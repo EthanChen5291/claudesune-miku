@@ -1,0 +1,13 @@
+// toy song v1: hats busier (ONLY the hats layer changed)
+setcpm(120/4)
+let key = "C:minor"
+let chords = chord("<Cm7 Fm7 Cm7 G7>").dict('ireal')
+let form = {
+  A: "<1!4 0!4>",
+  B: "<0!4 1!4>",
+}
+kick: s("bd*4").gain("1 .8 .9 .8")
+hats: s("hh*16").gain(".6 .3 .4 .3 .7 .3 .4 .3 .6 .3 .4 .3 .7 .3 .5 .4")
+bass: chords.rootNotes(2).struct("x ~ x ~ ~ x ~ ~").s("sawtooth")
+lead: n("0 2 4 3").scale(key).gain(".9 .6 .8 .6").mask(form.B)
+pads: chords.voicing().room(.3).orbit(2)

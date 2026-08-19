@@ -32,6 +32,13 @@ with the same harness on both arms. Containment is scored at instrument-stream l
 edit. 3 replicates per case per arm to separate engine effect from song-to-song variance.
 Full protocol: eval/PROTOCOL.md.
 
+## D4b. Three eval arms after user clarification (2026-08-19, mid-build)
+Ethan clarified the baseline should be Claude's *default* music-making behavior, not
+Strudel-flavored. Added arm B0 (no format constraints, casual project phrasing, agents free
+to run tools — the authentic counterfactual). Kept the already-launched freehand-Strudel arm
+as B1: it costs nothing extra and isolates "engine vs merely-using-Strudel", keeping
+containment directly comparable. The report leads with B0 vs AFTER.
+
 ## D5. Both arms see the full edit list up front
 A real session reveals edits one at a time, but sub-agents can't be drip-fed
 mid-conversation cheaply. Compromise: the full edit chain is in the prompt with an explicit

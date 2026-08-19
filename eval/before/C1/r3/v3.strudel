@@ -1,0 +1,148 @@
+// "night pressure" — f minor house @ 122 bpm
+// form: A (16) / B chorus (16) / A' (16) / B chorus (16) = 64 bars
+// harmony: Fm7 | Fm7 | AbM7 | AbM7 | DbM7 | DbM7 | Cm7 | Cm7 (8-bar loop)
+
+setcpm(122/4)
+
+let drumBank = "RolandTR909"
+
+// ---------------- drums (section variants) ----------------
+
+let hatsA = s("hh*16").gain("[0.2 0.1 0.55 0.12]*4")
+
+let hatsB = stack(
+  s("[~ oh]*4").gain(0.5),
+  s("hh*16").gain("[0.3 0.12 0.2 0.12]*4")
+)
+
+let hatsA2 = stack(
+  s("[~ oh]*4").gain(0.45),
+  s("<hh*16!3 [hh*8 hh*16]>").gain("[0.38 0.16 0.26 0.16]*4")
+)
+
+let clapA = s("~ cp ~ cp").gain(0.75)
+
+let clapA2 = stack(
+  s("~ cp ~ cp").gain(0.75),
+  s("[~ ~ ~ cp]*2").gain(0.25)
+)
+
+let percB = s("[~ rd]*4").gain(0.3)
+
+let percA2 = stack(
+  s("[~ rim ~ ~] [~ ~ rim ~] [~ rim ~ ~] [rim ~ ~ rim]").gain(0.4),
+  s("<~ ~ ~ [~ ~ ~ [lt ht]]>").gain(0.5)
+)
+
+// ---------------- bass: rolling offbeat octaves on the roots ----------------
+
+let bassLine = note(`<
+  [~ f2 ~ f2 ~ f2 f1 ~] [~ f2 ~ f2 ~ f2 ~ [f2 f3]]
+  [~ ab2 ~ ab2 ~ ab2 ab1 ~] [~ ab2 ~ ab2 ~ ab2 ~ [ab2 ab3]]
+  [~ db2 ~ db2 ~ db2 db1 ~] [~ db2 ~ db2 ~ db2 ~ [db2 db3]]
+  [~ c2 ~ c2 ~ c2 c1 ~] [~ c2 ~ c2 ~ c2 ~ [c2 c3]]
+>`)
+  .s("square")
+  .lpf(380)
+  .attack(0.004).decay(0.12).sustain(0.5).release(0.06)
+  .gain(0.8)
+
+// ---------------- chords ----------------
+
+let chordsA = note(`<
+  [f3,ab3,c4,eb4]!2 [ab3,c4,eb4,g4]!2
+  [f3,ab3,c4,db4]!2 [eb3,g3,bb3,c4]!2
+>`)
+  .struct("[~ x]*4")
+  .s("gm_epiano1")
+  .clip(0.6).gain(0.55).room(0.25)
+
+let chordsB = note(`<
+  [f3,ab3,c4,eb4,g4,c5]!2 [ab3,c4,eb4,g4,bb4,eb5]!2
+  [f3,ab3,c4,db4,f4,ab4]!2 [g3,bb3,c4,eb4,g4,c5]!2
+>`)
+  .struct("~ x ~ x [~ x] x [x x] [~ x]")
+  .s("gm_epiano1")
+  .clip(0.55).gain(0.6).room(0.3)
+
+// ---------------- pad: chorus only, wide and slow ----------------
+
+let padB = note("<[f4,ab4,c5,eb5,g5,c6] [ab4,c5,eb5,g5,bb5] [f4,ab4,db5,f5,ab5] [eb4,g4,c5,eb5,g5]>")
+  .slow(2)
+  .s("sawtooth")
+  .attack(0.4).release(1.4)
+  .lpf(1400).gain(0.22).room(0.5)
+  .pan(sine.range(0.3, 0.7).slow(8))
+
+// ---------------- lead: sparse mid-register hook in A, lifted in B ----------------
+
+let leadA = n(`<
+  [~ 0 ~ 2 ~ ~ 3 ~] [~ ~ 2 ~ 0 ~ ~ ~]
+  [~ 0 ~ 2 ~ ~ 4 ~] [~ ~ 3 ~ 2 ~ ~ ~]
+  [~ 0 ~ 2 ~ ~ 3 ~] [~ ~ 2 ~ 0 ~ ~ ~]
+  [~ 4 ~ 3 ~ 2 ~ ~] [7 ~ ~ 0 ~ ~ ~ ~]
+>`)
+  .scale("F4:minor")
+  .s("triangle")
+  .lpf(2200).clip(0.8)
+  .delay(0.35).delaytime(0.37).delayfeedback(0.3)
+  .room(0.3).gain(0.5)
+
+let leadB = n(`<
+  [11 ~ 12 11 [14 12] ~ 11 9] [9 [11 9] 7 9 11 ~ [12 11] 9]
+  [11 ~ 12 11 14 ~ [16 14] 12] [14 [12 11] 11 9 ~ 11 [12 14] ~]
+  [11 ~ 12 11 [14 12] ~ 11 9] [9 [11 9] 7 9 11 ~ [12 11] 9]
+  [11 12 14 [16 14] ~ 14 16 ~] [16 ~ 14 12 [11 12] 14 ~ 16]
+>`)
+  .scale("F4:minor")
+  .s("sawtooth")
+  .lpf(3000).clip(0.85)
+  .delay(0.3).delaytime(0.25).delayfeedback(0.25)
+  .room(0.35).gain(0.42)
+
+// ---------------- arp: chorus sparkle ----------------
+
+let arpB = n("[0 4] 7 [9 7] 11 [9 11] 7 [9 4] 7")
+  .fast(2)
+  .scale("F5:minor")
+  .s("square")
+  .lpf(3200).clip(0.5)
+  .pan(sine.range(0.2, 0.8).fast(2))
+  .delay(0.25).delaytime(0.185).delayfeedback(0.2)
+  .gain(0.28)
+
+// ---------------- arrangement: A / B / A' / B ----------------
+
+kick: s("bd*4").bank(drumBank).gain(1)
+
+hats: arrange(
+  [16, hatsA], [16, hatsB], [16, hatsA2], [16, hatsB]
+).bank(drumBank)
+
+clap: arrange(
+  [16, clapA], [16, clapA], [16, clapA2], [16, clapA]
+).bank(drumBank)
+
+perc: arrange(
+  [16, silence], [16, percB], [16, percA2], [16, percB]
+).bank(drumBank)
+
+crash: s("cr").slow(16).gain(0.45).room(0.4).bank(drumBank)
+
+bass: bassLine
+
+chords: arrange(
+  [16, chordsA], [16, chordsB], [16, chordsA], [16, chordsB]
+)
+
+pad: arrange(
+  [16, silence], [16, padB], [16, silence], [16, padB]
+)
+
+lead: arrange(
+  [16, leadA], [16, leadB], [16, leadA], [16, leadB]
+)
+
+arp: arrange(
+  [16, silence], [16, arpB], [16, silence], [16, arpB]
+)

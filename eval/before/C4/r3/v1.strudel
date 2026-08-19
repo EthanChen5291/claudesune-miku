@@ -1,0 +1,94 @@
+// "Ion Trail" — melodic trance, A minor, 138 BPM
+// Form: A (bars 1-16) | B chorus (17-32) | C breakdown (33-48) | B final chorus (49-64)
+// One cycle = one bar; the full form loops every 64 cycles.
+
+setcpm(138/4)
+
+// ---------- section masks (64 bars) ----------
+let mA   = "<1!16 0!48>"                // A: intro groove, bars 1-16
+let mB   = "<0!16 1!16 0!16 1!16>"      // B: both choruses, bars 17-32 & 49-64
+let mC   = "<0!32 1!16 0!16>"           // C: breakdown, bars 33-48
+let mAB  = "<1!32 0!16 1!16>"           // everything except the breakdown
+let mPad = "<1!16 0!16 1!32>"           // pads: A, C, and the final chorus
+let mR1  = "<0!12 1!4 0!48>"            // riser into chorus 1: bars 13-16
+let mF1  = "<0!15 1 0!48>"              // drum fill into chorus 1: bar 16
+let mR2  = "<0!40 1!8 0!16>"            // extended riser into final chorus: bars 41-48
+let mF2  = "<0!46 1!2 0!16>"            // extended drum fill into final chorus: bars 47-48
+let mHit = "<0!16 1 0!31 1 0!15>"       // crash impact on both chorus downbeats
+
+// ---------- harmony: Am | F | C | G (i VI III VII in A minor) ----------
+let roots     = "<a1 f2 c2 g1>"
+let stabs     = "<[a3,c4,e4] [f3,a3,c4] [c4,e4,g4] [g3,b3,d4]>"
+let padChords = "<[a2,g3,c4,e4] [f2,e3,a3,c4] [c3,b3,e4,g4] [g2,f3,b3,d4]>"
+let arpNotes  = "<[a3 c4 e4 a4]*4 [f3 a3 c4 f4]*4 [c4 e4 g4 c5]*4 [g3 b3 d4 g4]*4>"
+let leadMel   = `<
+  [e5 c5 a4 c5 e5@2 d5 c5]
+  [c5 a4 f4 a4 c5@2 d5 e5]
+  [e5 g5 e5 c5 g4@2 a4 b4]
+  [d5 b4 g4 b4 d5 e5 d5 b4]
+>`
+
+// ---------- drums ----------
+kick: s("bd*4").bank("RolandTR909").gain(1.05).shape(0.3).mask(mAB)
+
+hats: s("[~ oh]*4").bank("RolandTR909").gain(0.5).hpf(5000).cut(1).mask(mAB)
+
+shaker: s("hh*16").bank("RolandTR909").gain("[0.32 0.14 0.2 0.14]*4").hpf(9000).mask(mB)
+
+clap: s("~ cp ~ cp").bank("RolandTR909").gain(0.8).room(0.25).mask(mB)
+
+// ---------- bass & harmony ----------
+bass: note(roots).struct("[~ x]*8").s("sawtooth")
+  .lpf(800).lpq(6).attack(0.002).decay(0.12).sustain(0.35).release(0.05)
+  .shape(0.2).gain(0.9).mask(mAB)
+
+chords: note(stabs).struct("[~ x]*4").s("supersaw")
+  .detune(0.35).attack(0.004).decay(0.16).sustain(0.2).release(0.08)
+  .lpf(2200).room(0.3).gain(0.6).mask(mB)
+
+pad: note(padChords).s("supersaw")
+  .detune(0.25).attack(0.4).sustain(0.8).release(0.9)
+  .lpf(sine.slow(8).range(700, 1800)).room(0.6).gain(0.45).mask(mPad)
+
+// ---------- melody ----------
+arp: note(arpNotes).s("sawtooth")
+  .decay(0.09).sustain(0).lpf(saw.slow(16).range(500, 4200))
+  .delay(0.4).delaytime(0.33).delayfeedback(0.4)
+  .pan(sine.slow(3).range(0.25, 0.75)).gain(0.5).mask(mAB)
+
+lead: note(leadMel).s("supersaw")
+  .detune(0.4).attack(0.01).decay(0.3).sustain(0.5).release(0.12)
+  .lpf(3500).delay(0.35).delaytime(0.33).delayfeedback(0.35)
+  .room(0.4).gain(0.8).mask(mB)
+
+pluck: note(leadMel).s("triangle")
+  .attack(0.002).decay(0.18).sustain(0)
+  .delay(0.6).delaytime(0.33).delayfeedback(0.5)
+  .room(0.75).gain(0.6).mask(mC)
+
+// ---------- transition material (own layers) ----------
+riser1: s("white")
+  .lpf(saw.slow(4).range(400, 9000)).hpf(180)
+  .gain(saw.slow(4).range(0.04, 0.32)).room(0.5).mask(mR1)
+
+fill1: s("sd*4 sd*4 sd*8 sd*16").bank("RolandTR909")
+  .gain(saw.range(0.35, 0.9)).speed(saw.range(1, 1.35)).room(0.3).mask(mF1)
+
+// final-chorus riser: 8 bars long, wider sweep, louder peak
+riser2: s("white")
+  .lpf(saw.slow(8).range(300, 11000)).hpf(150)
+  .gain(saw.slow(8).range(0.03, 0.42)).room(0.55).mask(mR2)
+
+// second riser layer: tonal pitch riser climbing an octave over the 8 bars
+riser2b: note("a5*8").add(note(saw.slow(8).range(0, 12)))
+  .s("sawtooth").hpf(800).lpf(6000)
+  .gain(saw.slow(8).range(0.03, 0.25))
+  .delay(0.4).delaytime(0.33).delayfeedback(0.4)
+  .room(0.6).mask(mR2)
+
+// final-chorus fill: two-bar escalating snare roll
+fill2: s("<[sd*2 sd*4 sd*4 sd*8] [sd*8 sd*8 sd*16 sd*16]>").bank("RolandTR909")
+  .gain(saw.slow(2).range(0.3, 0.95)).speed(saw.slow(2).range(1, 1.5))
+  .room(0.35).mask(mF2)
+
+impact: s("crash").bank("RolandTR909").gain(0.75).room(0.5).mask(mHit)

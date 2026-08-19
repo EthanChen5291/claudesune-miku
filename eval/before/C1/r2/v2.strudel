@@ -1,0 +1,80 @@
+// "Umbra" — house in F minor · 122 BPM
+// form: A (16 bars) → B chorus (16) → A' (16, busier drums, same melody) → B (16)
+// 64 bars total, then it loops. one cycle = one bar.
+
+setcpm(122/4)
+
+// -------------------------------------------------------------- material
+
+// i — bVI — iv — v : Fm7 · Dbmaj7 · Bbm7 · Cm7 (one chord per bar)
+let chordA = note("<[f3,ab3,c4,eb4] [db3,f3,ab3,c4] [bb2,db3,f3,ab3] [c3,eb3,g3,bb3]>")
+
+// chorus voicings — wider, with 9ths and a higher top
+let chordB = note("<[f3,ab3,c4,eb4,g4,c5,eb5] [db3,ab3,c4,eb4,f4,ab4,c5] [bb2,db3,ab3,c4,f4,ab4] [c3,g3,bb3,eb4,g4,bb4]>")
+
+// verse melody — A and A' share this note-for-note
+let verseMelody = note("<[c5 ~ ab4 g4 f4 ~ ~ ~] [~ ab4 ~ f4 ~ eb4 ~ c4] [f4 ~ ab4 ~ bb4 ~ g4 ~] [g4 ~ c5 ~ ~ bb4 ab4 ~]>")
+
+// chorus melody — pushed high (f5–f6) and densified with 16th-note pairs
+let chorusMelody = note("<[[f5 ab5] c6 [ab5 c6] eb6 [c6 ab5] g5 f5 [ab5 c6]] [[ab5 f5] db6 [c6 ab5] f5 [ab5 c6] eb6 c6 [ab5 f5]] [[f5 db6] c6 [db6 f5] ab5 [bb5 db6] f6 [db6 c6] bb5] [[g5 bb5] c6 [eb6 c6] g5 [bb5 c6] eb6 [f6 eb6] c6]>")
+
+// bass — offbeat pump in the verse, driving octave line in the chorus
+let bassA = note("<f2 db2 bb1 c2>").struct("[~ x]*4")
+let bassB = note("<[f2 ~ f2 f3 ~ f2 f3 f2] [db2 ~ db2 db3 ~ db2 db3 db2] [bb1 ~ bb1 bb2 ~ bb1 bb2 bb1] [c2 ~ c2 c3 ~ c2 c3 c2]>")
+
+// -------------------------------------------------------------- section variants
+
+let hatsA  = s("hh*16").gain("[0.5 0.22 0.35 0.22]*4")
+let hatsB  = s("hh*16").gain("[0.6 0.3 0.45 0.3]*4").ply("<1 1 1 2>")
+let hatsA2 = s("hh*16").gain("[0.55 0.25 0.4 0.25]*4").ply("<1 1 1 [1 2]>")
+
+let clapMain = s("~ cp ~ cp").gain(0.9).room(0.15)
+let clapBusy = stack(clapMain, s("~ ~ ~ [~ ~ ~ cp]").gain(0.3))
+
+let percB  = s("rim(3,8)").gain(0.4).pan(0.65)
+let percA2 = s("rim(5,16)").gain(0.32).pan(0.35)
+
+let rideB  = s("rd*4").gain(0.35).pan(0.6)
+let crashB = s("cr").slow(16).gain(0.5).room(0.4)
+
+let chordsA = chordA.struct("~ x ~ [~ x]").lpf(1100).gain(0.45)
+let chordsB = chordB.struct("[~ x] [~ x] [~ x] [~ [x x]]").lpf(1900).gain(0.5)
+
+let leadA = verseMelody.lpf(1900).gain(0.5)
+let leadB = chorusMelody.lpf(3200).gain(0.45)
+
+let padB = chordB.s("sawtooth").attack(0.35).sustain(0.7).release(0.9)
+  .lpf(1150).gain(0.28).room(0.55).pan(sine.range(0.25, 0.75).slow(8))
+
+// -------------------------------------------------------------- voices · A B A' B
+
+kick: s("bd*4").bank("RolandTR909").gain(1.1).shape(0.3)
+
+hats: arrange([16, hatsA], [16, hatsB], [16, hatsA2], [16, hatsB])
+  .bank("RolandTR909").cut(1)
+
+ohat: s("[~ oh]*4").bank("RolandTR909").gain(0.5).cut(1)
+
+clap: arrange([16, clapMain], [16, clapMain], [16, clapBusy], [16, clapMain])
+  .bank("RolandTR909")
+
+perc: arrange([16, silence], [16, percB], [16, percA2], [16, percB])
+  .bank("RolandTR909")
+
+ride: arrange([16, silence], [16, rideB], [16, silence], [16, rideB])
+  .bank("RolandTR909")
+
+crash: arrange([16, silence], [16, crashB], [16, silence], [16, crashB])
+  .bank("RolandTR909")
+
+bass: arrange([16, bassA], [16, bassB], [16, bassA], [16, bassB])
+  .s("sawtooth").lpf(600).decay(0.16).sustain(0.35).release(0.06)
+  .gain(0.8).shape(0.2)
+
+chords: arrange([16, chordsA], [16, chordsB], [16, chordsA], [16, chordsB])
+  .s("sawtooth").attack(0.004).decay(0.18).sustain(0.22).release(0.08).room(0.25)
+
+lead: arrange([16, leadA], [16, leadB], [16, leadA], [16, leadB])
+  .s("triangle").delay(0.35).delaytime(0.37).delayfeedback(0.32).room(0.3)
+
+pad: arrange([16, silence], [16, padB], [16, silence], [16, padB])

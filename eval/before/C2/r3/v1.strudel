@@ -1,0 +1,56 @@
+// "Sevenfold" — instrumental groove in 7/8, D dorian, 140 BPM
+// form: A (8 bars) — B (8) — C bridge with NO BASS (8) — A (8, bass returns = payoff)
+// one cycle = one 7/8 bar (7 eighth-note slots), grouped 2+2+3
+// cpm = 140 bpm quarters / 3.5 quarters per bar = 40
+
+setcpm(140/3.5)
+
+// ---------- drums ----------
+let kickA = s("bd ~ ~ ~ bd ~ <~ bd>")
+let kickB = s("bd ~ [~ bd] ~ bd ~ bd")
+let kickC = s("<bd ~> ~ ~ ~ ~ ~ ~")
+
+let snareA = s("~ ~ sd ~ ~ <~ sd> ~")
+let snareB = s("~ ~ sd ~ ~ sd sd").gain("1 1 .9 1 1 .35 .8")
+let snareC = s("~ ~ rim ~ ~ ~ rim").gain(.55)
+
+// hats swung: each pair of eighths plays long-short (2:1 shuffle), the lone 7th eighth stays straight
+let hatsA = s("[hh@2 hh]@2 [hh@2 hh]@2 [hh@2 hh]@2 hh").gain(".9 .5 .7 .5 .8 .5 .6")
+let hatsB = s("[hh@2 hh]@2 [hh@2 hh]@2 [hh@2 hh]@2 oh").gain(".9 .5 .7 .5 .8 .5 .7")
+let hatsC = s("[hh@2 hh]@2 [hh@2 hh]@2 [hh@2 hh]@2 hh").gain(".5 .3 .4 .3 .45 .3 .35").hpf(9000).speed(1.4)
+
+let rideB = s("~ rd ~ rd ~ rd ~").gain(.5)
+let rideC = s("rd ~ ~ ~ ~ ~ ~").gain(.35)
+
+// ---------- bass (withheld for all of C, returns hotter in the final A) ----------
+let bassA = note("<[d2 ~ d2 e2 f2 ~ c2] [d2 ~ d2 e2 f2 g2 a2]>")
+  .s("sawtooth").lpf(600).gain(.8)
+let bassB = note("<[e2 ~ e2 g2 ~ g2 ~] [g2 ~ g2 a2 b2 ~ a2] [e2 ~ e2 g2 ~ g2 ~] [c2 ~ c2 d2 e2 g2 a2]>")
+  .s("sawtooth").lpf(600).gain(.8)
+let bassOut = bassA.lpf(900).gain(.95) // payoff: same riff, brighter and louder
+
+// ---------- harmony ----------
+let chordsA = note("<[d3,f3,a3,c4] [d3,f3,g3,b3]>").struct("~ ~ x ~ ~ x ~")
+  .s("gm_epiano1").room(.3).gain(.65)
+let chordsB = note("<[e3,g3,b3,d4] [d3,e3,g3,b3] [e3,g3,b3,d4] [e3,g3,b3,c4]>").struct("x ~ ~ x ~ ~ x")
+  .s("gm_epiano1").room(.3).gain(.6)
+let chordsC = note("<[d3,f3,a3,c4,e4] [c3,e3,g3,b3,d4] [b2,d3,f3,a3] [a2,c3,e3,g3,b3]>")
+  .s("sawtooth").attack(.5).release(1.5).lpf(900).room(.6).gain(.4)
+
+// ---------- lead ----------
+let leadA = n("<[7 ~ 4 ~ 2 ~ 4] [5 ~ 3 2 1 ~ 2] [7 ~ 4 ~ 2 4 5] [6 ~ 5 3 0 ~ ~]>")
+  .scale("d4:dorian")
+let leadB = n("<[~ 9 ~ 7 ~ 6 ~] [~ 8 ~ 7 6 4 ~] [~ 9 ~ 7 ~ 6 7] [8 ~ 6 ~ 4 ~ 1]>")
+  .scale("d4:dorian")
+let leadC = n("<[~ ~ 11 ~ ~ ~ ~] [~ ~ ~ ~ 9 ~ ~] [~ ~ 10 ~ ~ ~ ~] [~ ~ ~ ~ ~ 7 ~]>")
+  .scale("d4:dorian").release(1.5)
+
+// ---------- arrangement: A B C A, 8 bars each ----------
+kick: arrange([8, kickA], [8, kickB], [8, kickC], [8, kickA]).bank("RolandTR909")
+snare: arrange([8, snareA], [8, snareB], [8, snareC], [8, snareA]).bank("RolandTR909")
+hats: arrange([8, hatsA], [8, hatsB], [8, hatsC], [8, hatsA]).bank("RolandTR909")
+ride: arrange([8, silence], [8, rideB], [8, rideC], [8, rideB]).bank("RolandTR909")
+bass: arrange([8, bassA], [8, bassB], [8, silence], [8, bassOut])
+chords: arrange([8, chordsA], [8, chordsB], [8, chordsC], [8, chordsA])
+lead: arrange([8, leadA], [8, leadB], [8, leadC], [8, leadA])
+  .s("triangle").lpf(2200).delay(.35).delaytime(.32).delayfeedback(.35).room(.3).gain(.8)

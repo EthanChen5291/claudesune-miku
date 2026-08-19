@@ -5,13 +5,25 @@ Purpose: measure what the Strudel Song Engine actually changes, versus the count
 
 ## Arms
 
-- **BEFORE (freehand)**: an LLM agent receives the generation prompt and writes a `.strudel`
-  file directly from its own knowledge of Strudel. Edits are applied by freehand file editing.
-  No engine, no harness, no verification, no code execution. This is what you get today by
-  pasting prompts into a chat. Generated **before** the engine was implemented, by agents that
-  were never shown the engine design.
+- **B0 (default-Claude)** — *the primary "before"*: an agent gets only the musical brief and
+  the change requests, phrased as a casual project ask, with **no format constraints and no
+  engine knowledge**. It makes music however Claude naturally would (its choice of tools and
+  formats — historically MIDI-via-script, synthesized audio, etc.). This is the true
+  counterfactual: "what happens today if you randomly ask Claude to make music."
+  Files: `eval/before-default/`.
+- **B1 (freehand-Strudel)** — *format-matched ablation*: same prompts, but the agent must
+  produce one `.strudel` file with labeled layers, written purely from its own knowledge —
+  no engine, no verification, no code execution. Isolates what the engine adds *beyond*
+  merely targeting Strudel, and makes containment numbers directly comparable to the engine
+  arm. Files: `eval/before/`.
 - **AFTER (engine)**: the same prompts flow through the engine: song spec JSON → compile →
   bind → verify; each edit is scoped, containment-gated, and re-verified.
+  Files: `eval/after/`.
+
+B0 and B1 were both generated **before** the engine was implemented, by agents never shown
+the engine design. B0 outputs are scored with format-appropriate tooling (e.g. MIDI track
+diffing for containment) where possible; what can't be measured automatically is reported
+as such rather than silently skipped.
 
 ## Replicates
 

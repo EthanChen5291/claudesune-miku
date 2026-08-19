@@ -5,7 +5,7 @@
   "type": "module",
   "private": true,
   "scripts": {
-    "test": "node --test test/",
+    "test": "node --test \"test/**/*.test.js\"",
     "verify": "node src/cli.js verify",
     "generate": "node src/cli.js generate",
     "edit": "node src/cli.js edit"
