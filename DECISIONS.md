@@ -86,3 +86,26 @@ Workflows are used where fan-out is real and coherence doesn't suffer: baseline 
 inline and sequentially (per §6's hard ordering) because they share one evolving design;
 libraries are authored inline for taste coherence (§3.5 "30 excellent beats 300 mediocre"),
 then critiqued by agents.
+
+## D12. Bare-identifier form keys (transpiler gotcha discovered empirically)
+The strudel transpiler mini-fies ALL double-quoted strings — including object KEYS —
+so `let form = { "A'": "<1 0>" }` breaks in the REPL itself, not just headless.
+Compiler emits form keys as sanitized bare identifiers (A' → Ap) with a comment mapping,
+and accesses them as `form.Ap`. Section names keep their fancy spelling in the spec/meta.
+
+## D13. Bound material is emitted as resolved note names, not runtime .scale() lookups
+The binder resolves degrees → concrete notes at bind time (it knows the harmony timeline,
+scale, snapping policy, and cadence targets) and emits explicit `note("<[...] [...]>")`
+grids, one bracket-group per cycle over the harmony period. Rationale: harmonic snapping
+per-chord CANNOT be expressed with a runtime .scale() call (the same melodic cycle repeats
+over different chords), and resolved notes make motif assertions exact. Renovation/re-binding
+happens at the spec level, so nothing is lost. The §2 .scale() pipeline remains the verified
+substrate for degree→note math.
+
+## D14. Passing-tone policy (binder, deterministic)
+Accented onsets (accent ≥ 0.7) snap to the nearest chord tone of the sounding chord
+(semitone distance, tie → lower). Weak onsets keep their diatonic scale tone — always
+in-key, never snapped. Cadence targets override the final onset (nearest chord root /
+tonic). Accent→gain mapping: gain = gmin + accent·(gmax−gmin), default range [0.35, 1.0].
+Per-onset microtiming shifts onset fractions exactly in the emitted grid (capped at grid
+96; dropped with a warning beyond). Swing emits .swingBy(x, subdiv), verified at 1.1.0.

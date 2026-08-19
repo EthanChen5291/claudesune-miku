@@ -1,0 +1,40 @@
+{
+  "title": "toy-house",
+  "form": "A B A' B",
+  "meter": "4/4",
+  "bpm": 122,
+  "genre": "house",
+  "key": "F:minor",
+  "seed": 42,
+  "sections": {
+    "A": {
+      "role": "verse", "bars": 4,
+      "harmony": ["Fm9", "Bbm9", "Fm9", "C7"],
+      "layers": {
+        "kick": { "pattern": "s(\"bd*4\").gain(\"1 .85 .92 .85\")" },
+        "hats": { "pattern": "s(\"hh*8\").gain(\".55 .35 .7 .35 .55 .35 .7 .45\")" },
+        "bass": { "pattern": "chords.rootNotes(2).struct(\"x ~ x ~ ~ x ~ ~\").s(\"sawtooth\").lpf(700)" },
+        "pads": { "pattern": "chords.voicing().s(\"square\").room(.4).gain(.5)" }
+      }
+    },
+    "B": {
+      "role": "chorus", "bars": 4,
+      "contrasts_with": "A", "resolves": "A",
+      "must": { "density": "> 1.3x A", "register_span": "wider than A" },
+      "harmony": ["Db^7", "Eb7", "Fm9", "C7"],
+      "layers": {
+        "kick": { "pattern": "s(\"bd*4\").gain(\"1 .9 .95 .9\")" },
+        "hats": { "pattern": "s(\"hh*16\").gain(\".6 .3 .45 .3 .75 .3 .45 .35 .6 .3 .45 .3 .75 .3 .5 .4\")" },
+        "bass": { "pattern": "chords.rootNotes(2).struct(\"x ~ x x ~ x x ~\").s(\"sawtooth\").lpf(900)" },
+        "pads": { "pattern": "chords.voicing().s(\"square\").room(.4).gain(.6)" },
+        "lead": { "pattern": "n(\"0 4 7 4 9 7 4 2\").scale(\"F4:minor\").s(\"triangle\").gain(\".9 .6 .8 .6 1 .7 .8 .6\")" }
+      }
+    },
+    "A'": {
+      "recalls": "A",
+      "vary": {
+        "hats": { "pattern": "s(\"hh*8, ~ rim ~ rim\").gain(\".55 .35 .7 .35 .55 .35 .7 .45\")" }
+      }
+    }
+  }
+}

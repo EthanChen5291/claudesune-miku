@@ -55,7 +55,7 @@ export async function verifySong(source, { meta = null, cycles = null, meter = n
  * The edit gate (§3.3). Rejects when any non-allowed label's hap signature changed.
  */
 export async function checkEdit(oldSource, newSource, {
-  allowLabels = [], allowBindings = [], allowAspects = null,
+  allowLabels = [], allowBindings = [], allowAspects = null, allowWindows = null,
   meta = null, cycles = null, meter = null,
 } = {}) {
   const [from, to] = windowOf(meta, { cycles });
@@ -74,7 +74,7 @@ export async function checkEdit(oldSource, newSource, {
   }
   const oldRes = { evaluated: oldEv, haps: hapsByLabel(oldEv, from, to) };
   const newRes = { evaluated: newEv, haps: hapsByLabel(newEv, from, to) };
-  const gate = containment(oldRes, newRes, { allowLabels, allowBindings, allowAspects });
+  const gate = containment(oldRes, newRes, { allowLabels, allowBindings, allowAspects, allowWindows });
 
   const metricsFor = (res) => {
     const out = {};

@@ -1,0 +1,47 @@
+// "Sleep Signals" — lo-fi hip-hop in C minor, 84 BPM
+// Form: A (verse, 8 bars) B (chorus, 8 bars) A B — 32-bar loop, 1 cycle = 1 bar
+setcpm(84/4)
+
+// ---- harmony: jazzy rootless extended voicings ----
+// verse:  Cm9 | Fm9 | Abmaj9 | G7b9   (one chord per TWO bars, once per 8-bar section)
+let verseChords  = "<[eb3,g3,bb3,d4] [ab3,c4,eb4,g4] [g3,bb3,c4,eb4] [f3,ab3,b3,d4]>"
+// chorus: Fm9 | Bb13 | Ebmaj9 | G7b9
+let chorusChords = "<[ab3,c4,eb4,g4] [ab3,c4,d4,g4] [g3,bb3,d4,f4] [f3,ab3,b3,d4]>"
+
+let verseBass  = "<[c2@3 c2@4 eb2] [f2@3 f2@4 g2] [ab1@3 ab1@5] [g1@3 g1@3 b1@2]>"
+let chorusBass = "<[f2@3 f2@5] [bb1@3 bb1@4 d2] [eb2@3 eb2@5] [g1@3 g1@2 b1@3]>"
+
+// sleepy 4-bar phrases, mostly space
+let verseLead  = "<[~ ~ g4 ~ eb4 ~ ~ ~] [~ f4 ~ ab4 ~ g4 ~ ~] [~ ~ eb4 ~ g4 ~ bb4 ~] [~ ab4 g4 ~ ~ ~ d4 ~]>"
+let chorusLead = "<[~ ~ c5 ~ ab4 ~ g4 ~] [~ f4 ~ g4 ~ ~ ab4 ~] [bb4 ~ ~ g4 ~ f4 ~ ~] [~ ~ d4 ~ eb4@2 ~ ~]>"
+
+// ---- drums ----
+kick: s("<[bd ~ ~ ~ ~ ~ ~ bd ~ ~ bd ~ ~ ~ ~ ~] [bd ~ ~ ~ ~ ~ ~ bd ~ ~ bd ~ ~ ~ bd ~]>")
+  .shape(.2).gain(.9)
+
+snare: s("~ sd ~ sd").room(.15).gain(.8)
+
+hats: s("<[hh*8] [hh hh hh hh hh hh hh ~]>")
+  .swingBy(1/6, 4).lpf(7000).gain(.55)
+
+ohat: s("<~ [~ ~ ~ ~ ~ ~ ~ oh]>")
+  .swingBy(1/6, 4).lpf(6000).gain(.5)
+
+// ---- music ----
+chords: arrange(
+  [8, note(verseChords).slow(2)], [8, note(chorusChords).slow(2)],
+  [8, note(verseChords).slow(2)], [8, note(chorusChords).slow(2)]
+).struct("x@5 x@3").s("gm_epiano1").lpf(1500).room(.35).gain(.55)
+
+bass: arrange(
+  [8, note(verseBass)], [8, note(chorusBass)],
+  [8, note(verseBass)], [8, note(chorusBass)]
+).s("gm_acoustic_bass").lpf(900).gain(.8)
+
+lead: arrange(
+  [8, note(verseLead)], [8, note(chorusLead)],
+  [8, note(verseLead)], [8, note(chorusLead)]
+).clip(2).s("gm_vibraphone").lpf(2500).room(.5)
+  .delay(.25).delaytime(.54).delayfeedback(.3).gain(.5)
+
+crackle: s("crackle*4").density(.1).gain(.4)

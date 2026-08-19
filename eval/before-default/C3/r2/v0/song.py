@@ -359,13 +359,13 @@ def snare_hit(vel, seed):
 
 
 def hat_hit(vel, seed, open_hat=False):
-    t = _t(0.5 if open_hat else 0.07)
+    t = _t(0.5 if open_hat else 0.09)
     rng = np.random.default_rng(seed)
     nz = rng.standard_normal(t.size)
-    nz = np.diff(nz, prepend=0.0)
-    nz = np.diff(nz, prepend=0.0)                  # steep highpass
+    nz = np.diff(nz, prepend=0.0)                  # highpass
+    nz += 0.35 * nz * np.sin(2 * np.pi * 6100 * t)  # metallic shimmer
     nz /= max(1e-9, np.max(np.abs(nz)))
-    decay = 6.5 if open_hat else 70.0
+    decay = 6.5 if open_hat else 55.0
     return nz * np.exp(-t * decay) * (vel / 127.0) ** 1.6
 
 
@@ -399,11 +399,11 @@ def render_audio(path, ep, bass, mel, drums, total_bars):
         if drum == KICK:
             add(kick_hit(vel, seed), beat_to_sec(start), 0.0, 1.00)
         elif drum == SNARE:
-            add(snare_hit(vel, seed), beat_to_sec(start), 0.06, 0.75)
+            add(snare_hit(vel, seed), beat_to_sec(start), 0.06, 0.85)
         elif drum == CHAT:
-            add(hat_hit(vel, seed), beat_to_sec(start), 0.30, 0.32)
+            add(hat_hit(vel, seed), beat_to_sec(start), 0.30, 0.55)
         else:
-            add(hat_hit(vel, seed, open_hat=True), beat_to_sec(start), 0.30, 0.30)
+            add(hat_hit(vel, seed, open_hat=True), beat_to_sec(start), 0.30, 0.45)
 
     mix = np.stack([left, right])
 
@@ -414,8 +414,8 @@ def render_audio(path, ep, bass, mel, drums, total_bars):
     gain = np.ones_like(freqs)
     lo = np.clip(freqs / 30.0, 0.0, 1.0)
     gain *= lo * lo
-    roll = np.clip((freqs - 5500.0) / 9500.0, 0.0, 1.0)
-    gain *= 0.12 + 0.88 * 0.5 * (1.0 + np.cos(np.pi * roll))
+    roll = np.clip((freqs - 6500.0) / 9500.0, 0.0, 1.0)
+    gain *= 0.20 + 0.80 * 0.5 * (1.0 + np.cos(np.pi * roll))
     mix = np.fft.irfft(spec * gain, n=nsamp, axis=1)
 
     # vinyl crackle + hiss

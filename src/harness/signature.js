@@ -177,6 +177,12 @@ function changedHapFraction(oldRecs, newRecs) {
   return roundNum(1 - kept / denom);
 }
 
+function outsideWindows(entry, windows) {
+  if (!entry) return entry;
+  const inside = (t) => windows.some(([a, b]) => t >= a - 1e-9 && t < b - 1e-9);
+  return { ...entry, haps: entry.haps.filter((h) => !inside(h.whole.begin.valueOf())) };
+}
+
 /** Diff all labels of two evaluated songs' haps maps. Returns array of diffs (identical included). */
 export function diffSongs(oldHaps, newHaps) {
   const names = [...new Set([...oldHaps.keys(), ...newHaps.keys()])].sort();
@@ -195,10 +201,12 @@ export function diffSongs(oldHaps, newHaps) {
  *   that (transitively) references them — expanded via static analysis.
  * - allowAspects: optional; when given (e.g. ['sound']), even ALLOWED labels must
  *   keep their other aspect signatures identical (scoped "sound swap" edits).
+ * - allowWindows: optional [[fromCycle, toCycle], ...]; even ALLOWED labels must be
+ *   unchanged OUTSIDE these windows (scoped "chorus only, verse untouched" edits).
  *
  * Returns { ok, leaks: [...], allowed: [...], changelog: [lines], diffs }.
  */
-export function containment(oldRes, newRes, { allowLabels = [], allowBindings = [], allowAspects = null } = {}) {
+export function containment(oldRes, newRes, { allowLabels = [], allowBindings = [], allowAspects = null, allowWindows = null } = {}) {
   const allowed = new Set(allowLabels);
   for (const b of allowBindings) {
     for (const res of [oldRes, newRes]) {
@@ -223,6 +231,15 @@ export function containment(oldRes, newRes, { allowLabels = [], allowBindings = 
         .map(([k]) => k);
       if (forbidden.length) {
         leaks.push({ label: d.label, reason: `${d.label}: allowed label but forbidden aspect(s) changed: ${forbidden.join(', ')} (allowed: ${allowAspects.join(', ')})` });
+        continue;
+      }
+    }
+    if (allowWindows && d.kind === 'changed') {
+      const oldOut = outsideWindows(oldRes.haps.get(d.label), allowWindows);
+      const newOut = outsideWindows(newRes.haps.get(d.label), allowWindows);
+      const outDiff = diffLabel(d.label, oldOut, newOut);
+      if (outDiff.kind !== 'identical') {
+        leaks.push({ label: d.label, reason: `${d.label}: changed outside the allowed cycle window(s) ${JSON.stringify(allowWindows)} — ${outDiff.line}` });
         continue;
       }
     }
