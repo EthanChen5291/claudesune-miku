@@ -32,12 +32,12 @@
         },
         "hats": {
           "bind": {
-            "rhythm": "swung_lofi_hats",
+            "rhythm": "sixteenth_drive",
             "sound": "hh",
             "fx": ".bank(\"tr909\")",
             "gainRange": [
-              0.3,
-              0.8
+              0.25,
+              0.75
             ]
           }
         },
@@ -107,13 +107,6 @@
             "fx": ".delay(0.25).room(0.3)",
             "cadence": "tonic"
           }
-        },
-        "clap": {
-          "bind": {
-            "rhythm": "backbeat_ghost",
-            "sound": "cp",
-            "fx": ".bank(\"tr909\").room(0.25)"
-          }
         }
       }
     },
@@ -176,19 +169,7 @@
   "transitions": [
     {
       "use": "riser_hat_swell",
-      "into": "B",
-      "occurrence": 1
-    },
-    {
-      "use": "riser_hat_swell",
-      "into": "B",
-      "occurrence": 2
-    },
-    {
-      "use": "riser_hat_swell",
-      "into": "B",
-      "occurrence": "last",
-      "bars": 4
+      "into": "B"
     },
     {
       "use": "fill_snare_roll",

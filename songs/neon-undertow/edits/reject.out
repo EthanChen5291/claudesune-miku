@@ -1,0 +1,10 @@
+cannot use window: not in browser?
+🌀 @strudel/core loaded 🌀
+EDIT REJECTED (containment): kick: 160→176 haps, timing changed (+16/-0 onsets), 16 pitches changed, 16 sounds changed, 68 gains changed
+
+CONTAINMENT: REJECT
+  allowed labels: hats
+  leaks:
+    ✗ kick: 160→176 haps, timing changed (+16/-0 onsets), 16 pitches changed, 16 sounds changed, 68 gains changed
+  changelog:
+    kick: 160→176 haps, timing changed (+16/-0 onsets), 16 pitches changed, 16 sounds changed, 68 gains changed

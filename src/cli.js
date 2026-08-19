@@ -141,6 +141,9 @@ async function edit(argv) {
     process.exit(4);
   }
   const verifyRes = await verifySong(newSource, { meta: newMeta });
+  const prevVerify = await verifySong(oldSource, { meta: oldMeta });
+  const prevFails = new Set(prevVerify.assertions.filter((a) => !a.pass && a.severity === 'fail').map((a) => a.name));
+  const newFails = verifyRes.assertions.filter((a) => !a.pass && a.severity === 'fail' && !prevFails.has(a.name));
   emit(dir, n + 1, {
     source: newSource, meta: newMeta, verifyRes, editRes: res,
     note: values.note ?? null, prevSource: oldSource, title: newMeta.title ?? basename(dir),
@@ -148,6 +151,11 @@ async function edit(argv) {
   console.log(fmtContainment(res.containment));
   printVerify(verifyRes, newMeta, values.json);
   console.log(`\nACCEPTED -> ${dir}/v${n + 1}.strudel (listen.html has before/after A-B)`);
+  if (newFails.length) {
+    console.log(`\n⚠ MUSICAL REGRESSION: this contained edit broke ${newFails.length} assertion(s) that previously passed:`);
+    for (const f of newFails) console.log(`  ✗ ${f.name} — ${f.detail}`);
+    console.log('  The edit is accepted (containment is the gate); fix or re-declare the constraint in a follow-up.');
+  }
   if (values.spec) writeFileSync(join(dir, 'spec.json'), JSON.stringify(readJson(values.spec), null, 2));
 }
 

@@ -1,16 +1,31 @@
-# neon-undertow — v0
+# neon-undertow — v6
 
-_2026-08-19 22:51 · 4/4 · cycles 0–48_
+**Edit:** restore the chorus lift: verse hats to swung 8ths, add chorus clap backbeat
+
+_2026-08-19 22:56 · 4/4 · cycles 0–48_
+
+## What changed
+
+Containment: **PASS** — allowed: clap, hats
+- clap: layer added (96 haps)
+- hats: 704→640 haps, timing changed (+32/-96 onsets), 64 pitches changed, 192 sounds changed, 444 gains changed
+
+| label | metric | before | after |
+|---|---|---|---|
+| clap | layer | — | present |
+| hats | density (onsets/cycle) | 14.666667 | 13.333333 |
+| hats | syncopation | 0.727273 | 0.7 |
+| hats | accent variance | 0.027509 | 0.025607 |
 
 ## Verification
 
 - lint: clean
 - evaluates headlessly: yes
-- assertions: 34/34 pass
+- assertions: 38/38 pass
 
 ### relational
-- ✅ `B.must.density` — "> 1.3x A": measured 39.79 vs target > 38.35 (A: 29.50)
-- ✅ `B.must.register_span` — "wider than A": measured 49 vs target > 32 (A: 32)
+- ✅ `B.must.density` — "> 1.3x A": measured 43.79 vs target > 43.55 (A: 33.50)
+- ✅ `B.must.register_span` — "wider than A": measured 61 vs target > 32 (A: 32)
 
 ### structural
 - ✅ `C.withhold.kick` — kick silent in C as declared
@@ -33,23 +48,27 @@ _2026-08-19 22:51 · 4/4 · cycles 0–48_
 - ✅ `bass.bass_root_five.contour` — contour shape 100% preserved after harmonic snapping (24 steps)
 - ✅ `lead.m1.notes` — 144 emitted notes match the bound resolution exactly
 - ✅ `lead.m1.contour` — contour shape 100% preserved after harmonic snapping (40 steps)
-- ✅ `lead.cadence` — cadence target "tonic" resolved to F4 (enforced at bind time, verified by exact-notes check)
+- ✅ `lead.cadence` — cadence target "tonic" resolved to F5 (enforced at bind time, verified by exact-notes check)
 - ✅ `lead.m1.notes` — 16 emitted notes match the bound resolution exactly
 - ✅ `lead.m1.contour(invert+octave_up)` — contour shape 100% preserved after harmonic snapping (8 steps) under transform "invert+octave_up"
 
 ### interlock
-- ✅ `A.kick+hats` — complement joint=1 (hats in kick gaps: 1, reverse: 1) [declared pair] [texture grid — complement n/a]
+- ✅ `A.kick+hats` — complement joint=0.286 (hats in kick gaps: 0.571, reverse: 0) [texture grid — complement n/a]
 - ✅ `A.kick+bass` — complement joint=0.667 (bass in kick gaps: 0.667, reverse: 0.667) [texture grid — complement n/a]
-- ✅ `A.hats+bass` — complement joint=1 (bass in hats gaps: 1, reverse: 1)
+- ✅ `A.hats+bass` — complement joint=0.762 (bass in hats gaps: 0.667, reverse: 0.857) [texture grid — complement n/a]
 - ✅ `A'.kick+hats` — complement joint=0.4 (hats in kick gaps: 0.8, reverse: 0) [texture grid — complement n/a]
 - ✅ `A'.kick+bass` — complement joint=0.667 (bass in kick gaps: 0.667, reverse: 0.667) [texture grid — complement n/a]
 - ✅ `A'.hats+bass` — complement joint=0.4 (bass in hats gaps: 0, reverse: 0.8) [texture grid — complement n/a]
 - ✅ `B.kick+hats` — complement joint=0.4 (hats in kick gaps: 0.8, reverse: 0) [texture grid — complement n/a]
 - ✅ `B.kick+bass` — complement joint=1 (bass in kick gaps: 1, reverse: 1) [declared pair] [texture grid — complement n/a]
 - ✅ `B.kick+lead` — complement joint=0.733 (lead in kick gaps: 0.8, reverse: 0.667) [texture grid — complement n/a]
+- ✅ `B.kick+clap` — complement joint=0.417 (clap in kick gaps: 0.5, reverse: 0.333) [texture grid — complement n/a]
 - ✅ `B.hats+bass` — complement joint=0.367 (bass in hats gaps: 0, reverse: 0.733) [texture grid — complement n/a]
 - ✅ `B.hats+lead` — complement joint=0.333 (lead in hats gaps: 0, reverse: 0.667) [texture grid — complement n/a]
+- ✅ `B.hats+clap` — complement joint=0.367 (clap in hats gaps: 0, reverse: 0.733) [texture grid — complement n/a]
 - ✅ `B.bass+lead` — complement joint=0.55 (lead in bass gaps: 0.6, reverse: 0.5)
+- ✅ `B.bass+clap` — complement joint=1 (clap in bass gaps: 1, reverse: 1)
+- ✅ `B.lead+clap` — complement joint=0.55 (clap in lead gaps: 0.5, reverse: 0.6)
 - ✅ `C.hats+lead` — complement joint=0.429 (lead in hats gaps: 0, reverse: 0.857) [texture grid — complement n/a]
 
 ## Per-label metrics
@@ -57,23 +76,20 @@ _2026-08-19 22:51 · 4/4 · cycles 0–48_
 | label | onsets | density | span | sync | accVar | variety |
 |---|---|---|---|---|---|---|
 | kick | 160 | 3.333333 | 0 | 0 | 0.001719 | 0 |
-| hats | 608 | 12.666667 | 0 | 0.736842 | 0.025839 | 0.06383 |
+| hats | 640 | 13.333333 | 0 | 0.7 | 0.025607 | 0.06383 |
 | bass | 160 | 3.333333 | 8 | 0.8 | 0.005666 | 0.078947 |
 | pads | 456 | 9.5 | 31 | 0.328947 | 0.00338 | 0.025641 |
-| lead | 160 | 3.333333 | 13 | 0.6 | 0.019801 | 0.066667 |
-| riser | 96 | 2 | 0 | 0.75 | 0.029971 | 0 |
+| lead | 160 | 3.333333 | 18 | 0.6 | 0.019801 | 0.066667 |
+| clap | 96 | 2 | 0 | 0.5 | 0.03825 | 0 |
+| riser | 128 | 2.666667 | 0 | 0.75 | 0.029982 | 0 |
 | fill | 16 | 0.333333 | 0 | 0.75 | 0.035071 | 0 |
 | impact | 1 | 0.020833 | 0 | 0 | 0 | 0 |
 
 ## What to listen for
 
-- Section B (chorus, cycles [[8,16],[24,32],[40,48]]) should lift relative to its verse.
-- Section C withholds kick, bass — their return is the payoff.
-- Transition "riser_hat_swell" (riser) into B at cycles 6–8.
-- Transition "riser_hat_swell" (riser) into B at cycles 22–24.
-- Transition "riser_hat_swell" (riser) into B at cycles 38–40.
-- Transition "fill_snare_roll" (fill) into B at cycles 39–40.
-- Transition "sub_drop" (impact) into B at cycles 40–41.
+- The requested change: restore the chorus lift: verse hats to swung 8ths, add chorus clap backbeat
+- clap: layer added — its entrance/absence is the change.
+- Everything else (kick, bass, pads, lead, riser, fill, impact) is bit-identical — if anything sounds different there, that's a bug to report.
 
 ---
 _Open `listen.html` for per-label mutes and A/B; `*.strudel` files are paste-ready for strudel.cc._

@@ -1,0 +1,58 @@
+cannot use window: not in browser?
+🌀 @strudel/core loaded 🌀
+CONTAINMENT: PASS
+  allowed labels: hats
+  changelog:
+    hats: 704→704 haps, timing changed (+64/-64 onsets), pitches unchanged
+
+lint: clean
+eval: ok
+
+  label   onsets  density  span  sync   pcH    accVar  variety
+  ------  ------  -------  ----  -----  -----  ------  -------
+  kick    160     3.333    0     0      0      0.002   0      
+  hats    704     14.667   0     0.727  0      0.028   0.064  
+  bass    160     3.333    8     0.8    1.201  0.006   0.079  
+  pads    456     9.5      31    0.329  2.953  0.003   0.026  
+  lead    160     3.333    18    0.6    2.389  0.02    0.067  
+  riser   96      2        0     0.75   0      0.03    0      
+  fill    16      0.333    0     0.75   0      0.035   0      
+  impact  1       0.021    0     0      0      0       0      
+
+assertions:
+  [FAIL] B.must.density: "> 1.3x A": measured 39.79 vs target > 53.95 (A: 41.50)
+  [PASS] B.must.register_span: "wider than A": measured 61 vs target > 32 (A: 32)
+  [PASS] C.withhold.kick: kick silent in C as declared
+  [PASS] C.payoff.kick->B: kick returns in B (96 onsets) — the payoff exists
+  [PASS] C.withhold.bass: bass silent in C as declared
+  [PASS] C.payoff.bass->B: bass returns in B (96 onsets) — the payoff exists
+  [PASS] bass.accented-chord-tones[A,A']: 48 accented onsets (bound), 100% chord tones
+  [PASS] bass.accented-chord-tones[B]: 48 accented onsets (bound), 100% chord tones
+  [PASS] lead.accented-chord-tones[B]: 72 accented onsets (bound), 100% chord tones
+  [PASS] lead.accented-chord-tones[C]: 8 accented onsets (bound), 100% chord tones
+  [PASS] pads.accented-chord-tones: 312 accented onsets, 100% chord tones [free material — exceptions allowed, listed for review]
+  [PASS] impact.accented-chord-tones: 1 accented onsets, 100% chord tones [free material — exceptions allowed, listed for review]
+  [PASS] bass.bass_root_five.notes: 64 emitted notes match the bound resolution exactly
+  [PASS] bass.bass_root_five.contour: contour shape 100% preserved after harmonic snapping (24 steps)
+  [PASS] bass.bass_root_five.notes: 96 emitted notes match the bound resolution exactly
+  [PASS] bass.bass_root_five.contour: contour shape 100% preserved after harmonic snapping (24 steps)
+  [PASS] lead.m1.notes: 144 emitted notes match the bound resolution exactly
+  [PASS] lead.m1.contour: contour shape 100% preserved after harmonic snapping (40 steps)
+  [PASS] lead.cadence: cadence target "tonic" resolved to F5 (enforced at bind time, verified by exact-notes check)
+  [PASS] lead.m1.notes: 16 emitted notes match the bound resolution exactly
+  [PASS] lead.m1.contour(invert+octave_up): contour shape 100% preserved after harmonic snapping (8 steps) under transform "invert+octave_up"
+  [PASS] A.kick+hats: complement joint=0.4 (hats in kick gaps: 0.8, reverse: 0) [texture grid — complement n/a]
+  [PASS] A.kick+bass: complement joint=0.667 (bass in kick gaps: 0.667, reverse: 0.667) [texture grid — complement n/a]
+  [PASS] A.hats+bass: complement joint=0.4 (bass in hats gaps: 0, reverse: 0.8) [texture grid — complement n/a]
+  [PASS] A'.kick+hats: complement joint=0.4 (hats in kick gaps: 0.8, reverse: 0) [texture grid — complement n/a]
+  [PASS] A'.kick+bass: complement joint=0.667 (bass in kick gaps: 0.667, reverse: 0.667) [texture grid — complement n/a]
+  [PASS] A'.hats+bass: complement joint=0.4 (bass in hats gaps: 0, reverse: 0.8) [texture grid — complement n/a]
+  [PASS] B.kick+hats: complement joint=0.4 (hats in kick gaps: 0.8, reverse: 0) [texture grid — complement n/a]
+  [PASS] B.kick+bass: complement joint=1 (bass in kick gaps: 1, reverse: 1) [declared pair] [texture grid — complement n/a]
+  [PASS] B.kick+lead: complement joint=0.733 (lead in kick gaps: 0.8, reverse: 0.667) [texture grid — complement n/a]
+  [PASS] B.hats+bass: complement joint=0.367 (bass in hats gaps: 0, reverse: 0.733) [texture grid — complement n/a]
+  [PASS] B.hats+lead: complement joint=0.333 (lead in hats gaps: 0, reverse: 0.667) [texture grid — complement n/a]
+  [PASS] B.bass+lead: complement joint=0.55 (lead in bass gaps: 0.6, reverse: 0.5)
+  [PASS] C.hats+lead: complement joint=0.429 (lead in hats gaps: 0, reverse: 0.857) [texture grid — complement n/a]
+
+ACCEPTED -> songs/neon-undertow/v4.strudel (listen.html has before/after A-B)

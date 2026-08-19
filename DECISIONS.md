@@ -109,3 +109,35 @@ in-key, never snapped. Cadence targets override the final onset (nearest chord r
 tonic). Accent→gain mapping: gain = gmin + accent·(gmax−gmin), default range [0.35, 1.0].
 Per-onset microtiming shifts onset fractions exactly in the emitted grid (capped at grid
 96; dropped with a warning beyond). Swing emits .swingBy(x, subdiv), verified at 1.1.0.
+
+## D15. Contained-but-regressive edits are accepted with a loud banner, not rejected
+Containment is the hard gate (§3.3); relational musts are declared musical intent.
+When a perfectly scoped edit breaks a must that previously passed (the demo session's
+edit 1 made the verse so busy the chorus stopped lifting 1.3×), the edit command
+accepts it but prints a MUSICAL REGRESSION banner with the measured values. Rationale:
+the human may be mid-way through a multi-edit plan (as the demo session was — edit 6
+restored the lift); hard-rejecting would force constraint edits before material edits.
+
+## D16. Aspect signatures compare value SEQUENCES, timing separately
+time = sorted onset multiset; pitch/sound/gain = value sequences in temporal order
+with times dropped. So `--aspects time` admits a pure swing edit (onsets move,
+values intact) and `--aspects sound` admits a timbre swap (values change, onsets
+intact) — each provably ONLY that. (First design keyed values by onset time, which
+made any timing edit look like it changed every aspect.)
+
+## D17. Harmonic-assertion calibration (found by the demo songs, not by unit tests)
+- chordTones() unions ALL ireal dictionary voicings per quality + a documented
+  extensions policy (9th everywhere, 11th on minor family, 13th on dom/major 7ths).
+  A single sampled voicing flagged the 9th of Eb7 as a wrong note.
+- Bound material is judged per placement with the binder's own accent cutoff
+  (min gain among accents ≥ 0.7), severity FAIL — a miss there is an engine bug.
+  Free material is judged warn-level with a relative cutoff — accented tensions are
+  an authorial choice but get listed (§3.3 "documented exceptions").
+- The original quartal_9 m7/m9 voicing shapes contained genuine wrong notes (b9/b13);
+  the checker caught them; shapes fixed to So What-style diatonic fourths.
+
+## D18. Interlock texture rule
+A layer covering ≥12 onsets/cycle or the meter's full pulse grid (all 7 pulses in
+7/8) is a texture: it SUPPLIES the grid others syncopate against, so complement
+scoring doesn't apply to its pairs (reported as "[texture grid]"). Without this,
+any 16th-hat layer flagged every partner.

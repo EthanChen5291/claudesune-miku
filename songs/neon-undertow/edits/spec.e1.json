@@ -32,12 +32,12 @@
         },
         "hats": {
           "bind": {
-            "rhythm": "swung_lofi_hats",
+            "rhythm": "sixteenth_drive",
             "sound": "hh",
             "fx": ".bank(\"tr909\")",
             "gainRange": [
-              0.3,
-              0.8
+              0.25,
+              0.75
             ]
           }
         },
@@ -46,8 +46,8 @@
             "rhythm": "anticipation_bass",
             "contour": "lib:bass_root_five",
             "octave": 2,
-            "sound": "square",
-            "fx": ".lpf(420)"
+            "sound": "sawtooth",
+            "fx": ".lpf(650)"
           }
         },
         "pads": {
@@ -91,8 +91,8 @@
             "rhythm": "offbeat_8ths",
             "contour": "lib:bass_root_five",
             "octave": 2,
-            "sound": "square",
-            "fx": ".lpf(520)"
+            "sound": "sawtooth",
+            "fx": ".lpf(900)"
           }
         },
         "pads": {
@@ -102,17 +102,10 @@
           "bind": {
             "rhythm": "push_pull_16s",
             "contour": "m1",
-            "octave": 5,
+            "octave": 4,
             "sound": "triangle",
             "fx": ".delay(0.25).room(0.3)",
             "cadence": "tonic"
-          }
-        },
-        "clap": {
-          "bind": {
-            "rhythm": "backbeat_ghost",
-            "sound": "cp",
-            "fx": ".bank(\"tr909\").room(0.25)"
           }
         }
       }
@@ -176,19 +169,7 @@
   "transitions": [
     {
       "use": "riser_hat_swell",
-      "into": "B",
-      "occurrence": 1
-    },
-    {
-      "use": "riser_hat_swell",
-      "into": "B",
-      "occurrence": 2
-    },
-    {
-      "use": "riser_hat_swell",
-      "into": "B",
-      "occurrence": "last",
-      "bars": 4
+      "into": "B"
     },
     {
       "use": "fill_snare_roll",
