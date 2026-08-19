@@ -1,0 +1,1 @@
+- research into how to improve and how to train melody

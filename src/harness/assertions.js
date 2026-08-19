@@ -164,10 +164,15 @@ export function runAssertions(evaluated, hapsMap, meta) {
         if (!seg.pcs.has(pc)) violations.push(`${h.value.note ?? pc}@${h.whole.begin.toFraction()} vs ${seg.symbol}`);
       }
       const rate = 1 - violations.length / accented.length;
+      // Bound material MUST satisfy this (the binder snapped it — a miss is a bug).
+      // Free material gets a warning: accented tensions are a legitimate authorial
+      // choice, but Ethan should know where they are (documented exceptions, §3.3).
+      const isBound = (meta.motifPlacements ?? []).some((p) => p.label === label);
+      const isTransition = meta.labels?.[label]?.kind === 'transition';
       results.push({
         family: 'harmonic', name: `${label}.accented-chord-tones`, pass: rate >= 0.85,
-        severity: meta.labels?.[label]?.kind === 'transition' ? 'warn' : 'fail',
-        detail: `${accented.length} accented onsets, ${fmt(rate * 100)}% chord tones${violations.length ? ` — violations: ${violations.slice(0, 5).join(', ')}${violations.length > 5 ? ` (+${violations.length - 5})` : ''}` : ''}`,
+        severity: isBound && !isTransition ? 'fail' : 'warn',
+        detail: `${accented.length} accented onsets, ${fmt(rate * 100)}% chord tones${isBound ? '' : ' [free material — exceptions allowed, listed for review]'}${violations.length ? ` — violations: ${violations.slice(0, 5).join(', ')}${violations.length > 5 ? ` (+${violations.length - 5})` : ''}` : ''}`,
       });
     }
   }
