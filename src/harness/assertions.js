@@ -147,15 +147,12 @@ export function runAssertions(evaluated, hapsMap, meta) {
   // ---- harmonic: accented onsets carry chord tones ----
   const timeline = chordTimeline(harmonyHaps(evaluated, meta, [[0, meta.totalCycles ?? 16]]));
   if (timeline.length) {
-    for (const [label, entry] of hapsMap) {
-      if (entry.muted) continue;
-      const pitched = entry.haps.filter((h) => pitchOf(h.value) != null);
-      if (pitched.length === 0) continue;
+    const judge = (haps, cutoffFn) => {
+      const pitched = haps.filter((h) => pitchOf(h.value) != null);
+      if (!pitched.length) return null;
       const gains = pitched.map((h) => gainOf(h.value));
-      const maxG = Math.max(...gains);
-      const varied = Math.max(...gains) - Math.min(...gains) > 1e-6;
-      const accented = pitched.filter((h, i) => varied ? gains[i] >= 0.8 * maxG : isDownbeat(h));
-      if (!accented.length) continue;
+      const accented = pitched.filter((h, i) => cutoffFn(gains[i], h));
+      if (!accented.length) return null;
       const violations = [];
       for (const h of accented) {
         const seg = chordAt(timeline, h.whole.begin.valueOf());
@@ -163,16 +160,48 @@ export function runAssertions(evaluated, hapsMap, meta) {
         const pc = ((Math.round(pitchOf(h.value)) % 12) + 12) % 12;
         if (!seg.pcs.has(pc)) violations.push(`${h.value.note ?? pc}@${h.whole.begin.toFraction()} vs ${seg.symbol}`);
       }
-      const rate = 1 - violations.length / accented.length;
-      // Bound material MUST satisfy this (the binder snapped it — a miss is a bug).
-      // Free material gets a warning: accented tensions are a legitimate authorial
-      // choice, but Ethan should know where they are (documented exceptions, §3.3).
-      const isBound = (meta.motifPlacements ?? []).some((p) => p.label === label);
-      const isTransition = meta.labels?.[label]?.kind === 'transition';
+      return { accented: accented.length, violations };
+    };
+    const vio = (v) => v.violations.length ? ` — violations: ${v.violations.slice(0, 5).join(', ')}${v.violations.length > 5 ? ` (+${v.violations.length - 5})` : ''}` : '';
+
+    // Bound material: per placement, using the binder's OWN accent mapping (gains
+    // for accents ≥ 0.7 in that placement) — assertion and binder agree exactly.
+    const boundLabels = new Set();
+    for (const p of meta.motifPlacements ?? []) {
+      if (!p.notes || !p.gains || !p.accents) continue; // percussive
+      boundLabels.add(p.label);
+      const entry = hapsMap.get(p.label);
+      if (!entry || entry.muted) continue;
+      const ranges = (p.sections ?? []).flatMap((s) => meta.sections[s]?.ranges ?? []);
+      const accGains = p.gains.filter((_, i) => p.accents[i] >= 0.7);
+      if (!accGains.length || !ranges.length) continue;
+      const cutoff = Math.min(...accGains) - 1e-6;
+      const inRanges = entry.haps.filter((h) => ranges.some(([a, b]) => h.whole.begin.valueOf() >= a - 1e-9 && h.whole.begin.valueOf() < b - 1e-9));
+      const v = judge(inRanges, (g) => g >= cutoff);
+      if (!v) continue;
+      const isTransition = meta.labels?.[p.label]?.kind === 'transition';
+      const rate = 1 - v.violations.length / v.accented;
       results.push({
-        family: 'harmonic', name: `${label}.accented-chord-tones`, pass: rate >= 0.85,
-        severity: isBound && !isTransition ? 'fail' : 'warn',
-        detail: `${accented.length} accented onsets, ${fmt(rate * 100)}% chord tones${isBound ? '' : ' [free material — exceptions allowed, listed for review]'}${violations.length ? ` — violations: ${violations.slice(0, 5).join(', ')}${violations.length > 5 ? ` (+${violations.length - 5})` : ''}` : ''}`,
+        family: 'harmonic', name: `${p.label}.accented-chord-tones[${(p.sections ?? []).join(',')}]`,
+        pass: rate >= 0.85, severity: isTransition ? 'warn' : 'fail',
+        detail: `${v.accented} accented onsets (bound), ${fmt(rate * 100)}% chord tones${vio(v)}`,
+      });
+    }
+
+    // Free material: whole-song heuristic cutoff; warn-level — accented tensions
+    // are a legitimate authorial choice, but they get listed (documented exceptions, §3.3).
+    for (const [label, entry] of hapsMap) {
+      if (entry.muted || boundLabels.has(label)) continue;
+      const gains = entry.haps.map((h) => gainOf(h.value));
+      if (!gains.length) continue;
+      const maxG = Math.max(...gains);
+      const varied = maxG - Math.min(...gains) > 1e-6;
+      const v = judge(entry.haps, (g, h) => varied ? g >= 0.8 * maxG : isDownbeat(h));
+      if (!v) continue;
+      const rate = 1 - v.violations.length / v.accented;
+      results.push({
+        family: 'harmonic', name: `${label}.accented-chord-tones`, pass: rate >= 0.85, severity: 'warn',
+        detail: `${v.accented} accented onsets, ${fmt(rate * 100)}% chord tones [free material — exceptions allowed, listed for review]${vio(v)}`,
       });
     }
   }
@@ -198,24 +227,27 @@ export function runAssertions(evaluated, hapsMap, meta) {
         : `emitted notes diverge from bound resolution (first mismatch at ${firstMismatch(emitted, tiled)})`,
     });
     if (p.contourSignsExpected?.length) {
-      const midis = [...p.notes].sort((a, b) => a.cycle - b.cycle || cmpFrac(a.t, b.t)).map((n) => n.midi);
-      const perCycle = groupBy(p.notes, (n) => n.cycle);
+      // Compare the EMITTED pitch direction between adjacent onsets against the
+      // direction of the degrees the binder actually assigned there (which follow
+      // the transformed contour). Snapping may move a note by ≤2 semitones without
+      // counting as a shape break.
+      const ordered = [...p.notes].sort((a, b) => a.cycle - b.cycle || cmpFrac(a.t, b.t));
       let match = 0, totalSigns = 0;
-      for (const cyc of Object.values(perCycle)) {
-        const signs = contourSigns(cyc.sort((a, b) => cmpFrac(a.t, b.t)).map((n) => n.midi));
-        const expected = p.contourSignsExpected;
-        for (let i = 0; i < signs.length && i < expected.length; i++) {
-          totalSigns++;
-          if (signs[i] === expected[i] || Math.abs(cyc[i + 1].midi - cyc[i].midi) <= 2) match++;
-        }
+      for (let i = 1; i < ordered.length; i++) {
+        if (ordered[i].cycle !== ordered[i - 1].cycle) continue; // phrase steps within a cycle
+        if (ordered[i].degree == null || ordered[i - 1].degree == null) continue;
+        totalSigns++;
+        const emittedSign = Math.sign(ordered[i].midi - ordered[i - 1].midi);
+        const degreeSign = Math.sign(ordered[i].degree - ordered[i - 1].degree);
+        const snapSlack = Math.abs(ordered[i].midi - ordered[i - 1].midi) <= 2;
+        if (emittedSign === degreeSign || snapSlack) match++;
       }
       const rate = totalSigns ? match / totalSigns : 1;
       results.push({
         family: 'motif', name: `${p.label}.${p.motif ?? p.contourLib ?? 'bound'}.contour${p.transform ? `(${p.transform})` : ''}`,
         pass: rate >= 0.8, severity: 'fail',
-        detail: `contour shape ${fmt(rate * 100)}% preserved after harmonic snapping${p.transform ? ` under transform "${p.transform}"` : ''}`,
+        detail: `contour shape ${fmt(rate * 100)}% preserved after harmonic snapping (${totalSigns} steps)${p.transform ? ` under transform "${p.transform}"` : ''}`,
       });
-      void midis;
     }
     if (p.cadence) {
       const last = [...p.notes].sort((a, b) => a.cycle - b.cycle || cmpFrac(a.t, b.t)).at(-1);
@@ -236,10 +268,10 @@ export function runAssertions(evaluated, hapsMap, meta) {
   for (const [sName, layers] of Object.entries(bySection)) {
     if (layers.length < 2) continue;
     const declaredPairs = declaredPairsFor(Object.fromEntries(layers.map((l) => [l.label, l.rhythm])));
-    for (const r of checkInterlocks(layers, { declaredPairs })) {
+    for (const r of checkInterlocks(layers, { declaredPairs, meterNum: parseMeter(meter).num })) {
       results.push({
         family: 'interlock', name: `${sName}.${r.pair.join('+')}`, pass: r.ok, severity: 'warn',
-        detail: `complement joint=${r.joint} (${r.pair[1]} in ${r.pair[0]} gaps: ${r.bInAGaps}, reverse: ${r.aInBGaps})${r.declared ? ' [declared pair]' : ''}${r.ok ? '' : ' — rhythms collide; use a declared interlock pair or raise complementarity'}`,
+        detail: `complement joint=${r.joint} (${r.pair[1]} in ${r.pair[0]} gaps: ${r.bInAGaps}, reverse: ${r.aInBGaps})${r.declared ? ' [declared pair]' : ''}${r.texture ? ' [texture grid — complement n/a]' : ''}${r.ok ? '' : ' — rhythms collide; use a declared interlock pair or raise complementarity'}`,
       });
     }
   }

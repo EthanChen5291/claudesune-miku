@@ -30,7 +30,24 @@ export const DEFAULT_INTERLOCK_THRESHOLD = 0.34;
  * layers: [{ label, onsets: ['0','3/16',...] }], declaredPairs: [['kick','bass'],...]
  * Coincidence on the downbeat is expected and excluded from blame.
  */
-export function checkInterlocks(layers, { threshold = DEFAULT_INTERLOCK_THRESHOLD, declaredPairs = [] } = {}) {
+// A layer with ≥ TEXTURE_DENSITY onsets per cycle is a continuous texture (e.g. a
+// 16th-note hat grid): it SUPPLIES the grid others syncopate against, so
+// complement scoring doesn't apply to pairs that include it.
+const TEXTURE_DENSITY = 12;
+
+function isTexture(onsets, meterNum) {
+  if (onsets.length >= TEXTURE_DENSITY) return true;
+  // covers every beat of the meter's pulse grid (e.g. all 7 pulses in 7/8)
+  if (meterNum) {
+    const set = new Set(onsets.map(keyOf));
+    let covered = 0;
+    for (let k = 0; k < meterNum; k++) if (set.has(keyOf([k, meterNum]))) covered++;
+    if (covered === meterNum) return true;
+  }
+  return false;
+}
+
+export function checkInterlocks(layers, { threshold = DEFAULT_INTERLOCK_THRESHOLD, declaredPairs = [], meterNum = null } = {}) {
   const results = [];
   const declared = new Set(declaredPairs.map((p) => [...p].sort().join('+')));
   for (let i = 0; i < layers.length; i++) {
@@ -39,11 +56,13 @@ export function checkInterlocks(layers, { threshold = DEFAULT_INTERLOCK_THRESHOL
       const dropDownbeat = (os) => os.filter((o) => keyOf(o) !== '0/1');
       const score = interlockScore(dropDownbeat(a.onsets), dropDownbeat(b.onsets));
       const pairKey = [a.label, b.label].sort().join('+');
+      const texture = isTexture(a.onsets, meterNum) || isTexture(b.onsets, meterNum);
       results.push({
         pair: [a.label, b.label],
         ...score,
         declared: declared.has(pairKey),
-        ok: score.joint >= threshold || declared.has(pairKey),
+        texture,
+        ok: texture || score.joint >= threshold || declared.has(pairKey),
       });
     }
   }

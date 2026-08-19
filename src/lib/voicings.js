@@ -31,10 +31,10 @@ export const VOICINGS = {
   quartal_9: {
     range: ['C3', 'C6'],
     shapes: {
-      '': '0 5 10', m: '3 8 13', 7: '4 9 14', '^7': '4 9 14',
-      m7: '3 8 13', m9: '3 8 13 18', 6: '2 7 12', sus4: '0 5 10', dim: '3 6 11', o: '3 6 11',
+      '': '0 7 14', m: '0 5 12', 7: '4 9 14', '^7': '4 9 14',
+      m7: '0 5 10 15', m9: '2 7 12 17', 6: '2 7 12', sus4: '0 5 12', dim: '0 3 6', o: '0 3 6 9',
     },
-    character: 'Stacked fourths off the 3rd — the modern modal sound. Ambiguous on purpose; melts genre.',
+    character: 'Stacked fourths (So What language): m7 gets root-4th-7th-3rd, m9 pure fourths off the 9th, dominants fourths off the 3rd. Modal, diatonic, melts genre.',
   },
   spread_tenth: {
     range: ['C2', 'C6'],

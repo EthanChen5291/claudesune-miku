@@ -158,7 +158,9 @@ export function bind(rhythmEntry, contourEntry, harmonyContext, meter = '4/4', o
     const notes = [];
     for (let i = 0; i < steps.length; i++) {
       if (!melodic) { notes.push(sound); continue; }
-      const deg = degrees[i % degrees.length];
+      // global index: the contour continues ACROSS cycles, so a contour longer
+      // than one cycle's onsets unfolds as a multi-cycle phrase instead of truncating
+      const deg = degrees[(c * steps.length + i) % degrees.length];
       let midi = degreeToMidi(deg, rootMidi, key.intervals);
       const accented = r.accents[i] >= ACCENT_THRESHOLD;
       if (accented && pcs?.size) midi = snapToPcs(midi, pcs);
@@ -169,7 +171,7 @@ export function bind(rhythmEntry, contourEntry, harmonyContext, meter = '4/4', o
       }
       const name = midiToNoteName(midi, { flats });
       notes.push(name);
-      boundNotes.push({ cycle: c, step: steps[i], t: fracStr(steps[i], G), note: name, midi, accented });
+      boundNotes.push({ cycle: c, step: steps[i], t: fracStr(steps[i], G), note: name, midi, accented, degree: deg });
     }
     cycles.push(notes);
   }

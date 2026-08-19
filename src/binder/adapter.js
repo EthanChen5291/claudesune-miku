@@ -43,7 +43,9 @@ export function resolveContour(ref, spec) {
  */
 export function makeBindFn(spec) {
   return (b, ctx) => {
-    const { entry: rhythm, name: rhythmName } = resolveRhythm(b.rhythm);
+    let { entry: rhythm, name: rhythmName } = resolveRhythm(b.rhythm);
+    if (b.swing != null) rhythm = { ...rhythm, swing: b.swing };
+    if (b.swingSubdiv != null) rhythm = { ...rhythm, swingSubdiv: b.swingSubdiv };
     const { entry: contour, name: contourName, motif, baseTransform } = resolveContour(b.contour, spec);
     if (rhythm.meter_class && rhythm.meter_class !== 'any' && rhythm.meter_class !== ctx.meter) {
       throw new Error(`rhythm "${rhythmName}" is ${rhythm.meter_class} but the song is ${ctx.meter}`);

@@ -87,23 +87,25 @@ export function soundOf(value) {
   return out;
 }
 
-/** Aspect signatures for one label entry. Each is an array of strings, sorted. */
+/** Aspect signatures for one label entry.
+ *  time  = sorted onset multiset;
+ *  pitch/sound/gain = value SEQUENCES in temporal order (t dropped) — so a pure
+ *  timing edit (swing) changes only `time`, and a pure sound swap changes only
+ *  `sound`, regardless of where onsets sit. */
 export function aspectSignatures(entry) {
+  const ordered = [...entry.haps].sort((a, b) => {
+    const d = a.whole.begin.sub(b.whole.begin).valueOf();
+    if (d) return d;
+    return JSON.stringify(canonicalValue(a.value)) < JSON.stringify(canonicalValue(b.value)) ? -1 : 1;
+  });
   const time = [], pitch = [], sound = [], gain = [];
-  for (const h of entry.haps) {
-    const t = frac(h.whole.begin);
-    time.push(t);
-    const p = pitchOf(h.value);
-    pitch.push(JSON.stringify([t, p]));
-    sound.push(JSON.stringify([t, soundOf(h.value)]));
-    gain.push(JSON.stringify([t, gainOf(h.value)]));
+  for (const h of ordered) {
+    time.push(frac(h.whole.begin));
+    pitch.push(JSON.stringify(pitchOf(h.value)));
+    sound.push(JSON.stringify(soundOf(h.value)));
+    gain.push(JSON.stringify(gainOf(h.value)));
   }
-  return {
-    time: time.sort(),
-    pitch: pitch.sort(),
-    sound: sound.sort(),
-    gain: gain.sort(),
-  };
+  return { time: time.slice().sort(), pitch, sound, gain };
 }
 
 function arrEq(a, b) {
@@ -137,11 +139,13 @@ export function diffLabel(name, oldE, newE) {
     gain: !arrEq(a.gain, b.gain),
     muted: oldE.muted !== newE.muted,
   };
-  // per-onset change counts (keyed by time when timing is stable)
+  // per-onset change counts: positional compare of the value sequences
   const changedCounts = {};
   for (const [key, viewA, viewB] of [['pitch', a.pitch, b.pitch], ['sound', a.sound, b.sound], ['gain', a.gain, b.gain]]) {
-    const setA = new Set(viewA);
-    changedCounts[key] = viewB.filter((x) => !setA.has(x)).length;
+    const len = Math.max(viewA.length, viewB.length);
+    let n = 0;
+    for (let i = 0; i < len; i++) if (viewA[i] !== viewB[i]) n++;
+    changedCounts[key] = n;
   }
   const parts = [];
   if (aspects.muted) parts.push(newE.muted ? 'muted' : 'unmuted');

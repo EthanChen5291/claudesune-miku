@@ -152,3 +152,15 @@ test('verifySong end-to-end shape', async () => {
   assert.equal(res.lint.errors.length, 0);
   assert.ok(res.labels.kick.metrics.onsets === 32);
 });
+
+test('aspect semantics: a pure timing change (swing) leaves pitch/sound/gain sequences intact', async () => {
+  const a = `h: s("hh*8").gain(".9 .4 .7 .4 .9 .4 .7 .5")`;
+  const b = `h: s("hh*8").gain(".9 .4 .7 .4 .9 .4 .7 .5").swingBy(.4, 4)`;
+  const res = await checkEdit(a, b, { allowLabels: ['h'], allowAspects: ['time'], cycles: 4 });
+  assert.equal(res.ok, true, JSON.stringify(res.containment?.leaks));
+  const d = res.containment.diffs.find((x) => x.label === 'h');
+  assert.equal(d.aspects.time, true);
+  assert.equal(d.aspects.pitch, false);
+  assert.equal(d.aspects.sound, false);
+  assert.equal(d.aspects.gain, false);
+});

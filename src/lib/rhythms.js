@@ -110,6 +110,12 @@ export const RHYTHMS = {
     meter_class: '7/8', tags: ['melodic', 'aksak'],
     character: 'Melodic 7/8 line that ghosts between group boundaries — anchors on 1 and the 4th pulse, pushes elsewhere.',
   },
+  seven_offbeat_lift: {
+    onsets: ['1/14', '5/14', '9/14', '13/14'],
+    accents: [0.72, 0.62, 0.82, 0.66],
+    meter_class: '7/8', tags: ['melodic', 'hat', 'aksak'],
+    character: 'Offbeat pulses inside 7/8 — the exhale against a 2+2+3 kick. The 9/14 accent leans into the long group.',
+  },
   waltz_lift: {
     onsets: ['0', '1/3', '2/3'],
     accents: [1.0, 0.55, 0.7],

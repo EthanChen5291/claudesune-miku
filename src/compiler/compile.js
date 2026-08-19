@@ -11,6 +11,7 @@
 // multiple of the material's period.
 
 import { sectionLayout, resolveSection, identOf, maskString } from './form.js';
+import { voicingRegistration } from '../lib/voicings.js';
 
 const DEFAULT_METER = '4/4';
 
@@ -75,6 +76,21 @@ export function compile(spec, { bindFn = null, transitionFn = null } = {}) {
   }
   L.push(`}`);
   L.push('');
+
+  // ---- voicing-shape registrations (auto-detected from material exprs) ----
+  const shapeRefs = new Set();
+  for (const s of Object.values(resolved)) {
+    for (const mat of Object.values(s.layers)) {
+      const text = typeof mat === 'string' ? mat : mat.pattern ?? '';
+      for (const m of String(text).matchAll(/me_([a-z0-9_]+)/g)) shapeRefs.add(m[1]);
+    }
+  }
+  if (shapeRefs.size) {
+    L.push(`// ---- voicing shapes (library: src/lib/voicings.js) ----`);
+    for (const shape of [...shapeRefs].sort()) L.push(voicingRegistration(shape));
+    L.push('');
+    meta.voicingShapes = [...shapeRefs].sort();
+  }
 
   // ---- harmony ----
   L.push(`// ---- harmony ----`);
@@ -184,7 +200,7 @@ export function compile(spec, { bindFn = null, transitionFn = null } = {}) {
       transitionLayers.push(layer);
       L.push('');
     }
-    (meta.transitions ??= []).push(res.meta);
+    (meta.transitions ??= []).push(...res.meta);
   }
 
   // ---- labels ----
