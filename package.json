@@ -1,0 +1,22 @@
+{
+  "name": "motif-engine",
+  "version": "0.1.0",
+  "description": "Strudel Song Engine: iterative, verified AI music generation",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "test": "node --test test/",
+    "verify": "node src/cli.js verify",
+    "generate": "node src/cli.js generate",
+    "edit": "node src/cli.js edit"
+  },
+  "dependencies": {
+    "@strudel/core": "1.1.0",
+    "@strudel/mini": "1.1.0",
+    "@strudel/tonal": "1.1.0",
+    "@strudel/transpiler": "1.1.0",
+    "@strudel/reference": "1.1.0",
+    "acorn": "^8.11.0",
+    "acorn-walk": "^8.3.0"
+  }
+}
