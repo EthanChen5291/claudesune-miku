@@ -30,12 +30,14 @@ function inRange(h, a, b) {
 }
 
 /**
- * Metrics for one label's onset haps over [from, to) cycles.
+ * Metrics for one label's onset haps over [from, to) cycles, or over several
+ * disjoint ranges (a recurring section) via opts.ranges = [[a,b], ...].
  */
-export function labelMetrics(haps, { from = 0, to = 16, meter = '4/4' } = {}) {
+export function labelMetrics(haps, { from = 0, to = 16, meter = '4/4', ranges = null } = {}) {
   const { num } = parseMeter(meter);
-  const hs = haps.filter((h) => inRange(h, from, to));
-  const cycles = Math.max(to - from, 1e-9);
+  const rs = ranges ?? [[from, to]];
+  const hs = haps.filter((h) => rs.some(([a, b]) => inRange(h, a, b)));
+  const cycles = Math.max(rs.reduce((acc, [a, b]) => acc + (b - a), 0), 1e-9);
 
   // pitch
   const midis = [];
@@ -108,8 +110,9 @@ export function labelMetrics(haps, { from = 0, to = 16, meter = '4/4' } = {}) {
  * Simultaneous onsets are grouped into one sonority (so voiced chords count once);
  * a restatement of the same harmony (same chord symbol / same pc-set) is NOT a change.
  */
-export function harmonicRhythm(haps, { from = 0, to = 16 } = {}) {
-  const hs = haps.filter((h) => inRange(h, from, to))
+export function harmonicRhythm(haps, { from = 0, to = 16, ranges = null } = {}) {
+  const rs = ranges ?? [[from, to]];
+  const hs = haps.filter((h) => rs.some(([a, b]) => inRange(h, a, b)))
     .slice()
     .sort((a, b) => a.whole.begin.valueOf() - b.whole.begin.valueOf());
   // group by onset time
@@ -128,7 +131,8 @@ export function harmonicRhythm(haps, { from = 0, to = 16 } = {}) {
     if (prev === null) changes++; // first sonority establishes the harmony
     prev = sonority;
   }
-  return { changes, perCycle: round(changes / Math.max(to - from, 1e-9)), sonorities: groups.size };
+  const totalCycles = rs.reduce((acc, [a, b]) => acc + (b - a), 0);
+  return { changes, perCycle: round(changes / Math.max(totalCycles, 1e-9)), sonorities: groups.size };
 }
 
 function chordKey(v) {

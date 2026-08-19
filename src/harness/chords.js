@@ -28,7 +28,8 @@ export function chordRootPc(symbol) {
   if (rootCache.has(symbol)) return rootCache.get(symbol);
   let pc = null;
   try {
-    const haps = rootNotes(chord(pure(symbol)), 2).queryArc(0, 1).filter((h) => h.hasOnset());
+    // standalone registered functions take the pattern LAST: rootNotes(octave, pat)
+    const haps = rootNotes(2, chord(pure(symbol))).queryArc(0, 1).filter((h) => h.hasOnset());
     const m = noteToMidi(haps[0]?.value?.note);
     if (typeof m === 'number' && !Number.isNaN(m)) pc = ((Math.round(m) % 12) + 12) % 12;
   } catch { /* ignore */ }

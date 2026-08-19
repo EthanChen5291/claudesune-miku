@@ -6,8 +6,9 @@ import { evaluateSong, hapsByLabel } from './evaluate.js';
 import { containment, diffSongs } from './signature.js';
 import { labelMetrics, harmonicRhythm, parseMeter } from './metrics.js';
 import { lintSong } from './lint.js';
+import { runAssertions } from './assertions.js';
 
-export { evaluateSong, hapsByLabel, containment, diffSongs, labelMetrics, harmonicRhythm, lintSong, parseMeter };
+export { evaluateSong, hapsByLabel, containment, diffSongs, labelMetrics, harmonicRhythm, lintSong, parseMeter, runAssertions };
 
 /**
  * Default cycle window: meta's song length if known, else opts.cycles, else 16.
@@ -48,6 +49,8 @@ export async function verifySong(source, { meta = null, cycles = null, meter = n
   out.meter = m;
   out.evaluated = ev;
   out.haps = haps;
+  out.assertions = meta ? runAssertions(ev, haps, meta) : [];
+  out.assertionsPass = out.assertions.every((a) => a.pass || a.severity === 'warn');
   return out;
 }
 
