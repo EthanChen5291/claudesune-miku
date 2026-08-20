@@ -309,3 +309,11 @@ percussion is the special case. Consequences:
   path (neon-undertow v7, aksak-lantern v1) — the v6→v7 A/B on lead_B is a live
   before/after of the smear fix. Eval artifacts stay frozen as a record of the
   engine version they measured.
+
+**D26 addendum (design-session ruling, 2026-08-19):** explicit alterations are
+exempt from chord-tone SNAPPING but remain SUBJECT TO vertical interlock. A 'b5'
+that lands a minor 9th against another layer is still a violation — resolved by
+revoicing the OTHER layer or by octave displacement, never by flattening the
+declared color. The warn-level vertical sweep already sees altered notes (it
+checks emitted haps); this ruling binds the queued revoicing implementation
+(interval-grammar §8 step 3). Ratified cross-session with motif-engine-be.
