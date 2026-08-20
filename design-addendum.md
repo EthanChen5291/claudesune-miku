@@ -37,6 +37,10 @@ The base spec's containment check is binary hap-signature equality per label. Th
 
 This is stronger and more musical than all-or-nothing, and it is the enabling mechanism for the edit planner (A3).
 
+**Aspect views must be OVER-inclusive** *(hardened 2026-08-19 after adversarial review — DECISIONS.md D25)*: the containment gate's one inviolable property is that a hidden change never passes; the acceptable failure mode is over-rejection, never under-detection. The review confirmed five false-PASS holes in the first implementation (sample-index changes invisible to all aspect views; added/removed layers bypassing aspect contracts and window scoping; anonymous `$:` dependency misattribution; scope-blind identifier collection; mute flips exempt from contracts) — all closed with regression tests. When designing any new aspect view or contract type, default every ambiguous case to "counts as a change."
+
+**Strudel gotcha addendum to doc.md §3.6**: `swingBy` that would push an onset past its swing window **silently deletes the onset** in strudel 1.1.0. The binder hard-errors on this (and warns when a swing affects zero onsets — A3.7); never emit swing values near the window boundary without checking.
+
 ---
 
 ## A3. Edit planner — general/vague edit requests
