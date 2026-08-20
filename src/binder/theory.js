@@ -95,6 +95,19 @@ export function applyTransform(degrees, transform, scaleLen = 7) {
   return out;
 }
 
+/** Does this key's signature use flats? Mode-aware via the relative major. */
+const MODE_TO_MAJOR_OFFSET = { major: 0, ionian: 0, dorian: 10, phrygian: 8, lydian: 7, mixolydian: 5, aeolian: 3, minor: 3, locrian: 1, harmonicMinor: 3, melodicMinor: 3, majorPentatonic: 0, minorPentatonic: 3 };
+const FLAT_MAJORS = new Set([5, 10, 3, 8, 1, 6]); // F Bb Eb Ab Db Gb
+export function keyUsesFlats(key) {
+  try {
+    const { rootPc, scaleName, rootName } = parseKey(key);
+    if (/b/.test(rootName)) return true;
+    if (/#/.test(rootName)) return false;
+    const majorPc = (rootPc + (MODE_TO_MAJOR_OFFSET[scaleName] ?? 0)) % 12;
+    return FLAT_MAJORS.has(majorPc);
+  } catch { return true; }
+}
+
 /** Sign sequence of a pitch/degree sequence: 1 up, -1 down, 0 same. */
 export function contourSigns(seq) {
   const out = [];

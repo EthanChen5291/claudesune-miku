@@ -99,6 +99,12 @@ function songBars(streams) {
   for (const evs of Object.values(streams)) for (const e of evs) max = Math.max(max, e.t);
   return Math.max(Math.ceil(max), 1);
 }
+function durationOf(streams, pattern) {
+  const bars = songBars(streams);
+  let d = 0;
+  for (const [name, evs] of Object.entries(streams)) if (matchAllowed(name, [pattern])) for (const e of evs) d += e.dur ?? 0;
+  return d / bars;
+}
 function densityOf(streams, pattern) {
   const bars = songBars(streams);
   let n = 0;
@@ -192,7 +198,10 @@ function effectiveness(caseId, editId, ctx) {
     case 'C2.E2': return delta('lead density/bar', densityOf(before, 'lead'), densityOf(after, 'lead'), 'down');
     case 'C3.E1': return delta('harmonic changes/bar', harmonicRhythmOf(before, 'chord'), harmonicRhythmOf(after, 'chord'), 'down');
     case 'C3.E2': return delta('drum vel variance', velVarianceOf(before, 'drum'), velVarianceOf(after, 'drum'), 'up');
-    case 'C4.E1': return delta('transition onsets/bar', densityOf(before, 'transition'), densityOf(after, 'transition'), 'up');
+    case 'C4.E1': {
+      const energy = (streams) => densityOf(streams, 'transition') + durationOf(streams, 'transition');
+      return delta('transition energy (onsets+dur per bar)', energy(before), energy(after), 'up');
+    }
     case 'C4.E2': {
       const t = transpositionOf(before, after);
       return { metric: 'transposed +2 fraction', before: null, after: t.plus2Fraction, achieved: t.plus2Fraction != null && t.plus2Fraction >= 0.95, note: `${t.total} paired pitches` };
@@ -255,8 +264,9 @@ async function scoreReplicate(arm, c, rep) {
     // aspect precision: for edits that lock aspects, did allowed streams keep them?
     const aspectViolations = [];
     const locked = { time: !edit.allowed_aspects.includes('time'), pitch: !edit.allowed_aspects.includes('pitch'), gain: !edit.allowed_aspects.includes('gain'), sound: !edit.allowed_aspects.includes('sound') };
+    const leakNames = new Set(leaks.map((l) => l.name));
     for (const chg of changed) {
-      if (leaks.includes(chg)) continue;
+      if (leakNames.has(chg.name)) continue;
       if (locked.time && chg.timeChanged) aspectViolations.push(`${chg.name}: time`);
       // when timing changed LEGITIMATELY, sequence lengths shift structurally in
       // every aspect — judge locked aspects by palette growth instead (uniform rule)
@@ -310,6 +320,9 @@ async function main() {
       editsScored: scored.length,
       editsMissingOrUneval: rows.flatMap((r) => r.edits.filter((e) => e.status !== 'scored')).length,
       contained: scored.filter((e) => e.contained).length,
+      fullyClean: scored.filter((e) =>
+        (e.contained && !e.aspectViolations?.length && e.effect?.achieved !== false)
+        || (e.noop && e.effect?.achieved === true)).length,
       leaks: scored.filter((e) => e.leaks.length > 0).length,
       noops: scored.filter((e) => e.noop).length,
       aspectViolations: scored.filter((e) => e.aspectViolations?.length).length,

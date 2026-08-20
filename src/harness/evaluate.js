@@ -94,9 +94,21 @@ function collectPatternNames(id, out) {
   else if (id.type === 'RestElement') collectPatternNames(id.argument, out);
 }
 
+// Identifiers referenced by a statement, minus names the statement DECLARES
+// itself (function params, arrow params, local lets) — a lambda parameter named
+// like a hoisted binding must not credit the label with that binding as a dep
+// (review finding: over-crediting let allowBindings whitelist unrelated labels).
 function identifiersIn(node, into) {
+  const shadowed = new Set();
+  walk.full(node, (n) => {
+    if (n.type === 'VariableDeclarator') { const out = []; collectPatternNames(n.id, out); out.forEach((x) => shadowed.add(x)); }
+    if (n.type === 'FunctionDeclaration' || n.type === 'FunctionExpression' || n.type === 'ArrowFunctionExpression') {
+      if (n.id?.name) shadowed.add(n.id.name);
+      for (const p of n.params ?? []) { const out = []; collectPatternNames(p, out); out.forEach((x) => shadowed.add(x)); }
+    }
+  });
   walk.simple(node, {
-    Identifier(n) { into.add(n.name); },
+    Identifier(n) { if (!shadowed.has(n.name)) into.add(n.name); },
   });
   return into;
 }
@@ -129,6 +141,7 @@ export function analyzeStructure(transpiledCode) {
   for (const node of ast.body) {
     for (const n of declaredNamesOf(node)) bindings.add(n);
   }
+  let anonSeq = 0; // '$' labels indexed IN STATEMENT ORDER, matching the runtime registry
   for (const node of ast.body) {
     const declared = declaredNamesOf(node);
     if (declared.length) {
@@ -139,8 +152,10 @@ export function analyzeStructure(transpiledCode) {
       }
       continue;
     }
-    const label = labelOfStatement(node);
+    let label = labelOfStatement(node);
     if (label != null) {
+      if (label === '$') label = `$${++anonSeq}`;
+      else if (label.startsWith('_')) label = label.slice(1) || '_';
       const refs = identifiersIn(node, new Set());
       labelRefs.set(label, new Set([...refs].filter((r) => bindings.has(r))));
     }
@@ -179,7 +194,18 @@ export function analyzeStructure(transpiledCode) {
  *   cpm, warnings
  * Throws on syntax/runtime errors (message includes the underlying cause).
  */
-export async function evaluateSong(source, { quiet = true } = {}) {
+// Evaluations serialize on a module-level lock: Pattern.prototype.p writes into a
+// module-level registry, so two interleaved evaluateSong calls would cross-
+// contaminate labels (review finding). The lock makes concurrency safe.
+let evalLock = Promise.resolve();
+
+export function evaluateSong(source, opts = {}) {
+  const run = evalLock.then(() => evaluateSongInner(source, opts));
+  evalLock = run.catch(() => {});
+  return run;
+}
+
+async function evaluateSongInner(source, { quiet = true } = {}) {
   const warnings = [];
   let transpiled;
   try {

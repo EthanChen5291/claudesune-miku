@@ -30,9 +30,9 @@
       "aspectViolations": [],
       "minimality": 1,
       "effect": {
-        "metric": "transition onsets/bar",
-        "before": 2.7813,
-        "after": 2.6563,
+        "metric": "transition energy (onsets+dur per bar)",
+        "before": 3,
+        "after": 2.9688,
         "achieved": false
       }
     },

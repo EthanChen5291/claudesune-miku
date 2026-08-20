@@ -1,4 +1,4 @@
-# §5 Acceptance checklist — run 2026-08-20T01:20
+# §5 Acceptance checklist — run 2026-08-20T01:51
 
 - [x] deterministic test suite green — _45 pass / 0 fail (npm test)_
 - [x] §5(a) scoped edit passes — _test/harness.test.js "ACCEPTANCE (a)"_

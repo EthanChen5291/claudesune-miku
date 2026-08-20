@@ -7,7 +7,7 @@
   "v0": {
     "evalOk": true,
     "error": null,
-    "streamCount": 11,
+    "streamCount": 10,
     "drumVelVariance": 0.0777,
     "meterOffgrid": null
   },
@@ -36,31 +36,27 @@
       "prompt": "The chorus should lift more — push its melodic register higher and make it denser. The verse (A sections) must not change at all.",
       "status": "scored",
       "changedStreams": [
-        "track3",
-        "track4",
-        "track5",
-        "track6"
+        "organ",
+        "lead",
+        "pad"
       ],
       "leaks": [
-        "track3",
-        "track4",
-        "track5",
-        "track6"
+        "organ"
       ],
       "contained": false,
       "noop": false,
       "aspectViolations": [],
-      "minimality": null,
+      "minimality": 0.6446,
       "effect": {
         "metric": "lead register max",
-        "before": null,
-        "after": null,
-        "achieved": false,
+        "before": 82,
+        "after": 94,
+        "achieved": true,
         "extra": {
           "metric": "lead density/bar",
-          "before": 0,
-          "after": 0,
-          "achieved": false
+          "before": 12.25,
+          "after": 15.125,
+          "achieved": true
         }
       }
     },

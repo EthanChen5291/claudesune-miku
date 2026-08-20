@@ -216,3 +216,30 @@ revoicing per interval-grammar §8 (hard = §4 rules + Avoid columns, via
 revoice/octave-displacement; soft = horizontal tables as seeded weights),
 (2) vertical-interlock WARN→FAIL flip, (3) A3.6/A3.7 alongside the A3 planner.
 None block the current deliverables.
+
+## D25. Adversarial review: 31 confirmed findings, all triaged (2026-08-19)
+Four-dimension review (containment, musical, compiler/CLI, eval-fairness) with
+adversarial verification; 31/32 findings confirmed by reproduction, all fixed same
+day except two documented-not-fixed. Highlights:
+- Containment gate had FIVE false-PASS holes: sample-index (n) changes invisible to
+  every aspect view; added/removed labels bypassing aspect contracts AND window
+  scoping; anonymous $-label deps misattributed; scope-blind identifier collection
+  over-crediting binding deps; mute flips exempt from contracts. All closed — the
+  aspect views are now over-inclusive by design (a hidden change can never pass;
+  the worst failure mode is an over-reject).
+- Binder: microtiming grid overflow (lazy_dilla couldn't bind) and out-of-range
+  wraps fixed; swing that would push an onset past its swingBy window now ERRORS
+  (strudel 1.1.0 silently deletes such onsets); swing affecting zero onsets warns.
+  Euclid rotation flipped to match strudel's euclidRot exactly.
+- Compiler: orbit assignment is now a pure name-hash (no probing: no hang at 9+
+  labels, no renumbering; orbit SHARING is allowed and documented); recalled bound
+  material now binds in its OWNER section's harmonic context; equal-string materials
+  in unrelated sections no longer merge; transition binding names include the
+  template; material/transition label collisions are errors; edit refuses
+  --spec+--file together.
+- Eval scorer: four fixes that had systematically disadvantaged B0 (see PROTOCOL
+  amendments 5–10). eval/REPORT.md is rewritten from the corrected numbers with a
+  correction notice — the headline changed and we kept the honest one.
+Documented-not-fixed: dominant-exception chord-quality spelling now covers C9/C13/
+sus (fixed) — remaining known gap: section-scoped containment is still unmeasured
+by the EVAL scorer (the engine's own gate does enforce it via --sections).

@@ -42,7 +42,15 @@ export function parseMidi(path) {
     while (pos < end) {
       tick += readVar();
       let status = buf[pos];
-      if (status & 0x80) { pos++; running = status; } else status = running;
+      if (status & 0x80) {
+        pos++;
+        // meta/sysex CLEAR running status (SMF spec) — treating them as running
+        // status turned parse errors into silent stream corruption (review finding)
+        running = status < 0xf0 ? status : null;
+      } else {
+        if (running == null) throw new Error(`running status with no prior status at ${pos}`);
+        status = running;
+      }
       const type = status >> 4;
       const ch = status & 0x0f;
       if (type === 0x9 || type === 0x8) {
@@ -89,6 +97,17 @@ const DRUM_FAMILY = new Map([
   [49, 'cymbal'], [51, 'cymbal'], [52, 'cymbal'], [53, 'cymbal'], [55, 'cymbal'], [57, 'cymbal'], [59, 'cymbal'],
 ]);
 
+const GM_FAMILY = [
+  [0, 7, 'keys'], [8, 15, 'chromatic'], [16, 23, 'organ'], [24, 31, 'guitar'],
+  [32, 39, 'bass'], [40, 47, 'strings'], [48, 55, 'ensemble'], [56, 63, 'brass'],
+  [64, 71, 'reed'], [72, 79, 'pipe'], [80, 87, 'lead'], [88, 95, 'pad'],
+  [96, 103, 'fx'], [104, 111, 'ethnic'], [112, 119, 'perc'], [120, 127, 'fx'],
+];
+function gmFamily(program) {
+  for (const [lo, hi, name] of GM_FAMILY) if (program >= lo && program <= hi) return name;
+  return null;
+}
+
 /**
  * Streams from a MIDI file: { streamName: [{t (bars), pitch, vel, dur}] }.
  * Drum channel (10) splits by GM family; other tracks keyed by track name/channel.
@@ -102,7 +121,10 @@ export function midiStreams(path, { barQuarters = 4 } = {}) {
   for (let i = 0; i < midi.tracks.length; i++) {
     const tr = midi.tracks[i];
     if (!tr.notes.length) continue;
-    const base = (tr.name || `track${i}`).toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/^_|_$/g, '') || `track${i}`;
+    // unnamed tracks: fall back to the GM program family so instrument identity
+    // is not discarded (review finding: unnamed-track edits were automatic leaks)
+    const fallback = tr.programs.length ? gmFamily(tr.programs[0].program) : null;
+    const base = (tr.name || fallback || `track${i}`).toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/^_|_$/g, '') || `track${i}`;
     for (const n of tr.notes) {
       const t = round6(n.tick / midi.division / barQuarters);
       if (n.ch === 9) {

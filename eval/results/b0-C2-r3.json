@@ -36,20 +36,18 @@
       "prompt": "Make the lead melody sparser, but only in the A sections. B and C must not change.",
       "status": "scored",
       "changedStreams": [
-        "track4"
+        "lead"
       ],
-      "leaks": [
-        "track4"
-      ],
-      "contained": false,
+      "leaks": [],
+      "contained": true,
       "noop": false,
       "aspectViolations": [],
-      "minimality": null,
+      "minimality": 0.3833,
       "effect": {
         "metric": "lead density/bar",
-        "before": 0,
-        "after": 0,
-        "achieved": false
+        "before": 3.75,
+        "after": 2.3125,
+        "achieved": true
       }
     }
   ]

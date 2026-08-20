@@ -127,7 +127,9 @@ export function makeTransitionFn(spec) {
         : [job.boundary, Math.min(job.boundary + bars, job.next.end)];
       const span = window[1] - window[0];
       const expr = job.entry.make(span);
-      const binding = `${job.entry.label}_${identOf(job.next.name)}${job.occIdx}`;
+      // template name included: two different transitions into the same occurrence
+      // must not collide into one `let` (review finding)
+      const binding = `${job.entry.label}_${identOf(job.name)}_${identOf(job.next.name)}${job.occIdx}`;
       const mask = maskString([window], layout.total);
       layers.push({
         binding,

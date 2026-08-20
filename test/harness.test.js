@@ -164,3 +164,40 @@ test('aspect semantics: a pure timing change (swing) leaves pitch/sound/gain seq
   assert.equal(d.aspects.sound, false);
   assert.equal(d.aspects.gain, false);
 });
+
+// Regression tests for the adversarial review's confirmed false-PASS holes (D25).
+test('REVIEW: sample-index (n) change cannot hide from aspect contracts', async () => {
+  const res = await checkEdit(`lead: s("east*4").n("0 1 2 3")`, `lead: s("east*4").n("0 1 2 7")`,
+    { allowLabels: ['lead'], allowAspects: ['gain'], cycles: 2 });
+  assert.equal(res.ok, false);
+  assert.match(res.reason, /forbidden aspect/);
+});
+
+test('REVIEW: added/removed layers cannot bypass aspect contracts or windows', async () => {
+  const base = `kick: s("bd*4")\nlead: note("c3 e3 g3")`;
+  const removed = await checkEdit(base, `kick: s("bd*4")`, { allowLabels: ['lead'], allowAspects: ['gain'], cycles: 4 });
+  assert.equal(removed.ok, false);
+  assert.match(removed.reason, /layer removed under an aspect contract/);
+  const added = await checkEdit(`kick: s("bd*4")`, `kick: s("bd*4")\nriser: s("hh*8")`,
+    { allowLabels: ['riser'], allowWindows: [[8, 16]], cycles: 16 });
+  assert.equal(added.ok, false);
+  assert.match(added.reason, /outside the allowed cycle window/);
+});
+
+test('REVIEW: anonymous $ labels carry their OWN statement deps', async () => {
+  const ev = await evaluateSong(`let melody = "c3 e3 g3"\n$: note(melody)\n$: s("bd*4")`);
+  assert.ok(ev.labelDeps.get('$1').has('melody'));
+  assert.equal(ev.labelDeps.get('$2').size, 0);
+});
+
+test('REVIEW: lambda params do not credit labels with binding deps', async () => {
+  const ev = await evaluateSong(`let chords = "Cm7"\nx: s("bd*4").fmap((chords) => chords)\ny: note("c3").scale(chords)`);
+  assert.equal(ev.labelDeps.get('x').has('chords'), false);
+  assert.equal(ev.labelDeps.get('y').has('chords'), true);
+});
+
+test('REVIEW: mute flip violates an aspect contract', async () => {
+  const res = await checkEdit(`bass: note("c2*4")`, `_bass: note("c2*4")`,
+    { allowLabels: ['bass'], allowAspects: ['pitch'], cycles: 2 });
+  assert.equal(res.ok, false);
+});

@@ -75,3 +75,19 @@ Results: `eval/results/` (raw JSON per song/edit) and `eval/REPORT.md` (aggregat
    profile (§3.4: accents are rhythm-intrinsic).
 4. B0 sound-only no-ops (C1.E3) count as clean when the WAV changed: timbre is not
    representable in MIDI; the correct edit leaves the note data untouched.
+
+## Review-driven scorer corrections (adversarial review, applied uniformly; see git)
+
+5. MIDI parser: meta/sysex events now CLEAR running status per the SMF spec (they
+   were being treated as running status, silently corrupting streams — one corrupt
+   B0 file scored as valid). Malformed files now fail loudly as eval-success data.
+6. Unnamed MIDI tracks are named by their GM program family, so instrument identity
+   survives and unnamed-track edits are not automatic leaks.
+7. C4.E1 allowed streams include drum voices (a drum fill IS transition material
+   wherever it lands) — with the caveat that this loosens the scope for all arms.
+8. Transition "energy" counts note durations as well as onsets (a LONGER riser is
+   bigger even at equal onset count).
+9. Leak-vs-aspect double-charging fixed (leaked streams were also counted as aspect
+   violations due to an object-identity bug).
+10. `fullyClean` aggregate: contained + no aspect violations + effect not failed,
+    OR a sound-only no-op whose WAV changed (correct behavior in MIDI-land).

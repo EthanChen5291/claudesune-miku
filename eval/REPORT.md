@@ -1,105 +1,108 @@
-# Before/After Evaluation — Results
+# Before/After Evaluation — Results (corrected)
 
-Three arms, identical briefs and edit chains, 4 cases × 3 replicates × 2–3 edits each
-(27 edit operations per arm), all scored by the same instrument (`eval/score.js`,
-raw records in `eval/results/`). Protocol: `eval/PROTOCOL.md`. Cases: `eval/cases.json`.
+> **Correction notice:** an adversarial review of the scorer found four bugs that
+> systematically disadvantaged the B0 arm (MIDI running-status corruption, discarded
+> instrument identity on unnamed tracks, synonym asymmetry on drum fills, and
+> duration-blind energy metrics). All are fixed; every arm is re-scored below with
+> the same corrected instrument. An earlier revision of this report overstated B0's
+> failures — the corrected numbers change the headline, and we keep the honest one.
 
-- **B0 — default-Claude** (the true counterfactual): casual project ask, no format
-  constraints. All 12 replicates chose Python/numpy synthesis → WAV + MIDI mirror.
-- **B1 — freehand Strudel**: same briefs, one labeled `.strudel` file, written from
-  model knowledge, no verification or execution allowed.
-- **AFTER — engine**: spec JSON → compile → bind → verify; every edit scoped and
-  containment-gated by the engine.
+Three arms, identical briefs and edit chains, 4 cases × 3 replicates × 2–3 edits
+(27 edit operations per arm), one scoring instrument (`eval/score.js`, raw records
+in `eval/results/`). Protocol + amendments: `eval/PROTOCOL.md`.
 
-**Integrity note (A6.1):** the engine arm ran on *unratified, hand-written* library
-entries (`ratified: false`) — every claim below is about the **mechanism**
-(containment, binding, verification), not about curated-library quality.
+- **B0 — default-Claude** (the true counterfactual): casual ask, no constraints.
+  All replicates chose Python/numpy → WAV + MIDI.
+- **B1 — freehand Strudel**: one labeled `.strudel` file from model knowledge,
+  no verification, no execution.
+- **AFTER — engine**: spec → compile → bind → verify; edits scoped and gated.
 
-## Headline table
+**Integrity notes:** the engine arm ran on *unratified hand-written* library entries
+(`ratified: false`) — claims are about the mechanism, not curated-library quality.
+Section-scoped containment ("the verse must not change") is verified inside the
+engine's own gate but is NOT independently measured by this scorer for any arm.
 
-| measure (27 edits/arm) | B0 default | B1 freehand-Strudel | AFTER engine |
+## Headline table (corrected)
+
+| measure | B0 default | B1 freehand | AFTER engine |
 |---|---|---|---|
-| edits stream-contained | 15 | **27** | **27** |
-| leaking edits | **8** | 0 | 0 |
-| no-op edits | 4 (3 legitimately¹) | 0 | 0 |
-| aspect violations (scope letter broken) | 0¹ | 1 | 0 |
-| requested effect achieved | 18 | **27** | 22 |
-| **edits fully clean** | **17 (63%)** | **26 (96%)** | **22 (81%)** |
-| mean changed-fraction within target² | 0.72 | 0.77 | 0.72 |
-| v0 generations evaluable | 12/12 | 12/12 | 12/12 |
-| v0 drum velocity variance (0 = robotic) | 0.034 | 0.059 | 0.035 |
+| v0 generations valid | 11/12¹ | 12/12 | 12/12 |
+| edits stream-contained | 21/25 scored | **27/27** | **27/27** |
+| leaking edits | 1 (+2 unscoreable¹) | 0 | 0 |
+| aspect violations | 0² | 1 | 0 |
+| requested effect achieved | 24/25 | **27/27** | 22/27 |
+| **edits fully clean** | **23/27 (85%)** | **26/27 (96%)** | **22/27 (81%)** |
+| v0 drum velocity variance | 0.034 | 0.059 | 0.035 |
 
-¹ B0's three C1.E3 no-ops are *correct* (a timbre swap lives in the synth, not the
-MIDI; the WAV changed, the notes didn't) and are counted clean. Sound-aspect scoring
-is not observable in MIDI, so B0's aspect row is structurally lenient.
-² Fraction of the targeted stream's haps changed; lower = more surgical. Roughly
-equal across arms — an edit like "hats 8ths→16ths" legitimately rewrites the layer.
+¹ One B0 replicate (C2/r1) wrote a structurally corrupt MIDI file — its whole edit
+chain is unlistenable as MIDI, and **nothing in the B0 workflow noticed**.
+² The sound aspect is unobservable in MIDI, so B0's aspect row is structurally lenient.
+
+## What the corrected numbers actually say
+
+**1. A frontier model editing small, self-authored files is already precise.**
+On ~30–60-line songs it wrote minutes earlier, with unusually well-scoped edit
+requests, the freehand arms rarely leak (B0: 1 leak; B1: 0). The engine's containment
+advantage on THIS eval is therefore **not a raw outcome delta — it is a guarantee
+plus a reject path**. The differences that remain are qualitative and they all
+point the same direction:
+
+- B0 shipped a **corrupt deliverable** (C2/r1) and an **organ leak** (C1/r3) with
+  zero indication anything was wrong. B1 shipped its one aspect violation silently.
+  The engine *rejected* equivalent mistakes before they became versions
+  (demonstrated live in `songs/neon-undertow/EDIT_SESSION.md`: leak → exit 4,
+  nothing written).
+- Neither baseline can verify structure: no chorus-lift measurement, no
+  withhold/payoff check, no harmonic-anchor policing, no report, no A/B page.
+  The engine emits all of these on every accepted version — including catching its
+  own musical regression mid-session (edit 1 broke the chorus lift; the metrics
+  said so; edit 6 fixed it).
+- Expect the freehand arms' precision to degrade with song size, edit-chain length,
+  and time-since-authoring; the guarantee doesn't. n=3 per cell cannot show that
+  scaling story — it is the design argument, stated as such, not a measured result.
+
+**2. The engine's five effect misses are real, concentrated, and now designed for:**
+- **C4.E2 ×3:** spec-level key change re-derives voicings in the new key (82–89%
+  of pitches move exactly +2, the rest re-voice). Violates the letter of
+  "transposition only". → design-addendum **A3.6** (typed edit operators:
+  `literal_transpose` vs `rederive_key`, declared, never silently chosen).
+- **C2.E1 ×1:** swing over straight 7/8 pulses moved zero onsets. The binder now
+  **warns at bind time** when swing affects no onsets, and hard-errors when swing
+  would push an onset past its window (strudel silently deletes those). → also
+  generalized as design-addendum **A3.7** (universal no-op detection).
+- **C4.E1 ×1:** one replicate's "bigger transition" measured flat (3.0 → 2.97
+  energy) — a genuine execution miss by the engine-arm agent, visible because it
+  is measured.
+
+**3. What the eval cannot show yet** — flagged rather than implied: section-scoped
+independence ("verse untouched") is unmeasured by the scorer; B1's strong numbers
+come with zero mechanical assurance behind them; all arms were driven by the same
+model under favorable conditions; n=3 per cell is directional only.
 
 ## Per-edit outcome matrix (3 replicates per cell)
 
 | edit | B0 | B1 | AFTER |
 |---|---|---|---|
 | C1.E1 hats busier | ✓✓✓ | ✓✓✓ | ✓✓✓ |
-| C1.E2 chorus lifts, verse untouched | **LLL** | ✓✓✓ | ✓✓✓ |
-| C1.E3 darker bass, sound only | ✓✓✓¹ | a✓✓ | ✓✓✓ |
-| C2.E1 swing the hats (7/8) | ✓✓✓ | ✓✓✓ | **e**✓✓ |
-| C2.E2 sparser lead, A sections only | **nLL** | ✓✓✓ | ✓✓✓ |
+| C1.E2 chorus lifts, verse untouched | ✓✓**L** | ✓✓✓ | ✓✓✓ |
+| C1.E3 darker bass, sound only | ✓✓✓ | **a**✓✓ | ✓✓✓ |
+| C2.E1 swing the hats (7/8) | **uu**✓ | ✓✓✓ | **e**✓✓ |
+| C2.E2 sparser lead, A only | **u**✓✓ | ✓✓✓ | ✓✓✓ |
 | C3.E1 halve harmonic rhythm | **e**✓✓ | ✓✓✓ | ✓✓✓ |
 | C3.E2 drum velocity contour | ✓✓✓ | ✓✓✓ | ✓✓✓ |
-| C4.E1 bigger final transition | **LLL** | ✓✓✓ | ✓**e**✓ |
+| C4.E1 bigger final transition | ✓✓✓ | ✓✓✓ | ✓**e**✓ |
 | C4.E2 key change, pitch only | ✓✓✓ | ✓✓✓ | **eee** |
 
-L = leaked into untargeted streams · a = broke the scope's aspect letter ·
-n = nothing changed · e = requested effect not measurably achieved
-
-## What the numbers say
-
-**1. The true default (B0) fails the edit task.** 10 of 27 edit requests failed
-outright: every "chorus lifts, verse must not change" leaked into the verse; every
-"only transition material may change" rewrote other layers; "sparser lead in A only"
-leaked or did nothing. This is the failure mode the engine exists for — and in the
-default workflow it is *silent*: nothing tells you the verse changed.
-
-**2. Freehand Strudel (B1) was far more precise than expected** — 26/27 clean.
-Read this carefully rather than triumphantly:
-- These are ~30–60-line files the same frontier model wrote minutes earlier, with
-  edits stated with unusual scoping precision. Favorable conditions for freehand.
-- B1's precision is **measured post-hoc by this harness; nothing guaranteed it at
-  edit time.** The one aspect violation shipped without anyone knowing. The engine's
-  27/27 is **by construction** — a leak is rejected before it becomes a version
-  (demonstrated in `songs/neon-undertow/EDIT_SESSION.md`, exit code 4, nothing written).
-- B1 has no verification loop at all: no chorus-lift assertion, no withhold/payoff
-  check, no harmonic-anchor check, no report, no A/B listen page. Its generation
-  quality claims are unfalsifiable; the engine's are measured per version.
-
-**3. The engine's five effect misses are legible, concentrated, and diagnosable —
-because everything is measured:**
-- **C4.E2 (0/3):** a spec-level key change *re-derives* the song in the new key —
-  ireal re-voices chords in new shapes rather than literally shifting every pitch
-  +2 (82–89% of pitches moved exactly +2). Musically defensible, but it violates
-  the letter of "transposition only". Fix path: a literal-transpose edit operator
-  that bypasses re-binding. Known limitation, now on record.
-- **C2.E1 (1 miss):** `swingBy(x, 7)` on a rhythm whose onsets all sit at slice
-  starts moves nothing — swing over straight 7/8 pulses silently no-ops. Fix path:
-  binder warns when a swing affects zero onsets. (The other two replicates chose
-  finer rhythms and swung correctly.)
-- **C4.E1 (1 miss):** the agent lengthened the riser; onsets-per-bar as an energy
-  proxy slightly dropped. Metric limitation as much as engine limitation.
-
-**4. Scoring amendments made during analysis (uniform across arms, all in git):**
-harmonic-rhythm edits legitimately re-bind harmony-following layers (C3.E1 scope
-widened; also cleared B1's one such "leak"); when timing legitimately changes,
-locked aspects are judged by value-palette growth instead of sequence identity;
-a sparser rhythm carries its own accent profile, so C2.E2 allows gain movement.
+✓ clean · L leak · a aspect violation · e effect not achieved · u unscoreable (corrupt MIDI)
+(C2 columns: r1 is the corrupt-MIDI replicate for B0.)
 
 ## Bottom line
 
-Against the **actual default** (B0), the engine turns a 63%-clean, silently-failing
-edit process into a 100%-contained, 81%-effective one with named leaks, per-edit
-reports, and A/B listening. Against a **skilled freehand Strudel writer** (B1), the
-engine's containment advantage on small songs is a guarantee rather than an outcome
-delta — the eval's honest finding is that the engine's remaining gap is *effect
-fidelity on two specific edit types*, both now precisely characterized, while the
-freehand path's gap is that **nothing in it can ever tell you when it fails.**
-
-Replicates: n=3 per cell; treat per-cell differences as directional, not significant.
+The engine did what it was designed to do — 27/27 contained **by construction**,
+with named leaks on rejection, measured musical structure, and per-version listening
+artifacts — and this eval also measured, honestly, that on small fresh songs a
+skilled freehand pass gets close on outcomes while offering none of the assurance.
+The engine's real deficits surfaced with numbers attached (transposition fidelity,
+swing semantics) and are already folded into the design (A3.6/A3.7). The baselines'
+deficits surfaced only because *this eval's instrument* exists — inside their own
+workflows, nothing would ever have said a word.

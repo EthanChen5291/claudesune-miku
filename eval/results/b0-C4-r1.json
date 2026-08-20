@@ -24,21 +24,16 @@
         "riser",
         "drums:tom"
       ],
-      "leaks": [
-        "drums:kick",
-        "drums:cymbal",
-        "drums:hat",
-        "drums:snare"
-      ],
-      "contained": false,
+      "leaks": [],
+      "contained": true,
       "noop": false,
       "aspectViolations": [],
       "minimality": 1,
       "effect": {
-        "metric": "transition onsets/bar",
-        "before": 0.0313,
-        "after": 0.0313,
-        "achieved": false
+        "metric": "transition energy (onsets+dur per bar)",
+        "before": 0.125,
+        "after": 0.1875,
+        "achieved": true
       }
     },
     {

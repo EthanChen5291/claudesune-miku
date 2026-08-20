@@ -68,12 +68,14 @@ let currentVersion = DATA.versions.length - 1;
 const muted = new Set();
 
 function applyMutes(src) {
+  // labels live at column 0 — anchoring without leading whitespace keeps
+  // indented object keys (form masks) safe even when a section shares the name
   let out = src;
   for (const label of DATA.labels) {
-    const on = new RegExp('^(\\\\s*)' + label + ':', 'm');
-    const off = new RegExp('^(\\\\s*)_' + label + ':', 'm');
-    if (muted.has(label)) out = out.replace(on, '$1_' + label + ':');
-    else out = out.replace(off, '$1' + label + ':');
+    const on = new RegExp('^' + label + ':', 'm');
+    const off = new RegExp('^_' + label + ':', 'm');
+    if (muted.has(label)) out = out.replace(on, '_' + label + ':');
+    else out = out.replace(off, label + ':');
   }
   return out;
 }

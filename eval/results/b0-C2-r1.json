@@ -5,48 +5,24 @@
   "versions": 3,
   "expectedVersions": 3,
   "v0": {
-    "evalOk": true,
-    "error": null,
-    "streamCount": 7,
-    "drumVelVariance": 0.0318,
-    "meterOffgrid": 0.0785
+    "evalOk": false,
+    "error": "running status with no prior status at 3144",
+    "streamCount": 0,
+    "drumVelVariance": null,
+    "meterOffgrid": null
   },
   "edits": [
     {
       "edit": "E1",
       "prompt": "Add a swing/shuffle feel to the hats only. Nothing else may change.",
-      "status": "scored",
-      "changedStreams": [
-        "drums:hat"
-      ],
-      "leaks": [],
-      "contained": true,
-      "noop": false,
-      "aspectViolations": [],
-      "minimality": 0.4303,
-      "effect": {
-        "metric": "hat offgrid (grid 7)",
-        "before": 0,
-        "after": 0.4303,
-        "achieved": true
-      }
+      "status": "uneval",
+      "error": "before: running status with no prior status at 3144"
     },
     {
       "edit": "E2",
       "prompt": "Make the lead melody sparser, but only in the A sections. B and C must not change.",
-      "status": "scored",
-      "changedStreams": [],
-      "leaks": [],
-      "contained": false,
-      "noop": true,
-      "aspectViolations": [],
-      "minimality": null,
-      "effect": {
-        "metric": "lead density/bar",
-        "before": 0,
-        "after": 0,
-        "achieved": false
-      }
+      "status": "uneval",
+      "error": "before: running status with no prior status at 3192"
     }
   ]
 }

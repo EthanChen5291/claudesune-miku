@@ -57,9 +57,10 @@ export function chordTones(symbol) {
     // as chord tones — the 9th everywhere, the 11th on minor family, the 13th on
     // dominant/major family. These are consonant colors, not wrong notes.
     const q = parsed.quality;
-    pcs.add((parsed.rootPc + 2) % 12); // 9th
-    if (/^m(?!aj)/.test(q)) pcs.add((parsed.rootPc + 5) % 12); // 11th (minor family only — it's an avoid note over major)
-    if (/7|9|13|\^/.test(q) && !/^m/.test(q)) pcs.add((parsed.rootPc + 9) % 12); // 13th (dom/major 7ths)
+    const altered = /[b#]\d|alt/.test(q); // explicitly altered chords keep ONLY their spelled tensions
+    if (!altered) pcs.add((parsed.rootPc + 2) % 12); // 9th
+    if (!altered && /^m(?!aj)/.test(q)) pcs.add((parsed.rootPc + 5) % 12); // 11th (minor family only — it's an avoid note over major)
+    if (!altered && /7|9|13|\^/.test(q) && !/^m/.test(q)) pcs.add((parsed.rootPc + 9) % 12); // 13th (dom/major 7ths)
   } else {
     try {
       const haps = chord(pure(symbol)).dict('ireal').voicing().queryArc(0, 1).filter((h) => h.hasOnset());

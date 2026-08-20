@@ -39,6 +39,7 @@ export async function strudelStreams(source, { cycles = 64 } = {}) {
       const name = split && fam ? `${label}:${fam}` : label;
       (streams[name] ??= []).push({
         t: round6(h.whole.begin.valueOf()),
+        dur: round6(h.whole.end.valueOf() - h.whole.begin.valueOf()),
         pitch: pitchOf(h.value),
         vel: gainOf(h.value),
         sound: JSON.stringify(soundOf(h.value)),

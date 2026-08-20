@@ -21,19 +21,16 @@
         "drums:snare",
         "riser_fx"
       ],
-      "leaks": [
-        "drums:kick",
-        "drums:snare"
-      ],
-      "contained": false,
+      "leaks": [],
+      "contained": true,
       "noop": false,
       "aspectViolations": [],
-      "minimality": 0.5,
+      "minimality": 0.75,
       "effect": {
-        "metric": "transition onsets/bar",
-        "before": 0.0313,
-        "after": 0.0313,
-        "achieved": false
+        "metric": "transition energy (onsets+dur per bar)",
+        "before": 0.0938,
+        "after": 0.125,
+        "achieved": true
       }
     },
     {

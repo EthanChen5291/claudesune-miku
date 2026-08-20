@@ -10,10 +10,10 @@
 // Output is a resolved note("<[...]...>") grid + boundMeta for motif assertions.
 
 import { noteToMidi } from '@strudel/core';
-import { parseKey, degreeToMidi, midiToNoteName, snapToPcs, applyTransform, contourSigns } from './theory.js';
+import { parseKey, degreeToMidi, midiToNoteName, snapToPcs, applyTransform, contourSigns, keyUsesFlats } from './theory.js';
 import { chordTones, chordRootPc } from '../harness/chords.js';
 
-const MAX_GRID = 96;
+const MAX_GRID = 192;
 export const ACCENT_THRESHOLD = 0.7;
 const DEFAULT_GAIN_RANGE = [0.35, 1.0];
 
@@ -58,7 +58,7 @@ export function euclidOnsets(k, n, rot = 0) {
   const bits = [...a.flat(), ...b.flat()];
   const onsets = [];
   bits.forEach((bit, i) => { if (bit) onsets.push(i); });
-  return onsets.map((i) => norm(((i - rot) % n + n) % n, n)).sort((x, y) => x[0] / x[1] - y[0] / y[1]);
+  return onsets.map((i) => norm(((i + rot) % n + n) % n, n)).sort((x, y) => x[0] / x[1] - y[0] / y[1]);
 }
 
 /** Normalize a rhythm entry -> { onsets: [[n,d]...], accents: [...], swing, swingSubdiv, microtiming } */
@@ -78,10 +78,17 @@ export function normalizeRhythm(entry) {
     throw new Error(`rhythm entry must carry a real accent profile (${count} onsets, got ${accents ? accents.length : 0} accents) — uniform velocity is a bug (§3.4)`);
   }
   if (entry.microtiming && entry.microtiming.length === count) {
-    onsets = onsets.map((f, i) => {
+    // shift each onset, wrap into [0,1) (a push past the barline lands at the top
+    // of the cycle — review finding: out-of-range shifts silently corrupted the
+    // grid), and re-sort keeping each onset's accent attached
+    const paired = onsets.map((f, i) => {
       const shift = toFrac(entry.microtiming[i] ?? 0);
-      return norm(f[0] * shift[1] + shift[0] * f[1], f[1] * shift[1]);
-    });
+      let [n, d] = norm(f[0] * shift[1] + shift[0] * f[1], f[1] * shift[1]);
+      n = ((n % d) + d) % d;
+      return { onset: norm(n, d), accent: accents[i] };
+    }).sort((a, b) => a.onset[0] / a.onset[1] - b.onset[0] / b.onset[1]);
+    onsets = paired.map((p) => p.onset);
+    accents = paired.map((p) => p.accent);
   }
   return { onsets, accents: accents.slice(), swing: entry.swing ?? 0, swingSubdiv: entry.swingSubdiv ?? null, name: entry.name ?? null };
 }
@@ -156,7 +163,7 @@ export function bind(rhythmEntry, contourEntry, harmonyContext, meter = '4/4', o
   }
 
   // per-cycle note grids
-  const flats = /b|m|dim|F|Bb|Eb|Ab|Db|Gb/.test(harmonyContext?.key ?? '');
+  const flats = keyUsesFlats(harmonyContext?.key ?? 'C:major');
   const rootMidi = melodic ? noteToMidi(key.rootName.toUpperCase().replace(/^([A-G])B$/, '$1b') + String(octave)) : null;
   const cycles = [];
   const boundNotes = [];
@@ -209,7 +216,27 @@ export function bind(rhythmEntry, contourEntry, harmonyContext, meter = '4/4', o
   if (period === 1 && melodic) expr = `${headFn}("${noteCycles[0]}")`;
   if (melodic && sound) expr += `.s("${sound}")`;
   expr += `.gain("${gainCycle}")`;
-  if (r.swing) expr += `.swingBy(${r.swing}, ${r.swingSubdiv ?? defaultSubdiv(meter)})`;
+  if (r.swing) {
+    const subdiv = r.swingSubdiv ?? defaultSubdiv(meter);
+    // swingBy delays each 1/subdiv window's second half by swing * (1/(2*subdiv)).
+    // At 1.1.0 an onset delayed past its window end is silently DELETED (review
+    // finding) — check statically and fail loudly instead.
+    const halfW = 1 / (2 * subdiv);
+    let affected = 0;
+    for (const [n, d] of r.onsets) {
+      const pos = n / d;
+      const inWindow = pos - Math.floor(pos * subdiv) / subdiv;
+      if (inWindow >= halfW - 1e-9) {
+        affected++;
+        const windowEnd = (Math.floor(pos * subdiv) + 1) / subdiv;
+        if (pos + r.swing * halfW >= windowEnd - 1e-9) {
+          throw new Error(`swing ${r.swing} pushes the onset at ${n}/${d} past its 1/${subdiv} window — strudel would silently delete it; reduce swing or subdiv`);
+        }
+      }
+    }
+    if (affected === 0) warnings.push(`swing ${r.swing} affects ZERO onsets (all sit at window starts on the 1/${subdiv} grid) — it will be inaudible`);
+    expr += `.swingBy(${r.swing}, ${subdiv})`;
+  }
   if (fx) expr += fx.startsWith('.') ? fx : '.' + fx;
 
   const boundMeta = {
@@ -250,4 +277,4 @@ function at(v, k) { return k === 1 ? String(v) : `${v}@${k}`; }
 // half — so n = beats per bar swings the OFFBEAT 8ths (verified at 1.1.0).
 function defaultSubdiv(meter) { return Number(String(meter).split('/')[0]); }
 function fracStr(step, G) { const g = gcd(step || G, G); return step === 0 ? '0' : `${step / g}/${G / g}`; }
-function round2(x) { return Math.round(x * 100) / 100; }
+function round2(x) { return Math.round(x * 1000) / 1000; }

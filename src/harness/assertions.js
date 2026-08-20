@@ -361,7 +361,7 @@ function verticalInterlock(hapsMap, meta, timeline) {
       const d = hi - lo;
       if (d % 12 === 1 && d > 12) {
         const seg = timeline?.length ? chordAt(timeline, e.t0) : null;
-        const isDomRootB9 = seg && /7/.test(seg.symbol) && !/(m7|\^7)/.test(seg.symbol)
+        const isDomRootB9 = seg && isDominant(seg.symbol)
           && lo % 12 === (chordRootPcOf(seg.symbol) ?? -1);
         if (!isDomRootB9 && b9hits.length < 40) b9hits.push(`${e.label}/${o.label} ${lo}-${hi} @${e.t0.toFixed(2)}`);
       }
@@ -386,6 +386,16 @@ function verticalInterlock(hapsMap, meta, timeline) {
     if (subLabels.size) item('sub-exclusion', subHits, 'voices inside the sub exclusion zone');
   }
   return out;
+}
+// dominant-quality detection incl. spellings without a literal '7' (C9, C13, 9sus, 7alt)
+function isDominant(symbol) {
+  const m = /^[A-G][#b]?(.*)$/.exec(symbol);
+  if (!m) return false;
+  const q = m[1];
+  if (/^(maj|\^|M)/.test(q) || /^m(?!aj)/.test(q) || /^(dim|o|h)/.test(q) || /^(6|69|add)/.test(q)) return false;
+  return /^(7|9|11|13)/.test(q)      // 7, 7b9, 7alt, 9, 11, 13, 9sus, 13sus...
+    || /^alt/.test(q)                // Calt
+    || /^sus/.test(q) && /7|9|13/.test(q); // sus7-style spellings
 }
 const rootPcCache = new Map();
 function chordRootPcOf(symbol) {

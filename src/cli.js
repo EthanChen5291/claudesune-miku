@@ -121,6 +121,7 @@ async function edit(argv) {
   });
   const dir = positionals[0];
   if (!dir || (!values.file && !values.spec)) { console.error('usage: edit <songdir> (--file f.strudel | --spec s.json) --allow ... --note "..."'); process.exit(1); }
+  if (values.file && values.spec) { console.error('pass EITHER --file OR --spec, not both (they are different edit sources)'); process.exit(1); }
   const n = latestVersion(dir);
   if (n < 0) { console.error(`no versions in ${dir}`); process.exit(1); }
   const oldSource = read(join(dir, `v${n}.strudel`));

@@ -149,29 +149,32 @@ export function compile(spec, { bindFn = null, transitionFn = null } = {}) {
   for (const label of labels) {
     L.push(`// ---- material: ${label} ----`);
     const bindingBySection = {};
-    const emitted = new Map(); // material object identity -> binding name
+    const emitted = new Set(); // binding names already emitted for this label
     for (const name of uniqueInOrder(layout.order)) {
       const s = resolved[name];
       const mat = s.layers[label];
       if (mat == null) continue;
-      let bname = emitted.get(mat);
-      if (!bname) {
-        bname = `${label}_${identOf(ownerSection(spec, resolved, name, label))}`;
-        if (!emitted.has(mat) && ![...emitted.values()].includes(bname)) {
-          const { expr, period, boundMeta } = materialExpr(mat, {
-            spec, section: s, sectionName: name, label, bindFn, meter, layout,
-          });
-          let finalExpr = expr;
-          if (/\.(room|delay)\s*\(/.test(expr) && !/\.orbit\s*\(/.test(expr)) {
-            const orb = orbitOf(label);
-            finalExpr = `${expr}.orbit(${orb})`;
-            meta.orbits[label] = orb;
-          }
-          L.push(`let ${bname} = ${finalExpr}`);
-          meta.bindings[bname] = { label, sections: [name], kind: mat.bind ? 'bound' : 'free', period };
-          if (boundMeta) meta.motifPlacements.push({ ...boundMeta, label, binding: bname, sections: [name] });
-          emitted.set(mat, bname);
+      // Reuse happens ONLY through recalls-inheritance (ownerSection), never by
+      // value equality — equal strings in unrelated sections stay separate
+      // bindings (review finding), and inherited material is bound in its
+      // OWNER section's harmonic context, not the first-in-form user's.
+      const owner = ownerSection(spec, resolved, name, label);
+      const bname = `${label}_${identOf(owner)}`;
+      if (!emitted.has(bname)) {
+        const ownerResolved = resolved[owner] ?? s;
+        const { expr, period, boundMeta } = materialExpr(mat, {
+          spec, section: ownerResolved, sectionName: owner, label, bindFn, meter, layout,
+        });
+        let finalExpr = expr;
+        if (/\.(room|delay)\s*\(/.test(expr) && !/\.orbit\s*\(/.test(expr)) {
+          const orb = orbitOf(label);
+          finalExpr = `${expr}.orbit(${orb})`;
+          meta.orbits[label] = orb;
         }
+        L.push(`let ${bname} = ${finalExpr}`);
+        meta.bindings[bname] = { label, sections: [name], kind: mat.bind ? 'bound' : 'free', period };
+        if (boundMeta) meta.motifPlacements.push({ ...boundMeta, label, binding: bname, sections: [name] });
+        emitted.add(bname);
       } else {
         meta.bindings[bname].sections.push(name);
         const mp = meta.motifPlacements.find((m) => m.binding === bname);
@@ -216,6 +219,9 @@ export function compile(spec, { bindFn = null, transitionFn = null } = {}) {
   }
   const byLabel = new Map();
   for (const layer of transitionLayers) {
+    if (labels.includes(layer.label)) {
+      throw new Error(`transition label "${layer.label}" collides with a material layer label — rename the spec layer (labels: ${labels.join(', ')})`);
+    }
     if (!byLabel.has(layer.label)) byLabel.set(layer.label, []);
     byLabel.get(layer.label).push(layer.term);
   }
@@ -286,19 +292,17 @@ function uniqueInOrder(arr) {
   return [...new Set(arr)];
 }
 
-// name -> orbit in [2..9], stable regardless of which other labels exist or use fx
-function stableOrbits(labels) {
-  const assigned = new Map();
-  const taken = new Set();
-  for (const label of [...labels].sort()) {
+// name -> orbit in [2..9]: a PURE function of the label name, no uniqueness
+// probing (review findings: probing hung with 9+ labels and renumbered other
+// labels' orbits when the label set changed). Two labels may share an orbit —
+// that's a shared fx bus, only a problem when their delay/reverb params differ,
+// which the lint's orbit warning already surfaces.
+function stableOrbits(_labels) {
+  return (label) => {
     let h = 0;
     for (const c of label) h = (h * 31 + c.charCodeAt(0)) >>> 0;
-    let orb = 2 + (h % 8);
-    while (taken.has(orb)) orb = 2 + ((orb - 1) % 8);
-    taken.add(orb);
-    assigned.set(label, orb);
-  }
-  return (label) => assigned.get(label) ?? 2;
+    return 2 + (h % 8);
+  };
 }
 
 function validateSpec(spec) {

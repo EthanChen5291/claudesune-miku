@@ -177,7 +177,12 @@
             "fill",
             "fx",
             "transition",
-            "sweep"
+            "sweep",
+            "tom",
+            "snare",
+            "cymbal",
+            "crash",
+            "drum"
           ],
           "allowed_aspects": [
             "time",

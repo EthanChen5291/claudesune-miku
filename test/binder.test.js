@@ -175,7 +175,7 @@ test('compile+bind end-to-end: bound layer, transitions, assertions all green', 
     transitions: [{ use: 'fill_snare_roll', into: 'B' }],
   };
   const { source, meta } = compile(spec, { bindFn: makeBindFn(spec), transitionFn: makeTransitionFn(spec) });
-  assert.match(source, /fill_B1\.late\(3\)\.mask/); // fill occupies the last bar before B
+  assert.match(source, /fill_fill_snare_roll_B1\.late\(3\)\.mask/); // fill occupies the last bar before B (binding = label_template_section)
   const res = await verifySong(source, { meta });
   assert.equal(res.evalOk, true, res.error);
   assert.equal(res.lint.errors.length, 0, JSON.stringify(res.lint.errors));

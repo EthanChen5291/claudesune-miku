@@ -61,6 +61,19 @@ export function pitchOf(value) {
   if (value.note !== undefined) return resolveNote(value.note);
   return null; // bare n without note = sample index / unresolved: not a pitch
 }
+
+/** Full pitch-aspect key: resolved midi PLUS the raw pitch-ish keys (n, scale,
+ *  value), so a sample-index or scale swap can never hide from every aspect view
+ *  (review finding: n-changes were invisible to all four aspects — false PASS). */
+export function pitchKeyOf(value) {
+  if (value == null || typeof value !== 'object') return JSON.stringify(pitchOf(value));
+  return JSON.stringify({
+    m: pitchOf(value),
+    n: value.n !== undefined && value.note === undefined ? value.n : undefined,
+    scale: value.scale,
+    value: value.value,
+  });
+}
 function resolveNote(x) {
   if (typeof x === 'number') return x;
   if (typeof x !== 'string') return null;
@@ -104,8 +117,14 @@ export function aspectSignatures(entry) {
   const pitch = [], sound = [], gain = [];
   for (const t of times) {
     const hs = groups.get(t);
-    pitch.push(JSON.stringify(hs.map((h) => pitchOf(h.value)).sort(cmpAny)));
-    sound.push(JSON.stringify([...new Set(hs.map((h) => JSON.stringify(soundOf(h.value))))].sort()));
+    pitch.push(JSON.stringify(hs.map((h) => pitchKeyOf(h.value)).sort()));
+    // n rides in the sound aspect too when s is present (sample index = timbre);
+    // over-inclusive on purpose: a hidden change must never pass, a doubly visible
+    // one at worst over-rejects.
+    sound.push(JSON.stringify([...new Set(hs.map((h) => JSON.stringify({
+      ...soundOf(h.value),
+      __n: h.value?.s !== undefined && h.value?.n !== undefined ? h.value.n : undefined,
+    })))].sort()));
     gain.push(JSON.stringify([...new Set(hs.map((h) => gainOf(h.value)))].sort((a, b) => a - b)));
   }
   return { time: times, pitch, sound, gain };
@@ -191,9 +210,15 @@ function changedHapFraction(oldRecs, newRecs) {
 }
 
 function outsideWindows(entry, windows) {
-  if (!entry) return entry;
-  const inside = (t) => windows.some(([a, b]) => t >= a - 1e-9 && t < b - 1e-9);
-  return { ...entry, haps: entry.haps.filter((h) => !inside(h.whole.begin.valueOf())) };
+  // A hap is window-confined only if its WHOLE SPAN sits inside one window —
+  // a note that rings past the boundary is audible outside it (review finding).
+  if (!entry) return { muted: false, haps: [], error: null };
+  const confined = (h) => {
+    const t0 = h.whole.begin.valueOf();
+    const t1 = h.whole.end.valueOf();
+    return windows.some(([a, b]) => t0 >= a - 1e-9 && t1 <= b + 1e-9);
+  };
+  return { ...entry, haps: entry.haps.filter((h) => !confined(h)) };
 }
 
 /** Diff all labels of two evaluated songs' haps maps. Returns array of diffs (identical included). */
@@ -249,20 +274,28 @@ export function containment(oldRes, newRes, { allowLabels = [], allowBindings = 
       continue;
     }
     const labelAspects = aspectsFor(d.label);
+    // Added/removed layers change EVERY aspect and every window — they must never
+    // bypass a contract just because there is nothing to diff against (review
+    // findings: add/remove bypassed both allowAspects and allowWindows).
+    if (labelAspects && (d.kind === 'added' || d.kind === 'removed')) {
+      leaks.push({ label: d.label, reason: `${d.label}: layer ${d.kind} under an aspect contract (allowed aspects: ${labelAspects.join(', ')}) — adding/removing a layer changes every aspect` });
+      continue;
+    }
     if (labelAspects && d.kind === 'changed') {
       const forbidden = Object.entries(d.aspects)
-        .filter(([k, changed]) => changed && k !== 'muted' && !labelAspects.includes(k))
-        .map(([k]) => k);
+        .filter(([k, changed]) => changed && !labelAspects.includes(k))
+        .map(([k]) => k); // note: 'muted' flips count — muting changes everything audible
       if (forbidden.length) {
         leaks.push({ label: d.label, reason: `${d.label}: allowed label but forbidden aspect(s) changed: ${forbidden.join(', ')} (allowed: ${labelAspects.join(', ')})` });
         continue;
       }
     }
-    if (allowWindows && d.kind === 'changed') {
+    if (allowWindows && d.kind !== 'identical') {
       const oldOut = outsideWindows(oldRes.haps.get(d.label), allowWindows);
       const newOut = outsideWindows(newRes.haps.get(d.label), allowWindows);
       const outDiff = diffLabel(d.label, oldOut, newOut);
-      if (outDiff.kind !== 'identical') {
+      if (outDiff && outDiff.kind !== 'identical'
+          && !(outDiff.kind === 'added' && !newOut.haps.length) && !(outDiff.kind === 'removed' && !oldOut?.haps?.length)) {
         leaks.push({ label: d.label, reason: `${d.label}: changed outside the allowed cycle window(s) ${JSON.stringify(allowWindows)} — ${outDiff.line}` });
         continue;
       }
