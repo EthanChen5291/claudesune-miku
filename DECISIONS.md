@@ -206,3 +206,13 @@ The addendum does not change any eval case prompt.
    seeded sampling weights.
 3. Library entries additionally marked `ratified: false`; the eval narrative must state
    the engine arm ran on unratified scaffolding entries (A6.1 non-circularity).
+
+## D24. Post-eval work queue (agreed with the design session, 2026-08-19)
+Eval findings became design rules in design-addendum.md: A3.6 (typed edit operators —
+rederive_key vs literal_transpose declared, never silently chosen) and A3.7 (universal
+no-op detection: a lever changing zero haps in its targeted dimension = bind-time
+warning + intent-assertion failure). Sequenced queue: (1) binder-side vertical
+revoicing per interval-grammar §8 (hard = §4 rules + Avoid columns, via
+revoice/octave-displacement; soft = horizontal tables as seeded weights),
+(2) vertical-interlock WARN→FAIL flip, (3) A3.6/A3.7 alongside the A3 planner.
+None block the current deliverables.
