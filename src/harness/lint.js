@@ -2,7 +2,8 @@
 // the installed pinned packages (ground truth) or be locally defined. Unknown
 // function → lint ERROR before evaluation, not a runtime surprise.
 // Also flags two Strudel gotchas: repeated single-use effects on one chain, and
-// same-orbit delay/reverb conflicts.
+// same-orbit delay/reverb conflicts — and (D28) chord symbols that do not resolve,
+// which would otherwise drop out of verification without failing anything.
 
 import * as acorn from 'acorn';
 import * as walk from 'acorn-walk';
@@ -10,6 +11,8 @@ import * as core from '@strudel/core';
 import * as mini from '@strudel/mini';
 import * as tonal from '@strudel/tonal';
 import { reference } from '@strudel/reference';
+import { chordTones, chordQuality } from './chords.js';
+import { VOICINGS } from '../lib/voicings.js';
 
 const { Pattern } = core;
 
@@ -127,7 +130,79 @@ export function lintSong(source) {
     });
   }
 
+  // ---- Harmony: every chord symbol must RESOLVE (D28) ----
+  // An unknown spelling fails SILENTLY today: chordTones() returns an empty set,
+  // so the binder skips chord-tone snapping (bind.js warns, into console) and the
+  // harmonic assertion skips the segment outright (`if (seg.pcs.size === 0)
+  // continue`). The chord stops being verified while everything still reports
+  // PASS. Second half of the same hole: a symbol that resolves for the timeline
+  // but has no shape in the me_* dict a comp bind names — .voicing() then emits
+  // nothing and the layer goes silent on that chord.
+  for (const cc of chordCalls(ast)) {
+    const shapeName = cc.dict && cc.dict !== 'ireal' ? String(cc.dict).replace(/^me_/, '') : null;
+    const shapes = shapeName ? VOICINGS[shapeName]?.shapes : null;
+    for (const sym of cc.symbols) {
+      if (chordTones(sym).size === 0) {
+        errors.push({
+          line: cc.line,
+          msg: `chord symbol "${sym}" does not resolve to any pitch classes — it would bind and play, but chord-tone snapping and every harmonic assertion SKIP it silently. Check the spelling against the ireal dialect ('sus' not 'sus4', 'o' not 'dim', '2' not 'sus2', '^7'/'M7' for major sevenths)`,
+        });
+        continue;
+      }
+      if (!shapes) continue;
+      const q = chordQuality(sym);
+      if (q != null && !(q in shapes)) {
+        errors.push({
+          line: cc.line,
+          msg: `chord "${sym}" has no ${q === '' ? 'major-triad' : `"${q}"`} shape in voicing "me_${shapeName}" — .voicing() emits NOTHING for it and the layer goes silent on that chord. Add the quality to src/lib/voicings.js (ear-gated), or pick harmony the shape covers: findProgressions({ shape: '${shapeName}' })`,
+        });
+      }
+    }
+  }
+
   return { errors, warnings };
+}
+
+/**
+ * Every `chord("<literal>")` call in the source, with the `.dict('...')` (if any)
+ * applied downstream of it. Association is by source range: the chord() call sits
+ * inside the object of the .dict() member expression.
+ */
+function chordCalls(ast) {
+  const calls = [];
+  walk.full(ast, (n) => {
+    if (n.type !== 'CallExpression') return;
+    if (n.callee.type !== 'Identifier' || n.callee.name !== 'chord') return;
+    const a = n.arguments[0];
+    if (a?.type !== 'Literal' || typeof a.value !== 'string') return;
+    calls.push({ node: n, line: n.loc.start.line, symbols: chordSymbolsIn(a.value), dict: null });
+  });
+  if (!calls.length) return calls;
+  walk.full(ast, (n) => {
+    if (n.type !== 'CallExpression') return;
+    const c = n.callee;
+    if (c.type !== 'MemberExpression' || c.computed || c.property.name !== 'dict') return;
+    const a = n.arguments[0];
+    if (a?.type !== 'Literal' || typeof a.value !== 'string') return;
+    for (const call of calls) {
+      if (call.dict == null && call.node.start >= c.object.start && call.node.end <= c.object.end) {
+        call.dict = a.value;
+      }
+    }
+  });
+  return calls;
+}
+
+/** Chord symbols inside a mini-notation string, operators stripped. */
+function chordSymbolsIn(mini) {
+  const out = new Set();
+  for (const raw of String(mini).split(/[\s,<>[\]{}()|]+/)) {
+    let tok = raw;
+    while (/[!*@/:][\d.]+$/.test(tok)) tok = tok.replace(/[!*@/:][\d.]+$/, '');
+    tok = tok.replace(/[!?.]+$/, '');
+    if (tok && /^[A-G]/.test(tok)) out.add(tok);
+  }
+  return out;
 }
 
 function rootObject(member) {

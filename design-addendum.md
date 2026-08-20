@@ -54,6 +54,7 @@ Vague requests ("make it quieter", "less active", "different harmony") intention
 5. **Interpretation in the report.** report.md always states the chosen reading and the alternatives: *"Read 'quieter' as −3dB on pads+lead in B sections; alternatives: thin hats, drop a layer."* This is what makes vague-edit iteration converge in two rounds instead of six.
 6. **Typed edit operators** *(from eval findings, 2026-08-19 — eval/REPORT.md)*. Plans are built from a typed operator taxonomy, because some intents have two legitimate operators with different letters: "change key" = `rederive_key` (spec-level re-bind/re-voice — musically idiomatic) **vs** `literal_transpose` (shift every pitch n semitones, bypassing re-binding — letter-exact). The engine scored 0/3 on "key change, pitch only" by silently choosing re-derivation; the fix is not picking better, it's *declaring which operator* (per rule 5) so the report names it and the intent assertion tests the right letter. Expect more intent→operator forks of this kind; add them to the ontology as the eval/edit history surfaces them.
 7. **No-op detection is universal.** Any applied lever/modifier that changes zero haps in its targeted dimension is a **bind-time warning** (e.g. `swingBy` over straight 7/8 pulses moves zero onsets — eval C2.E1) and an **intent-assertion failure** at edit time. Silence is never success.
+8. **Motif placement reasons over contour realization modes** *(post-audition-round-1, DECISIONS D26)*. The binder resolves contour-length vs onset-count mismatch by mode — `exact` (L==S), `phrase` (L%S==0), `tiled` (S%L==0), `unfold` (L≥2S, slow line by intent), else shape-preserving `resample` with first/last/extrema guaranteed — reported per bind in `boundMeta.contourRealization`. Planner edits like "keep the melody but let it breathe" are mode changes, and intent assertions can check the realized mode directly.
 
 ---
 
@@ -101,7 +102,9 @@ Three-plus families replace the base spec's flat rhythms/contours split. The cor
 ### A5.2 Rhythm role taxonomy × register bands
 Two **orthogonal axes** on every rhythm-bearing entry:
 
-**Role**: `percussion` | `harmony` | `support` | `bass` | (melodic rhythm never stands alone — it stays fused in melodic phrases)
+**Role**: `percussion` | `harmony` | `chords` | `support` | `bass` | (melodic rhythm never stands alone — it stays fused in melodic phrases)
+
+*(`chords` added post-audition-round-1, DECISIONS D27: comping rhythms — maps to `harmony.comp` in the grammar family tree. Comping entries may span multiple bars (`bars: N`) and carry per-onset `voices` (`main` = voicing stab, `bounce` = low root), driven by `bindComp()`.)*
 
 - **Percussion** — drums/perc; onsets + accents, no pitch dimension.
 - **Harmony** — when chord instruments strike (comping), plus `chord_change_rate` field.
@@ -140,8 +143,9 @@ A third library layer beside entries and the compatibility graph: **how each rol
 ### A5.6 Entry schema sketch
 ```json
 { "id": "bossa-comp-1", "family": "accompaniment",
-  "role": "harmony", "band": "mid", "style": "jazz-bossa",
+  "role": "chords", "band": "mid", "style": "jazz-bossa", "bars": 1,
   "onsets": [0, 0.1875, 0.5, 0.8125], "accents": [0.7, 1.0, 0.6, 0.9],
+  "voices": ["main", "main", "bounce", "main"],
   "swing": 0, "chord_change_rate": "1/bar", "meter_class": "4/4",
   "compat": [{ "with": "bossa-bass-1", "kind": "co-designed" }],
   "provenance": { "kind": "transcribed", "source": "<song/section>",

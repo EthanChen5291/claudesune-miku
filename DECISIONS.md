@@ -317,3 +317,83 @@ revoicing the OTHER layer or by octave displacement, never by flattening the
 declared color. The warn-level vertical sweep already sees altered notes (it
 checks emitted haps); this ruling binds the queued revoicing implementation
 (interval-grammar §8 step 3). Ratified cross-session with motif-engine-be.
+
+## D28 — Progression library imported from ldrolez; one chord dialect (2026-08-20)
+
+Ethan asked whether the existing free chord/progression collections fit. Findings
+and rulings:
+
+**The corpus, not the MIDI.** ldrolez/free-midi-chords ships 13k MIDI files, but
+those are *generated output* — `gen.py` renders them from `chords.py`, 190 Roman-
+numeral progressions with human-authored mood tags, MIT licensed. We take the
+numerals. The MIDI is written at a hardcoded velocity 100 on a quantized grid, so
+our own A6.2 ingest triage would mark it pitch-side-only anyway; extracting
+progressions from it would be a lossy round-trip back to a text file we can just
+read. `vendor/ldrolez/chords.py` is vendored verbatim with its license so the
+transcode is reproducible; `scripts/import-ldrolez.mjs` regenerates
+`src/lib/progressions.js` and `--check` guards it in the test suite.
+
+**Semitones from the tonic, not numerals.** The source writes three notations:
+major-key numerals, natural-minor numerals, and modal numerals using Ionian degree
+NAMES. That last one is not a different key center — "relative to Ionian" means
+`bIII` = 3 semitones above the tonic, always. So all three are tonic-anchored and
+differ only in *spelling*: minor's `III` and modal's `bIII` are the same chord.
+The library therefore stores `degrees: '0:m 10 8 3'` — semitones above the tonic
+plus a quality — and nothing re-parses a numeral against a mode at bind time. The
+numeral string is kept as a display/provenance field.
+`renderProgression(entry, key)` (src/binder/harmony.js) is the only place a
+progression becomes note names; sections take `harmony: { lib: "<name>" }` and the
+compiler resolves it against `spec.key` once, before anything downstream.
+
+**One chord dialect (a real bug, pre-existing).** The same chord symbol reaches
+BOTH `.dict('ireal')` (the harmony timeline, and what `harness/chords.js` resolves
+against) and a comp bind's `.dict('me_*')`. The two dictionaries did not speak the
+same dialect: `voicings.js` was keyed `sus4`/`dim`, which ireal does not know, while
+ireal's `sus`/`o` had no shape. Either spelling was therefore broken on one path —
+and **broken silently**: `chordTones()` returns an empty set, the binder skips
+chord-tone snapping (console warning only), and the harmonic assertion skips the
+segment outright (`if (seg.pcs.size === 0) continue`). The chord stops being
+verified while the run still reports PASS. Rulings:
+- Voicing quality keys are the ireal dialect: `sus4`→`sus`, `dim`→`o`, old `o`
+  (a dim seventh) →`o7`. Pure key renames; **no shape value changed**.
+- New lint ERROR (`src/harness/lint.js`): every chord symbol in a `chord("...")`
+  call must resolve to a non-empty pitch-class set, and — when a `me_*` dict is
+  bound downstream — must have a shape in it, since `.voicing()` emits nothing
+  otherwise and the layer goes silent on that chord. This is the same class as
+  the containment false-PASS holes closed in 623c48f: a check that quietly stops
+  applying is worse than one that fails.
+
+**Imported ≠ ratified (A6.1).** 188 of 190 entries transcode (`IM-5` has no ireal
+equivalent — dropped, 1 entry; one duplicate merged keeping both tag sets). All
+land `ratified: false` with `character: null` — a character line is earned in the
+audition loop, never generated at import, and A6.6 caps the *library* at ~30-60
+entries. **This corpus is a candidate pool, not a library**; `findProgressions()`
+is how the pool is queried, and promotion happens by ear.
+
+**Voicing coverage is the deferrable tail, not a bottleneck.** 174 of 188 entries
+are playable with the shapes that exist today. The other 14 need six qualities
+(`2 5 69 add9 m6 madd9`) that nobody has auditioned; `findProgressions({ shape })`
+filters to what plays, and the lint names the missing quality when a song hits one.
+Hand-writing those 30-odd offset strings is ear-gated work and is deliberately NOT
+done here — it is exactly what voiced MIDI (MIDI Crate, once A6 exists) should
+supply instead of guesses.
+
+**Spelling is carried, not derived.** The key signature alone gets chromatic roots
+wrong: D dorian has no flats in its signature, so a borrowed b7 rendered as "A#" —
+which sounds right and reads as an error in a dorian song. Two rulings: (a) the
+source's accidental is kept in the `degrees` grammar (`3b`, `6#`) because the
+semitone count cannot recover it — `bVI` and `#V` are one pitch with two spellings,
+and the corpus has both (137 flats, 3 sharps); (b) a chromatic root with no source
+accidental spells as the LOWERED neighbour when the note a semitone above is
+diatonic, since borrowed roots are almost always flats. Signature preference is
+the last resort, not the first.
+
+**MIDI Crate (phelpsiemusic).** Redistribution cleared with the author by Ethan.
+Ruling: it is a **voicing/comping/accent source, not a progression source** — MIDI
+is the wrong format for progressions (see above) and the right one for register,
+inversion, and comping figures, which no numeral corpus carries. Sequencing: A6 is
+on the roadmap regardless, but `progressions.js` lands first so the extractor has a
+destination schema to emit into. First action on the subscription is the A6.2
+triage (velocity variance / grid deviation) — every rhythm entry in the library is
+still `provenance: 'hand-written'`, so humanized files would be the first real
+accent data we have; quantized ones are pitch-side-only.

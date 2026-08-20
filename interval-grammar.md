@@ -150,9 +150,10 @@ The verifier computes the actual interval histogram per label per section and ch
 
 At bind time, per layer, deterministic and seeded:
 
+0. **Contour realization** — length-mismatch mode chosen first (`exact`/`phrase`/`tiled`/`unfold`/shape-preserving `resample` with extrema survival — DECISIONS D26), reported in `boundMeta.contourRealization`.
 1. **Horizontal filter** — the role×style grammar (§5) legalizes the contour's intervals: illegal interval → adjust to nearest legal (preserving contour direction), never silently drop the note.
-2. **Vertical snap vs chord** — §6 policy: accents → Safe degrees; weak onsets pass; cadence targets win.
-3. **Vertical interlock vs other layers** — NEW check class, the harmonic sibling of the rhythmic complement score: against all concurrently active labels, enforce the b9 rule (§4.1), low-interval limits (§4.2), sub exclusion (§4.3), lane crossing (§4.4). Violation → revoice/octave-displace (bass octave displacement is always free), retry seeded.
+2. **Vertical snap vs chord** — §6 policy: accents → Safe degrees; weak onsets pass; cadence targets win. **Exception: explicit degree alterations** (`b5`, `#3` — mode-clamped, DECISIONS D26) are *declared color* — exempt from chord-tone snapping; a vertical check must never "correct" them as a snap miss.
+3. **Vertical interlock vs other layers** — NEW check class, the harmonic sibling of the rhythmic complement score: against all concurrently active labels, enforce the b9 rule (§4.1), low-interval limits (§4.2), sub exclusion (§4.3), lane crossing (§4.4). Violation → revoice/octave-displace (bass octave displacement is always free), retry seeded. Declared alterations (step 2 exception) remain *subject to* interlock — but a clash is resolved by revoicing the **other** layer or octave displacement, never by flattening the declared color.
 4. **Profile shaping** — §7 targets bias step-vs-leap choices where the grammar allows either.
 
 Failures at any stage are reported with the rule that fired — same philosophy as containment: never silently "fixed."

@@ -74,6 +74,11 @@ export function chordTones(symbol) {
   return pcs;
 }
 
+/** Quality substring of a chord symbol ("Fm9" -> "m9", "C" -> ""), or null. */
+export function chordQuality(symbol) {
+  return parseSymbol(symbol)?.quality ?? null;
+}
+
 /** Root pitch class (0-11) of a chord symbol, or null. */
 export function chordRootPc(symbol) {
   if (rootCache.has(symbol)) return rootCache.get(symbol);

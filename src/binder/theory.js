@@ -73,12 +73,15 @@ export function degreeToMidi(degree, rootMidi, intervals, altArg = null) {
   return altered < neighbor ? altered : base;
 }
 
+/** pitch class (0-11) -> bare note name, spelled for the key */
+export function pcToNoteName(pc, { flats = true } = {}) {
+  const names = flats ? NOTE_NAMES_FLAT : NOTE_NAMES_SHARP;
+  return names[((pc % 12) + 12) % 12];
+}
+
 /** midi -> note name, flats for flat-ish keys */
 export function midiToNoteName(midi, { flats = true } = {}) {
-  const names = flats ? NOTE_NAMES_FLAT : NOTE_NAMES_SHARP;
-  const pc = ((midi % 12) + 12) % 12;
-  const oct = Math.floor(midi / 12) - 1;
-  return `${names[pc]}${oct}`;
+  return `${pcToNoteName(midi, { flats })}${Math.floor(midi / 12) - 1}`;
 }
 
 /** nearest midi to `midi` whose pitch class is in pcs; tie -> lower (D14) */

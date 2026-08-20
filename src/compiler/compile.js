@@ -12,6 +12,7 @@
 
 import { sectionLayout, resolveSection, identOf, maskString } from './form.js';
 import { voicingRegistration } from '../lib/voicings.js';
+import { resolveHarmony } from '../binder/harmony.js';
 
 const DEFAULT_METER = '4/4';
 
@@ -27,6 +28,19 @@ export function compile(spec, { bindFn = null, transitionFn = null } = {}) {
   const layout = sectionLayout(spec);
   const resolved = {};
   for (const name of Object.keys(spec.sections)) resolved[name] = resolveSection(spec, name);
+  // Library progressions become plain chord symbols HERE, once, against spec.key
+  // (D28). Everything downstream — emission, binding, verification, the edit gate
+  // — sees an ordinary harmony array and needs to know nothing about numerals.
+  const harmonyLibOf = {};
+  for (const [name, s] of Object.entries(resolved)) {
+    try {
+      const { harmony, lib } = resolveHarmony(s.harmony, spec.key);
+      s.harmony = harmony;
+      if (lib) harmonyLibOf[name] = lib;
+    } catch (e) {
+      throw new Error(`section "${name}": ${e.message}`);
+    }
+  }
 
   const L = []; // output lines
   const meta = {
@@ -54,7 +68,8 @@ export function compile(spec, { bindFn = null, transitionFn = null } = {}) {
       contrasts_with: s.contrasts_with ?? null, resolves: s.resolves ?? null,
       recalls: spec.sections[name].recalls ?? null, sets_up: s.sets_up ?? null,
       withhold: spec.sections[name].withhold ?? [],
-      harmony: s.harmony ?? null, ranges: layout.ranges[name] ?? [],
+      harmony: s.harmony ?? null, harmonyLib: harmonyLibOf[name] ?? null,
+      ranges: layout.ranges[name] ?? [],
       cadence: s.cadence ?? null,
     };
   }
@@ -315,6 +330,12 @@ function validateSpec(spec) {
   if (spec.meter && !/^\d+\s*\/\s*\d+$/.test(spec.meter)) throw new Error(`bad meter "${spec.meter}"`);
   for (const [name, s] of Object.entries(spec.sections)) {
     if (!s.recalls && s.bars == null) throw new Error(`section "${name}" needs bars or recalls`);
+    if (s.harmony != null && !Array.isArray(s.harmony)) {
+      if (typeof s.harmony !== 'object' || !s.harmony.lib) {
+        throw new Error(`section "${name}": harmony must be an array of chord symbols or { lib: "<progression>" }`);
+      }
+      if (!spec.key) throw new Error(`section "${name}" uses harmony { lib: "${s.harmony.lib}" }, which needs spec.key to render into (e.g. "C:minor")`);
+    }
     for (const label of Object.keys(s.layers ?? {})) {
       if (!/^[a-z][a-z0-9_]*$/.test(label)) throw new Error(`label "${label}" must be lower_snake (it becomes a Strudel label and JS identifier)`);
     }

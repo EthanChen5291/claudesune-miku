@@ -76,6 +76,13 @@ Edit `src/lib/*.js`. Rules the tests enforce:
   aren't flagged.
 - transitions: `from`/`to` roles, `placement: 'before'|'at'`, a `make(bars)` that
   emits 1.1.0-safe source using ubiquitous sample names only.
+- **progressions are NOT hand-edited**: `src/lib/progressions.js` is generated from
+  `vendor/ldrolez/chords.py` by `node scripts/import-ldrolez.mjs` (D28). It is a
+  ratified:false *candidate pool*, queried with `findProgressions()`; entries are
+  promoted by ear, and that is when a `character` line gets written.
+- chord qualities everywhere use the **ireal dialect** (`sus` not `sus4`, `o`/`o7`
+  not `dim`) — one symbol has to be valid on the harmony timeline AND in a `me_*`
+  voicing shape. Lint fails a symbol that resolves in neither (D28).
 
 Then `npm test` — library invariants are asserted.
 
