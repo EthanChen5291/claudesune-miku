@@ -61,12 +61,23 @@ function streamDiff(before = [], after = []) {
   const timeB = sorted(after.map((e) => String(e.t)));
   const seqOf = (evs, f) => evs.map(f); // already time-ordered
   const eq = (a, b) => a.length === b.length && a.every((x, i) => x === b[i]);
+  // palette = the SET of distinct values an aspect uses; when timing legitimately
+  // changes, sequence lengths shift structurally, so aspect violations are judged
+  // by whether NEW values appear (paletteGrew), not by sequence identity.
+  const palette = (evs, f) => new Set(evs.map(f));
+  const grew = (f) => {
+    const a = palette(before, f); const b = palette(after, f);
+    return [...b].some((x) => !a.has(x));
+  };
   return {
     changed,
     timeChanged: !eq(timeA, timeB),
     pitchChanged: !eq(seqOf(before, (e) => String(e.pitch ?? e.drumNote ?? '')), seqOf(after, (e) => String(e.pitch ?? e.drumNote ?? ''))),
     velChanged: !eq(seqOf(before, (e) => String(e.vel)), seqOf(after, (e) => String(e.vel))),
     soundChanged: !eq(seqOf(before, (e) => String(e.sound ?? '')), seqOf(after, (e) => String(e.sound ?? ''))),
+    pitchPaletteGrew: grew((e) => String(e.pitch ?? e.drumNote ?? '')),
+    velPaletteGrew: grew((e) => String(e.vel)),
+    soundPaletteGrew: grew((e) => String(e.sound ?? '')),
     changedFraction: fullA.length || fullB.length
       ? round(1 - intersectCount(fullA, fullB) / Math.max(fullA.length, fullB.length)) : 0,
   };
@@ -247,10 +258,13 @@ async function scoreReplicate(arm, c, rep) {
     for (const chg of changed) {
       if (leaks.includes(chg)) continue;
       if (locked.time && chg.timeChanged) aspectViolations.push(`${chg.name}: time`);
-      if (locked.pitch && chg.pitchChanged) aspectViolations.push(`${chg.name}: pitch`);
-      if (locked.gain && chg.velChanged) aspectViolations.push(`${chg.name}: gain`);
+      // when timing changed LEGITIMATELY, sequence lengths shift structurally in
+      // every aspect — judge locked aspects by palette growth instead (uniform rule)
+      const timeMoved = chg.timeChanged && !locked.time;
+      if (locked.pitch && (timeMoved ? chg.pitchPaletteGrew : chg.pitchChanged)) aspectViolations.push(`${chg.name}: pitch`);
+      if (locked.gain && (timeMoved ? chg.velPaletteGrew : chg.velChanged)) aspectViolations.push(`${chg.name}: gain`);
       // sound aspect not observable in MIDI (lives in the synth), so only judge for strudel arms
-      if (locked.sound && arm !== 'b0' && chg.soundChanged) aspectViolations.push(`${chg.name}: sound`);
+      if (locked.sound && arm !== 'b0' && (timeMoved ? chg.soundPaletteGrew : chg.soundChanged)) aspectViolations.push(`${chg.name}: sound`);
     }
     rec.status = 'scored';
     rec.changedStreams = changed.map((x) => x.name);

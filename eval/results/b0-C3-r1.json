@@ -20,13 +20,11 @@
         "electric_piano",
         "upright_bass"
       ],
-      "leaks": [
-        "upright_bass"
-      ],
-      "contained": false,
+      "leaks": [],
+      "contained": true,
       "noop": false,
       "aspectViolations": [],
-      "minimality": 0.6719,
+      "minimality": 0.8125,
       "effect": {
         "metric": "harmonic changes/bar",
         "before": 7.8125,

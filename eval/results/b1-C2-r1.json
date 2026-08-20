@@ -41,10 +41,7 @@
       "leaks": [],
       "contained": true,
       "noop": false,
-      "aspectViolations": [
-        "lead: gain",
-        "lead: sound"
-      ],
+      "aspectViolations": [],
       "minimality": 0.2264,
       "effect": {
         "metric": "lead density/bar",

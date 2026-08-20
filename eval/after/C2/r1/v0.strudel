@@ -1,0 +1,90 @@
+// ============ copper-aksak ============
+// compiled by motif-engine (seed 20260819) — edit map in the song's meta.json
+// form: A B C A | 7/8 | 140 bpm | key D:dorian
+setcpm(140/7)
+
+let key = "D:dorian"
+
+// ---- form masks (compiled from form: A B C A; edit the SPEC, not these) ----
+let form = {
+  A: "<1!8 0!16 1!8>",
+  B: "<0!8 1!8 0!16>",
+  C: "<0!16 1!8 0!8>",
+}
+
+// ---- voicing shapes (library: src/lib/voicings.js) ----
+addVoicings('me_cluster_upper', { '6': ['7 9 14'], '7': ['7 10 14'], '': ['7 11 14'], 'm': ['7 10 14'], '^7': ['7 11 14'], 'm7': ['7 10 14'], 'm9': ['10 14 15'], 'sus4': ['5 7 12'], 'dim': ['6 9 12'], 'o': ['6 9 12'] }, ['C4', 'C6'])
+addVoicings('me_quartal_9', { '6': ['2 7 12'], '7': ['4 9 14'], '': ['0 7 14'], 'm': ['0 5 12'], '^7': ['4 9 14'], 'm7': ['0 5 10 15'], 'm9': ['2 7 12 17'], 'sus4': ['0 5 12'], 'dim': ['0 3 6'], 'o': ['0 3 6 9'] }, ['C3', 'C6'])
+addVoicings('me_shell_37', { '6': ['4 9'], '7': ['4 10'], '': ['4 7'], 'm': ['3 7'], '^7': ['4 11'], 'm7': ['3 10'], 'm9': ['3 10 14'], 'sus4': ['5 7'], 'dim': ['3 6'], 'o': ['3 6'] }, ['C3', 'C5'])
+
+// ---- harmony ----
+let harmony_A = chord("<Dm7 G7>/4").dict('ireal')
+let harmony_B = chord("<Dm7 F^7 G7 Am7>/2").dict('ireal')
+let harmony_C = chord("<Em7 Am7>/4").dict('ireal')
+let chords = stack(
+  harmony_A.mask(form.A),
+  harmony_B.mask(form.B),
+  harmony_C.mask(form.C),
+)
+
+// ---- material: kick ----
+let kick_A = s("bd ~ bd ~ bd ~@2").gain("1@2 0.88@2 0.94@3")
+let kick_B = s("bd ~ bd ~ bd ~@2").gain("1@2 0.88@2 0.94@3")
+let kick_C = s("bd ~ bd ~ bd ~@2").gain("0.55@2 0.49@2 0.52@3")
+
+// ---- material: hats ----
+let hats_A = s("hh hh hh hh hh hh hh").gain("0.75 0.45 0.64 0.46 0.68 0.48 0.54")
+let hats_B = s("hh hh hh hh hh hh hh").gain("1 0.64 0.87 0.65 0.91 0.67 0.75")
+let hats_C = s("hh hh hh hh hh hh hh").gain("0.45 0.25 0.38 0.26 0.4 0.27 0.31")
+
+// ---- material: bass ----
+let bass_A = note("<[D2@3 A2 D2@3 A2@2 F2@2 D2@3] [D2@3 A2 D2@3 A2@2 F2@2 D2@3] [D2@3 A2 D2@3 A2@2 F2@2 D2@3] [D2@3 A2 D2@3 A2@2 F2@2 D2@3] [D2@3 A2 D2@3 A2@2 F2@2 D2@3] [D2@3 A2 D2@3 A2@2 F2@2 D2@3] [D2@3 A2 D2@3 A2@2 F2@2 D2@3] [D2@3 A2 D2@3 A2@2 F2@2 D2@3]>").s("sawtooth").gain("1@3 0.68 0.87@3 0.94@2 0.71@2 0.82@3").lpf(650)
+let bass_B = note("<[D2@3 A2 D2@3 A2@2 F2@2 D2@3] [D2@3 A2 D2@3 A2@2 F2@2 D2@3] [D2@3 A2 D2@3 A2@2 F2@2 D2@3] [D2@3 A2 D2@3 A2@2 F2@2 D2@3] [D2@3 A2 D2@3 A2@2 F2@2 D2@3] [D2@3 A2 D2@3 A2@2 F2@2 D2@3] [D2@3 A2 D2@3 A2@2 F2@2 D2@3] [D2@3 A2 D2@3 A2@2 F2@2 D2@3]>").s("sawtooth").gain("1@3 0.68 0.87@3 0.94@2 0.71@2 0.82@3").lpf(900)
+
+// ---- material: keys ----
+let keys_A = chords.dict('me_shell_37').voicing().struct("x ~ ~ ~ x ~ ~").s("square").lpf(1000).room(0.3).gain(".48 .4").orbit(6)
+let keys_B = chords.dict('me_quartal_9').voicing().struct("x ~ x ~ x ~ ~").s("square").lpf(1400).room(0.3).gain(".55 .46 .5").orbit(6)
+let keys_C = chords.dict('me_cluster_upper').voicing().s("square").lpf(850).room(0.55).gain(0.5).attack(0.3).orbit(6)
+
+// ---- material: lead ----
+let lead_A = note("<[~ D4@4 F4@4 G4@4 B4] [~ C5@4 B4@4 G4@4 F4] [~ D4@4 F4@4 G4@4 B4] [~ C5@4 B4@4 G4@4 F4] [~ D4@4 F4@4 G4@4 B4] [~ B4@4 B4@4 G4@4 F4] [~ D4@4 F4@4 G4@4 B4] [~ B4@4 B4@4 G4@4 D4]>").s("triangle").gain("0.82 0.82@4 0.75@4 0.88@4 0.78").delay(0.25).room(0.3).orbit(7)
+let lead_B = note("<[D5@3 F5 G5@3 C6@2 C6@2 C6@3] [G5@3 F5 D5@3 F5@2 G5@2 C6@3] [C6@3 B5 G5@3 F5@2 D5@2 F5@3] [G5@3 B5 C6@3 C6@2 G5@2 F5@3] [D5@3 F5 G5@3 B5@2 C6@2 B5@3] [G5@3 F5 D5@3 F5@2 G5@2 B5@3] [C6@3 B5 G5@3 E5@2 D5@2 E5@3] [G5@3 B5 C6@3 B5@2 G5@2 D5@3]>").s("triangle").gain("1@3 0.68 0.87@3 0.94@2 0.71@2 0.82@3").delay(0.3).room(0.35).orbit(7)
+let lead_C = note("<[~ D5@4 B4@4 A4@4 F4] [~ E4@4 F4@4 A4@4 B4] [~ D5@4 B4@4 A4@4 F4] [~ E4@4 F4@4 A4@4 B4] [~ D5@4 B4@4 A4@4 F4] [~ E4@4 F4@4 A4@4 B4] [~ D5@4 B4@4 A4@4 F4] [~ E4@4 F4@4 A4@4 B4]>").s("triangle").gain("0.82 0.82@4 0.75@4 0.88@4 0.78").delay(0.35).room(0.5).orbit(7)
+
+// ---- material: perc ----
+let perc_B = s("~ rim ~@3 rim ~@3 rim ~@3 rim").gain("0.59 0.59@4 0.55@4 0.63@4 0.56")
+
+// ---- transition: impact_boom: B -> C @ cycles 16-17 ----
+let impact_C2 = s("bd, oh").speed("0.6, 0.45").gain("0.95, 0.6").room(0.5)
+
+// ---- transition: fill_tom_run: C -> A @ cycles 23-24 ----
+let fill_A3 = s("[ht ht] [mt mt] [lt lt] [sd sd]").gain(saw.range(0.55, 0.95)).speed("1 1 1 1.02")
+
+// ---- layers ----
+kick: stack(
+  kick_A.mask(form.A),
+  kick_B.mask(form.B),
+  kick_C.mask(form.C),
+)
+hats: stack(
+  hats_A.mask(form.A),
+  hats_B.mask(form.B),
+  hats_C.mask(form.C),
+)
+bass: stack(
+  bass_A.mask(form.A),
+  bass_B.mask(form.B),
+)
+keys: stack(
+  keys_A.mask(form.A),
+  keys_B.mask(form.B),
+  keys_C.mask(form.C),
+)
+lead: stack(
+  lead_A.mask(form.A),
+  lead_B.mask(form.B),
+  lead_C.mask(form.C),
+)
+perc: perc_B.mask(form.B)
+impact: impact_C2.late(16).mask("<0!16 1 0!15>")
+fill: fill_A3.late(23).mask("<0!23 1 0!8>")

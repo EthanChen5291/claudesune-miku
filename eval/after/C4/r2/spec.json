@@ -1,0 +1,233 @@
+{
+  "title": "meridian-arc",
+  "genre": "melodic trance",
+  "form": "A B C B",
+  "meter": "4/4",
+  "bpm": 138,
+  "key": "B:minor",
+  "seed": 20260819,
+  "motifs": {
+    "m1": {
+      "lib": "rise_anthem"
+    }
+  },
+  "sections": {
+    "A": {
+      "role": "verse",
+      "bars": 8,
+      "harmony": [
+        "Bm9",
+        "G^7",
+        "D^7",
+        "A7"
+      ],
+      "harmonicRhythm": 2,
+      "layers": {
+        "kick": {
+          "bind": {
+            "rhythm": "four_floor",
+            "sound": "bd",
+            "fx": ".bank(\"tr909\")"
+          }
+        },
+        "hats": {
+          "bind": {
+            "rhythm": "offbeat_8ths",
+            "sound": "hh",
+            "fx": ".bank(\"tr909\")",
+            "gainRange": [
+              0.3,
+              0.7
+            ]
+          }
+        },
+        "bass": {
+          "bind": {
+            "rhythm": "offbeat_8ths",
+            "contour": "lib:bass_root_five",
+            "octave": 2,
+            "sound": "sawtooth",
+            "fx": ".lpf(500)"
+          }
+        },
+        "pads": {
+          "pattern": "chords.dict('me_drop2').voicing().struct(\"x ~ ~ x ~ ~ x ~\").s(\"sawtooth\").lpf(850).room(0.45).gain(\".45 .38 .42\")"
+        },
+        "arp": {
+          "bind": {
+            "rhythm": "gallop_arp",
+            "contour": "lib:pendulum_fifth",
+            "octave": 4,
+            "sound": "square",
+            "fx": ".lpf(1300).delay(0.2)",
+            "gainRange": [
+              0.3,
+              0.65
+            ]
+          }
+        }
+      }
+    },
+    "B": {
+      "role": "chorus",
+      "bars": 8,
+      "contrasts_with": "A",
+      "resolves": "A",
+      "must": {
+        "density": "> 1.3x A",
+        "register_span": "wider than A"
+      },
+      "harmony": [
+        "G^7",
+        "A7",
+        "Bm9",
+        "F#m7"
+      ],
+      "harmonicRhythm": 2,
+      "layers": {
+        "kick": {
+          "bind": {
+            "rhythm": "four_floor",
+            "sound": "bd",
+            "fx": ".bank(\"tr909\")"
+          }
+        },
+        "hats": {
+          "bind": {
+            "rhythm": "sixteenth_drive",
+            "sound": "hh",
+            "fx": ".bank(\"tr909\")",
+            "gainRange": [
+              0.35,
+              0.85
+            ]
+          }
+        },
+        "clap": {
+          "bind": {
+            "rhythm": "backbeat_ghost",
+            "sound": "cp",
+            "fx": ".bank(\"tr909\").room(0.25)"
+          }
+        },
+        "bass": {
+          "bind": {
+            "rhythm": "offbeat_8ths",
+            "contour": "lib:bass_root_five",
+            "octave": 2,
+            "sound": "sawtooth",
+            "fx": ".lpf(750)"
+          }
+        },
+        "pads": {
+          "pattern": "chords.dict('me_power_sus').voicing().struct(\"x ~ ~ x ~ ~ x ~\").s(\"sawtooth\").lpf(1600).room(0.45).gain(\".58 .5 .54\")"
+        },
+        "arp": {
+          "bind": {
+            "rhythm": "gallop_arp",
+            "contour": "lib:spiral_up",
+            "octave": 4,
+            "sound": "square",
+            "fx": ".lpf(2200).delay(0.2)",
+            "gainRange": [
+              0.4,
+              0.8
+            ]
+          }
+        },
+        "lead": {
+          "bind": {
+            "rhythm": "push_pull_16s",
+            "contour": "m1",
+            "octave": 5,
+            "sound": "sawtooth",
+            "fx": ".lpf(2800).delay(0.25).room(0.35)",
+            "cadence": "tonic"
+          }
+        }
+      }
+    },
+    "C": {
+      "role": "breakdown",
+      "bars": 8,
+      "sets_up": "B",
+      "withhold": [
+        "kick",
+        "bass",
+        "clap"
+      ],
+      "harmony": [
+        "G^7",
+        "F#7"
+      ],
+      "harmonicRhythm": 4,
+      "layers": {
+        "hats": {
+          "bind": {
+            "rhythm": "offbeat_8ths",
+            "sound": "hh",
+            "fx": ".bank(\"tr909\")",
+            "gainRange": [
+              0.12,
+              0.4
+            ]
+          }
+        },
+        "pads": {
+          "pattern": "chords.dict('me_cluster_upper').voicing().s(\"sawtooth\").lpf(650).room(0.7).gain(0.5).attack(0.4)"
+        },
+        "lead": {
+          "bind": {
+            "rhythm": "push_pull_16s",
+            "contour": "m1",
+            "octave": 4,
+            "sound": "triangle",
+            "fx": ".delay(0.4).room(0.6)"
+          }
+        },
+        "arp": {
+          "bind": {
+            "rhythm": "gallop_arp",
+            "contour": "lib:spiral_up",
+            "octave": 3,
+            "sound": "square",
+            "fx": ".lpf(600).room(0.4)",
+            "gainRange": [
+              0.2,
+              0.5
+            ]
+          }
+        }
+      }
+    }
+  },
+  "transitions": [
+    {
+      "use": "riser_hat_swell",
+      "into": "B",
+      "occurrence": 1
+    },
+    {
+      "use": "riser_noise_sweep",
+      "into": "B",
+      "occurrence": "last",
+      "bars": 4
+    },
+    {
+      "use": "fill_snare_roll",
+      "into": "B",
+      "occurrence": 1
+    },
+    {
+      "use": "fill_snare_roll",
+      "into": "B",
+      "occurrence": "last",
+      "bars": 2
+    },
+    {
+      "use": "sub_drop",
+      "into": "B",
+      "occurrence": "last"
+    }
+  ]
+}

@@ -1,0 +1,270 @@
+{
+  "title": "copper-aksak",
+  "genre": "odd-meter instrumental groove",
+  "form": "A B C A",
+  "meter": "7/8",
+  "bpm": 140,
+  "key": "D:dorian",
+  "seed": 20260819,
+  "motifs": {
+    "m1": {
+      "lib": "dorian_lift"
+    }
+  },
+  "sections": {
+    "A": {
+      "role": "verse",
+      "bars": 8,
+      "harmony": [
+        "Dm7",
+        "G7"
+      ],
+      "harmonicRhythm": 4,
+      "layers": {
+        "kick": {
+          "bind": {
+            "rhythm": "seven_pulse_223",
+            "sound": "bd"
+          }
+        },
+        "hats": {
+          "bind": {
+            "rhythm": {
+              "name": "seven_hats_223_shuffled",
+              "onsets": [
+                "0",
+                "3/14",
+                "2/7",
+                "1/2",
+                "4/7",
+                "11/14",
+                "6/7"
+              ],
+              "accents": [
+                1.0,
+                0.4,
+                0.78,
+                0.42,
+                0.85,
+                0.45,
+                0.58
+              ],
+              "meter_class": "7/8",
+              "role": "percussion",
+              "band": "high",
+              "tags": [
+                "hat",
+                "aksak"
+              ]
+            },
+            "sound": "hh",
+            "gainRange": [
+              0.25,
+              0.75
+            ]
+          }
+        },
+        "bass": {
+          "bind": {
+            "rhythm": "seven_syncopated",
+            "contour": "lib:pendulum_fifth",
+            "octave": 2,
+            "sound": "sawtooth",
+            "fx": ".lpf(650)"
+          }
+        },
+        "keys": {
+          "pattern": "chords.dict('me_shell_37').voicing().struct(\"x ~ ~ ~ x ~ ~\").s(\"square\").lpf(1000).room(0.3).gain(\".48 .4\")"
+        },
+        "lead": {
+          "bind": {
+            "rhythm": "seven_offbeat_lift",
+            "contour": "m1",
+            "octave": 4,
+            "sound": "triangle",
+            "fx": ".delay(0.25).room(0.3)",
+            "cadence": "tonic"
+          }
+        }
+      }
+    },
+    "B": {
+      "role": "lift",
+      "bars": 8,
+      "contrasts_with": "A",
+      "must": {
+        "density": "> 1.15x A"
+      },
+      "harmony": [
+        "Dm7",
+        "F^7",
+        "G7",
+        "Am7"
+      ],
+      "harmonicRhythm": 2,
+      "layers": {
+        "kick": {
+          "bind": {
+            "rhythm": "seven_pulse_223",
+            "sound": "bd"
+          }
+        },
+        "hats": {
+          "bind": {
+            "rhythm": {
+              "name": "seven_hats_223_shuffled",
+              "onsets": [
+                "0",
+                "3/14",
+                "2/7",
+                "1/2",
+                "4/7",
+                "11/14",
+                "6/7"
+              ],
+              "accents": [
+                1.0,
+                0.4,
+                0.78,
+                0.42,
+                0.85,
+                0.45,
+                0.58
+              ],
+              "meter_class": "7/8",
+              "role": "percussion",
+              "band": "high",
+              "tags": [
+                "hat",
+                "aksak"
+              ]
+            },
+            "sound": "hh",
+            "gainRange": [
+              0.4,
+              1
+            ]
+          }
+        },
+        "perc": {
+          "bind": {
+            "rhythm": "seven_offbeat_lift",
+            "sound": "rim",
+            "gainRange": [
+              0.3,
+              0.7
+            ]
+          }
+        },
+        "bass": {
+          "bind": {
+            "rhythm": "seven_syncopated",
+            "contour": "lib:pendulum_fifth",
+            "octave": 2,
+            "sound": "sawtooth",
+            "fx": ".lpf(900)"
+          }
+        },
+        "keys": {
+          "pattern": "chords.dict('me_quartal_9').voicing().struct(\"x ~ x ~ x ~ ~\").s(\"square\").lpf(1400).room(0.3).gain(\".55 .46 .5\")"
+        },
+        "lead": {
+          "bind": {
+            "rhythm": "seven_syncopated",
+            "contour": "m1",
+            "octave": 5,
+            "sound": "triangle",
+            "fx": ".delay(0.3).room(0.35)",
+            "cadence": "tonic"
+          }
+        }
+      }
+    },
+    "C": {
+      "role": "bridge",
+      "bars": 8,
+      "sets_up": "A",
+      "withhold": [
+        "bass"
+      ],
+      "harmony": [
+        "Em7",
+        "Am7"
+      ],
+      "harmonicRhythm": 4,
+      "layers": {
+        "kick": {
+          "bind": {
+            "rhythm": "seven_pulse_223",
+            "sound": "bd",
+            "gainRange": [
+              0.2,
+              0.55
+            ]
+          }
+        },
+        "hats": {
+          "bind": {
+            "rhythm": {
+              "name": "seven_hats_223_shuffled",
+              "onsets": [
+                "0",
+                "3/14",
+                "2/7",
+                "1/2",
+                "4/7",
+                "11/14",
+                "6/7"
+              ],
+              "accents": [
+                1.0,
+                0.4,
+                0.78,
+                0.42,
+                0.85,
+                0.45,
+                0.58
+              ],
+              "meter_class": "7/8",
+              "role": "percussion",
+              "band": "high",
+              "tags": [
+                "hat",
+                "aksak"
+              ]
+            },
+            "sound": "hh",
+            "gainRange": [
+              0.12,
+              0.45
+            ]
+          }
+        },
+        "keys": {
+          "pattern": "chords.dict('me_cluster_upper').voicing().s(\"square\").lpf(850).room(0.55).gain(0.5).attack(0.3)"
+        },
+        "lead": {
+          "bind": {
+            "rhythm": "seven_offbeat_lift",
+            "contour": "m1",
+            "transform": "invert",
+            "octave": 5,
+            "sound": "triangle",
+            "fx": ".delay(0.35).room(0.5)"
+          }
+        }
+      }
+    }
+  },
+  "transitions": [
+    {
+      "use": "impact_boom",
+      "into": "C"
+    },
+    {
+      "use": "fill_tom_run",
+      "into": "A",
+      "occurrence": "last"
+    }
+  ]
+}

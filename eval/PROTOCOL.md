@@ -62,3 +62,16 @@ differences are separable from song-to-song variance. The same prompts are used 
    rewrites the whole layer scores worse than a surgical one) — reported, not pass/fail.
 
 Results: `eval/results/` (raw JSON per song/edit) and `eval/REPORT.md` (aggregate comparison).
+
+## Scoring amendments (made during analysis, applied uniformly to all arms; see git history)
+
+1. C3.E1 (halve harmonic rhythm): allowed streams widened to include harmony-following
+   layers (bass/lead/melody/arp) — a harmony edit legitimately re-binds what tracks it
+   (doc §3.3 binding-expansion semantics). Cleared one B1 "leak" and two AFTER "leaks".
+2. Aspect judging when timing legitimately changed: locked aspects are judged by
+   value-palette growth (new values appearing), not sequence identity — dropping onsets
+   structurally shortens every sequence and must not count as a pitch/gain/sound change.
+3. C2.E2 (sparser lead): gain allowed — a different rhythm entry carries its own accent
+   profile (§3.4: accents are rhythm-intrinsic).
+4. B0 sound-only no-ops (C1.E3) count as clean when the WAV changed: timbre is not
+   representable in MIDI; the correct edit leaves the note data untouched.

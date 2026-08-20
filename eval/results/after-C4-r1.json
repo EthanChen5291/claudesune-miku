@@ -1,0 +1,59 @@
+{
+  "arm": "after",
+  "case": "C4",
+  "rep": 1,
+  "versions": 3,
+  "expectedVersions": 3,
+  "v0": {
+    "evalOk": true,
+    "error": null,
+    "streamCount": 11,
+    "drumVelVariance": 0.0443,
+    "meterOffgrid": null
+  },
+  "edits": [
+    {
+      "edit": "E1",
+      "prompt": "Make the transition into the final chorus bigger — a longer riser and a drum fill. Only transition material may change.",
+      "status": "scored",
+      "changedStreams": [
+        "riser:noise",
+        "fill"
+      ],
+      "leaks": [],
+      "contained": true,
+      "noop": false,
+      "aspectViolations": [],
+      "minimality": 1,
+      "effect": {
+        "metric": "transition onsets/bar",
+        "before": 1.5938,
+        "after": 2.1563,
+        "achieved": true
+      }
+    },
+    {
+      "edit": "E2",
+      "prompt": "Change the key from A minor to B minor. All rhythms, contours, and sounds stay exactly the same — pitch transposition only.",
+      "status": "scored",
+      "changedStreams": [
+        "bass",
+        "pads",
+        "arp",
+        "lead"
+      ],
+      "leaks": [],
+      "contained": true,
+      "noop": false,
+      "aspectViolations": [],
+      "minimality": 1,
+      "effect": {
+        "metric": "transposed +2 fraction",
+        "before": null,
+        "after": 0.8867,
+        "achieved": false,
+        "note": "1342 paired pitches"
+      }
+    }
+  ]
+}

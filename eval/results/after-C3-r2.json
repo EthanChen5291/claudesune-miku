@@ -1,0 +1,58 @@
+{
+  "arm": "after",
+  "case": "C3",
+  "rep": 2,
+  "versions": 3,
+  "expectedVersions": 3,
+  "v0": {
+    "evalOk": true,
+    "error": null,
+    "streamCount": 7,
+    "drumVelVariance": 0.0272,
+    "meterOffgrid": null
+  },
+  "edits": [
+    {
+      "edit": "E1",
+      "prompt": "Halve the harmonic rhythm — the chords should change half as often. Nothing else changes.",
+      "status": "scored",
+      "changedStreams": [
+        "bass",
+        "keys",
+        "lead"
+      ],
+      "leaks": [],
+      "contained": true,
+      "noop": false,
+      "aspectViolations": [],
+      "minimality": 0.6277,
+      "effect": {
+        "metric": "harmonic changes/bar",
+        "before": 1,
+        "after": 0.5,
+        "achieved": true
+      }
+    },
+    {
+      "edit": "E2",
+      "prompt": "Give the drums a velocity contour — accents and ghost notes instead of uniform hits. Timing and which drums hit must not change.",
+      "status": "scored",
+      "changedStreams": [
+        "kick",
+        "snare",
+        "hats"
+      ],
+      "leaks": [],
+      "contained": true,
+      "noop": false,
+      "aspectViolations": [],
+      "minimality": 1,
+      "effect": {
+        "metric": "drum vel variance",
+        "before": 0.0272,
+        "after": 0.0376,
+        "achieved": true
+      }
+    }
+  ]
+}

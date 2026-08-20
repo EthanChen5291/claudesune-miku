@@ -1,0 +1,1313 @@
+{
+  "title": "attic-light",
+  "genre": "lo-fi hip-hop",
+  "meter": "4/4",
+  "bpm": 84,
+  "key": "C:minor",
+  "seed": 20260819,
+  "form": "A B A B",
+  "totalCycles": 32,
+  "instances": [
+    {
+      "name": "A",
+      "start": 0,
+      "end": 8
+    },
+    {
+      "name": "B",
+      "start": 8,
+      "end": 16
+    },
+    {
+      "name": "A",
+      "start": 16,
+      "end": 24
+    },
+    {
+      "name": "B",
+      "start": 24,
+      "end": 32
+    }
+  ],
+  "ranges": {
+    "A": [
+      [
+        0,
+        8
+      ],
+      [
+        16,
+        24
+      ]
+    ],
+    "B": [
+      [
+        8,
+        16
+      ],
+      [
+        24,
+        32
+      ]
+    ]
+  },
+  "sections": {
+    "A": {
+      "role": "verse",
+      "bars": 8,
+      "must": null,
+      "contrasts_with": null,
+      "resolves": null,
+      "recalls": null,
+      "sets_up": null,
+      "withhold": [],
+      "harmony": [
+        "Cm9",
+        "Fm9",
+        "Ab^7",
+        "Eb^7"
+      ],
+      "ranges": [
+        [
+          0,
+          8
+        ],
+        [
+          16,
+          24
+        ]
+      ],
+      "cadence": null
+    },
+    "B": {
+      "role": "chorus",
+      "bars": 8,
+      "must": {
+        "density": "> 1.2x A"
+      },
+      "contrasts_with": "A",
+      "resolves": null,
+      "recalls": "A",
+      "sets_up": null,
+      "withhold": [],
+      "harmony": [
+        "Fm9",
+        "Eb^7",
+        "Ab^7",
+        "Cm9"
+      ],
+      "ranges": [
+        [
+          8,
+          16
+        ],
+        [
+          24,
+          32
+        ]
+      ],
+      "cadence": null
+    }
+  },
+  "harmonyBinding": "chords",
+  "bindings": {
+    "harmony_A": {
+      "label": "chords",
+      "sections": [
+        "A"
+      ],
+      "kind": "harmony"
+    },
+    "harmony_B": {
+      "label": "chords",
+      "sections": [
+        "B"
+      ],
+      "kind": "harmony"
+    },
+    "chords": {
+      "label": "(harmony timeline)",
+      "sections": [
+        "A",
+        "B"
+      ],
+      "kind": "harmony-combined"
+    },
+    "kick_A": {
+      "label": "kick",
+      "sections": [
+        "A",
+        "B"
+      ],
+      "kind": "bound",
+      "period": 1
+    },
+    "snare_A": {
+      "label": "snare",
+      "sections": [
+        "A",
+        "B"
+      ],
+      "kind": "bound",
+      "period": 1
+    },
+    "hats_A": {
+      "label": "hats",
+      "sections": [
+        "A",
+        "B"
+      ],
+      "kind": "bound",
+      "period": 1
+    },
+    "bass_A": {
+      "label": "bass",
+      "sections": [
+        "A",
+        "B"
+      ],
+      "kind": "bound",
+      "period": 8
+    },
+    "keys_A": {
+      "label": "keys",
+      "sections": [
+        "A"
+      ],
+      "kind": "free",
+      "period": 1
+    },
+    "keys_B": {
+      "label": "keys",
+      "sections": [
+        "B"
+      ],
+      "kind": "free",
+      "period": 1
+    },
+    "lead_A": {
+      "label": "lead",
+      "sections": [
+        "A"
+      ],
+      "kind": "bound",
+      "period": 8
+    },
+    "lead_B": {
+      "label": "lead",
+      "sections": [
+        "B"
+      ],
+      "kind": "bound",
+      "period": 8
+    },
+    "perc_B": {
+      "label": "perc",
+      "sections": [
+        "B"
+      ],
+      "kind": "bound",
+      "period": 1
+    },
+    "riser_B3": {
+      "label": "riser",
+      "sections": [
+        "B"
+      ],
+      "kind": "transition"
+    },
+    "sweep_A2": {
+      "label": "sweep",
+      "sections": [
+        "A"
+      ],
+      "kind": "transition"
+    }
+  },
+  "labels": {
+    "kick": {
+      "sections": [
+        "A",
+        "B"
+      ],
+      "bindings": {
+        "A": "kick_A",
+        "B": "kick_A"
+      }
+    },
+    "snare": {
+      "sections": [
+        "A",
+        "B"
+      ],
+      "bindings": {
+        "A": "snare_A",
+        "B": "snare_A"
+      }
+    },
+    "hats": {
+      "sections": [
+        "A",
+        "B"
+      ],
+      "bindings": {
+        "A": "hats_A",
+        "B": "hats_A"
+      }
+    },
+    "bass": {
+      "sections": [
+        "A",
+        "B"
+      ],
+      "bindings": {
+        "A": "bass_A",
+        "B": "bass_A"
+      }
+    },
+    "keys": {
+      "sections": [
+        "A",
+        "B"
+      ],
+      "bindings": {
+        "A": "keys_A",
+        "B": "keys_B"
+      }
+    },
+    "lead": {
+      "sections": [
+        "A",
+        "B"
+      ],
+      "bindings": {
+        "A": "lead_A",
+        "B": "lead_B"
+      }
+    },
+    "perc": {
+      "sections": [
+        "B"
+      ],
+      "bindings": {
+        "B": "perc_B"
+      }
+    },
+    "riser": {
+      "sections": [],
+      "bindings": {},
+      "kind": "transition"
+    },
+    "sweep": {
+      "sections": [],
+      "bindings": {},
+      "kind": "transition"
+    }
+  },
+  "motifPlacements": [
+    {
+      "motif": null,
+      "rhythm": "two_step_kick",
+      "archetype": null,
+      "transform": null,
+      "degrees": null,
+      "contourSignsExpected": null,
+      "onsets": [
+        "0/1",
+        "3/8",
+        "5/8"
+      ],
+      "accents": [
+        1,
+        0.65,
+        0.85
+      ],
+      "gains": [
+        0.9,
+        0.9,
+        0.9
+      ],
+      "swing": 0,
+      "period": 1,
+      "notes": null,
+      "cadence": null,
+      "contourLib": null,
+      "role": "percussion",
+      "band": "low",
+      "style": "ukg",
+      "mix": null,
+      "label": "kick",
+      "binding": "kick_A",
+      "sections": [
+        "A",
+        "B"
+      ]
+    },
+    {
+      "motif": null,
+      "rhythm": "backbeat_ghost",
+      "archetype": null,
+      "transform": null,
+      "degrees": null,
+      "contourSignsExpected": null,
+      "onsets": [
+        "1/4",
+        "7/16",
+        "3/4",
+        "15/16"
+      ],
+      "accents": [
+        1,
+        0.35,
+        0.95,
+        0.4
+      ],
+      "gains": [
+        0.7,
+        0.7,
+        0.7,
+        0.7
+      ],
+      "swing": 0,
+      "period": 1,
+      "notes": null,
+      "cadence": null,
+      "contourLib": null,
+      "role": "percussion",
+      "band": "mid",
+      "style": "universal",
+      "mix": null,
+      "label": "snare",
+      "binding": "snare_A",
+      "sections": [
+        "A",
+        "B"
+      ]
+    },
+    {
+      "motif": null,
+      "rhythm": "swung_lofi_hats",
+      "archetype": null,
+      "transform": null,
+      "degrees": null,
+      "contourSignsExpected": null,
+      "onsets": [
+        "0/1",
+        "1/8",
+        "1/4",
+        "3/8",
+        "1/2",
+        "5/8",
+        "3/4",
+        "7/8"
+      ],
+      "accents": [
+        0.9,
+        0.42,
+        0.72,
+        0.46,
+        0.86,
+        0.4,
+        0.72,
+        0.52
+      ],
+      "gains": [
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5
+      ],
+      "swing": 0.55,
+      "period": 1,
+      "notes": null,
+      "cadence": null,
+      "contourLib": null,
+      "role": "percussion",
+      "band": "high",
+      "style": "lofi-hiphop",
+      "mix": null,
+      "label": "hats",
+      "binding": "hats_A",
+      "sections": [
+        "A",
+        "B"
+      ]
+    },
+    {
+      "motif": null,
+      "rhythm": "anticipation_bass",
+      "archetype": null,
+      "transform": null,
+      "degrees": [
+        0,
+        0,
+        4,
+        0
+      ],
+      "contourSignsExpected": [
+        0,
+        1,
+        -1
+      ],
+      "onsets": [
+        "0/1",
+        "7/16",
+        "1/2",
+        "15/16"
+      ],
+      "accents": [
+        0.95,
+        0.6,
+        0.85,
+        0.7
+      ],
+      "gains": [
+        0.97,
+        0.74,
+        0.9,
+        0.81
+      ],
+      "swing": 0,
+      "period": 8,
+      "notes": [
+        {
+          "cycle": 0,
+          "step": 0,
+          "t": "0",
+          "note": "C2",
+          "midi": 36,
+          "accented": true,
+          "degree": 0
+        },
+        {
+          "cycle": 0,
+          "step": 7,
+          "t": "7/16",
+          "note": "C2",
+          "midi": 36,
+          "accented": false,
+          "degree": 0
+        },
+        {
+          "cycle": 0,
+          "step": 8,
+          "t": "1/2",
+          "note": "G2",
+          "midi": 43,
+          "accented": true,
+          "degree": 4
+        },
+        {
+          "cycle": 0,
+          "step": 15,
+          "t": "15/16",
+          "note": "C2",
+          "midi": 36,
+          "accented": true,
+          "degree": 0
+        },
+        {
+          "cycle": 1,
+          "step": 0,
+          "t": "0",
+          "note": "C2",
+          "midi": 36,
+          "accented": true,
+          "degree": 0
+        },
+        {
+          "cycle": 1,
+          "step": 7,
+          "t": "7/16",
+          "note": "C2",
+          "midi": 36,
+          "accented": false,
+          "degree": 0
+        },
+        {
+          "cycle": 1,
+          "step": 8,
+          "t": "1/2",
+          "note": "G2",
+          "midi": 43,
+          "accented": true,
+          "degree": 4
+        },
+        {
+          "cycle": 1,
+          "step": 15,
+          "t": "15/16",
+          "note": "C2",
+          "midi": 36,
+          "accented": true,
+          "degree": 0
+        },
+        {
+          "cycle": 2,
+          "step": 0,
+          "t": "0",
+          "note": "C2",
+          "midi": 36,
+          "accented": true,
+          "degree": 0
+        },
+        {
+          "cycle": 2,
+          "step": 7,
+          "t": "7/16",
+          "note": "C2",
+          "midi": 36,
+          "accented": false,
+          "degree": 0
+        },
+        {
+          "cycle": 2,
+          "step": 8,
+          "t": "1/2",
+          "note": "G2",
+          "midi": 43,
+          "accented": true,
+          "degree": 4
+        },
+        {
+          "cycle": 2,
+          "step": 15,
+          "t": "15/16",
+          "note": "C2",
+          "midi": 36,
+          "accented": true,
+          "degree": 0
+        },
+        {
+          "cycle": 3,
+          "step": 0,
+          "t": "0",
+          "note": "C2",
+          "midi": 36,
+          "accented": true,
+          "degree": 0
+        },
+        {
+          "cycle": 3,
+          "step": 7,
+          "t": "7/16",
+          "note": "C2",
+          "midi": 36,
+          "accented": false,
+          "degree": 0
+        },
+        {
+          "cycle": 3,
+          "step": 8,
+          "t": "1/2",
+          "note": "G2",
+          "midi": 43,
+          "accented": true,
+          "degree": 4
+        },
+        {
+          "cycle": 3,
+          "step": 15,
+          "t": "15/16",
+          "note": "C2",
+          "midi": 36,
+          "accented": true,
+          "degree": 0
+        },
+        {
+          "cycle": 4,
+          "step": 0,
+          "t": "0",
+          "note": "C2",
+          "midi": 36,
+          "accented": true,
+          "degree": 0
+        },
+        {
+          "cycle": 4,
+          "step": 7,
+          "t": "7/16",
+          "note": "C2",
+          "midi": 36,
+          "accented": false,
+          "degree": 0
+        },
+        {
+          "cycle": 4,
+          "step": 8,
+          "t": "1/2",
+          "note": "G2",
+          "midi": 43,
+          "accented": true,
+          "degree": 4
+        },
+        {
+          "cycle": 4,
+          "step": 15,
+          "t": "15/16",
+          "note": "C2",
+          "midi": 36,
+          "accented": true,
+          "degree": 0
+        },
+        {
+          "cycle": 5,
+          "step": 0,
+          "t": "0",
+          "note": "C2",
+          "midi": 36,
+          "accented": true,
+          "degree": 0
+        },
+        {
+          "cycle": 5,
+          "step": 7,
+          "t": "7/16",
+          "note": "C2",
+          "midi": 36,
+          "accented": false,
+          "degree": 0
+        },
+        {
+          "cycle": 5,
+          "step": 8,
+          "t": "1/2",
+          "note": "G2",
+          "midi": 43,
+          "accented": true,
+          "degree": 4
+        },
+        {
+          "cycle": 5,
+          "step": 15,
+          "t": "15/16",
+          "note": "C2",
+          "midi": 36,
+          "accented": true,
+          "degree": 0
+        },
+        {
+          "cycle": 6,
+          "step": 0,
+          "t": "0",
+          "note": "C2",
+          "midi": 36,
+          "accented": true,
+          "degree": 0
+        },
+        {
+          "cycle": 6,
+          "step": 7,
+          "t": "7/16",
+          "note": "C2",
+          "midi": 36,
+          "accented": false,
+          "degree": 0
+        },
+        {
+          "cycle": 6,
+          "step": 8,
+          "t": "1/2",
+          "note": "G2",
+          "midi": 43,
+          "accented": true,
+          "degree": 4
+        },
+        {
+          "cycle": 6,
+          "step": 15,
+          "t": "15/16",
+          "note": "C2",
+          "midi": 36,
+          "accented": true,
+          "degree": 0
+        },
+        {
+          "cycle": 7,
+          "step": 0,
+          "t": "0",
+          "note": "C2",
+          "midi": 36,
+          "accented": true,
+          "degree": 0
+        },
+        {
+          "cycle": 7,
+          "step": 7,
+          "t": "7/16",
+          "note": "C2",
+          "midi": 36,
+          "accented": false,
+          "degree": 0
+        },
+        {
+          "cycle": 7,
+          "step": 8,
+          "t": "1/2",
+          "note": "G2",
+          "midi": 43,
+          "accented": true,
+          "degree": 4
+        },
+        {
+          "cycle": 7,
+          "step": 15,
+          "t": "15/16",
+          "note": "C2",
+          "midi": 36,
+          "accented": true,
+          "degree": 0
+        }
+      ],
+      "cadence": null,
+      "contourLib": "bass_root_five",
+      "role": "bass",
+      "band": "low",
+      "style": "universal",
+      "mix": null,
+      "label": "bass",
+      "binding": "bass_A",
+      "sections": [
+        "A",
+        "B"
+      ]
+    },
+    {
+      "motif": null,
+      "rhythm": "sparse_pedal",
+      "archetype": null,
+      "transform": null,
+      "degrees": [
+        0,
+        3,
+        0,
+        3
+      ],
+      "contourSignsExpected": [
+        1,
+        -1,
+        1
+      ],
+      "onsets": [
+        "0/1",
+        "3/4"
+      ],
+      "accents": [
+        1,
+        0.6
+      ],
+      "gains": [
+        0.7,
+        0.54
+      ],
+      "swing": 0,
+      "period": 8,
+      "notes": [
+        {
+          "cycle": 0,
+          "step": 0,
+          "t": "0",
+          "note": "C4",
+          "midi": 60,
+          "accented": true,
+          "degree": 0
+        },
+        {
+          "cycle": 0,
+          "step": 3,
+          "t": "3/4",
+          "note": "F4",
+          "midi": 65,
+          "accented": false,
+          "degree": 3
+        },
+        {
+          "cycle": 1,
+          "step": 0,
+          "t": "0",
+          "note": "C4",
+          "midi": 60,
+          "accented": true,
+          "degree": 0
+        },
+        {
+          "cycle": 1,
+          "step": 3,
+          "t": "3/4",
+          "note": "F4",
+          "midi": 65,
+          "accented": false,
+          "degree": 3
+        },
+        {
+          "cycle": 2,
+          "step": 0,
+          "t": "0",
+          "note": "C4",
+          "midi": 60,
+          "accented": true,
+          "degree": 0
+        },
+        {
+          "cycle": 2,
+          "step": 3,
+          "t": "3/4",
+          "note": "F4",
+          "midi": 65,
+          "accented": false,
+          "degree": 3
+        },
+        {
+          "cycle": 3,
+          "step": 0,
+          "t": "0",
+          "note": "C4",
+          "midi": 60,
+          "accented": true,
+          "degree": 0
+        },
+        {
+          "cycle": 3,
+          "step": 3,
+          "t": "3/4",
+          "note": "F4",
+          "midi": 65,
+          "accented": false,
+          "degree": 3
+        },
+        {
+          "cycle": 4,
+          "step": 0,
+          "t": "0",
+          "note": "C4",
+          "midi": 60,
+          "accented": true,
+          "degree": 0
+        },
+        {
+          "cycle": 4,
+          "step": 3,
+          "t": "3/4",
+          "note": "F4",
+          "midi": 65,
+          "accented": false,
+          "degree": 3
+        },
+        {
+          "cycle": 5,
+          "step": 0,
+          "t": "0",
+          "note": "C4",
+          "midi": 60,
+          "accented": true,
+          "degree": 0
+        },
+        {
+          "cycle": 5,
+          "step": 3,
+          "t": "3/4",
+          "note": "F4",
+          "midi": 65,
+          "accented": false,
+          "degree": 3
+        },
+        {
+          "cycle": 6,
+          "step": 0,
+          "t": "0",
+          "note": "C4",
+          "midi": 60,
+          "accented": true,
+          "degree": 0
+        },
+        {
+          "cycle": 6,
+          "step": 3,
+          "t": "3/4",
+          "note": "F4",
+          "midi": 65,
+          "accented": false,
+          "degree": 3
+        },
+        {
+          "cycle": 7,
+          "step": 0,
+          "t": "0",
+          "note": "C4",
+          "midi": 60,
+          "accented": true,
+          "degree": 0
+        },
+        {
+          "cycle": 7,
+          "step": 3,
+          "t": "3/4",
+          "note": "F4",
+          "midi": 65,
+          "accented": false,
+          "degree": 3
+        }
+      ],
+      "cadence": null,
+      "contourLib": "minimal_dyad",
+      "role": "bass",
+      "band": "low",
+      "style": "universal",
+      "mix": null,
+      "label": "lead",
+      "binding": "lead_A",
+      "sections": [
+        "A"
+      ]
+    },
+    {
+      "motif": "m1",
+      "rhythm": "tresillo",
+      "archetype": null,
+      "transform": null,
+      "degrees": [
+        4,
+        4,
+        7,
+        4,
+        2,
+        0
+      ],
+      "contourSignsExpected": [
+        0,
+        1,
+        -1,
+        -1,
+        -1
+      ],
+      "onsets": [
+        "0/1",
+        "3/8",
+        "3/4"
+      ],
+      "accents": [
+        1,
+        0.7,
+        0.85
+      ],
+      "gains": [
+        0.8,
+        0.67,
+        0.73
+      ],
+      "swing": 0,
+      "period": 8,
+      "notes": [
+        {
+          "cycle": 0,
+          "step": 0,
+          "t": "0",
+          "note": "G4",
+          "midi": 67,
+          "accented": true,
+          "degree": 4
+        },
+        {
+          "cycle": 0,
+          "step": 3,
+          "t": "3/8",
+          "note": "G4",
+          "midi": 67,
+          "accented": true,
+          "degree": 4
+        },
+        {
+          "cycle": 0,
+          "step": 6,
+          "t": "3/4",
+          "note": "C5",
+          "midi": 72,
+          "accented": true,
+          "degree": 7
+        },
+        {
+          "cycle": 1,
+          "step": 0,
+          "t": "0",
+          "note": "G4",
+          "midi": 67,
+          "accented": true,
+          "degree": 4
+        },
+        {
+          "cycle": 1,
+          "step": 3,
+          "t": "3/8",
+          "note": "Eb4",
+          "midi": 63,
+          "accented": true,
+          "degree": 2
+        },
+        {
+          "cycle": 1,
+          "step": 6,
+          "t": "3/4",
+          "note": "C4",
+          "midi": 60,
+          "accented": true,
+          "degree": 0
+        },
+        {
+          "cycle": 2,
+          "step": 0,
+          "t": "0",
+          "note": "G4",
+          "midi": 67,
+          "accented": true,
+          "degree": 4
+        },
+        {
+          "cycle": 2,
+          "step": 3,
+          "t": "3/8",
+          "note": "G4",
+          "midi": 67,
+          "accented": true,
+          "degree": 4
+        },
+        {
+          "cycle": 2,
+          "step": 6,
+          "t": "3/4",
+          "note": "C5",
+          "midi": 72,
+          "accented": true,
+          "degree": 7
+        },
+        {
+          "cycle": 3,
+          "step": 0,
+          "t": "0",
+          "note": "G4",
+          "midi": 67,
+          "accented": true,
+          "degree": 4
+        },
+        {
+          "cycle": 3,
+          "step": 3,
+          "t": "3/8",
+          "note": "Eb4",
+          "midi": 63,
+          "accented": true,
+          "degree": 2
+        },
+        {
+          "cycle": 3,
+          "step": 6,
+          "t": "3/4",
+          "note": "C4",
+          "midi": 60,
+          "accented": true,
+          "degree": 0
+        },
+        {
+          "cycle": 4,
+          "step": 0,
+          "t": "0",
+          "note": "G4",
+          "midi": 67,
+          "accented": true,
+          "degree": 4
+        },
+        {
+          "cycle": 4,
+          "step": 3,
+          "t": "3/8",
+          "note": "G4",
+          "midi": 67,
+          "accented": true,
+          "degree": 4
+        },
+        {
+          "cycle": 4,
+          "step": 6,
+          "t": "3/4",
+          "note": "C5",
+          "midi": 72,
+          "accented": true,
+          "degree": 7
+        },
+        {
+          "cycle": 5,
+          "step": 0,
+          "t": "0",
+          "note": "G4",
+          "midi": 67,
+          "accented": true,
+          "degree": 4
+        },
+        {
+          "cycle": 5,
+          "step": 3,
+          "t": "3/8",
+          "note": "Eb4",
+          "midi": 63,
+          "accented": true,
+          "degree": 2
+        },
+        {
+          "cycle": 5,
+          "step": 6,
+          "t": "3/4",
+          "note": "C4",
+          "midi": 60,
+          "accented": true,
+          "degree": 0
+        },
+        {
+          "cycle": 6,
+          "step": 0,
+          "t": "0",
+          "note": "G4",
+          "midi": 67,
+          "accented": true,
+          "degree": 4
+        },
+        {
+          "cycle": 6,
+          "step": 3,
+          "t": "3/8",
+          "note": "G4",
+          "midi": 67,
+          "accented": true,
+          "degree": 4
+        },
+        {
+          "cycle": 6,
+          "step": 6,
+          "t": "3/4",
+          "note": "C5",
+          "midi": 72,
+          "accented": true,
+          "degree": 7
+        },
+        {
+          "cycle": 7,
+          "step": 0,
+          "t": "0",
+          "note": "G4",
+          "midi": 67,
+          "accented": true,
+          "degree": 4
+        },
+        {
+          "cycle": 7,
+          "step": 3,
+          "t": "3/8",
+          "note": "Eb4",
+          "midi": 63,
+          "accented": true,
+          "degree": 2
+        },
+        {
+          "cycle": 7,
+          "step": 6,
+          "t": "3/4",
+          "note": "C4",
+          "midi": 60,
+          "accented": true,
+          "degree": 0
+        }
+      ],
+      "cadence": null,
+      "contourLib": "hook_drop",
+      "role": "percussion",
+      "band": "low",
+      "style": "latin",
+      "mix": null,
+      "label": "lead",
+      "binding": "lead_B",
+      "sections": [
+        "B"
+      ]
+    },
+    {
+      "motif": null,
+      "rhythm": "son_clave_3",
+      "archetype": null,
+      "transform": null,
+      "degrees": null,
+      "contourSignsExpected": null,
+      "onsets": [
+        "0/1",
+        "3/16",
+        "3/8",
+        "5/8",
+        "3/4"
+      ],
+      "accents": [
+        1,
+        0.8,
+        0.9,
+        0.7,
+        0.85
+      ],
+      "gains": [
+        0.4,
+        0.4,
+        0.4,
+        0.4,
+        0.4
+      ],
+      "swing": 0,
+      "period": 1,
+      "notes": null,
+      "cadence": null,
+      "contourLib": null,
+      "role": "percussion",
+      "band": "mid",
+      "style": "latin",
+      "mix": null,
+      "label": "perc",
+      "binding": "perc_B",
+      "sections": [
+        "B"
+      ]
+    }
+  ],
+  "styles": null,
+  "orbits": {
+    "keys": 6,
+    "lead": 7
+  },
+  "voicingShapes": [
+    "drop2",
+    "shell_37"
+  ],
+  "transitions": [
+    {
+      "name": "riser_hat_swell",
+      "kind": "riser",
+      "label": "riser",
+      "binding": "riser_B3",
+      "from": "A",
+      "to": "B",
+      "window": [
+        22,
+        24
+      ]
+    },
+    {
+      "name": "sweep_downlifter",
+      "kind": "sweep",
+      "label": "sweep",
+      "binding": "sweep_A2",
+      "from": "B",
+      "to": "A",
+      "window": [
+        16,
+        17
+      ]
+    }
+  ]
+}

@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>undertow-lift v3 — listen</title>
+<style>
+  :root { color-scheme: dark; }
+  body { font: 14px/1.5 -apple-system, system-ui, sans-serif; margin: 0; background: #14141a; color: #e8e8ee; }
+  header { padding: 14px 20px 10px; border-bottom: 1px solid #2b2b36; display: flex; flex-wrap: wrap; gap: 14px; align-items: center; }
+  h1 { font-size: 16px; margin: 0 12px 0 0; }
+  .vswitch button { margin-right: 6px; padding: 6px 14px; border-radius: 6px; border: 1px solid #3a3a4a; background: #1e1e28; color: #cfcfe0; cursor: pointer; font-weight: 600; }
+  .vswitch button.active { background: #4c6ef5; border-color: #4c6ef5; color: #fff; }
+  .mutes { display: flex; flex-wrap: wrap; gap: 4px 12px; padding: 8px 20px; border-bottom: 1px solid #2b2b36; }
+  .mutes label { user-select: none; cursor: pointer; opacity: .9; }
+  .mutes input { accent-color: #4c6ef5; }
+  main { padding: 12px 20px; }
+  #repl { min-height: 420px; }
+  strudel-editor { display: block; }
+  .panel { background: #1b1b24; border: 1px solid #2b2b36; border-radius: 8px; padding: 12px 16px; margin: 14px 0; }
+  .panel h2 { font-size: 13px; text-transform: uppercase; letter-spacing: .08em; color: #9a9ab0; margin: 0 0 8px; }
+  .panel ul { margin: 0; padding-left: 18px; }
+  button.copy { padding: 6px 12px; border-radius: 6px; border: 1px solid #3a3a4a; background: #1e1e28; color: #cfcfe0; cursor: pointer; }
+  a { color: #74a0ff; }
+  .hint { color: #9a9ab0; font-size: 12.5px; }
+</style>
+</head>
+<body>
+<header>
+  <h1>undertow-lift v3</h1>
+  <div class="vswitch" id="vswitch"></div>
+  <span class="hint">switch version or mutes, then hit play in the editor (ctrl+enter updates)</span>
+</header>
+<div class="mutes" id="mutes"></div>
+<main>
+  <div id="repl"></div>
+  <div class="panel" id="listenfor" style="display:none"><h2>What to listen for</h2><ul id="listenforList"></ul></div>
+  <div class="panel">
+    <h2>Paste-ready</h2>
+    <button class="copy" id="copyBtn">Copy current code (with mutes)</button>
+    <a id="ccLink" target="_blank" style="margin-left:12px">open on strudel.cc</a>
+    <div class="hint" style="margin-top:6px">The embedded REPL is pinned to strudel 1.1.0 (same as the engine). strudel.cc runs latest — both play this code.</div>
+  </div>
+</main>
+<script src="https://unpkg.com/@strudel/repl@1.1.0/dist/index.js"></script>
+<script>
+const DATA = {"title":"undertow-lift v3","versions":[{"name":"before (v2)","source":"// ============ undertow-lift ============\n// compiled by motif-engine (seed 20260819) — edit map in the song's meta.json\n// form: A B A' B | 4/4 | 122 bpm | key F:minor\nsetcpm(122/4)\n\nlet key = \"F:minor\"\n\n// ---- form masks (compiled from form: A B A' B; edit the SPEC, not these) ----\nlet form = {\n  A: \"<1!8 0!24>\",\n  B: \"<0!8 1!8 0!8 1!8>\",\n  Ap: \"<0!16 1!8 0!8>\",  // section A'\n}\n\n// ---- voicing shapes (library: src/lib/voicings.js) ----\naddVoicings('me_drop2', { '6': ['-3 0 4 9'], '7': ['-2 0 4 10'], '': ['-5 0 4'], 'm': ['-5 0 3'], '^7': ['-1 0 4 11'], 'm7': ['-2 0 3 10'], 'm9': ['-2 0 3 10 14'], 'sus4': ['-5 0 5'], 'dim': ['-6 0 3'], 'o': ['-6 0 3 9'] }, ['C3', 'C6'])\naddVoicings('me_spread_tenth', { '6': ['0 9 16'], '7': ['0 10 16'], '': ['0 7 16'], 'm': ['0 7 15'], '^7': ['0 11 16'], 'm7': ['0 10 15'], 'm9': ['0 10 15 26'], 'sus4': ['0 7 17'], 'dim': ['0 6 15'], 'o': ['0 6 15'] }, ['C2', 'C6'])\n\n// ---- harmony ----\nlet harmony_A = chord(\"<Fm9 Ab^7 Db^7 C7>/2\").dict('ireal')\nlet harmony_B = chord(\"<Db^7 Bbm9 Fm9 C7>/2\").dict('ireal')\nlet chords = stack(\n  harmony_A.mask(form.A),\n  harmony_B.mask(form.B),\n  harmony_A.mask(form.Ap),\n)\n\n// ---- material: kick ----\nlet kick_A = s(\"bd bd bd bd\").gain(\"1 0.9 0.95 0.9\").bank(\"tr909\")\nlet kick_B = s(\"bd bd bd bd\").gain(\"1 0.9 0.95 0.9\").bank(\"tr909\")\n\n// ---- material: hats ----\nlet hats_A = s(\"hh hh hh hh hh hh hh hh\").gain(\"0.66 0.47 0.59 0.48 0.64 0.46 0.59 0.51\").swingBy(0.55, 4).bank(\"tr909\")\nlet hats_B = s(\"hh hh hh hh hh hh hh hh hh hh hh hh hh hh hh hh\").gain(\"0.9 0.57 0.69 0.57 0.8 0.57 0.69 0.58 0.85 0.57 0.69 0.57 0.8 0.58 0.71 0.6\").bank(\"tr909\")\nlet hats_Ap = s(\"hh hh hh hh hh hh hh hh hh hh hh hh hh hh hh hh\").gain(\"0.8 0.47 0.59 0.47 0.7 0.47 0.59 0.48 0.75 0.47 0.59 0.47 0.7 0.48 0.61 0.5\").bank(\"tr909\")\n\n// ---- material: clap ----\nlet clap_A = s(\"~@4 cp ~@2 cp ~@4 cp ~@2 cp\").gain(\"1@4 1@3 0.58@5 0.97@3 0.61\").bank(\"tr909\").room(0.2).orbit(2)\nlet clap_B = s(\"~@4 cp ~@2 cp ~@4 cp ~@2 cp\").gain(\"1@4 1@3 0.58@5 0.97@3 0.61\").bank(\"tr909\").room(0.25).orbit(2)\nlet clap_Ap = s(\"cp ~@2 cp ~@2 cp ~@3 cp ~ cp ~@3\").gain(\"0.65@3 0.57@3 0.61@4 0.53@2 0.59@4\").bank(\"tr909\").room(0.2).orbit(2)\n\n// ---- material: bass ----\nlet bass_A = note(\"<[F2@7 F2 C3@7 F2] [F2@7 F2 C3@7 F2] [F2@7 F2 C3@7 F2] [F2@7 F2 C3@7 F2] [F2@7 F2 C3@7 F2] [F2@7 F2 C3@7 F2] [E2@7 F2 C3@7 E2] [E2@7 F2 C3@7 E2]>\").s(\"sawtooth\").gain(\"0.97@7 0.74 0.9@7 0.81\").lpf(800)\nlet bass_B = note(\"<[~ F2@2 F2@2 C3@2 F2] [~ F2@2 F2@2 C3@2 F2] [~ F2@2 F2@2 C3@2 F2] [~ F2@2 F2@2 C3@2 F2] [~ F2@2 F2@2 C3@2 F2] [~ F2@2 F2@2 C3@2 F2] [~ E2@2 F2@2 C3@2 F2] [~ E2@2 F2@2 C3@2 F2]>\").s(\"sawtooth\").gain(\"0.84 0.84@2 0.74@2 0.87@2 0.75\").lpf(900)\n\n// ---- material: pads ----\nlet pads_A = chords.dict('me_drop2').voicing().struct(\"x ~ ~ ~ x ~ ~ ~\").s(\"square\").lpf(900).room(0.4).gain(\".5 .44\").orbit(4)\nlet pads_B = chords.dict('me_spread_tenth').voicing().struct(\"x ~ x x ~ x x ~\").s(\"square\").lpf(1400).room(0.4).gain(\".55 .48 .5 .46 .52\").orbit(4)\n\n// ---- material: lead ----\nlet lead_A = note(\"<[F4@3 Ab4@3 G4@4 Bb4@2 Ab4@4] [C5@3 F4@3 Ab4@4 G4@2 Bb4@4] [Ab4@3 C5@3 F4@4 Ab4@2 G4@4] [Bb4@3 Ab4@3 C5@4 F4@2 Ab4@4] [Ab4@3 Bb4@3 Ab4@4 C5@2 F4@4] [Ab4@3 Ab4@3 Bb4@4 Ab4@2 C5@4] [E4@3 G4@3 G4@4 Bb4@2 G4@4] [C5@3 E4@3 G4@4 G4@2 Bb4@4]>\").s(\"triangle\").gain(\"1@3 0.87@3 0.94@4 0.81@2 0.9@4\").delay(0.2).room(0.25).orbit(6)\nlet lead_B = note(\"<[F5@2 Ab5 Bb5 C6@2 Db6 F6 F5@2 Ab5 Bb5 C6@2 Db6 F6] [F5@2 Ab5 Bb5 C6@2 Db6 F6 F5@2 Ab5 Bb5 C6@2 Db6 F6] [F5@2 Ab5 Bb5 C6@2 Db6 F6 F5@2 Ab5 Bb5 C6@2 Db6 F6] [F5@2 Ab5 Bb5 C6@2 Db6 F6 F5@2 Ab5 Bb5 C6@2 Db6 F6] [F5@2 Ab5 Bb5 C6@2 Db6 F6 F5@2 Ab5 Bb5 C6@2 Db6 F6] [F5@2 Ab5 Bb5 C6@2 Db6 F6 F5@2 Ab5 Bb5 C6@2 Db6 F6] [E5@2 Ab5 Bb5 C6@2 Db6 F6 E5@2 Ab5 Bb5 C6@2 Db6 F6] [E5@2 Ab5 Bb5 C6@2 Db6 F6 E5@2 Ab5 Bb5 C6@2 Db6 F6]>\").s(\"triangle\").gain(\"1@2 0.64 0.74 0.9@2 0.64 0.74 0.94@2 0.64 0.74 0.9@2 0.68 0.77\").delay(0.25).room(0.3).orbit(6)\n\n// ---- transition: riser_hat_swell: A -> B @ cycles 6-8 ----\nlet riser_B1 = s(\"hh*16\").gain(saw.range(0.12, 0.72).slow(2)).lpf(saw.range(1500, 9000).slow(2)).pan(0.5)\n\n// ---- transition: riser_hat_swell: A' -> B @ cycles 22-24 ----\nlet riser_B3 = s(\"hh*16\").gain(saw.range(0.12, 0.72).slow(2)).lpf(saw.range(1500, 9000).slow(2)).pan(0.5)\n\n// ---- transition: fill_snare_roll: A' -> B @ cycles 23-24 ----\nlet fill_B3 = s(\"sd*16\").gain(saw.range(0.3, 0.95)).lpf(4000)\n\n// ---- layers ----\nkick: stack(\n  kick_A.mask(form.A),\n  kick_B.mask(form.B),\n  kick_A.mask(form.Ap),\n)\nhats: stack(\n  hats_A.mask(form.A),\n  hats_B.mask(form.B),\n  hats_Ap.mask(form.Ap),\n)\nclap: stack(\n  clap_A.mask(form.A),\n  clap_B.mask(form.B),\n  clap_Ap.mask(form.Ap),\n)\nbass: stack(\n  bass_A.mask(form.A),\n  bass_B.mask(form.B),\n  bass_A.mask(form.Ap),\n)\npads: stack(\n  pads_A.mask(form.A),\n  pads_B.mask(form.B),\n  pads_A.mask(form.Ap),\n)\nlead: stack(\n  lead_A.mask(form.A),\n  lead_B.mask(form.B),\n  lead_A.mask(form.Ap),\n)\nriser: stack(\n  riser_B1.late(6).mask(\"<0!6 1!2 0!24>\"),\n  riser_B3.late(22).mask(\"<0!22 1!2 0!8>\"),\n)\nfill: fill_B3.late(23).mask(\"<0!23 1 0!8>\")\n","note":"pre-edit"},{"name":"after (v3)","source":"// ============ undertow-lift ============\n// compiled by motif-engine (seed 20260819) — edit map in the song's meta.json\n// form: A B A' B | 4/4 | 122 bpm | key F:minor\nsetcpm(122/4)\n\nlet key = \"F:minor\"\n\n// ---- form masks (compiled from form: A B A' B; edit the SPEC, not these) ----\nlet form = {\n  A: \"<1!8 0!24>\",\n  B: \"<0!8 1!8 0!8 1!8>\",\n  Ap: \"<0!16 1!8 0!8>\",  // section A'\n}\n\n// ---- voicing shapes (library: src/lib/voicings.js) ----\naddVoicings('me_drop2', { '6': ['-3 0 4 9'], '7': ['-2 0 4 10'], '': ['-5 0 4'], 'm': ['-5 0 3'], '^7': ['-1 0 4 11'], 'm7': ['-2 0 3 10'], 'm9': ['-2 0 3 10 14'], 'sus4': ['-5 0 5'], 'dim': ['-6 0 3'], 'o': ['-6 0 3 9'] }, ['C3', 'C6'])\naddVoicings('me_spread_tenth', { '6': ['0 9 16'], '7': ['0 10 16'], '': ['0 7 16'], 'm': ['0 7 15'], '^7': ['0 11 16'], 'm7': ['0 10 15'], 'm9': ['0 10 15 26'], 'sus4': ['0 7 17'], 'dim': ['0 6 15'], 'o': ['0 6 15'] }, ['C2', 'C6'])\n\n// ---- harmony ----\nlet harmony_A = chord(\"<Fm9 Ab^7 Db^7 C7>/2\").dict('ireal')\nlet harmony_B = chord(\"<Db^7 Bbm9 Fm9 C7>/2\").dict('ireal')\nlet chords = stack(\n  harmony_A.mask(form.A),\n  harmony_B.mask(form.B),\n  harmony_A.mask(form.Ap),\n)\n\n// ---- material: kick ----\nlet kick_A = s(\"bd bd bd bd\").gain(\"1 0.9 0.95 0.9\").bank(\"tr909\")\nlet kick_B = s(\"bd bd bd bd\").gain(\"1 0.9 0.95 0.9\").bank(\"tr909\")\n\n// ---- material: hats ----\nlet hats_A = s(\"hh hh hh hh hh hh hh hh\").gain(\"0.66 0.47 0.59 0.48 0.64 0.46 0.59 0.51\").swingBy(0.55, 4).bank(\"tr909\")\nlet hats_B = s(\"hh hh hh hh hh hh hh hh hh hh hh hh hh hh hh hh\").gain(\"0.9 0.57 0.69 0.57 0.8 0.57 0.69 0.58 0.85 0.57 0.69 0.57 0.8 0.58 0.71 0.6\").bank(\"tr909\")\nlet hats_Ap = s(\"hh hh hh hh hh hh hh hh hh hh hh hh hh hh hh hh\").gain(\"0.8 0.47 0.59 0.47 0.7 0.47 0.59 0.48 0.75 0.47 0.59 0.47 0.7 0.48 0.61 0.5\").bank(\"tr909\")\n\n// ---- material: clap ----\nlet clap_A = s(\"~@4 cp ~@2 cp ~@4 cp ~@2 cp\").gain(\"1@4 1@3 0.58@5 0.97@3 0.61\").bank(\"tr909\").room(0.2).orbit(2)\nlet clap_B = s(\"~@4 cp ~@2 cp ~@4 cp ~@2 cp\").gain(\"1@4 1@3 0.58@5 0.97@3 0.61\").bank(\"tr909\").room(0.25).orbit(2)\nlet clap_Ap = s(\"cp ~@2 cp ~@2 cp ~@3 cp ~ cp ~@3\").gain(\"0.65@3 0.57@3 0.61@4 0.53@2 0.59@4\").bank(\"tr909\").room(0.2).orbit(2)\n\n// ---- material: bass ----\nlet bass_A = note(\"<[F2@7 F2 C3@7 F2] [F2@7 F2 C3@7 F2] [F2@7 F2 C3@7 F2] [F2@7 F2 C3@7 F2] [F2@7 F2 C3@7 F2] [F2@7 F2 C3@7 F2] [E2@7 F2 C3@7 E2] [E2@7 F2 C3@7 E2]>\").s(\"square\").gain(\"0.97@7 0.74 0.9@7 0.81\").lpf(420)\nlet bass_B = note(\"<[~ F2@2 F2@2 C3@2 F2] [~ F2@2 F2@2 C3@2 F2] [~ F2@2 F2@2 C3@2 F2] [~ F2@2 F2@2 C3@2 F2] [~ F2@2 F2@2 C3@2 F2] [~ F2@2 F2@2 C3@2 F2] [~ E2@2 F2@2 C3@2 F2] [~ E2@2 F2@2 C3@2 F2]>\").s(\"square\").gain(\"0.84 0.84@2 0.74@2 0.87@2 0.75\").lpf(500)\n\n// ---- material: pads ----\nlet pads_A = chords.dict('me_drop2').voicing().struct(\"x ~ ~ ~ x ~ ~ ~\").s(\"square\").lpf(900).room(0.4).gain(\".5 .44\").orbit(4)\nlet pads_B = chords.dict('me_spread_tenth').voicing().struct(\"x ~ x x ~ x x ~\").s(\"square\").lpf(1400).room(0.4).gain(\".55 .48 .5 .46 .52\").orbit(4)\n\n// ---- material: lead ----\nlet lead_A = note(\"<[F4@3 Ab4@3 G4@4 Bb4@2 Ab4@4] [C5@3 F4@3 Ab4@4 G4@2 Bb4@4] [Ab4@3 C5@3 F4@4 Ab4@2 G4@4] [Bb4@3 Ab4@3 C5@4 F4@2 Ab4@4] [Ab4@3 Bb4@3 Ab4@4 C5@2 F4@4] [Ab4@3 Ab4@3 Bb4@4 Ab4@2 C5@4] [E4@3 G4@3 G4@4 Bb4@2 G4@4] [C5@3 E4@3 G4@4 G4@2 Bb4@4]>\").s(\"triangle\").gain(\"1@3 0.87@3 0.94@4 0.81@2 0.9@4\").delay(0.2).room(0.25).orbit(6)\nlet lead_B = note(\"<[F5@2 Ab5 Bb5 C6@2 Db6 F6 F5@2 Ab5 Bb5 C6@2 Db6 F6] [F5@2 Ab5 Bb5 C6@2 Db6 F6 F5@2 Ab5 Bb5 C6@2 Db6 F6] [F5@2 Ab5 Bb5 C6@2 Db6 F6 F5@2 Ab5 Bb5 C6@2 Db6 F6] [F5@2 Ab5 Bb5 C6@2 Db6 F6 F5@2 Ab5 Bb5 C6@2 Db6 F6] [F5@2 Ab5 Bb5 C6@2 Db6 F6 F5@2 Ab5 Bb5 C6@2 Db6 F6] [F5@2 Ab5 Bb5 C6@2 Db6 F6 F5@2 Ab5 Bb5 C6@2 Db6 F6] [E5@2 Ab5 Bb5 C6@2 Db6 F6 E5@2 Ab5 Bb5 C6@2 Db6 F6] [E5@2 Ab5 Bb5 C6@2 Db6 F6 E5@2 Ab5 Bb5 C6@2 Db6 F6]>\").s(\"triangle\").gain(\"1@2 0.64 0.74 0.9@2 0.64 0.74 0.94@2 0.64 0.74 0.9@2 0.68 0.77\").delay(0.25).room(0.3).orbit(6)\n\n// ---- transition: riser_hat_swell: A -> B @ cycles 6-8 ----\nlet riser_B1 = s(\"hh*16\").gain(saw.range(0.12, 0.72).slow(2)).lpf(saw.range(1500, 9000).slow(2)).pan(0.5)\n\n// ---- transition: riser_hat_swell: A' -> B @ cycles 22-24 ----\nlet riser_B3 = s(\"hh*16\").gain(saw.range(0.12, 0.72).slow(2)).lpf(saw.range(1500, 9000).slow(2)).pan(0.5)\n\n// ---- transition: fill_snare_roll: A' -> B @ cycles 23-24 ----\nlet fill_B3 = s(\"sd*16\").gain(saw.range(0.3, 0.95)).lpf(4000)\n\n// ---- layers ----\nkick: stack(\n  kick_A.mask(form.A),\n  kick_B.mask(form.B),\n  kick_A.mask(form.Ap),\n)\nhats: stack(\n  hats_A.mask(form.A),\n  hats_B.mask(form.B),\n  hats_Ap.mask(form.Ap),\n)\nclap: stack(\n  clap_A.mask(form.A),\n  clap_B.mask(form.B),\n  clap_Ap.mask(form.Ap),\n)\nbass: stack(\n  bass_A.mask(form.A),\n  bass_B.mask(form.B),\n  bass_A.mask(form.Ap),\n)\npads: stack(\n  pads_A.mask(form.A),\n  pads_B.mask(form.B),\n  pads_A.mask(form.Ap),\n)\nlead: stack(\n  lead_A.mask(form.A),\n  lead_B.mask(form.B),\n  lead_A.mask(form.Ap),\n)\nriser: stack(\n  riser_B1.late(6).mask(\"<0!6 1!2 0!24>\"),\n  riser_B3.late(22).mask(\"<0!22 1!2 0!8>\"),\n)\nfill: fill_B3.late(23).mask(\"<0!23 1 0!8>\")\n","note":"darker bass: sawtooth -> square, lpf 800/900 -> 420/500 (notes+rhythm locked)"}],"labels":["kick","hats","clap","bass","pads","lead","riser","fill"],"listenFor":["The requested change: darker bass: sawtooth -> square, lpf 800/900 -> 420/500 (notes+rhythm locked)","bass: same notes, same rhythm, new timbre — ONLY the tone color should differ.","Everything else (kick, hats, clap, pads, lead, riser, fill) is bit-identical — if anything sounds different there, that's a bug to report."],"notes":[]};
+let currentVersion = DATA.versions.length - 1;
+const muted = new Set();
+
+function applyMutes(src) {
+  let out = src;
+  for (const label of DATA.labels) {
+    const on = new RegExp('^(\\s*)' + label + ':', 'm');
+    const off = new RegExp('^(\\s*)_' + label + ':', 'm');
+    if (muted.has(label)) out = out.replace(on, '$1_' + label + ':');
+    else out = out.replace(off, '$1' + label + ':');
+  }
+  return out;
+}
+function currentCode() { return applyMutes(DATA.versions[currentVersion].source); }
+function render() {
+  const holder = document.getElementById('repl');
+  holder.innerHTML = '';
+  const el = document.createElement('strudel-editor');
+  el.setAttribute('code', currentCode());
+  holder.appendChild(el);
+  document.querySelectorAll('.vswitch button').forEach((b, i) => b.classList.toggle('active', i === currentVersion));
+  document.getElementById('ccLink').href = 'https://strudel.cc/#' + encodeURIComponent(btoa(unescape(encodeURIComponent(currentCode()))));
+}
+const vs = document.getElementById('vswitch');
+DATA.versions.forEach((v, i) => {
+  const b = document.createElement('button');
+  b.textContent = v.name;
+  b.title = v.note || '';
+  b.onclick = () => { currentVersion = i; render(); };
+  vs.appendChild(b);
+});
+const ms = document.getElementById('mutes');
+DATA.labels.forEach((label) => {
+  const l = document.createElement('label');
+  const c = document.createElement('input');
+  c.type = 'checkbox'; c.checked = true;
+  c.onchange = () => { c.checked ? muted.delete(label) : muted.add(label); render(); };
+  l.appendChild(c); l.appendChild(document.createTextNode(' ' + label));
+  ms.appendChild(l);
+});
+if (DATA.listenFor.length) {
+  document.getElementById('listenfor').style.display = '';
+  const ul = document.getElementById('listenforList');
+  DATA.listenFor.forEach((x) => { const li = document.createElement('li'); li.textContent = x; ul.appendChild(li); });
+}
+document.getElementById('copyBtn').onclick = async () => {
+  await navigator.clipboard.writeText(currentCode());
+  document.getElementById('copyBtn').textContent = 'Copied ✓';
+  setTimeout(() => document.getElementById('copyBtn').textContent = 'Copy current code (with mutes)', 1200);
+};
+render();
+</script>
+</body>
+</html>

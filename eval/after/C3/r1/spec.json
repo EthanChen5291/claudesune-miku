@@ -1,0 +1,142 @@
+{
+  "title": "attic-light",
+  "genre": "lo-fi hip-hop",
+  "form": "A B A B",
+  "meter": "4/4",
+  "bpm": 84,
+  "key": "C:minor",
+  "seed": 20260819,
+  "motifs": {
+    "m1": {
+      "lib": "hook_drop"
+    }
+  },
+  "sections": {
+    "A": {
+      "role": "verse",
+      "bars": 8,
+      "harmony": [
+        "Cm9",
+        "Fm9",
+        "Ab^7",
+        "Eb^7"
+      ],
+      "harmonicRhythm": 2,
+      "layers": {
+        "kick": {
+          "bind": {
+            "rhythm": "two_step_kick",
+            "sound": "bd",
+            "fx": ".bank(\"tr808\")",
+            "gainRange": [
+              0.55,
+              1
+            ]
+          }
+        },
+        "snare": {
+          "bind": {
+            "rhythm": "backbeat_ghost",
+            "sound": "sd",
+            "fx": ".bank(\"tr808\")",
+            "gainRange": [
+              0.25,
+              0.95
+            ]
+          }
+        },
+        "hats": {
+          "bind": {
+            "rhythm": "swung_lofi_hats",
+            "sound": "hh",
+            "fx": ".bank(\"tr808\")",
+            "gainRange": [
+              0.22,
+              0.75
+            ]
+          }
+        },
+        "bass": {
+          "bind": {
+            "rhythm": "anticipation_bass",
+            "contour": "lib:bass_root_five",
+            "octave": 2,
+            "sound": "sawtooth",
+            "fx": ".lpf(350)"
+          }
+        },
+        "keys": {
+          "pattern": "chords.dict('me_shell_37').voicing().struct(\"x ~ ~ x ~ ~ ~ ~\").s(\"square\").lpf(850).room(0.45).gain(\".5 .42 .5 .42\")"
+        },
+        "lead": {
+          "bind": {
+            "rhythm": "sparse_pedal",
+            "contour": "lib:minimal_dyad",
+            "octave": 4,
+            "sound": "triangle",
+            "fx": ".lpf(1400).delay(0.3).room(0.5)",
+            "gainRange": [
+              0.3,
+              0.7
+            ]
+          }
+        }
+      }
+    },
+    "B": {
+      "role": "chorus",
+      "recalls": "A",
+      "contrasts_with": "A",
+      "must": {
+        "density": "> 1.2x A"
+      },
+      "harmony": [
+        "Fm9",
+        "Eb^7",
+        "Ab^7",
+        "Cm9"
+      ],
+      "vary": {
+        "keys": {
+          "pattern": "chords.dict('me_drop2').voicing().struct(\"x ~ x ~ ~ x ~ x\").s(\"square\").lpf(1100).room(0.4).gain(\".5 .42 .46 .4\")"
+        },
+        "lead": {
+          "bind": {
+            "rhythm": "tresillo",
+            "contour": "m1",
+            "octave": 4,
+            "sound": "triangle",
+            "fx": ".lpf(1800).delay(0.35).room(0.4)",
+            "gainRange": [
+              0.35,
+              0.8
+            ]
+          }
+        },
+        "perc": {
+          "bind": {
+            "rhythm": "son_clave_3",
+            "sound": "rim",
+            "fx": ".bank(\"tr808\")",
+            "gainRange": [
+              0.25,
+              0.6
+            ]
+          }
+        }
+      }
+    }
+  },
+  "transitions": [
+    {
+      "use": "riser_hat_swell",
+      "into": "B",
+      "occurrence": "last"
+    },
+    {
+      "use": "sweep_downlifter",
+      "into": "A",
+      "occurrence": 1
+    }
+  ]
+}

@@ -1,4 +1,4 @@
-# §5 Acceptance checklist — run 2026-08-20T00:58
+# §5 Acceptance checklist — run 2026-08-20T01:20
 
 - [x] deterministic test suite green — _45 pass / 0 fail (npm test)_
 - [x] §5(a) scoped edit passes — _test/harness.test.js "ACCEPTANCE (a)"_
@@ -22,6 +22,6 @@
 - [x] SESSIONS.md: the 3 commands — _SESSIONS.md_
 - [x] README: setup + version pin & why + edit workflow + adding entries — _README.md_
 - [x] DECISIONS.md log exists with dated judgment calls — _DECISIONS.md_
-- [ ] **FAIL** eval: three arms with replicates on disk — _eval/_
+- [x] eval: three arms with replicates on disk — _eval/_
 
-**FAILURES PRESENT — see above**
+**ALL CHECKS PASS**

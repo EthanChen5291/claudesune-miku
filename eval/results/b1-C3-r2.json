@@ -21,13 +21,11 @@
         "chords",
         "pad"
       ],
-      "leaks": [
-        "bass"
-      ],
-      "contained": false,
+      "leaks": [],
+      "contained": true,
       "noop": false,
       "aspectViolations": [],
-      "minimality": 0.525,
+      "minimality": 0.75,
       "effect": {
         "metric": "harmonic changes/bar",
         "before": 1,

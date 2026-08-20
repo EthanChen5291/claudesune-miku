@@ -20,13 +20,11 @@
         "e_piano_chords",
         "bass"
       ],
-      "leaks": [
-        "bass"
-      ],
-      "contained": false,
+      "leaks": [],
+      "contained": true,
       "noop": false,
       "aspectViolations": [],
-      "minimality": 0.4506,
+      "minimality": 0.7835,
       "effect": {
         "metric": "harmonic changes/bar",
         "before": 1.0313,

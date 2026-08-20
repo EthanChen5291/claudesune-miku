@@ -4,29 +4,65 @@
     {
       "id": "C1",
       "name": "house-lift",
-      "gen_prompt": "Write a house track in F minor at 122 BPM, form A B A' B with 16-bar sections. B is the chorus: it must lift — noticeably denser and wider in melodic register than A. A' is a varied return of A with busier drums but the same melody. Use separate labeled layers per voice (e.g. kick, hats, snare/clap, bass, chords, lead).",
+      "gen_prompt": "Write a house track in F minor at 122 BPM, form A B A' B with 16-bar sections. B is the chorus: it must lift \u2014 noticeably denser and wider in melodic register than A. A' is a varied return of A with busier drums but the same melody. Use separate labeled layers per voice (e.g. kick, hats, snare/clap, bass, chords, lead).",
       "edits": [
         {
           "id": "E1",
-          "prompt": "Make the hats busier. Only the hats — nothing else may change.",
-          "allowed_streams": ["hat"],
-          "allowed_aspects": ["time", "pitch", "sound", "gain"],
-          "effect": { "stream": "hat", "metric": "onset_density", "direction": "up" }
+          "prompt": "Make the hats busier. Only the hats \u2014 nothing else may change.",
+          "allowed_streams": [
+            "hat"
+          ],
+          "allowed_aspects": [
+            "time",
+            "pitch",
+            "sound",
+            "gain"
+          ],
+          "effect": {
+            "stream": "hat",
+            "metric": "onset_density",
+            "direction": "up"
+          }
         },
         {
           "id": "E2",
-          "prompt": "The chorus should lift more — push its melodic register higher and make it denser. The verse (A sections) must not change at all.",
-          "allowed_streams": ["lead", "melody", "chords", "arp", "pad"],
-          "allowed_sections": ["chorus"],
-          "allowed_aspects": ["time", "pitch", "sound", "gain"],
-          "effect": { "stream": "lead", "metric": "chorus_lift_ratio", "direction": "up" }
+          "prompt": "The chorus should lift more \u2014 push its melodic register higher and make it denser. The verse (A sections) must not change at all.",
+          "allowed_streams": [
+            "lead",
+            "melody",
+            "chords",
+            "arp",
+            "pad"
+          ],
+          "allowed_sections": [
+            "chorus"
+          ],
+          "allowed_aspects": [
+            "time",
+            "pitch",
+            "sound",
+            "gain"
+          ],
+          "effect": {
+            "stream": "lead",
+            "metric": "chorus_lift_ratio",
+            "direction": "up"
+          }
         },
         {
           "id": "E3",
-          "prompt": "Swap the bass sound to something darker. The bass notes and rhythm must not change — sound/timbre only.",
-          "allowed_streams": ["bass"],
-          "allowed_aspects": ["sound"],
-          "effect": { "stream": "bass", "metric": "sound_changed", "direction": "changed" }
+          "prompt": "Swap the bass sound to something darker. The bass notes and rhythm must not change \u2014 sound/timbre only.",
+          "allowed_streams": [
+            "bass"
+          ],
+          "allowed_aspects": [
+            "sound"
+          ],
+          "effect": {
+            "stream": "bass",
+            "metric": "sound_changed",
+            "direction": "changed"
+          }
         }
       ]
     },
@@ -39,17 +75,42 @@
         {
           "id": "E1",
           "prompt": "Add a swing/shuffle feel to the hats only. Nothing else may change.",
-          "allowed_streams": ["hat"],
-          "allowed_aspects": ["time", "gain"],
-          "effect": { "stream": "hat", "metric": "offgrid_fraction", "direction": "up" }
+          "allowed_streams": [
+            "hat"
+          ],
+          "allowed_aspects": [
+            "time",
+            "gain"
+          ],
+          "effect": {
+            "stream": "hat",
+            "metric": "offgrid_fraction",
+            "direction": "up"
+          }
         },
         {
           "id": "E2",
           "prompt": "Make the lead melody sparser, but only in the A sections. B and C must not change.",
-          "allowed_streams": ["lead", "melody"],
-          "allowed_sections": ["A"],
-          "allowed_aspects": ["time", "pitch"],
-          "effect": { "stream": "lead", "metric": "onset_density", "direction": "down", "sections": ["A"] }
+          "allowed_streams": [
+            "lead",
+            "melody"
+          ],
+          "allowed_sections": [
+            "A"
+          ],
+          "allowed_aspects": [
+            "time",
+            "pitch",
+            "gain"
+          ],
+          "effect": {
+            "stream": "lead",
+            "metric": "onset_density",
+            "direction": "down",
+            "sections": [
+              "A"
+            ]
+          }
         }
       ]
     },
@@ -60,17 +121,46 @@
       "edits": [
         {
           "id": "E1",
-          "prompt": "Halve the harmonic rhythm — the chords should change half as often. Nothing else changes.",
-          "allowed_streams": ["chord", "keys", "pad", "piano", "rhodes"],
-          "allowed_aspects": ["time", "pitch"],
-          "effect": { "stream": "chord", "metric": "harmonic_rhythm", "direction": "down" }
+          "prompt": "Halve the harmonic rhythm \u2014 the chords should change half as often. Nothing else changes.",
+          "allowed_streams": [
+            "chord",
+            "keys",
+            "pad",
+            "piano",
+            "rhodes",
+            "bass",
+            "lead",
+            "melody",
+            "arp"
+          ],
+          "allowed_aspects": [
+            "time",
+            "pitch"
+          ],
+          "effect": {
+            "stream": "chord",
+            "metric": "harmonic_rhythm",
+            "direction": "down"
+          }
         },
         {
           "id": "E2",
-          "prompt": "Give the drums a velocity contour — accents and ghost notes instead of uniform hits. Timing and which drums hit must not change.",
-          "allowed_streams": ["drum", "kick", "snare", "hat", "perc"],
-          "allowed_aspects": ["gain"],
-          "effect": { "stream": "drum", "metric": "accent_variance", "direction": "up" }
+          "prompt": "Give the drums a velocity contour \u2014 accents and ghost notes instead of uniform hits. Timing and which drums hit must not change.",
+          "allowed_streams": [
+            "drum",
+            "kick",
+            "snare",
+            "hat",
+            "perc"
+          ],
+          "allowed_aspects": [
+            "gain"
+          ],
+          "effect": {
+            "stream": "drum",
+            "metric": "accent_variance",
+            "direction": "up"
+          }
         }
       ]
     },
@@ -81,17 +171,40 @@
       "edits": [
         {
           "id": "E1",
-          "prompt": "Make the transition into the final chorus bigger — a longer riser and a drum fill. Only transition material may change.",
-          "allowed_streams": ["riser", "fill", "fx", "transition", "sweep"],
-          "allowed_aspects": ["time", "pitch", "sound", "gain"],
-          "effect": { "stream": "riser", "metric": "transition_energy", "direction": "up" }
+          "prompt": "Make the transition into the final chorus bigger \u2014 a longer riser and a drum fill. Only transition material may change.",
+          "allowed_streams": [
+            "riser",
+            "fill",
+            "fx",
+            "transition",
+            "sweep"
+          ],
+          "allowed_aspects": [
+            "time",
+            "pitch",
+            "sound",
+            "gain"
+          ],
+          "effect": {
+            "stream": "riser",
+            "metric": "transition_energy",
+            "direction": "up"
+          }
         },
         {
           "id": "E2",
-          "prompt": "Change the key from A minor to B minor. All rhythms, contours, and sounds stay exactly the same — pitch transposition only.",
-          "allowed_streams": ["*"],
-          "allowed_aspects": ["pitch"],
-          "effect": { "stream": "*", "metric": "transposition", "direction": "up2" }
+          "prompt": "Change the key from A minor to B minor. All rhythms, contours, and sounds stay exactly the same \u2014 pitch transposition only.",
+          "allowed_streams": [
+            "*"
+          ],
+          "allowed_aspects": [
+            "pitch"
+          ],
+          "effect": {
+            "stream": "*",
+            "metric": "transposition",
+            "direction": "up2"
+          }
         }
       ]
     }

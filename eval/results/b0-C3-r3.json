@@ -20,14 +20,10 @@
         "ep_chords",
         "bass"
       ],
-      "leaks": [
-        "bass"
-      ],
-      "contained": false,
+      "leaks": [],
+      "contained": true,
       "noop": false,
-      "aspectViolations": [
-        "ep_chords: gain"
-      ],
+      "aspectViolations": [],
       "minimality": 0.37,
       "effect": {
         "metric": "harmonic changes/bar",

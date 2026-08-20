@@ -43,9 +43,7 @@
       ],
       "contained": false,
       "noop": false,
-      "aspectViolations": [
-        "track3: gain"
-      ],
+      "aspectViolations": [],
       "minimality": null,
       "effect": {
         "metric": "lead density/bar",

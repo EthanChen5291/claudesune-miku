@@ -7,13 +7,13 @@
       "versionsComplete": "12/12",
       "editsScored": 27,
       "editsMissingOrUneval": 0,
-      "contained": 12,
-      "leaks": 11,
+      "contained": 15,
+      "leaks": 8,
       "noops": 4,
-      "aspectViolations": 3,
+      "aspectViolations": 0,
       "effectAchieved": 18,
       "effectFailed": 9,
-      "meanMinimality": 0.6925,
+      "meanMinimality": 0.7188,
       "meanDrumVelVariance": 0.0336
     }
   },
@@ -365,9 +365,7 @@
           ],
           "contained": false,
           "noop": false,
-          "aspectViolations": [
-            "track3: gain"
-          ],
+          "aspectViolations": [],
           "minimality": null,
           "effect": {
             "metric": "lead density/bar",
@@ -423,9 +421,7 @@
           ],
           "contained": false,
           "noop": false,
-          "aspectViolations": [
-            "track4: gain"
-          ],
+          "aspectViolations": [],
           "minimality": null,
           "effect": {
             "metric": "lead density/bar",
@@ -458,13 +454,11 @@
             "electric_piano",
             "upright_bass"
           ],
-          "leaks": [
-            "upright_bass"
-          ],
-          "contained": false,
+          "leaks": [],
+          "contained": true,
           "noop": false,
           "aspectViolations": [],
-          "minimality": 0.6719,
+          "minimality": 0.8125,
           "effect": {
             "metric": "harmonic changes/bar",
             "before": 7.8125,
@@ -517,13 +511,11 @@
             "e_piano_chords",
             "bass"
           ],
-          "leaks": [
-            "bass"
-          ],
-          "contained": false,
+          "leaks": [],
+          "contained": true,
           "noop": false,
           "aspectViolations": [],
-          "minimality": 0.4506,
+          "minimality": 0.7835,
           "effect": {
             "metric": "harmonic changes/bar",
             "before": 1.0313,
@@ -576,14 +568,10 @@
             "ep_chords",
             "bass"
           ],
-          "leaks": [
-            "bass"
-          ],
-          "contained": false,
+          "leaks": [],
+          "contained": true,
           "noop": false,
-          "aspectViolations": [
-            "ep_chords: gain"
-          ],
+          "aspectViolations": [],
           "minimality": 0.37,
           "effect": {
             "metric": "harmonic changes/bar",

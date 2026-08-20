@@ -1,0 +1,188 @@
+{
+  "title": "undertow-lift",
+  "genre": "house",
+  "form": "A B A' B",
+  "meter": "4/4",
+  "bpm": 122,
+  "key": "F:minor",
+  "seed": 20260819,
+  "motifs": {
+    "m1": {
+      "lib": "zigzag_narrow"
+    },
+    "m2": {
+      "lib": "rise_anthem"
+    }
+  },
+  "sections": {
+    "A": {
+      "role": "verse",
+      "bars": 8,
+      "harmony": [
+        "Fm9",
+        "Ab^7",
+        "Db^7",
+        "C7"
+      ],
+      "harmonicRhythm": 2,
+      "layers": {
+        "kick": {
+          "bind": {
+            "rhythm": "four_floor",
+            "sound": "bd",
+            "fx": ".bank(\"tr909\")"
+          }
+        },
+        "hats": {
+          "bind": {
+            "rhythm": "swung_lofi_hats",
+            "sound": "hh",
+            "fx": ".bank(\"tr909\")",
+            "gainRange": [
+              0.3,
+              0.7
+            ]
+          }
+        },
+        "clap": {
+          "bind": {
+            "rhythm": "backbeat_ghost",
+            "sound": "cp",
+            "fx": ".bank(\"tr909\").room(0.2)"
+          }
+        },
+        "bass": {
+          "bind": {
+            "rhythm": "anticipation_bass",
+            "contour": "lib:bass_root_five",
+            "octave": 2,
+            "sound": "square",
+            "fx": ".lpf(420)"
+          }
+        },
+        "pads": {
+          "pattern": "chords.dict('me_drop2').voicing().struct(\"x ~ ~ ~ x ~ ~ ~\").s(\"square\").lpf(900).room(0.4).gain(\".5 .44\")"
+        },
+        "lead": {
+          "bind": {
+            "rhythm": "son_clave_3",
+            "contour": "m1",
+            "octave": 4,
+            "sound": "triangle",
+            "fx": ".delay(0.2).room(0.25)"
+          }
+        }
+      }
+    },
+    "B": {
+      "role": "chorus",
+      "bars": 8,
+      "contrasts_with": "A",
+      "resolves": "A",
+      "must": {
+        "density": "> 1.3x A",
+        "register_span": "wider than A"
+      },
+      "harmony": [
+        "Db^7",
+        "Bbm9",
+        "Fm9",
+        "C7"
+      ],
+      "harmonicRhythm": 2,
+      "layers": {
+        "kick": {
+          "bind": {
+            "rhythm": "four_floor",
+            "sound": "bd",
+            "fx": ".bank(\"tr909\")"
+          }
+        },
+        "hats": {
+          "bind": {
+            "rhythm": "sixteenth_drive",
+            "sound": "hh",
+            "fx": ".bank(\"tr909\")",
+            "gainRange": [
+              0.35,
+              0.9
+            ]
+          }
+        },
+        "clap": {
+          "bind": {
+            "rhythm": "backbeat_ghost",
+            "sound": "cp",
+            "fx": ".bank(\"tr909\").room(0.25)"
+          }
+        },
+        "bass": {
+          "bind": {
+            "rhythm": "offbeat_8ths",
+            "contour": "lib:bass_root_five",
+            "octave": 2,
+            "sound": "square",
+            "fx": ".lpf(500)"
+          }
+        },
+        "pads": {
+          "pattern": "chords.dict('me_spread_tenth').voicing().struct(\"x ~ x x ~ x x ~\").s(\"square\").lpf(1400).room(0.4).gain(\".55 .48 .5 .46 .52\")"
+        },
+        "lead": {
+          "bind": {
+            "rhythm": "gallop_arp",
+            "contour": "m2",
+            "octave": 5,
+            "sound": "triangle",
+            "fx": ".delay(0.25).room(0.3)",
+            "cadence": "tonic"
+          }
+        }
+      }
+    },
+    "A'": {
+      "recalls": "A",
+      "vary": {
+        "hats": {
+          "bind": {
+            "rhythm": "sixteenth_drive",
+            "sound": "hh",
+            "fx": ".bank(\"tr909\")",
+            "gainRange": [
+              0.25,
+              0.8
+            ]
+          }
+        },
+        "clap": {
+          "bind": {
+            "rhythm": "son_clave_3",
+            "sound": "cp",
+            "fx": ".bank(\"tr909\").room(0.2)",
+            "gainRange": [
+              0.25,
+              0.65
+            ]
+          }
+        }
+      }
+    }
+  },
+  "transitions": [
+    {
+      "use": "riser_hat_swell",
+      "into": "B",
+      "occurrence": 1
+    },
+    {
+      "use": "riser_hat_swell",
+      "into": "B",
+      "occurrence": "last"
+    },
+    {
+      "use": "fill_snare_roll",
+      "into": "B",
+      "occurrence": "last"
+    }
+  ]
+}
