@@ -123,7 +123,15 @@ Retrieval prefers co-designed edges within the song's style palette.
 - **Lint rule (mechanical, in verify)**: binding an entry outside the palette fails unless the spec carries an explicit `mix` declaration on that binding. Mixing is never prevented — it is impossible to do *silently*.
 - Mix declarations are graded: `surface` (timbres, grooves, voicings — highly audible) vs `device` (abstract melodic/structural devices — barely detectable, universal anyway). report.md calls out every cross-style use with what to listen for. Policy loosens later from Ethan's accept/reject data, not from guesses.
 
-### A5.5 Entry schema sketch
+### A5.5 Interval grammars (see `interval-grammar.md`)
+A third library layer beside entries and the compatibility graph: **how each role is allowed to move**, per role × style. Key decisions (full mockup in `interval-grammar.md`):
+- **Harmony is a family, not one behavior**: `melody`, `harmony.counter` (independent counter-line, real material), `harmony.parallel` (derived transform — diatonic 3rds/6ths tracking the melody, no entries needed), `harmony.comp`/`inner`/`pad`/`drone`, `support.arp`, `bass.*`.
+- **Bass archetype catalog**: `anchor` (held per chord), `pulse` (repeated root per measure), `pedal` (held across changes), `alternating` (root–5th/octave), `walking`, `riff`, `sub`. Walking/riff are fused bass *melodies*; the other five derive all pitches from harmony at bind time — most bass costs the library nothing.
+- **Universal vertical rules**: the b9 rule (no vertical minor 9th between voices except root→b9 on dominants), low-interval limits (mud check), sub-bass exclusion zone, register lanes.
+- **Vertical interlock**: new binder/verifier check class — the harmonic sibling of the rhythmic complement score, enforced between concurrently active layers.
+- **Per-section interval profiles + variation floor**: each section instance targets an interval histogram (leap ratio, range, chromaticism, repetition), modulated by the energy curve; a `recalls` section must measurably differ in ≥1 dimension or declare `copy: true`.
+
+### A5.6 Entry schema sketch
 ```json
 { "id": "bossa-comp-1", "family": "accompaniment",
   "role": "harmony", "band": "mid", "style": "jazz-bossa",

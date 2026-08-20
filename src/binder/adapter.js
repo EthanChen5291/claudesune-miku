@@ -8,6 +8,7 @@ import { TRANSITIONS, findTransitions } from '../lib/transitions.js';
 import { identOf, maskString } from '../compiler/form.js';
 
 export function resolveRhythm(ref) {
+  if (ref == null) return { entry: null, name: null };
   if (typeof ref === 'object') return { entry: ref, name: ref.name ?? null };
   const name = String(ref).replace(/^lib:/, '');
   const entry = RHYTHMS[name];
@@ -44,10 +45,10 @@ export function resolveContour(ref, spec) {
 export function makeBindFn(spec) {
   return (b, ctx) => {
     let { entry: rhythm, name: rhythmName } = resolveRhythm(b.rhythm);
-    if (b.swing != null) rhythm = { ...rhythm, swing: b.swing };
-    if (b.swingSubdiv != null) rhythm = { ...rhythm, swingSubdiv: b.swingSubdiv };
+    if (rhythm && b.swing != null) rhythm = { ...rhythm, swing: b.swing };
+    if (rhythm && b.swingSubdiv != null) rhythm = { ...rhythm, swingSubdiv: b.swingSubdiv };
     const { entry: contour, name: contourName, motif, baseTransform } = resolveContour(b.contour, spec);
-    if (rhythm.meter_class && rhythm.meter_class !== 'any' && rhythm.meter_class !== ctx.meter) {
+    if (rhythm?.meter_class && rhythm.meter_class !== 'any' && rhythm.meter_class !== ctx.meter) {
       throw new Error(`rhythm "${rhythmName}" is ${rhythm.meter_class} but the song is ${ctx.meter}`);
     }
     const section = ctx.section;
@@ -67,11 +68,20 @@ export function makeBindFn(spec) {
       motifName: motif,
       rhythmName,
       legato: b.legato,
+      archetype: b.archetype ?? null,
     });
     for (const w of warnings) (ctx.warnings ??= []).push(`[bind ${ctx.label}/${ctx.sectionName}] ${w}`);
     return {
       expr, period,
-      boundMeta: { ...boundMeta, contourLib: contourName },
+      boundMeta: {
+        ...boundMeta,
+        contourLib: contourName,
+        // taxonomy + style containment metadata (addendum A5.2/A5.4)
+        role: b.role ?? rhythm?.role ?? (b.archetype ? 'bass' : null),
+        band: b.band ?? rhythm?.band ?? (b.archetype === 'sub' ? 'sub' : null),
+        style: rhythm?.style ?? null,
+        mix: b.mix ?? null, // 'surface' | 'device' — explicit cross-style declaration
+      },
     };
   };
 }

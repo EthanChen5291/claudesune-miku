@@ -51,9 +51,13 @@ test('compile: output evaluates, all labels live, §3.1 layout holds', async () 
     const t = h.whole.begin.valueOf();
     return (t >= 4 && t < 8) || (t >= 12 && t < 16);
   }));
-  // orbit assigned once per label using room/delay
-  assert.equal(meta.orbits.pads, 2);
-  assert.equal((source.match(/\.orbit\(2\)/g) || []).length, 2); // pads_A and pads_B share it
+  // orbit assigned once per label using room/delay, stable under label-set changes (A1.2)
+  const orb = meta.orbits.pads;
+  assert.ok(orb >= 2 && orb <= 9);
+  assert.equal((source.match(new RegExp(`\\.orbit\\(${orb}\\)`, 'g')) || []).length, 2); // pads_A and pads_B share it
+  const withExtra = structuredClone(spec);
+  withExtra.sections.A.layers.zz_extra = { pattern: 's("rim*2").gain(".6 .4").room(.2)' };
+  assert.equal(compile(withExtra).meta.orbits.pads, orb); // adding another fx label must not renumber pads
 });
 
 test('compile: deterministic (same spec -> identical source)', () => {

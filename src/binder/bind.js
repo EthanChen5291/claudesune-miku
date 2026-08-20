@@ -109,9 +109,16 @@ function gridSize(onsets) {
  */
 export function bind(rhythmEntry, contourEntry, harmonyContext, meter = '4/4', opts = {}) {
   const warnings = [];
+  const archetype = opts.archetype ?? null; // bass archetypes (interval-grammar §3): anchor|pulse|pedal|alternating
+  if (archetype && !['anchor', 'pulse', 'pedal', 'alternating'].includes(archetype)) {
+    throw new Error(`unsupported bass archetype "${archetype}" (derived: anchor, pulse, pedal, alternating; walking/riff are fused library entries)`);
+  }
+  if (archetype && !harmonyContext?.harmony?.length) throw new Error(`archetype "${archetype}" needs a harmony context`);
+  if (archetype === 'anchor' && !rhythmEntry) rhythmEntry = { onsets: ['0'], accents: [0.9], name: 'derived:anchor' };
+  if (!rhythmEntry) throw new Error('rhythm entry required (only the anchor archetype derives its own onsets)');
   const r = normalizeRhythm(rhythmEntry);
   const G = gridSize(r.onsets);
-  const melodic = contourEntry != null;
+  const melodic = contourEntry != null || archetype != null;
   const {
     octave = 4, sound = null, fx = '', gainRange = DEFAULT_GAIN_RANGE,
     cadence = null, transform = null, motifName = null, rhythmName = rhythmEntry.name ?? null,
@@ -134,15 +141,17 @@ export function bind(rhythmEntry, contourEntry, harmonyContext, meter = '4/4', o
   const period = melodic && harmony?.length ? harmony.length * barsPerChord : 1;
   const chordOfCycle = (c) => (harmony?.length ? harmony[Math.floor(c / barsPerChord) % harmony.length] : null);
 
-  // degrees (transformed)
+  // degrees (transformed) — archetype binds derive pitches from harmony instead
   let degrees = null;
   let key = null;
   if (melodic) {
     key = parseKey(harmonyContext?.key ?? 'C:major');
-    degrees = applyTransform(contourEntry.degrees, transform, key.intervals.length);
-    if (degrees.length !== steps.length) {
-      // contour and rhythm lengths may differ: cycle the contour across onsets (documented)
-      warnings.push(`contour has ${degrees.length} degrees for ${steps.length} onsets — cycling contour`);
+    if (!archetype) {
+      degrees = applyTransform(contourEntry.degrees, transform, key.intervals.length);
+      if (degrees.length !== steps.length) {
+        // contour and rhythm lengths may differ: cycle the contour across onsets (documented)
+        warnings.push(`contour has ${degrees.length} degrees for ${steps.length} onsets — cycling contour`);
+      }
     }
   }
 
@@ -155,9 +164,22 @@ export function bind(rhythmEntry, contourEntry, harmonyContext, meter = '4/4', o
     const sym = chordOfCycle(c);
     const pcs = sym ? chordTones(sym) : null;
     if (sym && (!pcs || pcs.size === 0)) warnings.push(`unknown chord "${sym}" — no snapping applied in cycle ${c}`);
+    if (archetype === 'anchor' && c % barsPerChord !== 0) { cycles.push(steps.map(() => null)); continue; }
     const notes = [];
     for (let i = 0; i < steps.length; i++) {
       if (!melodic) { notes.push(sound); continue; }
+      if (archetype) {
+        const baseC = noteToMidi('C' + String(octave));
+        const rootSym = archetype === 'pedal' ? harmony[0] : sym;
+        const rootPc = chordRootPc(rootSym) ?? key.rootPc;
+        const rootMidiA = baseC + ((rootPc - baseC % 12) + 12) % 12;
+        let midi = rootMidiA;
+        if (archetype === 'alternating' && i > 0 && i % 2 === 1) midi = rootMidiA + 7; // root–5th; beat 1 = root, non-negotiable
+        const name = midiToNoteName(midi, { flats });
+        notes.push(name);
+        boundNotes.push({ cycle: c, step: steps[i], t: fracStr(steps[i], G), note: name, midi, accented: r.accents[i] >= ACCENT_THRESHOLD, degree: null });
+        continue;
+      }
       // global index: the contour continues ACROSS cycles, so a contour longer
       // than one cycle's onsets unfolds as a multi-cycle phrase instead of truncating
       const deg = degrees[(c * steps.length + i) % degrees.length];
@@ -178,7 +200,7 @@ export function bind(rhythmEntry, contourEntry, harmonyContext, meter = '4/4', o
 
   // token emission with legato (@k extends to next onset)
   const gainVals = r.accents.map((a) => round2(gainRange[0] + a * (gainRange[1] - gainRange[0])));
-  const noteCycles = cycles.map((notes) => tokens(steps, notes, G, { legato }));
+  const noteCycles = cycles.map((notes) => tokens(steps, notes.map((n) => n ?? '~'), G, { legato }));
   const gainCycle = tokens(steps, gainVals.map(String), G, { legato: true, fillLeading: String(gainVals[0]) });
 
   const noteBody = period === 1 ? noteCycles[0] : `<${noteCycles.map((t) => `[${t}]`).join(' ')}>`;
@@ -193,9 +215,10 @@ export function bind(rhythmEntry, contourEntry, harmonyContext, meter = '4/4', o
   const boundMeta = {
     motif: motifName,
     rhythm: rhythmName,
+    archetype,
     transform: transform ?? null,
     degrees: melodic ? degrees : null,
-    contourSignsExpected: melodic ? contourSigns(degrees) : null,
+    contourSignsExpected: melodic && degrees ? contourSigns(degrees) : null,
     onsets: r.onsets.map(([n, d]) => `${n}/${d}`),
     accents: r.accents,
     gains: gainVals,

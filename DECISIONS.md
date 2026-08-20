@@ -141,3 +141,54 @@ A layer covering ≥12 onsets/cycle or the meter's full pulse grid (all 7 pulses
 7/8) is a texture: it SUPPLIES the grid others syncopate against, so complement
 scoring doesn't apply to its pairs (reported as "[texture grid]"). Without this,
 any 16th-hat layer flagged every partner.
+
+## D19. Design-addendum incorporation (2026-08-19, relayed mid-build from the design session)
+design-addendum.md + interval-grammar.md read in full; precedence honored. Status of each
+"affects the base engine now" item:
+- **A1.1 (all edits spec-level)** — CONFLICT with doc.md §3.1's hand-editable file layout
+  and with the CLI's `edit --file` path (used once in the demo session). Resolution
+  pending adjudication: spec-level is now documented as the canonical flow; `--file`
+  retained as a *gated* escape hatch (still passes the same containment) because the
+  eval harness also needs it to score freehand baseline files. Flag to Ethan.
+- **A1.2 (deterministic compiler)** — already held (tested); one hole found and fixed:
+  orbit numbers were assigned by a counter (adding an fx layer could renumber other
+  labels). Now a pure function of the label name. New test asserts one-section spec
+  changes leave every other line byte-identical.
+- **A2 (dimensional containment)** — already built dimensionally (time/pitch/gain/sound
+  ≈ timing/pitch/dynamics/timbre-params). Added the full contract shape: '*' label
+  wildcard + per-label aspect maps ("key change: pitch everywhere, timing nowhere" is
+  now one contract). Also fixed aspect grouping: values are compared as per-strike SETS
+  so chord-size changes read as pitch-only.
+- **A1.3 (arrangement metrics)** — added gwDensity (gain-weighted density) per label and
+  gw_density / active_layers / cross_register_width to the must vocabulary.
+- **A5.2 (role × band, bass first-class)** — role/band/style/provenance added to every
+  rhythm entry. Bass archetypes anchor/pulse/pedal/alternating implemented as DERIVED
+  binds (pitches from harmony, zero library pitch material); walking/riff deferred —
+  they are fused entries that per A6.1 must come through Ethan's audition pipeline.
+- **A5.4 (style containment)** — spec.styles palette + fail-level verify lint; graded
+  mix declarations (surface/device) honored and narrated in the report.
+- **Interval-grammar §4/§8 (vertical interlock)** — implemented verifier-side: b9 rule
+  (with the dominant root→b9 exception), low-interval mud limits, sub-exclusion zone.
+  WARN severity for now because the binder does not yet revoice to satisfy them —
+  flips to FAIL when binder-side revoicing lands (deferred; see D20). It immediately
+  caught real pads/bass m9 clashes in the demo song.
+- **§7 interval profiles** — measured and reported per bound placement (leap_ratio,
+  repetition, range); enforcement deferred pending the addendum's own open question
+  (hard filter vs soft weights).
+
+## D20. Deferred addendum items (deliberately)
+Binder-side horizontal grammar filter + vertical revoicing (§8 steps 1/3), register
+lanes (needs A7 instrument palette), A3 edit planner, A4 energy curves, A6 extraction
+pipeline, A7 palette. Rationale: each is a subsystem, the addendum marks them
+relevant-later, and the eval/acceptance deliverables gate on the base engine.
+
+## D21. Current library entries are UNRATIFIED seeds
+A6.1's non-circularity rule: no entry enters the library without Ethan's ear. Every
+current entry is provenance 'hand-written' by the building LLM and has NOT been
+auditioned. They exist so the engine is testable end-to-end. First audition round
+should keep/kill them like any extracted candidate.
+
+## D22. Baseline eval arms predate the addendum
+B0/B1 were generated against the base doc's prompts before the addendum arrived
+(by design — they're the counterfactual). The AFTER arm runs on the amended engine.
+The addendum does not change any eval case prompt.

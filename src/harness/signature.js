@@ -88,25 +88,34 @@ export function soundOf(value) {
 }
 
 /** Aspect signatures for one label entry.
- *  time  = sorted onset multiset;
- *  pitch/sound/gain = value SEQUENCES in temporal order (t dropped) — so a pure
- *  timing edit (swing) changes only `time`, and a pure sound swap changes only
- *  `sound`, regardless of where onsets sit. */
+ *  time  = sorted DISTINCT onset times (when strikes happen);
+ *  pitch/sound/gain = per-strike value SETS in temporal order (t dropped) — so a
+ *  pure timing edit (swing) changes only `time`; a sound swap only `sound`; and a
+ *  chord growing from 4 to 5 voices at the same strike changes only `pitch`
+ *  (the gain/sound SETS at that strike are unchanged). */
 export function aspectSignatures(entry) {
-  const ordered = [...entry.haps].sort((a, b) => {
-    const d = a.whole.begin.sub(b.whole.begin).valueOf();
-    if (d) return d;
-    return JSON.stringify(canonicalValue(a.value)) < JSON.stringify(canonicalValue(b.value)) ? -1 : 1;
-  });
-  const time = [], pitch = [], sound = [], gain = [];
-  for (const h of ordered) {
-    time.push(frac(h.whole.begin));
-    pitch.push(JSON.stringify(pitchOf(h.value)));
-    sound.push(JSON.stringify(soundOf(h.value)));
-    gain.push(JSON.stringify(gainOf(h.value)));
+  const groups = new Map(); // time fraction string -> haps
+  for (const h of entry.haps) {
+    const t = frac(h.whole.begin);
+    if (!groups.has(t)) groups.set(t, []);
+    groups.get(t).push(h);
   }
-  return { time: time.slice().sort(), pitch, sound, gain };
+  const times = [...groups.keys()].sort((a, b) => cmpFracStr(a, b));
+  const pitch = [], sound = [], gain = [];
+  for (const t of times) {
+    const hs = groups.get(t);
+    pitch.push(JSON.stringify(hs.map((h) => pitchOf(h.value)).sort(cmpAny)));
+    sound.push(JSON.stringify([...new Set(hs.map((h) => JSON.stringify(soundOf(h.value))))].sort()));
+    gain.push(JSON.stringify([...new Set(hs.map((h) => gainOf(h.value)))].sort((a, b) => a - b)));
+  }
+  return { time: times, pitch, sound, gain };
 }
+function cmpFracStr(a, b) {
+  const pa = a.includes('/') ? a.split('/').map(Number) : [Number(a), 1];
+  const pb = b.includes('/') ? b.split('/').map(Number) : [Number(b), 1];
+  return pa[0] * pb[1] - pb[0] * pa[1];
+}
+function cmpAny(a, b) { return (a ?? -1e9) - (b ?? -1e9); }
 
 function arrEq(a, b) {
   return a.length === b.length && a.every((x, i) => x === b[i]);
@@ -203,15 +212,20 @@ export function diffSongs(oldHaps, newHaps) {
  * - allowLabels: labels whose haps may change.
  * - allowBindings: hoisted bindings whose edit legitimizes changes in every label
  *   that (transitively) references them — expanded via static analysis.
- * - allowAspects: optional; when given (e.g. ['sound']), even ALLOWED labels must
- *   keep their other aspect signatures identical (scoped "sound swap" edits).
+ * - allowAspects: optional dimensional contract (addendum A2). Either an array
+ *   (applies to every allowed label) or a per-label object with optional '*'
+ *   default: { lead: ['pitch'], '*': ['gain'] }. Even ALLOWED labels must keep
+ *   their non-contracted aspect signatures identical.
+ * - allowLabels may include '*' — every label is allowed (used with an aspect
+ *   contract, e.g. a key change: pitch may move everywhere, timing nowhere).
  * - allowWindows: optional [[fromCycle, toCycle], ...]; even ALLOWED labels must be
  *   unchanged OUTSIDE these windows (scoped "chorus only, verse untouched" edits).
  *
  * Returns { ok, leaks: [...], allowed: [...], changelog: [lines], diffs }.
  */
 export function containment(oldRes, newRes, { allowLabels = [], allowBindings = [], allowAspects = null, allowWindows = null } = {}) {
-  const allowed = new Set(allowLabels);
+  const allLabels = new Set([...oldRes.haps.keys(), ...newRes.haps.keys()]);
+  const allowed = allowLabels.includes('*') ? new Set(allLabels) : new Set(allowLabels);
   for (const b of allowBindings) {
     for (const res of [oldRes, newRes]) {
       for (const [label, deps] of res.evaluated.labelDeps) {
@@ -219,6 +233,11 @@ export function containment(oldRes, newRes, { allowLabels = [], allowBindings = 
       }
     }
   }
+  const aspectsFor = (label) => {
+    if (!allowAspects) return null;
+    if (Array.isArray(allowAspects)) return allowAspects;
+    return allowAspects[label] ?? allowAspects['*'] ?? null;
+  };
 
   const diffs = diffSongs(oldRes.haps, newRes.haps);
   const leaks = [];
@@ -229,12 +248,13 @@ export function containment(oldRes, newRes, { allowLabels = [], allowBindings = 
       leaks.push({ label: d.label, reason: d.line });
       continue;
     }
-    if (allowAspects && d.kind === 'changed') {
+    const labelAspects = aspectsFor(d.label);
+    if (labelAspects && d.kind === 'changed') {
       const forbidden = Object.entries(d.aspects)
-        .filter(([k, changed]) => changed && k !== 'muted' && !allowAspects.includes(k))
+        .filter(([k, changed]) => changed && k !== 'muted' && !labelAspects.includes(k))
         .map(([k]) => k);
       if (forbidden.length) {
-        leaks.push({ label: d.label, reason: `${d.label}: allowed label but forbidden aspect(s) changed: ${forbidden.join(', ')} (allowed: ${allowAspects.join(', ')})` });
+        leaks.push({ label: d.label, reason: `${d.label}: allowed label but forbidden aspect(s) changed: ${forbidden.join(', ')} (allowed: ${labelAspects.join(', ')})` });
         continue;
       }
     }

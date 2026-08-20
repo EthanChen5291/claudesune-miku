@@ -91,6 +91,7 @@ export function labelMetrics(haps, { from = 0, to = 16, meter = '4/4', ranges = 
   return {
     onsets: hs.length,
     density: round(hs.length / cycles),
+    gwDensity: round(gains.reduce((a, x) => a + x, 0) / cycles), // gain-weighted density (loudness proxy, A1.3)
     registerSpan: midis.length ? Math.max(...midis) - Math.min(...midis) : 0,
     registerCenter: midis.length ? round(midis.reduce((a, x) => a + x, 0) / midis.length) : null,
     registerMax: midis.length ? Math.max(...midis) : null,

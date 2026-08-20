@@ -16,7 +16,9 @@ import { declaredPairsFor } from '../lib/interlocks.js';
 
 const METRIC_KEYS = {
   density: 'density',
-  register_span: 'registerSpan',
+  gw_density: 'gwDensity',            // gain-weighted density (A1.3 — Goodhart-resistant "louder/fuller")
+  register_span: 'registerSpan',      // on the section AGGREGATE this is cross-layer register width (A1.3)
+  cross_register_width: 'registerSpan',
   register_center: 'registerCenter',
   register_max: 'registerMax',
   syncopation: 'syncopation',
@@ -44,7 +46,7 @@ export function parseConstraint(key, raw) {
   const m = /^(>=|<=|>|<|==?)\s*([\d.]+)\s*(x\s+(\S.*))?$/.exec(s);
   if (!m) throw new Error(`unparseable must-constraint "${s}" for "${key}"`);
   const metric = METRIC_KEYS[key] ? key : null;
-  if (!metric && key !== 'harmonic_rhythm') throw new Error(`unknown must metric "${key}" (have: ${Object.keys(METRIC_KEYS).join(', ')}, harmonic_rhythm)`);
+  if (!metric && key !== 'harmonic_rhythm' && key !== 'active_layers') throw new Error(`unknown must metric "${key}" (have: ${Object.keys(METRIC_KEYS).join(', ')}, harmonic_rhythm, active_layers)`);
   return { metric: key, cmp: m[1] === '=' ? '==' : m[1], factor: Number(m[2]), ref: m[4]?.trim() ?? null, raw: s };
 }
 
@@ -72,6 +74,14 @@ function sectionMetric(hapsMap, metricKey, ranges, meter, meta, evaluated) {
   if (metricKey === 'harmonic_rhythm') {
     const chordsHaps = harmonyHaps(evaluated, meta, ranges);
     return harmonicRhythm(chordsHaps, { ranges }).perCycle;
+  }
+  if (metricKey === 'active_layers') { // arrangement metric (A1.3)
+    let n = 0;
+    for (const [, entry] of hapsMap) {
+      if (entry.muted) continue;
+      if (labelMetrics(entry.haps, { ranges, meter }).onsets > 0) n++;
+    }
+    return n;
   }
   const m = labelMetrics(sectionHaps(hapsMap), { ranges, meter });
   return m[METRIC_KEYS[metricKey] ?? metricKey] ?? 0;
@@ -258,6 +268,44 @@ export function runAssertions(evaluated, hapsMap, meta) {
     }
   }
 
+  // ---- style containment (addendum A5.4): bound entries must sit in the palette ----
+  if (meta.styles?.length) {
+    for (const p of meta.motifPlacements ?? []) {
+      if (!p.style || p.style === 'universal') continue;
+      if (meta.styles.includes(p.style)) continue;
+      const ok = p.mix === 'surface' || p.mix === 'device';
+      results.push({
+        family: 'style', name: `${p.label}.style.${p.style}`, pass: ok, severity: 'fail',
+        detail: ok
+          ? `cross-style use of "${p.style}" (${p.rhythm ?? p.contourLib}) declared as mix:${p.mix}${p.mix === 'surface' ? ' — highly audible, listen for the borrowed groove/timbre' : ' — abstract device, barely detectable'}`
+          : `entry "${p.rhythm ?? p.contourLib}" is style "${p.style}" but the palette is [${meta.styles.join(', ')}] — declare "mix": "surface"|"device" on the bind or pick an in-palette entry`,
+      });
+    }
+  }
+
+  // ---- vertical interlock (interval-grammar §4/§8): b9 rule + low-interval limits + sub exclusion ----
+  results.push(...verticalInterlock(hapsMap, meta, timeline));
+
+  // ---- interval profiles (interval-grammar §7): measured per bound melodic placement ----
+  for (const p of meta.motifPlacements ?? []) {
+    if (!p.notes || p.notes.length < 3 || p.archetype) continue;
+    const ordered = [...p.notes].sort((a, b) => a.cycle - b.cycle || cmpFrac(a.t, b.t));
+    let leaps = 0, reps = 0, steps = 0;
+    for (let i = 1; i < ordered.length; i++) {
+      const d = Math.abs(ordered[i].midi - ordered[i - 1].midi);
+      if (d === 0) reps++;
+      else if (d > 2) leaps++;
+      else steps++;
+    }
+    const n = ordered.length - 1;
+    const midis = ordered.map((x) => x.midi);
+    results.push({
+      family: 'motif', name: `${p.label}.${p.motif ?? p.contourLib ?? 'bound'}.interval-profile`,
+      pass: true, severity: 'warn',
+      detail: `leap_ratio ${(leaps / n).toFixed(2)}, repetition ${(reps / n).toFixed(2)}, range ${Math.max(...midis) - Math.min(...midis)} semitones (measured; enforcement pending grammar policy)`,
+    });
+  }
+
   // ---- interlock: complement scores between bound rhythmic layers, per section ----
   const bySection = {};
   for (const p of meta.motifPlacements ?? []) {
@@ -277,6 +325,81 @@ export function runAssertions(evaluated, hapsMap, meta) {
   }
 
   return results;
+}
+
+// Vertical interlock (interval-grammar §4): checks between concurrently sounding
+// voices across ALL layers — the harmonic sibling of the rhythmic complement score.
+//   4.1 b9 rule: no vertical minor-9th (semitone class 1 spanning > an octave)
+//       between voices, except root→b9 on a dominant chord.
+//   4.2 low-interval limits: simple intervals below their mud limit get flagged.
+//   4.3 sub exclusion: when a band:'sub' label sounds, no other pitched voice below E2.
+// Warn-level for now: the binder does not yet revoice to satisfy these (D19) —
+// flips to fail once binder-side revoicing lands.
+const LOW_LIMITS = { 1: 52, 2: 52, 3: 48, 4: 46, 5: 46, 6: 46, 7: 36, 8: 36, 9: 36, 10: 35, 11: 35, 0: 27 };
+function verticalInterlock(hapsMap, meta, timeline) {
+  const events = [];
+  const subLabels = new Set((meta.motifPlacements ?? []).filter((p) => p.band === 'sub').map((p) => p.label));
+  for (const [label, entry] of hapsMap) {
+    if (entry.muted) continue;
+    for (const h of entry.haps) {
+      const p = pitchOf(h.value);
+      if (p == null) continue;
+      events.push({ label, midi: Math.round(p), t0: h.whole.begin.valueOf(), t1: h.whole.end.valueOf() });
+    }
+  }
+  events.sort((a, b) => a.t0 - b.t0);
+  const active = [];
+  const b9hits = [];
+  const mudHits = [];
+  const subHits = [];
+  for (const e of events) {
+    for (let i = active.length - 1; i >= 0; i--) if (active[i].t1 <= e.t0 + 1e-9) active.splice(i, 1);
+    for (const o of active) {
+      if (o.label === e.label) continue;
+      const lo = Math.min(e.midi, o.midi);
+      const hi = Math.max(e.midi, o.midi);
+      const d = hi - lo;
+      if (d % 12 === 1 && d > 12) {
+        const seg = timeline?.length ? chordAt(timeline, e.t0) : null;
+        const isDomRootB9 = seg && /7/.test(seg.symbol) && !/(m7|\^7)/.test(seg.symbol)
+          && lo % 12 === (chordRootPcOf(seg.symbol) ?? -1);
+        if (!isDomRootB9 && b9hits.length < 40) b9hits.push(`${e.label}/${o.label} ${lo}-${hi} @${e.t0.toFixed(2)}`);
+      }
+      if (d > 0 && d <= 12 && lo < (LOW_LIMITS[d % 12] ?? 0)) {
+        if (mudHits.length < 40) mudHits.push(`${e.label}/${o.label} interval ${d} on midi ${lo} @${e.t0.toFixed(2)}`);
+      }
+      if ((subLabels.has(e.label) || subLabels.has(o.label)) && !(subLabels.has(e.label) && subLabels.has(o.label))) {
+        const other = subLabels.has(e.label) ? o : e;
+        if (other.midi < 40 && subHits.length < 40) subHits.push(`${other.label} midi ${other.midi} below E2 while sub active @${e.t0.toFixed(2)}`);
+      }
+    }
+    active.push(e);
+  }
+  const out = [];
+  const item = (name, hits, what) => out.push({
+    family: 'vertical', name, pass: hits.length === 0, severity: 'warn',
+    detail: hits.length ? `${hits.length} ${what}: ${hits.slice(0, 4).join('; ')}${hits.length > 4 ? ` (+${hits.length - 4})` : ''}` : `no ${what}`,
+  });
+  if (events.length) {
+    item('b9-rule', b9hits, 'vertical minor-9th violations');
+    item('low-interval-limits', mudHits, 'muddy low intervals');
+    if (subLabels.size) item('sub-exclusion', subHits, 'voices inside the sub exclusion zone');
+  }
+  return out;
+}
+const rootPcCache = new Map();
+function chordRootPcOf(symbol) {
+  if (!rootPcCache.has(symbol)) {
+    const m = /^([A-G])([#b]?)/.exec(symbol);
+    if (!m) rootPcCache.set(symbol, null);
+    else {
+      let pc = { C: 0, D: 2, E: 4, F: 5, G: 7, A: 9, B: 11 }[m[1]];
+      if (m[2] === '#') pc += 1;
+      if (m[2] === 'b') pc -= 1;
+      rootPcCache.set(symbol, ((pc % 12) + 12) % 12);
+    }
+  }
+  return rootPcCache.get(symbol);
 }
 
 function isDownbeat(h) {

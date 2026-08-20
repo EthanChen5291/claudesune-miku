@@ -45,6 +45,7 @@ export function compile(spec, { bindFn = null, transitionFn = null } = {}) {
     bindings: {},      // bindingName -> { label, sections: [...] }
     labels: {},        // label -> { sections: [...], bindings: {section: bindingName} }
     motifPlacements: [], // filled by bindFn results
+    styles: spec.styles ?? null, // style palette (addendum A5.4)
     orbits: {},
   };
   for (const [name, s] of Object.entries(resolved)) {
@@ -140,7 +141,11 @@ export function compile(spec, { bindFn = null, transitionFn = null } = {}) {
   // ---- section material, grouped per label (one contiguous region per label) ----
   const labels = collectLabels(resolved, layout.order);
   const labelTerms = {}; // label -> [{term}]
-  let orbitCounter = 2; // orbit 1 left for the default; assign 2.. to fx users
+  // Orbit assignment must be a pure function of the label NAME (addendum A1.2:
+  // adding an fx layer elsewhere must not renumber other labels' orbits — byte
+  // identity of untouched sections). Hash the name into 2..9; resolve collisions
+  // by name-sorted probing.
+  const orbitOf = stableOrbits(labels);
   for (const label of labels) {
     L.push(`// ---- material: ${label} ----`);
     const bindingBySection = {};
@@ -158,7 +163,7 @@ export function compile(spec, { bindFn = null, transitionFn = null } = {}) {
           });
           let finalExpr = expr;
           if (/\.(room|delay)\s*\(/.test(expr) && !/\.orbit\s*\(/.test(expr)) {
-            const orb = meta.orbits[label] ?? orbitCounter++;
+            const orb = orbitOf(label);
             finalExpr = `${expr}.orbit(${orb})`;
             meta.orbits[label] = orb;
           }
@@ -279,6 +284,21 @@ function collectLabels(resolved, order) {
 
 function uniqueInOrder(arr) {
   return [...new Set(arr)];
+}
+
+// name -> orbit in [2..9], stable regardless of which other labels exist or use fx
+function stableOrbits(labels) {
+  const assigned = new Map();
+  const taken = new Set();
+  for (const label of [...labels].sort()) {
+    let h = 0;
+    for (const c of label) h = (h * 31 + c.charCodeAt(0)) >>> 0;
+    let orb = 2 + (h % 8);
+    while (taken.has(orb)) orb = 2 + ((orb - 1) % 8);
+    taken.add(orb);
+    assigned.set(label, orb);
+  }
+  return (label) => assigned.get(label) ?? 2;
 }
 
 function validateSpec(spec) {
