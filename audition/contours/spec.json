@@ -1,0 +1,452 @@
+{
+  "title": "contours",
+  "meter": "4/4",
+  "bpm": 112,
+  "key": "C:dorian",
+  "seed": 1,
+  "form": "arch_classic rise_anthem fall_sigh zigzag_narrow pendulum_fifth spiral_up hook_drop valley bass_root_five dorian_lift minimal_dyad question_answer",
+  "sections": {
+    "arch_classic": {
+      "bars": 2,
+      "harmony": [
+        "Cm7"
+      ],
+      "harmonicRhythm": 2,
+      "layers": {
+        "lead": {
+          "bind": {
+            "rhythm": {
+              "name": "even_7",
+              "onsets": [
+                "0/7",
+                "1/7",
+                "2/7",
+                "3/7",
+                "4/7",
+                "5/7",
+                "6/7"
+              ],
+              "accents": [
+                0.68,
+                0.5,
+                0.6,
+                0.5,
+                0.6,
+                0.5,
+                0.6
+              ]
+            },
+            "contour": "lib:arch_classic",
+            "octave": 5,
+            "sound": "triangle",
+            "fx": ".room(0.15)"
+          }
+        }
+      }
+    },
+    "rise_anthem": {
+      "bars": 2,
+      "harmony": [
+        "Cm7"
+      ],
+      "harmonicRhythm": 2,
+      "layers": {
+        "lead": {
+          "bind": {
+            "rhythm": {
+              "name": "even_6",
+              "onsets": [
+                "0/6",
+                "1/6",
+                "2/6",
+                "3/6",
+                "4/6",
+                "5/6"
+              ],
+              "accents": [
+                0.68,
+                0.5,
+                0.6,
+                0.5,
+                0.6,
+                0.5
+              ]
+            },
+            "contour": "lib:rise_anthem",
+            "octave": 5,
+            "sound": "triangle",
+            "fx": ".room(0.15)"
+          }
+        }
+      }
+    },
+    "fall_sigh": {
+      "bars": 2,
+      "harmony": [
+        "Cm7"
+      ],
+      "harmonicRhythm": 2,
+      "layers": {
+        "lead": {
+          "bind": {
+            "rhythm": {
+              "name": "even_6",
+              "onsets": [
+                "0/6",
+                "1/6",
+                "2/6",
+                "3/6",
+                "4/6",
+                "5/6"
+              ],
+              "accents": [
+                0.68,
+                0.5,
+                0.6,
+                0.5,
+                0.6,
+                0.5
+              ]
+            },
+            "contour": "lib:fall_sigh",
+            "octave": 5,
+            "sound": "triangle",
+            "fx": ".room(0.15)"
+          }
+        }
+      }
+    },
+    "zigzag_narrow": {
+      "bars": 2,
+      "harmony": [
+        "Cm7"
+      ],
+      "harmonicRhythm": 2,
+      "layers": {
+        "lead": {
+          "bind": {
+            "rhythm": {
+              "name": "even_6",
+              "onsets": [
+                "0/6",
+                "1/6",
+                "2/6",
+                "3/6",
+                "4/6",
+                "5/6"
+              ],
+              "accents": [
+                0.68,
+                0.5,
+                0.6,
+                0.5,
+                0.6,
+                0.5
+              ]
+            },
+            "contour": "lib:zigzag_narrow",
+            "octave": 5,
+            "sound": "triangle",
+            "fx": ".room(0.15)"
+          }
+        }
+      }
+    },
+    "pendulum_fifth": {
+      "bars": 2,
+      "harmony": [
+        "Cm7"
+      ],
+      "harmonicRhythm": 2,
+      "layers": {
+        "lead": {
+          "bind": {
+            "rhythm": {
+              "name": "even_6",
+              "onsets": [
+                "0/6",
+                "1/6",
+                "2/6",
+                "3/6",
+                "4/6",
+                "5/6"
+              ],
+              "accents": [
+                0.68,
+                0.5,
+                0.6,
+                0.5,
+                0.6,
+                0.5
+              ]
+            },
+            "contour": "lib:pendulum_fifth",
+            "octave": 5,
+            "sound": "triangle",
+            "fx": ".room(0.15)"
+          }
+        }
+      }
+    },
+    "spiral_up": {
+      "bars": 2,
+      "harmony": [
+        "Cm7"
+      ],
+      "harmonicRhythm": 2,
+      "layers": {
+        "lead": {
+          "bind": {
+            "rhythm": {
+              "name": "even_8",
+              "onsets": [
+                "0/8",
+                "1/8",
+                "2/8",
+                "3/8",
+                "4/8",
+                "5/8",
+                "6/8",
+                "7/8"
+              ],
+              "accents": [
+                0.68,
+                0.5,
+                0.6,
+                0.5,
+                0.6,
+                0.5,
+                0.6,
+                0.5
+              ]
+            },
+            "contour": "lib:spiral_up",
+            "octave": 5,
+            "sound": "triangle",
+            "fx": ".room(0.15)"
+          }
+        }
+      }
+    },
+    "hook_drop": {
+      "bars": 2,
+      "harmony": [
+        "Cm7"
+      ],
+      "harmonicRhythm": 2,
+      "layers": {
+        "lead": {
+          "bind": {
+            "rhythm": {
+              "name": "even_8",
+              "onsets": [
+                "0/8",
+                "1/8",
+                "2/8",
+                "3/8",
+                "4/8",
+                "5/8",
+                "6/8",
+                "7/8"
+              ],
+              "accents": [
+                0.68,
+                0.5,
+                0.6,
+                0.5,
+                0.6,
+                0.5,
+                0.6,
+                0.5
+              ]
+            },
+            "contour": "lib:hook_drop",
+            "octave": 5,
+            "sound": "triangle",
+            "fx": ".room(0.15)"
+          }
+        }
+      }
+    },
+    "valley": {
+      "bars": 2,
+      "harmony": [
+        "Cm7"
+      ],
+      "harmonicRhythm": 2,
+      "layers": {
+        "lead": {
+          "bind": {
+            "rhythm": {
+              "name": "even_6",
+              "onsets": [
+                "0/6",
+                "1/6",
+                "2/6",
+                "3/6",
+                "4/6",
+                "5/6"
+              ],
+              "accents": [
+                0.68,
+                0.5,
+                0.6,
+                0.5,
+                0.6,
+                0.5
+              ]
+            },
+            "contour": "lib:valley",
+            "octave": 5,
+            "sound": "triangle",
+            "fx": ".room(0.15)"
+          }
+        }
+      }
+    },
+    "bass_root_five": {
+      "bars": 2,
+      "harmony": [
+        "Cm7"
+      ],
+      "harmonicRhythm": 2,
+      "layers": {
+        "lead": {
+          "bind": {
+            "rhythm": {
+              "name": "even_4",
+              "onsets": [
+                "0/4",
+                "1/4",
+                "2/4",
+                "3/4"
+              ],
+              "accents": [
+                0.68,
+                0.5,
+                0.6,
+                0.5
+              ]
+            },
+            "contour": "lib:bass_root_five",
+            "octave": 5,
+            "sound": "triangle",
+            "fx": ".room(0.15)"
+          }
+        }
+      }
+    },
+    "dorian_lift": {
+      "bars": 2,
+      "harmony": [
+        "Cm7"
+      ],
+      "harmonicRhythm": 2,
+      "layers": {
+        "lead": {
+          "bind": {
+            "rhythm": {
+              "name": "even_8",
+              "onsets": [
+                "0/8",
+                "1/8",
+                "2/8",
+                "3/8",
+                "4/8",
+                "5/8",
+                "6/8",
+                "7/8"
+              ],
+              "accents": [
+                0.68,
+                0.5,
+                0.6,
+                0.5,
+                0.6,
+                0.5,
+                0.6,
+                0.5
+              ]
+            },
+            "contour": "lib:dorian_lift",
+            "octave": 5,
+            "sound": "triangle",
+            "fx": ".room(0.15)"
+          }
+        }
+      }
+    },
+    "minimal_dyad": {
+      "bars": 2,
+      "harmony": [
+        "Cm7"
+      ],
+      "harmonicRhythm": 2,
+      "layers": {
+        "lead": {
+          "bind": {
+            "rhythm": {
+              "name": "even_4",
+              "onsets": [
+                "0/4",
+                "1/4",
+                "2/4",
+                "3/4"
+              ],
+              "accents": [
+                0.68,
+                0.5,
+                0.6,
+                0.5
+              ]
+            },
+            "contour": "lib:minimal_dyad",
+            "octave": 5,
+            "sound": "triangle",
+            "fx": ".room(0.15)"
+          }
+        }
+      }
+    },
+    "question_answer": {
+      "bars": 2,
+      "harmony": [
+        "Cm7"
+      ],
+      "harmonicRhythm": 2,
+      "layers": {
+        "lead": {
+          "bind": {
+            "rhythm": {
+              "name": "even_8",
+              "onsets": [
+                "0/8",
+                "1/8",
+                "2/8",
+                "3/8",
+                "4/8",
+                "5/8",
+                "6/8",
+                "7/8"
+              ],
+              "accents": [
+                0.68,
+                0.5,
+                0.6,
+                0.5,
+                0.6,
+                0.5,
+                0.6,
+                0.5
+              ]
+            },
+            "contour": "lib:question_answer",
+            "octave": 5,
+            "sound": "triangle",
+            "fx": ".room(0.15)"
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,78 @@
+{
+  "title": "interlocks-4-4",
+  "meter": "4/4",
+  "bpm": 118,
+  "key": "F:minor",
+  "seed": 1,
+  "form": "house_pump two_step_snap clave_push dembow_ride",
+  "sections": {
+    "house_pump": {
+      "bars": 4,
+      "layers": {
+        "layer_a": {
+          "bind": {
+            "rhythm": "four_floor",
+            "sound": "bd"
+          }
+        },
+        "layer_b": {
+          "bind": {
+            "rhythm": "offbeat_8ths",
+            "sound": "lt"
+          }
+        }
+      }
+    },
+    "two_step_snap": {
+      "bars": 4,
+      "layers": {
+        "layer_a": {
+          "bind": {
+            "rhythm": "two_step_kick",
+            "sound": "bd"
+          }
+        },
+        "layer_b": {
+          "bind": {
+            "rhythm": "backbeat_ghost",
+            "sound": "sd"
+          }
+        }
+      }
+    },
+    "clave_push": {
+      "bars": 4,
+      "layers": {
+        "layer_a": {
+          "bind": {
+            "rhythm": "tresillo",
+            "sound": "bd"
+          }
+        },
+        "layer_b": {
+          "bind": {
+            "rhythm": "anticipation_bass",
+            "sound": "lt"
+          }
+        }
+      }
+    },
+    "dembow_ride": {
+      "bars": 4,
+      "layers": {
+        "layer_a": {
+          "bind": {
+            "rhythm": "dembow",
+            "sound": "cp"
+          }
+        },
+        "layer_b": {
+          "bind": {
+            "rhythm": "sixteenth_drive",
+            "sound": "hh"
+          }
+        }
+      }
+    }
+  }
+}

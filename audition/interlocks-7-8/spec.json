@@ -1,0 +1,27 @@
+{
+  "title": "interlocks-7-8",
+  "meter": "7/8",
+  "bpm": 140,
+  "key": "D:dorian",
+  "seed": 1,
+  "form": "aksak_engine",
+  "sections": {
+    "aksak_engine": {
+      "bars": 4,
+      "layers": {
+        "layer_a": {
+          "bind": {
+            "rhythm": "seven_pulse_223",
+            "sound": "bd"
+          }
+        },
+        "layer_b": {
+          "bind": {
+            "rhythm": "seven_syncopated",
+            "sound": "rim"
+          }
+        }
+      }
+    }
+  }
+}

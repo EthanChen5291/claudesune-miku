@@ -1,27 +1,31 @@
-# neon-undertow — v6
+# neon-undertow — v7
 
-**Edit:** restore the chorus lift: verse hats to swung 8ths, add chorus clap backbeat
+**Edit:** engine round: audition-r1 library fixes (drop2 bass note, shape-preserving contour realization — lead_B arch no longer smears) + review-cycle emission fixes (3-decimal gains, stable orbits, transition binding names)
 
-_2026-08-19 22:56 · 4/4 · cycles 0–48_
+_2026-08-20 03:45 · 4/4 · cycles 0–48_
 
 ## What changed
 
-Containment: **PASS** — allowed: clap, hats
-- clap: layer added (96 haps)
-- hats: 704→640 haps, timing changed (+32/-96 onsets), 64 pitches changed, 192 sounds changed, 444 gains changed
+Containment: **PASS** — allowed: bass, clap, fill, hats, impact, kick, lead, pads, riser
+- bass: 160→160 haps, timing unchanged, pitches unchanged, 96 gains changed
+- clap: 96→96 haps, timing unchanged, pitches unchanged, 96 sounds changed, 48 gains changed
+- hats: 640→640 haps, timing unchanged, pitches unchanged, 296 gains changed
+- kick: 160→160 haps, timing unchanged, pitches unchanged, 120 gains changed
+- lead: 160→160 haps, timing unchanged, 90 pitches changed, 160 sounds changed, 48 gains changed
 
 | label | metric | before | after |
 |---|---|---|---|
-| clap | layer | — | present |
-| hats | density (onsets/cycle) | 14.666667 | 13.333333 |
-| hats | syncopation | 0.727273 | 0.7 |
-| hats | accent variance | 0.027509 | 0.025607 |
+| bass | accent variance | 0.005666 | 0.005567 |
+| clap | accent variance | 0.03825 | 0.038297 |
+| hats | accent variance | 0.025607 | 0.025596 |
+| kick | accent variance | 0.001719 | 0.001598 |
+| lead | accent variance | 0.019801 | 0.019815 |
 
 ## Verification
 
 - lint: clean
 - evaluates headlessly: yes
-- assertions: 38/38 pass
+- assertions: 42/44 pass, 2 warn
 
 ### relational
 - ✅ `B.must.density` — "> 1.3x A": measured 43.79 vs target > 43.55 (A: 33.50)
@@ -51,6 +55,10 @@ Containment: **PASS** — allowed: clap, hats
 - ✅ `lead.cadence` — cadence target "tonic" resolved to F5 (enforced at bind time, verified by exact-notes check)
 - ✅ `lead.m1.notes` — 16 emitted notes match the bound resolution exactly
 - ✅ `lead.m1.contour(invert+octave_up)` — contour shape 100% preserved after harmonic snapping (8 steps) under transform "invert+octave_up"
+- ✅ `bass.bass_root_five.interval-profile` — leap_ratio 0.52, repetition 0.39, range 8 semitones (measured; enforcement pending grammar policy)
+- ✅ `bass.bass_root_five.interval-profile` — leap_ratio 0.52, repetition 0.35, range 8 semitones (measured; enforcement pending grammar policy)
+- ✅ `lead.m1.interval-profile` — leap_ratio 0.51, repetition 0.11, range 9 semitones (measured; enforcement pending grammar policy)
+- ✅ `lead.m1.interval-profile` — leap_ratio 0.60, repetition 0.07, range 10 semitones (measured; enforcement pending grammar policy)
 
 ### interlock
 - ✅ `A.kick+hats` — complement joint=0.286 (hats in kick gaps: 0.571, reverse: 0) [texture grid — complement n/a]
@@ -75,21 +83,21 @@ Containment: **PASS** — allowed: clap, hats
 
 | label | onsets | density | span | sync | accVar | variety |
 |---|---|---|---|---|---|---|
-| kick | 160 | 3.333333 | 0 | 0 | 0.001719 | 0 |
-| hats | 640 | 13.333333 | 0 | 0.7 | 0.025607 | 0.06383 |
-| bass | 160 | 3.333333 | 8 | 0.8 | 0.005666 | 0.078947 |
+| kick | 160 | 3.333333 | 0 | 0 | 0.001598 | 0 |
+| hats | 640 | 13.333333 | 0 | 0.7 | 0.025596 | 0.06383 |
+| bass | 160 | 3.333333 | 8 | 0.8 | 0.005567 | 0.078947 |
 | pads | 456 | 9.5 | 31 | 0.328947 | 0.00338 | 0.025641 |
-| lead | 160 | 3.333333 | 18 | 0.6 | 0.019801 | 0.066667 |
-| clap | 96 | 2 | 0 | 0.5 | 0.03825 | 0 |
+| lead | 160 | 3.333333 | 18 | 0.6 | 0.019815 | 0.066667 |
+| clap | 96 | 2 | 0 | 0.5 | 0.038297 | 0 |
 | riser | 128 | 2.666667 | 0 | 0.75 | 0.029982 | 0 |
 | fill | 16 | 0.333333 | 0 | 0.75 | 0.035071 | 0 |
 | impact | 1 | 0.020833 | 0 | 0 | 0 | 0 |
 
 ## What to listen for
 
-- The requested change: restore the chorus lift: verse hats to swung 8ths, add chorus clap backbeat
-- clap: layer added — its entrance/absence is the change.
-- Everything else (kick, bass, pads, lead, riser, fill, impact) is bit-identical — if anything sounds different there, that's a bug to report.
+- The requested change: engine round: audition-r1 library fixes (drop2 bass note, shape-preserving contour realization — lead_B arch no longer smears) + review-cycle emission fixes (3-decimal gains, stable orbits, transition binding names)
+- clap: same notes, same rhythm, new timbre — ONLY the tone color should differ.
+- Everything else (pads, riser, fill, impact) is bit-identical — if anything sounds different there, that's a bug to report.
 
 ---
 _Open `listen.html` for per-label mutes and A/B; `*.strudel` files are paste-ready for strudel.cc._

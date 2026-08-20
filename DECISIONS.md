@@ -243,3 +243,69 @@ day except two documented-not-fixed. Highlights:
 Documented-not-fixed: dominant-exception chord-quality spelling now covers C9/C13/
 sus (fixed) — remaining known gap: section-scoped containment is still unmeasured
 by the EVAL scorer (the engine's own gate does enforce it via --sections).
+
+## D26 — Audition round 1: shape-preserving contour realization (2026-08-19)
+
+Ethan's first keep/kill listen (audition/CHECKLIST.md) came back with verdicts, and
+the biggest one wasn't library data — it was the binder. The old realization cycled
+contour degrees globally across onsets, so any contour whose length mismatched the
+rhythm's onset count smeared: arch_classic (7 degrees over the 6-onset audition
+rhythm) never completed its arch inside a bar and bar 2 was a different shape
+entirely. Ethan correctly called those renders "not valid."
+
+New realization (bind.js `realizeContour`), by L = degree count vs S = main onsets
+per rhythm statement:
+- **L == S** → exact, every statement identical (unchanged behavior).
+- **L % S == 0** → a k-statement phrase, exact unfold, period extended to cover it
+  (question_answer's two-halves logic survives).
+- **S % L == 0** → tile within the statement (minimal_dyad's seesaw survives).
+- **L ≥ 2S** → a slow line by intent: unfold across statements (old behavior —
+  neon-undertow's C-section lead was always this and stays byte-stable).
+- **otherwise** → shape-preserving resample: first, last, and global extrema always
+  survive (the arch keeps its peak), gaps filled evenly. Warned in bind output.
+
+Also from the same round:
+- **Degree alterations**: contours may write 'b5'/'#3'. Applied with a MODE CLAMP —
+  'b5' darkens the 6th degree only if the mode hasn't already (no double-flats), and
+  altered degrees are EXEMPT from chord-tone snapping (an explicit alteration is the
+  composer overriding the diatonic default). fall_sigh now carries the b6 Ethan
+  asked for ("flat the second note").
+- **Contour data fixes**: dorian_lift was off by one (peaked on the 7th degree while
+  claiming the mode-defining raised 6th — now [0,2,3,4,5,4,2,0]); hook_drop
+  rebuilt as repeated-top-note + drop; spiral_up rebuilt to actually gain ground and
+  land on the octave. arch_classic data was always correct — the renderer was the bug.
+- **Voicings**: quartal_9 and power_sus KILLED by ear (removed; aksak-lantern spec
+  migrated to me_shell_37 via a gated spec edit). drop2 shapes were dropping the
+  WRONG VOICE — the 7th/maj7 landed a step under the root ("the bass note sounds
+  off", loudest on Ab^7 where the maj7 sat a semitone below). True drop-2 now: the
+  fifth drops (-5); dim family drops the b3 (-9).
+
+## D27 — Rhythms are for notes; multi-bar entries; main/bounce voices (2026-08-19)
+
+Ethan's framing correction: the rhythm library exists for NOTES to fill in — pure
+percussion is the special case. Consequences:
+- anticipation_bass, push_pull_16s, gallop_arp demoted to role 'percussion'
+  (his verdict: fine as drums, can't carry a line). findRhythms() gained a `role`
+  filter so retrieval can never hand a percussion-only rhythm to a note line.
+- **Multi-bar rhythms**: entries may set `bars: N` with onsets in bar units [0, N).
+  The binder splits per bar (per-bar grids), emits `<[bar1] [bar2]>` alternations
+  for notes, gains, and struct patterns; the compiler's existing .late() alignment
+  handles odd section starts because period is always a multiple of bars.
+- **Voices**: each onset may be 'main' (carries the chord/contour) or 'bounce'
+  (light low root to bounce off — Ethan's description). In melodic binds the
+  contour flows through main onsets only; bounces get the sounding chord's root an
+  octave below. New `bindComp()` + `{bind: {comp: true, dict}}` drives a section's
+  harmony as comping: voicing stabs on main onsets, low-root bounces between,
+  accents→gains on both. The motif exact-notes assertion is comp-aware (checks the
+  bounce line's presence; the voicing notes belong to .voicing(), not the binder).
+- **New entries** (all ratified:false pending round 2): pushed_comp_2bar — Ethan's
+  requested 2-bar pattern (bar 1 on-beat 1-2-3 with bounces, bar 2 anticipated &s
+  then 3-4; the common anticipation/"rhythmic push" comping family), charleston_2bar,
+  bossa_comp_2bar, call_response_2bar, even_8ths.
+- **Auditions render by role now**: melodic entries as lines over a vamp, chords
+  entries as comping, bass as a low line, percussion as drums; contours audition on
+  EXACT-FIT even rhythms with sub-threshold accents so the ear hears the data —
+  no resampling, no snapping. Both demo songs regenerated through the gated edit
+  path (neon-undertow v7, aksak-lantern v1) — the v6→v7 A/B on lead_B is a live
+  before/after of the smear fix. Eval artifacts stay frozen as a record of the
+  engine version they measured.

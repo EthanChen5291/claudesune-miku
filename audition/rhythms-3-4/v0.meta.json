@@ -1,0 +1,109 @@
+{
+  "title": "rhythms-3-4",
+  "genre": null,
+  "meter": "3/4",
+  "bpm": 150,
+  "key": "C:major",
+  "seed": 1,
+  "form": "waltz_lift",
+  "totalCycles": 4,
+  "instances": [
+    {
+      "name": "waltz_lift",
+      "start": 0,
+      "end": 4
+    }
+  ],
+  "ranges": {
+    "waltz_lift": [
+      [
+        0,
+        4
+      ]
+    ]
+  },
+  "sections": {
+    "waltz_lift": {
+      "role": null,
+      "bars": 4,
+      "must": null,
+      "contrasts_with": null,
+      "resolves": null,
+      "recalls": null,
+      "sets_up": null,
+      "withhold": [],
+      "harmony": null,
+      "ranges": [
+        [
+          0,
+          4
+        ]
+      ],
+      "cadence": null
+    }
+  },
+  "harmonyBinding": "chords",
+  "bindings": {
+    "hits_waltz_lift": {
+      "label": "hits",
+      "sections": [
+        "waltz_lift"
+      ],
+      "kind": "bound",
+      "period": 1
+    }
+  },
+  "labels": {
+    "hits": {
+      "sections": [
+        "waltz_lift"
+      ],
+      "bindings": {
+        "waltz_lift": "hits_waltz_lift"
+      }
+    }
+  },
+  "motifPlacements": [
+    {
+      "motif": null,
+      "rhythm": "waltz_lift",
+      "archetype": null,
+      "transform": null,
+      "degrees": null,
+      "contourRealization": null,
+      "contourSignsExpected": null,
+      "onsets": [
+        "0/1",
+        "1/3",
+        "2/3"
+      ],
+      "accents": [
+        1,
+        0.55,
+        0.7
+      ],
+      "bars": 1,
+      "gains": [
+        1,
+        0.708,
+        0.805
+      ],
+      "swing": 0,
+      "period": 1,
+      "notes": null,
+      "cadence": null,
+      "contourLib": null,
+      "role": "percussion",
+      "band": "low",
+      "style": "waltz",
+      "mix": null,
+      "label": "hits",
+      "binding": "hits_waltz_lift",
+      "sections": [
+        "waltz_lift"
+      ]
+    }
+  ],
+  "styles": null,
+  "orbits": {}
+}

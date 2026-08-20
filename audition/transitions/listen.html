@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>transitions v0 — listen</title>
+<style>
+  :root { color-scheme: dark; }
+  body { font: 14px/1.5 -apple-system, system-ui, sans-serif; margin: 0; background: #14141a; color: #e8e8ee; }
+  header { padding: 14px 20px 10px; border-bottom: 1px solid #2b2b36; display: flex; flex-wrap: wrap; gap: 14px; align-items: center; }
+  h1 { font-size: 16px; margin: 0 12px 0 0; }
+  .vswitch button { margin-right: 6px; padding: 6px 14px; border-radius: 6px; border: 1px solid #3a3a4a; background: #1e1e28; color: #cfcfe0; cursor: pointer; font-weight: 600; }
+  .vswitch button.active { background: #4c6ef5; border-color: #4c6ef5; color: #fff; }
+  .mutes { display: flex; flex-wrap: wrap; gap: 4px 12px; padding: 8px 20px; border-bottom: 1px solid #2b2b36; }
+  .mutes label { user-select: none; cursor: pointer; opacity: .9; }
+  .mutes input { accent-color: #4c6ef5; }
+  main { padding: 12px 20px; }
+  #repl { min-height: 420px; }
+  strudel-editor { display: block; }
+  .panel { background: #1b1b24; border: 1px solid #2b2b36; border-radius: 8px; padding: 12px 16px; margin: 14px 0; }
+  .panel h2 { font-size: 13px; text-transform: uppercase; letter-spacing: .08em; color: #9a9ab0; margin: 0 0 8px; }
+  .panel ul { margin: 0; padding-left: 18px; }
+  button.copy { padding: 6px 12px; border-radius: 6px; border: 1px solid #3a3a4a; background: #1e1e28; color: #cfcfe0; cursor: pointer; }
+  a { color: #74a0ff; }
+  .hint { color: #9a9ab0; font-size: 12.5px; }
+</style>
+</head>
+<body>
+<header>
+  <h1>transitions v0</h1>
+  <div class="vswitch" id="vswitch"></div>
+  <span class="hint">switch version or mutes, then hit play in the editor (ctrl+enter updates)</span>
+</header>
+<div class="mutes" id="mutes"></div>
+<main>
+  <div id="repl"></div>
+  <div class="panel" id="listenfor" style="display:none"><h2>What to listen for</h2><ul id="listenforList"></ul></div>
+  <div class="panel">
+    <h2>Paste-ready</h2>
+    <button class="copy" id="copyBtn">Copy current code (with mutes)</button>
+    <a id="ccLink" target="_blank" style="margin-left:12px">open on strudel.cc</a>
+    <div class="hint" style="margin-top:6px">The embedded REPL is pinned to strudel 1.1.0 (same as the engine). strudel.cc runs latest — both play this code.</div>
+  </div>
+</main>
+<script src="https://unpkg.com/@strudel/repl@1.1.0/dist/index.js"></script>
+<script>
+const DATA = {"title":"transitions v0","versions":[{"name":"v0","source":"// ============ transitions ============\n// compiled by motif-engine (seed 1) — edit map in the song's meta.json\n// form: leadin_riser chorus_riser leadin_noise chorus_noise leadin_fill chorus_fill leadin_tom any_tom leadin_impact any_impact chorus_before_sweep after_sweep leadin_drop chorus_drop | 4/4 | 122 bpm | key F:minor\nsetcpm(122/4)\n\nlet key = \"F:minor\"\n\n// ---- form masks (compiled from form: leadin_riser chorus_riser leadin_noise chorus_noise leadin_fill chorus_fill leadin_tom any_tom leadin_impact any_impact chorus_before_sweep after_sweep leadin_drop chorus_drop; edit the SPEC, not these) ----\nlet form = {\n  leadin_riser: \"<1!4 0!52>\",\n  chorus_riser: \"<0!4 1!4 0!48>\",\n  leadin_noise: \"<0!8 1!4 0!44>\",\n  chorus_noise: \"<0!12 1!4 0!40>\",\n  leadin_fill: \"<0!16 1!4 0!36>\",\n  chorus_fill: \"<0!20 1!4 0!32>\",\n  leadin_tom: \"<0!24 1!4 0!28>\",\n  any_tom: \"<0!28 1!4 0!24>\",\n  leadin_impact: \"<0!32 1!4 0!20>\",\n  any_impact: \"<0!36 1!4 0!16>\",\n  chorus_before_sweep: \"<0!40 1!4 0!12>\",\n  after_sweep: \"<0!44 1!4 0!8>\",\n  leadin_drop: \"<0!48 1!4 0!4>\",\n  chorus_drop: \"<0!52 1!4>\",\n}\n\n// ---- voicing shapes (library: src/lib/voicings.js) ----\naddVoicings('me_closed_stack', { '6': ['0 4 7 9'], '7': ['0 4 7 10'], '': ['0 4 7'], 'm': ['0 3 7'], '^7': ['0 4 7 11'], 'm7': ['0 3 7 10'], 'm9': ['0 3 7 10 14'], 'sus4': ['0 5 7'], 'dim': ['0 3 6'], 'o': ['0 3 6 9'] }, ['C3', 'C6'])\n\n// ---- harmony ----\nlet harmony_leadin_riser = chord(\"<Fm9 C7>/2\").dict('ireal')\nlet harmony_chorus_riser = chord(\"<Fm9 C7>/2\").dict('ireal')\nlet harmony_leadin_noise = chord(\"<Fm9 C7>/2\").dict('ireal')\nlet harmony_chorus_noise = chord(\"<Fm9 C7>/2\").dict('ireal')\nlet harmony_leadin_fill = chord(\"<Fm9 C7>/2\").dict('ireal')\nlet harmony_chorus_fill = chord(\"<Fm9 C7>/2\").dict('ireal')\nlet harmony_leadin_tom = chord(\"<Fm9 C7>/2\").dict('ireal')\nlet harmony_any_tom = chord(\"<Fm9 C7>/2\").dict('ireal')\nlet harmony_leadin_impact = chord(\"<Fm9 C7>/2\").dict('ireal')\nlet harmony_any_impact = chord(\"<Fm9 C7>/2\").dict('ireal')\nlet harmony_chorus_before_sweep = chord(\"<Fm9 C7>/2\").dict('ireal')\nlet harmony_after_sweep = chord(\"<Fm9 C7>/2\").dict('ireal')\nlet harmony_leadin_drop = chord(\"<Fm9 C7>/2\").dict('ireal')\nlet harmony_chorus_drop = chord(\"<Fm9 C7>/2\").dict('ireal')\nlet chords = stack(\n  harmony_leadin_riser.mask(form.leadin_riser),\n  harmony_chorus_riser.mask(form.chorus_riser),\n  harmony_leadin_noise.mask(form.leadin_noise),\n  harmony_chorus_noise.mask(form.chorus_noise),\n  harmony_leadin_fill.mask(form.leadin_fill),\n  harmony_chorus_fill.mask(form.chorus_fill),\n  harmony_leadin_tom.mask(form.leadin_tom),\n  harmony_any_tom.mask(form.any_tom),\n  harmony_leadin_impact.mask(form.leadin_impact),\n  harmony_any_impact.mask(form.any_impact),\n  harmony_chorus_before_sweep.mask(form.chorus_before_sweep),\n  harmony_after_sweep.mask(form.after_sweep),\n  harmony_leadin_drop.mask(form.leadin_drop),\n  harmony_chorus_drop.mask(form.chorus_drop),\n)\n\n// ---- material: kick ----\nlet kick_leadin_riser = s(\"bd bd bd bd\").gain(\"1 0.903 0.948 0.903\").bank(\"tr909\")\nlet kick_chorus_riser = s(\"bd bd bd bd\").gain(\"1 0.903 0.948 0.903\").bank(\"tr909\")\nlet kick_chorus_noise = s(\"bd bd bd bd\").gain(\"1 0.903 0.948 0.903\").bank(\"tr909\")\nlet kick_leadin_fill = s(\"bd bd bd bd\").gain(\"1 0.903 0.948 0.903\").bank(\"tr909\")\nlet kick_chorus_fill = s(\"bd bd bd bd\").gain(\"1 0.903 0.948 0.903\").bank(\"tr909\")\nlet kick_leadin_tom = s(\"bd bd bd bd\").gain(\"1 0.903 0.948 0.903\").bank(\"tr909\")\nlet kick_any_tom = s(\"bd bd bd bd\").gain(\"1 0.903 0.948 0.903\").bank(\"tr909\")\nlet kick_leadin_impact = s(\"bd bd bd bd\").gain(\"1 0.903 0.948 0.903\").bank(\"tr909\")\nlet kick_any_impact = s(\"bd bd bd bd\").gain(\"1 0.903 0.948 0.903\").bank(\"tr909\")\nlet kick_chorus_before_sweep = s(\"bd bd bd bd\").gain(\"1 0.903 0.948 0.903\").bank(\"tr909\")\nlet kick_after_sweep = s(\"bd bd bd bd\").gain(\"1 0.903 0.948 0.903\")\nlet kick_chorus_drop = s(\"bd bd bd bd\").gain(\"1 0.903 0.948 0.903\").bank(\"tr909\")\n\n// ---- material: hats ----\nlet hats_leadin_riser = s(\"hh hh hh hh hh hh hh hh hh hh hh hh hh hh hh hh\").gain(\"1 0.61 0.753 0.61 0.883 0.61 0.753 0.623 0.935 0.61 0.753 0.61 0.883 0.623 0.779 0.649\").bank(\"tr909\")\nlet hats_chorus_riser = s(\"hh hh hh hh hh hh hh hh hh hh hh hh hh hh hh hh\").gain(\"1 0.61 0.753 0.61 0.883 0.61 0.753 0.623 0.935 0.61 0.753 0.61 0.883 0.623 0.779 0.649\").bank(\"tr909\")\nlet hats_leadin_noise = s(\"hh hh hh hh hh hh hh hh\").gain(\"0.465 0.297 0.402 0.311 0.451 0.29 0.402 0.332\").swingBy(0.55, 4)\nlet hats_chorus_noise = s(\"hh hh hh hh hh hh hh hh hh hh hh hh hh hh hh hh\").gain(\"1 0.61 0.753 0.61 0.883 0.61 0.753 0.623 0.935 0.61 0.753 0.61 0.883 0.623 0.779 0.649\").bank(\"tr909\")\nlet hats_leadin_fill = s(\"hh hh hh hh hh hh hh hh hh hh hh hh hh hh hh hh\").gain(\"1 0.61 0.753 0.61 0.883 0.61 0.753 0.623 0.935 0.61 0.753 0.61 0.883 0.623 0.779 0.649\").bank(\"tr909\")\nlet hats_chorus_fill = s(\"hh hh hh hh hh hh hh hh hh hh hh hh hh hh hh hh\").gain(\"1 0.61 0.753 0.61 0.883 0.61 0.753 0.623 0.935 0.61 0.753 0.61 0.883 0.623 0.779 0.649\").bank(\"tr909\")\nlet hats_leadin_tom = s(\"hh hh hh hh hh hh hh hh hh hh hh hh hh hh hh hh\").gain(\"1 0.61 0.753 0.61 0.883 0.61 0.753 0.623 0.935 0.61 0.753 0.61 0.883 0.623 0.779 0.649\").bank(\"tr909\")\nlet hats_any_tom = s(\"hh hh hh hh hh hh hh hh hh hh hh hh hh hh hh hh\").gain(\"1 0.61 0.753 0.61 0.883 0.61 0.753 0.623 0.935 0.61 0.753 0.61 0.883 0.623 0.779 0.649\").bank(\"tr909\")\nlet hats_leadin_impact = s(\"hh hh hh hh hh hh hh hh hh hh hh hh hh hh hh hh\").gain(\"1 0.61 0.753 0.61 0.883 0.61 0.753 0.623 0.935 0.61 0.753 0.61 0.883 0.623 0.779 0.649\").bank(\"tr909\")\nlet hats_any_impact = s(\"hh hh hh hh hh hh hh hh hh hh hh hh hh hh hh hh\").gain(\"1 0.61 0.753 0.61 0.883 0.61 0.753 0.623 0.935 0.61 0.753 0.61 0.883 0.623 0.779 0.649\").bank(\"tr909\")\nlet hats_chorus_before_sweep = s(\"hh hh hh hh hh hh hh hh hh hh hh hh hh hh hh hh\").gain(\"1 0.61 0.753 0.61 0.883 0.61 0.753 0.623 0.935 0.61 0.753 0.61 0.883 0.623 0.779 0.649\").bank(\"tr909\")\nlet hats_after_sweep = s(\"hh hh hh hh hh hh hh hh\").gain(\"0.515 0.347 0.452 0.361 0.501 0.34 0.452 0.382\").swingBy(0.55, 4)\nlet hats_leadin_drop = s(\"hh hh hh hh hh hh hh hh\").gain(\"0.465 0.297 0.402 0.311 0.451 0.29 0.402 0.332\").swingBy(0.55, 4)\nlet hats_chorus_drop = s(\"hh hh hh hh hh hh hh hh hh hh hh hh hh hh hh hh\").gain(\"1 0.61 0.753 0.61 0.883 0.61 0.753 0.623 0.935 0.61 0.753 0.61 0.883 0.623 0.779 0.649\").bank(\"tr909\")\n\n// ---- material: bass ----\nlet bass_leadin_riser = note(\"<[F2@7 F2 C3@7 F2] [F2@7 F2 C3@7 F2] [E2@7 F2 C3@7 E2] [E2@7 F2 C3@7 E2]>\").s(\"square\").gain(\"0.967@7 0.74 0.903@7 0.805\").lpf(500)\nlet bass_chorus_riser = note(\"<[F2@7 F2 C3@7 F2] [F2@7 F2 C3@7 F2] [E2@7 F2 C3@7 E2] [E2@7 F2 C3@7 E2]>\").s(\"square\").gain(\"0.967@7 0.74 0.903@7 0.805\").lpf(500)\nlet bass_chorus_noise = note(\"<[F2@7 F2 C3@7 F2] [F2@7 F2 C3@7 F2] [E2@7 F2 C3@7 E2] [E2@7 F2 C3@7 E2]>\").s(\"square\").gain(\"0.967@7 0.74 0.903@7 0.805\").lpf(500)\nlet bass_leadin_fill = note(\"<[F2@7 F2 C3@7 F2] [F2@7 F2 C3@7 F2] [E2@7 F2 C3@7 E2] [E2@7 F2 C3@7 E2]>\").s(\"square\").gain(\"0.967@7 0.74 0.903@7 0.805\").lpf(500)\nlet bass_chorus_fill = note(\"<[F2@7 F2 C3@7 F2] [F2@7 F2 C3@7 F2] [E2@7 F2 C3@7 E2] [E2@7 F2 C3@7 E2]>\").s(\"square\").gain(\"0.967@7 0.74 0.903@7 0.805\").lpf(500)\nlet bass_leadin_tom = note(\"<[F2@7 F2 C3@7 F2] [F2@7 F2 C3@7 F2] [E2@7 F2 C3@7 E2] [E2@7 F2 C3@7 E2]>\").s(\"square\").gain(\"0.967@7 0.74 0.903@7 0.805\").lpf(500)\nlet bass_any_tom = note(\"<[F2@7 F2 C3@7 F2] [F2@7 F2 C3@7 F2] [E2@7 F2 C3@7 E2] [E2@7 F2 C3@7 E2]>\").s(\"square\").gain(\"0.967@7 0.74 0.903@7 0.805\").lpf(500)\nlet bass_leadin_impact = note(\"<[F2@7 F2 C3@7 F2] [F2@7 F2 C3@7 F2] [E2@7 F2 C3@7 E2] [E2@7 F2 C3@7 E2]>\").s(\"square\").gain(\"0.967@7 0.74 0.903@7 0.805\").lpf(500)\nlet bass_any_impact = note(\"<[F2@7 F2 C3@7 F2] [F2@7 F2 C3@7 F2] [E2@7 F2 C3@7 E2] [E2@7 F2 C3@7 E2]>\").s(\"square\").gain(\"0.967@7 0.74 0.903@7 0.805\").lpf(500)\nlet bass_chorus_before_sweep = note(\"<[F2@7 F2 C3@7 F2] [F2@7 F2 C3@7 F2] [E2@7 F2 C3@7 E2] [E2@7 F2 C3@7 E2]>\").s(\"square\").gain(\"0.967@7 0.74 0.903@7 0.805\").lpf(500)\nlet bass_chorus_drop = note(\"<[F2@7 F2 C3@7 F2] [F2@7 F2 C3@7 F2] [E2@7 F2 C3@7 E2] [E2@7 F2 C3@7 E2]>\").s(\"square\").gain(\"0.967@7 0.74 0.903@7 0.805\").lpf(500)\n\n// ---- material: pads ----\nlet pads_leadin_riser = chords.dict('me_closed_stack').voicing().s(\"square\").lpf(1200).room(0.3).gain(0.5).orbit(2)\nlet pads_chorus_riser = chords.dict('me_closed_stack').voicing().s(\"square\").lpf(1200).room(0.3).gain(0.5).orbit(2)\nlet pads_leadin_noise = chords.dict('me_closed_stack').voicing().s(\"square\").lpf(700).room(0.5).gain(0.45).orbit(2)\nlet pads_chorus_noise = chords.dict('me_closed_stack').voicing().s(\"square\").lpf(1200).room(0.3).gain(0.5).orbit(2)\nlet pads_leadin_fill = chords.dict('me_closed_stack').voicing().s(\"square\").lpf(1200).room(0.3).gain(0.5).orbit(2)\nlet pads_chorus_fill = chords.dict('me_closed_stack').voicing().s(\"square\").lpf(1200).room(0.3).gain(0.5).orbit(2)\nlet pads_leadin_tom = chords.dict('me_closed_stack').voicing().s(\"square\").lpf(1200).room(0.3).gain(0.5).orbit(2)\nlet pads_any_tom = chords.dict('me_closed_stack').voicing().s(\"square\").lpf(1200).room(0.3).gain(0.5).orbit(2)\nlet pads_leadin_impact = chords.dict('me_closed_stack').voicing().s(\"square\").lpf(1200).room(0.3).gain(0.5).orbit(2)\nlet pads_any_impact = chords.dict('me_closed_stack').voicing().s(\"square\").lpf(1200).room(0.3).gain(0.5).orbit(2)\nlet pads_chorus_before_sweep = chords.dict('me_closed_stack').voicing().s(\"square\").lpf(1200).room(0.3).gain(0.5).orbit(2)\nlet pads_leadin_drop = chords.dict('me_closed_stack').voicing().s(\"square\").lpf(700).room(0.5).gain(0.45).orbit(2)\nlet pads_chorus_drop = chords.dict('me_closed_stack').voicing().s(\"square\").lpf(1200).room(0.3).gain(0.5).orbit(2)\n\n// ---- transition: riser_hat_swell: leadin_riser -> chorus_riser @ cycles 2-4 ----\nlet riser_riser_hat_swell_chorus_riser1 = s(\"hh*16\").gain(saw.range(0.12, 0.72).slow(2)).lpf(saw.range(1500, 9000).slow(2)).pan(0.5)\n\n// ---- transition: riser_noise_sweep: leadin_noise -> chorus_noise @ cycles 8-12 ----\nlet riser_riser_noise_sweep_chorus_noise3 = s(\"white\").gain(saw.range(0.04, 0.5).slow(4)).lpf(saw.range(300, 9000).slow(4)).attack(0.05).release(0.1)\n\n// ---- transition: fill_snare_roll: leadin_fill -> chorus_fill @ cycles 19-20 ----\nlet fill_fill_snare_roll_chorus_fill5 = s(\"sd*16\").gain(saw.range(0.3, 0.95)).lpf(4000)\n\n// ---- transition: fill_tom_run: leadin_tom -> any_tom @ cycles 27-28 ----\nlet fill_fill_tom_run_any_tom7 = s(\"[ht ht] [mt mt] [lt lt] [sd sd]\").gain(saw.range(0.55, 0.95)).speed(\"1 1 1 1.02\")\n\n// ---- transition: impact_boom: leadin_impact -> any_impact @ cycles 36-37 ----\nlet impact_impact_boom_any_impact9 = s(\"bd, oh\").speed(\"0.6, 0.45\").gain(\"0.95, 0.6\").room(0.5)\n\n// ---- transition: sweep_downlifter: chorus_before_sweep -> after_sweep @ cycles 44-45 ----\nlet sweep_sweep_downlifter_after_sweep11 = s(\"oh*8\").gain(saw.range(0.55, 0.05)).lpf(saw.range(7000, 500)).pan(saw.range(0.3, 0.7))\n\n// ---- transition: sub_drop: leadin_drop -> chorus_drop @ cycles 52-53 ----\nlet impact_sub_drop_chorus_drop13 = note(\"<c1>\").s(\"sine\").gain(0.85).release(0.4).lpf(150)\n\n// ---- layers ----\nkick: stack(\n  kick_leadin_riser.mask(form.leadin_riser),\n  kick_chorus_riser.mask(form.chorus_riser),\n  kick_chorus_noise.mask(form.chorus_noise),\n  kick_leadin_fill.mask(form.leadin_fill),\n  kick_chorus_fill.mask(form.chorus_fill),\n  kick_leadin_tom.mask(form.leadin_tom),\n  kick_any_tom.mask(form.any_tom),\n  kick_leadin_impact.mask(form.leadin_impact),\n  kick_any_impact.mask(form.any_impact),\n  kick_chorus_before_sweep.mask(form.chorus_before_sweep),\n  kick_after_sweep.mask(form.after_sweep),\n  kick_chorus_drop.mask(form.chorus_drop),\n)\nhats: stack(\n  hats_leadin_riser.mask(form.leadin_riser),\n  hats_chorus_riser.mask(form.chorus_riser),\n  hats_leadin_noise.mask(form.leadin_noise),\n  hats_chorus_noise.mask(form.chorus_noise),\n  hats_leadin_fill.mask(form.leadin_fill),\n  hats_chorus_fill.mask(form.chorus_fill),\n  hats_leadin_tom.mask(form.leadin_tom),\n  hats_any_tom.mask(form.any_tom),\n  hats_leadin_impact.mask(form.leadin_impact),\n  hats_any_impact.mask(form.any_impact),\n  hats_chorus_before_sweep.mask(form.chorus_before_sweep),\n  hats_after_sweep.mask(form.after_sweep),\n  hats_leadin_drop.mask(form.leadin_drop),\n  hats_chorus_drop.mask(form.chorus_drop),\n)\nbass: stack(\n  bass_leadin_riser.mask(form.leadin_riser),\n  bass_chorus_riser.mask(form.chorus_riser),\n  bass_chorus_noise.mask(form.chorus_noise),\n  bass_leadin_fill.mask(form.leadin_fill),\n  bass_chorus_fill.mask(form.chorus_fill),\n  bass_leadin_tom.mask(form.leadin_tom),\n  bass_any_tom.mask(form.any_tom),\n  bass_leadin_impact.mask(form.leadin_impact),\n  bass_any_impact.mask(form.any_impact),\n  bass_chorus_before_sweep.mask(form.chorus_before_sweep),\n  bass_chorus_drop.mask(form.chorus_drop),\n)\npads: stack(\n  pads_leadin_riser.mask(form.leadin_riser),\n  pads_chorus_riser.mask(form.chorus_riser),\n  pads_leadin_noise.mask(form.leadin_noise),\n  pads_chorus_noise.mask(form.chorus_noise),\n  pads_leadin_fill.mask(form.leadin_fill),\n  pads_chorus_fill.mask(form.chorus_fill),\n  pads_leadin_tom.mask(form.leadin_tom),\n  pads_any_tom.mask(form.any_tom),\n  pads_leadin_impact.mask(form.leadin_impact),\n  pads_any_impact.mask(form.any_impact),\n  pads_chorus_before_sweep.mask(form.chorus_before_sweep),\n  pads_leadin_drop.mask(form.leadin_drop),\n  pads_chorus_drop.mask(form.chorus_drop),\n)\nriser: stack(\n  riser_riser_hat_swell_chorus_riser1.late(2).mask(\"<0!2 1!2 0!52>\"),\n  riser_riser_noise_sweep_chorus_noise3.late(8).mask(\"<0!8 1!4 0!44>\"),\n)\nfill: stack(\n  fill_fill_snare_roll_chorus_fill5.late(19).mask(\"<0!19 1 0!36>\"),\n  fill_fill_tom_run_any_tom7.late(27).mask(\"<0!27 1 0!28>\"),\n)\nimpact: stack(\n  impact_impact_boom_any_impact9.late(36).mask(\"<0!36 1 0!19>\"),\n  impact_sub_drop_chorus_drop13.late(52).mask(\"<0!52 1 0!3>\"),\n)\nsweep: sweep_sweep_downlifter_after_sweep11.late(44).mask(\"<0!44 1 0!11>\")\n","note":"current"}],"labels":["kick","hats","bass","pads","riser","fill","impact","sweep"],"listenFor":["Section chorus_riser (chorus, cycles [[4,8]]) should lift relative to its verse.","Section chorus_noise (chorus, cycles [[12,16]]) should lift relative to its verse.","Section chorus_fill (chorus, cycles [[20,24]]) should lift relative to its verse.","Section any_impact (chorus, cycles [[36,40]]) should lift relative to its verse.","Section chorus_before_sweep (chorus, cycles [[40,44]]) should lift relative to its verse.","Section chorus_drop (chorus, cycles [[52,56]]) should lift relative to its verse.","Transition \"riser_hat_swell\" (riser) into chorus_riser at cycles 2–4.","Transition \"riser_noise_sweep\" (riser) into chorus_noise at cycles 8–12.","Transition \"fill_snare_roll\" (fill) into chorus_fill at cycles 19–20.","Transition \"fill_tom_run\" (fill) into any_tom at cycles 27–28.","Transition \"impact_boom\" (impact) into any_impact at cycles 36–37.","Transition \"sweep_downlifter\" (sweep) into after_sweep at cycles 44–45.","Transition \"sub_drop\" (impact) into chorus_drop at cycles 52–53."],"notes":[]};
+let currentVersion = DATA.versions.length - 1;
+const muted = new Set();
+
+function applyMutes(src) {
+  // labels live at column 0 — anchoring without leading whitespace keeps
+  // indented object keys (form masks) safe even when a section shares the name
+  let out = src;
+  for (const label of DATA.labels) {
+    const on = new RegExp('^' + label + ':', 'm');
+    const off = new RegExp('^_' + label + ':', 'm');
+    if (muted.has(label)) out = out.replace(on, '_' + label + ':');
+    else out = out.replace(off, label + ':');
+  }
+  return out;
+}
+function currentCode() { return applyMutes(DATA.versions[currentVersion].source); }
+function render() {
+  const holder = document.getElementById('repl');
+  holder.innerHTML = '';
+  const el = document.createElement('strudel-editor');
+  el.setAttribute('code', currentCode());
+  holder.appendChild(el);
+  document.querySelectorAll('.vswitch button').forEach((b, i) => b.classList.toggle('active', i === currentVersion));
+  document.getElementById('ccLink').href = 'https://strudel.cc/#' + encodeURIComponent(btoa(unescape(encodeURIComponent(currentCode()))));
+}
+const vs = document.getElementById('vswitch');
+DATA.versions.forEach((v, i) => {
+  const b = document.createElement('button');
+  b.textContent = v.name;
+  b.title = v.note || '';
+  b.onclick = () => { currentVersion = i; render(); };
+  vs.appendChild(b);
+});
+const ms = document.getElementById('mutes');
+DATA.labels.forEach((label) => {
+  const l = document.createElement('label');
+  const c = document.createElement('input');
+  c.type = 'checkbox'; c.checked = true;
+  c.onchange = () => { c.checked ? muted.delete(label) : muted.add(label); render(); };
+  l.appendChild(c); l.appendChild(document.createTextNode(' ' + label));
+  ms.appendChild(l);
+});
+if (DATA.listenFor.length) {
+  document.getElementById('listenfor').style.display = '';
+  const ul = document.getElementById('listenforList');
+  DATA.listenFor.forEach((x) => { const li = document.createElement('li'); li.textContent = x; ul.appendChild(li); });
+}
+document.getElementById('copyBtn').onclick = async () => {
+  await navigator.clipboard.writeText(currentCode());
+  document.getElementById('copyBtn').textContent = 'Copied ✓';
+  setTimeout(() => document.getElementById('copyBtn').textContent = 'Copy current code (with mutes)', 1200);
+};
+render();
+</script>
+</body>
+</html>

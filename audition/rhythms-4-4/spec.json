@@ -1,0 +1,275 @@
+{
+  "title": "rhythms-4-4",
+  "meter": "4/4",
+  "bpm": 118,
+  "key": "F:minor",
+  "seed": 1,
+  "form": "four_floor offbeat_8ths backbeat_ghost tresillo son_clave_3 dembow sixteenth_drive swung_lofi_hats lazy_dilla two_step_kick anticipation_bass push_pull_16s gallop_arp sparse_pedal even_8ths pushed_comp_2bar charleston_2bar bossa_comp_2bar call_response_2bar",
+  "sections": {
+    "four_floor": {
+      "bars": 4,
+      "layers": {
+        "hits": {
+          "bind": {
+            "rhythm": "four_floor",
+            "sound": "bd"
+          }
+        }
+      }
+    },
+    "offbeat_8ths": {
+      "bars": 4,
+      "harmony": [
+        "Fm7",
+        "Db^7"
+      ],
+      "harmonicRhythm": 2,
+      "layers": {
+        "hits": {
+          "bind": {
+            "rhythm": "offbeat_8ths",
+            "contour": "lib:zigzag_narrow",
+            "octave": 4,
+            "sound": "triangle",
+            "fx": ".room(0.15)"
+          }
+        }
+      }
+    },
+    "backbeat_ghost": {
+      "bars": 4,
+      "layers": {
+        "hits": {
+          "bind": {
+            "rhythm": "backbeat_ghost",
+            "sound": "sd"
+          }
+        }
+      }
+    },
+    "tresillo": {
+      "bars": 4,
+      "layers": {
+        "hits": {
+          "bind": {
+            "rhythm": "tresillo",
+            "sound": "bd"
+          }
+        }
+      }
+    },
+    "son_clave_3": {
+      "bars": 4,
+      "layers": {
+        "hits": {
+          "bind": {
+            "rhythm": "son_clave_3",
+            "sound": "rim"
+          }
+        }
+      }
+    },
+    "dembow": {
+      "bars": 4,
+      "layers": {
+        "hits": {
+          "bind": {
+            "rhythm": "dembow",
+            "sound": "cp"
+          }
+        }
+      }
+    },
+    "sixteenth_drive": {
+      "bars": 4,
+      "layers": {
+        "hits": {
+          "bind": {
+            "rhythm": "sixteenth_drive",
+            "sound": "hh"
+          }
+        }
+      }
+    },
+    "swung_lofi_hats": {
+      "bars": 4,
+      "layers": {
+        "hits": {
+          "bind": {
+            "rhythm": "swung_lofi_hats",
+            "sound": "hh"
+          }
+        }
+      }
+    },
+    "lazy_dilla": {
+      "bars": 4,
+      "layers": {
+        "hits": {
+          "bind": {
+            "rhythm": "lazy_dilla",
+            "sound": "hh"
+          }
+        }
+      }
+    },
+    "two_step_kick": {
+      "bars": 4,
+      "layers": {
+        "hits": {
+          "bind": {
+            "rhythm": "two_step_kick",
+            "sound": "bd"
+          }
+        }
+      }
+    },
+    "anticipation_bass": {
+      "bars": 4,
+      "layers": {
+        "hits": {
+          "bind": {
+            "rhythm": "anticipation_bass",
+            "sound": "bd"
+          }
+        }
+      }
+    },
+    "push_pull_16s": {
+      "bars": 4,
+      "layers": {
+        "hits": {
+          "bind": {
+            "rhythm": "push_pull_16s",
+            "sound": "rim"
+          }
+        }
+      }
+    },
+    "gallop_arp": {
+      "bars": 4,
+      "layers": {
+        "hits": {
+          "bind": {
+            "rhythm": "gallop_arp",
+            "sound": "rim"
+          }
+        }
+      }
+    },
+    "sparse_pedal": {
+      "bars": 4,
+      "harmony": [
+        "Fm7",
+        "Db^7"
+      ],
+      "harmonicRhythm": 2,
+      "layers": {
+        "hits": {
+          "bind": {
+            "rhythm": "sparse_pedal",
+            "contour": "lib:bass_root_five",
+            "octave": 2,
+            "sound": "square",
+            "fx": ".lpf(600)"
+          }
+        }
+      }
+    },
+    "even_8ths": {
+      "bars": 4,
+      "harmony": [
+        "Fm7",
+        "Db^7"
+      ],
+      "harmonicRhythm": 2,
+      "layers": {
+        "hits": {
+          "bind": {
+            "rhythm": "even_8ths",
+            "contour": "lib:zigzag_narrow",
+            "octave": 4,
+            "sound": "triangle",
+            "fx": ".room(0.15)"
+          }
+        }
+      }
+    },
+    "pushed_comp_2bar": {
+      "bars": 4,
+      "harmony": [
+        "Fm7",
+        "Db^7"
+      ],
+      "harmonicRhythm": 2,
+      "layers": {
+        "hits": {
+          "bind": {
+            "rhythm": "pushed_comp_2bar",
+            "comp": true,
+            "dict": "drop2",
+            "sound": "square",
+            "fx": ".lpf(1500).room(0.2)"
+          }
+        }
+      }
+    },
+    "charleston_2bar": {
+      "bars": 4,
+      "harmony": [
+        "Fm7",
+        "Db^7"
+      ],
+      "harmonicRhythm": 2,
+      "layers": {
+        "hits": {
+          "bind": {
+            "rhythm": "charleston_2bar",
+            "comp": true,
+            "dict": "drop2",
+            "sound": "square",
+            "fx": ".lpf(1500).room(0.2)"
+          }
+        }
+      }
+    },
+    "bossa_comp_2bar": {
+      "bars": 4,
+      "harmony": [
+        "Fm7",
+        "Db^7"
+      ],
+      "harmonicRhythm": 2,
+      "layers": {
+        "hits": {
+          "bind": {
+            "rhythm": "bossa_comp_2bar",
+            "comp": true,
+            "dict": "drop2",
+            "sound": "square",
+            "fx": ".lpf(1500).room(0.2)"
+          }
+        }
+      }
+    },
+    "call_response_2bar": {
+      "bars": 4,
+      "harmony": [
+        "Fm7",
+        "Db^7"
+      ],
+      "harmonicRhythm": 2,
+      "layers": {
+        "hits": {
+          "bind": {
+            "rhythm": "call_response_2bar",
+            "contour": "lib:zigzag_narrow",
+            "octave": 4,
+            "sound": "triangle",
+            "fx": ".room(0.15)"
+          }
+        }
+      }
+    }
+  }
+}

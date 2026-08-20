@@ -114,7 +114,7 @@ test('interlock: complement scores; declared library pairs really interlock', ()
 test('libraries: counts and abstract-only invariants (§3.5, §5)', () => {
   assert.ok(Object.keys(RHYTHMS).length >= 12, `rhythms: ${Object.keys(RHYTHMS).length}`);
   assert.ok(Object.keys(CONTOURS).length >= 10, `contours: ${Object.keys(CONTOURS).length}`);
-  assert.ok(Object.keys(VOICINGS).length >= 6, `voicings: ${Object.keys(VOICINGS).length}`);
+  assert.ok(Object.keys(VOICINGS).length >= 5, `voicings: ${Object.keys(VOICINGS).length}`); // quartal_9 + power_sus killed in audition r1
   assert.ok(INTERLOCKS.length >= 4, `interlocks: ${INTERLOCKS.length}`);
   assert.ok(Object.keys(TRANSITIONS).length >= 6, `transitions: ${Object.keys(TRANSITIONS).length}`);
   for (const [name, r] of Object.entries(RHYTHMS)) {
@@ -127,7 +127,8 @@ test('libraries: counts and abstract-only invariants (§3.5, §5)', () => {
     for (const o of r.onsets ?? []) assert.equal(typeof o, 'string', `${name}: onsets are exact fractions, not floats`);
   }
   for (const [name, c] of Object.entries(CONTOURS)) {
-    assert.ok(c.degrees.every(Number.isInteger), name);
+    // integers or explicit alterations ('b5') — audition r1 added fall_sigh's b6
+    assert.ok(c.degrees.every((d) => Number.isInteger(d) || /^[b#]-?\d+$/.test(String(d))), name);
     assert.ok(c.shape && c.character, name);
   }
   // retrieval is by computed musical properties

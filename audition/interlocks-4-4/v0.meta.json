@@ -1,0 +1,602 @@
+{
+  "title": "interlocks-4-4",
+  "genre": null,
+  "meter": "4/4",
+  "bpm": 118,
+  "key": "F:minor",
+  "seed": 1,
+  "form": "house_pump two_step_snap clave_push dembow_ride",
+  "totalCycles": 16,
+  "instances": [
+    {
+      "name": "house_pump",
+      "start": 0,
+      "end": 4
+    },
+    {
+      "name": "two_step_snap",
+      "start": 4,
+      "end": 8
+    },
+    {
+      "name": "clave_push",
+      "start": 8,
+      "end": 12
+    },
+    {
+      "name": "dembow_ride",
+      "start": 12,
+      "end": 16
+    }
+  ],
+  "ranges": {
+    "house_pump": [
+      [
+        0,
+        4
+      ]
+    ],
+    "two_step_snap": [
+      [
+        4,
+        8
+      ]
+    ],
+    "clave_push": [
+      [
+        8,
+        12
+      ]
+    ],
+    "dembow_ride": [
+      [
+        12,
+        16
+      ]
+    ]
+  },
+  "sections": {
+    "house_pump": {
+      "role": null,
+      "bars": 4,
+      "must": null,
+      "contrasts_with": null,
+      "resolves": null,
+      "recalls": null,
+      "sets_up": null,
+      "withhold": [],
+      "harmony": null,
+      "ranges": [
+        [
+          0,
+          4
+        ]
+      ],
+      "cadence": null
+    },
+    "two_step_snap": {
+      "role": null,
+      "bars": 4,
+      "must": null,
+      "contrasts_with": null,
+      "resolves": null,
+      "recalls": null,
+      "sets_up": null,
+      "withhold": [],
+      "harmony": null,
+      "ranges": [
+        [
+          4,
+          8
+        ]
+      ],
+      "cadence": null
+    },
+    "clave_push": {
+      "role": null,
+      "bars": 4,
+      "must": null,
+      "contrasts_with": null,
+      "resolves": null,
+      "recalls": null,
+      "sets_up": null,
+      "withhold": [],
+      "harmony": null,
+      "ranges": [
+        [
+          8,
+          12
+        ]
+      ],
+      "cadence": null
+    },
+    "dembow_ride": {
+      "role": null,
+      "bars": 4,
+      "must": null,
+      "contrasts_with": null,
+      "resolves": null,
+      "recalls": null,
+      "sets_up": null,
+      "withhold": [],
+      "harmony": null,
+      "ranges": [
+        [
+          12,
+          16
+        ]
+      ],
+      "cadence": null
+    }
+  },
+  "harmonyBinding": "chords",
+  "bindings": {
+    "layer_a_house_pump": {
+      "label": "layer_a",
+      "sections": [
+        "house_pump"
+      ],
+      "kind": "bound",
+      "period": 1
+    },
+    "layer_a_two_step_snap": {
+      "label": "layer_a",
+      "sections": [
+        "two_step_snap"
+      ],
+      "kind": "bound",
+      "period": 1
+    },
+    "layer_a_clave_push": {
+      "label": "layer_a",
+      "sections": [
+        "clave_push"
+      ],
+      "kind": "bound",
+      "period": 1
+    },
+    "layer_a_dembow_ride": {
+      "label": "layer_a",
+      "sections": [
+        "dembow_ride"
+      ],
+      "kind": "bound",
+      "period": 1
+    },
+    "layer_b_house_pump": {
+      "label": "layer_b",
+      "sections": [
+        "house_pump"
+      ],
+      "kind": "bound",
+      "period": 1
+    },
+    "layer_b_two_step_snap": {
+      "label": "layer_b",
+      "sections": [
+        "two_step_snap"
+      ],
+      "kind": "bound",
+      "period": 1
+    },
+    "layer_b_clave_push": {
+      "label": "layer_b",
+      "sections": [
+        "clave_push"
+      ],
+      "kind": "bound",
+      "period": 1
+    },
+    "layer_b_dembow_ride": {
+      "label": "layer_b",
+      "sections": [
+        "dembow_ride"
+      ],
+      "kind": "bound",
+      "period": 1
+    }
+  },
+  "labels": {
+    "layer_a": {
+      "sections": [
+        "house_pump",
+        "two_step_snap",
+        "clave_push",
+        "dembow_ride"
+      ],
+      "bindings": {
+        "house_pump": "layer_a_house_pump",
+        "two_step_snap": "layer_a_two_step_snap",
+        "clave_push": "layer_a_clave_push",
+        "dembow_ride": "layer_a_dembow_ride"
+      }
+    },
+    "layer_b": {
+      "sections": [
+        "house_pump",
+        "two_step_snap",
+        "clave_push",
+        "dembow_ride"
+      ],
+      "bindings": {
+        "house_pump": "layer_b_house_pump",
+        "two_step_snap": "layer_b_two_step_snap",
+        "clave_push": "layer_b_clave_push",
+        "dembow_ride": "layer_b_dembow_ride"
+      }
+    }
+  },
+  "motifPlacements": [
+    {
+      "motif": null,
+      "rhythm": "four_floor",
+      "archetype": null,
+      "transform": null,
+      "degrees": null,
+      "contourRealization": null,
+      "contourSignsExpected": null,
+      "onsets": [
+        "0/1",
+        "1/4",
+        "1/2",
+        "3/4"
+      ],
+      "accents": [
+        1,
+        0.85,
+        0.92,
+        0.85
+      ],
+      "bars": 1,
+      "gains": [
+        1,
+        0.903,
+        0.948,
+        0.903
+      ],
+      "swing": 0,
+      "period": 1,
+      "notes": null,
+      "cadence": null,
+      "contourLib": null,
+      "role": "percussion",
+      "band": "low",
+      "style": "universal",
+      "mix": null,
+      "label": "layer_a",
+      "binding": "layer_a_house_pump",
+      "sections": [
+        "house_pump"
+      ]
+    },
+    {
+      "motif": null,
+      "rhythm": "two_step_kick",
+      "archetype": null,
+      "transform": null,
+      "degrees": null,
+      "contourRealization": null,
+      "contourSignsExpected": null,
+      "onsets": [
+        "0/1",
+        "3/8",
+        "5/8"
+      ],
+      "accents": [
+        1,
+        0.65,
+        0.85
+      ],
+      "bars": 1,
+      "gains": [
+        1,
+        0.773,
+        0.903
+      ],
+      "swing": 0,
+      "period": 1,
+      "notes": null,
+      "cadence": null,
+      "contourLib": null,
+      "role": "percussion",
+      "band": "low",
+      "style": "ukg",
+      "mix": null,
+      "label": "layer_a",
+      "binding": "layer_a_two_step_snap",
+      "sections": [
+        "two_step_snap"
+      ]
+    },
+    {
+      "motif": null,
+      "rhythm": "tresillo",
+      "archetype": null,
+      "transform": null,
+      "degrees": null,
+      "contourRealization": null,
+      "contourSignsExpected": null,
+      "onsets": [
+        "0/1",
+        "3/8",
+        "3/4"
+      ],
+      "accents": [
+        1,
+        0.7,
+        0.85
+      ],
+      "bars": 1,
+      "gains": [
+        1,
+        0.805,
+        0.903
+      ],
+      "swing": 0,
+      "period": 1,
+      "notes": null,
+      "cadence": null,
+      "contourLib": null,
+      "role": "percussion",
+      "band": "low",
+      "style": "latin",
+      "mix": null,
+      "label": "layer_a",
+      "binding": "layer_a_clave_push",
+      "sections": [
+        "clave_push"
+      ]
+    },
+    {
+      "motif": null,
+      "rhythm": "dembow",
+      "archetype": null,
+      "transform": null,
+      "degrees": null,
+      "contourRealization": null,
+      "contourSignsExpected": null,
+      "onsets": [
+        "0/1",
+        "3/16",
+        "1/2",
+        "11/16",
+        "7/8"
+      ],
+      "accents": [
+        1,
+        0.85,
+        0.9,
+        0.85,
+        0.55
+      ],
+      "bars": 1,
+      "gains": [
+        1,
+        0.903,
+        0.935,
+        0.903,
+        0.708
+      ],
+      "swing": 0,
+      "period": 1,
+      "notes": null,
+      "cadence": null,
+      "contourLib": null,
+      "role": "percussion",
+      "band": "low",
+      "style": "reggaeton",
+      "mix": null,
+      "label": "layer_a",
+      "binding": "layer_a_dembow_ride",
+      "sections": [
+        "dembow_ride"
+      ]
+    },
+    {
+      "motif": null,
+      "rhythm": "offbeat_8ths",
+      "archetype": null,
+      "transform": null,
+      "degrees": null,
+      "contourRealization": null,
+      "contourSignsExpected": null,
+      "onsets": [
+        "1/8",
+        "3/8",
+        "5/8",
+        "7/8"
+      ],
+      "accents": [
+        0.75,
+        0.6,
+        0.8,
+        0.62
+      ],
+      "bars": 1,
+      "gains": [
+        0.838,
+        0.74,
+        0.87,
+        0.753
+      ],
+      "swing": 0,
+      "period": 1,
+      "notes": null,
+      "cadence": null,
+      "contourLib": null,
+      "role": "support",
+      "band": "mid",
+      "style": "house",
+      "mix": null,
+      "label": "layer_b",
+      "binding": "layer_b_house_pump",
+      "sections": [
+        "house_pump"
+      ]
+    },
+    {
+      "motif": null,
+      "rhythm": "backbeat_ghost",
+      "archetype": null,
+      "transform": null,
+      "degrees": null,
+      "contourRealization": null,
+      "contourSignsExpected": null,
+      "onsets": [
+        "1/4",
+        "7/16",
+        "3/4",
+        "15/16"
+      ],
+      "accents": [
+        1,
+        0.35,
+        0.95,
+        0.4
+      ],
+      "bars": 1,
+      "gains": [
+        1,
+        0.577,
+        0.967,
+        0.61
+      ],
+      "swing": 0,
+      "period": 1,
+      "notes": null,
+      "cadence": null,
+      "contourLib": null,
+      "role": "percussion",
+      "band": "mid",
+      "style": "universal",
+      "mix": null,
+      "label": "layer_b",
+      "binding": "layer_b_two_step_snap",
+      "sections": [
+        "two_step_snap"
+      ]
+    },
+    {
+      "motif": null,
+      "rhythm": "anticipation_bass",
+      "archetype": null,
+      "transform": null,
+      "degrees": null,
+      "contourRealization": null,
+      "contourSignsExpected": null,
+      "onsets": [
+        "0/1",
+        "7/16",
+        "1/2",
+        "15/16"
+      ],
+      "accents": [
+        0.95,
+        0.6,
+        0.85,
+        0.7
+      ],
+      "bars": 1,
+      "gains": [
+        0.967,
+        0.74,
+        0.903,
+        0.805
+      ],
+      "swing": 0,
+      "period": 1,
+      "notes": null,
+      "cadence": null,
+      "contourLib": null,
+      "role": "percussion",
+      "band": "low",
+      "style": "universal",
+      "mix": null,
+      "label": "layer_b",
+      "binding": "layer_b_clave_push",
+      "sections": [
+        "clave_push"
+      ]
+    },
+    {
+      "motif": null,
+      "rhythm": "sixteenth_drive",
+      "archetype": null,
+      "transform": null,
+      "degrees": null,
+      "contourRealization": null,
+      "contourSignsExpected": null,
+      "onsets": [
+        "0/1",
+        "1/16",
+        "1/8",
+        "3/16",
+        "1/4",
+        "5/16",
+        "3/8",
+        "7/16",
+        "1/2",
+        "9/16",
+        "5/8",
+        "11/16",
+        "3/4",
+        "13/16",
+        "7/8",
+        "15/16"
+      ],
+      "accents": [
+        1,
+        0.4,
+        0.62,
+        0.4,
+        0.82,
+        0.4,
+        0.62,
+        0.42,
+        0.9,
+        0.4,
+        0.62,
+        0.4,
+        0.82,
+        0.42,
+        0.66,
+        0.46
+      ],
+      "bars": 1,
+      "gains": [
+        1,
+        0.61,
+        0.753,
+        0.61,
+        0.883,
+        0.61,
+        0.753,
+        0.623,
+        0.935,
+        0.61,
+        0.753,
+        0.61,
+        0.883,
+        0.623,
+        0.779,
+        0.649
+      ],
+      "swing": 0,
+      "period": 1,
+      "notes": null,
+      "cadence": null,
+      "contourLib": null,
+      "role": "percussion",
+      "band": "high",
+      "style": "universal",
+      "mix": null,
+      "label": "layer_b",
+      "binding": "layer_b_dembow_ride",
+      "sections": [
+        "dembow_ride"
+      ]
+    }
+  ],
+  "styles": null,
+  "orbits": {}
+}

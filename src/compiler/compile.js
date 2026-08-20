@@ -82,8 +82,11 @@ export function compile(spec, { bindFn = null, transitionFn = null } = {}) {
   const shapeRefs = new Set();
   for (const s of Object.values(resolved)) {
     for (const mat of Object.values(s.layers)) {
-      const text = typeof mat === 'string' ? mat : mat.pattern ?? '';
+      const text = typeof mat === 'string' ? mat : JSON.stringify(mat);
       for (const m of String(text).matchAll(/me_([a-z0-9_]+)/g)) shapeRefs.add(m[1]);
+      // comp binds may name the shape without the me_ prefix
+      const dict = mat?.bind?.dict;
+      if (dict && dict !== 'ireal') shapeRefs.add(String(dict).replace(/^me_/, ''));
     }
   }
   if (shapeRefs.size) {

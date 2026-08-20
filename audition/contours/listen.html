@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>contours v0 — listen</title>
+<style>
+  :root { color-scheme: dark; }
+  body { font: 14px/1.5 -apple-system, system-ui, sans-serif; margin: 0; background: #14141a; color: #e8e8ee; }
+  header { padding: 14px 20px 10px; border-bottom: 1px solid #2b2b36; display: flex; flex-wrap: wrap; gap: 14px; align-items: center; }
+  h1 { font-size: 16px; margin: 0 12px 0 0; }
+  .vswitch button { margin-right: 6px; padding: 6px 14px; border-radius: 6px; border: 1px solid #3a3a4a; background: #1e1e28; color: #cfcfe0; cursor: pointer; font-weight: 600; }
+  .vswitch button.active { background: #4c6ef5; border-color: #4c6ef5; color: #fff; }
+  .mutes { display: flex; flex-wrap: wrap; gap: 4px 12px; padding: 8px 20px; border-bottom: 1px solid #2b2b36; }
+  .mutes label { user-select: none; cursor: pointer; opacity: .9; }
+  .mutes input { accent-color: #4c6ef5; }
+  main { padding: 12px 20px; }
+  #repl { min-height: 420px; }
+  strudel-editor { display: block; }
+  .panel { background: #1b1b24; border: 1px solid #2b2b36; border-radius: 8px; padding: 12px 16px; margin: 14px 0; }
+  .panel h2 { font-size: 13px; text-transform: uppercase; letter-spacing: .08em; color: #9a9ab0; margin: 0 0 8px; }
+  .panel ul { margin: 0; padding-left: 18px; }
+  button.copy { padding: 6px 12px; border-radius: 6px; border: 1px solid #3a3a4a; background: #1e1e28; color: #cfcfe0; cursor: pointer; }
+  a { color: #74a0ff; }
+  .hint { color: #9a9ab0; font-size: 12.5px; }
+</style>
+</head>
+<body>
+<header>
+  <h1>contours v0</h1>
+  <div class="vswitch" id="vswitch"></div>
+  <span class="hint">switch version or mutes, then hit play in the editor (ctrl+enter updates)</span>
+</header>
+<div class="mutes" id="mutes"></div>
+<main>
+  <div id="repl"></div>
+  <div class="panel" id="listenfor" style="display:none"><h2>What to listen for</h2><ul id="listenforList"></ul></div>
+  <div class="panel">
+    <h2>Paste-ready</h2>
+    <button class="copy" id="copyBtn">Copy current code (with mutes)</button>
+    <a id="ccLink" target="_blank" style="margin-left:12px">open on strudel.cc</a>
+    <div class="hint" style="margin-top:6px">The embedded REPL is pinned to strudel 1.1.0 (same as the engine). strudel.cc runs latest — both play this code.</div>
+  </div>
+</main>
+<script src="https://unpkg.com/@strudel/repl@1.1.0/dist/index.js"></script>
+<script>
+const DATA = {"title":"contours v0","versions":[{"name":"v0","source":"// ============ contours ============\n// compiled by motif-engine (seed 1) — edit map in the song's meta.json\n// form: arch_classic rise_anthem fall_sigh zigzag_narrow pendulum_fifth spiral_up hook_drop valley bass_root_five dorian_lift minimal_dyad question_answer | 4/4 | 112 bpm | key C:dorian\nsetcpm(112/4)\n\nlet key = \"C:dorian\"\n\n// ---- form masks (compiled from form: arch_classic rise_anthem fall_sigh zigzag_narrow pendulum_fifth spiral_up hook_drop valley bass_root_five dorian_lift minimal_dyad question_answer; edit the SPEC, not these) ----\nlet form = {\n  arch_classic: \"<1!2 0!22>\",\n  rise_anthem: \"<0!2 1!2 0!20>\",\n  fall_sigh: \"<0!4 1!2 0!18>\",\n  zigzag_narrow: \"<0!6 1!2 0!16>\",\n  pendulum_fifth: \"<0!8 1!2 0!14>\",\n  spiral_up: \"<0!10 1!2 0!12>\",\n  hook_drop: \"<0!12 1!2 0!10>\",\n  valley: \"<0!14 1!2 0!8>\",\n  bass_root_five: \"<0!16 1!2 0!6>\",\n  dorian_lift: \"<0!18 1!2 0!4>\",\n  minimal_dyad: \"<0!20 1!2 0!2>\",\n  question_answer: \"<0!22 1!2>\",\n}\n\n// ---- harmony ----\nlet harmony_arch_classic = chord(\"<Cm7>/2\").dict('ireal')\nlet harmony_rise_anthem = chord(\"<Cm7>/2\").dict('ireal')\nlet harmony_fall_sigh = chord(\"<Cm7>/2\").dict('ireal')\nlet harmony_zigzag_narrow = chord(\"<Cm7>/2\").dict('ireal')\nlet harmony_pendulum_fifth = chord(\"<Cm7>/2\").dict('ireal')\nlet harmony_spiral_up = chord(\"<Cm7>/2\").dict('ireal')\nlet harmony_hook_drop = chord(\"<Cm7>/2\").dict('ireal')\nlet harmony_valley = chord(\"<Cm7>/2\").dict('ireal')\nlet harmony_bass_root_five = chord(\"<Cm7>/2\").dict('ireal')\nlet harmony_dorian_lift = chord(\"<Cm7>/2\").dict('ireal')\nlet harmony_minimal_dyad = chord(\"<Cm7>/2\").dict('ireal')\nlet harmony_question_answer = chord(\"<Cm7>/2\").dict('ireal')\nlet chords = stack(\n  harmony_arch_classic.mask(form.arch_classic),\n  harmony_rise_anthem.mask(form.rise_anthem),\n  harmony_fall_sigh.mask(form.fall_sigh),\n  harmony_zigzag_narrow.mask(form.zigzag_narrow),\n  harmony_pendulum_fifth.mask(form.pendulum_fifth),\n  harmony_spiral_up.mask(form.spiral_up),\n  harmony_hook_drop.mask(form.hook_drop),\n  harmony_valley.mask(form.valley),\n  harmony_bass_root_five.mask(form.bass_root_five),\n  harmony_dorian_lift.mask(form.dorian_lift),\n  harmony_minimal_dyad.mask(form.minimal_dyad),\n  harmony_question_answer.mask(form.question_answer),\n)\n\n// ---- material: lead ----\nlet lead_arch_classic = note(\"<[C5 Eb5 G5 A5 G5 Eb5 C5] [C5 Eb5 G5 A5 G5 Eb5 C5]>\").s(\"triangle\").gain(\"0.792 0.675 0.74 0.675 0.74 0.675 0.74\").room(0.15).orbit(6)\nlet lead_rise_anthem = note(\"<[C5 Eb5 F5 G5 A5 C6] [C5 Eb5 F5 G5 A5 C6]>\").s(\"triangle\").gain(\"0.792 0.675 0.74 0.675 0.74 0.675\").room(0.15).orbit(6)\nlet lead_fall_sigh = note(\"<[C6 Ab5 G5 Eb5 D5 C5] [C6 Ab5 G5 Eb5 D5 C5]>\").s(\"triangle\").gain(\"0.792 0.675 0.74 0.675 0.74 0.675\").room(0.15).orbit(6)\nlet lead_zigzag_narrow = note(\"<[C5 Eb5 D5 F5 Eb5 G5] [C5 Eb5 D5 F5 Eb5 G5]>\").s(\"triangle\").gain(\"0.792 0.675 0.74 0.675 0.74 0.675\").room(0.15).orbit(6)\nlet lead_pendulum_fifth = note(\"<[C5 G5 C5 G5 Eb5 C5] [C5 G5 C5 G5 Eb5 C5]>\").s(\"triangle\").gain(\"0.792 0.675 0.74 0.675 0.74 0.675\").room(0.15).orbit(6)\nlet lead_spiral_up = note(\"<[C5 F5 D5 G5 F5 Bb5 A5 C6] [C5 F5 D5 G5 F5 Bb5 A5 C6]>\").s(\"triangle\").gain(\"0.792 0.675 0.74 0.675 0.74 0.675 0.74 0.675\").room(0.15).orbit(6)\nlet lead_hook_drop = note(\"<[C6 C6 C6 G5 A5 G5 Eb5 C5] [C6 C6 C6 G5 A5 G5 Eb5 C5]>\").s(\"triangle\").gain(\"0.792 0.675 0.74 0.675 0.74 0.675 0.74 0.675\").room(0.15).orbit(6)\nlet lead_valley = note(\"<[G5 Eb5 C5 C5 Eb5 G5] [G5 Eb5 C5 C5 Eb5 G5]>\").s(\"triangle\").gain(\"0.792 0.675 0.74 0.675 0.74 0.675\").room(0.15).orbit(6)\nlet lead_bass_root_five = note(\"<[C5 C5 G5 C5] [C5 C5 G5 C5]>\").s(\"triangle\").gain(\"0.792 0.675 0.74 0.675\").room(0.15).orbit(6)\nlet lead_dorian_lift = note(\"<[C5 Eb5 F5 G5 A5 G5 Eb5 C5] [C5 Eb5 F5 G5 A5 G5 Eb5 C5]>\").s(\"triangle\").gain(\"0.792 0.675 0.74 0.675 0.74 0.675 0.74 0.675\").room(0.15).orbit(6)\nlet lead_minimal_dyad = note(\"<[C5 F5 C5 F5] [C5 F5 C5 F5]>\").s(\"triangle\").gain(\"0.792 0.675 0.74 0.675\").room(0.15).orbit(6)\nlet lead_question_answer = note(\"<[C5 Eb5 G5 Eb5 G5 A5 G5 C5] [C5 Eb5 G5 Eb5 G5 A5 G5 C5]>\").s(\"triangle\").gain(\"0.792 0.675 0.74 0.675 0.74 0.675 0.74 0.675\").room(0.15).orbit(6)\n\n// ---- layers ----\nlead: stack(\n  lead_arch_classic.mask(form.arch_classic),\n  lead_rise_anthem.mask(form.rise_anthem),\n  lead_fall_sigh.mask(form.fall_sigh),\n  lead_zigzag_narrow.mask(form.zigzag_narrow),\n  lead_pendulum_fifth.mask(form.pendulum_fifth),\n  lead_spiral_up.mask(form.spiral_up),\n  lead_hook_drop.mask(form.hook_drop),\n  lead_valley.mask(form.valley),\n  lead_bass_root_five.mask(form.bass_root_five),\n  lead_dorian_lift.mask(form.dorian_lift),\n  lead_minimal_dyad.mask(form.minimal_dyad),\n  lead_question_answer.mask(form.question_answer),\n)\n","note":"current"}],"labels":["lead"],"listenFor":[],"notes":[]};
+let currentVersion = DATA.versions.length - 1;
+const muted = new Set();
+
+function applyMutes(src) {
+  // labels live at column 0 — anchoring without leading whitespace keeps
+  // indented object keys (form masks) safe even when a section shares the name
+  let out = src;
+  for (const label of DATA.labels) {
+    const on = new RegExp('^' + label + ':', 'm');
+    const off = new RegExp('^_' + label + ':', 'm');
+    if (muted.has(label)) out = out.replace(on, '_' + label + ':');
+    else out = out.replace(off, label + ':');
+  }
+  return out;
+}
+function currentCode() { return applyMutes(DATA.versions[currentVersion].source); }
+function render() {
+  const holder = document.getElementById('repl');
+  holder.innerHTML = '';
+  const el = document.createElement('strudel-editor');
+  el.setAttribute('code', currentCode());
+  holder.appendChild(el);
+  document.querySelectorAll('.vswitch button').forEach((b, i) => b.classList.toggle('active', i === currentVersion));
+  document.getElementById('ccLink').href = 'https://strudel.cc/#' + encodeURIComponent(btoa(unescape(encodeURIComponent(currentCode()))));
+}
+const vs = document.getElementById('vswitch');
+DATA.versions.forEach((v, i) => {
+  const b = document.createElement('button');
+  b.textContent = v.name;
+  b.title = v.note || '';
+  b.onclick = () => { currentVersion = i; render(); };
+  vs.appendChild(b);
+});
+const ms = document.getElementById('mutes');
+DATA.labels.forEach((label) => {
+  const l = document.createElement('label');
+  const c = document.createElement('input');
+  c.type = 'checkbox'; c.checked = true;
+  c.onchange = () => { c.checked ? muted.delete(label) : muted.add(label); render(); };
+  l.appendChild(c); l.appendChild(document.createTextNode(' ' + label));
+  ms.appendChild(l);
+});
+if (DATA.listenFor.length) {
+  document.getElementById('listenfor').style.display = '';
+  const ul = document.getElementById('listenforList');
+  DATA.listenFor.forEach((x) => { const li = document.createElement('li'); li.textContent = x; ul.appendChild(li); });
+}
+document.getElementById('copyBtn').onclick = async () => {
+  await navigator.clipboard.writeText(currentCode());
+  document.getElementById('copyBtn').textContent = 'Copied ✓';
+  setTimeout(() => document.getElementById('copyBtn').textContent = 'Copy current code (with mutes)', 1200);
+};
+render();
+</script>
+</body>
+</html>

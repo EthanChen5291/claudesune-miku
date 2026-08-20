@@ -1,0 +1,21 @@
+{
+  "title": "rhythms-3-4",
+  "meter": "3/4",
+  "bpm": 150,
+  "key": "C:major",
+  "seed": 1,
+  "form": "waltz_lift",
+  "sections": {
+    "waltz_lift": {
+      "bars": 4,
+      "layers": {
+        "hits": {
+          "bind": {
+            "rhythm": "waltz_lift",
+            "sound": "bd"
+          }
+        }
+      }
+    }
+  }
+}

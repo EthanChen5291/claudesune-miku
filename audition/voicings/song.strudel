@@ -1,0 +1,52 @@
+// ============ voicings ============
+// compiled by motif-engine (seed 1) — edit map in the song's meta.json
+// form: closed_stack drop2 shell_37 spread_tenth cluster_upper | 4/4 | 100 bpm | key C:minor
+setcpm(100/4)
+
+let key = "C:minor"
+
+// ---- form masks (compiled from form: closed_stack drop2 shell_37 spread_tenth cluster_upper; edit the SPEC, not these) ----
+let form = {
+  closed_stack: "<1!4 0!16>",
+  drop2: "<0!4 1!4 0!12>",
+  shell_37: "<0!8 1!4 0!8>",
+  spread_tenth: "<0!12 1!4 0!4>",
+  cluster_upper: "<0!16 1!4>",
+}
+
+// ---- voicing shapes (library: src/lib/voicings.js) ----
+addVoicings('me_closed_stack', { '6': ['0 4 7 9'], '7': ['0 4 7 10'], '': ['0 4 7'], 'm': ['0 3 7'], '^7': ['0 4 7 11'], 'm7': ['0 3 7 10'], 'm9': ['0 3 7 10 14'], 'sus4': ['0 5 7'], 'dim': ['0 3 6'], 'o': ['0 3 6 9'] }, ['C3', 'C6'])
+addVoicings('me_cluster_upper', { '6': ['7 9 14'], '7': ['7 10 14'], '': ['7 11 14'], 'm': ['7 10 14'], '^7': ['7 11 14'], 'm7': ['7 10 14'], 'm9': ['10 14 15'], 'sus4': ['5 7 12'], 'dim': ['6 9 12'], 'o': ['6 9 12'] }, ['C4', 'C6'])
+addVoicings('me_drop2', { '6': ['-5 0 4 9'], '7': ['-5 0 4 10'], '': ['-5 0 4'], 'm': ['-5 0 3'], '^7': ['-5 0 4 11'], 'm7': ['-5 0 3 10'], 'm9': ['-5 0 3 10 14'], 'sus4': ['-5 0 5'], 'dim': ['-9 0 6'], 'o': ['-9 0 6 9'] }, ['C3', 'C6'])
+addVoicings('me_shell_37', { '6': ['4 9'], '7': ['4 10'], '': ['4 7'], 'm': ['3 7'], '^7': ['4 11'], 'm7': ['3 10'], 'm9': ['3 10 14'], 'sus4': ['5 7'], 'dim': ['3 6'], 'o': ['3 6'] }, ['C3', 'C5'])
+addVoicings('me_spread_tenth', { '6': ['0 9 16'], '7': ['0 10 16'], '': ['0 7 16'], 'm': ['0 7 15'], '^7': ['0 11 16'], 'm7': ['0 10 15'], 'm9': ['0 10 15 26'], 'sus4': ['0 7 17'], 'dim': ['0 6 15'], 'o': ['0 6 15'] }, ['C2', 'C6'])
+
+// ---- harmony ----
+let harmony_closed_stack = chord("<Cm9 Ab^7 Fm7 G7>").dict('ireal')
+let harmony_drop2 = chord("<Cm9 Ab^7 Fm7 G7>").dict('ireal')
+let harmony_shell_37 = chord("<Cm9 Ab^7 Fm7 G7>").dict('ireal')
+let harmony_spread_tenth = chord("<Cm9 Ab^7 Fm7 G7>").dict('ireal')
+let harmony_cluster_upper = chord("<Cm9 Ab^7 Fm7 G7>").dict('ireal')
+let chords = stack(
+  harmony_closed_stack.mask(form.closed_stack),
+  harmony_drop2.mask(form.drop2),
+  harmony_shell_37.mask(form.shell_37),
+  harmony_spread_tenth.mask(form.spread_tenth),
+  harmony_cluster_upper.mask(form.cluster_upper),
+)
+
+// ---- material: pads ----
+let pads_closed_stack = chords.dict('me_closed_stack').voicing().s("square").lpf(1400).room(0.4).gain(0.6).orbit(2)
+let pads_drop2 = chords.dict('me_drop2').voicing().s("square").lpf(1400).room(0.4).gain(0.6).orbit(2)
+let pads_shell_37 = chords.dict('me_shell_37').voicing().s("square").lpf(1400).room(0.4).gain(0.6).orbit(2)
+let pads_spread_tenth = chords.dict('me_spread_tenth').voicing().s("square").lpf(1400).room(0.4).gain(0.6).orbit(2)
+let pads_cluster_upper = chords.dict('me_cluster_upper').voicing().s("square").lpf(1400).room(0.4).gain(0.6).orbit(2)
+
+// ---- layers ----
+pads: stack(
+  pads_closed_stack.mask(form.closed_stack),
+  pads_drop2.mask(form.drop2),
+  pads_shell_37.mask(form.shell_37),
+  pads_spread_tenth.mask(form.spread_tenth),
+  pads_cluster_upper.mask(form.cluster_upper),
+)

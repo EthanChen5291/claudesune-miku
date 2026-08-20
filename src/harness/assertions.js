@@ -223,6 +223,32 @@ export function runAssertions(evaluated, hapsMap, meta) {
     if (!entry) continue;
     const ranges = (p.sections ?? []).flatMap((s) => meta.sections[s]?.ranges ?? []);
     if (!ranges.length) continue;
+    if (p.comp) {
+      // comp placement: the label also emits chord-voicing notes the binder never
+      // resolved — check the BOUNCE line is present at its onsets instead of
+      // demanding every emitted note match (audition r1 feature)
+      let checked = 0, misses = 0, firstMiss = null;
+      for (const [a, b] of ranges) {
+        const shift = a % (p.period || 1) === 0 ? 0 : a; // mirrors the compiler's .late(start) alignment
+        for (let g = Math.ceil(a); g < b; g++) {
+          for (const n of p.notes) {
+            const eff = (((g - shift) % p.period) + p.period) % p.period;
+            if (eff !== n.cycle) continue;
+            const t = g + fracVal(n.t);
+            checked++;
+            const hit = entry.haps.some((h) => Math.abs(h.whole.begin.valueOf() - t) < 1e-6 && h.value.note === n.note);
+            if (!hit) { misses++; firstMiss ??= `${n.note} @ cycle ${g} + ${n.t}`; }
+          }
+        }
+      }
+      results.push({
+        family: 'motif', name: `${p.label}.${p.rhythm ?? 'comp'}.comp-bounce`, pass: checked > 0 && misses === 0, severity: 'fail',
+        detail: misses === 0 && checked > 0
+          ? `${checked} bounce notes present under the comp stabs`
+          : `${misses}/${checked} bounce notes missing (first: ${firstMiss ?? 'no bounce onsets in range'})`,
+      });
+      continue;
+    }
     const expectedPhrase = [...p.notes].sort((a, b) => a.cycle - b.cycle || cmpFrac(a.t, b.t)).map((n) => n.note);
     const emitted = entry.haps
       .filter((h) => ranges.some(([a, b]) => h.whole.begin.valueOf() >= a - 1e-9 && h.whole.begin.valueOf() < b - 1e-9))
@@ -422,6 +448,10 @@ function cmpFrac(a, b) {
   const pa = a.includes('/') ? a.split('/').map(Number) : [Number(a), 1];
   const pb = b.includes('/') ? b.split('/').map(Number) : [Number(b), 1];
   return pa[0] * pb[1] - pb[0] * pa[1];
+}
+function fracVal(t) {
+  if (typeof t === 'number') return t;
+  return String(t).includes('/') ? Number(t.split('/')[0]) / Number(t.split('/')[1]) : Number(t);
 }
 function groupBy(arr, fn) {
   const out = {};

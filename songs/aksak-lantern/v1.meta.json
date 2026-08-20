@@ -1,0 +1,2513 @@
+{
+  "title": "aksak-lantern",
+  "genre": "odd-meter instrumental",
+  "meter": "7/8",
+  "bpm": 140,
+  "key": "D:dorian",
+  "seed": 20260820,
+  "form": "A B C A",
+  "totalCycles": 32,
+  "instances": [
+    {
+      "name": "A",
+      "start": 0,
+      "end": 8
+    },
+    {
+      "name": "B",
+      "start": 8,
+      "end": 16
+    },
+    {
+      "name": "C",
+      "start": 16,
+      "end": 24
+    },
+    {
+      "name": "A",
+      "start": 24,
+      "end": 32
+    }
+  ],
+  "ranges": {
+    "A": [
+      [
+        0,
+        8
+      ],
+      [
+        24,
+        32
+      ]
+    ],
+    "B": [
+      [
+        8,
+        16
+      ]
+    ],
+    "C": [
+      [
+        16,
+        24
+      ]
+    ]
+  },
+  "sections": {
+    "A": {
+      "role": "verse",
+      "bars": 8,
+      "must": null,
+      "contrasts_with": null,
+      "resolves": null,
+      "recalls": null,
+      "sets_up": null,
+      "withhold": [],
+      "harmony": [
+        "Dm7",
+        "G7"
+      ],
+      "ranges": [
+        [
+          0,
+          8
+        ],
+        [
+          24,
+          32
+        ]
+      ],
+      "cadence": null
+    },
+    "B": {
+      "role": "lift",
+      "bars": 8,
+      "must": {
+        "density": "> 1.15x A"
+      },
+      "contrasts_with": "A",
+      "resolves": null,
+      "recalls": null,
+      "sets_up": null,
+      "withhold": [],
+      "harmony": [
+        "Dm7",
+        "Em7",
+        "G7",
+        "Dm7"
+      ],
+      "ranges": [
+        [
+          8,
+          16
+        ]
+      ],
+      "cadence": null
+    },
+    "C": {
+      "role": "bridge",
+      "bars": 8,
+      "must": null,
+      "contrasts_with": null,
+      "resolves": null,
+      "recalls": null,
+      "sets_up": "A",
+      "withhold": [
+        "bass"
+      ],
+      "harmony": [
+        "Em7",
+        "A7"
+      ],
+      "ranges": [
+        [
+          16,
+          24
+        ]
+      ],
+      "cadence": null
+    }
+  },
+  "harmonyBinding": "chords",
+  "bindings": {
+    "harmony_A": {
+      "label": "chords",
+      "sections": [
+        "A"
+      ],
+      "kind": "harmony"
+    },
+    "harmony_B": {
+      "label": "chords",
+      "sections": [
+        "B"
+      ],
+      "kind": "harmony"
+    },
+    "harmony_C": {
+      "label": "chords",
+      "sections": [
+        "C"
+      ],
+      "kind": "harmony"
+    },
+    "chords": {
+      "label": "(harmony timeline)",
+      "sections": [
+        "A",
+        "B",
+        "C"
+      ],
+      "kind": "harmony-combined"
+    },
+    "kick_A": {
+      "label": "kick",
+      "sections": [
+        "A"
+      ],
+      "kind": "bound",
+      "period": 1
+    },
+    "kick_B": {
+      "label": "kick",
+      "sections": [
+        "B"
+      ],
+      "kind": "bound",
+      "period": 1
+    },
+    "kick_C": {
+      "label": "kick",
+      "sections": [
+        "C"
+      ],
+      "kind": "bound",
+      "period": 1
+    },
+    "hats_A": {
+      "label": "hats",
+      "sections": [
+        "A"
+      ],
+      "kind": "bound",
+      "period": 1
+    },
+    "hats_B": {
+      "label": "hats",
+      "sections": [
+        "B"
+      ],
+      "kind": "bound",
+      "period": 1
+    },
+    "hats_C": {
+      "label": "hats",
+      "sections": [
+        "C"
+      ],
+      "kind": "bound",
+      "period": 1
+    },
+    "bass_A": {
+      "label": "bass",
+      "sections": [
+        "A"
+      ],
+      "kind": "bound",
+      "period": 8
+    },
+    "bass_B": {
+      "label": "bass",
+      "sections": [
+        "B"
+      ],
+      "kind": "bound",
+      "period": 8
+    },
+    "keys_A": {
+      "label": "keys",
+      "sections": [
+        "A"
+      ],
+      "kind": "free",
+      "period": 1
+    },
+    "keys_B": {
+      "label": "keys",
+      "sections": [
+        "B"
+      ],
+      "kind": "free",
+      "period": 1
+    },
+    "keys_C": {
+      "label": "keys",
+      "sections": [
+        "C"
+      ],
+      "kind": "free",
+      "period": 1
+    },
+    "lead_B": {
+      "label": "lead",
+      "sections": [
+        "B"
+      ],
+      "kind": "bound",
+      "period": 8
+    },
+    "lead_C": {
+      "label": "lead",
+      "sections": [
+        "C"
+      ],
+      "kind": "bound",
+      "period": 8
+    },
+    "fill_fill_tom_run_A3": {
+      "label": "fill",
+      "sections": [
+        "A"
+      ],
+      "kind": "transition"
+    },
+    "impact_impact_boom_C2": {
+      "label": "impact",
+      "sections": [
+        "C"
+      ],
+      "kind": "transition"
+    }
+  },
+  "labels": {
+    "kick": {
+      "sections": [
+        "A",
+        "B",
+        "C"
+      ],
+      "bindings": {
+        "A": "kick_A",
+        "B": "kick_B",
+        "C": "kick_C"
+      }
+    },
+    "hats": {
+      "sections": [
+        "A",
+        "B",
+        "C"
+      ],
+      "bindings": {
+        "A": "hats_A",
+        "B": "hats_B",
+        "C": "hats_C"
+      }
+    },
+    "bass": {
+      "sections": [
+        "A",
+        "B"
+      ],
+      "bindings": {
+        "A": "bass_A",
+        "B": "bass_B"
+      }
+    },
+    "keys": {
+      "sections": [
+        "A",
+        "B",
+        "C"
+      ],
+      "bindings": {
+        "A": "keys_A",
+        "B": "keys_B",
+        "C": "keys_C"
+      }
+    },
+    "lead": {
+      "sections": [
+        "B",
+        "C"
+      ],
+      "bindings": {
+        "B": "lead_B",
+        "C": "lead_C"
+      }
+    },
+    "fill": {
+      "sections": [],
+      "bindings": {},
+      "kind": "transition"
+    },
+    "impact": {
+      "sections": [],
+      "bindings": {},
+      "kind": "transition"
+    }
+  },
+  "motifPlacements": [
+    {
+      "motif": null,
+      "rhythm": "seven_pulse_223",
+      "archetype": null,
+      "transform": null,
+      "degrees": null,
+      "contourRealization": null,
+      "contourSignsExpected": null,
+      "onsets": [
+        "0/1",
+        "2/7",
+        "4/7"
+      ],
+      "accents": [
+        1,
+        0.82,
+        0.9
+      ],
+      "bars": 1,
+      "gains": [
+        1,
+        0.883,
+        0.935
+      ],
+      "swing": 0,
+      "period": 1,
+      "notes": null,
+      "cadence": null,
+      "contourLib": null,
+      "role": "percussion",
+      "band": "low",
+      "style": "aksak",
+      "mix": null,
+      "label": "kick",
+      "binding": "kick_A",
+      "sections": [
+        "A"
+      ]
+    },
+    {
+      "motif": null,
+      "rhythm": "seven_pulse_223",
+      "archetype": null,
+      "transform": null,
+      "degrees": null,
+      "contourRealization": null,
+      "contourSignsExpected": null,
+      "onsets": [
+        "0/1",
+        "2/7",
+        "4/7"
+      ],
+      "accents": [
+        1,
+        0.82,
+        0.9
+      ],
+      "bars": 1,
+      "gains": [
+        1,
+        0.883,
+        0.935
+      ],
+      "swing": 0,
+      "period": 1,
+      "notes": null,
+      "cadence": null,
+      "contourLib": null,
+      "role": "percussion",
+      "band": "low",
+      "style": "aksak",
+      "mix": null,
+      "label": "kick",
+      "binding": "kick_B",
+      "sections": [
+        "B"
+      ]
+    },
+    {
+      "motif": null,
+      "rhythm": "seven_pulse_223",
+      "archetype": null,
+      "transform": null,
+      "degrees": null,
+      "contourRealization": null,
+      "contourSignsExpected": null,
+      "onsets": [
+        "0/1",
+        "2/7",
+        "4/7"
+      ],
+      "accents": [
+        1,
+        0.82,
+        0.9
+      ],
+      "bars": 1,
+      "gains": [
+        0.6,
+        0.537,
+        0.565
+      ],
+      "swing": 0,
+      "period": 1,
+      "notes": null,
+      "cadence": null,
+      "contourLib": null,
+      "role": "percussion",
+      "band": "low",
+      "style": "aksak",
+      "mix": null,
+      "label": "kick",
+      "binding": "kick_C",
+      "sections": [
+        "C"
+      ]
+    },
+    {
+      "motif": null,
+      "rhythm": "seven_hats_223",
+      "archetype": null,
+      "transform": null,
+      "degrees": null,
+      "contourRealization": null,
+      "contourSignsExpected": null,
+      "onsets": [
+        "0/1",
+        "1/7",
+        "2/7",
+        "3/7",
+        "4/7",
+        "5/7",
+        "6/7"
+      ],
+      "accents": [
+        1,
+        0.4,
+        0.78,
+        0.42,
+        0.85,
+        0.45,
+        0.58
+      ],
+      "bars": 1,
+      "gains": [
+        1,
+        0.61,
+        0.857,
+        0.623,
+        0.903,
+        0.643,
+        0.727
+      ],
+      "swing": 0,
+      "period": 1,
+      "notes": null,
+      "cadence": null,
+      "contourLib": null,
+      "role": "percussion",
+      "band": "high",
+      "style": "aksak",
+      "mix": null,
+      "label": "hats",
+      "binding": "hats_A",
+      "sections": [
+        "A"
+      ]
+    },
+    {
+      "motif": null,
+      "rhythm": "seven_hats_223",
+      "archetype": null,
+      "transform": null,
+      "degrees": null,
+      "contourRealization": null,
+      "contourSignsExpected": null,
+      "onsets": [
+        "0/1",
+        "1/7",
+        "2/7",
+        "3/7",
+        "4/7",
+        "5/7",
+        "6/7"
+      ],
+      "accents": [
+        1,
+        0.4,
+        0.78,
+        0.42,
+        0.85,
+        0.45,
+        0.58
+      ],
+      "bars": 1,
+      "gains": [
+        1,
+        0.64,
+        0.868,
+        0.652,
+        0.91,
+        0.67,
+        0.748
+      ],
+      "swing": 0,
+      "period": 1,
+      "notes": null,
+      "cadence": null,
+      "contourLib": null,
+      "role": "percussion",
+      "band": "high",
+      "style": "aksak",
+      "mix": null,
+      "label": "hats",
+      "binding": "hats_B",
+      "sections": [
+        "B"
+      ]
+    },
+    {
+      "motif": null,
+      "rhythm": "seven_hats_223",
+      "archetype": null,
+      "transform": null,
+      "degrees": null,
+      "contourRealization": null,
+      "contourSignsExpected": null,
+      "onsets": [
+        "0/1",
+        "1/7",
+        "2/7",
+        "3/7",
+        "4/7",
+        "5/7",
+        "6/7"
+      ],
+      "accents": [
+        1,
+        0.4,
+        0.78,
+        0.42,
+        0.85,
+        0.45,
+        0.58
+      ],
+      "bars": 1,
+      "gains": [
+        0.5,
+        0.29,
+        0.423,
+        0.297,
+        0.448,
+        0.308,
+        0.353
+      ],
+      "swing": 0,
+      "period": 1,
+      "notes": null,
+      "cadence": null,
+      "contourLib": null,
+      "role": "percussion",
+      "band": "high",
+      "style": "aksak",
+      "mix": null,
+      "label": "hats",
+      "binding": "hats_C",
+      "sections": [
+        "C"
+      ]
+    },
+    {
+      "motif": null,
+      "rhythm": "seven_syncopated",
+      "archetype": null,
+      "transform": null,
+      "degrees": [
+        0,
+        0,
+        0,
+        4,
+        4,
+        0
+      ],
+      "contourRealization": {
+        "mode": "resampled",
+        "k": 1
+      },
+      "contourSignsExpected": [
+        0,
+        0,
+        1,
+        0,
+        -1
+      ],
+      "onsets": [
+        "0/1",
+        "3/14",
+        "2/7",
+        "1/2",
+        "9/14",
+        "11/14"
+      ],
+      "accents": [
+        1,
+        0.5,
+        0.8,
+        0.9,
+        0.55,
+        0.72
+      ],
+      "bars": 1,
+      "gains": [
+        1,
+        0.675,
+        0.87,
+        0.935,
+        0.708,
+        0.818
+      ],
+      "swing": 0,
+      "period": 8,
+      "notes": [
+        {
+          "cycle": 0,
+          "step": 0,
+          "t": "0",
+          "note": "D2",
+          "midi": 38,
+          "accented": true,
+          "degree": 0,
+          "voice": "main"
+        },
+        {
+          "cycle": 0,
+          "step": 3,
+          "t": "3/14",
+          "note": "D2",
+          "midi": 38,
+          "accented": false,
+          "degree": 0,
+          "voice": "main"
+        },
+        {
+          "cycle": 0,
+          "step": 4,
+          "t": "2/7",
+          "note": "D2",
+          "midi": 38,
+          "accented": true,
+          "degree": 0,
+          "voice": "main"
+        },
+        {
+          "cycle": 0,
+          "step": 7,
+          "t": "1/2",
+          "note": "A2",
+          "midi": 45,
+          "accented": true,
+          "degree": 4,
+          "voice": "main"
+        },
+        {
+          "cycle": 0,
+          "step": 9,
+          "t": "9/14",
+          "note": "A2",
+          "midi": 45,
+          "accented": false,
+          "degree": 4,
+          "voice": "main"
+        },
+        {
+          "cycle": 0,
+          "step": 11,
+          "t": "11/14",
+          "note": "D2",
+          "midi": 38,
+          "accented": true,
+          "degree": 0,
+          "voice": "main"
+        },
+        {
+          "cycle": 1,
+          "step": 0,
+          "t": "0",
+          "note": "D2",
+          "midi": 38,
+          "accented": true,
+          "degree": 0,
+          "voice": "main"
+        },
+        {
+          "cycle": 1,
+          "step": 3,
+          "t": "3/14",
+          "note": "D2",
+          "midi": 38,
+          "accented": false,
+          "degree": 0,
+          "voice": "main"
+        },
+        {
+          "cycle": 1,
+          "step": 4,
+          "t": "2/7",
+          "note": "D2",
+          "midi": 38,
+          "accented": true,
+          "degree": 0,
+          "voice": "main"
+        },
+        {
+          "cycle": 1,
+          "step": 7,
+          "t": "1/2",
+          "note": "A2",
+          "midi": 45,
+          "accented": true,
+          "degree": 4,
+          "voice": "main"
+        },
+        {
+          "cycle": 1,
+          "step": 9,
+          "t": "9/14",
+          "note": "A2",
+          "midi": 45,
+          "accented": false,
+          "degree": 4,
+          "voice": "main"
+        },
+        {
+          "cycle": 1,
+          "step": 11,
+          "t": "11/14",
+          "note": "D2",
+          "midi": 38,
+          "accented": true,
+          "degree": 0,
+          "voice": "main"
+        },
+        {
+          "cycle": 2,
+          "step": 0,
+          "t": "0",
+          "note": "D2",
+          "midi": 38,
+          "accented": true,
+          "degree": 0,
+          "voice": "main"
+        },
+        {
+          "cycle": 2,
+          "step": 3,
+          "t": "3/14",
+          "note": "D2",
+          "midi": 38,
+          "accented": false,
+          "degree": 0,
+          "voice": "main"
+        },
+        {
+          "cycle": 2,
+          "step": 4,
+          "t": "2/7",
+          "note": "D2",
+          "midi": 38,
+          "accented": true,
+          "degree": 0,
+          "voice": "main"
+        },
+        {
+          "cycle": 2,
+          "step": 7,
+          "t": "1/2",
+          "note": "A2",
+          "midi": 45,
+          "accented": true,
+          "degree": 4,
+          "voice": "main"
+        },
+        {
+          "cycle": 2,
+          "step": 9,
+          "t": "9/14",
+          "note": "A2",
+          "midi": 45,
+          "accented": false,
+          "degree": 4,
+          "voice": "main"
+        },
+        {
+          "cycle": 2,
+          "step": 11,
+          "t": "11/14",
+          "note": "D2",
+          "midi": 38,
+          "accented": true,
+          "degree": 0,
+          "voice": "main"
+        },
+        {
+          "cycle": 3,
+          "step": 0,
+          "t": "0",
+          "note": "D2",
+          "midi": 38,
+          "accented": true,
+          "degree": 0,
+          "voice": "main"
+        },
+        {
+          "cycle": 3,
+          "step": 3,
+          "t": "3/14",
+          "note": "D2",
+          "midi": 38,
+          "accented": false,
+          "degree": 0,
+          "voice": "main"
+        },
+        {
+          "cycle": 3,
+          "step": 4,
+          "t": "2/7",
+          "note": "D2",
+          "midi": 38,
+          "accented": true,
+          "degree": 0,
+          "voice": "main"
+        },
+        {
+          "cycle": 3,
+          "step": 7,
+          "t": "1/2",
+          "note": "A2",
+          "midi": 45,
+          "accented": true,
+          "degree": 4,
+          "voice": "main"
+        },
+        {
+          "cycle": 3,
+          "step": 9,
+          "t": "9/14",
+          "note": "A2",
+          "midi": 45,
+          "accented": false,
+          "degree": 4,
+          "voice": "main"
+        },
+        {
+          "cycle": 3,
+          "step": 11,
+          "t": "11/14",
+          "note": "D2",
+          "midi": 38,
+          "accented": true,
+          "degree": 0,
+          "voice": "main"
+        },
+        {
+          "cycle": 4,
+          "step": 0,
+          "t": "0",
+          "note": "D2",
+          "midi": 38,
+          "accented": true,
+          "degree": 0,
+          "voice": "main"
+        },
+        {
+          "cycle": 4,
+          "step": 3,
+          "t": "3/14",
+          "note": "D2",
+          "midi": 38,
+          "accented": false,
+          "degree": 0,
+          "voice": "main"
+        },
+        {
+          "cycle": 4,
+          "step": 4,
+          "t": "2/7",
+          "note": "D2",
+          "midi": 38,
+          "accented": true,
+          "degree": 0,
+          "voice": "main"
+        },
+        {
+          "cycle": 4,
+          "step": 7,
+          "t": "1/2",
+          "note": "A2",
+          "midi": 45,
+          "accented": true,
+          "degree": 4,
+          "voice": "main"
+        },
+        {
+          "cycle": 4,
+          "step": 9,
+          "t": "9/14",
+          "note": "A2",
+          "midi": 45,
+          "accented": false,
+          "degree": 4,
+          "voice": "main"
+        },
+        {
+          "cycle": 4,
+          "step": 11,
+          "t": "11/14",
+          "note": "D2",
+          "midi": 38,
+          "accented": true,
+          "degree": 0,
+          "voice": "main"
+        },
+        {
+          "cycle": 5,
+          "step": 0,
+          "t": "0",
+          "note": "D2",
+          "midi": 38,
+          "accented": true,
+          "degree": 0,
+          "voice": "main"
+        },
+        {
+          "cycle": 5,
+          "step": 3,
+          "t": "3/14",
+          "note": "D2",
+          "midi": 38,
+          "accented": false,
+          "degree": 0,
+          "voice": "main"
+        },
+        {
+          "cycle": 5,
+          "step": 4,
+          "t": "2/7",
+          "note": "D2",
+          "midi": 38,
+          "accented": true,
+          "degree": 0,
+          "voice": "main"
+        },
+        {
+          "cycle": 5,
+          "step": 7,
+          "t": "1/2",
+          "note": "A2",
+          "midi": 45,
+          "accented": true,
+          "degree": 4,
+          "voice": "main"
+        },
+        {
+          "cycle": 5,
+          "step": 9,
+          "t": "9/14",
+          "note": "A2",
+          "midi": 45,
+          "accented": false,
+          "degree": 4,
+          "voice": "main"
+        },
+        {
+          "cycle": 5,
+          "step": 11,
+          "t": "11/14",
+          "note": "D2",
+          "midi": 38,
+          "accented": true,
+          "degree": 0,
+          "voice": "main"
+        },
+        {
+          "cycle": 6,
+          "step": 0,
+          "t": "0",
+          "note": "D2",
+          "midi": 38,
+          "accented": true,
+          "degree": 0,
+          "voice": "main"
+        },
+        {
+          "cycle": 6,
+          "step": 3,
+          "t": "3/14",
+          "note": "D2",
+          "midi": 38,
+          "accented": false,
+          "degree": 0,
+          "voice": "main"
+        },
+        {
+          "cycle": 6,
+          "step": 4,
+          "t": "2/7",
+          "note": "D2",
+          "midi": 38,
+          "accented": true,
+          "degree": 0,
+          "voice": "main"
+        },
+        {
+          "cycle": 6,
+          "step": 7,
+          "t": "1/2",
+          "note": "A2",
+          "midi": 45,
+          "accented": true,
+          "degree": 4,
+          "voice": "main"
+        },
+        {
+          "cycle": 6,
+          "step": 9,
+          "t": "9/14",
+          "note": "A2",
+          "midi": 45,
+          "accented": false,
+          "degree": 4,
+          "voice": "main"
+        },
+        {
+          "cycle": 6,
+          "step": 11,
+          "t": "11/14",
+          "note": "D2",
+          "midi": 38,
+          "accented": true,
+          "degree": 0,
+          "voice": "main"
+        },
+        {
+          "cycle": 7,
+          "step": 0,
+          "t": "0",
+          "note": "D2",
+          "midi": 38,
+          "accented": true,
+          "degree": 0,
+          "voice": "main"
+        },
+        {
+          "cycle": 7,
+          "step": 3,
+          "t": "3/14",
+          "note": "D2",
+          "midi": 38,
+          "accented": false,
+          "degree": 0,
+          "voice": "main"
+        },
+        {
+          "cycle": 7,
+          "step": 4,
+          "t": "2/7",
+          "note": "D2",
+          "midi": 38,
+          "accented": true,
+          "degree": 0,
+          "voice": "main"
+        },
+        {
+          "cycle": 7,
+          "step": 7,
+          "t": "1/2",
+          "note": "A2",
+          "midi": 45,
+          "accented": true,
+          "degree": 4,
+          "voice": "main"
+        },
+        {
+          "cycle": 7,
+          "step": 9,
+          "t": "9/14",
+          "note": "A2",
+          "midi": 45,
+          "accented": false,
+          "degree": 4,
+          "voice": "main"
+        },
+        {
+          "cycle": 7,
+          "step": 11,
+          "t": "11/14",
+          "note": "D2",
+          "midi": 38,
+          "accented": true,
+          "degree": 0,
+          "voice": "main"
+        }
+      ],
+      "cadence": null,
+      "contourLib": "bass_root_five",
+      "role": "melodic",
+      "band": "mid",
+      "style": "aksak",
+      "mix": null,
+      "label": "bass",
+      "binding": "bass_A",
+      "sections": [
+        "A"
+      ]
+    },
+    {
+      "motif": null,
+      "rhythm": "seven_syncopated",
+      "archetype": null,
+      "transform": null,
+      "degrees": [
+        0,
+        0,
+        0,
+        4,
+        4,
+        0
+      ],
+      "contourRealization": {
+        "mode": "resampled",
+        "k": 1
+      },
+      "contourSignsExpected": [
+        0,
+        0,
+        1,
+        0,
+        -1
+      ],
+      "onsets": [
+        "0/1",
+        "3/14",
+        "2/7",
+        "1/2",
+        "9/14",
+        "11/14"
+      ],
+      "accents": [
+        1,
+        0.5,
+        0.8,
+        0.9,
+        0.55,
+        0.72
+      ],
+      "bars": 1,
+      "gains": [
+        1,
+        0.675,
+        0.87,
+        0.935,
+        0.708,
+        0.818
+      ],
+      "swing": 0,
+      "period": 8,
+      "notes": [
+        {
+          "cycle": 0,
+          "step": 0,
+          "t": "0",
+          "note": "D2",
+          "midi": 38,
+          "accented": true,
+          "degree": 0,
+          "voice": "main"
+        },
+        {
+          "cycle": 0,
+          "step": 3,
+          "t": "3/14",
+          "note": "D2",
+          "midi": 38,
+          "accented": false,
+          "degree": 0,
+          "voice": "main"
+        },
+        {
+          "cycle": 0,
+          "step": 4,
+          "t": "2/7",
+          "note": "D2",
+          "midi": 38,
+          "accented": true,
+          "degree": 0,
+          "voice": "main"
+        },
+        {
+          "cycle": 0,
+          "step": 7,
+          "t": "1/2",
+          "note": "A2",
+          "midi": 45,
+          "accented": true,
+          "degree": 4,
+          "voice": "main"
+        },
+        {
+          "cycle": 0,
+          "step": 9,
+          "t": "9/14",
+          "note": "A2",
+          "midi": 45,
+          "accented": false,
+          "degree": 4,
+          "voice": "main"
+        },
+        {
+          "cycle": 0,
+          "step": 11,
+          "t": "11/14",
+          "note": "D2",
+          "midi": 38,
+          "accented": true,
+          "degree": 0,
+          "voice": "main"
+        },
+        {
+          "cycle": 1,
+          "step": 0,
+          "t": "0",
+          "note": "D2",
+          "midi": 38,
+          "accented": true,
+          "degree": 0,
+          "voice": "main"
+        },
+        {
+          "cycle": 1,
+          "step": 3,
+          "t": "3/14",
+          "note": "D2",
+          "midi": 38,
+          "accented": false,
+          "degree": 0,
+          "voice": "main"
+        },
+        {
+          "cycle": 1,
+          "step": 4,
+          "t": "2/7",
+          "note": "D2",
+          "midi": 38,
+          "accented": true,
+          "degree": 0,
+          "voice": "main"
+        },
+        {
+          "cycle": 1,
+          "step": 7,
+          "t": "1/2",
+          "note": "A2",
+          "midi": 45,
+          "accented": true,
+          "degree": 4,
+          "voice": "main"
+        },
+        {
+          "cycle": 1,
+          "step": 9,
+          "t": "9/14",
+          "note": "A2",
+          "midi": 45,
+          "accented": false,
+          "degree": 4,
+          "voice": "main"
+        },
+        {
+          "cycle": 1,
+          "step": 11,
+          "t": "11/14",
+          "note": "D2",
+          "midi": 38,
+          "accented": true,
+          "degree": 0,
+          "voice": "main"
+        },
+        {
+          "cycle": 2,
+          "step": 0,
+          "t": "0",
+          "note": "D2",
+          "midi": 38,
+          "accented": true,
+          "degree": 0,
+          "voice": "main"
+        },
+        {
+          "cycle": 2,
+          "step": 3,
+          "t": "3/14",
+          "note": "D2",
+          "midi": 38,
+          "accented": false,
+          "degree": 0,
+          "voice": "main"
+        },
+        {
+          "cycle": 2,
+          "step": 4,
+          "t": "2/7",
+          "note": "D2",
+          "midi": 38,
+          "accented": true,
+          "degree": 0,
+          "voice": "main"
+        },
+        {
+          "cycle": 2,
+          "step": 7,
+          "t": "1/2",
+          "note": "A2",
+          "midi": 45,
+          "accented": true,
+          "degree": 4,
+          "voice": "main"
+        },
+        {
+          "cycle": 2,
+          "step": 9,
+          "t": "9/14",
+          "note": "A2",
+          "midi": 45,
+          "accented": false,
+          "degree": 4,
+          "voice": "main"
+        },
+        {
+          "cycle": 2,
+          "step": 11,
+          "t": "11/14",
+          "note": "D2",
+          "midi": 38,
+          "accented": true,
+          "degree": 0,
+          "voice": "main"
+        },
+        {
+          "cycle": 3,
+          "step": 0,
+          "t": "0",
+          "note": "D2",
+          "midi": 38,
+          "accented": true,
+          "degree": 0,
+          "voice": "main"
+        },
+        {
+          "cycle": 3,
+          "step": 3,
+          "t": "3/14",
+          "note": "D2",
+          "midi": 38,
+          "accented": false,
+          "degree": 0,
+          "voice": "main"
+        },
+        {
+          "cycle": 3,
+          "step": 4,
+          "t": "2/7",
+          "note": "D2",
+          "midi": 38,
+          "accented": true,
+          "degree": 0,
+          "voice": "main"
+        },
+        {
+          "cycle": 3,
+          "step": 7,
+          "t": "1/2",
+          "note": "A2",
+          "midi": 45,
+          "accented": true,
+          "degree": 4,
+          "voice": "main"
+        },
+        {
+          "cycle": 3,
+          "step": 9,
+          "t": "9/14",
+          "note": "A2",
+          "midi": 45,
+          "accented": false,
+          "degree": 4,
+          "voice": "main"
+        },
+        {
+          "cycle": 3,
+          "step": 11,
+          "t": "11/14",
+          "note": "D2",
+          "midi": 38,
+          "accented": true,
+          "degree": 0,
+          "voice": "main"
+        },
+        {
+          "cycle": 4,
+          "step": 0,
+          "t": "0",
+          "note": "D2",
+          "midi": 38,
+          "accented": true,
+          "degree": 0,
+          "voice": "main"
+        },
+        {
+          "cycle": 4,
+          "step": 3,
+          "t": "3/14",
+          "note": "D2",
+          "midi": 38,
+          "accented": false,
+          "degree": 0,
+          "voice": "main"
+        },
+        {
+          "cycle": 4,
+          "step": 4,
+          "t": "2/7",
+          "note": "D2",
+          "midi": 38,
+          "accented": true,
+          "degree": 0,
+          "voice": "main"
+        },
+        {
+          "cycle": 4,
+          "step": 7,
+          "t": "1/2",
+          "note": "A2",
+          "midi": 45,
+          "accented": true,
+          "degree": 4,
+          "voice": "main"
+        },
+        {
+          "cycle": 4,
+          "step": 9,
+          "t": "9/14",
+          "note": "A2",
+          "midi": 45,
+          "accented": false,
+          "degree": 4,
+          "voice": "main"
+        },
+        {
+          "cycle": 4,
+          "step": 11,
+          "t": "11/14",
+          "note": "D2",
+          "midi": 38,
+          "accented": true,
+          "degree": 0,
+          "voice": "main"
+        },
+        {
+          "cycle": 5,
+          "step": 0,
+          "t": "0",
+          "note": "D2",
+          "midi": 38,
+          "accented": true,
+          "degree": 0,
+          "voice": "main"
+        },
+        {
+          "cycle": 5,
+          "step": 3,
+          "t": "3/14",
+          "note": "D2",
+          "midi": 38,
+          "accented": false,
+          "degree": 0,
+          "voice": "main"
+        },
+        {
+          "cycle": 5,
+          "step": 4,
+          "t": "2/7",
+          "note": "D2",
+          "midi": 38,
+          "accented": true,
+          "degree": 0,
+          "voice": "main"
+        },
+        {
+          "cycle": 5,
+          "step": 7,
+          "t": "1/2",
+          "note": "A2",
+          "midi": 45,
+          "accented": true,
+          "degree": 4,
+          "voice": "main"
+        },
+        {
+          "cycle": 5,
+          "step": 9,
+          "t": "9/14",
+          "note": "A2",
+          "midi": 45,
+          "accented": false,
+          "degree": 4,
+          "voice": "main"
+        },
+        {
+          "cycle": 5,
+          "step": 11,
+          "t": "11/14",
+          "note": "D2",
+          "midi": 38,
+          "accented": true,
+          "degree": 0,
+          "voice": "main"
+        },
+        {
+          "cycle": 6,
+          "step": 0,
+          "t": "0",
+          "note": "D2",
+          "midi": 38,
+          "accented": true,
+          "degree": 0,
+          "voice": "main"
+        },
+        {
+          "cycle": 6,
+          "step": 3,
+          "t": "3/14",
+          "note": "D2",
+          "midi": 38,
+          "accented": false,
+          "degree": 0,
+          "voice": "main"
+        },
+        {
+          "cycle": 6,
+          "step": 4,
+          "t": "2/7",
+          "note": "D2",
+          "midi": 38,
+          "accented": true,
+          "degree": 0,
+          "voice": "main"
+        },
+        {
+          "cycle": 6,
+          "step": 7,
+          "t": "1/2",
+          "note": "A2",
+          "midi": 45,
+          "accented": true,
+          "degree": 4,
+          "voice": "main"
+        },
+        {
+          "cycle": 6,
+          "step": 9,
+          "t": "9/14",
+          "note": "A2",
+          "midi": 45,
+          "accented": false,
+          "degree": 4,
+          "voice": "main"
+        },
+        {
+          "cycle": 6,
+          "step": 11,
+          "t": "11/14",
+          "note": "D2",
+          "midi": 38,
+          "accented": true,
+          "degree": 0,
+          "voice": "main"
+        },
+        {
+          "cycle": 7,
+          "step": 0,
+          "t": "0",
+          "note": "D2",
+          "midi": 38,
+          "accented": true,
+          "degree": 0,
+          "voice": "main"
+        },
+        {
+          "cycle": 7,
+          "step": 3,
+          "t": "3/14",
+          "note": "D2",
+          "midi": 38,
+          "accented": false,
+          "degree": 0,
+          "voice": "main"
+        },
+        {
+          "cycle": 7,
+          "step": 4,
+          "t": "2/7",
+          "note": "D2",
+          "midi": 38,
+          "accented": true,
+          "degree": 0,
+          "voice": "main"
+        },
+        {
+          "cycle": 7,
+          "step": 7,
+          "t": "1/2",
+          "note": "A2",
+          "midi": 45,
+          "accented": true,
+          "degree": 4,
+          "voice": "main"
+        },
+        {
+          "cycle": 7,
+          "step": 9,
+          "t": "9/14",
+          "note": "A2",
+          "midi": 45,
+          "accented": false,
+          "degree": 4,
+          "voice": "main"
+        },
+        {
+          "cycle": 7,
+          "step": 11,
+          "t": "11/14",
+          "note": "D2",
+          "midi": 38,
+          "accented": true,
+          "degree": 0,
+          "voice": "main"
+        }
+      ],
+      "cadence": null,
+      "contourLib": "bass_root_five",
+      "role": "melodic",
+      "band": "mid",
+      "style": "aksak",
+      "mix": null,
+      "label": "bass",
+      "binding": "bass_B",
+      "sections": [
+        "B"
+      ]
+    },
+    {
+      "motif": "m2",
+      "rhythm": "seven_offbeat_lift",
+      "archetype": null,
+      "transform": null,
+      "degrees": [
+        0,
+        2,
+        3,
+        4,
+        5,
+        4,
+        2,
+        0
+      ],
+      "contourRealization": {
+        "mode": "phrase",
+        "k": 2
+      },
+      "contourSignsExpected": [
+        1,
+        1,
+        1,
+        1,
+        -1,
+        -1,
+        -1
+      ],
+      "onsets": [
+        "1/14",
+        "5/14",
+        "9/14",
+        "13/14"
+      ],
+      "accents": [
+        0.72,
+        0.62,
+        0.82,
+        0.66
+      ],
+      "bars": 1,
+      "gains": [
+        0.818,
+        0.753,
+        0.883,
+        0.779
+      ],
+      "swing": 0,
+      "period": 8,
+      "notes": [
+        {
+          "cycle": 0,
+          "step": 1,
+          "t": "1/14",
+          "note": "D4",
+          "midi": 62,
+          "accented": true,
+          "degree": 0,
+          "voice": "main"
+        },
+        {
+          "cycle": 0,
+          "step": 5,
+          "t": "5/14",
+          "note": "F4",
+          "midi": 65,
+          "accented": false,
+          "degree": 2,
+          "voice": "main"
+        },
+        {
+          "cycle": 0,
+          "step": 9,
+          "t": "9/14",
+          "note": "G4",
+          "midi": 67,
+          "accented": true,
+          "degree": 3,
+          "voice": "main"
+        },
+        {
+          "cycle": 0,
+          "step": 13,
+          "t": "13/14",
+          "note": "A4",
+          "midi": 69,
+          "accented": false,
+          "degree": 4,
+          "voice": "main"
+        },
+        {
+          "cycle": 1,
+          "step": 1,
+          "t": "1/14",
+          "note": "C5",
+          "midi": 72,
+          "accented": true,
+          "degree": 5,
+          "voice": "main"
+        },
+        {
+          "cycle": 1,
+          "step": 5,
+          "t": "5/14",
+          "note": "A4",
+          "midi": 69,
+          "accented": false,
+          "degree": 4,
+          "voice": "main"
+        },
+        {
+          "cycle": 1,
+          "step": 9,
+          "t": "9/14",
+          "note": "F4",
+          "midi": 65,
+          "accented": true,
+          "degree": 2,
+          "voice": "main"
+        },
+        {
+          "cycle": 1,
+          "step": 13,
+          "t": "13/14",
+          "note": "D4",
+          "midi": 62,
+          "accented": false,
+          "degree": 0,
+          "voice": "main"
+        },
+        {
+          "cycle": 2,
+          "step": 1,
+          "t": "1/14",
+          "note": "D4",
+          "midi": 62,
+          "accented": true,
+          "degree": 0,
+          "voice": "main"
+        },
+        {
+          "cycle": 2,
+          "step": 5,
+          "t": "5/14",
+          "note": "F4",
+          "midi": 65,
+          "accented": false,
+          "degree": 2,
+          "voice": "main"
+        },
+        {
+          "cycle": 2,
+          "step": 9,
+          "t": "9/14",
+          "note": "G4",
+          "midi": 67,
+          "accented": true,
+          "degree": 3,
+          "voice": "main"
+        },
+        {
+          "cycle": 2,
+          "step": 13,
+          "t": "13/14",
+          "note": "A4",
+          "midi": 69,
+          "accented": false,
+          "degree": 4,
+          "voice": "main"
+        },
+        {
+          "cycle": 3,
+          "step": 1,
+          "t": "1/14",
+          "note": "B4",
+          "midi": 71,
+          "accented": true,
+          "degree": 5,
+          "voice": "main"
+        },
+        {
+          "cycle": 3,
+          "step": 5,
+          "t": "5/14",
+          "note": "A4",
+          "midi": 69,
+          "accented": false,
+          "degree": 4,
+          "voice": "main"
+        },
+        {
+          "cycle": 3,
+          "step": 9,
+          "t": "9/14",
+          "note": "E4",
+          "midi": 64,
+          "accented": true,
+          "degree": 2,
+          "voice": "main"
+        },
+        {
+          "cycle": 3,
+          "step": 13,
+          "t": "13/14",
+          "note": "D4",
+          "midi": 62,
+          "accented": false,
+          "degree": 0,
+          "voice": "main"
+        },
+        {
+          "cycle": 4,
+          "step": 1,
+          "t": "1/14",
+          "note": "D4",
+          "midi": 62,
+          "accented": true,
+          "degree": 0,
+          "voice": "main"
+        },
+        {
+          "cycle": 4,
+          "step": 5,
+          "t": "5/14",
+          "note": "F4",
+          "midi": 65,
+          "accented": false,
+          "degree": 2,
+          "voice": "main"
+        },
+        {
+          "cycle": 4,
+          "step": 9,
+          "t": "9/14",
+          "note": "G4",
+          "midi": 67,
+          "accented": true,
+          "degree": 3,
+          "voice": "main"
+        },
+        {
+          "cycle": 4,
+          "step": 13,
+          "t": "13/14",
+          "note": "A4",
+          "midi": 69,
+          "accented": false,
+          "degree": 4,
+          "voice": "main"
+        },
+        {
+          "cycle": 5,
+          "step": 1,
+          "t": "1/14",
+          "note": "B4",
+          "midi": 71,
+          "accented": true,
+          "degree": 5,
+          "voice": "main"
+        },
+        {
+          "cycle": 5,
+          "step": 5,
+          "t": "5/14",
+          "note": "A4",
+          "midi": 69,
+          "accented": false,
+          "degree": 4,
+          "voice": "main"
+        },
+        {
+          "cycle": 5,
+          "step": 9,
+          "t": "9/14",
+          "note": "F4",
+          "midi": 65,
+          "accented": true,
+          "degree": 2,
+          "voice": "main"
+        },
+        {
+          "cycle": 5,
+          "step": 13,
+          "t": "13/14",
+          "note": "D4",
+          "midi": 62,
+          "accented": false,
+          "degree": 0,
+          "voice": "main"
+        },
+        {
+          "cycle": 6,
+          "step": 1,
+          "t": "1/14",
+          "note": "D4",
+          "midi": 62,
+          "accented": true,
+          "degree": 0,
+          "voice": "main"
+        },
+        {
+          "cycle": 6,
+          "step": 5,
+          "t": "5/14",
+          "note": "F4",
+          "midi": 65,
+          "accented": false,
+          "degree": 2,
+          "voice": "main"
+        },
+        {
+          "cycle": 6,
+          "step": 9,
+          "t": "9/14",
+          "note": "G4",
+          "midi": 67,
+          "accented": true,
+          "degree": 3,
+          "voice": "main"
+        },
+        {
+          "cycle": 6,
+          "step": 13,
+          "t": "13/14",
+          "note": "A4",
+          "midi": 69,
+          "accented": false,
+          "degree": 4,
+          "voice": "main"
+        },
+        {
+          "cycle": 7,
+          "step": 1,
+          "t": "1/14",
+          "note": "C5",
+          "midi": 72,
+          "accented": true,
+          "degree": 5,
+          "voice": "main"
+        },
+        {
+          "cycle": 7,
+          "step": 5,
+          "t": "5/14",
+          "note": "A4",
+          "midi": 69,
+          "accented": false,
+          "degree": 4,
+          "voice": "main"
+        },
+        {
+          "cycle": 7,
+          "step": 9,
+          "t": "9/14",
+          "note": "F4",
+          "midi": 65,
+          "accented": true,
+          "degree": 2,
+          "voice": "main"
+        },
+        {
+          "cycle": 7,
+          "step": 13,
+          "t": "13/14",
+          "note": "D4",
+          "midi": 62,
+          "accented": false,
+          "degree": 0,
+          "voice": "main"
+        }
+      ],
+      "cadence": "tonic",
+      "contourLib": "dorian_lift",
+      "role": "support",
+      "band": "mid",
+      "style": "aksak",
+      "mix": null,
+      "label": "lead",
+      "binding": "lead_B",
+      "sections": [
+        "B"
+      ]
+    },
+    {
+      "motif": "m2",
+      "rhythm": "seven_offbeat_lift",
+      "archetype": null,
+      "transform": "invert",
+      "degrees": [
+        0,
+        -2,
+        -3,
+        -4,
+        -5,
+        -4,
+        -2,
+        0
+      ],
+      "contourRealization": {
+        "mode": "phrase",
+        "k": 2
+      },
+      "contourSignsExpected": [
+        -1,
+        -1,
+        -1,
+        -1,
+        1,
+        1,
+        1
+      ],
+      "onsets": [
+        "1/14",
+        "5/14",
+        "9/14",
+        "13/14"
+      ],
+      "accents": [
+        0.72,
+        0.62,
+        0.82,
+        0.66
+      ],
+      "bars": 1,
+      "gains": [
+        0.818,
+        0.753,
+        0.883,
+        0.779
+      ],
+      "swing": 0,
+      "period": 8,
+      "notes": [
+        {
+          "cycle": 0,
+          "step": 1,
+          "t": "1/14",
+          "note": "D5",
+          "midi": 74,
+          "accented": true,
+          "degree": 0,
+          "voice": "main"
+        },
+        {
+          "cycle": 0,
+          "step": 5,
+          "t": "5/14",
+          "note": "B4",
+          "midi": 71,
+          "accented": false,
+          "degree": -2,
+          "voice": "main"
+        },
+        {
+          "cycle": 0,
+          "step": 9,
+          "t": "9/14",
+          "note": "A4",
+          "midi": 69,
+          "accented": true,
+          "degree": -3,
+          "voice": "main"
+        },
+        {
+          "cycle": 0,
+          "step": 13,
+          "t": "13/14",
+          "note": "G4",
+          "midi": 67,
+          "accented": false,
+          "degree": -4,
+          "voice": "main"
+        },
+        {
+          "cycle": 1,
+          "step": 1,
+          "t": "1/14",
+          "note": "E4",
+          "midi": 64,
+          "accented": true,
+          "degree": -5,
+          "voice": "main"
+        },
+        {
+          "cycle": 1,
+          "step": 5,
+          "t": "5/14",
+          "note": "G4",
+          "midi": 67,
+          "accented": false,
+          "degree": -4,
+          "voice": "main"
+        },
+        {
+          "cycle": 1,
+          "step": 9,
+          "t": "9/14",
+          "note": "B4",
+          "midi": 71,
+          "accented": true,
+          "degree": -2,
+          "voice": "main"
+        },
+        {
+          "cycle": 1,
+          "step": 13,
+          "t": "13/14",
+          "note": "D5",
+          "midi": 74,
+          "accented": false,
+          "degree": 0,
+          "voice": "main"
+        },
+        {
+          "cycle": 2,
+          "step": 1,
+          "t": "1/14",
+          "note": "D5",
+          "midi": 74,
+          "accented": true,
+          "degree": 0,
+          "voice": "main"
+        },
+        {
+          "cycle": 2,
+          "step": 5,
+          "t": "5/14",
+          "note": "B4",
+          "midi": 71,
+          "accented": false,
+          "degree": -2,
+          "voice": "main"
+        },
+        {
+          "cycle": 2,
+          "step": 9,
+          "t": "9/14",
+          "note": "A4",
+          "midi": 69,
+          "accented": true,
+          "degree": -3,
+          "voice": "main"
+        },
+        {
+          "cycle": 2,
+          "step": 13,
+          "t": "13/14",
+          "note": "G4",
+          "midi": 67,
+          "accented": false,
+          "degree": -4,
+          "voice": "main"
+        },
+        {
+          "cycle": 3,
+          "step": 1,
+          "t": "1/14",
+          "note": "E4",
+          "midi": 64,
+          "accented": true,
+          "degree": -5,
+          "voice": "main"
+        },
+        {
+          "cycle": 3,
+          "step": 5,
+          "t": "5/14",
+          "note": "G4",
+          "midi": 67,
+          "accented": false,
+          "degree": -4,
+          "voice": "main"
+        },
+        {
+          "cycle": 3,
+          "step": 9,
+          "t": "9/14",
+          "note": "B4",
+          "midi": 71,
+          "accented": true,
+          "degree": -2,
+          "voice": "main"
+        },
+        {
+          "cycle": 3,
+          "step": 13,
+          "t": "13/14",
+          "note": "D5",
+          "midi": 74,
+          "accented": false,
+          "degree": 0,
+          "voice": "main"
+        },
+        {
+          "cycle": 4,
+          "step": 1,
+          "t": "1/14",
+          "note": "C#5",
+          "midi": 73,
+          "accented": true,
+          "degree": 0,
+          "voice": "main"
+        },
+        {
+          "cycle": 4,
+          "step": 5,
+          "t": "5/14",
+          "note": "B4",
+          "midi": 71,
+          "accented": false,
+          "degree": -2,
+          "voice": "main"
+        },
+        {
+          "cycle": 4,
+          "step": 9,
+          "t": "9/14",
+          "note": "A4",
+          "midi": 69,
+          "accented": true,
+          "degree": -3,
+          "voice": "main"
+        },
+        {
+          "cycle": 4,
+          "step": 13,
+          "t": "13/14",
+          "note": "G4",
+          "midi": 67,
+          "accented": false,
+          "degree": -4,
+          "voice": "main"
+        },
+        {
+          "cycle": 5,
+          "step": 1,
+          "t": "1/14",
+          "note": "E4",
+          "midi": 64,
+          "accented": true,
+          "degree": -5,
+          "voice": "main"
+        },
+        {
+          "cycle": 5,
+          "step": 5,
+          "t": "5/14",
+          "note": "G4",
+          "midi": 67,
+          "accented": false,
+          "degree": -4,
+          "voice": "main"
+        },
+        {
+          "cycle": 5,
+          "step": 9,
+          "t": "9/14",
+          "note": "B4",
+          "midi": 71,
+          "accented": true,
+          "degree": -2,
+          "voice": "main"
+        },
+        {
+          "cycle": 5,
+          "step": 13,
+          "t": "13/14",
+          "note": "D5",
+          "midi": 74,
+          "accented": false,
+          "degree": 0,
+          "voice": "main"
+        },
+        {
+          "cycle": 6,
+          "step": 1,
+          "t": "1/14",
+          "note": "C#5",
+          "midi": 73,
+          "accented": true,
+          "degree": 0,
+          "voice": "main"
+        },
+        {
+          "cycle": 6,
+          "step": 5,
+          "t": "5/14",
+          "note": "B4",
+          "midi": 71,
+          "accented": false,
+          "degree": -2,
+          "voice": "main"
+        },
+        {
+          "cycle": 6,
+          "step": 9,
+          "t": "9/14",
+          "note": "A4",
+          "midi": 69,
+          "accented": true,
+          "degree": -3,
+          "voice": "main"
+        },
+        {
+          "cycle": 6,
+          "step": 13,
+          "t": "13/14",
+          "note": "G4",
+          "midi": 67,
+          "accented": false,
+          "degree": -4,
+          "voice": "main"
+        },
+        {
+          "cycle": 7,
+          "step": 1,
+          "t": "1/14",
+          "note": "E4",
+          "midi": 64,
+          "accented": true,
+          "degree": -5,
+          "voice": "main"
+        },
+        {
+          "cycle": 7,
+          "step": 5,
+          "t": "5/14",
+          "note": "G4",
+          "midi": 67,
+          "accented": false,
+          "degree": -4,
+          "voice": "main"
+        },
+        {
+          "cycle": 7,
+          "step": 9,
+          "t": "9/14",
+          "note": "B4",
+          "midi": 71,
+          "accented": true,
+          "degree": -2,
+          "voice": "main"
+        },
+        {
+          "cycle": 7,
+          "step": 13,
+          "t": "13/14",
+          "note": "D5",
+          "midi": 74,
+          "accented": false,
+          "degree": 0,
+          "voice": "main"
+        }
+      ],
+      "cadence": null,
+      "contourLib": "dorian_lift",
+      "role": "support",
+      "band": "mid",
+      "style": "aksak",
+      "mix": null,
+      "label": "lead",
+      "binding": "lead_C",
+      "sections": [
+        "C"
+      ]
+    }
+  ],
+  "styles": null,
+  "orbits": {
+    "keys": 6,
+    "lead": 6
+  },
+  "voicingShapes": [
+    "cluster_upper",
+    "shell_37"
+  ],
+  "transitions": [
+    {
+      "name": "fill_tom_run",
+      "kind": "fill",
+      "label": "fill",
+      "binding": "fill_fill_tom_run_A3",
+      "from": "C",
+      "to": "A",
+      "window": [
+        23,
+        24
+      ]
+    },
+    {
+      "name": "impact_boom",
+      "kind": "impact",
+      "label": "impact",
+      "binding": "impact_impact_boom_C2",
+      "from": "B",
+      "to": "C",
+      "window": [
+        16,
+        17
+      ]
+    }
+  ]
+}

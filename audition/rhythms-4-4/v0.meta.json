@@ -1,0 +1,2671 @@
+{
+  "title": "rhythms-4-4",
+  "genre": null,
+  "meter": "4/4",
+  "bpm": 118,
+  "key": "F:minor",
+  "seed": 1,
+  "form": "four_floor offbeat_8ths backbeat_ghost tresillo son_clave_3 dembow sixteenth_drive swung_lofi_hats lazy_dilla two_step_kick anticipation_bass push_pull_16s gallop_arp sparse_pedal even_8ths pushed_comp_2bar charleston_2bar bossa_comp_2bar call_response_2bar",
+  "totalCycles": 76,
+  "instances": [
+    {
+      "name": "four_floor",
+      "start": 0,
+      "end": 4
+    },
+    {
+      "name": "offbeat_8ths",
+      "start": 4,
+      "end": 8
+    },
+    {
+      "name": "backbeat_ghost",
+      "start": 8,
+      "end": 12
+    },
+    {
+      "name": "tresillo",
+      "start": 12,
+      "end": 16
+    },
+    {
+      "name": "son_clave_3",
+      "start": 16,
+      "end": 20
+    },
+    {
+      "name": "dembow",
+      "start": 20,
+      "end": 24
+    },
+    {
+      "name": "sixteenth_drive",
+      "start": 24,
+      "end": 28
+    },
+    {
+      "name": "swung_lofi_hats",
+      "start": 28,
+      "end": 32
+    },
+    {
+      "name": "lazy_dilla",
+      "start": 32,
+      "end": 36
+    },
+    {
+      "name": "two_step_kick",
+      "start": 36,
+      "end": 40
+    },
+    {
+      "name": "anticipation_bass",
+      "start": 40,
+      "end": 44
+    },
+    {
+      "name": "push_pull_16s",
+      "start": 44,
+      "end": 48
+    },
+    {
+      "name": "gallop_arp",
+      "start": 48,
+      "end": 52
+    },
+    {
+      "name": "sparse_pedal",
+      "start": 52,
+      "end": 56
+    },
+    {
+      "name": "even_8ths",
+      "start": 56,
+      "end": 60
+    },
+    {
+      "name": "pushed_comp_2bar",
+      "start": 60,
+      "end": 64
+    },
+    {
+      "name": "charleston_2bar",
+      "start": 64,
+      "end": 68
+    },
+    {
+      "name": "bossa_comp_2bar",
+      "start": 68,
+      "end": 72
+    },
+    {
+      "name": "call_response_2bar",
+      "start": 72,
+      "end": 76
+    }
+  ],
+  "ranges": {
+    "four_floor": [
+      [
+        0,
+        4
+      ]
+    ],
+    "offbeat_8ths": [
+      [
+        4,
+        8
+      ]
+    ],
+    "backbeat_ghost": [
+      [
+        8,
+        12
+      ]
+    ],
+    "tresillo": [
+      [
+        12,
+        16
+      ]
+    ],
+    "son_clave_3": [
+      [
+        16,
+        20
+      ]
+    ],
+    "dembow": [
+      [
+        20,
+        24
+      ]
+    ],
+    "sixteenth_drive": [
+      [
+        24,
+        28
+      ]
+    ],
+    "swung_lofi_hats": [
+      [
+        28,
+        32
+      ]
+    ],
+    "lazy_dilla": [
+      [
+        32,
+        36
+      ]
+    ],
+    "two_step_kick": [
+      [
+        36,
+        40
+      ]
+    ],
+    "anticipation_bass": [
+      [
+        40,
+        44
+      ]
+    ],
+    "push_pull_16s": [
+      [
+        44,
+        48
+      ]
+    ],
+    "gallop_arp": [
+      [
+        48,
+        52
+      ]
+    ],
+    "sparse_pedal": [
+      [
+        52,
+        56
+      ]
+    ],
+    "even_8ths": [
+      [
+        56,
+        60
+      ]
+    ],
+    "pushed_comp_2bar": [
+      [
+        60,
+        64
+      ]
+    ],
+    "charleston_2bar": [
+      [
+        64,
+        68
+      ]
+    ],
+    "bossa_comp_2bar": [
+      [
+        68,
+        72
+      ]
+    ],
+    "call_response_2bar": [
+      [
+        72,
+        76
+      ]
+    ]
+  },
+  "sections": {
+    "four_floor": {
+      "role": null,
+      "bars": 4,
+      "must": null,
+      "contrasts_with": null,
+      "resolves": null,
+      "recalls": null,
+      "sets_up": null,
+      "withhold": [],
+      "harmony": null,
+      "ranges": [
+        [
+          0,
+          4
+        ]
+      ],
+      "cadence": null
+    },
+    "offbeat_8ths": {
+      "role": null,
+      "bars": 4,
+      "must": null,
+      "contrasts_with": null,
+      "resolves": null,
+      "recalls": null,
+      "sets_up": null,
+      "withhold": [],
+      "harmony": [
+        "Fm7",
+        "Db^7"
+      ],
+      "ranges": [
+        [
+          4,
+          8
+        ]
+      ],
+      "cadence": null
+    },
+    "backbeat_ghost": {
+      "role": null,
+      "bars": 4,
+      "must": null,
+      "contrasts_with": null,
+      "resolves": null,
+      "recalls": null,
+      "sets_up": null,
+      "withhold": [],
+      "harmony": null,
+      "ranges": [
+        [
+          8,
+          12
+        ]
+      ],
+      "cadence": null
+    },
+    "tresillo": {
+      "role": null,
+      "bars": 4,
+      "must": null,
+      "contrasts_with": null,
+      "resolves": null,
+      "recalls": null,
+      "sets_up": null,
+      "withhold": [],
+      "harmony": null,
+      "ranges": [
+        [
+          12,
+          16
+        ]
+      ],
+      "cadence": null
+    },
+    "son_clave_3": {
+      "role": null,
+      "bars": 4,
+      "must": null,
+      "contrasts_with": null,
+      "resolves": null,
+      "recalls": null,
+      "sets_up": null,
+      "withhold": [],
+      "harmony": null,
+      "ranges": [
+        [
+          16,
+          20
+        ]
+      ],
+      "cadence": null
+    },
+    "dembow": {
+      "role": null,
+      "bars": 4,
+      "must": null,
+      "contrasts_with": null,
+      "resolves": null,
+      "recalls": null,
+      "sets_up": null,
+      "withhold": [],
+      "harmony": null,
+      "ranges": [
+        [
+          20,
+          24
+        ]
+      ],
+      "cadence": null
+    },
+    "sixteenth_drive": {
+      "role": null,
+      "bars": 4,
+      "must": null,
+      "contrasts_with": null,
+      "resolves": null,
+      "recalls": null,
+      "sets_up": null,
+      "withhold": [],
+      "harmony": null,
+      "ranges": [
+        [
+          24,
+          28
+        ]
+      ],
+      "cadence": null
+    },
+    "swung_lofi_hats": {
+      "role": null,
+      "bars": 4,
+      "must": null,
+      "contrasts_with": null,
+      "resolves": null,
+      "recalls": null,
+      "sets_up": null,
+      "withhold": [],
+      "harmony": null,
+      "ranges": [
+        [
+          28,
+          32
+        ]
+      ],
+      "cadence": null
+    },
+    "lazy_dilla": {
+      "role": null,
+      "bars": 4,
+      "must": null,
+      "contrasts_with": null,
+      "resolves": null,
+      "recalls": null,
+      "sets_up": null,
+      "withhold": [],
+      "harmony": null,
+      "ranges": [
+        [
+          32,
+          36
+        ]
+      ],
+      "cadence": null
+    },
+    "two_step_kick": {
+      "role": null,
+      "bars": 4,
+      "must": null,
+      "contrasts_with": null,
+      "resolves": null,
+      "recalls": null,
+      "sets_up": null,
+      "withhold": [],
+      "harmony": null,
+      "ranges": [
+        [
+          36,
+          40
+        ]
+      ],
+      "cadence": null
+    },
+    "anticipation_bass": {
+      "role": null,
+      "bars": 4,
+      "must": null,
+      "contrasts_with": null,
+      "resolves": null,
+      "recalls": null,
+      "sets_up": null,
+      "withhold": [],
+      "harmony": null,
+      "ranges": [
+        [
+          40,
+          44
+        ]
+      ],
+      "cadence": null
+    },
+    "push_pull_16s": {
+      "role": null,
+      "bars": 4,
+      "must": null,
+      "contrasts_with": null,
+      "resolves": null,
+      "recalls": null,
+      "sets_up": null,
+      "withhold": [],
+      "harmony": null,
+      "ranges": [
+        [
+          44,
+          48
+        ]
+      ],
+      "cadence": null
+    },
+    "gallop_arp": {
+      "role": null,
+      "bars": 4,
+      "must": null,
+      "contrasts_with": null,
+      "resolves": null,
+      "recalls": null,
+      "sets_up": null,
+      "withhold": [],
+      "harmony": null,
+      "ranges": [
+        [
+          48,
+          52
+        ]
+      ],
+      "cadence": null
+    },
+    "sparse_pedal": {
+      "role": null,
+      "bars": 4,
+      "must": null,
+      "contrasts_with": null,
+      "resolves": null,
+      "recalls": null,
+      "sets_up": null,
+      "withhold": [],
+      "harmony": [
+        "Fm7",
+        "Db^7"
+      ],
+      "ranges": [
+        [
+          52,
+          56
+        ]
+      ],
+      "cadence": null
+    },
+    "even_8ths": {
+      "role": null,
+      "bars": 4,
+      "must": null,
+      "contrasts_with": null,
+      "resolves": null,
+      "recalls": null,
+      "sets_up": null,
+      "withhold": [],
+      "harmony": [
+        "Fm7",
+        "Db^7"
+      ],
+      "ranges": [
+        [
+          56,
+          60
+        ]
+      ],
+      "cadence": null
+    },
+    "pushed_comp_2bar": {
+      "role": null,
+      "bars": 4,
+      "must": null,
+      "contrasts_with": null,
+      "resolves": null,
+      "recalls": null,
+      "sets_up": null,
+      "withhold": [],
+      "harmony": [
+        "Fm7",
+        "Db^7"
+      ],
+      "ranges": [
+        [
+          60,
+          64
+        ]
+      ],
+      "cadence": null
+    },
+    "charleston_2bar": {
+      "role": null,
+      "bars": 4,
+      "must": null,
+      "contrasts_with": null,
+      "resolves": null,
+      "recalls": null,
+      "sets_up": null,
+      "withhold": [],
+      "harmony": [
+        "Fm7",
+        "Db^7"
+      ],
+      "ranges": [
+        [
+          64,
+          68
+        ]
+      ],
+      "cadence": null
+    },
+    "bossa_comp_2bar": {
+      "role": null,
+      "bars": 4,
+      "must": null,
+      "contrasts_with": null,
+      "resolves": null,
+      "recalls": null,
+      "sets_up": null,
+      "withhold": [],
+      "harmony": [
+        "Fm7",
+        "Db^7"
+      ],
+      "ranges": [
+        [
+          68,
+          72
+        ]
+      ],
+      "cadence": null
+    },
+    "call_response_2bar": {
+      "role": null,
+      "bars": 4,
+      "must": null,
+      "contrasts_with": null,
+      "resolves": null,
+      "recalls": null,
+      "sets_up": null,
+      "withhold": [],
+      "harmony": [
+        "Fm7",
+        "Db^7"
+      ],
+      "ranges": [
+        [
+          72,
+          76
+        ]
+      ],
+      "cadence": null
+    }
+  },
+  "harmonyBinding": "chords",
+  "bindings": {
+    "harmony_offbeat_8ths": {
+      "label": "chords",
+      "sections": [
+        "offbeat_8ths"
+      ],
+      "kind": "harmony"
+    },
+    "harmony_sparse_pedal": {
+      "label": "chords",
+      "sections": [
+        "sparse_pedal"
+      ],
+      "kind": "harmony"
+    },
+    "harmony_even_8ths": {
+      "label": "chords",
+      "sections": [
+        "even_8ths"
+      ],
+      "kind": "harmony"
+    },
+    "harmony_pushed_comp_2bar": {
+      "label": "chords",
+      "sections": [
+        "pushed_comp_2bar"
+      ],
+      "kind": "harmony"
+    },
+    "harmony_charleston_2bar": {
+      "label": "chords",
+      "sections": [
+        "charleston_2bar"
+      ],
+      "kind": "harmony"
+    },
+    "harmony_bossa_comp_2bar": {
+      "label": "chords",
+      "sections": [
+        "bossa_comp_2bar"
+      ],
+      "kind": "harmony"
+    },
+    "harmony_call_response_2bar": {
+      "label": "chords",
+      "sections": [
+        "call_response_2bar"
+      ],
+      "kind": "harmony"
+    },
+    "chords": {
+      "label": "(harmony timeline)",
+      "sections": [
+        "offbeat_8ths",
+        "sparse_pedal",
+        "even_8ths",
+        "pushed_comp_2bar",
+        "charleston_2bar",
+        "bossa_comp_2bar",
+        "call_response_2bar"
+      ],
+      "kind": "harmony-combined"
+    },
+    "hits_four_floor": {
+      "label": "hits",
+      "sections": [
+        "four_floor"
+      ],
+      "kind": "bound",
+      "period": 1
+    },
+    "hits_offbeat_8ths": {
+      "label": "hits",
+      "sections": [
+        "offbeat_8ths"
+      ],
+      "kind": "bound",
+      "period": 4
+    },
+    "hits_backbeat_ghost": {
+      "label": "hits",
+      "sections": [
+        "backbeat_ghost"
+      ],
+      "kind": "bound",
+      "period": 1
+    },
+    "hits_tresillo": {
+      "label": "hits",
+      "sections": [
+        "tresillo"
+      ],
+      "kind": "bound",
+      "period": 1
+    },
+    "hits_son_clave_3": {
+      "label": "hits",
+      "sections": [
+        "son_clave_3"
+      ],
+      "kind": "bound",
+      "period": 1
+    },
+    "hits_dembow": {
+      "label": "hits",
+      "sections": [
+        "dembow"
+      ],
+      "kind": "bound",
+      "period": 1
+    },
+    "hits_sixteenth_drive": {
+      "label": "hits",
+      "sections": [
+        "sixteenth_drive"
+      ],
+      "kind": "bound",
+      "period": 1
+    },
+    "hits_swung_lofi_hats": {
+      "label": "hits",
+      "sections": [
+        "swung_lofi_hats"
+      ],
+      "kind": "bound",
+      "period": 1
+    },
+    "hits_lazy_dilla": {
+      "label": "hits",
+      "sections": [
+        "lazy_dilla"
+      ],
+      "kind": "bound",
+      "period": 1
+    },
+    "hits_two_step_kick": {
+      "label": "hits",
+      "sections": [
+        "two_step_kick"
+      ],
+      "kind": "bound",
+      "period": 1
+    },
+    "hits_anticipation_bass": {
+      "label": "hits",
+      "sections": [
+        "anticipation_bass"
+      ],
+      "kind": "bound",
+      "period": 1
+    },
+    "hits_push_pull_16s": {
+      "label": "hits",
+      "sections": [
+        "push_pull_16s"
+      ],
+      "kind": "bound",
+      "period": 1
+    },
+    "hits_gallop_arp": {
+      "label": "hits",
+      "sections": [
+        "gallop_arp"
+      ],
+      "kind": "bound",
+      "period": 1
+    },
+    "hits_sparse_pedal": {
+      "label": "hits",
+      "sections": [
+        "sparse_pedal"
+      ],
+      "kind": "bound",
+      "period": 4
+    },
+    "hits_even_8ths": {
+      "label": "hits",
+      "sections": [
+        "even_8ths"
+      ],
+      "kind": "bound",
+      "period": 4
+    },
+    "hits_pushed_comp_2bar": {
+      "label": "hits",
+      "sections": [
+        "pushed_comp_2bar"
+      ],
+      "kind": "bound",
+      "period": 4
+    },
+    "hits_charleston_2bar": {
+      "label": "hits",
+      "sections": [
+        "charleston_2bar"
+      ],
+      "kind": "bound",
+      "period": 4
+    },
+    "hits_bossa_comp_2bar": {
+      "label": "hits",
+      "sections": [
+        "bossa_comp_2bar"
+      ],
+      "kind": "bound",
+      "period": 4
+    },
+    "hits_call_response_2bar": {
+      "label": "hits",
+      "sections": [
+        "call_response_2bar"
+      ],
+      "kind": "bound",
+      "period": 4
+    }
+  },
+  "labels": {
+    "hits": {
+      "sections": [
+        "four_floor",
+        "offbeat_8ths",
+        "backbeat_ghost",
+        "tresillo",
+        "son_clave_3",
+        "dembow",
+        "sixteenth_drive",
+        "swung_lofi_hats",
+        "lazy_dilla",
+        "two_step_kick",
+        "anticipation_bass",
+        "push_pull_16s",
+        "gallop_arp",
+        "sparse_pedal",
+        "even_8ths",
+        "pushed_comp_2bar",
+        "charleston_2bar",
+        "bossa_comp_2bar",
+        "call_response_2bar"
+      ],
+      "bindings": {
+        "four_floor": "hits_four_floor",
+        "offbeat_8ths": "hits_offbeat_8ths",
+        "backbeat_ghost": "hits_backbeat_ghost",
+        "tresillo": "hits_tresillo",
+        "son_clave_3": "hits_son_clave_3",
+        "dembow": "hits_dembow",
+        "sixteenth_drive": "hits_sixteenth_drive",
+        "swung_lofi_hats": "hits_swung_lofi_hats",
+        "lazy_dilla": "hits_lazy_dilla",
+        "two_step_kick": "hits_two_step_kick",
+        "anticipation_bass": "hits_anticipation_bass",
+        "push_pull_16s": "hits_push_pull_16s",
+        "gallop_arp": "hits_gallop_arp",
+        "sparse_pedal": "hits_sparse_pedal",
+        "even_8ths": "hits_even_8ths",
+        "pushed_comp_2bar": "hits_pushed_comp_2bar",
+        "charleston_2bar": "hits_charleston_2bar",
+        "bossa_comp_2bar": "hits_bossa_comp_2bar",
+        "call_response_2bar": "hits_call_response_2bar"
+      }
+    }
+  },
+  "motifPlacements": [
+    {
+      "motif": null,
+      "rhythm": "four_floor",
+      "archetype": null,
+      "transform": null,
+      "degrees": null,
+      "contourRealization": null,
+      "contourSignsExpected": null,
+      "onsets": [
+        "0/1",
+        "1/4",
+        "1/2",
+        "3/4"
+      ],
+      "accents": [
+        1,
+        0.85,
+        0.92,
+        0.85
+      ],
+      "bars": 1,
+      "gains": [
+        1,
+        0.903,
+        0.948,
+        0.903
+      ],
+      "swing": 0,
+      "period": 1,
+      "notes": null,
+      "cadence": null,
+      "contourLib": null,
+      "role": "percussion",
+      "band": "low",
+      "style": "universal",
+      "mix": null,
+      "label": "hits",
+      "binding": "hits_four_floor",
+      "sections": [
+        "four_floor"
+      ]
+    },
+    {
+      "motif": null,
+      "rhythm": "offbeat_8ths",
+      "archetype": null,
+      "transform": null,
+      "degrees": [
+        0,
+        1,
+        3,
+        4
+      ],
+      "contourRealization": {
+        "mode": "resampled",
+        "k": 1
+      },
+      "contourSignsExpected": [
+        1,
+        1,
+        1
+      ],
+      "onsets": [
+        "1/8",
+        "3/8",
+        "5/8",
+        "7/8"
+      ],
+      "accents": [
+        0.75,
+        0.6,
+        0.8,
+        0.62
+      ],
+      "bars": 1,
+      "gains": [
+        0.838,
+        0.74,
+        0.87,
+        0.753
+      ],
+      "swing": 0,
+      "period": 4,
+      "notes": [
+        {
+          "cycle": 0,
+          "step": 1,
+          "t": "1/8",
+          "note": "F4",
+          "midi": 65,
+          "accented": true,
+          "degree": 0,
+          "voice": "main"
+        },
+        {
+          "cycle": 0,
+          "step": 3,
+          "t": "3/8",
+          "note": "G4",
+          "midi": 67,
+          "accented": false,
+          "degree": 1,
+          "voice": "main"
+        },
+        {
+          "cycle": 0,
+          "step": 5,
+          "t": "5/8",
+          "note": "Bb4",
+          "midi": 70,
+          "accented": true,
+          "degree": 3,
+          "voice": "main"
+        },
+        {
+          "cycle": 0,
+          "step": 7,
+          "t": "7/8",
+          "note": "C5",
+          "midi": 72,
+          "accented": false,
+          "degree": 4,
+          "voice": "main"
+        },
+        {
+          "cycle": 1,
+          "step": 1,
+          "t": "1/8",
+          "note": "F4",
+          "midi": 65,
+          "accented": true,
+          "degree": 0,
+          "voice": "main"
+        },
+        {
+          "cycle": 1,
+          "step": 3,
+          "t": "3/8",
+          "note": "G4",
+          "midi": 67,
+          "accented": false,
+          "degree": 1,
+          "voice": "main"
+        },
+        {
+          "cycle": 1,
+          "step": 5,
+          "t": "5/8",
+          "note": "Bb4",
+          "midi": 70,
+          "accented": true,
+          "degree": 3,
+          "voice": "main"
+        },
+        {
+          "cycle": 1,
+          "step": 7,
+          "t": "7/8",
+          "note": "C5",
+          "midi": 72,
+          "accented": false,
+          "degree": 4,
+          "voice": "main"
+        },
+        {
+          "cycle": 2,
+          "step": 1,
+          "t": "1/8",
+          "note": "F4",
+          "midi": 65,
+          "accented": true,
+          "degree": 0,
+          "voice": "main"
+        },
+        {
+          "cycle": 2,
+          "step": 3,
+          "t": "3/8",
+          "note": "G4",
+          "midi": 67,
+          "accented": false,
+          "degree": 1,
+          "voice": "main"
+        },
+        {
+          "cycle": 2,
+          "step": 5,
+          "t": "5/8",
+          "note": "Bb4",
+          "midi": 70,
+          "accented": true,
+          "degree": 3,
+          "voice": "main"
+        },
+        {
+          "cycle": 2,
+          "step": 7,
+          "t": "7/8",
+          "note": "C5",
+          "midi": 72,
+          "accented": false,
+          "degree": 4,
+          "voice": "main"
+        },
+        {
+          "cycle": 3,
+          "step": 1,
+          "t": "1/8",
+          "note": "F4",
+          "midi": 65,
+          "accented": true,
+          "degree": 0,
+          "voice": "main"
+        },
+        {
+          "cycle": 3,
+          "step": 3,
+          "t": "3/8",
+          "note": "G4",
+          "midi": 67,
+          "accented": false,
+          "degree": 1,
+          "voice": "main"
+        },
+        {
+          "cycle": 3,
+          "step": 5,
+          "t": "5/8",
+          "note": "Bb4",
+          "midi": 70,
+          "accented": true,
+          "degree": 3,
+          "voice": "main"
+        },
+        {
+          "cycle": 3,
+          "step": 7,
+          "t": "7/8",
+          "note": "C5",
+          "midi": 72,
+          "accented": false,
+          "degree": 4,
+          "voice": "main"
+        }
+      ],
+      "cadence": null,
+      "contourLib": "zigzag_narrow",
+      "role": "support",
+      "band": "mid",
+      "style": "house",
+      "mix": null,
+      "label": "hits",
+      "binding": "hits_offbeat_8ths",
+      "sections": [
+        "offbeat_8ths"
+      ]
+    },
+    {
+      "motif": null,
+      "rhythm": "backbeat_ghost",
+      "archetype": null,
+      "transform": null,
+      "degrees": null,
+      "contourRealization": null,
+      "contourSignsExpected": null,
+      "onsets": [
+        "1/4",
+        "7/16",
+        "3/4",
+        "15/16"
+      ],
+      "accents": [
+        1,
+        0.35,
+        0.95,
+        0.4
+      ],
+      "bars": 1,
+      "gains": [
+        1,
+        0.577,
+        0.967,
+        0.61
+      ],
+      "swing": 0,
+      "period": 1,
+      "notes": null,
+      "cadence": null,
+      "contourLib": null,
+      "role": "percussion",
+      "band": "mid",
+      "style": "universal",
+      "mix": null,
+      "label": "hits",
+      "binding": "hits_backbeat_ghost",
+      "sections": [
+        "backbeat_ghost"
+      ]
+    },
+    {
+      "motif": null,
+      "rhythm": "tresillo",
+      "archetype": null,
+      "transform": null,
+      "degrees": null,
+      "contourRealization": null,
+      "contourSignsExpected": null,
+      "onsets": [
+        "0/1",
+        "3/8",
+        "3/4"
+      ],
+      "accents": [
+        1,
+        0.7,
+        0.85
+      ],
+      "bars": 1,
+      "gains": [
+        1,
+        0.805,
+        0.903
+      ],
+      "swing": 0,
+      "period": 1,
+      "notes": null,
+      "cadence": null,
+      "contourLib": null,
+      "role": "percussion",
+      "band": "low",
+      "style": "latin",
+      "mix": null,
+      "label": "hits",
+      "binding": "hits_tresillo",
+      "sections": [
+        "tresillo"
+      ]
+    },
+    {
+      "motif": null,
+      "rhythm": "son_clave_3",
+      "archetype": null,
+      "transform": null,
+      "degrees": null,
+      "contourRealization": null,
+      "contourSignsExpected": null,
+      "onsets": [
+        "0/1",
+        "3/16",
+        "3/8",
+        "5/8",
+        "3/4"
+      ],
+      "accents": [
+        1,
+        0.8,
+        0.9,
+        0.7,
+        0.85
+      ],
+      "bars": 1,
+      "gains": [
+        1,
+        0.87,
+        0.935,
+        0.805,
+        0.903
+      ],
+      "swing": 0,
+      "period": 1,
+      "notes": null,
+      "cadence": null,
+      "contourLib": null,
+      "role": "percussion",
+      "band": "mid",
+      "style": "latin",
+      "mix": null,
+      "label": "hits",
+      "binding": "hits_son_clave_3",
+      "sections": [
+        "son_clave_3"
+      ]
+    },
+    {
+      "motif": null,
+      "rhythm": "dembow",
+      "archetype": null,
+      "transform": null,
+      "degrees": null,
+      "contourRealization": null,
+      "contourSignsExpected": null,
+      "onsets": [
+        "0/1",
+        "3/16",
+        "1/2",
+        "11/16",
+        "7/8"
+      ],
+      "accents": [
+        1,
+        0.85,
+        0.9,
+        0.85,
+        0.55
+      ],
+      "bars": 1,
+      "gains": [
+        1,
+        0.903,
+        0.935,
+        0.903,
+        0.708
+      ],
+      "swing": 0,
+      "period": 1,
+      "notes": null,
+      "cadence": null,
+      "contourLib": null,
+      "role": "percussion",
+      "band": "low",
+      "style": "reggaeton",
+      "mix": null,
+      "label": "hits",
+      "binding": "hits_dembow",
+      "sections": [
+        "dembow"
+      ]
+    },
+    {
+      "motif": null,
+      "rhythm": "sixteenth_drive",
+      "archetype": null,
+      "transform": null,
+      "degrees": null,
+      "contourRealization": null,
+      "contourSignsExpected": null,
+      "onsets": [
+        "0/1",
+        "1/16",
+        "1/8",
+        "3/16",
+        "1/4",
+        "5/16",
+        "3/8",
+        "7/16",
+        "1/2",
+        "9/16",
+        "5/8",
+        "11/16",
+        "3/4",
+        "13/16",
+        "7/8",
+        "15/16"
+      ],
+      "accents": [
+        1,
+        0.4,
+        0.62,
+        0.4,
+        0.82,
+        0.4,
+        0.62,
+        0.42,
+        0.9,
+        0.4,
+        0.62,
+        0.4,
+        0.82,
+        0.42,
+        0.66,
+        0.46
+      ],
+      "bars": 1,
+      "gains": [
+        1,
+        0.61,
+        0.753,
+        0.61,
+        0.883,
+        0.61,
+        0.753,
+        0.623,
+        0.935,
+        0.61,
+        0.753,
+        0.61,
+        0.883,
+        0.623,
+        0.779,
+        0.649
+      ],
+      "swing": 0,
+      "period": 1,
+      "notes": null,
+      "cadence": null,
+      "contourLib": null,
+      "role": "percussion",
+      "band": "high",
+      "style": "universal",
+      "mix": null,
+      "label": "hits",
+      "binding": "hits_sixteenth_drive",
+      "sections": [
+        "sixteenth_drive"
+      ]
+    },
+    {
+      "motif": null,
+      "rhythm": "swung_lofi_hats",
+      "archetype": null,
+      "transform": null,
+      "degrees": null,
+      "contourRealization": null,
+      "contourSignsExpected": null,
+      "onsets": [
+        "0/1",
+        "1/8",
+        "1/4",
+        "3/8",
+        "1/2",
+        "5/8",
+        "3/4",
+        "7/8"
+      ],
+      "accents": [
+        0.9,
+        0.42,
+        0.72,
+        0.46,
+        0.86,
+        0.4,
+        0.72,
+        0.52
+      ],
+      "bars": 1,
+      "gains": [
+        0.935,
+        0.623,
+        0.818,
+        0.649,
+        0.909,
+        0.61,
+        0.818,
+        0.688
+      ],
+      "swing": 0.55,
+      "period": 1,
+      "notes": null,
+      "cadence": null,
+      "contourLib": null,
+      "role": "percussion",
+      "band": "high",
+      "style": "lofi-hiphop",
+      "mix": null,
+      "label": "hits",
+      "binding": "hits_swung_lofi_hats",
+      "sections": [
+        "swung_lofi_hats"
+      ]
+    },
+    {
+      "motif": null,
+      "rhythm": "lazy_dilla",
+      "archetype": null,
+      "transform": null,
+      "degrees": null,
+      "contourRealization": null,
+      "contourSignsExpected": null,
+      "onsets": [
+        "0/1",
+        "9/64",
+        "1/4",
+        "19/48",
+        "1/2",
+        "41/64",
+        "3/4",
+        "43/48"
+      ],
+      "accents": [
+        0.95,
+        0.5,
+        0.75,
+        0.55,
+        0.9,
+        0.5,
+        0.7,
+        0.6
+      ],
+      "bars": 1,
+      "gains": [
+        0.967,
+        0.675,
+        0.838,
+        0.708,
+        0.935,
+        0.675,
+        0.805,
+        0.74
+      ],
+      "swing": 0,
+      "period": 1,
+      "notes": null,
+      "cadence": null,
+      "contourLib": null,
+      "role": "percussion",
+      "band": "high",
+      "style": "lofi-hiphop",
+      "mix": null,
+      "label": "hits",
+      "binding": "hits_lazy_dilla",
+      "sections": [
+        "lazy_dilla"
+      ]
+    },
+    {
+      "motif": null,
+      "rhythm": "two_step_kick",
+      "archetype": null,
+      "transform": null,
+      "degrees": null,
+      "contourRealization": null,
+      "contourSignsExpected": null,
+      "onsets": [
+        "0/1",
+        "3/8",
+        "5/8"
+      ],
+      "accents": [
+        1,
+        0.65,
+        0.85
+      ],
+      "bars": 1,
+      "gains": [
+        1,
+        0.773,
+        0.903
+      ],
+      "swing": 0,
+      "period": 1,
+      "notes": null,
+      "cadence": null,
+      "contourLib": null,
+      "role": "percussion",
+      "band": "low",
+      "style": "ukg",
+      "mix": null,
+      "label": "hits",
+      "binding": "hits_two_step_kick",
+      "sections": [
+        "two_step_kick"
+      ]
+    },
+    {
+      "motif": null,
+      "rhythm": "anticipation_bass",
+      "archetype": null,
+      "transform": null,
+      "degrees": null,
+      "contourRealization": null,
+      "contourSignsExpected": null,
+      "onsets": [
+        "0/1",
+        "7/16",
+        "1/2",
+        "15/16"
+      ],
+      "accents": [
+        0.95,
+        0.6,
+        0.85,
+        0.7
+      ],
+      "bars": 1,
+      "gains": [
+        0.967,
+        0.74,
+        0.903,
+        0.805
+      ],
+      "swing": 0,
+      "period": 1,
+      "notes": null,
+      "cadence": null,
+      "contourLib": null,
+      "role": "percussion",
+      "band": "low",
+      "style": "universal",
+      "mix": null,
+      "label": "hits",
+      "binding": "hits_anticipation_bass",
+      "sections": [
+        "anticipation_bass"
+      ]
+    },
+    {
+      "motif": null,
+      "rhythm": "push_pull_16s",
+      "archetype": null,
+      "transform": null,
+      "degrees": null,
+      "contourRealization": null,
+      "contourSignsExpected": null,
+      "onsets": [
+        "0/1",
+        "3/16",
+        "3/8",
+        "5/8",
+        "3/4",
+        "15/16"
+      ],
+      "accents": [
+        1,
+        0.5,
+        0.8,
+        0.6,
+        0.9,
+        0.4
+      ],
+      "bars": 1,
+      "gains": [
+        1,
+        0.675,
+        0.87,
+        0.74,
+        0.935,
+        0.61
+      ],
+      "swing": 0,
+      "period": 1,
+      "notes": null,
+      "cadence": null,
+      "contourLib": null,
+      "role": "percussion",
+      "band": "mid",
+      "style": "universal",
+      "mix": null,
+      "label": "hits",
+      "binding": "hits_push_pull_16s",
+      "sections": [
+        "push_pull_16s"
+      ]
+    },
+    {
+      "motif": null,
+      "rhythm": "gallop_arp",
+      "archetype": null,
+      "transform": null,
+      "degrees": null,
+      "contourRealization": null,
+      "contourSignsExpected": null,
+      "onsets": [
+        "0/1",
+        "1/8",
+        "3/16",
+        "1/4",
+        "3/8",
+        "7/16",
+        "1/2",
+        "5/8",
+        "11/16",
+        "3/4",
+        "7/8",
+        "15/16"
+      ],
+      "accents": [
+        1,
+        0.45,
+        0.6,
+        0.85,
+        0.45,
+        0.6,
+        0.9,
+        0.45,
+        0.6,
+        0.85,
+        0.5,
+        0.65
+      ],
+      "bars": 1,
+      "gains": [
+        1,
+        0.643,
+        0.74,
+        0.903,
+        0.643,
+        0.74,
+        0.935,
+        0.643,
+        0.74,
+        0.903,
+        0.675,
+        0.773
+      ],
+      "swing": 0,
+      "period": 1,
+      "notes": null,
+      "cadence": null,
+      "contourLib": null,
+      "role": "percussion",
+      "band": "mid",
+      "style": "trance",
+      "mix": null,
+      "label": "hits",
+      "binding": "hits_gallop_arp",
+      "sections": [
+        "gallop_arp"
+      ]
+    },
+    {
+      "motif": null,
+      "rhythm": "sparse_pedal",
+      "archetype": null,
+      "transform": null,
+      "degrees": [
+        0,
+        0,
+        4,
+        0
+      ],
+      "contourRealization": {
+        "mode": "phrase",
+        "k": 2
+      },
+      "contourSignsExpected": [
+        0,
+        1,
+        -1
+      ],
+      "onsets": [
+        "0/1",
+        "3/4"
+      ],
+      "accents": [
+        1,
+        0.6
+      ],
+      "bars": 1,
+      "gains": [
+        1,
+        0.74
+      ],
+      "swing": 0,
+      "period": 4,
+      "notes": [
+        {
+          "cycle": 0,
+          "step": 0,
+          "t": "0",
+          "note": "F2",
+          "midi": 41,
+          "accented": true,
+          "degree": 0,
+          "voice": "main"
+        },
+        {
+          "cycle": 0,
+          "step": 3,
+          "t": "3/4",
+          "note": "F2",
+          "midi": 41,
+          "accented": false,
+          "degree": 0,
+          "voice": "main"
+        },
+        {
+          "cycle": 1,
+          "step": 0,
+          "t": "0",
+          "note": "C3",
+          "midi": 48,
+          "accented": true,
+          "degree": 4,
+          "voice": "main"
+        },
+        {
+          "cycle": 1,
+          "step": 3,
+          "t": "3/4",
+          "note": "F2",
+          "midi": 41,
+          "accented": false,
+          "degree": 0,
+          "voice": "main"
+        },
+        {
+          "cycle": 2,
+          "step": 0,
+          "t": "0",
+          "note": "F2",
+          "midi": 41,
+          "accented": true,
+          "degree": 0,
+          "voice": "main"
+        },
+        {
+          "cycle": 2,
+          "step": 3,
+          "t": "3/4",
+          "note": "F2",
+          "midi": 41,
+          "accented": false,
+          "degree": 0,
+          "voice": "main"
+        },
+        {
+          "cycle": 3,
+          "step": 0,
+          "t": "0",
+          "note": "C3",
+          "midi": 48,
+          "accented": true,
+          "degree": 4,
+          "voice": "main"
+        },
+        {
+          "cycle": 3,
+          "step": 3,
+          "t": "3/4",
+          "note": "F2",
+          "midi": 41,
+          "accented": false,
+          "degree": 0,
+          "voice": "main"
+        }
+      ],
+      "cadence": null,
+      "contourLib": "bass_root_five",
+      "role": "bass",
+      "band": "low",
+      "style": "universal",
+      "mix": null,
+      "label": "hits",
+      "binding": "hits_sparse_pedal",
+      "sections": [
+        "sparse_pedal"
+      ]
+    },
+    {
+      "motif": null,
+      "rhythm": "even_8ths",
+      "archetype": null,
+      "transform": null,
+      "degrees": [
+        0,
+        2,
+        2,
+        1,
+        3,
+        2,
+        2,
+        4
+      ],
+      "contourRealization": {
+        "mode": "resampled",
+        "k": 1
+      },
+      "contourSignsExpected": [
+        1,
+        0,
+        -1,
+        1,
+        -1,
+        0,
+        1
+      ],
+      "onsets": [
+        "0/1",
+        "1/8",
+        "1/4",
+        "3/8",
+        "1/2",
+        "5/8",
+        "3/4",
+        "7/8"
+      ],
+      "accents": [
+        0.85,
+        0.5,
+        0.65,
+        0.5,
+        0.75,
+        0.5,
+        0.65,
+        0.55
+      ],
+      "bars": 1,
+      "gains": [
+        0.903,
+        0.675,
+        0.773,
+        0.675,
+        0.838,
+        0.675,
+        0.773,
+        0.708
+      ],
+      "swing": 0,
+      "period": 4,
+      "notes": [
+        {
+          "cycle": 0,
+          "step": 0,
+          "t": "0",
+          "note": "F4",
+          "midi": 65,
+          "accented": true,
+          "degree": 0,
+          "voice": "main"
+        },
+        {
+          "cycle": 0,
+          "step": 1,
+          "t": "1/8",
+          "note": "Ab4",
+          "midi": 68,
+          "accented": false,
+          "degree": 2,
+          "voice": "main"
+        },
+        {
+          "cycle": 0,
+          "step": 2,
+          "t": "1/4",
+          "note": "Ab4",
+          "midi": 68,
+          "accented": false,
+          "degree": 2,
+          "voice": "main"
+        },
+        {
+          "cycle": 0,
+          "step": 3,
+          "t": "3/8",
+          "note": "G4",
+          "midi": 67,
+          "accented": false,
+          "degree": 1,
+          "voice": "main"
+        },
+        {
+          "cycle": 0,
+          "step": 4,
+          "t": "1/2",
+          "note": "Bb4",
+          "midi": 70,
+          "accented": true,
+          "degree": 3,
+          "voice": "main"
+        },
+        {
+          "cycle": 0,
+          "step": 5,
+          "t": "5/8",
+          "note": "Ab4",
+          "midi": 68,
+          "accented": false,
+          "degree": 2,
+          "voice": "main"
+        },
+        {
+          "cycle": 0,
+          "step": 6,
+          "t": "3/4",
+          "note": "Ab4",
+          "midi": 68,
+          "accented": false,
+          "degree": 2,
+          "voice": "main"
+        },
+        {
+          "cycle": 0,
+          "step": 7,
+          "t": "7/8",
+          "note": "C5",
+          "midi": 72,
+          "accented": false,
+          "degree": 4,
+          "voice": "main"
+        },
+        {
+          "cycle": 1,
+          "step": 0,
+          "t": "0",
+          "note": "F4",
+          "midi": 65,
+          "accented": true,
+          "degree": 0,
+          "voice": "main"
+        },
+        {
+          "cycle": 1,
+          "step": 1,
+          "t": "1/8",
+          "note": "Ab4",
+          "midi": 68,
+          "accented": false,
+          "degree": 2,
+          "voice": "main"
+        },
+        {
+          "cycle": 1,
+          "step": 2,
+          "t": "1/4",
+          "note": "Ab4",
+          "midi": 68,
+          "accented": false,
+          "degree": 2,
+          "voice": "main"
+        },
+        {
+          "cycle": 1,
+          "step": 3,
+          "t": "3/8",
+          "note": "G4",
+          "midi": 67,
+          "accented": false,
+          "degree": 1,
+          "voice": "main"
+        },
+        {
+          "cycle": 1,
+          "step": 4,
+          "t": "1/2",
+          "note": "Bb4",
+          "midi": 70,
+          "accented": true,
+          "degree": 3,
+          "voice": "main"
+        },
+        {
+          "cycle": 1,
+          "step": 5,
+          "t": "5/8",
+          "note": "Ab4",
+          "midi": 68,
+          "accented": false,
+          "degree": 2,
+          "voice": "main"
+        },
+        {
+          "cycle": 1,
+          "step": 6,
+          "t": "3/4",
+          "note": "Ab4",
+          "midi": 68,
+          "accented": false,
+          "degree": 2,
+          "voice": "main"
+        },
+        {
+          "cycle": 1,
+          "step": 7,
+          "t": "7/8",
+          "note": "C5",
+          "midi": 72,
+          "accented": false,
+          "degree": 4,
+          "voice": "main"
+        },
+        {
+          "cycle": 2,
+          "step": 0,
+          "t": "0",
+          "note": "F4",
+          "midi": 65,
+          "accented": true,
+          "degree": 0,
+          "voice": "main"
+        },
+        {
+          "cycle": 2,
+          "step": 1,
+          "t": "1/8",
+          "note": "Ab4",
+          "midi": 68,
+          "accented": false,
+          "degree": 2,
+          "voice": "main"
+        },
+        {
+          "cycle": 2,
+          "step": 2,
+          "t": "1/4",
+          "note": "Ab4",
+          "midi": 68,
+          "accented": false,
+          "degree": 2,
+          "voice": "main"
+        },
+        {
+          "cycle": 2,
+          "step": 3,
+          "t": "3/8",
+          "note": "G4",
+          "midi": 67,
+          "accented": false,
+          "degree": 1,
+          "voice": "main"
+        },
+        {
+          "cycle": 2,
+          "step": 4,
+          "t": "1/2",
+          "note": "Bb4",
+          "midi": 70,
+          "accented": true,
+          "degree": 3,
+          "voice": "main"
+        },
+        {
+          "cycle": 2,
+          "step": 5,
+          "t": "5/8",
+          "note": "Ab4",
+          "midi": 68,
+          "accented": false,
+          "degree": 2,
+          "voice": "main"
+        },
+        {
+          "cycle": 2,
+          "step": 6,
+          "t": "3/4",
+          "note": "Ab4",
+          "midi": 68,
+          "accented": false,
+          "degree": 2,
+          "voice": "main"
+        },
+        {
+          "cycle": 2,
+          "step": 7,
+          "t": "7/8",
+          "note": "C5",
+          "midi": 72,
+          "accented": false,
+          "degree": 4,
+          "voice": "main"
+        },
+        {
+          "cycle": 3,
+          "step": 0,
+          "t": "0",
+          "note": "F4",
+          "midi": 65,
+          "accented": true,
+          "degree": 0,
+          "voice": "main"
+        },
+        {
+          "cycle": 3,
+          "step": 1,
+          "t": "1/8",
+          "note": "Ab4",
+          "midi": 68,
+          "accented": false,
+          "degree": 2,
+          "voice": "main"
+        },
+        {
+          "cycle": 3,
+          "step": 2,
+          "t": "1/4",
+          "note": "Ab4",
+          "midi": 68,
+          "accented": false,
+          "degree": 2,
+          "voice": "main"
+        },
+        {
+          "cycle": 3,
+          "step": 3,
+          "t": "3/8",
+          "note": "G4",
+          "midi": 67,
+          "accented": false,
+          "degree": 1,
+          "voice": "main"
+        },
+        {
+          "cycle": 3,
+          "step": 4,
+          "t": "1/2",
+          "note": "Bb4",
+          "midi": 70,
+          "accented": true,
+          "degree": 3,
+          "voice": "main"
+        },
+        {
+          "cycle": 3,
+          "step": 5,
+          "t": "5/8",
+          "note": "Ab4",
+          "midi": 68,
+          "accented": false,
+          "degree": 2,
+          "voice": "main"
+        },
+        {
+          "cycle": 3,
+          "step": 6,
+          "t": "3/4",
+          "note": "Ab4",
+          "midi": 68,
+          "accented": false,
+          "degree": 2,
+          "voice": "main"
+        },
+        {
+          "cycle": 3,
+          "step": 7,
+          "t": "7/8",
+          "note": "C5",
+          "midi": 72,
+          "accented": false,
+          "degree": 4,
+          "voice": "main"
+        }
+      ],
+      "cadence": null,
+      "contourLib": "zigzag_narrow",
+      "role": "melodic",
+      "band": "mid",
+      "style": "universal",
+      "mix": null,
+      "label": "hits",
+      "binding": "hits_even_8ths",
+      "sections": [
+        "even_8ths"
+      ]
+    },
+    {
+      "motif": null,
+      "rhythm": "pushed_comp_2bar",
+      "comp": true,
+      "dict": "me_drop2",
+      "onsets": [
+        "0/1",
+        "1/4",
+        "3/8",
+        "1/2",
+        "5/8",
+        "3/4",
+        "9/8",
+        "11/8",
+        "3/2",
+        "7/4"
+      ],
+      "accents": [
+        1,
+        0.9,
+        0.5,
+        0.92,
+        0.5,
+        0.55,
+        0.85,
+        0.88,
+        0.95,
+        0.8
+      ],
+      "voices": [
+        "main",
+        "main",
+        "bounce",
+        "main",
+        "bounce",
+        "bounce",
+        "main",
+        "main",
+        "main",
+        "main"
+      ],
+      "bars": 2,
+      "gains": [
+        1,
+        0.935,
+        0.675,
+        0.948,
+        0.675,
+        0.708,
+        0.903,
+        0.922,
+        0.967,
+        0.87
+      ],
+      "swing": 0,
+      "period": 4,
+      "notes": [
+        {
+          "cycle": 0,
+          "step": 3,
+          "t": "3/8",
+          "note": "F3",
+          "midi": 53,
+          "accented": false,
+          "degree": null,
+          "voice": "bounce"
+        },
+        {
+          "cycle": 0,
+          "step": 5,
+          "t": "5/8",
+          "note": "F3",
+          "midi": 53,
+          "accented": false,
+          "degree": null,
+          "voice": "bounce"
+        },
+        {
+          "cycle": 0,
+          "step": 6,
+          "t": "3/4",
+          "note": "F3",
+          "midi": 53,
+          "accented": false,
+          "degree": null,
+          "voice": "bounce"
+        },
+        {
+          "cycle": 2,
+          "step": 3,
+          "t": "3/8",
+          "note": "Db3",
+          "midi": 49,
+          "accented": false,
+          "degree": null,
+          "voice": "bounce"
+        },
+        {
+          "cycle": 2,
+          "step": 5,
+          "t": "5/8",
+          "note": "Db3",
+          "midi": 49,
+          "accented": false,
+          "degree": null,
+          "voice": "bounce"
+        },
+        {
+          "cycle": 2,
+          "step": 6,
+          "t": "3/4",
+          "note": "Db3",
+          "midi": 49,
+          "accented": false,
+          "degree": null,
+          "voice": "bounce"
+        }
+      ],
+      "role": "chords",
+      "band": "mid",
+      "style": "pop",
+      "mix": null,
+      "label": "hits",
+      "binding": "hits_pushed_comp_2bar",
+      "sections": [
+        "pushed_comp_2bar"
+      ]
+    },
+    {
+      "motif": null,
+      "rhythm": "charleston_2bar",
+      "comp": true,
+      "dict": "me_drop2",
+      "onsets": [
+        "0/1",
+        "3/8",
+        "1/1",
+        "11/8",
+        "7/4"
+      ],
+      "accents": [
+        0.95,
+        0.8,
+        0.9,
+        0.82,
+        0.6
+      ],
+      "voices": [
+        "main",
+        "main",
+        "main",
+        "main",
+        "bounce"
+      ],
+      "bars": 2,
+      "gains": [
+        0.967,
+        0.87,
+        0.935,
+        0.883,
+        0.74
+      ],
+      "swing": 0,
+      "period": 4,
+      "notes": [
+        {
+          "cycle": 1,
+          "step": 6,
+          "t": "3/4",
+          "note": "F3",
+          "midi": 53,
+          "accented": false,
+          "degree": null,
+          "voice": "bounce"
+        },
+        {
+          "cycle": 3,
+          "step": 6,
+          "t": "3/4",
+          "note": "Db3",
+          "midi": 49,
+          "accented": false,
+          "degree": null,
+          "voice": "bounce"
+        }
+      ],
+      "role": "chords",
+      "band": "mid",
+      "style": "jazz",
+      "mix": null,
+      "label": "hits",
+      "binding": "hits_charleston_2bar",
+      "sections": [
+        "charleston_2bar"
+      ]
+    },
+    {
+      "motif": null,
+      "rhythm": "bossa_comp_2bar",
+      "comp": true,
+      "dict": "me_drop2",
+      "onsets": [
+        "0/1",
+        "3/8",
+        "3/4",
+        "5/4",
+        "13/8"
+      ],
+      "accents": [
+        0.9,
+        0.78,
+        0.85,
+        0.88,
+        0.7
+      ],
+      "voices": [
+        "main",
+        "main",
+        "main",
+        "main",
+        "main"
+      ],
+      "bars": 2,
+      "gains": [
+        0.935,
+        0.857,
+        0.903,
+        0.922,
+        0.805
+      ],
+      "swing": 0,
+      "period": 4,
+      "notes": null,
+      "role": "chords",
+      "band": "mid",
+      "style": "bossa",
+      "mix": null,
+      "label": "hits",
+      "binding": "hits_bossa_comp_2bar",
+      "sections": [
+        "bossa_comp_2bar"
+      ]
+    },
+    {
+      "motif": null,
+      "rhythm": "call_response_2bar",
+      "archetype": null,
+      "transform": null,
+      "degrees": [
+        0,
+        2,
+        2,
+        1,
+        3,
+        2,
+        2,
+        4
+      ],
+      "contourRealization": {
+        "mode": "resampled",
+        "k": 1
+      },
+      "contourSignsExpected": [
+        1,
+        0,
+        -1,
+        1,
+        -1,
+        0,
+        1
+      ],
+      "onsets": [
+        "0/1",
+        "1/8",
+        "1/4",
+        "1/2",
+        "5/8",
+        "1/1",
+        "3/2",
+        "7/4"
+      ],
+      "accents": [
+        1,
+        0.5,
+        0.8,
+        0.9,
+        0.55,
+        0.95,
+        0.75,
+        0.6
+      ],
+      "bars": 2,
+      "gains": [
+        1,
+        0.675,
+        0.87,
+        0.935,
+        0.708,
+        0.967,
+        0.838,
+        0.74
+      ],
+      "swing": 0,
+      "period": 4,
+      "notes": [
+        {
+          "cycle": 0,
+          "step": 0,
+          "t": "0",
+          "note": "F4",
+          "midi": 65,
+          "accented": true,
+          "degree": 0,
+          "voice": "main"
+        },
+        {
+          "cycle": 0,
+          "step": 1,
+          "t": "1/8",
+          "note": "Ab4",
+          "midi": 68,
+          "accented": false,
+          "degree": 2,
+          "voice": "main"
+        },
+        {
+          "cycle": 0,
+          "step": 2,
+          "t": "1/4",
+          "note": "Ab4",
+          "midi": 68,
+          "accented": true,
+          "degree": 2,
+          "voice": "main"
+        },
+        {
+          "cycle": 0,
+          "step": 4,
+          "t": "1/2",
+          "note": "G4",
+          "midi": 67,
+          "accented": true,
+          "degree": 1,
+          "voice": "main"
+        },
+        {
+          "cycle": 0,
+          "step": 5,
+          "t": "5/8",
+          "note": "Bb4",
+          "midi": 70,
+          "accented": false,
+          "degree": 3,
+          "voice": "main"
+        },
+        {
+          "cycle": 1,
+          "step": 0,
+          "t": "0",
+          "note": "Ab4",
+          "midi": 68,
+          "accented": true,
+          "degree": 2,
+          "voice": "main"
+        },
+        {
+          "cycle": 1,
+          "step": 2,
+          "t": "1/2",
+          "note": "Ab4",
+          "midi": 68,
+          "accented": true,
+          "degree": 2,
+          "voice": "main"
+        },
+        {
+          "cycle": 1,
+          "step": 3,
+          "t": "3/4",
+          "note": "C5",
+          "midi": 72,
+          "accented": false,
+          "degree": 4,
+          "voice": "main"
+        },
+        {
+          "cycle": 2,
+          "step": 0,
+          "t": "0",
+          "note": "F4",
+          "midi": 65,
+          "accented": true,
+          "degree": 0,
+          "voice": "main"
+        },
+        {
+          "cycle": 2,
+          "step": 1,
+          "t": "1/8",
+          "note": "Ab4",
+          "midi": 68,
+          "accented": false,
+          "degree": 2,
+          "voice": "main"
+        },
+        {
+          "cycle": 2,
+          "step": 2,
+          "t": "1/4",
+          "note": "Ab4",
+          "midi": 68,
+          "accented": true,
+          "degree": 2,
+          "voice": "main"
+        },
+        {
+          "cycle": 2,
+          "step": 4,
+          "t": "1/2",
+          "note": "Ab4",
+          "midi": 68,
+          "accented": true,
+          "degree": 1,
+          "voice": "main"
+        },
+        {
+          "cycle": 2,
+          "step": 5,
+          "t": "5/8",
+          "note": "Bb4",
+          "midi": 70,
+          "accented": false,
+          "degree": 3,
+          "voice": "main"
+        },
+        {
+          "cycle": 3,
+          "step": 0,
+          "t": "0",
+          "note": "Ab4",
+          "midi": 68,
+          "accented": true,
+          "degree": 2,
+          "voice": "main"
+        },
+        {
+          "cycle": 3,
+          "step": 2,
+          "t": "1/2",
+          "note": "Ab4",
+          "midi": 68,
+          "accented": true,
+          "degree": 2,
+          "voice": "main"
+        },
+        {
+          "cycle": 3,
+          "step": 3,
+          "t": "3/4",
+          "note": "C5",
+          "midi": 72,
+          "accented": false,
+          "degree": 4,
+          "voice": "main"
+        }
+      ],
+      "cadence": null,
+      "contourLib": "zigzag_narrow",
+      "role": "melodic",
+      "band": "mid",
+      "style": "universal",
+      "mix": null,
+      "label": "hits",
+      "binding": "hits_call_response_2bar",
+      "sections": [
+        "call_response_2bar"
+      ]
+    }
+  ],
+  "styles": null,
+  "orbits": {
+    "hits": 2
+  },
+  "voicingShapes": [
+    "drop2"
+  ]
+}

@@ -1,0 +1,70 @@
+{
+  "title": "rhythms-7-8",
+  "meter": "7/8",
+  "bpm": 140,
+  "key": "D:dorian",
+  "seed": 1,
+  "form": "seven_pulse_223 seven_hats_223 seven_syncopated seven_offbeat_lift",
+  "sections": {
+    "seven_pulse_223": {
+      "bars": 4,
+      "layers": {
+        "hits": {
+          "bind": {
+            "rhythm": "seven_pulse_223",
+            "sound": "bd"
+          }
+        }
+      }
+    },
+    "seven_hats_223": {
+      "bars": 4,
+      "layers": {
+        "hits": {
+          "bind": {
+            "rhythm": "seven_hats_223",
+            "sound": "hh"
+          }
+        }
+      }
+    },
+    "seven_syncopated": {
+      "bars": 4,
+      "harmony": [
+        "Dm7",
+        "G7"
+      ],
+      "harmonicRhythm": 2,
+      "layers": {
+        "hits": {
+          "bind": {
+            "rhythm": "seven_syncopated",
+            "contour": "lib:zigzag_narrow",
+            "octave": 4,
+            "sound": "triangle",
+            "fx": ".room(0.15)"
+          }
+        }
+      }
+    },
+    "seven_offbeat_lift": {
+      "bars": 4,
+      "harmony": [
+        "Dm7",
+        "G7"
+      ],
+      "harmonicRhythm": 2,
+      "layers": {
+        "hits": {
+          "bind": {
+            "rhythm": "seven_offbeat_lift",
+            "contour": "lib:zigzag_narrow",
+            "octave": 4,
+            "sound": "triangle",
+            "fx": ".room(0.15)"
+          }
+        }
+      }
+    }
+  }
+}

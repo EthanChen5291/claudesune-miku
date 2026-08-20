@@ -1,0 +1,5164 @@
+{
+  "title": "transitions",
+  "genre": null,
+  "meter": "4/4",
+  "bpm": 122,
+  "key": "F:minor",
+  "seed": 1,
+  "form": "leadin_riser chorus_riser leadin_noise chorus_noise leadin_fill chorus_fill leadin_tom any_tom leadin_impact any_impact chorus_before_sweep after_sweep leadin_drop chorus_drop",
+  "totalCycles": 56,
+  "instances": [
+    {
+      "name": "leadin_riser",
+      "start": 0,
+      "end": 4
+    },
+    {
+      "name": "chorus_riser",
+      "start": 4,
+      "end": 8
+    },
+    {
+      "name": "leadin_noise",
+      "start": 8,
+      "end": 12
+    },
+    {
+      "name": "chorus_noise",
+      "start": 12,
+      "end": 16
+    },
+    {
+      "name": "leadin_fill",
+      "start": 16,
+      "end": 20
+    },
+    {
+      "name": "chorus_fill",
+      "start": 20,
+      "end": 24
+    },
+    {
+      "name": "leadin_tom",
+      "start": 24,
+      "end": 28
+    },
+    {
+      "name": "any_tom",
+      "start": 28,
+      "end": 32
+    },
+    {
+      "name": "leadin_impact",
+      "start": 32,
+      "end": 36
+    },
+    {
+      "name": "any_impact",
+      "start": 36,
+      "end": 40
+    },
+    {
+      "name": "chorus_before_sweep",
+      "start": 40,
+      "end": 44
+    },
+    {
+      "name": "after_sweep",
+      "start": 44,
+      "end": 48
+    },
+    {
+      "name": "leadin_drop",
+      "start": 48,
+      "end": 52
+    },
+    {
+      "name": "chorus_drop",
+      "start": 52,
+      "end": 56
+    }
+  ],
+  "ranges": {
+    "leadin_riser": [
+      [
+        0,
+        4
+      ]
+    ],
+    "chorus_riser": [
+      [
+        4,
+        8
+      ]
+    ],
+    "leadin_noise": [
+      [
+        8,
+        12
+      ]
+    ],
+    "chorus_noise": [
+      [
+        12,
+        16
+      ]
+    ],
+    "leadin_fill": [
+      [
+        16,
+        20
+      ]
+    ],
+    "chorus_fill": [
+      [
+        20,
+        24
+      ]
+    ],
+    "leadin_tom": [
+      [
+        24,
+        28
+      ]
+    ],
+    "any_tom": [
+      [
+        28,
+        32
+      ]
+    ],
+    "leadin_impact": [
+      [
+        32,
+        36
+      ]
+    ],
+    "any_impact": [
+      [
+        36,
+        40
+      ]
+    ],
+    "chorus_before_sweep": [
+      [
+        40,
+        44
+      ]
+    ],
+    "after_sweep": [
+      [
+        44,
+        48
+      ]
+    ],
+    "leadin_drop": [
+      [
+        48,
+        52
+      ]
+    ],
+    "chorus_drop": [
+      [
+        52,
+        56
+      ]
+    ]
+  },
+  "sections": {
+    "leadin_riser": {
+      "role": "verse",
+      "bars": 4,
+      "must": null,
+      "contrasts_with": null,
+      "resolves": null,
+      "recalls": null,
+      "sets_up": null,
+      "withhold": [],
+      "harmony": [
+        "Fm9",
+        "C7"
+      ],
+      "ranges": [
+        [
+          0,
+          4
+        ]
+      ],
+      "cadence": null
+    },
+    "chorus_riser": {
+      "role": "chorus",
+      "bars": 4,
+      "must": null,
+      "contrasts_with": null,
+      "resolves": null,
+      "recalls": null,
+      "sets_up": null,
+      "withhold": [],
+      "harmony": [
+        "Fm9",
+        "C7"
+      ],
+      "ranges": [
+        [
+          4,
+          8
+        ]
+      ],
+      "cadence": null
+    },
+    "leadin_noise": {
+      "role": "breakdown",
+      "bars": 4,
+      "must": null,
+      "contrasts_with": null,
+      "resolves": null,
+      "recalls": null,
+      "sets_up": null,
+      "withhold": [],
+      "harmony": [
+        "Fm9",
+        "C7"
+      ],
+      "ranges": [
+        [
+          8,
+          12
+        ]
+      ],
+      "cadence": null
+    },
+    "chorus_noise": {
+      "role": "chorus",
+      "bars": 4,
+      "must": null,
+      "contrasts_with": null,
+      "resolves": null,
+      "recalls": null,
+      "sets_up": null,
+      "withhold": [],
+      "harmony": [
+        "Fm9",
+        "C7"
+      ],
+      "ranges": [
+        [
+          12,
+          16
+        ]
+      ],
+      "cadence": null
+    },
+    "leadin_fill": {
+      "role": "verse",
+      "bars": 4,
+      "must": null,
+      "contrasts_with": null,
+      "resolves": null,
+      "recalls": null,
+      "sets_up": null,
+      "withhold": [],
+      "harmony": [
+        "Fm9",
+        "C7"
+      ],
+      "ranges": [
+        [
+          16,
+          20
+        ]
+      ],
+      "cadence": null
+    },
+    "chorus_fill": {
+      "role": "chorus",
+      "bars": 4,
+      "must": null,
+      "contrasts_with": null,
+      "resolves": null,
+      "recalls": null,
+      "sets_up": null,
+      "withhold": [],
+      "harmony": [
+        "Fm9",
+        "C7"
+      ],
+      "ranges": [
+        [
+          20,
+          24
+        ]
+      ],
+      "cadence": null
+    },
+    "leadin_tom": {
+      "role": "verse",
+      "bars": 4,
+      "must": null,
+      "contrasts_with": null,
+      "resolves": null,
+      "recalls": null,
+      "sets_up": null,
+      "withhold": [],
+      "harmony": [
+        "Fm9",
+        "C7"
+      ],
+      "ranges": [
+        [
+          24,
+          28
+        ]
+      ],
+      "cadence": null
+    },
+    "any_tom": {
+      "role": "verse",
+      "bars": 4,
+      "must": null,
+      "contrasts_with": null,
+      "resolves": null,
+      "recalls": null,
+      "sets_up": null,
+      "withhold": [],
+      "harmony": [
+        "Fm9",
+        "C7"
+      ],
+      "ranges": [
+        [
+          28,
+          32
+        ]
+      ],
+      "cadence": null
+    },
+    "leadin_impact": {
+      "role": "verse",
+      "bars": 4,
+      "must": null,
+      "contrasts_with": null,
+      "resolves": null,
+      "recalls": null,
+      "sets_up": null,
+      "withhold": [],
+      "harmony": [
+        "Fm9",
+        "C7"
+      ],
+      "ranges": [
+        [
+          32,
+          36
+        ]
+      ],
+      "cadence": null
+    },
+    "any_impact": {
+      "role": "chorus",
+      "bars": 4,
+      "must": null,
+      "contrasts_with": null,
+      "resolves": null,
+      "recalls": null,
+      "sets_up": null,
+      "withhold": [],
+      "harmony": [
+        "Fm9",
+        "C7"
+      ],
+      "ranges": [
+        [
+          36,
+          40
+        ]
+      ],
+      "cadence": null
+    },
+    "chorus_before_sweep": {
+      "role": "chorus",
+      "bars": 4,
+      "must": null,
+      "contrasts_with": null,
+      "resolves": null,
+      "recalls": null,
+      "sets_up": null,
+      "withhold": [],
+      "harmony": [
+        "Fm9",
+        "C7"
+      ],
+      "ranges": [
+        [
+          40,
+          44
+        ]
+      ],
+      "cadence": null
+    },
+    "after_sweep": {
+      "role": "verse",
+      "bars": 4,
+      "must": null,
+      "contrasts_with": null,
+      "resolves": null,
+      "recalls": null,
+      "sets_up": null,
+      "withhold": [],
+      "harmony": [
+        "Fm9",
+        "C7"
+      ],
+      "ranges": [
+        [
+          44,
+          48
+        ]
+      ],
+      "cadence": null
+    },
+    "leadin_drop": {
+      "role": "breakdown",
+      "bars": 4,
+      "must": null,
+      "contrasts_with": null,
+      "resolves": null,
+      "recalls": null,
+      "sets_up": null,
+      "withhold": [],
+      "harmony": [
+        "Fm9",
+        "C7"
+      ],
+      "ranges": [
+        [
+          48,
+          52
+        ]
+      ],
+      "cadence": null
+    },
+    "chorus_drop": {
+      "role": "chorus",
+      "bars": 4,
+      "must": null,
+      "contrasts_with": null,
+      "resolves": null,
+      "recalls": null,
+      "sets_up": null,
+      "withhold": [],
+      "harmony": [
+        "Fm9",
+        "C7"
+      ],
+      "ranges": [
+        [
+          52,
+          56
+        ]
+      ],
+      "cadence": null
+    }
+  },
+  "harmonyBinding": "chords",
+  "bindings": {
+    "harmony_leadin_riser": {
+      "label": "chords",
+      "sections": [
+        "leadin_riser"
+      ],
+      "kind": "harmony"
+    },
+    "harmony_chorus_riser": {
+      "label": "chords",
+      "sections": [
+        "chorus_riser"
+      ],
+      "kind": "harmony"
+    },
+    "harmony_leadin_noise": {
+      "label": "chords",
+      "sections": [
+        "leadin_noise"
+      ],
+      "kind": "harmony"
+    },
+    "harmony_chorus_noise": {
+      "label": "chords",
+      "sections": [
+        "chorus_noise"
+      ],
+      "kind": "harmony"
+    },
+    "harmony_leadin_fill": {
+      "label": "chords",
+      "sections": [
+        "leadin_fill"
+      ],
+      "kind": "harmony"
+    },
+    "harmony_chorus_fill": {
+      "label": "chords",
+      "sections": [
+        "chorus_fill"
+      ],
+      "kind": "harmony"
+    },
+    "harmony_leadin_tom": {
+      "label": "chords",
+      "sections": [
+        "leadin_tom"
+      ],
+      "kind": "harmony"
+    },
+    "harmony_any_tom": {
+      "label": "chords",
+      "sections": [
+        "any_tom"
+      ],
+      "kind": "harmony"
+    },
+    "harmony_leadin_impact": {
+      "label": "chords",
+      "sections": [
+        "leadin_impact"
+      ],
+      "kind": "harmony"
+    },
+    "harmony_any_impact": {
+      "label": "chords",
+      "sections": [
+        "any_impact"
+      ],
+      "kind": "harmony"
+    },
+    "harmony_chorus_before_sweep": {
+      "label": "chords",
+      "sections": [
+        "chorus_before_sweep"
+      ],
+      "kind": "harmony"
+    },
+    "harmony_after_sweep": {
+      "label": "chords",
+      "sections": [
+        "after_sweep"
+      ],
+      "kind": "harmony"
+    },
+    "harmony_leadin_drop": {
+      "label": "chords",
+      "sections": [
+        "leadin_drop"
+      ],
+      "kind": "harmony"
+    },
+    "harmony_chorus_drop": {
+      "label": "chords",
+      "sections": [
+        "chorus_drop"
+      ],
+      "kind": "harmony"
+    },
+    "chords": {
+      "label": "(harmony timeline)",
+      "sections": [
+        "leadin_riser",
+        "chorus_riser",
+        "leadin_noise",
+        "chorus_noise",
+        "leadin_fill",
+        "chorus_fill",
+        "leadin_tom",
+        "any_tom",
+        "leadin_impact",
+        "any_impact",
+        "chorus_before_sweep",
+        "after_sweep",
+        "leadin_drop",
+        "chorus_drop"
+      ],
+      "kind": "harmony-combined"
+    },
+    "kick_leadin_riser": {
+      "label": "kick",
+      "sections": [
+        "leadin_riser"
+      ],
+      "kind": "bound",
+      "period": 1
+    },
+    "kick_chorus_riser": {
+      "label": "kick",
+      "sections": [
+        "chorus_riser"
+      ],
+      "kind": "bound",
+      "period": 1
+    },
+    "kick_chorus_noise": {
+      "label": "kick",
+      "sections": [
+        "chorus_noise"
+      ],
+      "kind": "bound",
+      "period": 1
+    },
+    "kick_leadin_fill": {
+      "label": "kick",
+      "sections": [
+        "leadin_fill"
+      ],
+      "kind": "bound",
+      "period": 1
+    },
+    "kick_chorus_fill": {
+      "label": "kick",
+      "sections": [
+        "chorus_fill"
+      ],
+      "kind": "bound",
+      "period": 1
+    },
+    "kick_leadin_tom": {
+      "label": "kick",
+      "sections": [
+        "leadin_tom"
+      ],
+      "kind": "bound",
+      "period": 1
+    },
+    "kick_any_tom": {
+      "label": "kick",
+      "sections": [
+        "any_tom"
+      ],
+      "kind": "bound",
+      "period": 1
+    },
+    "kick_leadin_impact": {
+      "label": "kick",
+      "sections": [
+        "leadin_impact"
+      ],
+      "kind": "bound",
+      "period": 1
+    },
+    "kick_any_impact": {
+      "label": "kick",
+      "sections": [
+        "any_impact"
+      ],
+      "kind": "bound",
+      "period": 1
+    },
+    "kick_chorus_before_sweep": {
+      "label": "kick",
+      "sections": [
+        "chorus_before_sweep"
+      ],
+      "kind": "bound",
+      "period": 1
+    },
+    "kick_after_sweep": {
+      "label": "kick",
+      "sections": [
+        "after_sweep"
+      ],
+      "kind": "bound",
+      "period": 1
+    },
+    "kick_chorus_drop": {
+      "label": "kick",
+      "sections": [
+        "chorus_drop"
+      ],
+      "kind": "bound",
+      "period": 1
+    },
+    "hats_leadin_riser": {
+      "label": "hats",
+      "sections": [
+        "leadin_riser"
+      ],
+      "kind": "bound",
+      "period": 1
+    },
+    "hats_chorus_riser": {
+      "label": "hats",
+      "sections": [
+        "chorus_riser"
+      ],
+      "kind": "bound",
+      "period": 1
+    },
+    "hats_leadin_noise": {
+      "label": "hats",
+      "sections": [
+        "leadin_noise"
+      ],
+      "kind": "bound",
+      "period": 1
+    },
+    "hats_chorus_noise": {
+      "label": "hats",
+      "sections": [
+        "chorus_noise"
+      ],
+      "kind": "bound",
+      "period": 1
+    },
+    "hats_leadin_fill": {
+      "label": "hats",
+      "sections": [
+        "leadin_fill"
+      ],
+      "kind": "bound",
+      "period": 1
+    },
+    "hats_chorus_fill": {
+      "label": "hats",
+      "sections": [
+        "chorus_fill"
+      ],
+      "kind": "bound",
+      "period": 1
+    },
+    "hats_leadin_tom": {
+      "label": "hats",
+      "sections": [
+        "leadin_tom"
+      ],
+      "kind": "bound",
+      "period": 1
+    },
+    "hats_any_tom": {
+      "label": "hats",
+      "sections": [
+        "any_tom"
+      ],
+      "kind": "bound",
+      "period": 1
+    },
+    "hats_leadin_impact": {
+      "label": "hats",
+      "sections": [
+        "leadin_impact"
+      ],
+      "kind": "bound",
+      "period": 1
+    },
+    "hats_any_impact": {
+      "label": "hats",
+      "sections": [
+        "any_impact"
+      ],
+      "kind": "bound",
+      "period": 1
+    },
+    "hats_chorus_before_sweep": {
+      "label": "hats",
+      "sections": [
+        "chorus_before_sweep"
+      ],
+      "kind": "bound",
+      "period": 1
+    },
+    "hats_after_sweep": {
+      "label": "hats",
+      "sections": [
+        "after_sweep"
+      ],
+      "kind": "bound",
+      "period": 1
+    },
+    "hats_leadin_drop": {
+      "label": "hats",
+      "sections": [
+        "leadin_drop"
+      ],
+      "kind": "bound",
+      "period": 1
+    },
+    "hats_chorus_drop": {
+      "label": "hats",
+      "sections": [
+        "chorus_drop"
+      ],
+      "kind": "bound",
+      "period": 1
+    },
+    "bass_leadin_riser": {
+      "label": "bass",
+      "sections": [
+        "leadin_riser"
+      ],
+      "kind": "bound",
+      "period": 4
+    },
+    "bass_chorus_riser": {
+      "label": "bass",
+      "sections": [
+        "chorus_riser"
+      ],
+      "kind": "bound",
+      "period": 4
+    },
+    "bass_chorus_noise": {
+      "label": "bass",
+      "sections": [
+        "chorus_noise"
+      ],
+      "kind": "bound",
+      "period": 4
+    },
+    "bass_leadin_fill": {
+      "label": "bass",
+      "sections": [
+        "leadin_fill"
+      ],
+      "kind": "bound",
+      "period": 4
+    },
+    "bass_chorus_fill": {
+      "label": "bass",
+      "sections": [
+        "chorus_fill"
+      ],
+      "kind": "bound",
+      "period": 4
+    },
+    "bass_leadin_tom": {
+      "label": "bass",
+      "sections": [
+        "leadin_tom"
+      ],
+      "kind": "bound",
+      "period": 4
+    },
+    "bass_any_tom": {
+      "label": "bass",
+      "sections": [
+        "any_tom"
+      ],
+      "kind": "bound",
+      "period": 4
+    },
+    "bass_leadin_impact": {
+      "label": "bass",
+      "sections": [
+        "leadin_impact"
+      ],
+      "kind": "bound",
+      "period": 4
+    },
+    "bass_any_impact": {
+      "label": "bass",
+      "sections": [
+        "any_impact"
+      ],
+      "kind": "bound",
+      "period": 4
+    },
+    "bass_chorus_before_sweep": {
+      "label": "bass",
+      "sections": [
+        "chorus_before_sweep"
+      ],
+      "kind": "bound",
+      "period": 4
+    },
+    "bass_chorus_drop": {
+      "label": "bass",
+      "sections": [
+        "chorus_drop"
+      ],
+      "kind": "bound",
+      "period": 4
+    },
+    "pads_leadin_riser": {
+      "label": "pads",
+      "sections": [
+        "leadin_riser"
+      ],
+      "kind": "free",
+      "period": 1
+    },
+    "pads_chorus_riser": {
+      "label": "pads",
+      "sections": [
+        "chorus_riser"
+      ],
+      "kind": "free",
+      "period": 1
+    },
+    "pads_leadin_noise": {
+      "label": "pads",
+      "sections": [
+        "leadin_noise"
+      ],
+      "kind": "free",
+      "period": 1
+    },
+    "pads_chorus_noise": {
+      "label": "pads",
+      "sections": [
+        "chorus_noise"
+      ],
+      "kind": "free",
+      "period": 1
+    },
+    "pads_leadin_fill": {
+      "label": "pads",
+      "sections": [
+        "leadin_fill"
+      ],
+      "kind": "free",
+      "period": 1
+    },
+    "pads_chorus_fill": {
+      "label": "pads",
+      "sections": [
+        "chorus_fill"
+      ],
+      "kind": "free",
+      "period": 1
+    },
+    "pads_leadin_tom": {
+      "label": "pads",
+      "sections": [
+        "leadin_tom"
+      ],
+      "kind": "free",
+      "period": 1
+    },
+    "pads_any_tom": {
+      "label": "pads",
+      "sections": [
+        "any_tom"
+      ],
+      "kind": "free",
+      "period": 1
+    },
+    "pads_leadin_impact": {
+      "label": "pads",
+      "sections": [
+        "leadin_impact"
+      ],
+      "kind": "free",
+      "period": 1
+    },
+    "pads_any_impact": {
+      "label": "pads",
+      "sections": [
+        "any_impact"
+      ],
+      "kind": "free",
+      "period": 1
+    },
+    "pads_chorus_before_sweep": {
+      "label": "pads",
+      "sections": [
+        "chorus_before_sweep"
+      ],
+      "kind": "free",
+      "period": 1
+    },
+    "pads_leadin_drop": {
+      "label": "pads",
+      "sections": [
+        "leadin_drop"
+      ],
+      "kind": "free",
+      "period": 1
+    },
+    "pads_chorus_drop": {
+      "label": "pads",
+      "sections": [
+        "chorus_drop"
+      ],
+      "kind": "free",
+      "period": 1
+    },
+    "riser_riser_hat_swell_chorus_riser1": {
+      "label": "riser",
+      "sections": [
+        "chorus_riser"
+      ],
+      "kind": "transition"
+    },
+    "riser_riser_noise_sweep_chorus_noise3": {
+      "label": "riser",
+      "sections": [
+        "chorus_noise"
+      ],
+      "kind": "transition"
+    },
+    "fill_fill_snare_roll_chorus_fill5": {
+      "label": "fill",
+      "sections": [
+        "chorus_fill"
+      ],
+      "kind": "transition"
+    },
+    "fill_fill_tom_run_any_tom7": {
+      "label": "fill",
+      "sections": [
+        "any_tom"
+      ],
+      "kind": "transition"
+    },
+    "impact_impact_boom_any_impact9": {
+      "label": "impact",
+      "sections": [
+        "any_impact"
+      ],
+      "kind": "transition"
+    },
+    "sweep_sweep_downlifter_after_sweep11": {
+      "label": "sweep",
+      "sections": [
+        "after_sweep"
+      ],
+      "kind": "transition"
+    },
+    "impact_sub_drop_chorus_drop13": {
+      "label": "impact",
+      "sections": [
+        "chorus_drop"
+      ],
+      "kind": "transition"
+    }
+  },
+  "labels": {
+    "kick": {
+      "sections": [
+        "leadin_riser",
+        "chorus_riser",
+        "chorus_noise",
+        "leadin_fill",
+        "chorus_fill",
+        "leadin_tom",
+        "any_tom",
+        "leadin_impact",
+        "any_impact",
+        "chorus_before_sweep",
+        "after_sweep",
+        "chorus_drop"
+      ],
+      "bindings": {
+        "leadin_riser": "kick_leadin_riser",
+        "chorus_riser": "kick_chorus_riser",
+        "chorus_noise": "kick_chorus_noise",
+        "leadin_fill": "kick_leadin_fill",
+        "chorus_fill": "kick_chorus_fill",
+        "leadin_tom": "kick_leadin_tom",
+        "any_tom": "kick_any_tom",
+        "leadin_impact": "kick_leadin_impact",
+        "any_impact": "kick_any_impact",
+        "chorus_before_sweep": "kick_chorus_before_sweep",
+        "after_sweep": "kick_after_sweep",
+        "chorus_drop": "kick_chorus_drop"
+      }
+    },
+    "hats": {
+      "sections": [
+        "leadin_riser",
+        "chorus_riser",
+        "leadin_noise",
+        "chorus_noise",
+        "leadin_fill",
+        "chorus_fill",
+        "leadin_tom",
+        "any_tom",
+        "leadin_impact",
+        "any_impact",
+        "chorus_before_sweep",
+        "after_sweep",
+        "leadin_drop",
+        "chorus_drop"
+      ],
+      "bindings": {
+        "leadin_riser": "hats_leadin_riser",
+        "chorus_riser": "hats_chorus_riser",
+        "leadin_noise": "hats_leadin_noise",
+        "chorus_noise": "hats_chorus_noise",
+        "leadin_fill": "hats_leadin_fill",
+        "chorus_fill": "hats_chorus_fill",
+        "leadin_tom": "hats_leadin_tom",
+        "any_tom": "hats_any_tom",
+        "leadin_impact": "hats_leadin_impact",
+        "any_impact": "hats_any_impact",
+        "chorus_before_sweep": "hats_chorus_before_sweep",
+        "after_sweep": "hats_after_sweep",
+        "leadin_drop": "hats_leadin_drop",
+        "chorus_drop": "hats_chorus_drop"
+      }
+    },
+    "bass": {
+      "sections": [
+        "leadin_riser",
+        "chorus_riser",
+        "chorus_noise",
+        "leadin_fill",
+        "chorus_fill",
+        "leadin_tom",
+        "any_tom",
+        "leadin_impact",
+        "any_impact",
+        "chorus_before_sweep",
+        "chorus_drop"
+      ],
+      "bindings": {
+        "leadin_riser": "bass_leadin_riser",
+        "chorus_riser": "bass_chorus_riser",
+        "chorus_noise": "bass_chorus_noise",
+        "leadin_fill": "bass_leadin_fill",
+        "chorus_fill": "bass_chorus_fill",
+        "leadin_tom": "bass_leadin_tom",
+        "any_tom": "bass_any_tom",
+        "leadin_impact": "bass_leadin_impact",
+        "any_impact": "bass_any_impact",
+        "chorus_before_sweep": "bass_chorus_before_sweep",
+        "chorus_drop": "bass_chorus_drop"
+      }
+    },
+    "pads": {
+      "sections": [
+        "leadin_riser",
+        "chorus_riser",
+        "leadin_noise",
+        "chorus_noise",
+        "leadin_fill",
+        "chorus_fill",
+        "leadin_tom",
+        "any_tom",
+        "leadin_impact",
+        "any_impact",
+        "chorus_before_sweep",
+        "leadin_drop",
+        "chorus_drop"
+      ],
+      "bindings": {
+        "leadin_riser": "pads_leadin_riser",
+        "chorus_riser": "pads_chorus_riser",
+        "leadin_noise": "pads_leadin_noise",
+        "chorus_noise": "pads_chorus_noise",
+        "leadin_fill": "pads_leadin_fill",
+        "chorus_fill": "pads_chorus_fill",
+        "leadin_tom": "pads_leadin_tom",
+        "any_tom": "pads_any_tom",
+        "leadin_impact": "pads_leadin_impact",
+        "any_impact": "pads_any_impact",
+        "chorus_before_sweep": "pads_chorus_before_sweep",
+        "leadin_drop": "pads_leadin_drop",
+        "chorus_drop": "pads_chorus_drop"
+      }
+    },
+    "riser": {
+      "sections": [],
+      "bindings": {},
+      "kind": "transition"
+    },
+    "fill": {
+      "sections": [],
+      "bindings": {},
+      "kind": "transition"
+    },
+    "impact": {
+      "sections": [],
+      "bindings": {},
+      "kind": "transition"
+    },
+    "sweep": {
+      "sections": [],
+      "bindings": {},
+      "kind": "transition"
+    }
+  },
+  "motifPlacements": [
+    {
+      "motif": null,
+      "rhythm": "four_floor",
+      "archetype": null,
+      "transform": null,
+      "degrees": null,
+      "contourRealization": null,
+      "contourSignsExpected": null,
+      "onsets": [
+        "0/1",
+        "1/4",
+        "1/2",
+        "3/4"
+      ],
+      "accents": [
+        1,
+        0.85,
+        0.92,
+        0.85
+      ],
+      "bars": 1,
+      "gains": [
+        1,
+        0.903,
+        0.948,
+        0.903
+      ],
+      "swing": 0,
+      "period": 1,
+      "notes": null,
+      "cadence": null,
+      "contourLib": null,
+      "role": "percussion",
+      "band": "low",
+      "style": "universal",
+      "mix": null,
+      "label": "kick",
+      "binding": "kick_leadin_riser",
+      "sections": [
+        "leadin_riser"
+      ]
+    },
+    {
+      "motif": null,
+      "rhythm": "four_floor",
+      "archetype": null,
+      "transform": null,
+      "degrees": null,
+      "contourRealization": null,
+      "contourSignsExpected": null,
+      "onsets": [
+        "0/1",
+        "1/4",
+        "1/2",
+        "3/4"
+      ],
+      "accents": [
+        1,
+        0.85,
+        0.92,
+        0.85
+      ],
+      "bars": 1,
+      "gains": [
+        1,
+        0.903,
+        0.948,
+        0.903
+      ],
+      "swing": 0,
+      "period": 1,
+      "notes": null,
+      "cadence": null,
+      "contourLib": null,
+      "role": "percussion",
+      "band": "low",
+      "style": "universal",
+      "mix": null,
+      "label": "kick",
+      "binding": "kick_chorus_riser",
+      "sections": [
+        "chorus_riser"
+      ]
+    },
+    {
+      "motif": null,
+      "rhythm": "four_floor",
+      "archetype": null,
+      "transform": null,
+      "degrees": null,
+      "contourRealization": null,
+      "contourSignsExpected": null,
+      "onsets": [
+        "0/1",
+        "1/4",
+        "1/2",
+        "3/4"
+      ],
+      "accents": [
+        1,
+        0.85,
+        0.92,
+        0.85
+      ],
+      "bars": 1,
+      "gains": [
+        1,
+        0.903,
+        0.948,
+        0.903
+      ],
+      "swing": 0,
+      "period": 1,
+      "notes": null,
+      "cadence": null,
+      "contourLib": null,
+      "role": "percussion",
+      "band": "low",
+      "style": "universal",
+      "mix": null,
+      "label": "kick",
+      "binding": "kick_chorus_noise",
+      "sections": [
+        "chorus_noise"
+      ]
+    },
+    {
+      "motif": null,
+      "rhythm": "four_floor",
+      "archetype": null,
+      "transform": null,
+      "degrees": null,
+      "contourRealization": null,
+      "contourSignsExpected": null,
+      "onsets": [
+        "0/1",
+        "1/4",
+        "1/2",
+        "3/4"
+      ],
+      "accents": [
+        1,
+        0.85,
+        0.92,
+        0.85
+      ],
+      "bars": 1,
+      "gains": [
+        1,
+        0.903,
+        0.948,
+        0.903
+      ],
+      "swing": 0,
+      "period": 1,
+      "notes": null,
+      "cadence": null,
+      "contourLib": null,
+      "role": "percussion",
+      "band": "low",
+      "style": "universal",
+      "mix": null,
+      "label": "kick",
+      "binding": "kick_leadin_fill",
+      "sections": [
+        "leadin_fill"
+      ]
+    },
+    {
+      "motif": null,
+      "rhythm": "four_floor",
+      "archetype": null,
+      "transform": null,
+      "degrees": null,
+      "contourRealization": null,
+      "contourSignsExpected": null,
+      "onsets": [
+        "0/1",
+        "1/4",
+        "1/2",
+        "3/4"
+      ],
+      "accents": [
+        1,
+        0.85,
+        0.92,
+        0.85
+      ],
+      "bars": 1,
+      "gains": [
+        1,
+        0.903,
+        0.948,
+        0.903
+      ],
+      "swing": 0,
+      "period": 1,
+      "notes": null,
+      "cadence": null,
+      "contourLib": null,
+      "role": "percussion",
+      "band": "low",
+      "style": "universal",
+      "mix": null,
+      "label": "kick",
+      "binding": "kick_chorus_fill",
+      "sections": [
+        "chorus_fill"
+      ]
+    },
+    {
+      "motif": null,
+      "rhythm": "four_floor",
+      "archetype": null,
+      "transform": null,
+      "degrees": null,
+      "contourRealization": null,
+      "contourSignsExpected": null,
+      "onsets": [
+        "0/1",
+        "1/4",
+        "1/2",
+        "3/4"
+      ],
+      "accents": [
+        1,
+        0.85,
+        0.92,
+        0.85
+      ],
+      "bars": 1,
+      "gains": [
+        1,
+        0.903,
+        0.948,
+        0.903
+      ],
+      "swing": 0,
+      "period": 1,
+      "notes": null,
+      "cadence": null,
+      "contourLib": null,
+      "role": "percussion",
+      "band": "low",
+      "style": "universal",
+      "mix": null,
+      "label": "kick",
+      "binding": "kick_leadin_tom",
+      "sections": [
+        "leadin_tom"
+      ]
+    },
+    {
+      "motif": null,
+      "rhythm": "four_floor",
+      "archetype": null,
+      "transform": null,
+      "degrees": null,
+      "contourRealization": null,
+      "contourSignsExpected": null,
+      "onsets": [
+        "0/1",
+        "1/4",
+        "1/2",
+        "3/4"
+      ],
+      "accents": [
+        1,
+        0.85,
+        0.92,
+        0.85
+      ],
+      "bars": 1,
+      "gains": [
+        1,
+        0.903,
+        0.948,
+        0.903
+      ],
+      "swing": 0,
+      "period": 1,
+      "notes": null,
+      "cadence": null,
+      "contourLib": null,
+      "role": "percussion",
+      "band": "low",
+      "style": "universal",
+      "mix": null,
+      "label": "kick",
+      "binding": "kick_any_tom",
+      "sections": [
+        "any_tom"
+      ]
+    },
+    {
+      "motif": null,
+      "rhythm": "four_floor",
+      "archetype": null,
+      "transform": null,
+      "degrees": null,
+      "contourRealization": null,
+      "contourSignsExpected": null,
+      "onsets": [
+        "0/1",
+        "1/4",
+        "1/2",
+        "3/4"
+      ],
+      "accents": [
+        1,
+        0.85,
+        0.92,
+        0.85
+      ],
+      "bars": 1,
+      "gains": [
+        1,
+        0.903,
+        0.948,
+        0.903
+      ],
+      "swing": 0,
+      "period": 1,
+      "notes": null,
+      "cadence": null,
+      "contourLib": null,
+      "role": "percussion",
+      "band": "low",
+      "style": "universal",
+      "mix": null,
+      "label": "kick",
+      "binding": "kick_leadin_impact",
+      "sections": [
+        "leadin_impact"
+      ]
+    },
+    {
+      "motif": null,
+      "rhythm": "four_floor",
+      "archetype": null,
+      "transform": null,
+      "degrees": null,
+      "contourRealization": null,
+      "contourSignsExpected": null,
+      "onsets": [
+        "0/1",
+        "1/4",
+        "1/2",
+        "3/4"
+      ],
+      "accents": [
+        1,
+        0.85,
+        0.92,
+        0.85
+      ],
+      "bars": 1,
+      "gains": [
+        1,
+        0.903,
+        0.948,
+        0.903
+      ],
+      "swing": 0,
+      "period": 1,
+      "notes": null,
+      "cadence": null,
+      "contourLib": null,
+      "role": "percussion",
+      "band": "low",
+      "style": "universal",
+      "mix": null,
+      "label": "kick",
+      "binding": "kick_any_impact",
+      "sections": [
+        "any_impact"
+      ]
+    },
+    {
+      "motif": null,
+      "rhythm": "four_floor",
+      "archetype": null,
+      "transform": null,
+      "degrees": null,
+      "contourRealization": null,
+      "contourSignsExpected": null,
+      "onsets": [
+        "0/1",
+        "1/4",
+        "1/2",
+        "3/4"
+      ],
+      "accents": [
+        1,
+        0.85,
+        0.92,
+        0.85
+      ],
+      "bars": 1,
+      "gains": [
+        1,
+        0.903,
+        0.948,
+        0.903
+      ],
+      "swing": 0,
+      "period": 1,
+      "notes": null,
+      "cadence": null,
+      "contourLib": null,
+      "role": "percussion",
+      "band": "low",
+      "style": "universal",
+      "mix": null,
+      "label": "kick",
+      "binding": "kick_chorus_before_sweep",
+      "sections": [
+        "chorus_before_sweep"
+      ]
+    },
+    {
+      "motif": null,
+      "rhythm": "four_floor",
+      "archetype": null,
+      "transform": null,
+      "degrees": null,
+      "contourRealization": null,
+      "contourSignsExpected": null,
+      "onsets": [
+        "0/1",
+        "1/4",
+        "1/2",
+        "3/4"
+      ],
+      "accents": [
+        1,
+        0.85,
+        0.92,
+        0.85
+      ],
+      "bars": 1,
+      "gains": [
+        1,
+        0.903,
+        0.948,
+        0.903
+      ],
+      "swing": 0,
+      "period": 1,
+      "notes": null,
+      "cadence": null,
+      "contourLib": null,
+      "role": "percussion",
+      "band": "low",
+      "style": "universal",
+      "mix": null,
+      "label": "kick",
+      "binding": "kick_after_sweep",
+      "sections": [
+        "after_sweep"
+      ]
+    },
+    {
+      "motif": null,
+      "rhythm": "four_floor",
+      "archetype": null,
+      "transform": null,
+      "degrees": null,
+      "contourRealization": null,
+      "contourSignsExpected": null,
+      "onsets": [
+        "0/1",
+        "1/4",
+        "1/2",
+        "3/4"
+      ],
+      "accents": [
+        1,
+        0.85,
+        0.92,
+        0.85
+      ],
+      "bars": 1,
+      "gains": [
+        1,
+        0.903,
+        0.948,
+        0.903
+      ],
+      "swing": 0,
+      "period": 1,
+      "notes": null,
+      "cadence": null,
+      "contourLib": null,
+      "role": "percussion",
+      "band": "low",
+      "style": "universal",
+      "mix": null,
+      "label": "kick",
+      "binding": "kick_chorus_drop",
+      "sections": [
+        "chorus_drop"
+      ]
+    },
+    {
+      "motif": null,
+      "rhythm": "sixteenth_drive",
+      "archetype": null,
+      "transform": null,
+      "degrees": null,
+      "contourRealization": null,
+      "contourSignsExpected": null,
+      "onsets": [
+        "0/1",
+        "1/16",
+        "1/8",
+        "3/16",
+        "1/4",
+        "5/16",
+        "3/8",
+        "7/16",
+        "1/2",
+        "9/16",
+        "5/8",
+        "11/16",
+        "3/4",
+        "13/16",
+        "7/8",
+        "15/16"
+      ],
+      "accents": [
+        1,
+        0.4,
+        0.62,
+        0.4,
+        0.82,
+        0.4,
+        0.62,
+        0.42,
+        0.9,
+        0.4,
+        0.62,
+        0.4,
+        0.82,
+        0.42,
+        0.66,
+        0.46
+      ],
+      "bars": 1,
+      "gains": [
+        1,
+        0.61,
+        0.753,
+        0.61,
+        0.883,
+        0.61,
+        0.753,
+        0.623,
+        0.935,
+        0.61,
+        0.753,
+        0.61,
+        0.883,
+        0.623,
+        0.779,
+        0.649
+      ],
+      "swing": 0,
+      "period": 1,
+      "notes": null,
+      "cadence": null,
+      "contourLib": null,
+      "role": "percussion",
+      "band": "high",
+      "style": "universal",
+      "mix": null,
+      "label": "hats",
+      "binding": "hats_leadin_riser",
+      "sections": [
+        "leadin_riser"
+      ]
+    },
+    {
+      "motif": null,
+      "rhythm": "sixteenth_drive",
+      "archetype": null,
+      "transform": null,
+      "degrees": null,
+      "contourRealization": null,
+      "contourSignsExpected": null,
+      "onsets": [
+        "0/1",
+        "1/16",
+        "1/8",
+        "3/16",
+        "1/4",
+        "5/16",
+        "3/8",
+        "7/16",
+        "1/2",
+        "9/16",
+        "5/8",
+        "11/16",
+        "3/4",
+        "13/16",
+        "7/8",
+        "15/16"
+      ],
+      "accents": [
+        1,
+        0.4,
+        0.62,
+        0.4,
+        0.82,
+        0.4,
+        0.62,
+        0.42,
+        0.9,
+        0.4,
+        0.62,
+        0.4,
+        0.82,
+        0.42,
+        0.66,
+        0.46
+      ],
+      "bars": 1,
+      "gains": [
+        1,
+        0.61,
+        0.753,
+        0.61,
+        0.883,
+        0.61,
+        0.753,
+        0.623,
+        0.935,
+        0.61,
+        0.753,
+        0.61,
+        0.883,
+        0.623,
+        0.779,
+        0.649
+      ],
+      "swing": 0,
+      "period": 1,
+      "notes": null,
+      "cadence": null,
+      "contourLib": null,
+      "role": "percussion",
+      "band": "high",
+      "style": "universal",
+      "mix": null,
+      "label": "hats",
+      "binding": "hats_chorus_riser",
+      "sections": [
+        "chorus_riser"
+      ]
+    },
+    {
+      "motif": null,
+      "rhythm": "swung_lofi_hats",
+      "archetype": null,
+      "transform": null,
+      "degrees": null,
+      "contourRealization": null,
+      "contourSignsExpected": null,
+      "onsets": [
+        "0/1",
+        "1/8",
+        "1/4",
+        "3/8",
+        "1/2",
+        "5/8",
+        "3/4",
+        "7/8"
+      ],
+      "accents": [
+        0.9,
+        0.42,
+        0.72,
+        0.46,
+        0.86,
+        0.4,
+        0.72,
+        0.52
+      ],
+      "bars": 1,
+      "gains": [
+        0.465,
+        0.297,
+        0.402,
+        0.311,
+        0.451,
+        0.29,
+        0.402,
+        0.332
+      ],
+      "swing": 0.55,
+      "period": 1,
+      "notes": null,
+      "cadence": null,
+      "contourLib": null,
+      "role": "percussion",
+      "band": "high",
+      "style": "lofi-hiphop",
+      "mix": null,
+      "label": "hats",
+      "binding": "hats_leadin_noise",
+      "sections": [
+        "leadin_noise"
+      ]
+    },
+    {
+      "motif": null,
+      "rhythm": "sixteenth_drive",
+      "archetype": null,
+      "transform": null,
+      "degrees": null,
+      "contourRealization": null,
+      "contourSignsExpected": null,
+      "onsets": [
+        "0/1",
+        "1/16",
+        "1/8",
+        "3/16",
+        "1/4",
+        "5/16",
+        "3/8",
+        "7/16",
+        "1/2",
+        "9/16",
+        "5/8",
+        "11/16",
+        "3/4",
+        "13/16",
+        "7/8",
+        "15/16"
+      ],
+      "accents": [
+        1,
+        0.4,
+        0.62,
+        0.4,
+        0.82,
+        0.4,
+        0.62,
+        0.42,
+        0.9,
+        0.4,
+        0.62,
+        0.4,
+        0.82,
+        0.42,
+        0.66,
+        0.46
+      ],
+      "bars": 1,
+      "gains": [
+        1,
+        0.61,
+        0.753,
+        0.61,
+        0.883,
+        0.61,
+        0.753,
+        0.623,
+        0.935,
+        0.61,
+        0.753,
+        0.61,
+        0.883,
+        0.623,
+        0.779,
+        0.649
+      ],
+      "swing": 0,
+      "period": 1,
+      "notes": null,
+      "cadence": null,
+      "contourLib": null,
+      "role": "percussion",
+      "band": "high",
+      "style": "universal",
+      "mix": null,
+      "label": "hats",
+      "binding": "hats_chorus_noise",
+      "sections": [
+        "chorus_noise"
+      ]
+    },
+    {
+      "motif": null,
+      "rhythm": "sixteenth_drive",
+      "archetype": null,
+      "transform": null,
+      "degrees": null,
+      "contourRealization": null,
+      "contourSignsExpected": null,
+      "onsets": [
+        "0/1",
+        "1/16",
+        "1/8",
+        "3/16",
+        "1/4",
+        "5/16",
+        "3/8",
+        "7/16",
+        "1/2",
+        "9/16",
+        "5/8",
+        "11/16",
+        "3/4",
+        "13/16",
+        "7/8",
+        "15/16"
+      ],
+      "accents": [
+        1,
+        0.4,
+        0.62,
+        0.4,
+        0.82,
+        0.4,
+        0.62,
+        0.42,
+        0.9,
+        0.4,
+        0.62,
+        0.4,
+        0.82,
+        0.42,
+        0.66,
+        0.46
+      ],
+      "bars": 1,
+      "gains": [
+        1,
+        0.61,
+        0.753,
+        0.61,
+        0.883,
+        0.61,
+        0.753,
+        0.623,
+        0.935,
+        0.61,
+        0.753,
+        0.61,
+        0.883,
+        0.623,
+        0.779,
+        0.649
+      ],
+      "swing": 0,
+      "period": 1,
+      "notes": null,
+      "cadence": null,
+      "contourLib": null,
+      "role": "percussion",
+      "band": "high",
+      "style": "universal",
+      "mix": null,
+      "label": "hats",
+      "binding": "hats_leadin_fill",
+      "sections": [
+        "leadin_fill"
+      ]
+    },
+    {
+      "motif": null,
+      "rhythm": "sixteenth_drive",
+      "archetype": null,
+      "transform": null,
+      "degrees": null,
+      "contourRealization": null,
+      "contourSignsExpected": null,
+      "onsets": [
+        "0/1",
+        "1/16",
+        "1/8",
+        "3/16",
+        "1/4",
+        "5/16",
+        "3/8",
+        "7/16",
+        "1/2",
+        "9/16",
+        "5/8",
+        "11/16",
+        "3/4",
+        "13/16",
+        "7/8",
+        "15/16"
+      ],
+      "accents": [
+        1,
+        0.4,
+        0.62,
+        0.4,
+        0.82,
+        0.4,
+        0.62,
+        0.42,
+        0.9,
+        0.4,
+        0.62,
+        0.4,
+        0.82,
+        0.42,
+        0.66,
+        0.46
+      ],
+      "bars": 1,
+      "gains": [
+        1,
+        0.61,
+        0.753,
+        0.61,
+        0.883,
+        0.61,
+        0.753,
+        0.623,
+        0.935,
+        0.61,
+        0.753,
+        0.61,
+        0.883,
+        0.623,
+        0.779,
+        0.649
+      ],
+      "swing": 0,
+      "period": 1,
+      "notes": null,
+      "cadence": null,
+      "contourLib": null,
+      "role": "percussion",
+      "band": "high",
+      "style": "universal",
+      "mix": null,
+      "label": "hats",
+      "binding": "hats_chorus_fill",
+      "sections": [
+        "chorus_fill"
+      ]
+    },
+    {
+      "motif": null,
+      "rhythm": "sixteenth_drive",
+      "archetype": null,
+      "transform": null,
+      "degrees": null,
+      "contourRealization": null,
+      "contourSignsExpected": null,
+      "onsets": [
+        "0/1",
+        "1/16",
+        "1/8",
+        "3/16",
+        "1/4",
+        "5/16",
+        "3/8",
+        "7/16",
+        "1/2",
+        "9/16",
+        "5/8",
+        "11/16",
+        "3/4",
+        "13/16",
+        "7/8",
+        "15/16"
+      ],
+      "accents": [
+        1,
+        0.4,
+        0.62,
+        0.4,
+        0.82,
+        0.4,
+        0.62,
+        0.42,
+        0.9,
+        0.4,
+        0.62,
+        0.4,
+        0.82,
+        0.42,
+        0.66,
+        0.46
+      ],
+      "bars": 1,
+      "gains": [
+        1,
+        0.61,
+        0.753,
+        0.61,
+        0.883,
+        0.61,
+        0.753,
+        0.623,
+        0.935,
+        0.61,
+        0.753,
+        0.61,
+        0.883,
+        0.623,
+        0.779,
+        0.649
+      ],
+      "swing": 0,
+      "period": 1,
+      "notes": null,
+      "cadence": null,
+      "contourLib": null,
+      "role": "percussion",
+      "band": "high",
+      "style": "universal",
+      "mix": null,
+      "label": "hats",
+      "binding": "hats_leadin_tom",
+      "sections": [
+        "leadin_tom"
+      ]
+    },
+    {
+      "motif": null,
+      "rhythm": "sixteenth_drive",
+      "archetype": null,
+      "transform": null,
+      "degrees": null,
+      "contourRealization": null,
+      "contourSignsExpected": null,
+      "onsets": [
+        "0/1",
+        "1/16",
+        "1/8",
+        "3/16",
+        "1/4",
+        "5/16",
+        "3/8",
+        "7/16",
+        "1/2",
+        "9/16",
+        "5/8",
+        "11/16",
+        "3/4",
+        "13/16",
+        "7/8",
+        "15/16"
+      ],
+      "accents": [
+        1,
+        0.4,
+        0.62,
+        0.4,
+        0.82,
+        0.4,
+        0.62,
+        0.42,
+        0.9,
+        0.4,
+        0.62,
+        0.4,
+        0.82,
+        0.42,
+        0.66,
+        0.46
+      ],
+      "bars": 1,
+      "gains": [
+        1,
+        0.61,
+        0.753,
+        0.61,
+        0.883,
+        0.61,
+        0.753,
+        0.623,
+        0.935,
+        0.61,
+        0.753,
+        0.61,
+        0.883,
+        0.623,
+        0.779,
+        0.649
+      ],
+      "swing": 0,
+      "period": 1,
+      "notes": null,
+      "cadence": null,
+      "contourLib": null,
+      "role": "percussion",
+      "band": "high",
+      "style": "universal",
+      "mix": null,
+      "label": "hats",
+      "binding": "hats_any_tom",
+      "sections": [
+        "any_tom"
+      ]
+    },
+    {
+      "motif": null,
+      "rhythm": "sixteenth_drive",
+      "archetype": null,
+      "transform": null,
+      "degrees": null,
+      "contourRealization": null,
+      "contourSignsExpected": null,
+      "onsets": [
+        "0/1",
+        "1/16",
+        "1/8",
+        "3/16",
+        "1/4",
+        "5/16",
+        "3/8",
+        "7/16",
+        "1/2",
+        "9/16",
+        "5/8",
+        "11/16",
+        "3/4",
+        "13/16",
+        "7/8",
+        "15/16"
+      ],
+      "accents": [
+        1,
+        0.4,
+        0.62,
+        0.4,
+        0.82,
+        0.4,
+        0.62,
+        0.42,
+        0.9,
+        0.4,
+        0.62,
+        0.4,
+        0.82,
+        0.42,
+        0.66,
+        0.46
+      ],
+      "bars": 1,
+      "gains": [
+        1,
+        0.61,
+        0.753,
+        0.61,
+        0.883,
+        0.61,
+        0.753,
+        0.623,
+        0.935,
+        0.61,
+        0.753,
+        0.61,
+        0.883,
+        0.623,
+        0.779,
+        0.649
+      ],
+      "swing": 0,
+      "period": 1,
+      "notes": null,
+      "cadence": null,
+      "contourLib": null,
+      "role": "percussion",
+      "band": "high",
+      "style": "universal",
+      "mix": null,
+      "label": "hats",
+      "binding": "hats_leadin_impact",
+      "sections": [
+        "leadin_impact"
+      ]
+    },
+    {
+      "motif": null,
+      "rhythm": "sixteenth_drive",
+      "archetype": null,
+      "transform": null,
+      "degrees": null,
+      "contourRealization": null,
+      "contourSignsExpected": null,
+      "onsets": [
+        "0/1",
+        "1/16",
+        "1/8",
+        "3/16",
+        "1/4",
+        "5/16",
+        "3/8",
+        "7/16",
+        "1/2",
+        "9/16",
+        "5/8",
+        "11/16",
+        "3/4",
+        "13/16",
+        "7/8",
+        "15/16"
+      ],
+      "accents": [
+        1,
+        0.4,
+        0.62,
+        0.4,
+        0.82,
+        0.4,
+        0.62,
+        0.42,
+        0.9,
+        0.4,
+        0.62,
+        0.4,
+        0.82,
+        0.42,
+        0.66,
+        0.46
+      ],
+      "bars": 1,
+      "gains": [
+        1,
+        0.61,
+        0.753,
+        0.61,
+        0.883,
+        0.61,
+        0.753,
+        0.623,
+        0.935,
+        0.61,
+        0.753,
+        0.61,
+        0.883,
+        0.623,
+        0.779,
+        0.649
+      ],
+      "swing": 0,
+      "period": 1,
+      "notes": null,
+      "cadence": null,
+      "contourLib": null,
+      "role": "percussion",
+      "band": "high",
+      "style": "universal",
+      "mix": null,
+      "label": "hats",
+      "binding": "hats_any_impact",
+      "sections": [
+        "any_impact"
+      ]
+    },
+    {
+      "motif": null,
+      "rhythm": "sixteenth_drive",
+      "archetype": null,
+      "transform": null,
+      "degrees": null,
+      "contourRealization": null,
+      "contourSignsExpected": null,
+      "onsets": [
+        "0/1",
+        "1/16",
+        "1/8",
+        "3/16",
+        "1/4",
+        "5/16",
+        "3/8",
+        "7/16",
+        "1/2",
+        "9/16",
+        "5/8",
+        "11/16",
+        "3/4",
+        "13/16",
+        "7/8",
+        "15/16"
+      ],
+      "accents": [
+        1,
+        0.4,
+        0.62,
+        0.4,
+        0.82,
+        0.4,
+        0.62,
+        0.42,
+        0.9,
+        0.4,
+        0.62,
+        0.4,
+        0.82,
+        0.42,
+        0.66,
+        0.46
+      ],
+      "bars": 1,
+      "gains": [
+        1,
+        0.61,
+        0.753,
+        0.61,
+        0.883,
+        0.61,
+        0.753,
+        0.623,
+        0.935,
+        0.61,
+        0.753,
+        0.61,
+        0.883,
+        0.623,
+        0.779,
+        0.649
+      ],
+      "swing": 0,
+      "period": 1,
+      "notes": null,
+      "cadence": null,
+      "contourLib": null,
+      "role": "percussion",
+      "band": "high",
+      "style": "universal",
+      "mix": null,
+      "label": "hats",
+      "binding": "hats_chorus_before_sweep",
+      "sections": [
+        "chorus_before_sweep"
+      ]
+    },
+    {
+      "motif": null,
+      "rhythm": "swung_lofi_hats",
+      "archetype": null,
+      "transform": null,
+      "degrees": null,
+      "contourRealization": null,
+      "contourSignsExpected": null,
+      "onsets": [
+        "0/1",
+        "1/8",
+        "1/4",
+        "3/8",
+        "1/2",
+        "5/8",
+        "3/4",
+        "7/8"
+      ],
+      "accents": [
+        0.9,
+        0.42,
+        0.72,
+        0.46,
+        0.86,
+        0.4,
+        0.72,
+        0.52
+      ],
+      "bars": 1,
+      "gains": [
+        0.515,
+        0.347,
+        0.452,
+        0.361,
+        0.501,
+        0.34,
+        0.452,
+        0.382
+      ],
+      "swing": 0.55,
+      "period": 1,
+      "notes": null,
+      "cadence": null,
+      "contourLib": null,
+      "role": "percussion",
+      "band": "high",
+      "style": "lofi-hiphop",
+      "mix": null,
+      "label": "hats",
+      "binding": "hats_after_sweep",
+      "sections": [
+        "after_sweep"
+      ]
+    },
+    {
+      "motif": null,
+      "rhythm": "swung_lofi_hats",
+      "archetype": null,
+      "transform": null,
+      "degrees": null,
+      "contourRealization": null,
+      "contourSignsExpected": null,
+      "onsets": [
+        "0/1",
+        "1/8",
+        "1/4",
+        "3/8",
+        "1/2",
+        "5/8",
+        "3/4",
+        "7/8"
+      ],
+      "accents": [
+        0.9,
+        0.42,
+        0.72,
+        0.46,
+        0.86,
+        0.4,
+        0.72,
+        0.52
+      ],
+      "bars": 1,
+      "gains": [
+        0.465,
+        0.297,
+        0.402,
+        0.311,
+        0.451,
+        0.29,
+        0.402,
+        0.332
+      ],
+      "swing": 0.55,
+      "period": 1,
+      "notes": null,
+      "cadence": null,
+      "contourLib": null,
+      "role": "percussion",
+      "band": "high",
+      "style": "lofi-hiphop",
+      "mix": null,
+      "label": "hats",
+      "binding": "hats_leadin_drop",
+      "sections": [
+        "leadin_drop"
+      ]
+    },
+    {
+      "motif": null,
+      "rhythm": "sixteenth_drive",
+      "archetype": null,
+      "transform": null,
+      "degrees": null,
+      "contourRealization": null,
+      "contourSignsExpected": null,
+      "onsets": [
+        "0/1",
+        "1/16",
+        "1/8",
+        "3/16",
+        "1/4",
+        "5/16",
+        "3/8",
+        "7/16",
+        "1/2",
+        "9/16",
+        "5/8",
+        "11/16",
+        "3/4",
+        "13/16",
+        "7/8",
+        "15/16"
+      ],
+      "accents": [
+        1,
+        0.4,
+        0.62,
+        0.4,
+        0.82,
+        0.4,
+        0.62,
+        0.42,
+        0.9,
+        0.4,
+        0.62,
+        0.4,
+        0.82,
+        0.42,
+        0.66,
+        0.46
+      ],
+      "bars": 1,
+      "gains": [
+        1,
+        0.61,
+        0.753,
+        0.61,
+        0.883,
+        0.61,
+        0.753,
+        0.623,
+        0.935,
+        0.61,
+        0.753,
+        0.61,
+        0.883,
+        0.623,
+        0.779,
+        0.649
+      ],
+      "swing": 0,
+      "period": 1,
+      "notes": null,
+      "cadence": null,
+      "contourLib": null,
+      "role": "percussion",
+      "band": "high",
+      "style": "universal",
+      "mix": null,
+      "label": "hats",
+      "binding": "hats_chorus_drop",
+      "sections": [
+        "chorus_drop"
+      ]
+    },
+    {
+      "motif": null,
+      "rhythm": "anticipation_bass",
+      "archetype": null,
+      "transform": null,
+      "degrees": [
+        0,
+        0,
+        4,
+        0
+      ],
+      "contourRealization": {
+        "mode": "exact",
+        "k": 1
+      },
+      "contourSignsExpected": [
+        0,
+        1,
+        -1
+      ],
+      "onsets": [
+        "0/1",
+        "7/16",
+        "1/2",
+        "15/16"
+      ],
+      "accents": [
+        0.95,
+        0.6,
+        0.85,
+        0.7
+      ],
+      "bars": 1,
+      "gains": [
+        0.967,
+        0.74,
+        0.903,
+        0.805
+      ],
+      "swing": 0,
+      "period": 4,
+      "notes": [
+        {
+          "cycle": 0,
+          "step": 0,
+          "t": "0",
+          "note": "F2",
+          "midi": 41,
+          "accented": true,
+          "degree": 0,
+          "voice": "main"
+        },
+        {
+          "cycle": 0,
+          "step": 7,
+          "t": "7/16",
+          "note": "F2",
+          "midi": 41,
+          "accented": false,
+          "degree": 0,
+          "voice": "main"
+        },
+        {
+          "cycle": 0,
+          "step": 8,
+          "t": "1/2",
+          "note": "C3",
+          "midi": 48,
+          "accented": true,
+          "degree": 4,
+          "voice": "main"
+        },
+        {
+          "cycle": 0,
+          "step": 15,
+          "t": "15/16",
+          "note": "F2",
+          "midi": 41,
+          "accented": true,
+          "degree": 0,
+          "voice": "main"
+        },
+        {
+          "cycle": 1,
+          "step": 0,
+          "t": "0",
+          "note": "F2",
+          "midi": 41,
+          "accented": true,
+          "degree": 0,
+          "voice": "main"
+        },
+        {
+          "cycle": 1,
+          "step": 7,
+          "t": "7/16",
+          "note": "F2",
+          "midi": 41,
+          "accented": false,
+          "degree": 0,
+          "voice": "main"
+        },
+        {
+          "cycle": 1,
+          "step": 8,
+          "t": "1/2",
+          "note": "C3",
+          "midi": 48,
+          "accented": true,
+          "degree": 4,
+          "voice": "main"
+        },
+        {
+          "cycle": 1,
+          "step": 15,
+          "t": "15/16",
+          "note": "F2",
+          "midi": 41,
+          "accented": true,
+          "degree": 0,
+          "voice": "main"
+        },
+        {
+          "cycle": 2,
+          "step": 0,
+          "t": "0",
+          "note": "E2",
+          "midi": 40,
+          "accented": true,
+          "degree": 0,
+          "voice": "main"
+        },
+        {
+          "cycle": 2,
+          "step": 7,
+          "t": "7/16",
+          "note": "F2",
+          "midi": 41,
+          "accented": false,
+          "degree": 0,
+          "voice": "main"
+        },
+        {
+          "cycle": 2,
+          "step": 8,
+          "t": "1/2",
+          "note": "C3",
+          "midi": 48,
+          "accented": true,
+          "degree": 4,
+          "voice": "main"
+        },
+        {
+          "cycle": 2,
+          "step": 15,
+          "t": "15/16",
+          "note": "E2",
+          "midi": 40,
+          "accented": true,
+          "degree": 0,
+          "voice": "main"
+        },
+        {
+          "cycle": 3,
+          "step": 0,
+          "t": "0",
+          "note": "E2",
+          "midi": 40,
+          "accented": true,
+          "degree": 0,
+          "voice": "main"
+        },
+        {
+          "cycle": 3,
+          "step": 7,
+          "t": "7/16",
+          "note": "F2",
+          "midi": 41,
+          "accented": false,
+          "degree": 0,
+          "voice": "main"
+        },
+        {
+          "cycle": 3,
+          "step": 8,
+          "t": "1/2",
+          "note": "C3",
+          "midi": 48,
+          "accented": true,
+          "degree": 4,
+          "voice": "main"
+        },
+        {
+          "cycle": 3,
+          "step": 15,
+          "t": "15/16",
+          "note": "E2",
+          "midi": 40,
+          "accented": true,
+          "degree": 0,
+          "voice": "main"
+        }
+      ],
+      "cadence": null,
+      "contourLib": "bass_root_five",
+      "role": "percussion",
+      "band": "low",
+      "style": "universal",
+      "mix": null,
+      "label": "bass",
+      "binding": "bass_leadin_riser",
+      "sections": [
+        "leadin_riser"
+      ]
+    },
+    {
+      "motif": null,
+      "rhythm": "anticipation_bass",
+      "archetype": null,
+      "transform": null,
+      "degrees": [
+        0,
+        0,
+        4,
+        0
+      ],
+      "contourRealization": {
+        "mode": "exact",
+        "k": 1
+      },
+      "contourSignsExpected": [
+        0,
+        1,
+        -1
+      ],
+      "onsets": [
+        "0/1",
+        "7/16",
+        "1/2",
+        "15/16"
+      ],
+      "accents": [
+        0.95,
+        0.6,
+        0.85,
+        0.7
+      ],
+      "bars": 1,
+      "gains": [
+        0.967,
+        0.74,
+        0.903,
+        0.805
+      ],
+      "swing": 0,
+      "period": 4,
+      "notes": [
+        {
+          "cycle": 0,
+          "step": 0,
+          "t": "0",
+          "note": "F2",
+          "midi": 41,
+          "accented": true,
+          "degree": 0,
+          "voice": "main"
+        },
+        {
+          "cycle": 0,
+          "step": 7,
+          "t": "7/16",
+          "note": "F2",
+          "midi": 41,
+          "accented": false,
+          "degree": 0,
+          "voice": "main"
+        },
+        {
+          "cycle": 0,
+          "step": 8,
+          "t": "1/2",
+          "note": "C3",
+          "midi": 48,
+          "accented": true,
+          "degree": 4,
+          "voice": "main"
+        },
+        {
+          "cycle": 0,
+          "step": 15,
+          "t": "15/16",
+          "note": "F2",
+          "midi": 41,
+          "accented": true,
+          "degree": 0,
+          "voice": "main"
+        },
+        {
+          "cycle": 1,
+          "step": 0,
+          "t": "0",
+          "note": "F2",
+          "midi": 41,
+          "accented": true,
+          "degree": 0,
+          "voice": "main"
+        },
+        {
+          "cycle": 1,
+          "step": 7,
+          "t": "7/16",
+          "note": "F2",
+          "midi": 41,
+          "accented": false,
+          "degree": 0,
+          "voice": "main"
+        },
+        {
+          "cycle": 1,
+          "step": 8,
+          "t": "1/2",
+          "note": "C3",
+          "midi": 48,
+          "accented": true,
+          "degree": 4,
+          "voice": "main"
+        },
+        {
+          "cycle": 1,
+          "step": 15,
+          "t": "15/16",
+          "note": "F2",
+          "midi": 41,
+          "accented": true,
+          "degree": 0,
+          "voice": "main"
+        },
+        {
+          "cycle": 2,
+          "step": 0,
+          "t": "0",
+          "note": "E2",
+          "midi": 40,
+          "accented": true,
+          "degree": 0,
+          "voice": "main"
+        },
+        {
+          "cycle": 2,
+          "step": 7,
+          "t": "7/16",
+          "note": "F2",
+          "midi": 41,
+          "accented": false,
+          "degree": 0,
+          "voice": "main"
+        },
+        {
+          "cycle": 2,
+          "step": 8,
+          "t": "1/2",
+          "note": "C3",
+          "midi": 48,
+          "accented": true,
+          "degree": 4,
+          "voice": "main"
+        },
+        {
+          "cycle": 2,
+          "step": 15,
+          "t": "15/16",
+          "note": "E2",
+          "midi": 40,
+          "accented": true,
+          "degree": 0,
+          "voice": "main"
+        },
+        {
+          "cycle": 3,
+          "step": 0,
+          "t": "0",
+          "note": "E2",
+          "midi": 40,
+          "accented": true,
+          "degree": 0,
+          "voice": "main"
+        },
+        {
+          "cycle": 3,
+          "step": 7,
+          "t": "7/16",
+          "note": "F2",
+          "midi": 41,
+          "accented": false,
+          "degree": 0,
+          "voice": "main"
+        },
+        {
+          "cycle": 3,
+          "step": 8,
+          "t": "1/2",
+          "note": "C3",
+          "midi": 48,
+          "accented": true,
+          "degree": 4,
+          "voice": "main"
+        },
+        {
+          "cycle": 3,
+          "step": 15,
+          "t": "15/16",
+          "note": "E2",
+          "midi": 40,
+          "accented": true,
+          "degree": 0,
+          "voice": "main"
+        }
+      ],
+      "cadence": null,
+      "contourLib": "bass_root_five",
+      "role": "percussion",
+      "band": "low",
+      "style": "universal",
+      "mix": null,
+      "label": "bass",
+      "binding": "bass_chorus_riser",
+      "sections": [
+        "chorus_riser"
+      ]
+    },
+    {
+      "motif": null,
+      "rhythm": "anticipation_bass",
+      "archetype": null,
+      "transform": null,
+      "degrees": [
+        0,
+        0,
+        4,
+        0
+      ],
+      "contourRealization": {
+        "mode": "exact",
+        "k": 1
+      },
+      "contourSignsExpected": [
+        0,
+        1,
+        -1
+      ],
+      "onsets": [
+        "0/1",
+        "7/16",
+        "1/2",
+        "15/16"
+      ],
+      "accents": [
+        0.95,
+        0.6,
+        0.85,
+        0.7
+      ],
+      "bars": 1,
+      "gains": [
+        0.967,
+        0.74,
+        0.903,
+        0.805
+      ],
+      "swing": 0,
+      "period": 4,
+      "notes": [
+        {
+          "cycle": 0,
+          "step": 0,
+          "t": "0",
+          "note": "F2",
+          "midi": 41,
+          "accented": true,
+          "degree": 0,
+          "voice": "main"
+        },
+        {
+          "cycle": 0,
+          "step": 7,
+          "t": "7/16",
+          "note": "F2",
+          "midi": 41,
+          "accented": false,
+          "degree": 0,
+          "voice": "main"
+        },
+        {
+          "cycle": 0,
+          "step": 8,
+          "t": "1/2",
+          "note": "C3",
+          "midi": 48,
+          "accented": true,
+          "degree": 4,
+          "voice": "main"
+        },
+        {
+          "cycle": 0,
+          "step": 15,
+          "t": "15/16",
+          "note": "F2",
+          "midi": 41,
+          "accented": true,
+          "degree": 0,
+          "voice": "main"
+        },
+        {
+          "cycle": 1,
+          "step": 0,
+          "t": "0",
+          "note": "F2",
+          "midi": 41,
+          "accented": true,
+          "degree": 0,
+          "voice": "main"
+        },
+        {
+          "cycle": 1,
+          "step": 7,
+          "t": "7/16",
+          "note": "F2",
+          "midi": 41,
+          "accented": false,
+          "degree": 0,
+          "voice": "main"
+        },
+        {
+          "cycle": 1,
+          "step": 8,
+          "t": "1/2",
+          "note": "C3",
+          "midi": 48,
+          "accented": true,
+          "degree": 4,
+          "voice": "main"
+        },
+        {
+          "cycle": 1,
+          "step": 15,
+          "t": "15/16",
+          "note": "F2",
+          "midi": 41,
+          "accented": true,
+          "degree": 0,
+          "voice": "main"
+        },
+        {
+          "cycle": 2,
+          "step": 0,
+          "t": "0",
+          "note": "E2",
+          "midi": 40,
+          "accented": true,
+          "degree": 0,
+          "voice": "main"
+        },
+        {
+          "cycle": 2,
+          "step": 7,
+          "t": "7/16",
+          "note": "F2",
+          "midi": 41,
+          "accented": false,
+          "degree": 0,
+          "voice": "main"
+        },
+        {
+          "cycle": 2,
+          "step": 8,
+          "t": "1/2",
+          "note": "C3",
+          "midi": 48,
+          "accented": true,
+          "degree": 4,
+          "voice": "main"
+        },
+        {
+          "cycle": 2,
+          "step": 15,
+          "t": "15/16",
+          "note": "E2",
+          "midi": 40,
+          "accented": true,
+          "degree": 0,
+          "voice": "main"
+        },
+        {
+          "cycle": 3,
+          "step": 0,
+          "t": "0",
+          "note": "E2",
+          "midi": 40,
+          "accented": true,
+          "degree": 0,
+          "voice": "main"
+        },
+        {
+          "cycle": 3,
+          "step": 7,
+          "t": "7/16",
+          "note": "F2",
+          "midi": 41,
+          "accented": false,
+          "degree": 0,
+          "voice": "main"
+        },
+        {
+          "cycle": 3,
+          "step": 8,
+          "t": "1/2",
+          "note": "C3",
+          "midi": 48,
+          "accented": true,
+          "degree": 4,
+          "voice": "main"
+        },
+        {
+          "cycle": 3,
+          "step": 15,
+          "t": "15/16",
+          "note": "E2",
+          "midi": 40,
+          "accented": true,
+          "degree": 0,
+          "voice": "main"
+        }
+      ],
+      "cadence": null,
+      "contourLib": "bass_root_five",
+      "role": "percussion",
+      "band": "low",
+      "style": "universal",
+      "mix": null,
+      "label": "bass",
+      "binding": "bass_chorus_noise",
+      "sections": [
+        "chorus_noise"
+      ]
+    },
+    {
+      "motif": null,
+      "rhythm": "anticipation_bass",
+      "archetype": null,
+      "transform": null,
+      "degrees": [
+        0,
+        0,
+        4,
+        0
+      ],
+      "contourRealization": {
+        "mode": "exact",
+        "k": 1
+      },
+      "contourSignsExpected": [
+        0,
+        1,
+        -1
+      ],
+      "onsets": [
+        "0/1",
+        "7/16",
+        "1/2",
+        "15/16"
+      ],
+      "accents": [
+        0.95,
+        0.6,
+        0.85,
+        0.7
+      ],
+      "bars": 1,
+      "gains": [
+        0.967,
+        0.74,
+        0.903,
+        0.805
+      ],
+      "swing": 0,
+      "period": 4,
+      "notes": [
+        {
+          "cycle": 0,
+          "step": 0,
+          "t": "0",
+          "note": "F2",
+          "midi": 41,
+          "accented": true,
+          "degree": 0,
+          "voice": "main"
+        },
+        {
+          "cycle": 0,
+          "step": 7,
+          "t": "7/16",
+          "note": "F2",
+          "midi": 41,
+          "accented": false,
+          "degree": 0,
+          "voice": "main"
+        },
+        {
+          "cycle": 0,
+          "step": 8,
+          "t": "1/2",
+          "note": "C3",
+          "midi": 48,
+          "accented": true,
+          "degree": 4,
+          "voice": "main"
+        },
+        {
+          "cycle": 0,
+          "step": 15,
+          "t": "15/16",
+          "note": "F2",
+          "midi": 41,
+          "accented": true,
+          "degree": 0,
+          "voice": "main"
+        },
+        {
+          "cycle": 1,
+          "step": 0,
+          "t": "0",
+          "note": "F2",
+          "midi": 41,
+          "accented": true,
+          "degree": 0,
+          "voice": "main"
+        },
+        {
+          "cycle": 1,
+          "step": 7,
+          "t": "7/16",
+          "note": "F2",
+          "midi": 41,
+          "accented": false,
+          "degree": 0,
+          "voice": "main"
+        },
+        {
+          "cycle": 1,
+          "step": 8,
+          "t": "1/2",
+          "note": "C3",
+          "midi": 48,
+          "accented": true,
+          "degree": 4,
+          "voice": "main"
+        },
+        {
+          "cycle": 1,
+          "step": 15,
+          "t": "15/16",
+          "note": "F2",
+          "midi": 41,
+          "accented": true,
+          "degree": 0,
+          "voice": "main"
+        },
+        {
+          "cycle": 2,
+          "step": 0,
+          "t": "0",
+          "note": "E2",
+          "midi": 40,
+          "accented": true,
+          "degree": 0,
+          "voice": "main"
+        },
+        {
+          "cycle": 2,
+          "step": 7,
+          "t": "7/16",
+          "note": "F2",
+          "midi": 41,
+          "accented": false,
+          "degree": 0,
+          "voice": "main"
+        },
+        {
+          "cycle": 2,
+          "step": 8,
+          "t": "1/2",
+          "note": "C3",
+          "midi": 48,
+          "accented": true,
+          "degree": 4,
+          "voice": "main"
+        },
+        {
+          "cycle": 2,
+          "step": 15,
+          "t": "15/16",
+          "note": "E2",
+          "midi": 40,
+          "accented": true,
+          "degree": 0,
+          "voice": "main"
+        },
+        {
+          "cycle": 3,
+          "step": 0,
+          "t": "0",
+          "note": "E2",
+          "midi": 40,
+          "accented": true,
+          "degree": 0,
+          "voice": "main"
+        },
+        {
+          "cycle": 3,
+          "step": 7,
+          "t": "7/16",
+          "note": "F2",
+          "midi": 41,
+          "accented": false,
+          "degree": 0,
+          "voice": "main"
+        },
+        {
+          "cycle": 3,
+          "step": 8,
+          "t": "1/2",
+          "note": "C3",
+          "midi": 48,
+          "accented": true,
+          "degree": 4,
+          "voice": "main"
+        },
+        {
+          "cycle": 3,
+          "step": 15,
+          "t": "15/16",
+          "note": "E2",
+          "midi": 40,
+          "accented": true,
+          "degree": 0,
+          "voice": "main"
+        }
+      ],
+      "cadence": null,
+      "contourLib": "bass_root_five",
+      "role": "percussion",
+      "band": "low",
+      "style": "universal",
+      "mix": null,
+      "label": "bass",
+      "binding": "bass_leadin_fill",
+      "sections": [
+        "leadin_fill"
+      ]
+    },
+    {
+      "motif": null,
+      "rhythm": "anticipation_bass",
+      "archetype": null,
+      "transform": null,
+      "degrees": [
+        0,
+        0,
+        4,
+        0
+      ],
+      "contourRealization": {
+        "mode": "exact",
+        "k": 1
+      },
+      "contourSignsExpected": [
+        0,
+        1,
+        -1
+      ],
+      "onsets": [
+        "0/1",
+        "7/16",
+        "1/2",
+        "15/16"
+      ],
+      "accents": [
+        0.95,
+        0.6,
+        0.85,
+        0.7
+      ],
+      "bars": 1,
+      "gains": [
+        0.967,
+        0.74,
+        0.903,
+        0.805
+      ],
+      "swing": 0,
+      "period": 4,
+      "notes": [
+        {
+          "cycle": 0,
+          "step": 0,
+          "t": "0",
+          "note": "F2",
+          "midi": 41,
+          "accented": true,
+          "degree": 0,
+          "voice": "main"
+        },
+        {
+          "cycle": 0,
+          "step": 7,
+          "t": "7/16",
+          "note": "F2",
+          "midi": 41,
+          "accented": false,
+          "degree": 0,
+          "voice": "main"
+        },
+        {
+          "cycle": 0,
+          "step": 8,
+          "t": "1/2",
+          "note": "C3",
+          "midi": 48,
+          "accented": true,
+          "degree": 4,
+          "voice": "main"
+        },
+        {
+          "cycle": 0,
+          "step": 15,
+          "t": "15/16",
+          "note": "F2",
+          "midi": 41,
+          "accented": true,
+          "degree": 0,
+          "voice": "main"
+        },
+        {
+          "cycle": 1,
+          "step": 0,
+          "t": "0",
+          "note": "F2",
+          "midi": 41,
+          "accented": true,
+          "degree": 0,
+          "voice": "main"
+        },
+        {
+          "cycle": 1,
+          "step": 7,
+          "t": "7/16",
+          "note": "F2",
+          "midi": 41,
+          "accented": false,
+          "degree": 0,
+          "voice": "main"
+        },
+        {
+          "cycle": 1,
+          "step": 8,
+          "t": "1/2",
+          "note": "C3",
+          "midi": 48,
+          "accented": true,
+          "degree": 4,
+          "voice": "main"
+        },
+        {
+          "cycle": 1,
+          "step": 15,
+          "t": "15/16",
+          "note": "F2",
+          "midi": 41,
+          "accented": true,
+          "degree": 0,
+          "voice": "main"
+        },
+        {
+          "cycle": 2,
+          "step": 0,
+          "t": "0",
+          "note": "E2",
+          "midi": 40,
+          "accented": true,
+          "degree": 0,
+          "voice": "main"
+        },
+        {
+          "cycle": 2,
+          "step": 7,
+          "t": "7/16",
+          "note": "F2",
+          "midi": 41,
+          "accented": false,
+          "degree": 0,
+          "voice": "main"
+        },
+        {
+          "cycle": 2,
+          "step": 8,
+          "t": "1/2",
+          "note": "C3",
+          "midi": 48,
+          "accented": true,
+          "degree": 4,
+          "voice": "main"
+        },
+        {
+          "cycle": 2,
+          "step": 15,
+          "t": "15/16",
+          "note": "E2",
+          "midi": 40,
+          "accented": true,
+          "degree": 0,
+          "voice": "main"
+        },
+        {
+          "cycle": 3,
+          "step": 0,
+          "t": "0",
+          "note": "E2",
+          "midi": 40,
+          "accented": true,
+          "degree": 0,
+          "voice": "main"
+        },
+        {
+          "cycle": 3,
+          "step": 7,
+          "t": "7/16",
+          "note": "F2",
+          "midi": 41,
+          "accented": false,
+          "degree": 0,
+          "voice": "main"
+        },
+        {
+          "cycle": 3,
+          "step": 8,
+          "t": "1/2",
+          "note": "C3",
+          "midi": 48,
+          "accented": true,
+          "degree": 4,
+          "voice": "main"
+        },
+        {
+          "cycle": 3,
+          "step": 15,
+          "t": "15/16",
+          "note": "E2",
+          "midi": 40,
+          "accented": true,
+          "degree": 0,
+          "voice": "main"
+        }
+      ],
+      "cadence": null,
+      "contourLib": "bass_root_five",
+      "role": "percussion",
+      "band": "low",
+      "style": "universal",
+      "mix": null,
+      "label": "bass",
+      "binding": "bass_chorus_fill",
+      "sections": [
+        "chorus_fill"
+      ]
+    },
+    {
+      "motif": null,
+      "rhythm": "anticipation_bass",
+      "archetype": null,
+      "transform": null,
+      "degrees": [
+        0,
+        0,
+        4,
+        0
+      ],
+      "contourRealization": {
+        "mode": "exact",
+        "k": 1
+      },
+      "contourSignsExpected": [
+        0,
+        1,
+        -1
+      ],
+      "onsets": [
+        "0/1",
+        "7/16",
+        "1/2",
+        "15/16"
+      ],
+      "accents": [
+        0.95,
+        0.6,
+        0.85,
+        0.7
+      ],
+      "bars": 1,
+      "gains": [
+        0.967,
+        0.74,
+        0.903,
+        0.805
+      ],
+      "swing": 0,
+      "period": 4,
+      "notes": [
+        {
+          "cycle": 0,
+          "step": 0,
+          "t": "0",
+          "note": "F2",
+          "midi": 41,
+          "accented": true,
+          "degree": 0,
+          "voice": "main"
+        },
+        {
+          "cycle": 0,
+          "step": 7,
+          "t": "7/16",
+          "note": "F2",
+          "midi": 41,
+          "accented": false,
+          "degree": 0,
+          "voice": "main"
+        },
+        {
+          "cycle": 0,
+          "step": 8,
+          "t": "1/2",
+          "note": "C3",
+          "midi": 48,
+          "accented": true,
+          "degree": 4,
+          "voice": "main"
+        },
+        {
+          "cycle": 0,
+          "step": 15,
+          "t": "15/16",
+          "note": "F2",
+          "midi": 41,
+          "accented": true,
+          "degree": 0,
+          "voice": "main"
+        },
+        {
+          "cycle": 1,
+          "step": 0,
+          "t": "0",
+          "note": "F2",
+          "midi": 41,
+          "accented": true,
+          "degree": 0,
+          "voice": "main"
+        },
+        {
+          "cycle": 1,
+          "step": 7,
+          "t": "7/16",
+          "note": "F2",
+          "midi": 41,
+          "accented": false,
+          "degree": 0,
+          "voice": "main"
+        },
+        {
+          "cycle": 1,
+          "step": 8,
+          "t": "1/2",
+          "note": "C3",
+          "midi": 48,
+          "accented": true,
+          "degree": 4,
+          "voice": "main"
+        },
+        {
+          "cycle": 1,
+          "step": 15,
+          "t": "15/16",
+          "note": "F2",
+          "midi": 41,
+          "accented": true,
+          "degree": 0,
+          "voice": "main"
+        },
+        {
+          "cycle": 2,
+          "step": 0,
+          "t": "0",
+          "note": "E2",
+          "midi": 40,
+          "accented": true,
+          "degree": 0,
+          "voice": "main"
+        },
+        {
+          "cycle": 2,
+          "step": 7,
+          "t": "7/16",
+          "note": "F2",
+          "midi": 41,
+          "accented": false,
+          "degree": 0,
+          "voice": "main"
+        },
+        {
+          "cycle": 2,
+          "step": 8,
+          "t": "1/2",
+          "note": "C3",
+          "midi": 48,
+          "accented": true,
+          "degree": 4,
+          "voice": "main"
+        },
+        {
+          "cycle": 2,
+          "step": 15,
+          "t": "15/16",
+          "note": "E2",
+          "midi": 40,
+          "accented": true,
+          "degree": 0,
+          "voice": "main"
+        },
+        {
+          "cycle": 3,
+          "step": 0,
+          "t": "0",
+          "note": "E2",
+          "midi": 40,
+          "accented": true,
+          "degree": 0,
+          "voice": "main"
+        },
+        {
+          "cycle": 3,
+          "step": 7,
+          "t": "7/16",
+          "note": "F2",
+          "midi": 41,
+          "accented": false,
+          "degree": 0,
+          "voice": "main"
+        },
+        {
+          "cycle": 3,
+          "step": 8,
+          "t": "1/2",
+          "note": "C3",
+          "midi": 48,
+          "accented": true,
+          "degree": 4,
+          "voice": "main"
+        },
+        {
+          "cycle": 3,
+          "step": 15,
+          "t": "15/16",
+          "note": "E2",
+          "midi": 40,
+          "accented": true,
+          "degree": 0,
+          "voice": "main"
+        }
+      ],
+      "cadence": null,
+      "contourLib": "bass_root_five",
+      "role": "percussion",
+      "band": "low",
+      "style": "universal",
+      "mix": null,
+      "label": "bass",
+      "binding": "bass_leadin_tom",
+      "sections": [
+        "leadin_tom"
+      ]
+    },
+    {
+      "motif": null,
+      "rhythm": "anticipation_bass",
+      "archetype": null,
+      "transform": null,
+      "degrees": [
+        0,
+        0,
+        4,
+        0
+      ],
+      "contourRealization": {
+        "mode": "exact",
+        "k": 1
+      },
+      "contourSignsExpected": [
+        0,
+        1,
+        -1
+      ],
+      "onsets": [
+        "0/1",
+        "7/16",
+        "1/2",
+        "15/16"
+      ],
+      "accents": [
+        0.95,
+        0.6,
+        0.85,
+        0.7
+      ],
+      "bars": 1,
+      "gains": [
+        0.967,
+        0.74,
+        0.903,
+        0.805
+      ],
+      "swing": 0,
+      "period": 4,
+      "notes": [
+        {
+          "cycle": 0,
+          "step": 0,
+          "t": "0",
+          "note": "F2",
+          "midi": 41,
+          "accented": true,
+          "degree": 0,
+          "voice": "main"
+        },
+        {
+          "cycle": 0,
+          "step": 7,
+          "t": "7/16",
+          "note": "F2",
+          "midi": 41,
+          "accented": false,
+          "degree": 0,
+          "voice": "main"
+        },
+        {
+          "cycle": 0,
+          "step": 8,
+          "t": "1/2",
+          "note": "C3",
+          "midi": 48,
+          "accented": true,
+          "degree": 4,
+          "voice": "main"
+        },
+        {
+          "cycle": 0,
+          "step": 15,
+          "t": "15/16",
+          "note": "F2",
+          "midi": 41,
+          "accented": true,
+          "degree": 0,
+          "voice": "main"
+        },
+        {
+          "cycle": 1,
+          "step": 0,
+          "t": "0",
+          "note": "F2",
+          "midi": 41,
+          "accented": true,
+          "degree": 0,
+          "voice": "main"
+        },
+        {
+          "cycle": 1,
+          "step": 7,
+          "t": "7/16",
+          "note": "F2",
+          "midi": 41,
+          "accented": false,
+          "degree": 0,
+          "voice": "main"
+        },
+        {
+          "cycle": 1,
+          "step": 8,
+          "t": "1/2",
+          "note": "C3",
+          "midi": 48,
+          "accented": true,
+          "degree": 4,
+          "voice": "main"
+        },
+        {
+          "cycle": 1,
+          "step": 15,
+          "t": "15/16",
+          "note": "F2",
+          "midi": 41,
+          "accented": true,
+          "degree": 0,
+          "voice": "main"
+        },
+        {
+          "cycle": 2,
+          "step": 0,
+          "t": "0",
+          "note": "E2",
+          "midi": 40,
+          "accented": true,
+          "degree": 0,
+          "voice": "main"
+        },
+        {
+          "cycle": 2,
+          "step": 7,
+          "t": "7/16",
+          "note": "F2",
+          "midi": 41,
+          "accented": false,
+          "degree": 0,
+          "voice": "main"
+        },
+        {
+          "cycle": 2,
+          "step": 8,
+          "t": "1/2",
+          "note": "C3",
+          "midi": 48,
+          "accented": true,
+          "degree": 4,
+          "voice": "main"
+        },
+        {
+          "cycle": 2,
+          "step": 15,
+          "t": "15/16",
+          "note": "E2",
+          "midi": 40,
+          "accented": true,
+          "degree": 0,
+          "voice": "main"
+        },
+        {
+          "cycle": 3,
+          "step": 0,
+          "t": "0",
+          "note": "E2",
+          "midi": 40,
+          "accented": true,
+          "degree": 0,
+          "voice": "main"
+        },
+        {
+          "cycle": 3,
+          "step": 7,
+          "t": "7/16",
+          "note": "F2",
+          "midi": 41,
+          "accented": false,
+          "degree": 0,
+          "voice": "main"
+        },
+        {
+          "cycle": 3,
+          "step": 8,
+          "t": "1/2",
+          "note": "C3",
+          "midi": 48,
+          "accented": true,
+          "degree": 4,
+          "voice": "main"
+        },
+        {
+          "cycle": 3,
+          "step": 15,
+          "t": "15/16",
+          "note": "E2",
+          "midi": 40,
+          "accented": true,
+          "degree": 0,
+          "voice": "main"
+        }
+      ],
+      "cadence": null,
+      "contourLib": "bass_root_five",
+      "role": "percussion",
+      "band": "low",
+      "style": "universal",
+      "mix": null,
+      "label": "bass",
+      "binding": "bass_any_tom",
+      "sections": [
+        "any_tom"
+      ]
+    },
+    {
+      "motif": null,
+      "rhythm": "anticipation_bass",
+      "archetype": null,
+      "transform": null,
+      "degrees": [
+        0,
+        0,
+        4,
+        0
+      ],
+      "contourRealization": {
+        "mode": "exact",
+        "k": 1
+      },
+      "contourSignsExpected": [
+        0,
+        1,
+        -1
+      ],
+      "onsets": [
+        "0/1",
+        "7/16",
+        "1/2",
+        "15/16"
+      ],
+      "accents": [
+        0.95,
+        0.6,
+        0.85,
+        0.7
+      ],
+      "bars": 1,
+      "gains": [
+        0.967,
+        0.74,
+        0.903,
+        0.805
+      ],
+      "swing": 0,
+      "period": 4,
+      "notes": [
+        {
+          "cycle": 0,
+          "step": 0,
+          "t": "0",
+          "note": "F2",
+          "midi": 41,
+          "accented": true,
+          "degree": 0,
+          "voice": "main"
+        },
+        {
+          "cycle": 0,
+          "step": 7,
+          "t": "7/16",
+          "note": "F2",
+          "midi": 41,
+          "accented": false,
+          "degree": 0,
+          "voice": "main"
+        },
+        {
+          "cycle": 0,
+          "step": 8,
+          "t": "1/2",
+          "note": "C3",
+          "midi": 48,
+          "accented": true,
+          "degree": 4,
+          "voice": "main"
+        },
+        {
+          "cycle": 0,
+          "step": 15,
+          "t": "15/16",
+          "note": "F2",
+          "midi": 41,
+          "accented": true,
+          "degree": 0,
+          "voice": "main"
+        },
+        {
+          "cycle": 1,
+          "step": 0,
+          "t": "0",
+          "note": "F2",
+          "midi": 41,
+          "accented": true,
+          "degree": 0,
+          "voice": "main"
+        },
+        {
+          "cycle": 1,
+          "step": 7,
+          "t": "7/16",
+          "note": "F2",
+          "midi": 41,
+          "accented": false,
+          "degree": 0,
+          "voice": "main"
+        },
+        {
+          "cycle": 1,
+          "step": 8,
+          "t": "1/2",
+          "note": "C3",
+          "midi": 48,
+          "accented": true,
+          "degree": 4,
+          "voice": "main"
+        },
+        {
+          "cycle": 1,
+          "step": 15,
+          "t": "15/16",
+          "note": "F2",
+          "midi": 41,
+          "accented": true,
+          "degree": 0,
+          "voice": "main"
+        },
+        {
+          "cycle": 2,
+          "step": 0,
+          "t": "0",
+          "note": "E2",
+          "midi": 40,
+          "accented": true,
+          "degree": 0,
+          "voice": "main"
+        },
+        {
+          "cycle": 2,
+          "step": 7,
+          "t": "7/16",
+          "note": "F2",
+          "midi": 41,
+          "accented": false,
+          "degree": 0,
+          "voice": "main"
+        },
+        {
+          "cycle": 2,
+          "step": 8,
+          "t": "1/2",
+          "note": "C3",
+          "midi": 48,
+          "accented": true,
+          "degree": 4,
+          "voice": "main"
+        },
+        {
+          "cycle": 2,
+          "step": 15,
+          "t": "15/16",
+          "note": "E2",
+          "midi": 40,
+          "accented": true,
+          "degree": 0,
+          "voice": "main"
+        },
+        {
+          "cycle": 3,
+          "step": 0,
+          "t": "0",
+          "note": "E2",
+          "midi": 40,
+          "accented": true,
+          "degree": 0,
+          "voice": "main"
+        },
+        {
+          "cycle": 3,
+          "step": 7,
+          "t": "7/16",
+          "note": "F2",
+          "midi": 41,
+          "accented": false,
+          "degree": 0,
+          "voice": "main"
+        },
+        {
+          "cycle": 3,
+          "step": 8,
+          "t": "1/2",
+          "note": "C3",
+          "midi": 48,
+          "accented": true,
+          "degree": 4,
+          "voice": "main"
+        },
+        {
+          "cycle": 3,
+          "step": 15,
+          "t": "15/16",
+          "note": "E2",
+          "midi": 40,
+          "accented": true,
+          "degree": 0,
+          "voice": "main"
+        }
+      ],
+      "cadence": null,
+      "contourLib": "bass_root_five",
+      "role": "percussion",
+      "band": "low",
+      "style": "universal",
+      "mix": null,
+      "label": "bass",
+      "binding": "bass_leadin_impact",
+      "sections": [
+        "leadin_impact"
+      ]
+    },
+    {
+      "motif": null,
+      "rhythm": "anticipation_bass",
+      "archetype": null,
+      "transform": null,
+      "degrees": [
+        0,
+        0,
+        4,
+        0
+      ],
+      "contourRealization": {
+        "mode": "exact",
+        "k": 1
+      },
+      "contourSignsExpected": [
+        0,
+        1,
+        -1
+      ],
+      "onsets": [
+        "0/1",
+        "7/16",
+        "1/2",
+        "15/16"
+      ],
+      "accents": [
+        0.95,
+        0.6,
+        0.85,
+        0.7
+      ],
+      "bars": 1,
+      "gains": [
+        0.967,
+        0.74,
+        0.903,
+        0.805
+      ],
+      "swing": 0,
+      "period": 4,
+      "notes": [
+        {
+          "cycle": 0,
+          "step": 0,
+          "t": "0",
+          "note": "F2",
+          "midi": 41,
+          "accented": true,
+          "degree": 0,
+          "voice": "main"
+        },
+        {
+          "cycle": 0,
+          "step": 7,
+          "t": "7/16",
+          "note": "F2",
+          "midi": 41,
+          "accented": false,
+          "degree": 0,
+          "voice": "main"
+        },
+        {
+          "cycle": 0,
+          "step": 8,
+          "t": "1/2",
+          "note": "C3",
+          "midi": 48,
+          "accented": true,
+          "degree": 4,
+          "voice": "main"
+        },
+        {
+          "cycle": 0,
+          "step": 15,
+          "t": "15/16",
+          "note": "F2",
+          "midi": 41,
+          "accented": true,
+          "degree": 0,
+          "voice": "main"
+        },
+        {
+          "cycle": 1,
+          "step": 0,
+          "t": "0",
+          "note": "F2",
+          "midi": 41,
+          "accented": true,
+          "degree": 0,
+          "voice": "main"
+        },
+        {
+          "cycle": 1,
+          "step": 7,
+          "t": "7/16",
+          "note": "F2",
+          "midi": 41,
+          "accented": false,
+          "degree": 0,
+          "voice": "main"
+        },
+        {
+          "cycle": 1,
+          "step": 8,
+          "t": "1/2",
+          "note": "C3",
+          "midi": 48,
+          "accented": true,
+          "degree": 4,
+          "voice": "main"
+        },
+        {
+          "cycle": 1,
+          "step": 15,
+          "t": "15/16",
+          "note": "F2",
+          "midi": 41,
+          "accented": true,
+          "degree": 0,
+          "voice": "main"
+        },
+        {
+          "cycle": 2,
+          "step": 0,
+          "t": "0",
+          "note": "E2",
+          "midi": 40,
+          "accented": true,
+          "degree": 0,
+          "voice": "main"
+        },
+        {
+          "cycle": 2,
+          "step": 7,
+          "t": "7/16",
+          "note": "F2",
+          "midi": 41,
+          "accented": false,
+          "degree": 0,
+          "voice": "main"
+        },
+        {
+          "cycle": 2,
+          "step": 8,
+          "t": "1/2",
+          "note": "C3",
+          "midi": 48,
+          "accented": true,
+          "degree": 4,
+          "voice": "main"
+        },
+        {
+          "cycle": 2,
+          "step": 15,
+          "t": "15/16",
+          "note": "E2",
+          "midi": 40,
+          "accented": true,
+          "degree": 0,
+          "voice": "main"
+        },
+        {
+          "cycle": 3,
+          "step": 0,
+          "t": "0",
+          "note": "E2",
+          "midi": 40,
+          "accented": true,
+          "degree": 0,
+          "voice": "main"
+        },
+        {
+          "cycle": 3,
+          "step": 7,
+          "t": "7/16",
+          "note": "F2",
+          "midi": 41,
+          "accented": false,
+          "degree": 0,
+          "voice": "main"
+        },
+        {
+          "cycle": 3,
+          "step": 8,
+          "t": "1/2",
+          "note": "C3",
+          "midi": 48,
+          "accented": true,
+          "degree": 4,
+          "voice": "main"
+        },
+        {
+          "cycle": 3,
+          "step": 15,
+          "t": "15/16",
+          "note": "E2",
+          "midi": 40,
+          "accented": true,
+          "degree": 0,
+          "voice": "main"
+        }
+      ],
+      "cadence": null,
+      "contourLib": "bass_root_five",
+      "role": "percussion",
+      "band": "low",
+      "style": "universal",
+      "mix": null,
+      "label": "bass",
+      "binding": "bass_any_impact",
+      "sections": [
+        "any_impact"
+      ]
+    },
+    {
+      "motif": null,
+      "rhythm": "anticipation_bass",
+      "archetype": null,
+      "transform": null,
+      "degrees": [
+        0,
+        0,
+        4,
+        0
+      ],
+      "contourRealization": {
+        "mode": "exact",
+        "k": 1
+      },
+      "contourSignsExpected": [
+        0,
+        1,
+        -1
+      ],
+      "onsets": [
+        "0/1",
+        "7/16",
+        "1/2",
+        "15/16"
+      ],
+      "accents": [
+        0.95,
+        0.6,
+        0.85,
+        0.7
+      ],
+      "bars": 1,
+      "gains": [
+        0.967,
+        0.74,
+        0.903,
+        0.805
+      ],
+      "swing": 0,
+      "period": 4,
+      "notes": [
+        {
+          "cycle": 0,
+          "step": 0,
+          "t": "0",
+          "note": "F2",
+          "midi": 41,
+          "accented": true,
+          "degree": 0,
+          "voice": "main"
+        },
+        {
+          "cycle": 0,
+          "step": 7,
+          "t": "7/16",
+          "note": "F2",
+          "midi": 41,
+          "accented": false,
+          "degree": 0,
+          "voice": "main"
+        },
+        {
+          "cycle": 0,
+          "step": 8,
+          "t": "1/2",
+          "note": "C3",
+          "midi": 48,
+          "accented": true,
+          "degree": 4,
+          "voice": "main"
+        },
+        {
+          "cycle": 0,
+          "step": 15,
+          "t": "15/16",
+          "note": "F2",
+          "midi": 41,
+          "accented": true,
+          "degree": 0,
+          "voice": "main"
+        },
+        {
+          "cycle": 1,
+          "step": 0,
+          "t": "0",
+          "note": "F2",
+          "midi": 41,
+          "accented": true,
+          "degree": 0,
+          "voice": "main"
+        },
+        {
+          "cycle": 1,
+          "step": 7,
+          "t": "7/16",
+          "note": "F2",
+          "midi": 41,
+          "accented": false,
+          "degree": 0,
+          "voice": "main"
+        },
+        {
+          "cycle": 1,
+          "step": 8,
+          "t": "1/2",
+          "note": "C3",
+          "midi": 48,
+          "accented": true,
+          "degree": 4,
+          "voice": "main"
+        },
+        {
+          "cycle": 1,
+          "step": 15,
+          "t": "15/16",
+          "note": "F2",
+          "midi": 41,
+          "accented": true,
+          "degree": 0,
+          "voice": "main"
+        },
+        {
+          "cycle": 2,
+          "step": 0,
+          "t": "0",
+          "note": "E2",
+          "midi": 40,
+          "accented": true,
+          "degree": 0,
+          "voice": "main"
+        },
+        {
+          "cycle": 2,
+          "step": 7,
+          "t": "7/16",
+          "note": "F2",
+          "midi": 41,
+          "accented": false,
+          "degree": 0,
+          "voice": "main"
+        },
+        {
+          "cycle": 2,
+          "step": 8,
+          "t": "1/2",
+          "note": "C3",
+          "midi": 48,
+          "accented": true,
+          "degree": 4,
+          "voice": "main"
+        },
+        {
+          "cycle": 2,
+          "step": 15,
+          "t": "15/16",
+          "note": "E2",
+          "midi": 40,
+          "accented": true,
+          "degree": 0,
+          "voice": "main"
+        },
+        {
+          "cycle": 3,
+          "step": 0,
+          "t": "0",
+          "note": "E2",
+          "midi": 40,
+          "accented": true,
+          "degree": 0,
+          "voice": "main"
+        },
+        {
+          "cycle": 3,
+          "step": 7,
+          "t": "7/16",
+          "note": "F2",
+          "midi": 41,
+          "accented": false,
+          "degree": 0,
+          "voice": "main"
+        },
+        {
+          "cycle": 3,
+          "step": 8,
+          "t": "1/2",
+          "note": "C3",
+          "midi": 48,
+          "accented": true,
+          "degree": 4,
+          "voice": "main"
+        },
+        {
+          "cycle": 3,
+          "step": 15,
+          "t": "15/16",
+          "note": "E2",
+          "midi": 40,
+          "accented": true,
+          "degree": 0,
+          "voice": "main"
+        }
+      ],
+      "cadence": null,
+      "contourLib": "bass_root_five",
+      "role": "percussion",
+      "band": "low",
+      "style": "universal",
+      "mix": null,
+      "label": "bass",
+      "binding": "bass_chorus_before_sweep",
+      "sections": [
+        "chorus_before_sweep"
+      ]
+    },
+    {
+      "motif": null,
+      "rhythm": "anticipation_bass",
+      "archetype": null,
+      "transform": null,
+      "degrees": [
+        0,
+        0,
+        4,
+        0
+      ],
+      "contourRealization": {
+        "mode": "exact",
+        "k": 1
+      },
+      "contourSignsExpected": [
+        0,
+        1,
+        -1
+      ],
+      "onsets": [
+        "0/1",
+        "7/16",
+        "1/2",
+        "15/16"
+      ],
+      "accents": [
+        0.95,
+        0.6,
+        0.85,
+        0.7
+      ],
+      "bars": 1,
+      "gains": [
+        0.967,
+        0.74,
+        0.903,
+        0.805
+      ],
+      "swing": 0,
+      "period": 4,
+      "notes": [
+        {
+          "cycle": 0,
+          "step": 0,
+          "t": "0",
+          "note": "F2",
+          "midi": 41,
+          "accented": true,
+          "degree": 0,
+          "voice": "main"
+        },
+        {
+          "cycle": 0,
+          "step": 7,
+          "t": "7/16",
+          "note": "F2",
+          "midi": 41,
+          "accented": false,
+          "degree": 0,
+          "voice": "main"
+        },
+        {
+          "cycle": 0,
+          "step": 8,
+          "t": "1/2",
+          "note": "C3",
+          "midi": 48,
+          "accented": true,
+          "degree": 4,
+          "voice": "main"
+        },
+        {
+          "cycle": 0,
+          "step": 15,
+          "t": "15/16",
+          "note": "F2",
+          "midi": 41,
+          "accented": true,
+          "degree": 0,
+          "voice": "main"
+        },
+        {
+          "cycle": 1,
+          "step": 0,
+          "t": "0",
+          "note": "F2",
+          "midi": 41,
+          "accented": true,
+          "degree": 0,
+          "voice": "main"
+        },
+        {
+          "cycle": 1,
+          "step": 7,
+          "t": "7/16",
+          "note": "F2",
+          "midi": 41,
+          "accented": false,
+          "degree": 0,
+          "voice": "main"
+        },
+        {
+          "cycle": 1,
+          "step": 8,
+          "t": "1/2",
+          "note": "C3",
+          "midi": 48,
+          "accented": true,
+          "degree": 4,
+          "voice": "main"
+        },
+        {
+          "cycle": 1,
+          "step": 15,
+          "t": "15/16",
+          "note": "F2",
+          "midi": 41,
+          "accented": true,
+          "degree": 0,
+          "voice": "main"
+        },
+        {
+          "cycle": 2,
+          "step": 0,
+          "t": "0",
+          "note": "E2",
+          "midi": 40,
+          "accented": true,
+          "degree": 0,
+          "voice": "main"
+        },
+        {
+          "cycle": 2,
+          "step": 7,
+          "t": "7/16",
+          "note": "F2",
+          "midi": 41,
+          "accented": false,
+          "degree": 0,
+          "voice": "main"
+        },
+        {
+          "cycle": 2,
+          "step": 8,
+          "t": "1/2",
+          "note": "C3",
+          "midi": 48,
+          "accented": true,
+          "degree": 4,
+          "voice": "main"
+        },
+        {
+          "cycle": 2,
+          "step": 15,
+          "t": "15/16",
+          "note": "E2",
+          "midi": 40,
+          "accented": true,
+          "degree": 0,
+          "voice": "main"
+        },
+        {
+          "cycle": 3,
+          "step": 0,
+          "t": "0",
+          "note": "E2",
+          "midi": 40,
+          "accented": true,
+          "degree": 0,
+          "voice": "main"
+        },
+        {
+          "cycle": 3,
+          "step": 7,
+          "t": "7/16",
+          "note": "F2",
+          "midi": 41,
+          "accented": false,
+          "degree": 0,
+          "voice": "main"
+        },
+        {
+          "cycle": 3,
+          "step": 8,
+          "t": "1/2",
+          "note": "C3",
+          "midi": 48,
+          "accented": true,
+          "degree": 4,
+          "voice": "main"
+        },
+        {
+          "cycle": 3,
+          "step": 15,
+          "t": "15/16",
+          "note": "E2",
+          "midi": 40,
+          "accented": true,
+          "degree": 0,
+          "voice": "main"
+        }
+      ],
+      "cadence": null,
+      "contourLib": "bass_root_five",
+      "role": "percussion",
+      "band": "low",
+      "style": "universal",
+      "mix": null,
+      "label": "bass",
+      "binding": "bass_chorus_drop",
+      "sections": [
+        "chorus_drop"
+      ]
+    }
+  ],
+  "styles": null,
+  "orbits": {
+    "pads": 2
+  },
+  "voicingShapes": [
+    "closed_stack"
+  ],
+  "transitions": [
+    {
+      "name": "riser_hat_swell",
+      "kind": "riser",
+      "label": "riser",
+      "binding": "riser_riser_hat_swell_chorus_riser1",
+      "from": "leadin_riser",
+      "to": "chorus_riser",
+      "window": [
+        2,
+        4
+      ]
+    },
+    {
+      "name": "riser_noise_sweep",
+      "kind": "riser",
+      "label": "riser",
+      "binding": "riser_riser_noise_sweep_chorus_noise3",
+      "from": "leadin_noise",
+      "to": "chorus_noise",
+      "window": [
+        8,
+        12
+      ]
+    },
+    {
+      "name": "fill_snare_roll",
+      "kind": "fill",
+      "label": "fill",
+      "binding": "fill_fill_snare_roll_chorus_fill5",
+      "from": "leadin_fill",
+      "to": "chorus_fill",
+      "window": [
+        19,
+        20
+      ]
+    },
+    {
+      "name": "fill_tom_run",
+      "kind": "fill",
+      "label": "fill",
+      "binding": "fill_fill_tom_run_any_tom7",
+      "from": "leadin_tom",
+      "to": "any_tom",
+      "window": [
+        27,
+        28
+      ]
+    },
+    {
+      "name": "impact_boom",
+      "kind": "impact",
+      "label": "impact",
+      "binding": "impact_impact_boom_any_impact9",
+      "from": "leadin_impact",
+      "to": "any_impact",
+      "window": [
+        36,
+        37
+      ]
+    },
+    {
+      "name": "sweep_downlifter",
+      "kind": "sweep",
+      "label": "sweep",
+      "binding": "sweep_sweep_downlifter_after_sweep11",
+      "from": "chorus_before_sweep",
+      "to": "after_sweep",
+      "window": [
+        44,
+        45
+      ]
+    },
+    {
+      "name": "sub_drop",
+      "kind": "impact",
+      "label": "impact",
+      "binding": "impact_sub_drop_chorus_drop13",
+      "from": "leadin_drop",
+      "to": "chorus_drop",
+      "window": [
+        52,
+        53
+      ]
+    }
+  ]
+}

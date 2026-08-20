@@ -1,7 +1,7 @@
 // Glue: resolves spec-level references (lib:name, motif names) and plugs the
 // binder and transition library into the compiler's bindFn/transitionFn hooks.
 
-import { bind } from './bind.js';
+import { bind, bindComp } from './bind.js';
 import { RHYTHMS } from '../lib/rhythms.js';
 import { CONTOURS } from '../lib/contours.js';
 import { TRANSITIONS, findTransitions } from '../lib/transitions.js';
@@ -52,6 +52,31 @@ export function makeBindFn(spec) {
       throw new Error(`rhythm "${rhythmName}" is ${rhythm.meter_class} but the song is ${ctx.meter}`);
     }
     const section = ctx.section;
+
+    // comp bind: the rhythm drives the section HARMONY as comping (main-voice
+    // onsets = full voicing stabs, bounce onsets = light low root)
+    if (b.comp) {
+      if (!section.harmony?.length) throw new Error(`comp bind on "${ctx.label}" in "${ctx.sectionName}" needs section harmony`);
+      const { expr, period, boundMeta, warnings } = bindComp(rhythm, {
+        harmony: section.harmony,
+        barsPerChord: section.harmonicRhythm ?? section.bars / section.harmony.length,
+        key: spec.key,
+      }, ctx.meter, {
+        dict: b.dict, sound: b.sound, bounceSound: b.bounceSound, octave: b.octave,
+        gainRange: b.gainRange, fx: b.fx ?? '', rhythmName,
+      });
+      for (const w of warnings) (ctx.warnings ??= []).push(`[bind ${ctx.label}/${ctx.sectionName}] ${w}`);
+      return {
+        expr, period,
+        boundMeta: {
+          ...boundMeta,
+          role: b.role ?? rhythm?.role ?? 'chords',
+          band: b.band ?? rhythm?.band ?? 'mid',
+          style: rhythm?.style ?? null,
+          mix: b.mix ?? null,
+        },
+      };
+    }
     const harmonyContext = section.harmony?.length ? {
       harmony: section.harmony,
       barsPerChord: section.harmonicRhythm ?? section.bars / section.harmony.length,

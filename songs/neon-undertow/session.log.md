@@ -26,3 +26,11 @@ make the transition into the final chorus bigger (4-bar riser)
 restore the chorus lift: verse hats to swung 8ths, add chorus clap backbeat
 - clap: layer added (96 haps)
 - hats: 704→640 haps, timing changed (+32/-96 onsets), 64 pitches changed, 192 sounds changed, 444 gains changed
+
+## v7 — 2026-08-20T03:45
+engine round: audition-r1 library fixes (drop2 bass note, shape-preserving contour realization — lead_B arch no longer smears) + review-cycle emission fixes (3-decimal gains, stable orbits, transition binding names)
+- bass: 160→160 haps, timing unchanged, pitches unchanged, 96 gains changed
+- clap: 96→96 haps, timing unchanged, pitches unchanged, 96 sounds changed, 48 gains changed
+- hats: 640→640 haps, timing unchanged, pitches unchanged, 296 gains changed
+- kick: 160→160 haps, timing unchanged, pitches unchanged, 120 gains changed
+- lead: 160→160 haps, timing unchanged, 90 pitches changed, 160 sounds changed, 48 gains changed

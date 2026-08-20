@@ -40,12 +40,37 @@ function normalizeScale(s) {
   return s;
 }
 
-/** degree (int) + root midi + intervals -> midi */
-export function degreeToMidi(degree, rootMidi, intervals) {
+/** Contour degrees may be plain integers or altered: 'b5' lowers the 6th scale
+ *  degree a semitone, '#3' raises the 4th. -> { d, alt } */
+export function parseDegree(x) {
+  if (typeof x === 'number') {
+    if (!Number.isInteger(x)) throw new Error(`degree ${x} must be an integer (use 'b<n>'/'#<n>' for chromatic alteration)`);
+    return { d: x, alt: 0 };
+  }
+  if (x && typeof x === 'object' && Number.isInteger(x.d)) return { d: x.d, alt: x.alt ?? 0 };
+  const m = /^([b#])(-?\d+)$/.exec(String(x).trim());
+  if (!m) throw new Error(`bad degree "${x}" (expected an integer or 'b<n>'/'#<n>')`);
+  return { d: Number(m[2]), alt: m[1] === 'b' ? -1 : 1 };
+}
+
+/** Numeric stand-in for sign/shape math: alteration counts as half a step. */
+export function degreeValue(x) { const { d, alt } = parseDegree(x); return d + alt * 0.5; }
+
+/** degree (int or 'b<n>'/'#<n>') + root midi + intervals -> midi.
+ *  Alterations are CLAMPED to the mode: 'b5' means "darken the 6th degree IF the
+ *  mode hasn't already" — in dorian/major it lowers a semitone; in natural minor
+ *  (already b6) it collides with the 5th degree and stays put. Same idea for '#'. */
+export function degreeToMidi(degree, rootMidi, intervals, altArg = null) {
+  const { d, alt } = altArg == null ? parseDegree(degree) : { d: degree, alt: altArg };
   const len = intervals.length;
-  const idx = ((degree % len) + len) % len;
-  const oct = Math.floor(degree / len);
-  return rootMidi + intervals[idx] + 12 * oct;
+  const idx = ((d % len) + len) % len;
+  const oct = Math.floor(d / len);
+  const base = rootMidi + intervals[idx] + 12 * oct;
+  if (!alt) return base;
+  const neighbor = degreeToMidi(d + alt, rootMidi, intervals, 0);
+  const altered = base + alt;
+  if (alt < 0) return altered > neighbor ? altered : base;
+  return altered < neighbor ? altered : base;
 }
 
 /** midi -> note name, flats for flat-ish keys */
@@ -73,26 +98,29 @@ export function snapToPcs(midi, pcs) {
   return best;
 }
 
-/** Motif transforms on degree arrays. Composable with '+': "invert+octave_up". */
+/** Motif transforms on degree arrays. Composable with '+': "invert+octave_up".
+ *  Altered degrees ('b5') keep their alteration through every transform (the
+ *  color travels with the note; under inversion this is an approximation). */
 export function applyTransform(degrees, transform, scaleLen = 7) {
-  let out = degrees.slice();
-  if (!transform) return out;
-  for (const t of String(transform).split('+').map((x) => x.trim())) {
-    switch (t) {
-      case '': break;
-      case 'invert': {
-        const pivot = out[0];
-        out = out.map((d) => pivot - (d - pivot));
-        break;
+  let out = degrees.map(parseDegree);
+  if (transform) {
+    for (const t of String(transform).split('+').map((x) => x.trim())) {
+      switch (t) {
+        case '': break;
+        case 'invert': {
+          const pivot = out[0].d;
+          out = out.map(({ d, alt }) => ({ d: pivot - (d - pivot), alt }));
+          break;
+        }
+        case 'retrograde': out = out.slice().reverse(); break;
+        case 'octave_up': out = out.map(({ d, alt }) => ({ d: d + scaleLen, alt })); break;
+        case 'octave_down': out = out.map(({ d, alt }) => ({ d: d - scaleLen, alt })); break;
+        case 'diminish': out = out.map(({ d, alt }, i) => i === 0 ? { d, alt } : { d: out[0].d + Math.trunc((d - out[0].d) / 2), alt }); break;
+        default: throw new Error(`unknown motif transform "${t}"`);
       }
-      case 'retrograde': out = out.slice().reverse(); break;
-      case 'octave_up': out = out.map((d) => d + scaleLen); break;
-      case 'octave_down': out = out.map((d) => d - scaleLen); break;
-      case 'diminish': out = out.map((d, i) => i === 0 ? d : out[0] + Math.trunc((d - out[0]) / 2)); break;
-      default: throw new Error(`unknown motif transform "${t}"`);
     }
   }
-  return out;
+  return out.map(({ d, alt }) => alt === 0 ? d : (alt < 0 ? 'b' : '#') + d);
 }
 
 /** Does this key's signature use flats? Mode-aware via the relative major. */
@@ -108,9 +136,11 @@ export function keyUsesFlats(key) {
   } catch { return true; }
 }
 
-/** Sign sequence of a pitch/degree sequence: 1 up, -1 down, 0 same. */
+/** Sign sequence of a pitch/degree sequence: 1 up, -1 down, 0 same.
+ *  Accepts plain numbers (midi, degrees) or altered-degree strings. */
 export function contourSigns(seq) {
+  const vals = seq.map((x) => (typeof x === 'number' ? x : degreeValue(x)));
   const out = [];
-  for (let i = 1; i < seq.length; i++) out.push(Math.sign(seq[i] - seq[i - 1]));
+  for (let i = 1; i < vals.length; i++) out.push(Math.sign(vals[i] - vals[i - 1]));
   return out;
 }

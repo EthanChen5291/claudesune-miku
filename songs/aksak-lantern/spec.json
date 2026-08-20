@@ -43,7 +43,7 @@
           }
         },
         "keys": {
-          "pattern": "chords.dict('me_quartal_9').voicing().struct(\"x ~ ~ ~ x ~ ~\").s(\"square\").lpf(1100).room(0.35).gain(\".5 .44\")"
+          "pattern": "chords.dict('me_shell_37').voicing().struct(\"x ~ ~ ~ x ~ ~\").s(\"square\").lpf(1100).room(0.35).gain(\".5 .44\")"
         }
       }
     },
@@ -88,7 +88,7 @@
           }
         },
         "keys": {
-          "pattern": "chords.dict('me_quartal_9').voicing().struct(\"x ~ ~ ~ x ~ ~\").s(\"square\").lpf(1400).room(0.35).gain(\".55 .48\")"
+          "pattern": "chords.dict('me_shell_37').voicing().struct(\"x ~ ~ ~ x ~ ~\").s(\"square\").lpf(1400).room(0.35).gain(\".55 .48\")"
         },
         "lead": {
           "bind": {

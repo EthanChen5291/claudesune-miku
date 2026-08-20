@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>rhythms-4-4 v0 — listen</title>
+<style>
+  :root { color-scheme: dark; }
+  body { font: 14px/1.5 -apple-system, system-ui, sans-serif; margin: 0; background: #14141a; color: #e8e8ee; }
+  header { padding: 14px 20px 10px; border-bottom: 1px solid #2b2b36; display: flex; flex-wrap: wrap; gap: 14px; align-items: center; }
+  h1 { font-size: 16px; margin: 0 12px 0 0; }
+  .vswitch button { margin-right: 6px; padding: 6px 14px; border-radius: 6px; border: 1px solid #3a3a4a; background: #1e1e28; color: #cfcfe0; cursor: pointer; font-weight: 600; }
+  .vswitch button.active { background: #4c6ef5; border-color: #4c6ef5; color: #fff; }
+  .mutes { display: flex; flex-wrap: wrap; gap: 4px 12px; padding: 8px 20px; border-bottom: 1px solid #2b2b36; }
+  .mutes label { user-select: none; cursor: pointer; opacity: .9; }
+  .mutes input { accent-color: #4c6ef5; }
+  main { padding: 12px 20px; }
+  #repl { min-height: 420px; }
+  strudel-editor { display: block; }
+  .panel { background: #1b1b24; border: 1px solid #2b2b36; border-radius: 8px; padding: 12px 16px; margin: 14px 0; }
+  .panel h2 { font-size: 13px; text-transform: uppercase; letter-spacing: .08em; color: #9a9ab0; margin: 0 0 8px; }
+  .panel ul { margin: 0; padding-left: 18px; }
+  button.copy { padding: 6px 12px; border-radius: 6px; border: 1px solid #3a3a4a; background: #1e1e28; color: #cfcfe0; cursor: pointer; }
+  a { color: #74a0ff; }
+  .hint { color: #9a9ab0; font-size: 12.5px; }
+</style>
+</head>
+<body>
+<header>
+  <h1>rhythms-4-4 v0</h1>
+  <div class="vswitch" id="vswitch"></div>
+  <span class="hint">switch version or mutes, then hit play in the editor (ctrl+enter updates)</span>
+</header>
+<div class="mutes" id="mutes"></div>
+<main>
+  <div id="repl"></div>
+  <div class="panel" id="listenfor" style="display:none"><h2>What to listen for</h2><ul id="listenforList"></ul></div>
+  <div class="panel">
+    <h2>Paste-ready</h2>
+    <button class="copy" id="copyBtn">Copy current code (with mutes)</button>
+    <a id="ccLink" target="_blank" style="margin-left:12px">open on strudel.cc</a>
+    <div class="hint" style="margin-top:6px">The embedded REPL is pinned to strudel 1.1.0 (same as the engine). strudel.cc runs latest — both play this code.</div>
+  </div>
+</main>
+<script src="https://unpkg.com/@strudel/repl@1.1.0/dist/index.js"></script>
+<script>
+const DATA = {"title":"rhythms-4-4 v0","versions":[{"name":"v0","source":"// ============ rhythms-4-4 ============\n// compiled by motif-engine (seed 1) — edit map in the song's meta.json\n// form: four_floor offbeat_8ths backbeat_ghost tresillo son_clave_3 dembow sixteenth_drive swung_lofi_hats lazy_dilla two_step_kick anticipation_bass push_pull_16s gallop_arp sparse_pedal even_8ths pushed_comp_2bar charleston_2bar bossa_comp_2bar call_response_2bar | 4/4 | 118 bpm | key F:minor\nsetcpm(118/4)\n\nlet key = \"F:minor\"\n\n// ---- form masks (compiled from form: four_floor offbeat_8ths backbeat_ghost tresillo son_clave_3 dembow sixteenth_drive swung_lofi_hats lazy_dilla two_step_kick anticipation_bass push_pull_16s gallop_arp sparse_pedal even_8ths pushed_comp_2bar charleston_2bar bossa_comp_2bar call_response_2bar; edit the SPEC, not these) ----\nlet form = {\n  four_floor: \"<1!4 0!72>\",\n  offbeat_8ths: \"<0!4 1!4 0!68>\",\n  backbeat_ghost: \"<0!8 1!4 0!64>\",\n  tresillo: \"<0!12 1!4 0!60>\",\n  son_clave_3: \"<0!16 1!4 0!56>\",\n  dembow: \"<0!20 1!4 0!52>\",\n  sixteenth_drive: \"<0!24 1!4 0!48>\",\n  swung_lofi_hats: \"<0!28 1!4 0!44>\",\n  lazy_dilla: \"<0!32 1!4 0!40>\",\n  two_step_kick: \"<0!36 1!4 0!36>\",\n  anticipation_bass: \"<0!40 1!4 0!32>\",\n  push_pull_16s: \"<0!44 1!4 0!28>\",\n  gallop_arp: \"<0!48 1!4 0!24>\",\n  sparse_pedal: \"<0!52 1!4 0!20>\",\n  even_8ths: \"<0!56 1!4 0!16>\",\n  pushed_comp_2bar: \"<0!60 1!4 0!12>\",\n  charleston_2bar: \"<0!64 1!4 0!8>\",\n  bossa_comp_2bar: \"<0!68 1!4 0!4>\",\n  call_response_2bar: \"<0!72 1!4>\",\n}\n\n// ---- voicing shapes (library: src/lib/voicings.js) ----\naddVoicings('me_drop2', { '6': ['-5 0 4 9'], '7': ['-5 0 4 10'], '': ['-5 0 4'], 'm': ['-5 0 3'], '^7': ['-5 0 4 11'], 'm7': ['-5 0 3 10'], 'm9': ['-5 0 3 10 14'], 'sus4': ['-5 0 5'], 'dim': ['-9 0 6'], 'o': ['-9 0 6 9'] }, ['C3', 'C6'])\n\n// ---- harmony ----\nlet harmony_offbeat_8ths = chord(\"<Fm7 Db^7>/2\").dict('ireal')\nlet harmony_sparse_pedal = chord(\"<Fm7 Db^7>/2\").dict('ireal')\nlet harmony_even_8ths = chord(\"<Fm7 Db^7>/2\").dict('ireal')\nlet harmony_pushed_comp_2bar = chord(\"<Fm7 Db^7>/2\").dict('ireal')\nlet harmony_charleston_2bar = chord(\"<Fm7 Db^7>/2\").dict('ireal')\nlet harmony_bossa_comp_2bar = chord(\"<Fm7 Db^7>/2\").dict('ireal')\nlet harmony_call_response_2bar = chord(\"<Fm7 Db^7>/2\").dict('ireal')\nlet chords = stack(\n  harmony_offbeat_8ths.mask(form.offbeat_8ths),\n  harmony_sparse_pedal.mask(form.sparse_pedal),\n  harmony_even_8ths.mask(form.even_8ths),\n  harmony_pushed_comp_2bar.mask(form.pushed_comp_2bar),\n  harmony_charleston_2bar.mask(form.charleston_2bar),\n  harmony_bossa_comp_2bar.mask(form.bossa_comp_2bar),\n  harmony_call_response_2bar.mask(form.call_response_2bar),\n)\n\n// ---- material: hits ----\nlet hits_four_floor = s(\"bd bd bd bd\").gain(\"1 0.903 0.948 0.903\")\nlet hits_offbeat_8ths = note(\"<[~ F4@2 G4@2 Bb4@2 C5] [~ F4@2 G4@2 Bb4@2 C5] [~ F4@2 G4@2 Bb4@2 C5] [~ F4@2 G4@2 Bb4@2 C5]>\").s(\"triangle\").gain(\"0.838 0.838@2 0.74@2 0.87@2 0.753\").room(0.15).orbit(2)\nlet hits_backbeat_ghost = s(\"~@4 sd ~@2 sd ~@4 sd ~@2 sd\").gain(\"1@4 1@3 0.577@5 0.967@3 0.61\")\nlet hits_tresillo = s(\"bd ~@2 bd ~@2 bd ~\").gain(\"1@3 0.805@3 0.903@2\")\nlet hits_son_clave_3 = s(\"rim ~@2 rim ~@2 rim ~@3 rim ~ rim ~@3\").gain(\"1@3 0.87@3 0.935@4 0.805@2 0.903@4\")\nlet hits_dembow = s(\"cp ~@2 cp ~@4 cp ~@2 cp ~@2 cp ~\").gain(\"1@3 0.903@5 0.935@3 0.903@3 0.708@2\")\nlet hits_sixteenth_drive = s(\"hh hh hh hh hh hh hh hh hh hh hh hh hh hh hh hh\").gain(\"1 0.61 0.753 0.61 0.883 0.61 0.753 0.623 0.935 0.61 0.753 0.61 0.883 0.623 0.779 0.649\")\nlet hits_swung_lofi_hats = s(\"hh hh hh hh hh hh hh hh\").gain(\"0.935 0.623 0.818 0.649 0.909 0.61 0.818 0.688\").swingBy(0.55, 4)\nlet hits_lazy_dilla = s(\"hh ~@26 hh ~@20 hh ~@27 hh ~@19 hh ~@26 hh ~@20 hh ~@27 hh ~@19\").gain(\"0.967@27 0.675@21 0.838@28 0.708@20 0.935@27 0.675@21 0.805@28 0.74@20\")\nlet hits_two_step_kick = s(\"bd ~@2 bd ~ bd ~@2\").gain(\"1@3 0.773@2 0.903@3\")\nlet hits_anticipation_bass = s(\"bd ~@6 bd bd ~@6 bd\").gain(\"0.967@7 0.74 0.903@7 0.805\")\nlet hits_push_pull_16s = s(\"rim ~@2 rim ~@2 rim ~@3 rim ~ rim ~@2 rim\").gain(\"1@3 0.675@3 0.87@4 0.74@2 0.935@3 0.61\")\nlet hits_gallop_arp = s(\"rim ~ rim rim rim ~ rim rim rim ~ rim rim rim ~ rim rim\").gain(\"1@2 0.643 0.74 0.903@2 0.643 0.74 0.935@2 0.643 0.74 0.903@2 0.675 0.773\")\nlet hits_sparse_pedal = note(\"<[F2@3 F2] [C3@3 F2] [F2@3 F2] [C3@3 F2]>\").s(\"square\").gain(\"1@3 0.74\").lpf(600)\nlet hits_even_8ths = note(\"<[F4 Ab4 Ab4 G4 Bb4 Ab4 Ab4 C5] [F4 Ab4 Ab4 G4 Bb4 Ab4 Ab4 C5] [F4 Ab4 Ab4 G4 Bb4 Ab4 Ab4 C5] [F4 Ab4 Ab4 G4 Bb4 Ab4 Ab4 C5]>\").s(\"triangle\").gain(\"0.903 0.675 0.773 0.675 0.838 0.675 0.773 0.708\").room(0.15).orbit(2)\nlet hits_pushed_comp_2bar = stack(chord(\"<Fm7 Db^7>/2\").dict('me_drop2').voicing().struct(\"<[x@2 x@2 x@4] [~ x@2 x x@2 x@2]>\").s(\"square\").gain(\"<[1@2 0.935@2 0.948@4] [0.903 0.903@2 0.922 0.967@2 0.87@2]>\"), note(\"<[~@3 F3 ~ F3 F3 ~] [~] [~@3 Db3 ~ Db3 Db3 ~] [~]>\").s(\"triangle\").gain(\"<[0.675@3 0.675@2 0.675 0.708@2] [0.675]>\")).lpf(1500).room(0.2).orbit(2)\nlet hits_charleston_2bar = stack(chord(\"<Fm7 Db^7>/2\").dict('me_drop2').voicing().struct(\"<[x@3 x@5] [x@3 x@5]>\").s(\"square\").gain(\"<[0.967@3 0.87@5] [0.935@3 0.883@5]>\"), note(\"<[~] [~@6 F3 ~] [~] [~@6 Db3 ~]>\").s(\"triangle\").gain(\"<[0.675] [0.74@6 0.74@2]>\")).lpf(1500).room(0.2).orbit(2)\nlet hits_bossa_comp_2bar = chord(\"<Fm7 Db^7>/2\").dict('me_drop2').voicing().struct(\"<[x@3 x@3 x@2] [~@2 x@3 x@3]>\").s(\"square\").gain(\"<[0.935@3 0.857@3 0.903@2] [0.922@2 0.922@3 0.805@3]>\").lpf(1500).room(0.2).orbit(2)\nlet hits_call_response_2bar = note(\"<[F4 Ab4 Ab4@2 G4 Bb4@3] [Ab4@2 Ab4 C5] [F4 Ab4 Ab4@2 Ab4 Bb4@3] [Ab4@2 Ab4 C5]>\").s(\"triangle\").gain(\"<[1 0.675 0.87@2 0.935 0.708@3] [0.967@2 0.838 0.74]>\").room(0.15).orbit(2)\n\n// ---- layers ----\nhits: stack(\n  hits_four_floor.mask(form.four_floor),\n  hits_offbeat_8ths.mask(form.offbeat_8ths),\n  hits_backbeat_ghost.mask(form.backbeat_ghost),\n  hits_tresillo.mask(form.tresillo),\n  hits_son_clave_3.mask(form.son_clave_3),\n  hits_dembow.mask(form.dembow),\n  hits_sixteenth_drive.mask(form.sixteenth_drive),\n  hits_swung_lofi_hats.mask(form.swung_lofi_hats),\n  hits_lazy_dilla.mask(form.lazy_dilla),\n  hits_two_step_kick.mask(form.two_step_kick),\n  hits_anticipation_bass.mask(form.anticipation_bass),\n  hits_push_pull_16s.mask(form.push_pull_16s),\n  hits_gallop_arp.mask(form.gallop_arp),\n  hits_sparse_pedal.mask(form.sparse_pedal),\n  hits_even_8ths.mask(form.even_8ths),\n  hits_pushed_comp_2bar.mask(form.pushed_comp_2bar),\n  hits_charleston_2bar.mask(form.charleston_2bar),\n  hits_bossa_comp_2bar.mask(form.bossa_comp_2bar),\n  hits_call_response_2bar.mask(form.call_response_2bar),\n)\n","note":"current"}],"labels":["hits"],"listenFor":[],"notes":[]};
+let currentVersion = DATA.versions.length - 1;
+const muted = new Set();
+
+function applyMutes(src) {
+  // labels live at column 0 — anchoring without leading whitespace keeps
+  // indented object keys (form masks) safe even when a section shares the name
+  let out = src;
+  for (const label of DATA.labels) {
+    const on = new RegExp('^' + label + ':', 'm');
+    const off = new RegExp('^_' + label + ':', 'm');
+    if (muted.has(label)) out = out.replace(on, '_' + label + ':');
+    else out = out.replace(off, label + ':');
+  }
+  return out;
+}
+function currentCode() { return applyMutes(DATA.versions[currentVersion].source); }
+function render() {
+  const holder = document.getElementById('repl');
+  holder.innerHTML = '';
+  const el = document.createElement('strudel-editor');
+  el.setAttribute('code', currentCode());
+  holder.appendChild(el);
+  document.querySelectorAll('.vswitch button').forEach((b, i) => b.classList.toggle('active', i === currentVersion));
+  document.getElementById('ccLink').href = 'https://strudel.cc/#' + encodeURIComponent(btoa(unescape(encodeURIComponent(currentCode()))));
+}
+const vs = document.getElementById('vswitch');
+DATA.versions.forEach((v, i) => {
+  const b = document.createElement('button');
+  b.textContent = v.name;
+  b.title = v.note || '';
+  b.onclick = () => { currentVersion = i; render(); };
+  vs.appendChild(b);
+});
+const ms = document.getElementById('mutes');
+DATA.labels.forEach((label) => {
+  const l = document.createElement('label');
+  const c = document.createElement('input');
+  c.type = 'checkbox'; c.checked = true;
+  c.onchange = () => { c.checked ? muted.delete(label) : muted.add(label); render(); };
+  l.appendChild(c); l.appendChild(document.createTextNode(' ' + label));
+  ms.appendChild(l);
+});
+if (DATA.listenFor.length) {
+  document.getElementById('listenfor').style.display = '';
+  const ul = document.getElementById('listenforList');
+  DATA.listenFor.forEach((x) => { const li = document.createElement('li'); li.textContent = x; ul.appendChild(li); });
+}
+document.getElementById('copyBtn').onclick = async () => {
+  await navigator.clipboard.writeText(currentCode());
+  document.getElementById('copyBtn').textContent = 'Copied ✓';
+  setTimeout(() => document.getElementById('copyBtn').textContent = 'Copy current code (with mutes)', 1200);
+};
+render();
+</script>
+</body>
+</html>

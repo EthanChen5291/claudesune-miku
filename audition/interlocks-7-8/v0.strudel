@@ -1,0 +1,23 @@
+// ============ interlocks-7-8 ============
+// compiled by motif-engine (seed 1) — edit map in the song's meta.json
+// form: aksak_engine | 7/8 | 140 bpm | key D:dorian
+setcpm(140/7)
+
+let key = "D:dorian"
+
+// ---- form masks (compiled from form: aksak_engine; edit the SPEC, not these) ----
+let form = {
+  aksak_engine: "<1!4>",
+}
+
+// ---- harmony ----
+
+// ---- material: layer_a ----
+let layer_a_aksak_engine = s("bd ~ bd ~ bd ~@2").gain("1@2 0.883@2 0.935@3")
+
+// ---- material: layer_b ----
+let layer_b_aksak_engine = s("rim ~@2 rim rim ~@2 rim ~ rim ~ rim ~@2").gain("1@3 0.675 0.87@3 0.935@2 0.708@2 0.818@3")
+
+// ---- layers ----
+layer_a: layer_a_aksak_engine
+layer_b: layer_b_aksak_engine

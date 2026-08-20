@@ -4,6 +4,13 @@
 // these must survive any meter. `character` documents the taste each entry encodes.
 // Retrieval is by computed properties (density/syncopation/downbeat anchoring),
 // not genre tags — tags are secondary hints.
+//
+// Audition r1 (Ethan, 2026-08-19): the library's PURPOSE is rhythms for NOTES to
+// fill in — pure drum patterns are the special case, not the default. Entries that
+// only work as percussion carry role 'percussion'; note-oriented entries carry
+// melodic/bass/chords roles and are auditioned WITH notes. Multi-bar entries set
+// `bars: N` with onsets in bar units [0, N). `voices` marks each onset 'main'
+// (carries the chord/contour) or 'bounce' (light low note to bounce off).
 
 export const RHYTHMS = {
   four_floor: {
@@ -79,25 +86,25 @@ export const RHYTHMS = {
     character: 'UKG two-step kick — hole on beat 2 is the point; the 3& shoves the bar forward.',
   },
   anticipation_bass: {
-    role: 'bass', band: 'low', style: 'universal', provenance: 'hand-written', ratified: false,
+    role: 'percussion', band: 'low', style: 'universal', provenance: 'hand-written', ratified: false, audit: 'audition-r1: percussion only',
     onsets: ['0', '7/16', '1/2', '15/16'],
     accents: [0.95, 0.6, 0.85, 0.7],
-    meter_class: '4/4', tags: ['bass', 'funk', 'house'],
-    character: 'Bass that pre-empts beats 2 and 1 by a 16th — the push-pull against a straight kick.',
+    meter_class: '4/4', tags: ['perc', 'kick', 'funk', 'house'],
+    character: 'Pre-empts beats 2 and 1 by a 16th — the push-pull against a straight kick. Audition r1: too sparse-with-holes to carry a note line; demoted to percussion.',
   },
   push_pull_16s: {
-    role: 'melodic', band: 'mid', style: 'universal', provenance: 'hand-written', ratified: false,
+    role: 'percussion', band: 'mid', style: 'universal', provenance: 'hand-written', ratified: false, audit: 'audition-r1: percussion only',
     onsets: ['0', '3/16', '3/8', '5/8', '3/4', '15/16'],
     accents: [1.0, 0.5, 0.8, 0.6, 0.9, 0.4],
-    meter_class: '4/4', tags: ['melodic', 'verified'],
-    character: 'The §2 handoff rhythm: strong anchors on 1 and 4 with syncopated pushes between — verified ground truth.',
+    meter_class: '4/4', tags: ['perc', 'verified'],
+    character: 'The §2 handoff rhythm: strong anchors on 1 and 4 with syncopated pushes between — verified ground truth. Audition r1: reads as percussion, not a note-carrier.',
   },
   gallop_arp: {
-    role: 'support', band: 'mid', style: 'trance', provenance: 'hand-written', ratified: false,
+    role: 'percussion', band: 'mid', style: 'trance', provenance: 'hand-written', ratified: false, audit: 'audition-r1: percussion only',
     onsets: ['0','1/8','3/16','1/4','3/8','7/16','1/2','5/8','11/16','3/4','7/8','15/16'],
     accents: [1.0, 0.45, 0.6, 0.85, 0.45, 0.6, 0.9, 0.45, 0.6, 0.85, 0.5, 0.65],
-    meter_class: '4/4', tags: ['melodic', 'arp', 'trance'],
-    character: 'Trance gallop (dum-da-da ×4). Accents on the long note; the two shorts stay under 0.7 so snapping leaves them free.',
+    meter_class: '4/4', tags: ['perc', 'arp', 'trance'],
+    character: 'Trance gallop (dum-da-da ×4). Accents on the long note. Audition r1: works as percussion, not as a note-filler; demoted.',
   },
   sparse_pedal: {
     role: 'bass', band: 'low', style: 'universal', provenance: 'hand-written', ratified: false,
@@ -141,6 +148,49 @@ export const RHYTHMS = {
     meter_class: '3/4', tags: ['kick', 'perc', 'waltz'],
     character: 'ONE-two-three with the lift on 3, not 2 — the third beat leads back to the downbeat.',
   },
+
+  // ---- note-oriented + multi-bar entries (audition r1 direction) ----
+  even_8ths: {
+    role: 'melodic', band: 'mid', style: 'universal', provenance: 'hand-written', ratified: false,
+    onsets: ['0', '1/8', '1/4', '3/8', '1/2', '5/8', '3/4', '7/8'],
+    accents: [0.85, 0.5, 0.65, 0.5, 0.75, 0.5, 0.65, 0.55],
+    meter_class: '4/4', tags: ['melodic', 'neutral'],
+    character: 'Straight 8ths with a beat-weighted accent tilt. The neutral note-carrier — when the CONTOUR is the story, this stays out of its way.',
+  },
+  pushed_comp_2bar: {
+    role: 'chords', band: 'mid', style: 'pop', provenance: 'ethan-requested', ratified: false,
+    bars: 2,
+    onsets: ['0', '1/4', '3/8', '1/2', '5/8', '3/4', '9/8', '11/8', '3/2', '7/4'],
+    accents: [1.0, 0.9, 0.5, 0.92, 0.5, 0.55, 0.85, 0.88, 0.95, 0.8],
+    voices: ['main', 'main', 'bounce', 'main', 'bounce', 'bounce', 'main', 'main', 'main', 'main'],
+    meter_class: '4/4', tags: ['comp', 'chords', 'pop', 'piano'],
+    character: 'Ethan\'s 2-bar push comp: bar 1 states 1-2-3 on the beat with light low bounces on 2&, 3&, 4; bar 2 anticipates on the &s of 1 and 2, then lands 3-4. The classic anticipation/"rhythmic push" comping family.',
+  },
+  charleston_2bar: {
+    role: 'chords', band: 'mid', style: 'jazz', provenance: 'hand-written', ratified: false,
+    bars: 2,
+    onsets: ['0', '3/8', '1', '11/8', '7/4'],
+    accents: [0.95, 0.8, 0.9, 0.82, 0.6],
+    voices: ['main', 'main', 'main', 'main', 'bounce'],
+    meter_class: '4/4', tags: ['comp', 'chords', 'jazz', 'charleston'],
+    character: 'Charleston (1, 2&) asked and answered: bar 2 repeats it and adds a soft low pickup on 4 leading back to the top.',
+  },
+  bossa_comp_2bar: {
+    role: 'chords', band: 'mid', style: 'bossa', provenance: 'hand-written', ratified: false,
+    bars: 2,
+    onsets: ['0', '3/8', '3/4', '5/4', '13/8'],
+    accents: [0.9, 0.78, 0.85, 0.88, 0.7],
+    meter_class: '4/4', tags: ['comp', 'chords', 'bossa', 'latin'],
+    character: 'Bossa comp skeleton over two bars: bar 1 pushes 1, 2&, 4; bar 2 answers on 2 and 3& — the offbeat half of the phrase.',
+  },
+  call_response_2bar: {
+    role: 'melodic', band: 'mid', style: 'universal', provenance: 'hand-written', ratified: false,
+    bars: 2,
+    onsets: ['0', '1/8', '1/4', '1/2', '5/8', '1', '3/2', '7/4'],
+    accents: [1.0, 0.5, 0.8, 0.9, 0.55, 0.95, 0.75, 0.6],
+    meter_class: '4/4', tags: ['melodic', 'phrase'],
+    character: 'Two-bar phrase logic for a line: busy call in bar 1 (five notes leaning on 1 and 3), sparse answer in bar 2 (three long notes). Eight onsets — 8-degree contours like question_answer land exactly.',
+  },
 };
 
 // ---------------------------------------------------------------------------
@@ -152,10 +202,13 @@ export function rhythmProperties(entry) {
   const r = normalizeRhythm(entry);
   const meterNum = entry.meter_class && entry.meter_class !== 'any'
     ? Number(entry.meter_class.split('/')[0]) : 4;
+  // bar-unit onsets: integer bar shifts are grid multiples, so this works for
+  // multi-bar entries unchanged
   const onGrid = ([n, d]) => (n * meterNum) % d === 0;
   const off = r.onsets.filter((o) => !onGrid(o)).length;
   return {
-    density: r.onsets.length,
+    density: r.onsets.length / r.bars,
+    bars: r.bars,
     syncopation: r.onsets.length ? off / r.onsets.length : 0,
     downbeatAnchored: r.onsets.some(([n]) => n === 0),
     swung: (entry.swing ?? 0) > 0 || !!entry.microtiming,
@@ -163,11 +216,14 @@ export function rhythmProperties(entry) {
   };
 }
 
-/** Retrieve by musical function: filters over computed properties + meter fit. */
-export function findRhythms({ meter = '4/4', minDensity = 0, maxDensity = Infinity, syncopation = null, downbeatAnchored = null, tag = null } = {}) {
+/** Retrieve by musical function: filters over computed properties + meter fit.
+ *  `role` filters by what the rhythm is FOR (melodic/bass/chords/percussion) —
+ *  audition r1: never hand a percussion-only rhythm to a note line. */
+export function findRhythms({ meter = '4/4', role = null, minDensity = 0, maxDensity = Infinity, syncopation = null, downbeatAnchored = null, tag = null } = {}) {
   const out = [];
   for (const [name, entry] of Object.entries(RHYTHMS)) {
     if (entry.meter_class !== 'any' && entry.meter_class !== meter) continue;
+    if (role && entry.role !== role) continue;
     const p = rhythmProperties(entry);
     if (p.density < minDensity || p.density > maxDensity) continue;
     if (syncopation === 'high' && p.syncopation < 0.4) continue;

@@ -56,10 +56,10 @@ test('A1.3: arrangement metrics available to musts (gw_density, active_layers)',
 
 test('A5.2: every rhythm entry carries role, band, style, provenance', () => {
   for (const [name, r] of Object.entries(RHYTHMS)) {
-    assert.ok(['percussion', 'harmony', 'support', 'bass', 'melodic'].includes(r.role), `${name}: role`);
+    assert.ok(['percussion', 'harmony', 'support', 'bass', 'melodic', 'chords'].includes(r.role), `${name}: role`);
     assert.ok(['sub', 'low', 'mid', 'high'].includes(r.band), `${name}: band`);
     assert.ok(typeof r.style === 'string' && r.style.length, `${name}: style`);
-    assert.equal(r.provenance, 'hand-written', `${name}: provenance (unratified seeds — Ethan's audition pending, A6.1)`);
+    assert.ok(['hand-written', 'ethan-requested'].includes(r.provenance), `${name}: provenance (A6.1: seeds are hand-written or user-requested, never engine-ratified)`);
   }
 });
 

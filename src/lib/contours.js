@@ -1,12 +1,16 @@
 // Contour library (§3.5). ABSTRACT ONLY: scale-degree sequences + shape metadata.
-// Degrees are scale indices (0 = root, 7 = octave in heptatonic). No note names,
-// no keys — binding gives them harmony. `character` documents the taste.
+// Degrees are scale indices (0 = root, 7 = octave in heptatonic); 'b5'/'#3'
+// strings request a chromatic alteration (clamped to the mode — see theory.js).
+// No note names, no keys — binding gives them harmony. `character` documents
+// the taste. `revised: 'audition-r1'` marks entries reworked after Ethan's
+// 2026-08-19 listen (the binder's old degree-cycling also smeared several of
+// these — realization is shape-preserving now, D26).
 
 export const CONTOURS = {
   arch_classic: {
     degrees: [0, 2, 4, 5, 4, 2, 0],
     shape: 'arch', span: 5,
-    character: 'The textbook arch — up to the 6th degree and home again. Safe, singable, resolves itself.',
+    character: 'The textbook arch — up to the 6th degree and home again. Safe, singable, resolves itself. (Audition r1 heard it smeared by the old cycling realization; the data was always the arch.)',
   },
   rise_anthem: {
     degrees: [0, 2, 3, 4, 5, 7],
@@ -14,9 +18,9 @@ export const CONTOURS = {
     character: 'Straight climb to the octave. Wants a chorus; pair with dense rhythm for lift.',
   },
   fall_sigh: {
-    degrees: [7, 5, 4, 2, 1, 0],
-    shape: 'fall', span: 7,
-    character: 'Descending sigh from the octave. Melancholy without trying; verse material.',
+    degrees: [7, 'b5', 4, 2, 1, 0],
+    shape: 'fall', span: 7, revised: 'audition-r1',
+    character: 'Descending sigh from the octave through a FLAT 6th (Ethan: "flat the second note") — the darkened submediant is the sigh. In modes already carrying a b6 the alteration clamps off.',
   },
   zigzag_narrow: {
     degrees: [0, 2, 1, 3, 2, 4],
@@ -29,14 +33,14 @@ export const CONTOURS = {
     character: 'Root–fifth pendulum with a 3rd-degree passing exit. Bassline-shaped but works an octave up.',
   },
   spiral_up: {
-    degrees: [0, 2, 1, 3, 2, 4, 3, 5],
-    shape: 'rise', span: 5,
-    character: 'Zigzag that gains ground — each backstep is smaller than the step before. Tension climber.',
+    degrees: [0, 3, 1, 4, 3, 6, 5, 7],
+    shape: 'rise', span: 7, revised: 'audition-r1',
+    character: 'Climb with shrinking backsteps (-2, then -1s) that lands ON the octave — the old data never gained real ground and got killed in audition r1. Tension climber with a summit.',
   },
   hook_drop: {
-    degrees: [4, 4, 7, 4, 2, 0],
-    shape: 'peak-fall', span: 7,
-    character: 'Repeated note, leap to the octave, tumble home. The repetition sets up the leap — hook-shaped.',
+    degrees: [7, 7, 7, 4, 5, 4, 2, 0],
+    shape: 'peak-fall', span: 7, revised: 'audition-r1',
+    character: 'The hook IS the repeated top note (octave ×3), then the drop: down to the 5th, a turn, and a stepwise tumble home. Audition r1 killed the old arpeggio-shaped version.',
   },
   valley: {
     degrees: [4, 2, 0, 0, 2, 4],
@@ -49,9 +53,9 @@ export const CONTOURS = {
     character: 'Root-root-fifth-root. The most boring line in music, which is why it works under everything.',
   },
   dorian_lift: {
-    degrees: [0, 2, 3, 5, 6, 5, 3, 2],
-    shape: 'arch', span: 6,
-    character: 'Arch that peaks on the 6th DEGREE — in dorian that is the raised 6th, the one note that names the mode.',
+    degrees: [0, 2, 3, 4, 5, 4, 2, 0],
+    shape: 'arch', span: 5, revised: 'audition-r1',
+    character: 'Arch that peaks on degree 5 — the actual 6th scale degree, dorian\'s raised 6th, the one note that names the mode. (Old data was off by one and peaked on the 7th; audition r1 caught it.)',
   },
   minimal_dyad: {
     degrees: [0, 3, 0, 3],

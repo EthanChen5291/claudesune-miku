@@ -1,0 +1,305 @@
+{
+  "title": "voicings",
+  "genre": null,
+  "meter": "4/4",
+  "bpm": 100,
+  "key": "C:minor",
+  "seed": 1,
+  "form": "closed_stack drop2 shell_37 spread_tenth cluster_upper",
+  "totalCycles": 20,
+  "instances": [
+    {
+      "name": "closed_stack",
+      "start": 0,
+      "end": 4
+    },
+    {
+      "name": "drop2",
+      "start": 4,
+      "end": 8
+    },
+    {
+      "name": "shell_37",
+      "start": 8,
+      "end": 12
+    },
+    {
+      "name": "spread_tenth",
+      "start": 12,
+      "end": 16
+    },
+    {
+      "name": "cluster_upper",
+      "start": 16,
+      "end": 20
+    }
+  ],
+  "ranges": {
+    "closed_stack": [
+      [
+        0,
+        4
+      ]
+    ],
+    "drop2": [
+      [
+        4,
+        8
+      ]
+    ],
+    "shell_37": [
+      [
+        8,
+        12
+      ]
+    ],
+    "spread_tenth": [
+      [
+        12,
+        16
+      ]
+    ],
+    "cluster_upper": [
+      [
+        16,
+        20
+      ]
+    ]
+  },
+  "sections": {
+    "closed_stack": {
+      "role": null,
+      "bars": 4,
+      "must": null,
+      "contrasts_with": null,
+      "resolves": null,
+      "recalls": null,
+      "sets_up": null,
+      "withhold": [],
+      "harmony": [
+        "Cm9",
+        "Ab^7",
+        "Fm7",
+        "G7"
+      ],
+      "ranges": [
+        [
+          0,
+          4
+        ]
+      ],
+      "cadence": null
+    },
+    "drop2": {
+      "role": null,
+      "bars": 4,
+      "must": null,
+      "contrasts_with": null,
+      "resolves": null,
+      "recalls": null,
+      "sets_up": null,
+      "withhold": [],
+      "harmony": [
+        "Cm9",
+        "Ab^7",
+        "Fm7",
+        "G7"
+      ],
+      "ranges": [
+        [
+          4,
+          8
+        ]
+      ],
+      "cadence": null
+    },
+    "shell_37": {
+      "role": null,
+      "bars": 4,
+      "must": null,
+      "contrasts_with": null,
+      "resolves": null,
+      "recalls": null,
+      "sets_up": null,
+      "withhold": [],
+      "harmony": [
+        "Cm9",
+        "Ab^7",
+        "Fm7",
+        "G7"
+      ],
+      "ranges": [
+        [
+          8,
+          12
+        ]
+      ],
+      "cadence": null
+    },
+    "spread_tenth": {
+      "role": null,
+      "bars": 4,
+      "must": null,
+      "contrasts_with": null,
+      "resolves": null,
+      "recalls": null,
+      "sets_up": null,
+      "withhold": [],
+      "harmony": [
+        "Cm9",
+        "Ab^7",
+        "Fm7",
+        "G7"
+      ],
+      "ranges": [
+        [
+          12,
+          16
+        ]
+      ],
+      "cadence": null
+    },
+    "cluster_upper": {
+      "role": null,
+      "bars": 4,
+      "must": null,
+      "contrasts_with": null,
+      "resolves": null,
+      "recalls": null,
+      "sets_up": null,
+      "withhold": [],
+      "harmony": [
+        "Cm9",
+        "Ab^7",
+        "Fm7",
+        "G7"
+      ],
+      "ranges": [
+        [
+          16,
+          20
+        ]
+      ],
+      "cadence": null
+    }
+  },
+  "harmonyBinding": "chords",
+  "bindings": {
+    "harmony_closed_stack": {
+      "label": "chords",
+      "sections": [
+        "closed_stack"
+      ],
+      "kind": "harmony"
+    },
+    "harmony_drop2": {
+      "label": "chords",
+      "sections": [
+        "drop2"
+      ],
+      "kind": "harmony"
+    },
+    "harmony_shell_37": {
+      "label": "chords",
+      "sections": [
+        "shell_37"
+      ],
+      "kind": "harmony"
+    },
+    "harmony_spread_tenth": {
+      "label": "chords",
+      "sections": [
+        "spread_tenth"
+      ],
+      "kind": "harmony"
+    },
+    "harmony_cluster_upper": {
+      "label": "chords",
+      "sections": [
+        "cluster_upper"
+      ],
+      "kind": "harmony"
+    },
+    "chords": {
+      "label": "(harmony timeline)",
+      "sections": [
+        "closed_stack",
+        "drop2",
+        "shell_37",
+        "spread_tenth",
+        "cluster_upper"
+      ],
+      "kind": "harmony-combined"
+    },
+    "pads_closed_stack": {
+      "label": "pads",
+      "sections": [
+        "closed_stack"
+      ],
+      "kind": "free",
+      "period": 1
+    },
+    "pads_drop2": {
+      "label": "pads",
+      "sections": [
+        "drop2"
+      ],
+      "kind": "free",
+      "period": 1
+    },
+    "pads_shell_37": {
+      "label": "pads",
+      "sections": [
+        "shell_37"
+      ],
+      "kind": "free",
+      "period": 1
+    },
+    "pads_spread_tenth": {
+      "label": "pads",
+      "sections": [
+        "spread_tenth"
+      ],
+      "kind": "free",
+      "period": 1
+    },
+    "pads_cluster_upper": {
+      "label": "pads",
+      "sections": [
+        "cluster_upper"
+      ],
+      "kind": "free",
+      "period": 1
+    }
+  },
+  "labels": {
+    "pads": {
+      "sections": [
+        "closed_stack",
+        "drop2",
+        "shell_37",
+        "spread_tenth",
+        "cluster_upper"
+      ],
+      "bindings": {
+        "closed_stack": "pads_closed_stack",
+        "drop2": "pads_drop2",
+        "shell_37": "pads_shell_37",
+        "spread_tenth": "pads_spread_tenth",
+        "cluster_upper": "pads_cluster_upper"
+      }
+    }
+  },
+  "motifPlacements": [],
+  "styles": null,
+  "orbits": {
+    "pads": 2
+  },
+  "voicingShapes": [
+    "closed_stack",
+    "cluster_upper",
+    "drop2",
+    "shell_37",
+    "spread_tenth"
+  ]
+}

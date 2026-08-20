@@ -15,10 +15,10 @@ export const VOICINGS = {
   drop2: {
     range: ['C3', 'C6'],
     shapes: {
-      '': '-5 0 4', m: '-5 0 3', 7: '-2 0 4 10', '^7': '-1 0 4 11',
-      m7: '-2 0 3 10', m9: '-2 0 3 10 14', 6: '-3 0 4 9', sus4: '-5 0 5', dim: '-6 0 3', o: '-6 0 3 9',
+      '': '-5 0 4', m: '-5 0 3', 7: '-5 0 4 10', '^7': '-5 0 4 11',
+      m7: '-5 0 3 10', m9: '-5 0 3 10 14', 6: '-5 0 4 9', sus4: '-5 0 5', dim: '-9 0 6', o: '-9 0 6 9',
     },
-    character: 'Second-from-top dropped an octave — the jazz piano warmth trick. Wider without mud.',
+    character: 'True drop-2: the FIFTH (second-from-top of the close core) dropped an octave — jazz warmth, solid bass note. Audition r1 caught the old shapes dropping the 7th, which put the leading tone / b7 a step under the root.',
   },
   shell_37: {
     range: ['C3', 'C5'],
@@ -28,14 +28,7 @@ export const VOICINGS = {
     },
     character: 'Rootless 3-and-7 shells (+9 on ninths). Lo-fi Rhodes language — the bass owns the root, stay out of its way.',
   },
-  quartal_9: {
-    range: ['C3', 'C6'],
-    shapes: {
-      '': '0 7 14', m: '0 5 12', 7: '4 9 14', '^7': '4 9 14',
-      m7: '0 5 10 15', m9: '2 7 12 17', 6: '2 7 12', sus4: '0 5 12', dim: '0 3 6', o: '0 3 6 9',
-    },
-    character: 'Stacked fourths (So What language): m7 gets root-4th-7th-3rd, m9 pure fourths off the 9th, dominants fourths off the 3rd. Modal, diatonic, melts genre.',
-  },
+  // quartal_9 and power_sus REMOVED — killed by ear in audition r1 (2026-08-19).
   spread_tenth: {
     range: ['C2', 'C6'],
     shapes: {
@@ -43,14 +36,6 @@ export const VOICINGS = {
       m7: '0 10 15', m9: '0 10 15 26', 6: '0 9 16', sus4: '0 7 17', dim: '0 6 15', o: '0 6 15',
     },
     character: 'Root, 7th/5th, 10th — wide open spread. Cinematic pads; leaves a canyon for the lead.',
-  },
-  power_sus: {
-    range: ['C3', 'C6'],
-    shapes: {
-      '': '0 7 12', m: '0 7 12', 7: '0 7 12 17', '^7': '0 7 12 17',
-      m7: '0 7 12 17', m9: '0 7 14 19', 6: '0 7 12', sus4: '0 5 12', dim: '0 6 12', o: '0 6 12',
-    },
-    character: 'Roots, fifths, octaves (+sus color on 7ths). Thirdless trance/supersaw fuel — huge and neutral.',
   },
   cluster_upper: {
     range: ['C4', 'C6'],

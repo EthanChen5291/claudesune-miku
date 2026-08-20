@@ -35,7 +35,9 @@ check('binder: harmonic snapping, accents→gain, swing, complement scoring',
 // 3. Library counts (≥12 rhythms, ≥10 contours, ≥6 voicings, ≥4 interlocks, ≥6 transitions)
 check(`rhythms ≥12 with real accent profiles (${Object.keys(RHYTHMS).length})`, Object.keys(RHYTHMS).length >= 12, 'src/lib/rhythms.js');
 check(`contours ≥10 (${Object.keys(CONTOURS).length})`, Object.keys(CONTOURS).length >= 10, 'src/lib/contours.js');
-check(`voicing shapes ≥6 (${Object.keys(VOICINGS).length})`, Object.keys(VOICINGS).length >= 6, 'src/lib/voicings.js');
+// seed target was ≥6; quartal_9 + power_sus were KILLED by ear in audition r1
+// (2026-08-19) — the count now tracks Ethan's verdicts, not seed inflation
+check(`voicing shapes ≥5 after audition r1 kills (${Object.keys(VOICINGS).length})`, Object.keys(VOICINGS).length >= 5, 'src/lib/voicings.js');
 check(`interlock pairs ≥4 (${INTERLOCKS.length})`, INTERLOCKS.length >= 4, 'src/lib/interlocks.js');
 check(`transitions ≥6 (${Object.keys(TRANSITIONS).length})`, Object.keys(TRANSITIONS).length >= 6, 'src/lib/transitions.js');
 const documented = Object.values(RHYTHMS).every((r) => r.character?.length > 20)

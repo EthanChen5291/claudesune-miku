@@ -1,0 +1,80 @@
+// ============ contours ============
+// compiled by motif-engine (seed 1) — edit map in the song's meta.json
+// form: arch_classic rise_anthem fall_sigh zigzag_narrow pendulum_fifth spiral_up hook_drop valley bass_root_five dorian_lift minimal_dyad question_answer | 4/4 | 112 bpm | key C:dorian
+setcpm(112/4)
+
+let key = "C:dorian"
+
+// ---- form masks (compiled from form: arch_classic rise_anthem fall_sigh zigzag_narrow pendulum_fifth spiral_up hook_drop valley bass_root_five dorian_lift minimal_dyad question_answer; edit the SPEC, not these) ----
+let form = {
+  arch_classic: "<1!2 0!22>",
+  rise_anthem: "<0!2 1!2 0!20>",
+  fall_sigh: "<0!4 1!2 0!18>",
+  zigzag_narrow: "<0!6 1!2 0!16>",
+  pendulum_fifth: "<0!8 1!2 0!14>",
+  spiral_up: "<0!10 1!2 0!12>",
+  hook_drop: "<0!12 1!2 0!10>",
+  valley: "<0!14 1!2 0!8>",
+  bass_root_five: "<0!16 1!2 0!6>",
+  dorian_lift: "<0!18 1!2 0!4>",
+  minimal_dyad: "<0!20 1!2 0!2>",
+  question_answer: "<0!22 1!2>",
+}
+
+// ---- harmony ----
+let harmony_arch_classic = chord("<Cm7>/2").dict('ireal')
+let harmony_rise_anthem = chord("<Cm7>/2").dict('ireal')
+let harmony_fall_sigh = chord("<Cm7>/2").dict('ireal')
+let harmony_zigzag_narrow = chord("<Cm7>/2").dict('ireal')
+let harmony_pendulum_fifth = chord("<Cm7>/2").dict('ireal')
+let harmony_spiral_up = chord("<Cm7>/2").dict('ireal')
+let harmony_hook_drop = chord("<Cm7>/2").dict('ireal')
+let harmony_valley = chord("<Cm7>/2").dict('ireal')
+let harmony_bass_root_five = chord("<Cm7>/2").dict('ireal')
+let harmony_dorian_lift = chord("<Cm7>/2").dict('ireal')
+let harmony_minimal_dyad = chord("<Cm7>/2").dict('ireal')
+let harmony_question_answer = chord("<Cm7>/2").dict('ireal')
+let chords = stack(
+  harmony_arch_classic.mask(form.arch_classic),
+  harmony_rise_anthem.mask(form.rise_anthem),
+  harmony_fall_sigh.mask(form.fall_sigh),
+  harmony_zigzag_narrow.mask(form.zigzag_narrow),
+  harmony_pendulum_fifth.mask(form.pendulum_fifth),
+  harmony_spiral_up.mask(form.spiral_up),
+  harmony_hook_drop.mask(form.hook_drop),
+  harmony_valley.mask(form.valley),
+  harmony_bass_root_five.mask(form.bass_root_five),
+  harmony_dorian_lift.mask(form.dorian_lift),
+  harmony_minimal_dyad.mask(form.minimal_dyad),
+  harmony_question_answer.mask(form.question_answer),
+)
+
+// ---- material: lead ----
+let lead_arch_classic = note("<[C5 Eb5 G5 A5 G5 Eb5 C5] [C5 Eb5 G5 A5 G5 Eb5 C5]>").s("triangle").gain("0.792 0.675 0.74 0.675 0.74 0.675 0.74").room(0.15).orbit(6)
+let lead_rise_anthem = note("<[C5 Eb5 F5 G5 A5 C6] [C5 Eb5 F5 G5 A5 C6]>").s("triangle").gain("0.792 0.675 0.74 0.675 0.74 0.675").room(0.15).orbit(6)
+let lead_fall_sigh = note("<[C6 Ab5 G5 Eb5 D5 C5] [C6 Ab5 G5 Eb5 D5 C5]>").s("triangle").gain("0.792 0.675 0.74 0.675 0.74 0.675").room(0.15).orbit(6)
+let lead_zigzag_narrow = note("<[C5 Eb5 D5 F5 Eb5 G5] [C5 Eb5 D5 F5 Eb5 G5]>").s("triangle").gain("0.792 0.675 0.74 0.675 0.74 0.675").room(0.15).orbit(6)
+let lead_pendulum_fifth = note("<[C5 G5 C5 G5 Eb5 C5] [C5 G5 C5 G5 Eb5 C5]>").s("triangle").gain("0.792 0.675 0.74 0.675 0.74 0.675").room(0.15).orbit(6)
+let lead_spiral_up = note("<[C5 F5 D5 G5 F5 Bb5 A5 C6] [C5 F5 D5 G5 F5 Bb5 A5 C6]>").s("triangle").gain("0.792 0.675 0.74 0.675 0.74 0.675 0.74 0.675").room(0.15).orbit(6)
+let lead_hook_drop = note("<[C6 C6 C6 G5 A5 G5 Eb5 C5] [C6 C6 C6 G5 A5 G5 Eb5 C5]>").s("triangle").gain("0.792 0.675 0.74 0.675 0.74 0.675 0.74 0.675").room(0.15).orbit(6)
+let lead_valley = note("<[G5 Eb5 C5 C5 Eb5 G5] [G5 Eb5 C5 C5 Eb5 G5]>").s("triangle").gain("0.792 0.675 0.74 0.675 0.74 0.675").room(0.15).orbit(6)
+let lead_bass_root_five = note("<[C5 C5 G5 C5] [C5 C5 G5 C5]>").s("triangle").gain("0.792 0.675 0.74 0.675").room(0.15).orbit(6)
+let lead_dorian_lift = note("<[C5 Eb5 F5 G5 A5 G5 Eb5 C5] [C5 Eb5 F5 G5 A5 G5 Eb5 C5]>").s("triangle").gain("0.792 0.675 0.74 0.675 0.74 0.675 0.74 0.675").room(0.15).orbit(6)
+let lead_minimal_dyad = note("<[C5 F5 C5 F5] [C5 F5 C5 F5]>").s("triangle").gain("0.792 0.675 0.74 0.675").room(0.15).orbit(6)
+let lead_question_answer = note("<[C5 Eb5 G5 Eb5 G5 A5 G5 C5] [C5 Eb5 G5 Eb5 G5 A5 G5 C5]>").s("triangle").gain("0.792 0.675 0.74 0.675 0.74 0.675 0.74 0.675").room(0.15).orbit(6)
+
+// ---- layers ----
+lead: stack(
+  lead_arch_classic.mask(form.arch_classic),
+  lead_rise_anthem.mask(form.rise_anthem),
+  lead_fall_sigh.mask(form.fall_sigh),
+  lead_zigzag_narrow.mask(form.zigzag_narrow),
+  lead_pendulum_fifth.mask(form.pendulum_fifth),
+  lead_spiral_up.mask(form.spiral_up),
+  lead_hook_drop.mask(form.hook_drop),
+  lead_valley.mask(form.valley),
+  lead_bass_root_five.mask(form.bass_root_five),
+  lead_dorian_lift.mask(form.dorian_lift),
+  lead_minimal_dyad.mask(form.minimal_dyad),
+  lead_question_answer.mask(form.question_answer),
+)
