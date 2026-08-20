@@ -192,3 +192,17 @@ should keep/kill them like any extracted candidate.
 B0/B1 were generated against the base doc's prompts before the addendum arrived
 (by design — they're the counterfactual). The AFTER arm runs on the amended engine.
 The addendum does not change any eval case prompt.
+
+## D23. Adjudication from the design session (relayed; Ethan can veto)
+1. `edit --file` stays as a gated escape hatch, BUT hand-editing a spec-backed song now
+   marks it DIVERGED (state.json): recompile-from-spec is refused until `--reconciled`
+   asserts the spec was updated to match. Silent spec drift — the real A1.1 hazard —
+   is now mechanically impossible. `generate` also refuses to overwrite an existing
+   song's history.
+2. Eval ordering confirmed: finish the eval on the engine as-is, THEN binder revoicing,
+   THEN vertical-interlock flips WARN→FAIL. §8's open question resolved by the design
+   session: HARD = §4 universal vertical rules + tension-table Avoid column (satisfied
+   by revoice/octave-displacement, never dropped notes); SOFT = horizontal tables as
+   seeded sampling weights.
+3. Library entries additionally marked `ratified: false`; the eval narrative must state
+   the engine arm ran on unratified scaffolding entries (A6.1 non-circularity).

@@ -1,0 +1,817 @@
+{
+  "generated": "eval/score.js",
+  "arms": {
+    "b0": {
+      "replicates": 12,
+      "v0EvalOk": "12/12",
+      "versionsComplete": "12/12",
+      "editsScored": 27,
+      "editsMissingOrUneval": 0,
+      "contained": 12,
+      "leaks": 11,
+      "noops": 4,
+      "aspectViolations": 3,
+      "effectAchieved": 18,
+      "effectFailed": 9,
+      "meanMinimality": 0.6925,
+      "meanDrumVelVariance": 0.0336
+    }
+  },
+  "detail": [
+    {
+      "arm": "b0",
+      "case": "C1",
+      "rep": 1,
+      "versions": 4,
+      "expectedVersions": 4,
+      "v0": {
+        "evalOk": true,
+        "error": null,
+        "streamCount": 10,
+        "drumVelVariance": 0.0273,
+        "meterOffgrid": null
+      },
+      "edits": [
+        {
+          "edit": "E1",
+          "prompt": "Make the hats busier. Only the hats — nothing else may change.",
+          "status": "scored",
+          "changedStreams": [
+            "track1:hat"
+          ],
+          "leaks": [],
+          "contained": true,
+          "noop": false,
+          "aspectViolations": [],
+          "minimality": 0.5477,
+          "effect": {
+            "metric": "hat density/bar",
+            "before": 11.3125,
+            "after": 15.0625,
+            "achieved": true
+          }
+        },
+        {
+          "edit": "E2",
+          "prompt": "The chorus should lift more — push its melodic register higher and make it denser. The verse (A sections) must not change at all.",
+          "status": "scored",
+          "changedStreams": [
+            "track4",
+            "track5",
+            "track6"
+          ],
+          "leaks": [
+            "track4",
+            "track5",
+            "track6"
+          ],
+          "contained": false,
+          "noop": false,
+          "aspectViolations": [],
+          "minimality": null,
+          "effect": {
+            "metric": "lead register max",
+            "before": null,
+            "after": null,
+            "achieved": false,
+            "extra": {
+              "metric": "lead density/bar",
+              "before": 0,
+              "after": 0,
+              "achieved": false
+            }
+          }
+        },
+        {
+          "edit": "E3",
+          "prompt": "Swap the bass sound to something darker. The bass notes and rhythm must not change — sound/timbre only.",
+          "status": "scored",
+          "changedStreams": [],
+          "leaks": [],
+          "contained": false,
+          "noop": true,
+          "aspectViolations": [],
+          "minimality": null,
+          "effect": {
+            "metric": "bass sound changed",
+            "before": null,
+            "after": null,
+            "achieved": true,
+            "note": "wav differs"
+          }
+        }
+      ]
+    },
+    {
+      "arm": "b0",
+      "case": "C1",
+      "rep": 2,
+      "versions": 4,
+      "expectedVersions": 4,
+      "v0": {
+        "evalOk": true,
+        "error": null,
+        "streamCount": 11,
+        "drumVelVariance": 0.0265,
+        "meterOffgrid": null
+      },
+      "edits": [
+        {
+          "edit": "E1",
+          "prompt": "Make the hats busier. Only the hats — nothing else may change.",
+          "status": "scored",
+          "changedStreams": [
+            "track1:hat"
+          ],
+          "leaks": [],
+          "contained": true,
+          "noop": false,
+          "aspectViolations": [],
+          "minimality": 0.2113,
+          "effect": {
+            "metric": "hat density/bar",
+            "before": 14,
+            "after": 17.75,
+            "achieved": true
+          }
+        },
+        {
+          "edit": "E2",
+          "prompt": "The chorus should lift more — push its melodic register higher and make it denser. The verse (A sections) must not change at all.",
+          "status": "scored",
+          "changedStreams": [
+            "track5"
+          ],
+          "leaks": [
+            "track5"
+          ],
+          "contained": false,
+          "noop": false,
+          "aspectViolations": [],
+          "minimality": null,
+          "effect": {
+            "metric": "lead register max",
+            "before": null,
+            "after": null,
+            "achieved": false,
+            "extra": {
+              "metric": "lead density/bar",
+              "before": 0,
+              "after": 0,
+              "achieved": false
+            }
+          }
+        },
+        {
+          "edit": "E3",
+          "prompt": "Swap the bass sound to something darker. The bass notes and rhythm must not change — sound/timbre only.",
+          "status": "scored",
+          "changedStreams": [],
+          "leaks": [],
+          "contained": false,
+          "noop": true,
+          "aspectViolations": [],
+          "minimality": null,
+          "effect": {
+            "metric": "bass sound changed",
+            "before": null,
+            "after": null,
+            "achieved": true,
+            "note": "wav differs"
+          }
+        }
+      ]
+    },
+    {
+      "arm": "b0",
+      "case": "C1",
+      "rep": 3,
+      "versions": 4,
+      "expectedVersions": 4,
+      "v0": {
+        "evalOk": true,
+        "error": null,
+        "streamCount": 11,
+        "drumVelVariance": 0.0777,
+        "meterOffgrid": null
+      },
+      "edits": [
+        {
+          "edit": "E1",
+          "prompt": "Make the hats busier. Only the hats — nothing else may change.",
+          "status": "scored",
+          "changedStreams": [
+            "track1:hat"
+          ],
+          "leaks": [],
+          "contained": true,
+          "noop": false,
+          "aspectViolations": [],
+          "minimality": 0.75,
+          "effect": {
+            "metric": "hat density/bar",
+            "before": 8,
+            "after": 16,
+            "achieved": true
+          }
+        },
+        {
+          "edit": "E2",
+          "prompt": "The chorus should lift more — push its melodic register higher and make it denser. The verse (A sections) must not change at all.",
+          "status": "scored",
+          "changedStreams": [
+            "track3",
+            "track4",
+            "track5",
+            "track6"
+          ],
+          "leaks": [
+            "track3",
+            "track4",
+            "track5",
+            "track6"
+          ],
+          "contained": false,
+          "noop": false,
+          "aspectViolations": [],
+          "minimality": null,
+          "effect": {
+            "metric": "lead register max",
+            "before": null,
+            "after": null,
+            "achieved": false,
+            "extra": {
+              "metric": "lead density/bar",
+              "before": 0,
+              "after": 0,
+              "achieved": false
+            }
+          }
+        },
+        {
+          "edit": "E3",
+          "prompt": "Swap the bass sound to something darker. The bass notes and rhythm must not change — sound/timbre only.",
+          "status": "scored",
+          "changedStreams": [],
+          "leaks": [],
+          "contained": false,
+          "noop": true,
+          "aspectViolations": [],
+          "minimality": null,
+          "effect": {
+            "metric": "bass sound changed",
+            "before": null,
+            "after": null,
+            "achieved": true,
+            "note": "wav differs"
+          }
+        }
+      ]
+    },
+    {
+      "arm": "b0",
+      "case": "C2",
+      "rep": 1,
+      "versions": 3,
+      "expectedVersions": 3,
+      "v0": {
+        "evalOk": true,
+        "error": null,
+        "streamCount": 7,
+        "drumVelVariance": 0.0318,
+        "meterOffgrid": 0.0785
+      },
+      "edits": [
+        {
+          "edit": "E1",
+          "prompt": "Add a swing/shuffle feel to the hats only. Nothing else may change.",
+          "status": "scored",
+          "changedStreams": [
+            "drums:hat"
+          ],
+          "leaks": [],
+          "contained": true,
+          "noop": false,
+          "aspectViolations": [],
+          "minimality": 0.4303,
+          "effect": {
+            "metric": "hat offgrid (grid 7)",
+            "before": 0,
+            "after": 0.4303,
+            "achieved": true
+          }
+        },
+        {
+          "edit": "E2",
+          "prompt": "Make the lead melody sparser, but only in the A sections. B and C must not change.",
+          "status": "scored",
+          "changedStreams": [],
+          "leaks": [],
+          "contained": false,
+          "noop": true,
+          "aspectViolations": [],
+          "minimality": null,
+          "effect": {
+            "metric": "lead density/bar",
+            "before": 0,
+            "after": 0,
+            "achieved": false
+          }
+        }
+      ]
+    },
+    {
+      "arm": "b0",
+      "case": "C2",
+      "rep": 2,
+      "versions": 3,
+      "expectedVersions": 3,
+      "v0": {
+        "evalOk": true,
+        "error": null,
+        "streamCount": 8,
+        "drumVelVariance": 0.0234,
+        "meterOffgrid": 0.065
+      },
+      "edits": [
+        {
+          "edit": "E1",
+          "prompt": "Add a swing/shuffle feel to the hats only. Nothing else may change.",
+          "status": "scored",
+          "changedStreams": [
+            "track4:hat"
+          ],
+          "leaks": [],
+          "contained": true,
+          "noop": false,
+          "aspectViolations": [],
+          "minimality": 0.4286,
+          "effect": {
+            "metric": "hat offgrid (grid 7)",
+            "before": 0,
+            "after": 0.4286,
+            "achieved": true
+          }
+        },
+        {
+          "edit": "E2",
+          "prompt": "Make the lead melody sparser, but only in the A sections. B and C must not change.",
+          "status": "scored",
+          "changedStreams": [
+            "track3"
+          ],
+          "leaks": [
+            "track3"
+          ],
+          "contained": false,
+          "noop": false,
+          "aspectViolations": [
+            "track3: gain"
+          ],
+          "minimality": null,
+          "effect": {
+            "metric": "lead density/bar",
+            "before": 0,
+            "after": 0,
+            "achieved": false
+          }
+        }
+      ]
+    },
+    {
+      "arm": "b0",
+      "case": "C2",
+      "rep": 3,
+      "versions": 3,
+      "expectedVersions": 3,
+      "v0": {
+        "evalOk": true,
+        "error": null,
+        "streamCount": 8,
+        "drumVelVariance": 0.0373,
+        "meterOffgrid": 0.3819
+      },
+      "edits": [
+        {
+          "edit": "E1",
+          "prompt": "Add a swing/shuffle feel to the hats only. Nothing else may change.",
+          "status": "scored",
+          "changedStreams": [
+            "track5:hat"
+          ],
+          "leaks": [],
+          "contained": true,
+          "noop": false,
+          "aspectViolations": [],
+          "minimality": 0.4483,
+          "effect": {
+            "metric": "hat offgrid (grid 7)",
+            "before": 0,
+            "after": 0.4483,
+            "achieved": true
+          }
+        },
+        {
+          "edit": "E2",
+          "prompt": "Make the lead melody sparser, but only in the A sections. B and C must not change.",
+          "status": "scored",
+          "changedStreams": [
+            "track4"
+          ],
+          "leaks": [
+            "track4"
+          ],
+          "contained": false,
+          "noop": false,
+          "aspectViolations": [
+            "track4: gain"
+          ],
+          "minimality": null,
+          "effect": {
+            "metric": "lead density/bar",
+            "before": 0,
+            "after": 0,
+            "achieved": false
+          }
+        }
+      ]
+    },
+    {
+      "arm": "b0",
+      "case": "C3",
+      "rep": 1,
+      "versions": 3,
+      "expectedVersions": 3,
+      "v0": {
+        "evalOk": true,
+        "error": null,
+        "streamCount": 6,
+        "drumVelVariance": 0,
+        "meterOffgrid": null
+      },
+      "edits": [
+        {
+          "edit": "E1",
+          "prompt": "Halve the harmonic rhythm — the chords should change half as often. Nothing else changes.",
+          "status": "scored",
+          "changedStreams": [
+            "electric_piano",
+            "upright_bass"
+          ],
+          "leaks": [
+            "upright_bass"
+          ],
+          "contained": false,
+          "noop": false,
+          "aspectViolations": [],
+          "minimality": 0.6719,
+          "effect": {
+            "metric": "harmonic changes/bar",
+            "before": 7.8125,
+            "after": 7.9375,
+            "achieved": false
+          }
+        },
+        {
+          "edit": "E2",
+          "prompt": "Give the drums a velocity contour — accents and ghost notes instead of uniform hits. Timing and which drums hit must not change.",
+          "status": "scored",
+          "changedStreams": [
+            "drums:kick",
+            "drums:hat",
+            "drums:snare"
+          ],
+          "leaks": [],
+          "contained": true,
+          "noop": false,
+          "aspectViolations": [],
+          "minimality": 1,
+          "effect": {
+            "metric": "drum vel variance",
+            "before": 0,
+            "after": 0.0268,
+            "achieved": true
+          }
+        }
+      ]
+    },
+    {
+      "arm": "b0",
+      "case": "C3",
+      "rep": 2,
+      "versions": 3,
+      "expectedVersions": 3,
+      "v0": {
+        "evalOk": true,
+        "error": null,
+        "streamCount": 6,
+        "drumVelVariance": 0.0065,
+        "meterOffgrid": null
+      },
+      "edits": [
+        {
+          "edit": "E1",
+          "prompt": "Halve the harmonic rhythm — the chords should change half as often. Nothing else changes.",
+          "status": "scored",
+          "changedStreams": [
+            "e_piano_chords",
+            "bass"
+          ],
+          "leaks": [
+            "bass"
+          ],
+          "contained": false,
+          "noop": false,
+          "aspectViolations": [],
+          "minimality": 0.4506,
+          "effect": {
+            "metric": "harmonic changes/bar",
+            "before": 1.0313,
+            "after": 0.5313,
+            "achieved": true
+          }
+        },
+        {
+          "edit": "E2",
+          "prompt": "Give the drums a velocity contour — accents and ghost notes instead of uniform hits. Timing and which drums hit must not change.",
+          "status": "scored",
+          "changedStreams": [
+            "drums:kick",
+            "drums:hat",
+            "drums:snare"
+          ],
+          "leaks": [],
+          "contained": true,
+          "noop": false,
+          "aspectViolations": [],
+          "minimality": 1,
+          "effect": {
+            "metric": "drum vel variance",
+            "before": 0.0065,
+            "after": 0.0352,
+            "achieved": true
+          }
+        }
+      ]
+    },
+    {
+      "arm": "b0",
+      "case": "C3",
+      "rep": 3,
+      "versions": 3,
+      "expectedVersions": 3,
+      "v0": {
+        "evalOk": true,
+        "error": null,
+        "streamCount": 6,
+        "drumVelVariance": 0.0175,
+        "meterOffgrid": null
+      },
+      "edits": [
+        {
+          "edit": "E1",
+          "prompt": "Halve the harmonic rhythm — the chords should change half as often. Nothing else changes.",
+          "status": "scored",
+          "changedStreams": [
+            "ep_chords",
+            "bass"
+          ],
+          "leaks": [
+            "bass"
+          ],
+          "contained": false,
+          "noop": false,
+          "aspectViolations": [
+            "ep_chords: gain"
+          ],
+          "minimality": 0.37,
+          "effect": {
+            "metric": "harmonic changes/bar",
+            "before": 1.6563,
+            "after": 0.8438,
+            "achieved": true
+          }
+        },
+        {
+          "edit": "E2",
+          "prompt": "Give the drums a velocity contour — accents and ghost notes instead of uniform hits. Timing and which drums hit must not change.",
+          "status": "scored",
+          "changedStreams": [
+            "drums:kick",
+            "drums:hat",
+            "drums:snare"
+          ],
+          "leaks": [],
+          "contained": true,
+          "noop": false,
+          "aspectViolations": [],
+          "minimality": 1,
+          "effect": {
+            "metric": "drum vel variance",
+            "before": 0.0175,
+            "after": 0.0355,
+            "achieved": true
+          }
+        }
+      ]
+    },
+    {
+      "arm": "b0",
+      "case": "C4",
+      "rep": 1,
+      "versions": 3,
+      "expectedVersions": 3,
+      "v0": {
+        "evalOk": true,
+        "error": null,
+        "streamCount": 12,
+        "drumVelVariance": 0.039,
+        "meterOffgrid": null
+      },
+      "edits": [
+        {
+          "edit": "E1",
+          "prompt": "Make the transition into the final chorus bigger — a longer riser and a drum fill. Only transition material may change.",
+          "status": "scored",
+          "changedStreams": [
+            "drums:kick",
+            "drums:cymbal",
+            "drums:hat",
+            "drums:snare",
+            "riser",
+            "drums:tom"
+          ],
+          "leaks": [
+            "drums:kick",
+            "drums:cymbal",
+            "drums:hat",
+            "drums:snare"
+          ],
+          "contained": false,
+          "noop": false,
+          "aspectViolations": [],
+          "minimality": 1,
+          "effect": {
+            "metric": "transition onsets/bar",
+            "before": 0.0313,
+            "after": 0.0313,
+            "achieved": false
+          }
+        },
+        {
+          "edit": "E2",
+          "prompt": "Change the key from A minor to B minor. All rhythms, contours, and sounds stay exactly the same — pitch transposition only.",
+          "status": "scored",
+          "changedStreams": [
+            "bass",
+            "arp",
+            "lead",
+            "pads",
+            "softlead",
+            "sub",
+            "riser"
+          ],
+          "leaks": [],
+          "contained": true,
+          "noop": false,
+          "aspectViolations": [],
+          "minimality": 1,
+          "effect": {
+            "metric": "transposed +2 fraction",
+            "before": null,
+            "after": 1,
+            "achieved": true,
+            "note": "1382 paired pitches"
+          }
+        }
+      ]
+    },
+    {
+      "arm": "b0",
+      "case": "C4",
+      "rep": 2,
+      "versions": 3,
+      "expectedVersions": 3,
+      "v0": {
+        "evalOk": true,
+        "error": null,
+        "streamCount": 10,
+        "drumVelVariance": 0.0827,
+        "meterOffgrid": null
+      },
+      "edits": [
+        {
+          "edit": "E1",
+          "prompt": "Make the transition into the final chorus bigger — a longer riser and a drum fill. Only transition material may change.",
+          "status": "scored",
+          "changedStreams": [
+            "riser_fx",
+            "drums:snare"
+          ],
+          "leaks": [
+            "drums:snare"
+          ],
+          "contained": false,
+          "noop": false,
+          "aspectViolations": [],
+          "minimality": 0.6563,
+          "effect": {
+            "metric": "transition onsets/bar",
+            "before": 1,
+            "after": 1.5,
+            "achieved": true
+          }
+        },
+        {
+          "edit": "E2",
+          "prompt": "Change the key from A minor to B minor. All rhythms, contours, and sounds stay exactly the same — pitch transposition only.",
+          "status": "scored",
+          "changedStreams": [
+            "pads",
+            "bass",
+            "lead",
+            "pluck_arp",
+            "riser_fx"
+          ],
+          "leaks": [],
+          "contained": true,
+          "noop": false,
+          "aspectViolations": [],
+          "minimality": 1,
+          "effect": {
+            "metric": "transposed +2 fraction",
+            "before": null,
+            "after": 1,
+            "achieved": true,
+            "note": "1841 paired pitches"
+          }
+        }
+      ]
+    },
+    {
+      "arm": "b0",
+      "case": "C4",
+      "rep": 3,
+      "versions": 3,
+      "expectedVersions": 3,
+      "v0": {
+        "evalOk": true,
+        "error": null,
+        "streamCount": 11,
+        "drumVelVariance": 0.0337,
+        "meterOffgrid": null
+      },
+      "edits": [
+        {
+          "edit": "E1",
+          "prompt": "Make the transition into the final chorus bigger — a longer riser and a drum fill. Only transition material may change.",
+          "status": "scored",
+          "changedStreams": [
+            "drums:kick",
+            "drums:snare",
+            "riser_fx"
+          ],
+          "leaks": [
+            "drums:kick",
+            "drums:snare"
+          ],
+          "contained": false,
+          "noop": false,
+          "aspectViolations": [],
+          "minimality": 0.5,
+          "effect": {
+            "metric": "transition onsets/bar",
+            "before": 0.0313,
+            "after": 0.0313,
+            "achieved": false
+          }
+        },
+        {
+          "edit": "E2",
+          "prompt": "Change the key from A minor to B minor. All rhythms, contours, and sounds stay exactly the same — pitch transposition only.",
+          "status": "scored",
+          "changedStreams": [
+            "bass",
+            "pluck",
+            "arp",
+            "lead",
+            "pad",
+            "riser_fx"
+          ],
+          "leaks": [],
+          "contained": true,
+          "noop": false,
+          "aspectViolations": [],
+          "minimality": 1,
+          "effect": {
+            "metric": "transposed +2 fraction",
+            "before": null,
+            "after": 1,
+            "achieved": true,
+            "note": "2247 paired pitches"
+          }
+        }
+      ]
+    }
+  ]
+}

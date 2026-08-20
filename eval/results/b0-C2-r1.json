@@ -1,0 +1,52 @@
+{
+  "arm": "b0",
+  "case": "C2",
+  "rep": 1,
+  "versions": 3,
+  "expectedVersions": 3,
+  "v0": {
+    "evalOk": true,
+    "error": null,
+    "streamCount": 7,
+    "drumVelVariance": 0.0318,
+    "meterOffgrid": 0.0785
+  },
+  "edits": [
+    {
+      "edit": "E1",
+      "prompt": "Add a swing/shuffle feel to the hats only. Nothing else may change.",
+      "status": "scored",
+      "changedStreams": [
+        "drums:hat"
+      ],
+      "leaks": [],
+      "contained": true,
+      "noop": false,
+      "aspectViolations": [],
+      "minimality": 0.4303,
+      "effect": {
+        "metric": "hat offgrid (grid 7)",
+        "before": 0,
+        "after": 0.4303,
+        "achieved": true
+      }
+    },
+    {
+      "edit": "E2",
+      "prompt": "Make the lead melody sparser, but only in the A sections. B and C must not change.",
+      "status": "scored",
+      "changedStreams": [],
+      "leaks": [],
+      "contained": false,
+      "noop": true,
+      "aspectViolations": [],
+      "minimality": null,
+      "effect": {
+        "metric": "lead density/bar",
+        "before": 0,
+        "after": 0,
+        "achieved": false
+      }
+    }
+  ]
+}

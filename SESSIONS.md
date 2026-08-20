@@ -38,6 +38,11 @@ Scoping flags:
 - `--aspects sound` — even allowed labels may only change timbre (also: `time`, `pitch`, `gain`)
 - `--sections B` — changes confined to that section's cycles
 
+Spec-level edits are the canonical flow (the .strudel file is compiled output, like
+`dist/`). A `--file` hand edit still passes the same gate, but it marks the song
+**diverged**: recompiling from the spec is then refused until you update the spec and
+pass `--reconciled` — a hand edit can never be silently reverted by the next compile.
+
 If ANYTHING outside the scope changed, the edit is **rejected with the leak named**,
 and no version is written. If it passes, you get `vN+1.strudel`, an updated
 `listen.html` with a **before/after A-B switch**, and a `report.md` saying what

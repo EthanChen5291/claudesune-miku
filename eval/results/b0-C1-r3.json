@@ -1,0 +1,86 @@
+{
+  "arm": "b0",
+  "case": "C1",
+  "rep": 3,
+  "versions": 4,
+  "expectedVersions": 4,
+  "v0": {
+    "evalOk": true,
+    "error": null,
+    "streamCount": 11,
+    "drumVelVariance": 0.0777,
+    "meterOffgrid": null
+  },
+  "edits": [
+    {
+      "edit": "E1",
+      "prompt": "Make the hats busier. Only the hats — nothing else may change.",
+      "status": "scored",
+      "changedStreams": [
+        "track1:hat"
+      ],
+      "leaks": [],
+      "contained": true,
+      "noop": false,
+      "aspectViolations": [],
+      "minimality": 0.75,
+      "effect": {
+        "metric": "hat density/bar",
+        "before": 8,
+        "after": 16,
+        "achieved": true
+      }
+    },
+    {
+      "edit": "E2",
+      "prompt": "The chorus should lift more — push its melodic register higher and make it denser. The verse (A sections) must not change at all.",
+      "status": "scored",
+      "changedStreams": [
+        "track3",
+        "track4",
+        "track5",
+        "track6"
+      ],
+      "leaks": [
+        "track3",
+        "track4",
+        "track5",
+        "track6"
+      ],
+      "contained": false,
+      "noop": false,
+      "aspectViolations": [],
+      "minimality": null,
+      "effect": {
+        "metric": "lead register max",
+        "before": null,
+        "after": null,
+        "achieved": false,
+        "extra": {
+          "metric": "lead density/bar",
+          "before": 0,
+          "after": 0,
+          "achieved": false
+        }
+      }
+    },
+    {
+      "edit": "E3",
+      "prompt": "Swap the bass sound to something darker. The bass notes and rhythm must not change — sound/timbre only.",
+      "status": "scored",
+      "changedStreams": [],
+      "leaks": [],
+      "contained": false,
+      "noop": true,
+      "aspectViolations": [],
+      "minimality": null,
+      "effect": {
+        "metric": "bass sound changed",
+        "before": null,
+        "after": null,
+        "achieved": true,
+        "note": "wav differs"
+      }
+    }
+  ]
+}

@@ -183,6 +183,6 @@ Retrieval/binding key: `(style, role[, archetype])` with inheritance fallback `r
 ---
 
 ## Open questions (for the build, not for now)
-- Are grammars *hard* filters or *soft* weights the generator samples from? (Lean: hard for Avoid, soft weights for the rest — deterministic given seed.)
+- ~~Are grammars *hard* filters or *soft* weights?~~ **RESOLVED (2026-08-19):** HARD = the §4 universal vertical rules (b9 rule, low-interval limits, sub exclusion) + anything in a §6 Avoid column — satisfied by revoicing/octave displacement, never by dropping notes. SOFT = the §5 horizontal tables (core/common/expressive/careful as sampling weights), deterministic given seed.
 - Does `harmony.counter` need its own extracted entries at seed time, or is generation + grammar + compatibility edges enough until the library grows?
 - Profile-dimension thresholds for the variation floor — 15% is a guess; tune from the first demo song's edit sessions.

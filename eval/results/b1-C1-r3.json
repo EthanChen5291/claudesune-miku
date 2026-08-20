@@ -1,0 +1,83 @@
+{
+  "arm": "b1",
+  "case": "C1",
+  "rep": 3,
+  "versions": 4,
+  "expectedVersions": 4,
+  "v0": {
+    "evalOk": true,
+    "error": null,
+    "streamCount": 12,
+    "drumVelVariance": 0.08,
+    "meterOffgrid": null
+  },
+  "edits": [
+    {
+      "edit": "E1",
+      "prompt": "Make the hats busier. Only the hats — nothing else may change.",
+      "status": "scored",
+      "changedStreams": [
+        "hats"
+      ],
+      "leaks": [],
+      "contained": true,
+      "noop": false,
+      "aspectViolations": [],
+      "minimality": 0.5897,
+      "effect": {
+        "metric": "hat density/bar",
+        "before": 12,
+        "after": 19.5,
+        "achieved": true
+      }
+    },
+    {
+      "edit": "E2",
+      "prompt": "The chorus should lift more — push its melodic register higher and make it denser. The verse (A sections) must not change at all.",
+      "status": "scored",
+      "changedStreams": [
+        "chords",
+        "pad",
+        "lead",
+        "arp"
+      ],
+      "leaks": [],
+      "contained": true,
+      "noop": false,
+      "aspectViolations": [],
+      "minimality": 1,
+      "effect": {
+        "metric": "lead register max",
+        "before": 89,
+        "after": 96,
+        "achieved": true,
+        "extra": {
+          "metric": "lead density/bar",
+          "before": 12.0625,
+          "after": 17.0625,
+          "achieved": true
+        }
+      }
+    },
+    {
+      "edit": "E3",
+      "prompt": "Swap the bass sound to something darker. The bass notes and rhythm must not change — sound/timbre only.",
+      "status": "scored",
+      "changedStreams": [
+        "bass"
+      ],
+      "leaks": [],
+      "contained": true,
+      "noop": false,
+      "aspectViolations": [],
+      "minimality": 1,
+      "effect": {
+        "metric": "bass sound changed",
+        "before": null,
+        "after": null,
+        "achieved": true,
+        "note": "sound params differ"
+      }
+    }
+  ]
+}

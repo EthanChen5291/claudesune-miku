@@ -73,6 +73,14 @@ function defaultListenFor(verifyRes, meta) {
   return hints;
 }
 
+function songState(dir) {
+  const p = join(dir, 'state.json');
+  return existsSync(p) ? JSON.parse(read(p)) : {};
+}
+function writeSongState(dir, state) {
+  writeFileSync(join(dir, 'state.json'), JSON.stringify(state, null, 2));
+}
+
 async function generate(argv) {
   const { values, positionals } = parseArgs({
     args: argv, allowPositionals: true,
@@ -80,6 +88,10 @@ async function generate(argv) {
   });
   const specPath = positionals[0];
   if (!specPath || !values.out) { console.error('usage: generate <spec.json> --out <songdir>'); process.exit(1); }
+  if (existsSync(values.out) && latestVersion(values.out) >= 0) {
+    console.error(`${values.out} already has versions — use \`edit\` (generate never overwrites a song's history)`);
+    process.exit(1);
+  }
   const spec = readJson(specPath);
   const { source, meta } = compile(spec, { bindFn: makeBindFn(spec), transitionFn: makeTransitionFn(spec) });
   const verifyRes = await verifySong(source, { meta });
@@ -104,6 +116,7 @@ async function edit(argv) {
       allow: { type: 'string', default: '' }, 'allow-binding': { type: 'string', default: '' },
       aspects: { type: 'string' }, sections: { type: 'string' },
       note: { type: 'string' }, json: { type: 'boolean', default: false },
+      reconciled: { type: 'boolean', default: false },
     },
   });
   const dir = positionals[0];
@@ -113,8 +126,17 @@ async function edit(argv) {
   const oldSource = read(join(dir, `v${n}.strudel`));
   const oldMeta = readJson(join(dir, `v${n}.meta.json`));
 
+  // Divergence guard (addendum A1.1 adjudication): a hand edit on a spec-backed
+  // song marks it diverged; recompiling from spec would silently revert the hand
+  // edit, so it is BLOCKED until the spec is reconciled.
+  const state = songState(dir);
   let newSource, newMeta;
   if (values.spec) {
+    if (state.diverged && !values.reconciled) {
+      console.error(`REFUSED: ${dir} diverged from its spec at v${state.divergedAt} (hand edit: "${state.divergedNote ?? ''}").`);
+      console.error('A recompile would silently revert that edit. Update the spec to reflect it, then pass --reconciled; or keep editing with --file.');
+      process.exit(5);
+    }
     const spec = readJson(values.spec);
     ({ source: newSource, meta: newMeta } = compile(spec, { bindFn: makeBindFn(spec), transitionFn: makeTransitionFn(spec) }));
   } else {
@@ -155,6 +177,12 @@ async function edit(argv) {
     console.log(`\n⚠ MUSICAL REGRESSION: this contained edit broke ${newFails.length} assertion(s) that previously passed:`);
     for (const f of newFails) console.log(`  ✗ ${f.name} — ${f.detail}`);
     console.log('  The edit is accepted (containment is the gate); fix or re-declare the constraint in a follow-up.');
+  }
+  if (values.file && existsSync(join(dir, 'spec.json'))) {
+    writeSongState(dir, { ...state, diverged: true, divergedAt: n + 1, divergedNote: values.note ?? null });
+    console.log(`\nnote: song marked DIVERGED from spec.json (hand edit). Recompile-from-spec is blocked until --reconciled.`);
+  } else if (values.spec && values.reconciled && state.diverged) {
+    writeSongState(dir, { ...state, diverged: false, reconciledAt: n + 1 });
   }
   if (values.spec) writeFileSync(join(dir, 'spec.json'), JSON.stringify(readJson(values.spec), null, 2));
 }
