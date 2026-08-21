@@ -1,6 +1,6 @@
-# §5 Acceptance checklist — run 2026-08-21T01:42
+# §5 Acceptance checklist — run 2026-08-21T02:04
 
-- [x] deterministic test suite green — _86 pass / 0 fail (npm test)_
+- [x] deterministic test suite green — _92 pass / 0 fail (npm test)_
 - [x] §5(a) scoped edit passes — _test/harness.test.js "ACCEPTANCE (a)"_
 - [x] §5(b) leaky edit rejected — _test/harness.test.js "ACCEPTANCE (b)"_
 - [x] §5(c) must-violating chorus flagged with measured values — _test/binder.test.js "ACCEPTANCE (c)"_

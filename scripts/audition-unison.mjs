@@ -16,10 +16,11 @@
 // As with the other page: every pattern is generated HERE by the real binder, and
 // the browser only assembles strings.
 
-import { writeFileSync, mkdirSync } from 'node:fs';
+import { writeFileSync, mkdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import * as acorn from 'acorn';
+import { RUNTIME_JS } from './audition-runtime.js';
 import { PROGRESSIONS_UNISON } from '../src/lib/progressions-unison.js';
 import { RHYTHMS_UNISON, INTERLOCKS_UNISON } from '../src/lib/rhythms-unison.js';
 import { VOICING_OBSERVATIONS } from '../src/lib/voicings-unison.js';
@@ -46,7 +47,15 @@ const TEXTURES = [
   { id: 'bossa', label: 'bossa',     rhythm: 'bossa_comp_2bar',  fx: '.room(0.3)' },
   { id: 'even',  label: 'even 8ths', rhythm: 'even_8ths',        fx: '.room(0.4)' },
 ];
-const DRUM_SOUND = { kick: 'bd', snare: 'sd', clap: 'cp', 'rim shot': 'rim', perc: 'perc', hat: 'hh', hats: 'hh', 'hat 1': 'hh', 'hat 2': 'oh' };
+// Dirt-Samples names, checked against src/ingest/sample-names.json below. Note
+// 'rs' not 'rim' and 'ho' not 'oh': those two do not exist in the map and would
+// have played silence.
+const DRUM_SOUND = { kick: 'bd', snare: 'sd', clap: 'cp', 'rim shot': 'rs', perc: 'perc', hat: 'hh', hats: 'hh', 'hat 1': 'hh', 'hat 2': 'ho' };
+const SAMPLE_NAMES = new Set(JSON.parse(readFileSync(join(ROOT, 'src/ingest/sample-names.json'), 'utf8')).names);
+for (const [part, name] of Object.entries(DRUM_SOUND)) {
+  if (!SAMPLE_NAMES.has(name)) throw new Error(`drum sound "${name}" (for ${part}) is not in any loaded sample map — it would play silence`);
+}
+if (!SAMPLE_NAMES.has('piano')) throw new Error('the piano sample map is missing from src/ingest/sample-names.json');
 
 // ---- progressions -------------------------------------------------------
 const KEY_FOR = (fam) => (fam === 'minor' ? 'C:minor' : 'C:major');
@@ -220,6 +229,7 @@ function page(DATA) {
     <span class="dim" id="count"></span>
     <span class="now" id="now">— click a card to play —</span>
     <button id="stop">■ stop</button>
+    <span class="dim" id="rtstatus">click any card to start audio</span>
   </div>
   <div class="row" style="margin-top:7px" id="controls"></div>
 </header>
@@ -235,10 +245,11 @@ function page(DATA) {
 </footer>
 <script src="${WEB_BUNDLE}"></script>
 <script>
+${RUNTIME_JS}
 const DATA = ${JSON.stringify(DATA)};
 const LS = 'motif-engine:unison-verdicts';
 let verdicts = {}; try { verdicts = JSON.parse(localStorage.getItem(LS) || '{}'); } catch {}
-let tab = 'progressions', texture = 'comp', playing = null, sel = 0, started = false, visible = [];
+let tab = 'progressions', texture = 'comp', playing = null, sel = 0, visible = [];
 const $ = (id) => document.getElementById(id);
 const save = () => localStorage.setItem(LS, JSON.stringify(verdicts));
 
@@ -249,21 +260,25 @@ const BLURB = {
 };
 
 function codeFor(e) {
-  const bpm = $('bpm') ? $('bpm').value : 112;
+  // Never interpolate a missing/blank control into the source: 'setcpm(' + '' +
+  // '/4)' is a syntax error, and a pattern that fails to parse is indistinguishable
+  // from a dead page.
+  const bpm = Number($('bpm') && $('bpm').value) || 112;
   let body;
   if (tab === 'progressions') body = ($('bass') && $('bass').checked) ? 'stack(' + e.exprs[texture] + ', ' + e.bass + ')' : e.exprs[texture];
   else body = e.expr;
   return 'setcpm(' + bpm + '/4)\\np: ' + body;
 }
 async function play(e, useLib) {
-  if (!started) { await window.initStrudel(); await strudel.samples(DATA.piano); started = true; }
   const code = useLib && e.libraryExpr ? 'setcpm(112/4)\\np: ' + e.libraryExpr : codeFor(e);
-  await strudel.evaluate(code);
+  $('now').textContent = RT.ready ? '…' : 'starting audio (first play loads the piano)…';
+  const ok = await rtPlay(code);
+  if (!ok) { playing = null; render(); return; }
   playing = e.name;
   $('now').textContent = '▶ ' + (useLib ? '[library shape] ' : '') + labelOf(e);
   render();
 }
-function stop() { if (started) strudel.hush(); playing = null; $('now').textContent = '— stopped —'; render(); }
+function stop() { rtStop(); playing = null; $('now').textContent = '— stopped —'; render(); }
 function labelOf(e) {
   if (tab === 'progressions') return (e.song ? e.song + '  —  ' : '') + e.numerals + '   ' + e.symbols.join(' ');
   if (tab === 'rhythms') return e.loop ? (e.part ? e.loop + ' · ' + e.part : e.loop + ' (whole loop)') : e.name;
@@ -373,11 +388,7 @@ function mark(e, verd) {
   if (verdicts[e.name] === verd) delete verdicts[e.name]; else verdicts[e.name] = verd;
   save(); render();
 }
-async function toClipboard(text) {
-  try { await navigator.clipboard.writeText(text); return true; } catch {}
-  const ta = document.createElement('textarea'); ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
-  document.body.appendChild(ta); ta.select(); const ok = document.execCommand('copy'); ta.remove(); return ok;
-}
+const toClipboard = rtCopy;
 async function copy(e, btn) {
   const ok = await toClipboard(codeFor(e));
   const t = btn.textContent; btn.textContent = ok ? '✓' : '✗'; setTimeout(() => { btn.textContent = t; }, 900);

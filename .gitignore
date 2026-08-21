@@ -8,3 +8,9 @@ scratch/
 # ARE tracked: they are what src/lib/*-unison.js was extracted from, and test/
 # re-reads them, so a clone must be able to reproduce the import.
 audios/**/*.wav
+
+# Render assets/outputs: soundfonts are fetched (see scripts/render-wav.mjs),
+# .mid/.wav are reproducible from the .strudel via `cli.js export`.
+vendor/soundfonts/
+songs/**/*.mid
+songs/**/*.wav

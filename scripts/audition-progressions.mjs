@@ -12,7 +12,7 @@
 //
 // Run: node scripts/audition-progressions.mjs   (then open audition/progressions.html)
 
-import { writeFileSync, mkdirSync } from 'node:fs';
+import { writeFileSync, mkdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { PROGRESSIONS, parseDegrees, progressionQualities } from '../src/lib/progressions.js';
@@ -23,6 +23,7 @@ import { CONTOURS } from '../src/lib/contours.js';
 import { VOICINGS, voicingRegistration } from '../src/lib/voicings.js';
 import { evaluateSong, hapsByLabel } from '../src/harness/evaluate.js';
 import * as acorn from 'acorn';
+import { RUNTIME_JS } from './audition-runtime.js';
 
 const ROOT = join(fileURLToPath(new URL('..', import.meta.url)));
 const OUT = join(ROOT, 'audition');
@@ -42,10 +43,14 @@ const TEXTURES = [
 ];
 const BASS = { rhythm: 'offbeat_8ths', contour: 'bass_root_five', octave: 2, sound: 'piano', fx: '.gain(0.7)' };
 
+const SAMPLE_NAMES = new Set(JSON.parse(readFileSync(join(ROOT, 'src/ingest/sample-names.json'), 'utf8')).names);
 for (const t of TEXTURES) {
   if (!RHYTHMS[t.rhythm]) throw new Error(`texture "${t.id}" names unknown rhythm "${t.rhythm}"`);
   if (!VOICINGS[t.dict]) throw new Error(`texture "${t.id}" names unknown voicing "${t.dict}"`);
+  // a sound name absent from every loaded map plays silence, not an error
+  if (!SAMPLE_NAMES.has(t.sound)) throw new Error(`sound "${t.sound}" is not in any loaded sample map`);
 }
+if (!SAMPLE_NAMES.has(BASS.sound)) throw new Error(`bass sound "${BASS.sound}" is not in any loaded sample map`);
 
 const keyFor = (family) => (family === 'minor' ? 'C:minor' : 'C:major');
 
@@ -183,6 +188,7 @@ function page(DATA) {
     <span class="dim" id="count"></span>
     <span class="now" id="now">— click a card to play —</span>
     <button id="stop">■ stop</button>
+    <span class="dim" id="rtstatus">click any card to start audio</span>
   </div>
   <div class="row" style="margin-top:7px">
     <label class="ctl">texture <span id="tex"></span></label>
@@ -208,12 +214,12 @@ function page(DATA) {
 </footer>
 <script src="${WEB_BUNDLE}"></script>
 <script>
+${RUNTIME_JS}
 const DATA = ${JSON.stringify(DATA)};
-const PIANO = 'github:felixroos/dough-samples/main/piano.json';
 const LS = 'motif-engine:progression-verdicts';
 let verdicts = {};
 try { verdicts = JSON.parse(localStorage.getItem(LS) || '{}'); } catch {}
-let texture = DATA.textures[0].id, playing = null, sel = 0, started = false, visible = [];
+let texture = DATA.textures[0].id, playing = null, sel = 0, visible = [];
 
 const $ = (id) => document.getElementById(id);
 const save = () => localStorage.setItem(LS, JSON.stringify(verdicts));
@@ -221,28 +227,30 @@ const save = () => localStorage.setItem(LS, JSON.stringify(verdicts));
 function codeFor(e) {
   const expr = e.exprs[texture];
   if (!expr) return null;
-  const layers = $('bass').checked ? expr + ', ' + e.bass : expr;
-  const tr = Number($('tr').value);
-  return 'setcpm(' + $('bpm').value + '/4)\\n' + DATA.preamble +
+  const layers = ($('bass') && $('bass').checked) ? expr + ', ' + e.bass : expr;
+  const tr = Number($('tr') && $('tr').value) || 0;
+  // Never interpolate a missing/blank control into the source: 'setcpm(' + '' +
+  // '/4)' is a syntax error, and a pattern that fails to parse is indistinguishable
+  // from a dead page.
+  const bpm = Number($('bpm') && $('bpm').value) || 112;
+  return 'setcpm(' + bpm + '/4)\\n' + DATA.preamble +
     '\\np: stack(' + layers + ')' + (tr ? '.transpose(' + tr + ')' : '');
 }
 
 async function play(e) {
   const code = codeFor(e);
   if (!code) return;
-  if (!started) {
-    await window.initStrudel();
-    await strudel.samples(PIANO);   // s("piano") is unavailable until this resolves
-    started = true;
-  }
-  // evaluate() HOT-SWAPS the pattern under the running transport — the whole
-  // point of the grid: two progressions can be compared in tempo, not by scrubbing.
-  await strudel.evaluate(code);
+  $('now').textContent = RT.ready ? '…' : 'starting audio (first play loads the piano)…';
+  // rtPlay() hot-swaps under the running transport — the whole point of the grid:
+  // two progressions compared in tempo, not by scrubbing. It also reports WHY
+  // nothing happened when nothing happens.
+  const ok = await rtPlay(code);
+  if (!ok) { playing = null; render(); return; }
   playing = e.name;
   $('now').textContent = '▶ ' + e.numerals + '   —   ' + e.symbols.join(' ');
   render();
 }
-function stop() { if (started) strudel.hush(); playing = null; $('now').textContent = '— stopped —'; render(); }
+function stop() { rtStop(); playing = null; $('now').textContent = '— stopped —'; render(); }
 
 function matches(e) {
   if ($('fFam').value && e.family !== $('fFam').value) return false;
@@ -304,17 +312,7 @@ function mark(e, verd) {
   if (!verdicts[e.name]) delete verdicts[e.name];
   save(); render();
 }
-async function toClipboard(text) {
-  // navigator.clipboard is not dependable on file:// — fall back to a scratch
-  // textarea so "copy" never silently does nothing.
-  try { await navigator.clipboard.writeText(text); return true; } catch {}
-  const ta = document.createElement('textarea');
-  ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
-  document.body.appendChild(ta); ta.select();
-  const ok = document.execCommand('copy');
-  ta.remove();
-  return ok;
-}
+const toClipboard = rtCopy;
 async function copy(e, btn) {
   const ok = await toClipboard(codeFor(e) ?? e.symbols.join(' '));
   const t = btn.textContent; btn.textContent = ok ? '✓' : '✗';

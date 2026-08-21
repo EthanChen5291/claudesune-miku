@@ -21,7 +21,17 @@
 - 6 chord qualities have no voicing shapes yet (2 5 69 add9 m6 madd9) — 14 of the
   188 progressions can't be voiced until someone writes and auditions them.
 - incorporate sound effects like fades for transition or emphasis.
+- [done, D30] audio export: `cli.js export <songdir> --wav` = haps -> song.mid
+  (@tonejs/midi, exact) -> song.wav (fluidsynth + GeneralUser GS in
+  vendor/soundfonts/). NEXT if render quality matters: DAW finishing tier
+  (import song.mid, real instruments per track; Reaper can render headlessly).
+  OSC -> StrudelDirt deferred (realtime-only, SC install, one fixed palette).
 
+- alan walker syntax incorporation
+
+
+- eventually apply midi to samples
+- assessment of strudle for music representation
 
 - further understanding of flow of sections in music
 

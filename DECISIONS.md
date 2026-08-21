@@ -475,3 +475,74 @@ finer was invented, which is what the audition pass is for.
 **Everything stays unratified.** 72 progressions, 12 rhythms, 91 voicing observations
 — all `ratified: false`, all `character: null`. Same discipline as D28: an extracted
 corpus is a candidate pool, not a library.
+
+## D29 addendum — the audition pages could not make a sound (2026-08-20)
+
+Both pages rendered, filtered and responded to clicks, and every pattern they emit
+had been verified through the engine's evaluator — but nothing played. Three faults,
+each of which fails as *silence* rather than as an error, which is why none of the
+existing checks caught them:
+
+1. **`samples('github:.../piano.json')` 404s.** strudel's `samples()` appends
+   `strudel.json` to any `github:` path, so it fetched `.../piano.json/strudel.json`.
+   The `github:` shorthand takes a DIRECTORY. Fixed by passing absolute https URLs.
+2. **`initStrudel()` prebakes no samples at all.** The `<strudel-editor>` component
+   the song `listen.html` pages use does that for you; `@strudel/web` does not. Both
+   a drum map and a piano map are now loaded explicitly.
+3. **`s("rim")` and `s("oh")` do not exist in Dirt-Samples** — the names are `rs` and
+   `ho`. The rhythms tab was emitting two sounds that resolve to nothing.
+
+The deeper problem was that a page could fail this way invisibly. Fixes, in order of
+how much they are worth:
+- **A missing sample name is now a build error.** `src/ingest/sample-names.json`
+  commits the 219 names the loaded maps provide (refresh with
+  `scripts/refresh-sample-names.mjs`); both generators check every sound they emit
+  against it, and a test re-checks the generated HTML. Note this also flags that the
+  engine's own libraries reference `rim`, which no map we load provides.
+- **The pages are executed in the test suite**, not just parsed. `test/helpers/dom.mjs`
+  is a ~60-line DOM shim; `test/audition.test.js` clicks every tab and a card in each,
+  then puts the emitted source through the engine's evaluator. Parsing with acorn
+  proved the page was valid JS; only running it proves it works.
+- **Failures are visible.** A shared `scripts/audition-runtime.js` (inlined into both
+  pages, so they cannot drift) adds an on-page banner fed by `window.onerror` and
+  `unhandledrejection`, a live status line, an explicit AudioContext resume, and a
+  25s timeout per sample map. Maps load with `allSettled`, so drums failing does not
+  cost you the piano. It was this banner that produced the exact 404 URL and made
+  fault 1 diagnosable in one round instead of by guesswork.
+- `codeFor()` no longer interpolates a blank control into the source — `setcpm(/4)`
+  is a syntax error, and an unparseable pattern is just more silence.
+
+## D30 — Audio export: MIDI from the haps, sound applied at render (2026-08-20)
+
+The engine can now produce audio files on command. The design question was where
+audio should come from, given that Strudel's WebAudio output lives in a browser
+and cannot be rendered headlessly on demand.
+
+**Decision: Strudel stays the composition/verification layer; audio leaves the
+engine as MIDI serialized from the same queried haps the harness verifies.**
+`src/emit/midi.js` walks `hapsByLabel` output (not pattern strings — the hap
+layer is exact: swing offsets, continuous-signal gain ramps, and voicing
+expansions are all already in the events) and emits one track per label via
+@tonejs/midi. `cli.js export <songdir> [--wav]` writes `song.mid` and optionally
+renders `song.wav` through fluidsynth + a GM soundfont
+(`scripts/render-wav.mjs`; soundfont resolution: --soundfont > $SOUNDFONT >
+vendor/soundfonts/, which is gitignored — GeneralUser GS lives there locally).
+
+Mapping rules, all round-trip-tested (test/midi.test.js):
+- 1 cycle = 1 bar (D7): quarter-bpm = cpm x 4·num/den, time signature from
+  meta.meter — the DAW's bar grid aligns with the engine's cycle grid in any
+  meter (aksak 7/8 verified: setcpm(140/7) -> 70 qbpm = 140 eighth pulses).
+- Drums: Dirt names -> GM percussion on ch 10, both engine spellings (rim/oh)
+  and Dirt-Samples spellings (rs/ho). Pitched labels get distinct channels;
+  a label mixing both splits into two tracks. Muted (`_label`) skipped.
+- gain -> velocity (clamped to [1/127, 1]), clip/legato scale duration,
+  waveform -> best-effort GM program (square->80 etc.) for soundfont previews.
+
+**What does NOT survive: timbre and FX** (s/bank, lpf, room, delay, envelopes).
+MIDI carries notes; sound identity is re-applied at render. The fluidsynth tier
+is the automated preview; the finishing tier is any DAW (import song.mid, one
+instrument per label track). OSC -> SuperDirt/StrudelDirt was considered and
+deferred: it is automatable (headless sclang + a Node OSC scheduler) but
+realtime-only, needs a SuperCollider install, and buys one fixed sound palette
+where MIDI buys every sampler/VST — revisit only if that specific palette is
+wanted.

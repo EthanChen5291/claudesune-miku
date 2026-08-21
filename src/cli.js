@@ -13,6 +13,9 @@ import { compile } from './compiler/compile.js';
 import { makeBindFn, makeTransitionFn } from './binder/adapter.js';
 import { verifySong, checkEdit } from './harness/index.js';
 import { renderListenHtml } from './emit/listen.js';
+import { songToMidi } from './emit/midi.js';
+import { songHaps } from './harness/evaluate.js';
+import { renderWav } from '../scripts/render-wav.mjs';
 import { renderReport, listenForHints } from './emit/reportmd.js';
 import { fmtMetricsTable, fmtAssertions, fmtContainment } from './harness/report.js';
 
@@ -26,6 +29,9 @@ const USAGE = `motif-engine
        [--sections B]                           confine changes to a section's cycle ranges
        --note "make the hats busier"            what this edit is (goes in the report)
   verify <songdir | file.strudel> [--meta <meta.json>] [--json]
+  export <songdir | file.strudel>               emit song.mid (haps -> MIDI, exact)
+       [--out x.mid] [--from 0] [--to cycles]   cycle window (default: meta totalCycles)
+       [--wav] [--soundfont f.sf2] [--gain 0.7] also render .wav via fluidsynth
 
 Every accepted generate/edit writes: vN.strudel (paste-ready), vN.meta.json,
 listen.html (per-label mutes, before/after A-B), report.md, session.log.md.`;
@@ -35,6 +41,7 @@ async function main() {
   if (cmd === 'generate') return generate(rest);
   if (cmd === 'edit') return edit(rest);
   if (cmd === 'verify') return verify(rest);
+  if (cmd === 'export') return exportCmd(rest);
   console.log(USAGE);
   process.exit(cmd ? 1 : 0);
 }
@@ -210,6 +217,54 @@ async function verify(argv) {
   printVerify(res, meta, values.json);
   if (!res.evalOk || res.lint.errors.length) process.exit(2);
   if (res.assertions.some((a) => !a.pass && a.severity === 'fail')) process.exit(3);
+}
+
+async function exportCmd(argv) {
+  const { values, positionals } = parseArgs({
+    args: argv, allowPositionals: true,
+    options: {
+      out: { type: 'string' }, meta: { type: 'string' },
+      from: { type: 'string' }, to: { type: 'string' },
+      wav: { type: 'boolean', default: false },
+      soundfont: { type: 'string' }, gain: { type: 'string' },
+    },
+  });
+  const target = positionals[0];
+  if (!target) { console.error('usage: export <songdir | file.strudel> [--out song.mid] [--from a --to b] [--wav]'); process.exit(1); }
+  let source, meta = null, outBase;
+  if (existsSync(target) && !target.endsWith('.strudel')) {
+    const n = latestVersion(target);
+    if (n < 0) { console.error(`no versions in ${target}`); process.exit(1); }
+    source = read(join(target, `v${n}.strudel`));
+    meta = readJson(join(target, `v${n}.meta.json`));
+    outBase = join(target, 'song');
+    console.log(`exporting ${target}/v${n}.strudel`);
+  } else {
+    source = read(target);
+    if (values.meta) meta = readJson(values.meta);
+    outBase = target.replace(/\.strudel$/, '');
+  }
+  const from = values.from ? Number(values.from) : 0;
+  let to = values.to ? Number(values.to) : meta?.totalCycles;
+  if (to == null) { to = 16; console.log('warning: no --to and no meta totalCycles — exporting 16 cycles'); }
+
+  const { evaluated, haps } = await songHaps(source, from, to);
+  const res = songToMidi(haps, {
+    cpm: evaluated.cpm, meter: meta?.meter ?? '4/4', from,
+    title: meta?.title ?? basename(outBase),
+  });
+  const midPath = values.out ?? `${outBase}.mid`;
+  writeFileSync(midPath, res.bytes);
+  for (const w of res.warnings) console.log(`warning: ${w}`);
+  for (const s of res.skipped) if (s.reason !== 'muted') console.log(`skipped ${s.label}: ${s.reason}`);
+  for (const t of res.tracks) console.log(`  ${t.label.padEnd(18)} ${t.kind.padEnd(8)} ch ${String(t.channel + 1).padStart(2)}  ${String(t.notes).padStart(4)} notes`);
+  console.log(`wrote ${midPath} (${Math.round(res.bpm * 100) / 100} bpm, ${meta?.meter ?? '4/4'}, cycles ${from}–${to})`);
+
+  if (values.wav) {
+    const wavPath = midPath.replace(/\.midi?$/i, '') + '.wav';
+    const out = renderWav(midPath, wavPath, { soundfont: values.soundfont ?? null, gain: values.gain ? Number(values.gain) : 0.7 });
+    console.log(`wrote ${out.wavPath} (${(out.bytes / 1e6).toFixed(1)} MB, soundfont: ${basename(out.soundfont)})`);
+  }
 }
 
 function printVerify(res, meta, asJson) {
