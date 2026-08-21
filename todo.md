@@ -2,6 +2,15 @@
 - expand to different genres (and mixing of genres)
 
 - get .midi of toby fox and .wav of laufey
+- [done, D29] Unison packs in audios/ ingested: 72 progressions + 12 drum-loop
+  rhythms + 91 voicing observations (all ratified:false). Audition at
+  audition/unison.html. NEXT: (a) listen + keep/kill, (b) 17 progressions are
+  flagged needsEar because the filename label disagrees with the notes, (c) 6
+  drum parts need an accent profile authored before they can bind, (d) promote
+  observed voicings into src/lib/voicings.js to close the D28 gaps.
+- NOT ingested: 124 WAV one-shots + FX from those packs. They are A7 instrument
+  palette material and need sample hosting the engine has no story for yet.
+- explore chord manipulation for variation (see ldrolez video)
 - [done, D28] ldrolez/free-midi-chords: 188 progressions imported as a candidate
   pool (src/lib/progressions.js). NEXT: audition to promote ~20-30 into the library
   (that's when each gets a `character` line and ratified:true).
@@ -12,6 +21,7 @@
 - 6 chord qualities have no voicing shapes yet (2 5 69 add9 m6 madd9) — 14 of the
   188 progressions can't be voiced until someone writes and auditions them.
 - incorporate sound effects like fades for transition or emphasis.
+
 
 - further understanding of flow of sections in music
 

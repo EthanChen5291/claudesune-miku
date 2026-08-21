@@ -7,6 +7,11 @@
 // Parsing + retrieval (§3.5: retrieval by computed properties, tags secondary)
 // ---------------------------------------------------------------------------
 import { VOICINGS } from './voicings.js';
+import { PROGRESSIONS_UNISON } from './progressions-unison.js';
+
+/** Both pools in one registry. `pack` says where an entry came from; the ldrolez
+ *  set is Roman-numeral source data, the unison set is extracted from MIDI (D29). */
+export const ALL_PROGRESSIONS = { ...PROGRESSIONS, ...PROGRESSIONS_UNISON };
 
 /** 'degrees' string -> [{ semis, spell, quality }] ('spell' = source accidental) */
 export function parseDegrees(degrees) {
@@ -38,11 +43,14 @@ export function playableWith(entry, shape) {
  */
 export function findProgressions({
   family = null, moods = null, length = null, minLength = 0, maxLength = Infinity,
-  shape = null, ratifiedOnly = false,
+  shape = null, ratifiedOnly = false, pack = null, needsEar = null,
 } = {}) {
   const want = moods ? [].concat(moods).map((m) => m.toLowerCase()) : null;
+  const packs = pack ? new Set([].concat(pack)) : null;
   const out = [];
-  for (const [name, entry] of Object.entries(PROGRESSIONS)) {
+  for (const [name, entry] of Object.entries(ALL_PROGRESSIONS)) {
+    if (packs && !packs.has(entry.pack)) continue;
+    if (needsEar != null && Boolean(entry.needsEar) !== needsEar) continue;
     if (family && entry.family !== family) continue;
     if (ratifiedOnly && !entry.ratified) continue;
     const n = parseDegrees(entry.degrees).length;

@@ -1,3 +1,10 @@
 node_modules/
 scratch/
 .DS_Store
+
+# Source audio for extraction (A6.6: the library stores ABSTRACTIONS, never audio).
+# The 92MB of Unison .wav one-shots/FX are licensed commercial samples and nothing
+# in src/ reads them — keep them locally, out of git history. The .mid files (336KB)
+# ARE tracked: they are what src/lib/*-unison.js was extracted from, and test/
+# re-reads them, so a clone must be able to reproduce the import.
+audios/**/*.wav

@@ -107,15 +107,17 @@ test('D28: every voicing-shape quality key is a spelling ireal also understands'
 });
 
 test('D28: retrieval filters by family, mood, length and playable shape', () => {
-  assert.equal(findProgressions({ family: 'minor' }).length, 58);
+  // scoped to the ldrolez pack — the pool now spans both corpora (D29)
+  assert.equal(findProgressions({ pack: 'ldrolez', family: 'minor' }).length, 58);
   assert.equal(findProgressions({ length: 4, family: 'major' }).every((r) => r.length === 4), true);
   assert.ok(findProgressions({ moods: 'Cadence' }).length >= 6);
   assert.ok(findProgressions({ moods: ['nostalgic'] }).length > 20); // case-insensitive
   assert.equal(findProgressions({ ratifiedOnly: true }).length, 0);  // nothing ratified yet
+  assert.equal(findProgressions({ pack: 'ldrolez' }).length, 188);
 
   // 174 of 188 are playable with the shapes that exist today; the rest need one
   // of six qualities nobody has auditioned yet.
-  assert.equal(findProgressions({ shape: 'shell_37' }).length, 174);
+  assert.equal(findProgressions({ pack: 'ldrolez', shape: 'shell_37' }).length, 174);
   const missing = new Set();
   for (const e of Object.values(PROGRESSIONS)) {
     for (const q of progressionQualities(e)) if (!(q in VOICINGS.shell_37.shapes)) missing.add(q);

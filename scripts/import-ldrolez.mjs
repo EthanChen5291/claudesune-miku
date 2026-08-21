@@ -140,7 +140,7 @@ L.push('');
 L.push(`export const PROGRESSIONS = {`);
 for (const e of entries) {
   L.push(`  ${e.name}: {`);
-  L.push(`    family: '${e.family}', role: 'harmony', style: 'universal',`);
+  L.push(`    family: '${e.family}', pack: 'ldrolez', role: 'harmony', style: 'universal',`);
   L.push(`    provenance: 'transcribed', source: 'ldrolez/free-midi-chords@MIT', ratified: false,`);
   L.push(`    numerals: '${e.numerals}',`);
   L.push(`    degrees: '${e.degrees}',`);

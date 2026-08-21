@@ -20,7 +20,7 @@
 
 export const PROGRESSIONS = {
   maj_I_I_IV_iii: {
-    family: 'major', role: 'harmony', style: 'universal',
+    family: 'major', pack: 'ldrolez', role: 'harmony', style: 'universal',
     provenance: 'transcribed', source: 'ldrolez/free-midi-chords@MIT', ratified: false,
     numerals: 'I I IV iii',
     degrees: '0 0 5 4:m',
@@ -28,7 +28,7 @@ export const PROGRESSIONS = {
     character: null,
   },
   maj_I_I7_Idom7_I7: {
-    family: 'major', role: 'harmony', style: 'universal',
+    family: 'major', pack: 'ldrolez', role: 'harmony', style: 'universal',
     provenance: 'transcribed', source: 'ldrolez/free-midi-chords@MIT', ratified: false,
     numerals: 'I I7 Idom7 I7',
     degrees: '0 0:^7 0:7 0:^7',
@@ -36,7 +36,7 @@ export const PROGRESSIONS = {
     character: null,
   },
   maj_I_I7_Idom7_IV: {
-    family: 'major', role: 'harmony', style: 'universal',
+    family: 'major', pack: 'ldrolez', role: 'harmony', style: 'universal',
     provenance: 'transcribed', source: 'ldrolez/free-midi-chords@MIT', ratified: false,
     numerals: 'I I7 Idom7 IV',
     degrees: '0 0:^7 0:7 5',
@@ -44,7 +44,7 @@ export const PROGRESSIONS = {
     character: null,
   },
   maj_I_iii_IV_vi: {
-    family: 'major', role: 'harmony', style: 'universal',
+    family: 'major', pack: 'ldrolez', role: 'harmony', style: 'universal',
     provenance: 'transcribed', source: 'ldrolez/free-midi-chords@MIT', ratified: false,
     numerals: 'I iii IV vi',
     degrees: '0 4:m 5 9:m',
@@ -52,7 +52,7 @@ export const PROGRESSIONS = {
     character: null,
   },
   maj_I_iii_vi_Isus4: {
-    family: 'major', role: 'harmony', style: 'universal',
+    family: 'major', pack: 'ldrolez', role: 'harmony', style: 'universal',
     provenance: 'transcribed', source: 'ldrolez/free-midi-chords@MIT', ratified: false,
     numerals: 'I iii vi Isus4',
     degrees: '0 4:m 9:m 0:sus',
@@ -60,7 +60,7 @@ export const PROGRESSIONS = {
     character: null,
   },
   maj_I_iii_vi_IV: {
-    family: 'major', role: 'harmony', style: 'universal',
+    family: 'major', pack: 'ldrolez', role: 'harmony', style: 'universal',
     provenance: 'transcribed', source: 'ldrolez/free-midi-chords@MIT', ratified: false,
     numerals: 'I iii vi IV',
     degrees: '0 4:m 9:m 5',
@@ -68,7 +68,7 @@ export const PROGRESSIONS = {
     character: null,
   },
   maj_I_IV_ii_V: {
-    family: 'major', role: 'harmony', style: 'universal',
+    family: 'major', pack: 'ldrolez', role: 'harmony', style: 'universal',
     provenance: 'transcribed', source: 'ldrolez/free-midi-chords@MIT', ratified: false,
     numerals: 'I IV ii V',
     degrees: '0 5 2:m 7',
@@ -76,7 +76,7 @@ export const PROGRESSIONS = {
     character: null,
   },
   maj_I_IV_Isus2_IV: {
-    family: 'major', role: 'harmony', style: 'universal',
+    family: 'major', pack: 'ldrolez', role: 'harmony', style: 'universal',
     provenance: 'transcribed', source: 'ldrolez/free-midi-chords@MIT', ratified: false,
     numerals: 'I IV Isus2 IV',
     degrees: '0 5 0:2 5',
@@ -84,7 +84,7 @@ export const PROGRESSIONS = {
     character: null,
   },
   maj_I_IV_V_IV: {
-    family: 'major', role: 'harmony', style: 'universal',
+    family: 'major', pack: 'ldrolez', role: 'harmony', style: 'universal',
     provenance: 'transcribed', source: 'ldrolez/free-midi-chords@MIT', ratified: false,
     numerals: 'I IV V IV',
     degrees: '0 5 7 5',
@@ -92,7 +92,7 @@ export const PROGRESSIONS = {
     character: null,
   },
   maj_I_IV_V: {
-    family: 'major', role: 'harmony', style: 'universal',
+    family: 'major', pack: 'ldrolez', role: 'harmony', style: 'universal',
     provenance: 'transcribed', source: 'ldrolez/free-midi-chords@MIT', ratified: false,
     numerals: 'I IV V',
     degrees: '0 5 7',
@@ -100,7 +100,7 @@ export const PROGRESSIONS = {
     character: null,
   },
   maj_I_IV_vi_V: {
-    family: 'major', role: 'harmony', style: 'universal',
+    family: 'major', pack: 'ldrolez', role: 'harmony', style: 'universal',
     provenance: 'transcribed', source: 'ldrolez/free-midi-chords@MIT', ratified: false,
     numerals: 'I IV vi V',
     degrees: '0 5 9:m 7',
@@ -108,7 +108,7 @@ export const PROGRESSIONS = {
     character: null,
   },
   maj_I_IV_vii_iii_vi_ii_V_I: {
-    family: 'major', role: 'harmony', style: 'universal',
+    family: 'major', pack: 'ldrolez', role: 'harmony', style: 'universal',
     provenance: 'transcribed', source: 'ldrolez/free-midi-chords@MIT', ratified: false,
     numerals: 'I IV vii iii vi ii V I',
     degrees: '0 5 11:m 4:m 9:m 2:m 7 0',
@@ -116,7 +116,7 @@ export const PROGRESSIONS = {
     character: null,
   },
   maj_I_V_I_IV: {
-    family: 'major', role: 'harmony', style: 'universal',
+    family: 'major', pack: 'ldrolez', role: 'harmony', style: 'universal',
     provenance: 'transcribed', source: 'ldrolez/free-midi-chords@MIT', ratified: false,
     numerals: 'I V I IV',
     degrees: '0 7 0 5',
@@ -124,7 +124,7 @@ export const PROGRESSIONS = {
     character: null,
   },
   maj_I_V_IV_vi: {
-    family: 'major', role: 'harmony', style: 'universal',
+    family: 'major', pack: 'ldrolez', role: 'harmony', style: 'universal',
     provenance: 'transcribed', source: 'ldrolez/free-midi-chords@MIT', ratified: false,
     numerals: 'I V IV vi',
     degrees: '0 7 5 9:m',
@@ -132,7 +132,7 @@ export const PROGRESSIONS = {
     character: null,
   },
   maj_I_V_vi_ii: {
-    family: 'major', role: 'harmony', style: 'universal',
+    family: 'major', pack: 'ldrolez', role: 'harmony', style: 'universal',
     provenance: 'transcribed', source: 'ldrolez/free-midi-chords@MIT', ratified: false,
     numerals: 'I V vi ii',
     degrees: '0 7 9:m 2:m',
@@ -140,7 +140,7 @@ export const PROGRESSIONS = {
     character: null,
   },
   maj_I_V_vi_iii_IV_I_IV_V: {
-    family: 'major', role: 'harmony', style: 'universal',
+    family: 'major', pack: 'ldrolez', role: 'harmony', style: 'universal',
     provenance: 'transcribed', source: 'ldrolez/free-midi-chords@MIT', ratified: false,
     numerals: 'I V vi iii IV I IV V',
     degrees: '0 7 9:m 4:m 5 0 5 7',
@@ -148,7 +148,7 @@ export const PROGRESSIONS = {
     character: null,
   },
   maj_I_V_vi_iii_IV: {
-    family: 'major', role: 'harmony', style: 'universal',
+    family: 'major', pack: 'ldrolez', role: 'harmony', style: 'universal',
     provenance: 'transcribed', source: 'ldrolez/free-midi-chords@MIT', ratified: false,
     numerals: 'I V vi iii IV',
     degrees: '0 7 9:m 4:m 5',
@@ -156,7 +156,7 @@ export const PROGRESSIONS = {
     character: null,
   },
   maj_I_V_vi_IV: {
-    family: 'major', role: 'harmony', style: 'universal',
+    family: 'major', pack: 'ldrolez', role: 'harmony', style: 'universal',
     provenance: 'transcribed', source: 'ldrolez/free-midi-chords@MIT', ratified: false,
     numerals: 'I V vi IV',
     degrees: '0 7 9:m 5',
@@ -164,7 +164,7 @@ export const PROGRESSIONS = {
     character: null,
   },
   maj_I_V_vi_V: {
-    family: 'major', role: 'harmony', style: 'universal',
+    family: 'major', pack: 'ldrolez', role: 'harmony', style: 'universal',
     provenance: 'transcribed', source: 'ldrolez/free-midi-chords@MIT', ratified: false,
     numerals: 'I V vi V',
     degrees: '0 7 9:m 7',
@@ -172,7 +172,7 @@ export const PROGRESSIONS = {
     character: null,
   },
   maj_I_vi_I_IV: {
-    family: 'major', role: 'harmony', style: 'universal',
+    family: 'major', pack: 'ldrolez', role: 'harmony', style: 'universal',
     provenance: 'transcribed', source: 'ldrolez/free-midi-chords@MIT', ratified: false,
     numerals: 'I vi I IV',
     degrees: '0 9:m 0 5',
@@ -180,7 +180,7 @@ export const PROGRESSIONS = {
     character: null,
   },
   maj_I_vi_ii_IV: {
-    family: 'major', role: 'harmony', style: 'universal',
+    family: 'major', pack: 'ldrolez', role: 'harmony', style: 'universal',
     provenance: 'transcribed', source: 'ldrolez/free-midi-chords@MIT', ratified: false,
     numerals: 'I vi ii IV',
     degrees: '0 9:m 2:m 5',
@@ -188,7 +188,7 @@ export const PROGRESSIONS = {
     character: null,
   },
   maj_I_vi_ii_V: {
-    family: 'major', role: 'harmony', style: 'universal',
+    family: 'major', pack: 'ldrolez', role: 'harmony', style: 'universal',
     provenance: 'transcribed', source: 'ldrolez/free-midi-chords@MIT', ratified: false,
     numerals: 'I vi ii V',
     degrees: '0 9:m 2:m 7',
@@ -196,7 +196,7 @@ export const PROGRESSIONS = {
     character: null,
   },
   maj_I_vi_IV_iii: {
-    family: 'major', role: 'harmony', style: 'universal',
+    family: 'major', pack: 'ldrolez', role: 'harmony', style: 'universal',
     provenance: 'transcribed', source: 'ldrolez/free-midi-chords@MIT', ratified: false,
     numerals: 'I vi IV iii',
     degrees: '0 9:m 5 4:m',
@@ -204,7 +204,7 @@ export const PROGRESSIONS = {
     character: null,
   },
   maj_I_vi_IV_V: {
-    family: 'major', role: 'harmony', style: 'universal',
+    family: 'major', pack: 'ldrolez', role: 'harmony', style: 'universal',
     provenance: 'transcribed', source: 'ldrolez/free-midi-chords@MIT', ratified: false,
     numerals: 'I vi IV V',
     degrees: '0 9:m 5 7',
@@ -212,7 +212,7 @@ export const PROGRESSIONS = {
     character: null,
   },
   maj_I7_V7_viadd9_IV7: {
-    family: 'major', role: 'harmony', style: 'universal',
+    family: 'major', pack: 'ldrolez', role: 'harmony', style: 'universal',
     provenance: 'transcribed', source: 'ldrolez/free-midi-chords@MIT', ratified: false,
     numerals: 'I7 V7 viadd9 IV7',
     degrees: '0:^7 7:7 9:add9 5:^7',
@@ -220,7 +220,7 @@ export const PROGRESSIONS = {
     character: null,
   },
   maj_ii_IV_V: {
-    family: 'major', role: 'harmony', style: 'universal',
+    family: 'major', pack: 'ldrolez', role: 'harmony', style: 'universal',
     provenance: 'transcribed', source: 'ldrolez/free-midi-chords@MIT', ratified: false,
     numerals: 'ii IV V',
     degrees: '2:m 5 7',
@@ -228,7 +228,7 @@ export const PROGRESSIONS = {
     character: null,
   },
   maj_ii_IV_vi_V: {
-    family: 'major', role: 'harmony', style: 'universal',
+    family: 'major', pack: 'ldrolez', role: 'harmony', style: 'universal',
     provenance: 'transcribed', source: 'ldrolez/free-midi-chords@MIT', ratified: false,
     numerals: 'ii IV vi V',
     degrees: '2:m 5 9:m 7',
@@ -236,7 +236,7 @@ export const PROGRESSIONS = {
     character: null,
   },
   maj_ii_V_I: {
-    family: 'major', role: 'harmony', style: 'universal',
+    family: 'major', pack: 'ldrolez', role: 'harmony', style: 'universal',
     provenance: 'transcribed', source: 'ldrolez/free-midi-chords@MIT', ratified: false,
     numerals: 'ii V I',
     degrees: '2:m 7 0',
@@ -244,7 +244,7 @@ export const PROGRESSIONS = {
     character: null,
   },
   maj_ii_V_I_IV: {
-    family: 'major', role: 'harmony', style: 'universal',
+    family: 'major', pack: 'ldrolez', role: 'harmony', style: 'universal',
     provenance: 'transcribed', source: 'ldrolez/free-midi-chords@MIT', ratified: false,
     numerals: 'ii V I IV',
     degrees: '2:m 7 0 5',
@@ -252,7 +252,7 @@ export const PROGRESSIONS = {
     character: null,
   },
   maj_ii7_Vadd9_I7: {
-    family: 'major', role: 'harmony', style: 'universal',
+    family: 'major', pack: 'ldrolez', role: 'harmony', style: 'universal',
     provenance: 'transcribed', source: 'ldrolez/free-midi-chords@MIT', ratified: false,
     numerals: 'ii7 Vadd9 I7',
     degrees: '2:m7 7:add9 0:^7',
@@ -260,7 +260,7 @@ export const PROGRESSIONS = {
     character: null,
   },
   maj_iii_vi_IV_I: {
-    family: 'major', role: 'harmony', style: 'universal',
+    family: 'major', pack: 'ldrolez', role: 'harmony', style: 'universal',
     provenance: 'transcribed', source: 'ldrolez/free-midi-chords@MIT', ratified: false,
     numerals: 'iii vi IV I',
     degrees: '4:m 9:m 5 0',
@@ -268,7 +268,7 @@ export const PROGRESSIONS = {
     character: null,
   },
   maj_iim7_V7_iiim7_vi7_iim7_V7: {
-    family: 'major', role: 'harmony', style: 'universal',
+    family: 'major', pack: 'ldrolez', role: 'harmony', style: 'universal',
     provenance: 'transcribed', source: 'ldrolez/free-midi-chords@MIT', ratified: false,
     numerals: 'iim7 V7 iiim7 vi7 iim7 V7',
     degrees: '2:m7 7:7 4:m7 9:m7 2:m7 7:7',
@@ -276,7 +276,7 @@ export const PROGRESSIONS = {
     character: null,
   },
   maj_Isus2_I_vi7_visus4: {
-    family: 'major', role: 'harmony', style: 'universal',
+    family: 'major', pack: 'ldrolez', role: 'harmony', style: 'universal',
     provenance: 'transcribed', source: 'ldrolez/free-midi-chords@MIT', ratified: false,
     numerals: 'Isus2 I vi7 visus4',
     degrees: '0:2 0 9:m7 9:sus',
@@ -284,7 +284,7 @@ export const PROGRESSIONS = {
     character: null,
   },
   maj_IV_I_ii_vi: {
-    family: 'major', role: 'harmony', style: 'universal',
+    family: 'major', pack: 'ldrolez', role: 'harmony', style: 'universal',
     provenance: 'transcribed', source: 'ldrolez/free-midi-chords@MIT', ratified: false,
     numerals: 'IV I ii vi',
     degrees: '5 0 2:m 9:m',
@@ -292,7 +292,7 @@ export const PROGRESSIONS = {
     character: null,
   },
   maj_IV_I_iii_IV: {
-    family: 'major', role: 'harmony', style: 'universal',
+    family: 'major', pack: 'ldrolez', role: 'harmony', style: 'universal',
     provenance: 'transcribed', source: 'ldrolez/free-midi-chords@MIT', ratified: false,
     numerals: 'IV I iii IV',
     degrees: '5 0 4:m 5',
@@ -300,7 +300,7 @@ export const PROGRESSIONS = {
     character: null,
   },
   maj_IV_I_IV6_Iadd9: {
-    family: 'major', role: 'harmony', style: 'universal',
+    family: 'major', pack: 'ldrolez', role: 'harmony', style: 'universal',
     provenance: 'transcribed', source: 'ldrolez/free-midi-chords@MIT', ratified: false,
     numerals: 'IV I IV6 Iadd9',
     degrees: '5 0 5:6 0:add9',
@@ -308,7 +308,7 @@ export const PROGRESSIONS = {
     character: null,
   },
   maj_IV_I_V_vi: {
-    family: 'major', role: 'harmony', style: 'universal',
+    family: 'major', pack: 'ldrolez', role: 'harmony', style: 'universal',
     provenance: 'transcribed', source: 'ldrolez/free-midi-chords@MIT', ratified: false,
     numerals: 'IV I V vi',
     degrees: '5 0 7 9:m',
@@ -316,7 +316,7 @@ export const PROGRESSIONS = {
     character: null,
   },
   maj_IV_IV_I_V: {
-    family: 'major', role: 'harmony', style: 'universal',
+    family: 'major', pack: 'ldrolez', role: 'harmony', style: 'universal',
     provenance: 'transcribed', source: 'ldrolez/free-midi-chords@MIT', ratified: false,
     numerals: 'IV IV I V',
     degrees: '5 5 0 7',
@@ -324,7 +324,7 @@ export const PROGRESSIONS = {
     character: null,
   },
   maj_IV_vi_I_V: {
-    family: 'major', role: 'harmony', style: 'universal',
+    family: 'major', pack: 'ldrolez', role: 'harmony', style: 'universal',
     provenance: 'transcribed', source: 'ldrolez/free-midi-chords@MIT', ratified: false,
     numerals: 'IV vi I V',
     degrees: '5 9:m 0 7',
@@ -332,7 +332,7 @@ export const PROGRESSIONS = {
     character: null,
   },
   maj_IV_vi_iii_I: {
-    family: 'major', role: 'harmony', style: 'universal',
+    family: 'major', pack: 'ldrolez', role: 'harmony', style: 'universal',
     provenance: 'transcribed', source: 'ldrolez/free-midi-chords@MIT', ratified: false,
     numerals: 'IV vi iii I',
     degrees: '5 9:m 4:m 0',
@@ -340,7 +340,7 @@ export const PROGRESSIONS = {
     character: null,
   },
   maj_IV_vi_IV_vi: {
-    family: 'major', role: 'harmony', style: 'universal',
+    family: 'major', pack: 'ldrolez', role: 'harmony', style: 'universal',
     provenance: 'transcribed', source: 'ldrolez/free-midi-chords@MIT', ratified: false,
     numerals: 'IV vi IV vi',
     degrees: '5 9:m 5 9:m',
@@ -348,7 +348,7 @@ export const PROGRESSIONS = {
     character: null,
   },
   maj_V_I_vi_V: {
-    family: 'major', role: 'harmony', style: 'universal',
+    family: 'major', pack: 'ldrolez', role: 'harmony', style: 'universal',
     provenance: 'transcribed', source: 'ldrolez/free-midi-chords@MIT', ratified: false,
     numerals: 'V I vi V',
     degrees: '7 0 9:m 7',
@@ -356,7 +356,7 @@ export const PROGRESSIONS = {
     character: null,
   },
   maj_V_IV_vi_I: {
-    family: 'major', role: 'harmony', style: 'universal',
+    family: 'major', pack: 'ldrolez', role: 'harmony', style: 'universal',
     provenance: 'transcribed', source: 'ldrolez/free-midi-chords@MIT', ratified: false,
     numerals: 'V IV vi I',
     degrees: '7 5 9:m 0',
@@ -364,7 +364,7 @@ export const PROGRESSIONS = {
     character: null,
   },
   maj_V_vi_IV_I: {
-    family: 'major', role: 'harmony', style: 'universal',
+    family: 'major', pack: 'ldrolez', role: 'harmony', style: 'universal',
     provenance: 'transcribed', source: 'ldrolez/free-midi-chords@MIT', ratified: false,
     numerals: 'V vi IV I',
     degrees: '7 9:m 5 0',
@@ -372,7 +372,7 @@ export const PROGRESSIONS = {
     character: null,
   },
   maj_vi_ii_V_I: {
-    family: 'major', role: 'harmony', style: 'universal',
+    family: 'major', pack: 'ldrolez', role: 'harmony', style: 'universal',
     provenance: 'transcribed', source: 'ldrolez/free-midi-chords@MIT', ratified: false,
     numerals: 'vi ii V I',
     degrees: '9:m 2:m 7 0',
@@ -380,7 +380,7 @@ export const PROGRESSIONS = {
     character: null,
   },
   maj_vi_IV_I_V: {
-    family: 'major', role: 'harmony', style: 'universal',
+    family: 'major', pack: 'ldrolez', role: 'harmony', style: 'universal',
     provenance: 'transcribed', source: 'ldrolez/free-midi-chords@MIT', ratified: false,
     numerals: 'vi IV I V',
     degrees: '9:m 5 0 7',
@@ -388,7 +388,7 @@ export const PROGRESSIONS = {
     character: null,
   },
   maj_vi_IV_iii_V: {
-    family: 'major', role: 'harmony', style: 'universal',
+    family: 'major', pack: 'ldrolez', role: 'harmony', style: 'universal',
     provenance: 'transcribed', source: 'ldrolez/free-midi-chords@MIT', ratified: false,
     numerals: 'vi IV iii V',
     degrees: '9:m 5 4:m 7',
@@ -396,7 +396,7 @@ export const PROGRESSIONS = {
     character: null,
   },
   maj_vi_V_IV_V_ii_V_I_I: {
-    family: 'major', role: 'harmony', style: 'universal',
+    family: 'major', pack: 'ldrolez', role: 'harmony', style: 'universal',
     provenance: 'transcribed', source: 'ldrolez/free-midi-chords@MIT', ratified: false,
     numerals: 'vi V IV V ii V I I',
     degrees: '9:m 7 5 7 2:m 7 0 0',
@@ -404,7 +404,7 @@ export const PROGRESSIONS = {
     character: null,
   },
   maj_vi_V_IV_V: {
-    family: 'major', role: 'harmony', style: 'universal',
+    family: 'major', pack: 'ldrolez', role: 'harmony', style: 'universal',
     provenance: 'transcribed', source: 'ldrolez/free-midi-chords@MIT', ratified: false,
     numerals: 'vi V IV V',
     degrees: '9:m 7 5 7',
@@ -412,7 +412,7 @@ export const PROGRESSIONS = {
     character: null,
   },
   min_i_i_iv_iv_v7_ii5_v_v7: {
-    family: 'minor', role: 'harmony', style: 'universal',
+    family: 'minor', pack: 'ldrolez', role: 'harmony', style: 'universal',
     provenance: 'transcribed', source: 'ldrolez/free-midi-chords@MIT', ratified: false,
     numerals: 'i i iv iv v7 ii5 v v7',
     degrees: '0:m 0:m 5:m 5:m 7:m7 2:5 7:m 7:m7',
@@ -420,7 +420,7 @@ export const PROGRESSIONS = {
     character: null,
   },
   min_i_ii_v_i: {
-    family: 'minor', role: 'harmony', style: 'universal',
+    family: 'minor', pack: 'ldrolez', role: 'harmony', style: 'universal',
     provenance: 'transcribed', source: 'ldrolez/free-midi-chords@MIT', ratified: false,
     numerals: 'i ii v i',
     degrees: '0:m 2:m 7:m 0:m',
@@ -428,7 +428,7 @@ export const PROGRESSIONS = {
     character: null,
   },
   min_i_III_iv_VI: {
-    family: 'minor', role: 'harmony', style: 'universal',
+    family: 'minor', pack: 'ldrolez', role: 'harmony', style: 'universal',
     provenance: 'transcribed', source: 'ldrolez/free-midi-chords@MIT', ratified: false,
     numerals: 'i III iv VI',
     degrees: '0:m 3 5:m 8',
@@ -436,7 +436,7 @@ export const PROGRESSIONS = {
     character: null,
   },
   min_i_III_VII_iv: {
-    family: 'minor', role: 'harmony', style: 'universal',
+    family: 'minor', pack: 'ldrolez', role: 'harmony', style: 'universal',
     provenance: 'transcribed', source: 'ldrolez/free-midi-chords@MIT', ratified: false,
     numerals: 'i III VII iv',
     degrees: '0:m 3 10 5:m',
@@ -444,7 +444,7 @@ export const PROGRESSIONS = {
     character: null,
   },
   min_i_III_VII_VI: {
-    family: 'minor', role: 'harmony', style: 'universal',
+    family: 'minor', pack: 'ldrolez', role: 'harmony', style: 'universal',
     provenance: 'transcribed', source: 'ldrolez/free-midi-chords@MIT', ratified: false,
     numerals: 'i III VII VI',
     degrees: '0:m 3 10 8',
@@ -452,7 +452,7 @@ export const PROGRESSIONS = {
     character: null,
   },
   min_i_ii_v_III_i_ii_v_VII: {
-    family: 'minor', role: 'harmony', style: 'universal',
+    family: 'minor', pack: 'ldrolez', role: 'harmony', style: 'universal',
     provenance: 'transcribed', source: 'ldrolez/free-midi-chords@MIT', ratified: false,
     numerals: 'i ii v III i ii v VII',
     degrees: '0:m 2:m 7:m 3 0:m 2:m 7:m 10',
@@ -460,7 +460,7 @@ export const PROGRESSIONS = {
     character: null,
   },
   min_i_iv_III_VI: {
-    family: 'minor', role: 'harmony', style: 'universal',
+    family: 'minor', pack: 'ldrolez', role: 'harmony', style: 'universal',
     provenance: 'transcribed', source: 'ldrolez/free-midi-chords@MIT', ratified: false,
     numerals: 'i iv III VI',
     degrees: '0:m 5:m 3 8',
@@ -468,7 +468,7 @@ export const PROGRESSIONS = {
     character: null,
   },
   min_i_iv_v_iv: {
-    family: 'minor', role: 'harmony', style: 'universal',
+    family: 'minor', pack: 'ldrolez', role: 'harmony', style: 'universal',
     provenance: 'transcribed', source: 'ldrolez/free-midi-chords@MIT', ratified: false,
     numerals: 'i iv v iv',
     degrees: '0:m 5:m 7:m 5:m',
@@ -476,7 +476,7 @@ export const PROGRESSIONS = {
     character: null,
   },
   min_i_iv_v: {
-    family: 'minor', role: 'harmony', style: 'universal',
+    family: 'minor', pack: 'ldrolez', role: 'harmony', style: 'universal',
     provenance: 'transcribed', source: 'ldrolez/free-midi-chords@MIT', ratified: false,
     numerals: 'i iv v',
     degrees: '0:m 5:m 7:m',
@@ -484,7 +484,7 @@ export const PROGRESSIONS = {
     character: null,
   },
   min_i_iv_VI_v: {
-    family: 'minor', role: 'harmony', style: 'universal',
+    family: 'minor', pack: 'ldrolez', role: 'harmony', style: 'universal',
     provenance: 'transcribed', source: 'ldrolez/free-midi-chords@MIT', ratified: false,
     numerals: 'i iv VI v',
     degrees: '0:m 5:m 8 7:m',
@@ -492,7 +492,7 @@ export const PROGRESSIONS = {
     character: null,
   },
   min_i_iv_VII_i: {
-    family: 'minor', role: 'harmony', style: 'universal',
+    family: 'minor', pack: 'ldrolez', role: 'harmony', style: 'universal',
     provenance: 'transcribed', source: 'ldrolez/free-midi-chords@MIT', ratified: false,
     numerals: 'i iv VII i',
     degrees: '0:m 5:m 10 0:m',
@@ -500,7 +500,7 @@ export const PROGRESSIONS = {
     character: null,
   },
   min_i_iv_VII_v_i_i_ii_V: {
-    family: 'minor', role: 'harmony', style: 'universal',
+    family: 'minor', pack: 'ldrolez', role: 'harmony', style: 'universal',
     provenance: 'transcribed', source: 'ldrolez/free-midi-chords@MIT', ratified: false,
     numerals: 'i iv VII v i i ii V',
     degrees: '0:m 5:m 10 7:m 0:m 0:m 2:m 7',
@@ -508,7 +508,7 @@ export const PROGRESSIONS = {
     character: null,
   },
   min_i_v_iv_VII: {
-    family: 'minor', role: 'harmony', style: 'universal',
+    family: 'minor', pack: 'ldrolez', role: 'harmony', style: 'universal',
     provenance: 'transcribed', source: 'ldrolez/free-midi-chords@MIT', ratified: false,
     numerals: 'i v iv VII',
     degrees: '0:m 7:m 5:m 10',
@@ -516,7 +516,7 @@ export const PROGRESSIONS = {
     character: null,
   },
   min_i_vdim_iv_VI: {
-    family: 'minor', role: 'harmony', style: 'universal',
+    family: 'minor', pack: 'ldrolez', role: 'harmony', style: 'universal',
     provenance: 'transcribed', source: 'ldrolez/free-midi-chords@MIT', ratified: false,
     numerals: 'i vdim iv VI',
     degrees: '0:m 7:o 5:m 8',
@@ -524,7 +524,7 @@ export const PROGRESSIONS = {
     character: null,
   },
   min_i_VI_III_VII_i_VI69_III7_VII: {
-    family: 'minor', role: 'harmony', style: 'universal',
+    family: 'minor', pack: 'ldrolez', role: 'harmony', style: 'universal',
     provenance: 'transcribed', source: 'ldrolez/free-midi-chords@MIT', ratified: false,
     numerals: 'i VI III VII i VI69 III7 VII',
     degrees: '0:m 8 3 10 0:m 8:69 3:^7 10',
@@ -532,7 +532,7 @@ export const PROGRESSIONS = {
     character: null,
   },
   min_i_VI_III_VII: {
-    family: 'minor', role: 'harmony', style: 'universal',
+    family: 'minor', pack: 'ldrolez', role: 'harmony', style: 'universal',
     provenance: 'transcribed', source: 'ldrolez/free-midi-chords@MIT', ratified: false,
     numerals: 'i VI III VII',
     degrees: '0:m 8 3 10',
@@ -540,7 +540,7 @@ export const PROGRESSIONS = {
     character: null,
   },
   min_i_VI_iv_ii: {
-    family: 'minor', role: 'harmony', style: 'universal',
+    family: 'minor', pack: 'ldrolez', role: 'harmony', style: 'universal',
     provenance: 'transcribed', source: 'ldrolez/free-midi-chords@MIT', ratified: false,
     numerals: 'i VI iv ii',
     degrees: '0:m 8 5:m 2:m',
@@ -548,7 +548,7 @@ export const PROGRESSIONS = {
     character: null,
   },
   min_i_VI_iv_III: {
-    family: 'minor', role: 'harmony', style: 'universal',
+    family: 'minor', pack: 'ldrolez', role: 'harmony', style: 'universal',
     provenance: 'transcribed', source: 'ldrolez/free-midi-chords@MIT', ratified: false,
     numerals: 'i VI iv III',
     degrees: '0:m 8 5:m 3',
@@ -556,7 +556,7 @@ export const PROGRESSIONS = {
     character: null,
   },
   min_i_VI_iv_v: {
-    family: 'minor', role: 'harmony', style: 'universal',
+    family: 'minor', pack: 'ldrolez', role: 'harmony', style: 'universal',
     provenance: 'transcribed', source: 'ldrolez/free-midi-chords@MIT', ratified: false,
     numerals: 'i VI iv v',
     degrees: '0:m 8 5:m 7:m',
@@ -564,7 +564,7 @@ export const PROGRESSIONS = {
     character: null,
   },
   min_i_VI_VII_iv: {
-    family: 'minor', role: 'harmony', style: 'universal',
+    family: 'minor', pack: 'ldrolez', role: 'harmony', style: 'universal',
     provenance: 'transcribed', source: 'ldrolez/free-midi-chords@MIT', ratified: false,
     numerals: 'i VI VII iv',
     degrees: '0:m 8 10 5:m',
@@ -572,7 +572,7 @@ export const PROGRESSIONS = {
     character: null,
   },
   min_i_VI_VII_v: {
-    family: 'minor', role: 'harmony', style: 'universal',
+    family: 'minor', pack: 'ldrolez', role: 'harmony', style: 'universal',
     provenance: 'transcribed', source: 'ldrolez/free-midi-chords@MIT', ratified: false,
     numerals: 'i VI VII v',
     degrees: '0:m 8 10 7:m',
@@ -580,7 +580,7 @@ export const PROGRESSIONS = {
     character: null,
   },
   min_i_VI_VII: {
-    family: 'minor', role: 'harmony', style: 'universal',
+    family: 'minor', pack: 'ldrolez', role: 'harmony', style: 'universal',
     provenance: 'transcribed', source: 'ldrolez/free-midi-chords@MIT', ratified: false,
     numerals: 'i VI VII',
     degrees: '0:m 8 10',
@@ -588,7 +588,7 @@ export const PROGRESSIONS = {
     character: null,
   },
   min_i_VII_i_v_III_VII_i_v_i: {
-    family: 'minor', role: 'harmony', style: 'universal',
+    family: 'minor', pack: 'ldrolez', role: 'harmony', style: 'universal',
     provenance: 'transcribed', source: 'ldrolez/free-midi-chords@MIT', ratified: false,
     numerals: 'i VII i v III VII i v i',
     degrees: '0:m 10 0:m 7:m 3 10 0:m 7:m 0:m',
@@ -596,7 +596,7 @@ export const PROGRESSIONS = {
     character: null,
   },
   min_i_VII_i_v: {
-    family: 'minor', role: 'harmony', style: 'universal',
+    family: 'minor', pack: 'ldrolez', role: 'harmony', style: 'universal',
     provenance: 'transcribed', source: 'ldrolez/free-midi-chords@MIT', ratified: false,
     numerals: 'i VII i v',
     degrees: '0:m 10 0:m 7:m',
@@ -604,7 +604,7 @@ export const PROGRESSIONS = {
     character: null,
   },
   min_i_VII_III_VI: {
-    family: 'minor', role: 'harmony', style: 'universal',
+    family: 'minor', pack: 'ldrolez', role: 'harmony', style: 'universal',
     provenance: 'transcribed', source: 'ldrolez/free-midi-chords@MIT', ratified: false,
     numerals: 'i VII III VI',
     degrees: '0:m 10 3 8',
@@ -612,7 +612,7 @@ export const PROGRESSIONS = {
     character: null,
   },
   min_i_VII_v_VI: {
-    family: 'minor', role: 'harmony', style: 'universal',
+    family: 'minor', pack: 'ldrolez', role: 'harmony', style: 'universal',
     provenance: 'transcribed', source: 'ldrolez/free-midi-chords@MIT', ratified: false,
     numerals: 'i VII v VI',
     degrees: '0:m 10 7:m 8',
@@ -620,7 +620,7 @@ export const PROGRESSIONS = {
     character: null,
   },
   min_i_VII_VI_III_iv_VI_VII_i: {
-    family: 'minor', role: 'harmony', style: 'universal',
+    family: 'minor', pack: 'ldrolez', role: 'harmony', style: 'universal',
     provenance: 'transcribed', source: 'ldrolez/free-midi-chords@MIT', ratified: false,
     numerals: 'i VII VI III iv VI VII i',
     degrees: '0:m 10 8 3 5:m 8 10 0:m',
@@ -628,7 +628,7 @@ export const PROGRESSIONS = {
     character: null,
   },
   min_i_VII_VI_III: {
-    family: 'minor', role: 'harmony', style: 'universal',
+    family: 'minor', pack: 'ldrolez', role: 'harmony', style: 'universal',
     provenance: 'transcribed', source: 'ldrolez/free-midi-chords@MIT', ratified: false,
     numerals: 'i VII VI III',
     degrees: '0:m 10 8 3',
@@ -636,7 +636,7 @@ export const PROGRESSIONS = {
     character: null,
   },
   min_i_VII_VI_iv: {
-    family: 'minor', role: 'harmony', style: 'universal',
+    family: 'minor', pack: 'ldrolez', role: 'harmony', style: 'universal',
     provenance: 'transcribed', source: 'ldrolez/free-midi-chords@MIT', ratified: false,
     numerals: 'i VII VI iv',
     degrees: '0:m 10 8 5:m',
@@ -644,7 +644,7 @@ export const PROGRESSIONS = {
     character: null,
   },
   min_i_VII_VI_VII: {
-    family: 'minor', role: 'harmony', style: 'universal',
+    family: 'minor', pack: 'ldrolez', role: 'harmony', style: 'universal',
     provenance: 'transcribed', source: 'ldrolez/free-midi-chords@MIT', ratified: false,
     numerals: 'i VII VI VII',
     degrees: '0:m 10 8 10',
@@ -652,7 +652,7 @@ export const PROGRESSIONS = {
     character: null,
   },
   min_i_VII_VIadd9_VII_i_v_VI_VIIsus4: {
-    family: 'minor', role: 'harmony', style: 'universal',
+    family: 'minor', pack: 'ldrolez', role: 'harmony', style: 'universal',
     provenance: 'transcribed', source: 'ldrolez/free-midi-chords@MIT', ratified: false,
     numerals: 'i VII VIadd9 VII i v VI VIIsus4',
     degrees: '0:m 10 8:add9 10 0:m 7:m 8 10:sus',
@@ -660,7 +660,7 @@ export const PROGRESSIONS = {
     character: null,
   },
   min_i7_VI_III7_VII6_i_i7_III7_iv7: {
-    family: 'minor', role: 'harmony', style: 'universal',
+    family: 'minor', pack: 'ldrolez', role: 'harmony', style: 'universal',
     provenance: 'transcribed', source: 'ldrolez/free-midi-chords@MIT', ratified: false,
     numerals: 'i7 VI III7 VII6 i i7 III7 iv7',
     degrees: '0:m7 8 3:^7 10:6 0:m 0:m7 3:^7 5:m7',
@@ -668,7 +668,7 @@ export const PROGRESSIONS = {
     character: null,
   },
   min_i7_VII_VI7_iv7: {
-    family: 'minor', role: 'harmony', style: 'universal',
+    family: 'minor', pack: 'ldrolez', role: 'harmony', style: 'universal',
     provenance: 'transcribed', source: 'ldrolez/free-midi-chords@MIT', ratified: false,
     numerals: 'i7 VII VI7 iv7',
     degrees: '0:m7 10 8:^7 5:m7',
@@ -676,7 +676,7 @@ export const PROGRESSIONS = {
     character: null,
   },
   min_ii_v_i: {
-    family: 'minor', role: 'harmony', style: 'universal',
+    family: 'minor', pack: 'ldrolez', role: 'harmony', style: 'universal',
     provenance: 'transcribed', source: 'ldrolez/free-midi-chords@MIT', ratified: false,
     numerals: 'ii v i',
     degrees: '2:m 7:m 0:m',
@@ -684,7 +684,7 @@ export const PROGRESSIONS = {
     character: null,
   },
   min_ii_v_i_iv: {
-    family: 'minor', role: 'harmony', style: 'universal',
+    family: 'minor', pack: 'ldrolez', role: 'harmony', style: 'universal',
     provenance: 'transcribed', source: 'ldrolez/free-midi-chords@MIT', ratified: false,
     numerals: 'ii v i iv',
     degrees: '2:m 7:m 0:m 5:m',
@@ -692,7 +692,7 @@ export const PROGRESSIONS = {
     character: null,
   },
   min_ii_VI_i_iv: {
-    family: 'minor', role: 'harmony', style: 'universal',
+    family: 'minor', pack: 'ldrolez', role: 'harmony', style: 'universal',
     provenance: 'transcribed', source: 'ldrolez/free-midi-chords@MIT', ratified: false,
     numerals: 'ii VI i iv',
     degrees: '2:m 8 0:m 5:m',
@@ -700,7 +700,7 @@ export const PROGRESSIONS = {
     character: null,
   },
   min_im7_ivsus4_v7_isus4: {
-    family: 'minor', role: 'harmony', style: 'universal',
+    family: 'minor', pack: 'ldrolez', role: 'harmony', style: 'universal',
     provenance: 'transcribed', source: 'ldrolez/free-midi-chords@MIT', ratified: false,
     numerals: 'im7 ivsus4 v7 isus4',
     degrees: '0:m7 5:sus 7:m7 0:sus',
@@ -708,7 +708,7 @@ export const PROGRESSIONS = {
     character: null,
   },
   min_iv_i_v_VI: {
-    family: 'minor', role: 'harmony', style: 'universal',
+    family: 'minor', pack: 'ldrolez', role: 'harmony', style: 'universal',
     provenance: 'transcribed', source: 'ldrolez/free-midi-chords@MIT', ratified: false,
     numerals: 'iv i v VI',
     degrees: '5:m 0:m 7:m 8',
@@ -716,7 +716,7 @@ export const PROGRESSIONS = {
     character: null,
   },
   min_iv_III_VII_i: {
-    family: 'minor', role: 'harmony', style: 'universal',
+    family: 'minor', pack: 'ldrolez', role: 'harmony', style: 'universal',
     provenance: 'transcribed', source: 'ldrolez/free-midi-chords@MIT', ratified: false,
     numerals: 'iv III VII i',
     degrees: '5:m 3 10 0:m',
@@ -724,7 +724,7 @@ export const PROGRESSIONS = {
     character: null,
   },
   min_iv_III_vsus4_VI_iv_i_III_VI: {
-    family: 'minor', role: 'harmony', style: 'universal',
+    family: 'minor', pack: 'ldrolez', role: 'harmony', style: 'universal',
     provenance: 'transcribed', source: 'ldrolez/free-midi-chords@MIT', ratified: false,
     numerals: 'iv III vsus4 VI iv i III VI',
     degrees: '5:m 3 7:sus 8 5:m 0:m 3 8',
@@ -732,7 +732,7 @@ export const PROGRESSIONS = {
     character: null,
   },
   min_iv_v_VI_VII: {
-    family: 'minor', role: 'harmony', style: 'universal',
+    family: 'minor', pack: 'ldrolez', role: 'harmony', style: 'universal',
     provenance: 'transcribed', source: 'ldrolez/free-midi-chords@MIT', ratified: false,
     numerals: 'iv v VI VII',
     degrees: '5:m 7:m 8 10',
@@ -740,7 +740,7 @@ export const PROGRESSIONS = {
     character: null,
   },
   min_iv_VI_v_VII: {
-    family: 'minor', role: 'harmony', style: 'universal',
+    family: 'minor', pack: 'ldrolez', role: 'harmony', style: 'universal',
     provenance: 'transcribed', source: 'ldrolez/free-midi-chords@MIT', ratified: false,
     numerals: 'iv VI v VII',
     degrees: '5:m 8 7:m 10',
@@ -748,7 +748,7 @@ export const PROGRESSIONS = {
     character: null,
   },
   min_iv_VI_VII_i: {
-    family: 'minor', role: 'harmony', style: 'universal',
+    family: 'minor', pack: 'ldrolez', role: 'harmony', style: 'universal',
     provenance: 'transcribed', source: 'ldrolez/free-midi-chords@MIT', ratified: false,
     numerals: 'iv VI VII i',
     degrees: '5:m 8 10 0:m',
@@ -756,7 +756,7 @@ export const PROGRESSIONS = {
     character: null,
   },
   min_v_i_iv_VII: {
-    family: 'minor', role: 'harmony', style: 'universal',
+    family: 'minor', pack: 'ldrolez', role: 'harmony', style: 'universal',
     provenance: 'transcribed', source: 'ldrolez/free-midi-chords@MIT', ratified: false,
     numerals: 'v i iv VII',
     degrees: '7:m 0:m 5:m 10',
@@ -764,7 +764,7 @@ export const PROGRESSIONS = {
     character: null,
   },
   min_v_iv_i: {
-    family: 'minor', role: 'harmony', style: 'universal',
+    family: 'minor', pack: 'ldrolez', role: 'harmony', style: 'universal',
     provenance: 'transcribed', source: 'ldrolez/free-midi-chords@MIT', ratified: false,
     numerals: 'v iv i',
     degrees: '7:m 5:m 0:m',
@@ -772,7 +772,7 @@ export const PROGRESSIONS = {
     character: null,
   },
   min_v_VI_III_i: {
-    family: 'minor', role: 'harmony', style: 'universal',
+    family: 'minor', pack: 'ldrolez', role: 'harmony', style: 'universal',
     provenance: 'transcribed', source: 'ldrolez/free-midi-chords@MIT', ratified: false,
     numerals: 'v VI III i',
     degrees: '7:m 8 3 0:m',
@@ -780,7 +780,7 @@ export const PROGRESSIONS = {
     character: null,
   },
   min_v_VI_v_i: {
-    family: 'minor', role: 'harmony', style: 'universal',
+    family: 'minor', pack: 'ldrolez', role: 'harmony', style: 'universal',
     provenance: 'transcribed', source: 'ldrolez/free-midi-chords@MIT', ratified: false,
     numerals: 'v VI v i',
     degrees: '7:m 8 7:m 0:m',
@@ -788,7 +788,7 @@ export const PROGRESSIONS = {
     character: null,
   },
   min_VI_i_v_III: {
-    family: 'minor', role: 'harmony', style: 'universal',
+    family: 'minor', pack: 'ldrolez', role: 'harmony', style: 'universal',
     provenance: 'transcribed', source: 'ldrolez/free-midi-chords@MIT', ratified: false,
     numerals: 'VI i v III',
     degrees: '8 0:m 7:m 3',
@@ -796,7 +796,7 @@ export const PROGRESSIONS = {
     character: null,
   },
   min_VI_i_v: {
-    family: 'minor', role: 'harmony', style: 'universal',
+    family: 'minor', pack: 'ldrolez', role: 'harmony', style: 'universal',
     provenance: 'transcribed', source: 'ldrolez/free-midi-chords@MIT', ratified: false,
     numerals: 'VI i v',
     degrees: '8 0:m 7:m',
@@ -804,7 +804,7 @@ export const PROGRESSIONS = {
     character: null,
   },
   min_VI_III_i_v: {
-    family: 'minor', role: 'harmony', style: 'universal',
+    family: 'minor', pack: 'ldrolez', role: 'harmony', style: 'universal',
     provenance: 'transcribed', source: 'ldrolez/free-midi-chords@MIT', ratified: false,
     numerals: 'VI III i v',
     degrees: '8 3 0:m 7:m',
@@ -812,7 +812,7 @@ export const PROGRESSIONS = {
     character: null,
   },
   min_VI_iv_i_v: {
-    family: 'minor', role: 'harmony', style: 'universal',
+    family: 'minor', pack: 'ldrolez', role: 'harmony', style: 'universal',
     provenance: 'transcribed', source: 'ldrolez/free-midi-chords@MIT', ratified: false,
     numerals: 'VI iv i v',
     degrees: '8 5:m 0:m 7:m',
@@ -820,7 +820,7 @@ export const PROGRESSIONS = {
     character: null,
   },
   min_VI_VI_i_VII: {
-    family: 'minor', role: 'harmony', style: 'universal',
+    family: 'minor', pack: 'ldrolez', role: 'harmony', style: 'universal',
     provenance: 'transcribed', source: 'ldrolez/free-midi-chords@MIT', ratified: false,
     numerals: 'VI VI i VII',
     degrees: '8 8 0:m 10',
@@ -828,7 +828,7 @@ export const PROGRESSIONS = {
     character: null,
   },
   min_VI_VII_i_III: {
-    family: 'minor', role: 'harmony', style: 'universal',
+    family: 'minor', pack: 'ldrolez', role: 'harmony', style: 'universal',
     provenance: 'transcribed', source: 'ldrolez/free-midi-chords@MIT', ratified: false,
     numerals: 'VI VII i III',
     degrees: '8 10 0:m 3',
@@ -836,7 +836,7 @@ export const PROGRESSIONS = {
     character: null,
   },
   min_VI_VII_v_III: {
-    family: 'minor', role: 'harmony', style: 'universal',
+    family: 'minor', pack: 'ldrolez', role: 'harmony', style: 'universal',
     provenance: 'transcribed', source: 'ldrolez/free-midi-chords@MIT', ratified: false,
     numerals: 'VI VII v III',
     degrees: '8 10 7:m 3',
@@ -844,7 +844,7 @@ export const PROGRESSIONS = {
     character: null,
   },
   min_VI7_VII_i_v_VI7_VII_i_iv7: {
-    family: 'minor', role: 'harmony', style: 'universal',
+    family: 'minor', pack: 'ldrolez', role: 'harmony', style: 'universal',
     provenance: 'transcribed', source: 'ldrolez/free-midi-chords@MIT', ratified: false,
     numerals: 'VI7 VII i v VI7 VII i iv7',
     degrees: '8:^7 10 0:m 7:m 8:^7 10 0:m 5:m7',
@@ -852,7 +852,7 @@ export const PROGRESSIONS = {
     character: null,
   },
   min_VI7_VII6_i_VII6: {
-    family: 'minor', role: 'harmony', style: 'universal',
+    family: 'minor', pack: 'ldrolez', role: 'harmony', style: 'universal',
     provenance: 'transcribed', source: 'ldrolez/free-midi-chords@MIT', ratified: false,
     numerals: 'VI7 VII6 i VII6',
     degrees: '8:^7 10:6 0:m 10:6',
@@ -860,7 +860,7 @@ export const PROGRESSIONS = {
     character: null,
   },
   min_VII_iv_v_i: {
-    family: 'minor', role: 'harmony', style: 'universal',
+    family: 'minor', pack: 'ldrolez', role: 'harmony', style: 'universal',
     provenance: 'transcribed', source: 'ldrolez/free-midi-chords@MIT', ratified: false,
     numerals: 'VII iv v i',
     degrees: '10 5:m 7:m 0:m',
@@ -868,7 +868,7 @@ export const PROGRESSIONS = {
     character: null,
   },
   min_VII_iv_VII_i: {
-    family: 'minor', role: 'harmony', style: 'universal',
+    family: 'minor', pack: 'ldrolez', role: 'harmony', style: 'universal',
     provenance: 'transcribed', source: 'ldrolez/free-midi-chords@MIT', ratified: false,
     numerals: 'VII iv VII i',
     degrees: '10 5:m 10 0:m',
@@ -876,7 +876,7 @@ export const PROGRESSIONS = {
     character: null,
   },
   mod_bIIIM_ii_bIIM_I: {
-    family: 'modal', role: 'harmony', style: 'universal',
+    family: 'modal', pack: 'ldrolez', role: 'harmony', style: 'universal',
     provenance: 'transcribed', source: 'ldrolez/free-midi-chords@MIT', ratified: false,
     numerals: 'bIIIM ii bIIM I',
     degrees: '3b 2:m 1b 0',
@@ -884,7 +884,7 @@ export const PROGRESSIONS = {
     character: null,
   },
   mod_bIIM_bVIM_biii_bviim: {
-    family: 'modal', role: 'harmony', style: 'universal',
+    family: 'modal', pack: 'ldrolez', role: 'harmony', style: 'universal',
     provenance: 'transcribed', source: 'ldrolez/free-midi-chords@MIT', ratified: false,
     numerals: 'bIIM bVIM biii bviim',
     degrees: '1b 8b 3b:m 10b:m',
@@ -892,7 +892,7 @@ export const PROGRESSIONS = {
     character: null,
   },
   mod_bIIM_ivm_biii_im: {
-    family: 'modal', role: 'harmony', style: 'universal',
+    family: 'modal', pack: 'ldrolez', role: 'harmony', style: 'universal',
     provenance: 'transcribed', source: 'ldrolez/free-midi-chords@MIT', ratified: false,
     numerals: 'bIIM ivm biii im',
     degrees: '1b 5:m 3b:m 0:m',
@@ -900,7 +900,7 @@ export const PROGRESSIONS = {
     character: null,
   },
   mod_bVIIM_bIIM_bIIIM_im: {
-    family: 'modal', role: 'harmony', style: 'universal',
+    family: 'modal', pack: 'ldrolez', role: 'harmony', style: 'universal',
     provenance: 'transcribed', source: 'ldrolez/free-midi-chords@MIT', ratified: false,
     numerals: 'bVIIM bIIM bIIIM im',
     degrees: '10b 1b 3b 0:m',
@@ -908,7 +908,7 @@ export const PROGRESSIONS = {
     character: null,
   },
   mod_bVIM_bIIIM_bVIIM_IV_I: {
-    family: 'modal', role: 'harmony', style: 'universal',
+    family: 'modal', pack: 'ldrolez', role: 'harmony', style: 'universal',
     provenance: 'transcribed', source: 'ldrolez/free-midi-chords@MIT', ratified: false,
     numerals: 'bVIM bIIIM bVIIM IV I',
     degrees: '8b 3b 10b 5 0',
@@ -916,7 +916,7 @@ export const PROGRESSIONS = {
     character: null,
   },
   mod_bVIM_bVIIm_im_bIIM: {
-    family: 'modal', role: 'harmony', style: 'universal',
+    family: 'modal', pack: 'ldrolez', role: 'harmony', style: 'universal',
     provenance: 'transcribed', source: 'ldrolez/free-midi-chords@MIT', ratified: false,
     numerals: 'bVIM bVIIm im bIIM',
     degrees: '8b 10b:m 0:m 1b',
@@ -924,7 +924,7 @@ export const PROGRESSIONS = {
     character: null,
   },
   mod_bVIM_vi_im_bVIIM: {
-    family: 'modal', role: 'harmony', style: 'universal',
+    family: 'modal', pack: 'ldrolez', role: 'harmony', style: 'universal',
     provenance: 'transcribed', source: 'ldrolez/free-midi-chords@MIT', ratified: false,
     numerals: 'bVIM vi im bVIIM',
     degrees: '8b 9:m 0:m 10b',
@@ -932,7 +932,7 @@ export const PROGRESSIONS = {
     character: null,
   },
   mod_bVIM7_ivmadd9_I: {
-    family: 'modal', role: 'harmony', style: 'universal',
+    family: 'modal', pack: 'ldrolez', role: 'harmony', style: 'universal',
     provenance: 'transcribed', source: 'ldrolez/free-midi-chords@MIT', ratified: false,
     numerals: 'bVIM7 ivmadd9 I',
     degrees: '8b:^7 5:madd9 0',
@@ -940,7 +940,7 @@ export const PROGRESSIONS = {
     character: null,
   },
   mod_I7_bIdom7_III7_ii7_V7: {
-    family: 'modal', role: 'harmony', style: 'universal',
+    family: 'modal', pack: 'ldrolez', role: 'harmony', style: 'universal',
     provenance: 'transcribed', source: 'ldrolez/free-midi-chords@MIT', ratified: false,
     numerals: 'I7 bIdom7 III7 ii7 V7',
     degrees: '0:^7 11b:7 4:m7 2:m7 7:7',
@@ -948,7 +948,7 @@ export const PROGRESSIONS = {
     character: null,
   },
   mod_I_bIIIM_bVIIM_I: {
-    family: 'modal', role: 'harmony', style: 'universal',
+    family: 'modal', pack: 'ldrolez', role: 'harmony', style: 'universal',
     provenance: 'transcribed', source: 'ldrolez/free-midi-chords@MIT', ratified: false,
     numerals: 'I bIIIM bVIIM I',
     degrees: '0 3b 10b 0',
@@ -956,7 +956,7 @@ export const PROGRESSIONS = {
     character: null,
   },
   mod_I_bIIIM_bVIIM_IV: {
-    family: 'modal', role: 'harmony', style: 'universal',
+    family: 'modal', pack: 'ldrolez', role: 'harmony', style: 'universal',
     provenance: 'transcribed', source: 'ldrolez/free-midi-chords@MIT', ratified: false,
     numerals: 'I bIIIM bVIIM IV',
     degrees: '0 3b 10b 5',
@@ -964,7 +964,7 @@ export const PROGRESSIONS = {
     character: null,
   },
   mod_I_bIIIM_bVIM_bVIIM: {
-    family: 'modal', role: 'harmony', style: 'universal',
+    family: 'modal', pack: 'ldrolez', role: 'harmony', style: 'universal',
     provenance: 'transcribed', source: 'ldrolez/free-midi-chords@MIT', ratified: false,
     numerals: 'I bIIIM bVIM bVIIM',
     degrees: '0 3b 8b 10b',
@@ -972,7 +972,7 @@ export const PROGRESSIONS = {
     character: null,
   },
   mod_I_bIIIM_IV_I: {
-    family: 'modal', role: 'harmony', style: 'universal',
+    family: 'modal', pack: 'ldrolez', role: 'harmony', style: 'universal',
     provenance: 'transcribed', source: 'ldrolez/free-midi-chords@MIT', ratified: false,
     numerals: 'I bIIIM IV I',
     degrees: '0 3b 5 0',
@@ -980,7 +980,7 @@ export const PROGRESSIONS = {
     character: null,
   },
   mod_I_bIIM_I_iii: {
-    family: 'modal', role: 'harmony', style: 'universal',
+    family: 'modal', pack: 'ldrolez', role: 'harmony', style: 'universal',
     provenance: 'transcribed', source: 'ldrolez/free-midi-chords@MIT', ratified: false,
     numerals: 'I bIIM I iii',
     degrees: '0 1b 0 4:m',
@@ -988,7 +988,7 @@ export const PROGRESSIONS = {
     character: null,
   },
   mod_I_bIIM7_bIIIM6_bIIM7_I_im_bVIIM_bIIM: {
-    family: 'modal', role: 'harmony', style: 'universal',
+    family: 'modal', pack: 'ldrolez', role: 'harmony', style: 'universal',
     provenance: 'transcribed', source: 'ldrolez/free-midi-chords@MIT', ratified: false,
     numerals: 'I bIIM7 bIIIM6 bIIM7 I im bVIIM bIIM',
     degrees: '0 1b:^7 3b:6 1b:^7 0 0:m 10b 1b',
@@ -996,7 +996,7 @@ export const PROGRESSIONS = {
     character: null,
   },
   mod_I_bVIIM_bVIM_bIIM: {
-    family: 'modal', role: 'harmony', style: 'universal',
+    family: 'modal', pack: 'ldrolez', role: 'harmony', style: 'universal',
     provenance: 'transcribed', source: 'ldrolez/free-midi-chords@MIT', ratified: false,
     numerals: 'I bVIIM bVIM bIIM',
     degrees: '0 10b 8b 1b',
@@ -1004,7 +1004,7 @@ export const PROGRESSIONS = {
     character: null,
   },
   mod_I_bVIIM_bVIM_IV_IVsus4_IV: {
-    family: 'modal', role: 'harmony', style: 'universal',
+    family: 'modal', pack: 'ldrolez', role: 'harmony', style: 'universal',
     provenance: 'transcribed', source: 'ldrolez/free-midi-chords@MIT', ratified: false,
     numerals: 'I bVIIM bVIM IV IVsus4 IV',
     degrees: '0 10b 8b 5 5:sus 5',
@@ -1012,7 +1012,7 @@ export const PROGRESSIONS = {
     character: null,
   },
   mod_I_bVIIM_I_I_bVIM_V: {
-    family: 'modal', role: 'harmony', style: 'universal',
+    family: 'modal', pack: 'ldrolez', role: 'harmony', style: 'universal',
     provenance: 'transcribed', source: 'ldrolez/free-midi-chords@MIT', ratified: false,
     numerals: 'I bVIIM I I bVIM V',
     degrees: '0 10b 0 0 8b 7',
@@ -1020,7 +1020,7 @@ export const PROGRESSIONS = {
     character: null,
   },
   mod_I_bVIIM_IV_V: {
-    family: 'modal', role: 'harmony', style: 'universal',
+    family: 'modal', pack: 'ldrolez', role: 'harmony', style: 'universal',
     provenance: 'transcribed', source: 'ldrolez/free-midi-chords@MIT', ratified: false,
     numerals: 'I bVIIM IV V',
     degrees: '0 10b 5 7',
@@ -1028,7 +1028,7 @@ export const PROGRESSIONS = {
     character: null,
   },
   mod_I_bVIM_bVIIM_ivm: {
-    family: 'modal', role: 'harmony', style: 'universal',
+    family: 'modal', pack: 'ldrolez', role: 'harmony', style: 'universal',
     provenance: 'transcribed', source: 'ldrolez/free-midi-chords@MIT', ratified: false,
     numerals: 'I bVIM bVIIM ivm',
     degrees: '0 8b 10b 5:m',
@@ -1036,7 +1036,7 @@ export const PROGRESSIONS = {
     character: null,
   },
   mod_I_bVIM_I_bIIM: {
-    family: 'modal', role: 'harmony', style: 'universal',
+    family: 'modal', pack: 'ldrolez', role: 'harmony', style: 'universal',
     provenance: 'transcribed', source: 'ldrolez/free-midi-chords@MIT', ratified: false,
     numerals: 'I bVIM I bIIM',
     degrees: '0 8b 0 1b',
@@ -1044,7 +1044,7 @@ export const PROGRESSIONS = {
     character: null,
   },
   mod_I_bVIM_IV_bIIIM_bVIIM: {
-    family: 'modal', role: 'harmony', style: 'universal',
+    family: 'modal', pack: 'ldrolez', role: 'harmony', style: 'universal',
     provenance: 'transcribed', source: 'ldrolez/free-midi-chords@MIT', ratified: false,
     numerals: 'I bVIM IV bIIIM bVIIM',
     degrees: '0 8b 5 3b 10b',
@@ -1052,7 +1052,7 @@ export const PROGRESSIONS = {
     character: null,
   },
   mod_I_I7_I9_IV_ivm: {
-    family: 'modal', role: 'harmony', style: 'universal',
+    family: 'modal', pack: 'ldrolez', role: 'harmony', style: 'universal',
     provenance: 'transcribed', source: 'ldrolez/free-midi-chords@MIT', ratified: false,
     numerals: 'I I7 I9 IV ivm',
     degrees: '0 0:^7 0:add9 5 5:m',
@@ -1060,7 +1060,7 @@ export const PROGRESSIONS = {
     character: null,
   },
   mod_I_I7_Idom7_IV_ivm_I: {
-    family: 'modal', role: 'harmony', style: 'universal',
+    family: 'modal', pack: 'ldrolez', role: 'harmony', style: 'universal',
     provenance: 'transcribed', source: 'ldrolez/free-midi-chords@MIT', ratified: false,
     numerals: 'I I7 Idom7 IV ivm I',
     degrees: '0 0:^7 0:7 5 5:m 0',
@@ -1068,7 +1068,7 @@ export const PROGRESSIONS = {
     character: null,
   },
   mod_I_I7_Idom7_IV_ivm_I_ivm6_Vdom7: {
-    family: 'modal', role: 'harmony', style: 'universal',
+    family: 'modal', pack: 'ldrolez', role: 'harmony', style: 'universal',
     provenance: 'transcribed', source: 'ldrolez/free-midi-chords@MIT', ratified: false,
     numerals: 'I I7 Idom7 IV ivm I ivm6 Vdom7',
     degrees: '0 0:^7 0:7 5 5:m 0 5:m6 7:7',
@@ -1076,7 +1076,7 @@ export const PROGRESSIONS = {
     character: null,
   },
   mod_I_im_bVII6_bVIM: {
-    family: 'modal', role: 'harmony', style: 'universal',
+    family: 'modal', pack: 'ldrolez', role: 'harmony', style: 'universal',
     provenance: 'transcribed', source: 'ldrolez/free-midi-chords@MIT', ratified: false,
     numerals: 'I im bVII6 bVIM',
     degrees: '0 0:m 10b:6 8b',
@@ -1084,7 +1084,7 @@ export const PROGRESSIONS = {
     character: null,
   },
   mod_I_IIIM_vi_V: {
-    family: 'modal', role: 'harmony', style: 'universal',
+    family: 'modal', pack: 'ldrolez', role: 'harmony', style: 'universal',
     provenance: 'transcribed', source: 'ldrolez/free-midi-chords@MIT', ratified: false,
     numerals: 'I IIIM vi V',
     degrees: '0 4 9:m 7',
@@ -1092,7 +1092,7 @@ export const PROGRESSIONS = {
     character: null,
   },
   mod_I_IIM_iii_V6: {
-    family: 'modal', role: 'harmony', style: 'universal',
+    family: 'modal', pack: 'ldrolez', role: 'harmony', style: 'universal',
     provenance: 'transcribed', source: 'ldrolez/free-midi-chords@MIT', ratified: false,
     numerals: 'I IIM iii V6',
     degrees: '0 2 4:m 7:6',
@@ -1100,7 +1100,7 @@ export const PROGRESSIONS = {
     character: null,
   },
   mod_I_IIM_IV_I: {
-    family: 'modal', role: 'harmony', style: 'universal',
+    family: 'modal', pack: 'ldrolez', role: 'harmony', style: 'universal',
     provenance: 'transcribed', source: 'ldrolez/free-midi-chords@MIT', ratified: false,
     numerals: 'I IIM IV I',
     degrees: '0 2 5 0',
@@ -1108,7 +1108,7 @@ export const PROGRESSIONS = {
     character: null,
   },
   mod_I_IV_bIIIM_bVIM: {
-    family: 'modal', role: 'harmony', style: 'universal',
+    family: 'modal', pack: 'ldrolez', role: 'harmony', style: 'universal',
     provenance: 'transcribed', source: 'ldrolez/free-midi-chords@MIT', ratified: false,
     numerals: 'I IV bIIIM bVIM',
     degrees: '0 5 3b 8b',
@@ -1116,7 +1116,7 @@ export const PROGRESSIONS = {
     character: null,
   },
   mod_I_IV_bVIIM_IV: {
-    family: 'modal', role: 'harmony', style: 'universal',
+    family: 'modal', pack: 'ldrolez', role: 'harmony', style: 'universal',
     provenance: 'transcribed', source: 'ldrolez/free-midi-chords@MIT', ratified: false,
     numerals: 'I IV bVIIM IV',
     degrees: '0 5 10b 5',
@@ -1124,7 +1124,7 @@ export const PROGRESSIONS = {
     character: null,
   },
   mod_I_IV_V_bVIIM: {
-    family: 'modal', role: 'harmony', style: 'universal',
+    family: 'modal', pack: 'ldrolez', role: 'harmony', style: 'universal',
     provenance: 'transcribed', source: 'ldrolez/free-midi-chords@MIT', ratified: false,
     numerals: 'I IV V bVIIM',
     degrees: '0 5 7 10b',
@@ -1132,7 +1132,7 @@ export const PROGRESSIONS = {
     character: null,
   },
   mod_I_ivm_bIIIM_bVIIM: {
-    family: 'modal', role: 'harmony', style: 'universal',
+    family: 'modal', pack: 'ldrolez', role: 'harmony', style: 'universal',
     provenance: 'transcribed', source: 'ldrolez/free-midi-chords@MIT', ratified: false,
     numerals: 'I ivm bIIIM bVIIM',
     degrees: '0 5:m 3b 10b',
@@ -1140,7 +1140,7 @@ export const PROGRESSIONS = {
     character: null,
   },
   mod_I_V_bVIIM_IV: {
-    family: 'modal', role: 'harmony', style: 'universal',
+    family: 'modal', pack: 'ldrolez', role: 'harmony', style: 'universal',
     provenance: 'transcribed', source: 'ldrolez/free-midi-chords@MIT', ratified: false,
     numerals: 'I V bVIIM IV',
     degrees: '0 7 10b 5',
@@ -1148,7 +1148,7 @@ export const PROGRESSIONS = {
     character: null,
   },
   mod_I_V_ivm_bVIM: {
-    family: 'modal', role: 'harmony', style: 'universal',
+    family: 'modal', pack: 'ldrolez', role: 'harmony', style: 'universal',
     provenance: 'transcribed', source: 'ldrolez/free-midi-chords@MIT', ratified: false,
     numerals: 'I V ivm bVIM',
     degrees: '0 7 5:m 8b',
@@ -1156,7 +1156,7 @@ export const PROGRESSIONS = {
     character: null,
   },
   mod_I_vi_bVIM_V: {
-    family: 'modal', role: 'harmony', style: 'universal',
+    family: 'modal', pack: 'ldrolez', role: 'harmony', style: 'universal',
     provenance: 'transcribed', source: 'ldrolez/free-midi-chords@MIT', ratified: false,
     numerals: 'I vi bVIM V',
     degrees: '0 9:m 8b 7',
@@ -1164,7 +1164,7 @@ export const PROGRESSIONS = {
     character: null,
   },
   mod_I5_iii_II5_sIVm_IV5_vi_V5_viim: {
-    family: 'modal', role: 'harmony', style: 'universal',
+    family: 'modal', pack: 'ldrolez', role: 'harmony', style: 'universal',
     provenance: 'transcribed', source: 'ldrolez/free-midi-chords@MIT', ratified: false,
     numerals: 'I5 iii II5 #IVm IV5 vi V5 viim',
     degrees: '0:5 4:m 2:5 6#:m 5:5 9:m 7:5 11:m',
@@ -1172,7 +1172,7 @@ export const PROGRESSIONS = {
     character: null,
   },
   mod_ii_bIIM_I_bVIIM: {
-    family: 'modal', role: 'harmony', style: 'universal',
+    family: 'modal', pack: 'ldrolez', role: 'harmony', style: 'universal',
     provenance: 'transcribed', source: 'ldrolez/free-midi-chords@MIT', ratified: false,
     numerals: 'ii bIIM I bVIIM',
     degrees: '2:m 1b 0 10b',
@@ -1180,7 +1180,7 @@ export const PROGRESSIONS = {
     character: null,
   },
   mod_ii_bVIIM7_I: {
-    family: 'modal', role: 'harmony', style: 'universal',
+    family: 'modal', pack: 'ldrolez', role: 'harmony', style: 'universal',
     provenance: 'transcribed', source: 'ldrolez/free-midi-chords@MIT', ratified: false,
     numerals: 'ii bVIIM7 I',
     degrees: '2:m 10b:^7 0',
@@ -1188,7 +1188,7 @@ export const PROGRESSIONS = {
     character: null,
   },
   mod_ii_IVM_vm_bVIIM: {
-    family: 'modal', role: 'harmony', style: 'universal',
+    family: 'modal', pack: 'ldrolez', role: 'harmony', style: 'universal',
     provenance: 'transcribed', source: 'ldrolez/free-midi-chords@MIT', ratified: false,
     numerals: 'ii IVM vm bVIIM',
     degrees: '2:m 5 7:m 10b',
@@ -1196,7 +1196,7 @@ export const PROGRESSIONS = {
     character: null,
   },
   mod_IIIM_V_VIsus4_VIM_I_IIM: {
-    family: 'modal', role: 'harmony', style: 'universal',
+    family: 'modal', pack: 'ldrolez', role: 'harmony', style: 'universal',
     provenance: 'transcribed', source: 'ldrolez/free-midi-chords@MIT', ratified: false,
     numerals: 'IIIM V VIsus4 VIM I IIM',
     degrees: '4 7 9:sus 9 0 2',
@@ -1204,7 +1204,7 @@ export const PROGRESSIONS = {
     character: null,
   },
   mod_im_bIIIM_bVIIM_IV: {
-    family: 'modal', role: 'harmony', style: 'universal',
+    family: 'modal', pack: 'ldrolez', role: 'harmony', style: 'universal',
     provenance: 'transcribed', source: 'ldrolez/free-midi-chords@MIT', ratified: false,
     numerals: 'im bIIIM bVIIM IV',
     degrees: '0:m 3b 10b 5',
@@ -1212,7 +1212,7 @@ export const PROGRESSIONS = {
     character: null,
   },
   mod_im_bIIIM_bVIM_V: {
-    family: 'modal', role: 'harmony', style: 'universal',
+    family: 'modal', pack: 'ldrolez', role: 'harmony', style: 'universal',
     provenance: 'transcribed', source: 'ldrolez/free-midi-chords@MIT', ratified: false,
     numerals: 'im bIIIM bVIM V',
     degrees: '0:m 3b 8b 7',
@@ -1220,7 +1220,7 @@ export const PROGRESSIONS = {
     character: null,
   },
   mod_im_bIIIM_IV_bVIM: {
-    family: 'modal', role: 'harmony', style: 'universal',
+    family: 'modal', pack: 'ldrolez', role: 'harmony', style: 'universal',
     provenance: 'transcribed', source: 'ldrolez/free-midi-chords@MIT', ratified: false,
     numerals: 'im bIIIM IV bVIM',
     degrees: '0:m 3b 5 8b',
@@ -1228,7 +1228,7 @@ export const PROGRESSIONS = {
     character: null,
   },
   mod_im_bIIIM_IV_V: {
-    family: 'modal', role: 'harmony', style: 'universal',
+    family: 'modal', pack: 'ldrolez', role: 'harmony', style: 'universal',
     provenance: 'transcribed', source: 'ldrolez/free-midi-chords@MIT', ratified: false,
     numerals: 'im bIIIM IV V',
     degrees: '0:m 3b 5 7',
@@ -1236,7 +1236,7 @@ export const PROGRESSIONS = {
     character: null,
   },
   mod_im_bIIIsus2_IV: {
-    family: 'modal', role: 'harmony', style: 'universal',
+    family: 'modal', pack: 'ldrolez', role: 'harmony', style: 'universal',
     provenance: 'transcribed', source: 'ldrolez/free-midi-chords@MIT', ratified: false,
     numerals: 'im bIIIsus2 IV',
     degrees: '0:m 3b:2 5',
@@ -1244,7 +1244,7 @@ export const PROGRESSIONS = {
     character: null,
   },
   mod_im_bIIM_bIIIM_bIIM: {
-    family: 'modal', role: 'harmony', style: 'universal',
+    family: 'modal', pack: 'ldrolez', role: 'harmony', style: 'universal',
     provenance: 'transcribed', source: 'ldrolez/free-midi-chords@MIT', ratified: false,
     numerals: 'im bIIM bIIIM bIIM',
     degrees: '0:m 1b 3b 1b',
@@ -1252,7 +1252,7 @@ export const PROGRESSIONS = {
     character: null,
   },
   mod_im_bIIM_biim6_ivm: {
-    family: 'modal', role: 'harmony', style: 'universal',
+    family: 'modal', pack: 'ldrolez', role: 'harmony', style: 'universal',
     provenance: 'transcribed', source: 'ldrolez/free-midi-chords@MIT', ratified: false,
     numerals: 'im bIIM biim6 ivm',
     degrees: '0:m 1b 1b:m6 5:m',
@@ -1260,7 +1260,7 @@ export const PROGRESSIONS = {
     character: null,
   },
   mod_im_bIIM_im7_bviim: {
-    family: 'modal', role: 'harmony', style: 'universal',
+    family: 'modal', pack: 'ldrolez', role: 'harmony', style: 'universal',
     provenance: 'transcribed', source: 'ldrolez/free-midi-chords@MIT', ratified: false,
     numerals: 'im bIIM im7 bviim',
     degrees: '0:m 1b 0:m7 10b:m',
@@ -1268,7 +1268,7 @@ export const PROGRESSIONS = {
     character: null,
   },
   mod_im_bIIM_ivm_IIIM_bIIM_ivm_IIIM_IIIM: {
-    family: 'modal', role: 'harmony', style: 'universal',
+    family: 'modal', pack: 'ldrolez', role: 'harmony', style: 'universal',
     provenance: 'transcribed', source: 'ldrolez/free-midi-chords@MIT', ratified: false,
     numerals: 'im bIIM ivm IIIM bIIM ivm IIIM IIIM',
     degrees: '0:m 1b 5:m 4 1b 5:m 4 4',
@@ -1276,7 +1276,7 @@ export const PROGRESSIONS = {
     character: null,
   },
   mod_im_bIIM_vm_im7: {
-    family: 'modal', role: 'harmony', style: 'universal',
+    family: 'modal', pack: 'ldrolez', role: 'harmony', style: 'universal',
     provenance: 'transcribed', source: 'ldrolez/free-midi-chords@MIT', ratified: false,
     numerals: 'im bIIM vm im7',
     degrees: '0:m 1b 7:m 0:m7',
@@ -1284,7 +1284,7 @@ export const PROGRESSIONS = {
     character: null,
   },
   mod_im_bVIIM_bIIM_vm: {
-    family: 'modal', role: 'harmony', style: 'universal',
+    family: 'modal', pack: 'ldrolez', role: 'harmony', style: 'universal',
     provenance: 'transcribed', source: 'ldrolez/free-midi-chords@MIT', ratified: false,
     numerals: 'im bVIIM bIIM vm',
     degrees: '0:m 10b 1b 7:m',
@@ -1292,7 +1292,7 @@ export const PROGRESSIONS = {
     character: null,
   },
   mod_im_bVIIM_IV_im: {
-    family: 'modal', role: 'harmony', style: 'universal',
+    family: 'modal', pack: 'ldrolez', role: 'harmony', style: 'universal',
     provenance: 'transcribed', source: 'ldrolez/free-midi-chords@MIT', ratified: false,
     numerals: 'im bVIIM IV im',
     degrees: '0:m 10b 5 0:m',
@@ -1300,7 +1300,7 @@ export const PROGRESSIONS = {
     character: null,
   },
   mod_im_bviim_bVIM_bIIM: {
-    family: 'modal', role: 'harmony', style: 'universal',
+    family: 'modal', pack: 'ldrolez', role: 'harmony', style: 'universal',
     provenance: 'transcribed', source: 'ldrolez/free-midi-chords@MIT', ratified: false,
     numerals: 'im bviim bVIM bIIM',
     degrees: '0:m 10b:m 8b 1b',
@@ -1308,7 +1308,7 @@ export const PROGRESSIONS = {
     character: null,
   },
   mod_im_bVIM_im_IV: {
-    family: 'modal', role: 'harmony', style: 'universal',
+    family: 'modal', pack: 'ldrolez', role: 'harmony', style: 'universal',
     provenance: 'transcribed', source: 'ldrolez/free-midi-chords@MIT', ratified: false,
     numerals: 'im bVIM im IV',
     degrees: '0:m 8b 0:m 5',
@@ -1316,7 +1316,7 @@ export const PROGRESSIONS = {
     character: null,
   },
   mod_im_bVIM_ivm_V: {
-    family: 'modal', role: 'harmony', style: 'universal',
+    family: 'modal', pack: 'ldrolez', role: 'harmony', style: 'universal',
     provenance: 'transcribed', source: 'ldrolez/free-midi-chords@MIT', ratified: false,
     numerals: 'im bVIM ivm V',
     degrees: '0:m 8b 5:m 7',
@@ -1324,7 +1324,7 @@ export const PROGRESSIONS = {
     character: null,
   },
   mod_im_ii_vm_IV: {
-    family: 'modal', role: 'harmony', style: 'universal',
+    family: 'modal', pack: 'ldrolez', role: 'harmony', style: 'universal',
     provenance: 'transcribed', source: 'ldrolez/free-midi-chords@MIT', ratified: false,
     numerals: 'im ii vm IV',
     degrees: '0:m 2:m 7:m 5',
@@ -1332,7 +1332,7 @@ export const PROGRESSIONS = {
     character: null,
   },
   mod_im_ivm9_bIIM_im_vm_ivm7_bIIM_im7: {
-    family: 'modal', role: 'harmony', style: 'universal',
+    family: 'modal', pack: 'ldrolez', role: 'harmony', style: 'universal',
     provenance: 'transcribed', source: 'ldrolez/free-midi-chords@MIT', ratified: false,
     numerals: 'im ivm9 bIIM im vm ivm7 bIIM im7',
     degrees: '0:m 5:m9 1b 0:m 7:m 5:m7 1b 0:m7',
@@ -1340,7 +1340,7 @@ export const PROGRESSIONS = {
     character: null,
   },
   mod_im_ivm9_bIIM_im: {
-    family: 'modal', role: 'harmony', style: 'universal',
+    family: 'modal', pack: 'ldrolez', role: 'harmony', style: 'universal',
     provenance: 'transcribed', source: 'ldrolez/free-midi-chords@MIT', ratified: false,
     numerals: 'im ivm9 bIIM im',
     degrees: '0:m 5:m9 1b 0:m',
@@ -1348,7 +1348,7 @@ export const PROGRESSIONS = {
     character: null,
   },
   mod_im_V_bVIIM_IV_bVIM_bIIIM_ivm_V: {
-    family: 'modal', role: 'harmony', style: 'universal',
+    family: 'modal', pack: 'ldrolez', role: 'harmony', style: 'universal',
     provenance: 'transcribed', source: 'ldrolez/free-midi-chords@MIT', ratified: false,
     numerals: 'im V bVIIM IV bVIM bIIIM ivm V',
     degrees: '0:m 7 10b 5 8b 3b 5:m 7',
@@ -1356,7 +1356,7 @@ export const PROGRESSIONS = {
     character: null,
   },
   mod_im_VIM_bi_V: {
-    family: 'modal', role: 'harmony', style: 'universal',
+    family: 'modal', pack: 'ldrolez', role: 'harmony', style: 'universal',
     provenance: 'transcribed', source: 'ldrolez/free-midi-chords@MIT', ratified: false,
     numerals: 'im VIM bi V',
     degrees: '0:m 9 11b:m 7',
@@ -1364,7 +1364,7 @@ export const PROGRESSIONS = {
     character: null,
   },
   mod_im_VIM_IIIM_bIIM: {
-    family: 'modal', role: 'harmony', style: 'universal',
+    family: 'modal', pack: 'ldrolez', role: 'harmony', style: 'universal',
     provenance: 'transcribed', source: 'ldrolez/free-midi-chords@MIT', ratified: false,
     numerals: 'im VIM IIIM bIIM',
     degrees: '0:m 9 4 1b',
@@ -1372,7 +1372,7 @@ export const PROGRESSIONS = {
     character: null,
   },
   mod_im_vm_isus4_I: {
-    family: 'modal', role: 'harmony', style: 'universal',
+    family: 'modal', pack: 'ldrolez', role: 'harmony', style: 'universal',
     provenance: 'transcribed', source: 'ldrolez/free-midi-chords@MIT', ratified: false,
     numerals: 'im vm isus4 I',
     degrees: '0:m 7:m 0:sus 0',
@@ -1380,7 +1380,7 @@ export const PROGRESSIONS = {
     character: null,
   },
   mod_im_vm_bVIM_bIIM: {
-    family: 'modal', role: 'harmony', style: 'universal',
+    family: 'modal', pack: 'ldrolez', role: 'harmony', style: 'universal',
     provenance: 'transcribed', source: 'ldrolez/free-midi-chords@MIT', ratified: false,
     numerals: 'im vm bVIM bIIM',
     degrees: '0:m 7:m 8b 1b',
@@ -1388,7 +1388,7 @@ export const PROGRESSIONS = {
     character: null,
   },
   mod_im_vm_bVIIM_IV: {
-    family: 'modal', role: 'harmony', style: 'universal',
+    family: 'modal', pack: 'ldrolez', role: 'harmony', style: 'universal',
     provenance: 'transcribed', source: 'ldrolez/free-midi-chords@MIT', ratified: false,
     numerals: 'im vm bVIIM IV',
     degrees: '0:m 7:m 10b 5',
@@ -1396,7 +1396,7 @@ export const PROGRESSIONS = {
     character: null,
   },
   mod_im_vm_ivm_bIIM7: {
-    family: 'modal', role: 'harmony', style: 'universal',
+    family: 'modal', pack: 'ldrolez', role: 'harmony', style: 'universal',
     provenance: 'transcribed', source: 'ldrolez/free-midi-chords@MIT', ratified: false,
     numerals: 'im vm ivm bIIM7',
     degrees: '0:m 7:m 5:m 1b:^7',
@@ -1404,7 +1404,7 @@ export const PROGRESSIONS = {
     character: null,
   },
   mod_im_viim_im_bii: {
-    family: 'modal', role: 'harmony', style: 'universal',
+    family: 'modal', pack: 'ldrolez', role: 'harmony', style: 'universal',
     provenance: 'transcribed', source: 'ldrolez/free-midi-chords@MIT', ratified: false,
     numerals: 'im viim im bii',
     degrees: '0:m 11:m 0:m 1b:m',
@@ -1412,7 +1412,7 @@ export const PROGRESSIONS = {
     character: null,
   },
   mod_iii_im_iii_im7: {
-    family: 'modal', role: 'harmony', style: 'universal',
+    family: 'modal', pack: 'ldrolez', role: 'harmony', style: 'universal',
     provenance: 'transcribed', source: 'ldrolez/free-midi-chords@MIT', ratified: false,
     numerals: 'iii im iii im7',
     degrees: '4:m 0:m 4:m 0:m7',
@@ -1420,7 +1420,7 @@ export const PROGRESSIONS = {
     character: null,
   },
   mod_IV_V_ii_im_bIIIM_IV: {
-    family: 'modal', role: 'harmony', style: 'universal',
+    family: 'modal', pack: 'ldrolez', role: 'harmony', style: 'universal',
     provenance: 'transcribed', source: 'ldrolez/free-midi-chords@MIT', ratified: false,
     numerals: 'IV V ii im bIIIM IV',
     degrees: '5 7 2:m 0:m 3b 5',
@@ -1428,7 +1428,7 @@ export const PROGRESSIONS = {
     character: null,
   },
   mod_ivm_bIIIM_iim7_V: {
-    family: 'modal', role: 'harmony', style: 'universal',
+    family: 'modal', pack: 'ldrolez', role: 'harmony', style: 'universal',
     provenance: 'transcribed', source: 'ldrolez/free-midi-chords@MIT', ratified: false,
     numerals: 'ivm bIIIM iim7 V',
     degrees: '5:m 3b 2:m7 7',
@@ -1436,7 +1436,7 @@ export const PROGRESSIONS = {
     character: null,
   },
   mod_ivm_im_bviim_bVIM: {
-    family: 'modal', role: 'harmony', style: 'universal',
+    family: 'modal', pack: 'ldrolez', role: 'harmony', style: 'universal',
     provenance: 'transcribed', source: 'ldrolez/free-midi-chords@MIT', ratified: false,
     numerals: 'ivm im bviim bVIM',
     degrees: '5:m 0:m 10b:m 8b',
@@ -1444,7 +1444,7 @@ export const PROGRESSIONS = {
     character: null,
   },
   mod_vdim_vdim_ivm_bIIIM: {
-    family: 'modal', role: 'harmony', style: 'universal',
+    family: 'modal', pack: 'ldrolez', role: 'harmony', style: 'universal',
     provenance: 'transcribed', source: 'ldrolez/free-midi-chords@MIT', ratified: false,
     numerals: 'vdim vdim ivm bIIIM',
     degrees: '7:o 7:o 5:m 3b',
@@ -1452,7 +1452,7 @@ export const PROGRESSIONS = {
     character: null,
   },
   mod_vi_bVIM_bVIIM_I: {
-    family: 'modal', role: 'harmony', style: 'universal',
+    family: 'modal', pack: 'ldrolez', role: 'harmony', style: 'universal',
     provenance: 'transcribed', source: 'ldrolez/free-midi-chords@MIT', ratified: false,
     numerals: 'vi bVIM bVIIM I',
     degrees: '9:m 8b 10b 0',
@@ -1460,7 +1460,7 @@ export const PROGRESSIONS = {
     character: null,
   },
   mod_vi_IV_I_IIM: {
-    family: 'modal', role: 'harmony', style: 'universal',
+    family: 'modal', pack: 'ldrolez', role: 'harmony', style: 'universal',
     provenance: 'transcribed', source: 'ldrolez/free-midi-chords@MIT', ratified: false,
     numerals: 'vi IV I IIM',
     degrees: '9:m 5 0 2',
@@ -1468,7 +1468,7 @@ export const PROGRESSIONS = {
     character: null,
   },
   mod_vi_viim_V_vi_sIVdim_V: {
-    family: 'modal', role: 'harmony', style: 'universal',
+    family: 'modal', pack: 'ldrolez', role: 'harmony', style: 'universal',
     provenance: 'transcribed', source: 'ldrolez/free-midi-chords@MIT', ratified: false,
     numerals: 'vi viim V vi #IVdim V',
     degrees: '9:m 11:m 7 9:m 6#:o 7',
@@ -1476,7 +1476,7 @@ export const PROGRESSIONS = {
     character: null,
   },
   mod_VIM_bVIM_im_bVIIM: {
-    family: 'modal', role: 'harmony', style: 'universal',
+    family: 'modal', pack: 'ldrolez', role: 'harmony', style: 'universal',
     provenance: 'transcribed', source: 'ldrolez/free-midi-chords@MIT', ratified: false,
     numerals: 'VIM bVIM im bVIIM',
     degrees: '9 8b 0:m 10b',
@@ -1484,7 +1484,7 @@ export const PROGRESSIONS = {
     character: null,
   },
   mod_bIIIM_V7_I: {
-    family: 'modal', role: 'harmony', style: 'universal',
+    family: 'modal', pack: 'ldrolez', role: 'harmony', style: 'universal',
     provenance: 'transcribed', source: 'ldrolez/free-midi-chords@MIT', ratified: false,
     numerals: 'bIIIM V7 I',
     degrees: '3b 7:7 0',
@@ -1492,7 +1492,7 @@ export const PROGRESSIONS = {
     character: null,
   },
   mod_bVIIM_V7_I: {
-    family: 'modal', role: 'harmony', style: 'universal',
+    family: 'modal', pack: 'ldrolez', role: 'harmony', style: 'universal',
     provenance: 'transcribed', source: 'ldrolez/free-midi-chords@MIT', ratified: false,
     numerals: 'bVIIM V7 I',
     degrees: '10b 7:7 0',
@@ -1500,7 +1500,7 @@ export const PROGRESSIONS = {
     character: null,
   },
   mod_ivm_bIIIM_bIIM_I: {
-    family: 'modal', role: 'harmony', style: 'universal',
+    family: 'modal', pack: 'ldrolez', role: 'harmony', style: 'universal',
     provenance: 'transcribed', source: 'ldrolez/free-midi-chords@MIT', ratified: false,
     numerals: 'ivm bIIIM bIIM I',
     degrees: '5:m 3b 1b 0',
@@ -1508,7 +1508,7 @@ export const PROGRESSIONS = {
     character: null,
   },
   mod_ivm_IIIM_bIIM_I: {
-    family: 'modal', role: 'harmony', style: 'universal',
+    family: 'modal', pack: 'ldrolez', role: 'harmony', style: 'universal',
     provenance: 'transcribed', source: 'ldrolez/free-midi-chords@MIT', ratified: false,
     numerals: 'ivm IIIM bIIM I',
     degrees: '5:m 4 1b 0',
@@ -1516,7 +1516,7 @@ export const PROGRESSIONS = {
     character: null,
   },
   mod_ivm_bIIIM_bVIM_I: {
-    family: 'modal', role: 'harmony', style: 'universal',
+    family: 'modal', pack: 'ldrolez', role: 'harmony', style: 'universal',
     provenance: 'transcribed', source: 'ldrolez/free-midi-chords@MIT', ratified: false,
     numerals: 'ivm bIIIM bVIM I',
     degrees: '5:m 3b 8b 0',
@@ -1534,6 +1534,11 @@ export const PROGRESSIONS = {
 // Parsing + retrieval (§3.5: retrieval by computed properties, tags secondary)
 // ---------------------------------------------------------------------------
 import { VOICINGS } from './voicings.js';
+import { PROGRESSIONS_UNISON } from './progressions-unison.js';
+
+/** Both pools in one registry. `pack` says where an entry came from; the ldrolez
+ *  set is Roman-numeral source data, the unison set is extracted from MIDI (D29). */
+export const ALL_PROGRESSIONS = { ...PROGRESSIONS, ...PROGRESSIONS_UNISON };
 
 /** 'degrees' string -> [{ semis, spell, quality }] ('spell' = source accidental) */
 export function parseDegrees(degrees) {
@@ -1565,11 +1570,14 @@ export function playableWith(entry, shape) {
  */
 export function findProgressions({
   family = null, moods = null, length = null, minLength = 0, maxLength = Infinity,
-  shape = null, ratifiedOnly = false,
+  shape = null, ratifiedOnly = false, pack = null, needsEar = null,
 } = {}) {
   const want = moods ? [].concat(moods).map((m) => m.toLowerCase()) : null;
+  const packs = pack ? new Set([].concat(pack)) : null;
   const out = [];
-  for (const [name, entry] of Object.entries(PROGRESSIONS)) {
+  for (const [name, entry] of Object.entries(ALL_PROGRESSIONS)) {
+    if (packs && !packs.has(entry.pack)) continue;
+    if (needsEar != null && Boolean(entry.needsEar) !== needsEar) continue;
     if (family && entry.family !== family) continue;
     if (ratifiedOnly && !entry.ratified) continue;
     const n = parseDegrees(entry.degrees).length;

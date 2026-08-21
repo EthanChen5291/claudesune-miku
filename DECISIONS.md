@@ -397,3 +397,81 @@ destination schema to emit into. First action on the subscription is the A6.2
 triage (velocity variance / grid deviation) — every rhythm entry in the library is
 still `provenance: 'hand-written'`, so humanized files would be the first real
 accent data we have; quantized ones are pitch-side-only.
+
+## D29 — Unison packs ingested: MIDI only, and only what each file can honestly teach (2026-08-20)
+
+Ethan dropped seven Unison packs into `audios/` — 84 MIDI, 124 WAV — as material
+that is "mostly human verified to be good". What came out, and the rulings behind it:
+
+**The MIDI carries its own analysis.** All 72 chord-progression files name the
+Roman numerals in the filename (`Post Malone - Circles (Imaj7-iii-IV-iv-...)`),
+which is the same tonic-anchored form D28 settled on — so they transcode into the
+existing `degrees` grammar with no new schema. Minor progressions are numbered
+from the NATURAL MINOR scale (VI = 8, VII = 10), like ldrolez's minor family, not
+Ionian-anchored; reading them as Ionian was the cause of an early 53% "disagreement"
+rate that was entirely my own error.
+
+**The filename is a label, not ground truth.** Every chord claimed by a filename is
+checked against the notes actually in the MIDI. 299 of 392 chords match exactly, 9
+have the player adding colour above the label, and the rest disagree. Entries where
+the label and notes conflict — or where the chord count does not divide evenly — are
+marked `needsEar: true` (17 of 72) rather than silently trusted. Two things fell out
+of that check that a filename-only import would have missed: **16 of 72 files are
+filed under the wrong key** (a "Minor Prog (i-v-VI-iv)" in the `E Major / C# Minor`
+folder is in C minor), and three labels have no ireal equivalent at all and were
+named from their notes instead. The tonic is therefore SOLVED from the notes, not
+read from the directory. This costs nothing: the library stores degrees relative to
+the tonic, so the solved key is only ever used to verify.
+
+**A6.2 triage, split in two.** The original flag was one boolean, which is too
+coarse: a file can carry one kind of feel and not the other. `accentsUsable` and
+`timingUsable` are now independent. Consequences, all of them load-bearing:
+- Every chord-progression file is `quantized-flat` (velocity 102 throughout, dead on
+  the grid). Pitch-side extraction only — **no accents were taken from any of them.**
+- Of 12 drum-loop parts, 3 are `performance` and became the first rhythm entries in
+  this library with accents that were not hand-written. 3 more are `timing-only`
+  (flat velocity, real microtiming — a consistent +1/96 push on the house hats, a
+  drag on the indie snare); their timing is kept, their dynamics are not.
+- The remaining 6 get `accents: null` and `needsAccents: true`. They cannot bind.
+  **Inventing a profile so they sound better is exactly the cached-LLM-output
+  circularity A6.1 forbids**, and the audition page plays them with no dynamics at
+  all rather than papering over the gap.
+
+**Grid vs feel.** Onsets are quantized to the smallest grid that explains them and
+the residual is kept as `microtiming`, which the binder already applies. Raw tick
+positions would need a 1/384 grid — past the binder's MAX_GRID of 192 — and would
+bury the feel inside the note positions where nothing can reason about it. The
+residual is expressed in 96ths of a bar (~20ms), the finest `toFrac` accepts; detail
+below that does not survive, which is recorded rather than quietly lost. Loop period
+is detected before extraction (A6.5), so a 16-bar export of a 4-bar loop enters the
+library as 4 bars.
+
+**Voicings are the real prize.** D28 said MIDI's unique value is register, spacing
+and inversion — things no numeral corpus carries — and named six qualities the
+voicing shapes had no offsets for. These records voice five of them
+(`add9` ×28, `69`, `madd9`, `m6`, `5`), plus 25 more qualities, as
+`src/lib/voicings-unison.js`. They are OBSERVATIONS, not shapes: promotion into
+`src/lib/voicings.js` is an ear decision, and the audition page A/Bs each observation
+against the library's current shape where one exists.
+
+**Free co-designed pairs.** The lofi drum loops ship as one MIDI file per instrument
+from the same loop, so 18 co-designed interlock pairs (A5.3's strongest edge type)
+come out at zero cost.
+
+**WAV is not ingested.** 124 files, 92MB: drum one-shots and FX risers/impacts. Those
+are instrument-palette material (A7, a third curated library that does not exist yet)
+and would need sample hosting the engine has no story for. The library stores
+abstractions, never audio (A6.6). `audios/**/*.wav` is gitignored for the same
+reason plus licensing; the 336KB of .mid IS tracked, because it is what the generated
+libraries were extracted from and the tests re-read it.
+
+**Separate pools, one retrieval.** Per Ethan's ask, the Unison material is kept
+distinguishable from the ldrolez corpus: separate generated files, a `pack` field on
+every entry, and its own audition page (`audition/unison.html`). `findProgressions()`
+spans both — 260 progressions — and filters by `pack`. Vibe labels come from the
+packs themselves (Dark, Emotional) or, for the famous pack, the song title; nothing
+finer was invented, which is what the audition pass is for.
+
+**Everything stays unratified.** 72 progressions, 12 rhythms, 91 voicing observations
+— all `ratified: false`, all `character: null`. Same discipline as D28: an extracted
+corpus is a candidate pool, not a library.
