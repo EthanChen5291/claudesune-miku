@@ -240,18 +240,19 @@ export function solveKeyKS(notes) {
 // ---------------------------------------------------------------------------
 
 // pitch class relative to the chord root -> member char. Quality-blind BY DESIGN:
-// '3' names "the chord's third" whether that is 3 or 4 semitones — that is what
-// makes a figure portable across progressions ("even if it's slightly different
-// intervals"). 'N' = not a chord member under ANY common quality of that root
-// (chromatic neighbour / linear motion), decided against the sounding chord.
-const REL_MEMBER = { 0: 'R', 2: '9', 3: '3', 4: '3', 5: '4', 7: '5', 8: '6', 9: '6', 10: '7', 11: '7' };
+// '3' names "the chord's third" whether that is 3 or 4 semitones, '5' the fifth
+// even when the chord diminishes it — that is what makes a figure portable
+// across progressions ("even if it's slightly different intervals"). A note that
+// is NOT a member of the sounding chord keeps its literal interval as '~<semis>'
+// ('~10' = a b7 colour over a plain triad): re-abstracting it to a member would
+// erase exactly the colour that made the bar worth extracting.
+const REL_MEMBER = { 0: 'R', 2: '9', 3: '3', 4: '3', 5: '4', 6: '5', 7: '5', 8: '5', 9: '6', 10: '7', 11: '7' };
 
 export function memberToken(midi, rootMidiRef, chordRelPcs) {
   const rel = mod12(midi - rootMidiRef);
   const oct = Math.floor((midi - rootMidiRef) / 12);
   const isChord = chordRelPcs.has(rel);
-  const m = REL_MEMBER[rel] ?? 'N';
-  const member = isChord ? m : (m === 'R' || m === '5' ? m : 'N');
+  const member = isChord ? REL_MEMBER[rel] : '~' + rel;
   return { token: member + '+'.repeat(Math.max(0, oct)), chordTone: isChord, below: oct < 0 };
 }
 

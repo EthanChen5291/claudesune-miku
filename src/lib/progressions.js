@@ -1535,10 +1535,12 @@ export const PROGRESSIONS = {
 // ---------------------------------------------------------------------------
 import { VOICINGS } from './voicings.js';
 import { PROGRESSIONS_UNISON } from './progressions-unison.js';
+import { PROGRESSIONS_UNDERTALE } from './progressions-undertale.js';
 
-/** Both pools in one registry. `pack` says where an entry came from; the ldrolez
- *  set is Roman-numeral source data, the unison set is extracted from MIDI (D29). */
-export const ALL_PROGRESSIONS = { ...PROGRESSIONS, ...PROGRESSIONS_UNISON };
+/** All pools in one registry. `pack` says where an entry came from; the ldrolez
+ *  set is Roman-numeral source data, the unison set is extracted from labeled
+ *  MIDI (D29), the undertale set is solved from unlabeled full songs (D30). */
+export const ALL_PROGRESSIONS = { ...PROGRESSIONS, ...PROGRESSIONS_UNISON, ...PROGRESSIONS_UNDERTALE };
 
 /** 'degrees' string -> [{ semis, spell, quality }] ('spell' = source accidental) */
 export function parseDegrees(degrees) {

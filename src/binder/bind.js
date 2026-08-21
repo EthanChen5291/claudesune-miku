@@ -436,6 +436,156 @@ export function bindComp(rhythmEntry, harmonyContext, meter = '4/4', opts = {}) 
 }
 
 // ---------------------------------------------------------------------------
+// bindFigure(): an Undertale-style figuration entry (D30) rendered against a
+// harmony context. The entry's `figure` tokens are CHORD-RELATIVE — 'R' root,
+// '3' the sounding chord's third (major or minor, whichever the chord carries),
+// '5' its fifth (diminished/augmented included), '7'/'9'/'4'/'6' likewise,
+// '~<n>' a literal n semitones above the root (a colour the chord does not
+// contain), '+' an octave up, 'a.b' struck together. This is what makes the
+// "movement of the fingers" portable: the same figure re-voices itself over any
+// progression, any quality.
+// ---------------------------------------------------------------------------
+
+const FIGURE_TOKEN = /^(R|[34567]|9|~\d+)(\+*)$/;
+
+/** the chord's own interval for a member, preferring what the chord actually carries */
+function memberSemis(member, rel, warnings, sym) {
+  const pick = (...cands) => cands.find((c) => rel.has(c));
+  let out;
+  switch (member) {
+    case 'R': return 0;
+    case '3': out = pick(4, 3); break;
+    case '4': out = pick(5, 6); break;
+    case '5': out = pick(7, 6, 8); break;
+    case '6': out = pick(9, 8); break;
+    case '7': out = pick(10, 11, 9); break;
+    case '9': out = pick(2, 1, 3); break;
+    default: return Number(member.slice(1)); // '~n' literal
+  }
+  if (out == null) {
+    const FALLBACK = { 3: 4, 4: 5, 5: 7, 6: 9, 7: 10, 9: 2 };
+    out = FALLBACK[member];
+    warnings.push(`chord "${sym}" carries no ${member} — using the default interval ${out}`);
+  }
+  return out;
+}
+
+/**
+ * bindFigure(figEntry, harmonyContext, meter, opts) -> { expr, period, boundMeta, warnings }
+ * figEntry: { onsets, accents, figure, bars?, microtiming?, legato?, octave? }
+ * opts: { octave=figEntry.octave??3, sound='piano', fx='', gainRange, rhythmName }
+ */
+export function bindFigure(figEntry, harmonyContext, meter = '4/4', opts = {}) {
+  const warnings = [];
+  if (!harmonyContext?.harmony?.length) throw new Error('figure bind needs a harmony context (section.harmony)');
+  const figure = figEntry.figure;
+  if (!figure?.length) throw new Error('figuration entry needs figure[] tokens');
+  if (!figEntry.onsets || figEntry.onsets.length !== figure.length) {
+    throw new Error(`figure[] must match onsets[] (${figEntry.onsets?.length ?? 0} onsets, ${figure.length} tokens)`);
+  }
+  for (const tok of figure) for (const m of String(tok).split('.')) {
+    if (!FIGURE_TOKEN.test(m)) throw new Error(`bad figure token "${tok}" (member R/3/4/5/6/7/9 or ~<semitones>, then '+' per octave)`);
+  }
+  const accents = figEntry.accents;
+  if (!accents || accents.length !== figure.length) {
+    throw new Error(`figuration entry must carry a real accent profile (${figure.length} onsets, got ${accents ? accents.length : 0}) — uniform velocity is a bug (§3.4)`);
+  }
+  const B = Math.max(1, Math.floor(figEntry.bars ?? 1));
+  const {
+    octave = figEntry.octave ?? 3, sound = 'piano', fx = '',
+    gainRange = DEFAULT_GAIN_RANGE, rhythmName = figEntry.name ?? null,
+  } = opts;
+
+  // pair onsets with accent + token, apply microtiming with the pairing intact
+  // (normalizeRhythm re-sorts after shifting and would orphan the tokens)
+  let paired = figEntry.onsets.map((o, i) => ({ onset: toFrac(o), accent: accents[i], tok: String(figure[i]) }));
+  if (figEntry.microtiming && figEntry.microtiming.length === paired.length) {
+    paired = paired.map((p, i) => {
+      const shift = toFrac(figEntry.microtiming[i] ?? 0);
+      let [n, d] = norm(p.onset[0] * shift[1] + shift[0] * p.onset[1], p.onset[1] * shift[1]);
+      const span = d * B;
+      n = ((n % span) + span) % span;
+      return { ...p, onset: norm(n, d) };
+    }).sort((a, b) => a.onset[0] / a.onset[1] - b.onset[0] / b.onset[1]);
+  }
+  for (const p of paired) {
+    if (p.onset[0] < 0 || p.onset[0] / p.onset[1] >= B) throw new Error(`onset ${p.onset.join('/')} outside [0, bars=${B})`);
+  }
+
+  // split per bar
+  const bars = Array.from({ length: B }, () => ({ onsets: [], accents: [], toks: [] }));
+  for (const p of paired) {
+    const [n, d] = p.onset;
+    const b = Math.floor(n / d);
+    bars[b].onsets.push(norm(n - b * d, d));
+    bars[b].accents.push(p.accent);
+    bars[b].toks.push(p.tok);
+  }
+  for (const bar of bars) {
+    bar.G = gridSize(bar.onsets);
+    bar.steps = bar.onsets.map(([n, d]) => (n * bar.G) / d);
+    for (let i = 1; i < bar.steps.length; i++) {
+      if (bar.steps[i] <= bar.steps[i - 1]) throw new Error('figure onsets must be strictly increasing');
+    }
+  }
+
+  const harmony = harmonyContext.harmony;
+  const barsPerChord = harmonyContext.barsPerChord ?? 1;
+  const period = lcm(harmony.length * barsPerChord, B);
+  if (period > MAX_PERIOD) throw new Error(`bound pattern period ${period} cycles exceeds ${MAX_PERIOD}`);
+  const flats = keyUsesFlats(harmonyContext.key ?? 'C:major');
+  const legato = figEntry.legato ?? false;
+  const baseC = noteToMidi('C' + String(octave));
+
+  const noteCycles = [];
+  const boundNotes = [];
+  for (let c = 0; c < period; c++) {
+    const bar = bars[c % B];
+    const sym = harmony[Math.floor(c / barsPerChord) % harmony.length];
+    const rootPc = chordRootPc(sym);
+    const pcs = sym ? chordTones(sym) : null;
+    if (sym && (!pcs || pcs.size === 0)) warnings.push(`unknown chord "${sym}" — figure members use default intervals in cycle ${c}`);
+    const rel = new Set([...(pcs ?? [])].map((p) => ((p - (rootPc ?? 0)) % 12 + 12) % 12));
+    const rootRef = baseC + (((rootPc ?? 0) - baseC % 12) + 12) % 12;
+    const values = [];
+    for (let i = 0; i < bar.steps.length; i++) {
+      const accented = bar.accents[i] >= ACCENT_THRESHOLD;
+      const names = bar.toks[i].split('.').map((m) => {
+        const [, member, plus] = FIGURE_TOKEN.exec(m);
+        const midi = rootRef + memberSemis(member, rel, warnings, sym) + 12 * plus.length;
+        const name = midiToNoteName(midi, { flats });
+        boundNotes.push({ cycle: c, step: bar.steps[i], t: fracStr(bar.steps[i], bar.G), note: name, midi, accented, degree: null, voice: 'main', token: m });
+        return name;
+      });
+      values.push(names.length === 1 ? names[0] : `[${names.join(',')}]`);
+    }
+    noteCycles.push(tokens(bar.steps, values, bar.G, { legato }));
+  }
+
+  const gainBars = bars.map((bar) => {
+    const gv = bar.accents.map((a) => round2(gainRange[0] + a * (gainRange[1] - gainRange[0])));
+    return tokens(bar.steps, gv.map(String), bar.G, { legato: true, fillLeading: String(gv[0] ?? round2(gainRange[0])) });
+  });
+  let expr = `note("${period === 1 ? noteCycles[0] : `<${noteCycles.map((t) => `[${t}]`).join(' ')}>`}")`;
+  if (sound) expr += `.s("${sound}")`;
+  expr += `.gain("${gainBars.length === 1 ? gainBars[0] : `<${gainBars.map((t) => `[${t}]`).join(' ')}>`}")`;
+  if (fx) expr += fx.startsWith('.') ? fx : '.' + fx;
+
+  const boundMeta = {
+    motif: null,
+    rhythm: rhythmName,
+    figure: figure.slice(),
+    onsets: paired.map((p) => `${p.onset[0]}/${p.onset[1]}`),
+    accents: accents.slice(),
+    bars: B,
+    gains: accents.map((a) => round2(gainRange[0] + a * (gainRange[1] - gainRange[0]))),
+    period,
+    notes: boundNotes,
+  };
+  return { expr, period, boundMeta, warnings };
+}
+
+// ---------------------------------------------------------------------------
 
 function swingSuffix(r, bars, meter, warnings) {
   if (!r.swing) return '';

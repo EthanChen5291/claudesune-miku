@@ -109,7 +109,8 @@ test('D29: entries whose label disagrees with the notes are FLAGGED, not silentl
     assert.equal(e.match.conflict, 0);
     assert.equal(e.match.rootMiss, 0);
   }
-  assert.equal(findProgressions({ needsEar: true }).length, flagged.length);
+  const packs = ['unison-famous', 'unison-dark', 'unison-emotional'];
+  assert.equal(findProgressions({ needsEar: true, pack: packs }).length, flagged.length);
 });
 
 test('D29: rhythms carry accents only where the source has dynamics to carry', () => {
@@ -168,7 +169,8 @@ test('D29: observed voicings cover qualities the library has no shape for', () =
 });
 
 test('D29: both corpora share one retrieval entry point, distinguishable by pack', () => {
-  assert.equal(Object.keys(ALL_PROGRESSIONS).length, 260);
+  // 188 ldrolez + 72 unison + the undertale pool (D30, counted by its own tests)
+  assert.equal(Object.keys(ALL_PROGRESSIONS).length, 260 + findProgressions({ pack: 'undertale' }).length);
   assert.equal(findProgressions({ pack: 'ldrolez' }).length, 188);
   assert.equal(findProgressions({ pack: ['unison-famous', 'unison-dark', 'unison-emotional'] }).length, 72);
   assert.equal(findProgressions({ pack: 'unison-dark' }).every((r) => r.entry.moods.includes('Dark')), true);

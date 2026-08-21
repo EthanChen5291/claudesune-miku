@@ -2,6 +2,16 @@
 - expand to different genres (and mixing of genres)
 
 - get .midi of toby fox and .wav of laufey
+- [done, D30] Undertale MIDI (110 files) ingested — harmony/bass side only:
+  166 chord loops (progressions-undertale.js), 85 accompaniment figurations as
+  chord-relative tokens + bindFigure() (figurations-undertale.js), rhythm
+  skeletons, 11 observed development moves; melody = notes only
+  (undertale-melody.md). All ratified:false. Audition at audition/undertale.html
+  (figures tab: switch the progression to hear the same movement re-voiced).
+  NEXT: (a) listen + keep/kill — 47 progressions and 37 figures are needsEar
+  (chord/key solved from notes with thin evidence), (b) promote kept figures'
+  character lines, (c) consider 2-bar figuration mining (current entries are
+  1-bar) once round 1 says the abstraction sounds right.
 - [done, D29] Unison packs in audios/ ingested: 72 progressions + 12 drum-loop
   rhythms + 91 voicing observations (all ratified:false). Audition at
   audition/unison.html. NEXT: (a) listen + keep/kill, (b) 17 progressions are
@@ -21,7 +31,7 @@
 - 6 chord qualities have no voicing shapes yet (2 5 69 add9 m6 madd9) — 14 of the
   188 progressions can't be voiced until someone writes and auditions them.
 - incorporate sound effects like fades for transition or emphasis.
-- [done, D30] audio export: `cli.js export <songdir> --wav` = haps -> song.mid
+- [done, D31] audio export: `cli.js export <songdir> --wav` = haps -> song.mid
   (@tonejs/midi, exact) -> song.wav (fluidsynth + GeneralUser GS in
   vendor/soundfonts/). NEXT if render quality matters: DAW finishing tier
   (import song.mid, real instruments per track; Reaper can render headlessly).
@@ -29,6 +39,16 @@
 
 - alan walker syntax incorporation
 
+- [researched, D32] chord manipulation (octave displacement, chord-to-instrument
+  distribution), instrument choice/doubling relations, loop-vs-rising-tension
+  structure + controlling instruments over time, arpeggio types / traversal
+  rhythms / staccato-vs-hold, bass-lowest rule -> arrangement-grammar.md.
+  Decision procedure everywhere: hard rules -> cost ranking -> seeded choice,
+  variation only at structural triggers (never per-chord dice); every choice a
+  declared typed operator. NEXT: implement §1 voicing operators AS the queued
+  D24 binder-revoicing pass (bass-note-integrity + bass-lowest lints first,
+  verifier-side), then phrase grid + ramp policies (§4.2); thresholds in the
+  doc are audition-tunable defaults.
 
 - eventually apply midi to samples
 - assessment of strudle for music representation

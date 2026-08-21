@@ -476,6 +476,79 @@ finer was invented, which is what the audition pass is for.
 — all `ratified: false`, all `character: null`. Same discipline as D28: an extracted
 corpus is a candidate pool, not a library.
 
+## D30 — Undertale corpus: figurations, or the left hand with the chord factored out (2026-08-20)
+
+Ethan dropped 110 Undertale piano MIDI into `audios/` with a specific ask: take
+the HARMONY/BASS side (chord patterns, rhythm patterns, development patterns) and
+make the "movement of the fingers" re-applicable to any progression "even if it's
+slightly different intervals or vibes"; for melody, only abstractable notes.
+What was built and the rulings behind it:
+
+**No labels, so evidence rides along.** Unlike the Unison packs (D29), nothing
+here is labeled: no numerals in filenames, no key directories, no per-part
+tracks. Everything is solved from the notes (`src/ingest/piano.js`) and every
+solve records its evidence — chord `coverage`, key `margin` (Krumhansl-
+Schmuckler, 25/110 songs ambiguous), figure `fit` — and low confidence lands as
+`needsEar: true`, never as a silent trust (A6.1). Hand separation: multi-track
+files declare it (43 files, lowest-mean-pitch tracks = accompaniment);
+single-track files get a two-means pitch split with the method recorded.
+
+**The figuration abstraction is the actual deliverable.** A figuration is one
+bar of accompaniment as CHORD-RELATIVE tokens: 'R' root, '3' *the sounding
+chord's* third — whichever quality the chord carries — '5' its fifth (diminished
+included), '7'/'9'/'4'/'6' likewise, '+' an octave up, 'a.b' struck together.
+A note the chord does NOT contain keeps its literal interval ('~10' = a b7
+colour) because re-abstracting it would erase exactly the colour worth keeping.
+`bindFigure()` (src/binder/bind.js) renders tokens against any harmony context,
+so `R 5 R+ 5` re-voices itself over Dm and F with different intervals and the
+same fingers — the portability Ethan asked for, and the test suite's contract.
+Figures were mined by recurrence: 1802 distinct bar-signatures across the
+corpus, deduped chord-blind (the same movement over different chords IS one
+figure), 85 emitted — recurrence threshold or being an endpoint of a
+development move.
+
+**These files DO carry feel — the opposite of the Unison chord packs.** Triage:
+106/110 `performance` (real velocity variance, real off-grid lag). So accents
+ARE taken (per-onset median of source velocities) where D29's chord packs
+forbade it, and grids are picked COARSEST-FIRST: a fine grid can "explain"
+humanization by absorbing it into step positions (Fallen Down's even 6ths came
+out as 48ths before the fix). The musical grid is the coarsest that fits; the
+residual is kept as `microtiming` — structure and feel separated, as A6.2
+intends.
+
+**Chord solving is tuned for this corpus, and honest about its limits.** Small
+template set in the ireal dialect ('2'/sus2 earned a slot: Toby leans on
+root-9th-5th sonorities and without it they mislabel as sus chords of the wrong
+root), melody notes at half weight, absent-template-tone penalty, hysteresis.
+Progression LOOPS are matched on ROOTS only — the quality labeler flaps between
+colour spellings of one chord (Bb5→Bb6) and full-label matching shredded real
+loops — with each merged segment's quality then a coverage-weighted majority
+vote. `barsPerChord` carries 0.5s: these songs change chords mid-bar and the
+data keeps that even though the binder plays 1 chord/bar today.
+
+**Development is data, not vibes.** Adjacent spans (each held ≥2 bars) of
+different figures are classified by what measurably changes — the corpus-wide
+tally: repitch_same_rhythm 26, arpeggiate 5, blockify 4, densify 3, sparsify 2,
+octave_lift 2, pattern_swap 2. Toby's dominant move is KEEPING the rhythm and
+moving the pitches. Moves whose endpoints weren't independently recurrent pull
+their figures into the pool — the PAIR is the datum.
+
+**Melody: observed, not extracted.** Stats over 37k melodic intervals became
+`undertale-melody.md` (cell-first writing: 73% of bars repeat an interval
+pattern; leap-heavy 40% but 79% gap-filled; the P4 as signature leap at 11.3%;
+chord-tone-on-beat 76% — matching D14's snapping policy already). Extracting
+melodies as contour entries would be copying tunes, not abstracting habits, and
+A6.1 wants ears deciding what enters the library.
+
+**Plumbing.** `PROGRESSIONS_UNDERTALE` (166 loops, pack 'undertale') merged
+into `ALL_PROGRESSIONS`; `RHYTHMS_UNDERTALE` are the figures' onset/accent
+skeletons for the existing bind()/bindComp() paths (oom-pah lows marked
+'bounce'); `audition/undertale.html` plays all of it — progressions under the
+corpus's own figures, every figure over four progressions (own song / minor
+axis / major pop / minor epic), development as 4-bars-A-then-4-bars-B; 1004
+patterns evaluate green. Everything `ratified: false`, `character: null` —
+candidate pool, not library.
+
 ## D29 addendum — the audition pages could not make a sound (2026-08-20)
 
 Both pages rendered, filtered and responded to clicks, and every pattern they emit
@@ -512,7 +585,9 @@ how much they are worth:
 - `codeFor()` no longer interpolates a blank control into the source — `setcpm(/4)`
   is a syntax error, and an unparseable pattern is just more silence.
 
-## D30 — Audio export: MIDI from the haps, sound applied at render (2026-08-20)
+## D31 — Audio export: MIDI from the haps, sound applied at render (2026-08-20)
+*(renumbered from a colliding D30 — two sessions appended the same number; the
+Undertale-corpus entry above kept it, having more cross-references in code.)*
 
 The engine can now produce audio files on command. The design question was where
 audio should come from, given that Strudel's WebAudio output lives in a browser
@@ -546,3 +621,52 @@ deferred: it is automatable (headless sclang + a Node OSC scheduler) but
 realtime-only, needs a SuperCollider install, and buys one fixed sound palette
 where MIDI buys every sampler/VST — revisit only if that specific palette is
 wanted.
+
+## D32 — Arrangement grammar: research written before machinery (2026-08-20)
+
+Ethan asked three questions in one breath: how chord notes get octave-displaced
+or moved across instruments "in a controlled way without it being random but
+ensuring it's expressive"; how instruments are chosen and related (same melody,
+slightly different, counter, chorus) and how structure evolves (loop vs rising
+tension, controlling instruments over time); and the vocabulary of note-rhythm
+textures (arpeggio types, traversal rhythms, staccato vs hold, bass lowest).
+Per the house pattern (interval-grammar.md), this landed as a RESEARCH DOC —
+`arrangement-grammar.md` — not code. Rulings worth recording:
+
+- **One decision procedure everywhere**: hard filter (interval-grammar §4 +
+  A7 metadata + new invariants) → deterministic cost ranking (voice-leading
+  distance, energy-curve fit, top-line coherence, style prior) → seeded
+  tie-break, with the winner DECLARED as a typed operator (the A3.6 pattern).
+  "Not random" = seeded choice among ranked-legal options; "expressive" =
+  variation triggers tied to structure (section/phrase boundaries, loop
+  recurrence counts, cadence approaches), never per-chord dice.
+- **Octave displacement is a closed operator set** (inv/drop/open/close/
+  lift_top/floor_bass/double/omit) over the existing voicings.js offset
+  representation — shapes × operators generate register variants, the library
+  does not enumerate spacings. Two new HARD invariants join §4: bass-note
+  integrity (a voicing's bottom is the declared chord bass — the D26 drop2 bug
+  as lint) and bass-lowest (an active bass label owns the lowest pitch,
+  default an octave under the harmony layer; Ethan's stated rule).
+- **Chord-to-instrument distribution is typed** (stacked/bass_split/
+  layer_split/top_split/hocket/halo), one label per target patch so D4
+  instrument-stream containment and mutes survive untouched. halo = the
+  block+arp pair the D30 development data already documents.
+- **Doubling relations are a taxonomy, not vibes** (unison/chorus/octave/
+  reduction/parallel/counter/antiphonal), with a foreground budget of ONE
+  carrier at a time; doubling count rides the A4.2 energy curve and A1.3
+  metrics verify it.
+- **Rising tension is a policy over the default 4/8-bar loop, not a different
+  structure**: sections subdivide into a phrase grid (default 4 bars) with a
+  ONE-change-per-boundary budget drawn from a typed move list whose
+  swap_figure options are the D30 development vocabulary (the corpus's move
+  tallies are the toby-fox prior). Ramp policies: plateau/terrace/saw/
+  subtractive/withhold. Verifier hooks reuse cycle-range metrics + the
+  containment diff (changes-per-boundary count).
+- **The D30 figuration token grammar is the canonical encoding for arpeggio
+  types** — hand-written arp taxonomy entries become figuration entries, no
+  new schema. Articulation (staccato/detached/tenuto/legato/let_ring) becomes
+  a data field rendered via emitted durations. Rotation (3-against-4 drift)
+  needs figure realization modes — the sibling of D26's contour modes — and is
+  queued, not faked.
+- **Build order defers to the D24 queue**: the §1 operators are implemented AS
+  the already-queued binder revoicing pass's vocabulary, not before it.
