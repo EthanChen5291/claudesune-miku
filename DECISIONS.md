@@ -1112,3 +1112,48 @@ harmony GENERATION (not hardcoded loops), layering (multiple harmonies + lead
 + ~2 added instruments, using the five principles above), then chronological
 editing (prompt-driven edits: add/change notes/instruments/vibe, escalation,
 drops).
+
+## D42 — Soundfonts, energy moved to generation, and the playback bugs (2026-08-23)
+
+Three asks from Ethan's round-6 follow-up.
+
+**1. General MIDI soundfonts wired.** @strudel/web does NOT bundle them, so the
+runtime now dynamically imports @strudel/soundfonts and calls
+registerSoundfonts(), unlocking ~128 gm_* instruments; each font's audio is
+fetched lazily on first use, so registration is cheap. Failure must not mean
+silence: RT.soundfonts records whether it worked, and rtSubstituteSounds()
+rewrites every `.s("gm_*")` to a bundled fallback before evaluation, with a
+banner saying so. First use: the counter voice.
+
+**2. Energy is a GENERATION decision, not a setting.** Ethan's clarification —
+the toggle is removed from the UI entirely. Density is derived from the first
+of the D41 two-hand principles, DENSITY COMPLEMENTARITY: a bar has an activity
+budget (`16 - bpm/40`, clamped 8..15 — looser at slow tempi), the accompaniment
+spends first, the melody gets the remainder. Validated against the ear before
+shipping: the two cards Ethan praised are bit-identical under the new rule
+(His Theme acc 0.5 -> melody 12; Gaster's acc 5.0 -> melody 9), because the
+rule explains why they already worked — while Megalovania (acc 10/bar) drops
+from an 8-note melody to 3, which is exactly the "very hyper" complaint. 112 of
+165 cards change, 44 quieter and 68 busier. A context-role mapping was built
+first and REJECTED by this check: it would have changed the Gaster card he
+praised. The role now picks the counter's INSTRUMENT instead (bell timbres by
+role: music_box for cutscene/character, vibraphone for town/overworld,
+epiano1 for boss/battle, kalimba for menu/joke) — the register-lane principle
+applied to timbre.
+
+**3. UI bugs.**
+- *Two songs at once*: rtPlay is now generation-guarded (each call takes a
+  ticket; a superseded call hushes and bows out) and always hushes before
+  evaluating. The cause was async boot — two quick clicks raced through
+  rtInit() and both reached evaluate.
+- *JS error when switching tabs mid-play*: switching now STOPS first. The old
+  card belongs to the old tab and codeFor()/labelOf() read the current tab, so
+  re-playing a progression under the figures tab threw (no `.labels`). Also
+  belt-and-braces: codeFor() returns null for an entry that does not belong to
+  the active tab rather than composing "p: undefined".
+- *Settings lost on refresh*: tab, texture, figure context, all filters,
+  tempo and checkboxes persist to localStorage and restore on load.
+The audition boot-order guard was updated (not weakened) to require that hush
+precedes every evaluate — the overlap fix is now a tested invariant.
+
+148/148 tests, 1863/1863 patterns green.

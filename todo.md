@@ -113,6 +113,13 @@
   layering phase's starting rules. Built: ENERGY toggle (auto=tempo default
   unchanged | context=atlas role decides | calm/mid/hyper pin the band) +
   "+ counter (triangle)" background voice (calm cell, oct 4, own seed).
+  [D42] soundfonts wired (@strudel/soundfonts, ~128 gm_* voices, lazy per
+  instrument, graceful fallback); energy REMOVED from the UI and derived at
+  generation time by density complementarity (activity budget - accompaniment
+  density; praised cards bit-identical, Megalovania 8->3 fixes "hyper");
+  counter instrument chosen by context role; playback bugs fixed (no overlap:
+  generation-guarded + hush-before-evaluate; no JS error: stop on tab switch +
+  codeFor tab guard; settings persist across refresh).
   NEXT (Ethan's stated order): (1) HARMONY GENERATION — compose progressions,
   not just replay extracted loops; (2) LAYERING — harmonies + lead + ~2 more
   instruments, engine-side instrument palette decision (load gm_* soundfonts

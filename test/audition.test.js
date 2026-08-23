@@ -53,13 +53,17 @@ test('audition/progressions.html: renders, and a card click emits playable sourc
   assert.equal(order[0], 'initStrudel');
   const firstEval = order.indexOf('evaluate');
   assert.ok(firstEval > 0, 'never reached evaluate');
-  assert.ok(order.slice(1, firstEval).every((c) => c === 'samples'), `unexpected boot order: ${order.join(' > ')}`);
-  assert.ok(order.slice(1, firstEval).length >= 2, 'both the drum and piano maps must load');
+  // every evaluate is preceded by a hush (D42: two quick clicks used to leave
+  // both patterns sounding), so the boot window is samples + that one hush
+  const boot = order.slice(1, firstEval);
+  assert.ok(boot.every((c) => c === 'samples' || c === 'hush'), `unexpected boot order: ${order.join(' > ')}`);
+  assert.ok(boot.filter((c) => c === 'samples').length >= 2, 'both the drum and piano maps must load');
+  assert.equal(order[firstEval - 1], 'hush', 'the previous pattern must be stopped before the next is evaluated');
   // a second card must NOT re-boot the runtime — that is what makes A/B in tempo work
   const before = r.calls.length;
   r.byId.get('grid').children[1].onclick();
   await flush();
-  assert.deepEqual(r.calls.slice(before).map((c) => c[0]), ['evaluate']);
+  assert.deepEqual(r.calls.slice(before).map((c) => c[0]), ['hush', 'evaluate']);
 });
 
 test('audition/unison.html: every tab renders and plays', async () => {

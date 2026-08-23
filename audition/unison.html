@@ -76,7 +76,15 @@ const SAMPLE_MAPS = {
   drums: 'https://raw.githubusercontent.com/tidalcycles/dirt-samples/master/strudel.json',
   piano: 'https://raw.githubusercontent.com/felixroos/dough-samples/main/piano.json',
 };
-const RT = { ready: false, booting: null, note: '' };
+// General MIDI soundfonts (~128 instruments: gm_music_box, gm_vibraphone,
+// gm_epiano1, gm_pad_warm …). @strudel/web does NOT bundle these — it is a
+// separate ES module that registers the gm_* sound names; each font's audio is
+// then fetched lazily the first time that instrument sounds, so registering is
+// cheap. If it fails (offline, CDN blocked) the page must not go silent: every
+// gm_* voice is rewritten to a bundled fallback before evaluation.
+const SOUNDFONT_URL = 'https://unpkg.com/@strudel/soundfonts@1.1.0/dist/index.mjs';
+const GM_FALLBACK = 'triangle';
+const RT = { ready: false, booting: null, note: '', soundfonts: false, gen: 0 };
 
 function rtBanner(msg, kind) {
   let el = document.getElementById('rtbanner');
@@ -118,6 +126,16 @@ async function rtInit() {
       const ac = strudel.getAudioContext && strudel.getAudioContext();
       if (ac && ac.state !== 'running') await ac.resume();
     } catch (e) { /* older bundles expose no context getter */ }
+    rtStatus('loading soundfonts…');
+    try {
+      const sf = await Promise.race([
+        import(SOUNDFONT_URL),
+        rtSleep(20000).then(() => { throw new Error('timed out'); }),
+      ]);
+      if (typeof sf.registerSoundfonts === 'function') { sf.registerSoundfonts(); RT.soundfonts = true; }
+    } catch (e) {
+      rtBanner('General MIDI soundfonts unavailable (' + (e && e.message ? e.message : e) + ') — those voices fall back to "' + GM_FALLBACK + '".', 'error');
+    }
     rtStatus('loading samples…');
     // Never block forever on a sample fetch, and never let one map take the other
     // down: drums failing should not cost you the piano. A hung request is
@@ -138,19 +156,34 @@ async function rtInit() {
   try { await RT.booting; } finally { RT.booting = null; }
 }
 
-/** play(code) -> true if it started, false if it reported a reason instead */
+/** gm_* voices -> a bundled sound when the soundfont module never loaded */
+function rtSubstituteSounds(code) {
+  if (RT.soundfonts) return code;
+  return String(code).replace(/\.s\("gm_[a-z0-9_]+"\)/g, '.s("' + GM_FALLBACK + '")');
+}
+
+/** play(code) -> true if it started, false if it reported a reason instead.
+ *  Plays are GENERATION-GUARDED: booting and sample loading are async, so two
+ *  quick clicks used to race and leave both patterns sounding. Each call takes
+ *  a ticket; a call that finds itself superseded hushes and bows out, and the
+ *  previous pattern is always hushed before the next is evaluated. */
 async function rtPlay(code) {
+  const gen = ++RT.gen;
   try {
     await rtInit();
-    await strudel.evaluate(code);
+    if (gen !== RT.gen) return false; // a newer click won while we were booting
+    try { strudel.hush(); } catch (e) {}
+    await strudel.evaluate(rtSubstituteSounds(code));
+    if (gen !== RT.gen) { try { strudel.hush(); } catch (e) {} return false; }
     return true;
   } catch (e) {
+    if (gen !== RT.gen) return false;
     rtBanner('Could not play: ' + (e && e.message ? e.message : e), 'error');
     rtStatus('error');
     return false;
   }
 }
-function rtStop() { try { if (RT.ready) strudel.hush(); } catch (e) {} }
+function rtStop() { RT.gen++; try { if (RT.ready) strudel.hush(); } catch (e) {} }
 
 async function rtCopy(text) {
   try { await navigator.clipboard.writeText(text); return true; } catch (e) {}

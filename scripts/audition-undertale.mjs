@@ -134,21 +134,22 @@ function barChords(symbols, barsPerChord, loopBars) {
 // recurrence, so a song gets a cell Toby actually played a lot.
 const fnv = (s) => { let h = 0x811c9dc5; for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 0x01000193); } return h >>> 0; };
 const MEL_CELLS = Object.entries(MELODY_RHYTHMS_UNDERTALE).map(([name, e]) => ({ name, ...e }));
-// Energy (D41): Ethan's toggle — the melody's rhythmic density chosen by WHAT
-// THE SONG IS FOR, not randomized. Explicit levels pin the density target;
-// 'context' derives it from the atlas context role (a boss theme runs hot, a
-// cutscene breathes); 'auto' stays the tempo rule — the default Ethan already
-// approved by ear must not change underneath him.
-const ENERGY_TARGETS = { calm: 3, mid: 6, hyper: 10 };
-const ROLE_ENERGY = {
-  battle: 10, boss: 10, chase: 10,
-  overworld: 6, town: 6, shop: 6, menu: 6, diegetic: 6, joke: 6,
-  cutscene: 4, character: 4, credits: 4, ending: 4,
-};
-function melodyRhythm(meter, bpm, seedName, { energy = 'auto', role = null } = {}) {
-  const target = ENERGY_TARGETS[energy]
-    ?? (energy === 'context' && role != null && ROLE_ENERGY[role] != null ? ROLE_ENERGY[role]
-      : Math.max(2, Math.min(12, Math.round(900 / (bpm || 110)))));
+// Energy (D41/D42): the melody's rhythmic density is decided AT GENERATION
+// TIME, never by a user knob — Ethan's clarification. It is derived from
+// DENSITY COMPLEMENTARITY, the first of the two-hand principles his round-6
+// ear pass produced: the two hands must not compete at the same rate. A bar
+// has a budget of activity (looser at slow tempi, tighter at fast ones); the
+// accompaniment spends first, and the melody gets what is left. That is why
+// Megalovania (10 accompaniment onsets a bar) now gets a 3-note melody where
+// the old tempo-only rule gave it 8 and sounded "very hyper", while the two
+// cards Ethan singled out — His Theme (0.5) and Gaster's (5.0) — are
+// bit-identical, because the rule explains why they already worked.
+function activityBudget(bpm) { return Math.max(8, Math.min(15, Math.round(16 - (bpm || 110) / 40))); }
+function melodyDensityTarget(bpm, accDensity) {
+  return Math.max(2, Math.min(12, Math.round(activityBudget(bpm) - accDensity)));
+}
+function melodyRhythm(meter, bpm, seedName, { target: forced = null, accDensity = 0 } = {}) {
+  const target = forced ?? melodyDensityTarget(bpm, accDensity);
   let pool = MEL_CELLS.filter((c) => c.meter_class === meter);
   if (!pool.length) pool = MEL_CELLS.filter((c) => c.meter_class === '4/4');
   const scored = pool
@@ -156,8 +157,19 @@ function melodyRhythm(meter, bpm, seedName, { energy = 'auto', role = null } = {
     .sort((a, b) => a.d - b.d || b.c.seen - a.c.seen);
   const near = scored.filter((x) => x.d <= scored[0].d + 1);
   const pick = near[fnv(seedName) % near.length].c;
-  return { name: pick.name, onsets: pick.onsets, accents: pick.accents, artic: pick.artic };
+  return { name: pick.name, onsets: pick.onsets, accents: pick.accents, artic: pick.artic, density: pick.density, target };
 }
+
+// Which instrument the background counter-voice speaks in — also a generation
+// decision, from the atlas context role. Bell-family timbres sit under a piano
+// lead without fighting it (the register-lane principle, applied to timbre).
+const ROLE_INSTRUMENT = {
+  boss: 'gm_epiano1', battle: 'gm_epiano1', chase: 'gm_epiano1',
+  town: 'gm_vibraphone', overworld: 'gm_vibraphone', shop: 'gm_vibraphone', diegetic: 'gm_vibraphone',
+  menu: 'gm_kalimba', joke: 'gm_kalimba',
+  cutscene: 'gm_music_box', character: 'gm_music_box', credits: 'gm_music_box', ending: 'gm_music_box',
+};
+const counterInstrument = (role) => ROLE_INSTRUMENT[role] ?? 'gm_music_box';
 
 const progressions = Object.entries(PROGRESSIONS_UNDERTALE).map(([name, e]) => {
   const key = e.sourceKey;
@@ -174,21 +186,26 @@ const progressions = Object.entries(PROGRESSIONS_UNDERTALE).map(([name, e]) => {
     exprs[t.id] = bindFigure(FIGURATIONS_UNDERTALE[t.fig], ctx, '4/4', { sound: 'piano', fx: '.room(0.25)' }).expr;
   }
   // own + melody: the D35 pipeline heard end-to-end — chord-scale note supply,
-  // anchors snapped, approach slots, toby-fox profile, seeded per entry.
-  // One expr per ENERGY level; 'auto' consults the atlas context role (D41).
+  // anchors snapped, approach slots, toby-fox profile, seeded per entry. The
+  // rhythm's density is DERIVED (above), not chosen in the UI.
   const atlas = ATLAS.progressions[name];
+  const role = atlas.context?.role ?? null;
+  const accDensity = e.ownFigure ? e.ownFigure.onsets.length / e.ownFigure.bars : 0;
   const base = exprs.own ?? exprs[TEXTURES[0].id];
-  for (const energy of ['auto', 'context', 'calm', 'mid', 'hyper']) {
-    const mel = bindMelody(melodyRhythm(e.meter, e.bpm, name, { energy, role: atlas.context?.role ?? null }), ctxBar, e.meter, {
-      style: 'toby-fox', seed: fnv(name), octave: 5, sound: 'piano', fx: '.gain(0.85).room(0.25)',
-    }).expr;
-    exprs[energy === 'auto' ? 'ownmel' : `ownmel_${energy}`] = `stack(${base}, ${mel})`;
-  }
-  // the tier-1 line as a BACKGROUND voice (D41): a calm counter-line an octave
-  // down on triangle — a different instrument so the ear files it as texture,
-  // different seed so it is not the lead's shadow
-  exprs.bgmel = bindMelody(melodyRhythm(e.meter, e.bpm, name + '::bg', { energy: 'calm' }), ctxBar, e.meter, {
-    style: 'toby-fox', seed: fnv(name + '::bg'), octave: 4, sound: 'triangle', fx: '.gain(0.4)',
+  const leadCell = melodyRhythm(e.meter, e.bpm, name, { accDensity });
+  const mel = bindMelody(leadCell, ctxBar, e.meter, {
+    style: 'toby-fox', seed: fnv(name), octave: 5, sound: 'piano', fx: '.gain(0.85).room(0.25)',
+  }).expr;
+  exprs.ownmel = `stack(${base}, ${mel})`;
+  // the tier-1 line as a BACKGROUND voice (D41): a sparse counter an octave
+  // down on a soundfont instrument chosen from the song's role — a different
+  // timbre so the ear files it as texture, a different seed so it is a
+  // counter-line and not the lead's shadow. Its density is the leftover of
+  // the leftover: accompaniment + lead already spent the bar's budget.
+  const bgTarget = Math.max(2, Math.min(6, Math.round(activityBudget(e.bpm) - accDensity - leadCell.density / 2)));
+  const bgInstrument = counterInstrument(role);
+  exprs.bgmel = bindMelody(melodyRhythm(e.meter, e.bpm, name + '::bg', { target: bgTarget }), ctxBar, e.meter, {
+    style: 'toby-fox', seed: fnv(name + '::bg'), octave: 4, sound: bgInstrument, fx: '.gain(0.45)',
   }).expr;
   // tier 2 (D38): an AUTHORED melody through the bindMelodySpec guard — only
   // where a spec exists; the client falls back to the tier-1 line elsewhere
@@ -215,6 +232,8 @@ const progressions = Object.entries(PROGRESSIONS_UNDERTALE).map(([name, e]) => {
     meter: e.meter, beats: Number(e.meter.split('/')[0]), bpm: e.bpm ?? 110,
     sourceKey: e.sourceKey, keyMargin: e.keyMargin,
     coverage: e.coverage, needsEar: !!e.needsEar, hasT2: !!exprs.ownmel2,
+    melCell: leadCell.name, melDensity: leadCell.density, melTarget: leadCell.target,
+    accDensity: Math.round(accDensity * 10) / 10, bgInstrument,
     section: atlas.section, sectionLabel: ATLAS_SECTIONS.progressions[atlas.section].label,
     similar: atlas.neighbors.blend, context: atlas.context,
     exprs, bass, src: sourceExpr(e),
@@ -340,7 +359,6 @@ const all = [
   ...progressions.map((p) => [`${p.name}/chords`, p.exprs.chords]),
   ...progressions.filter((p) => p.exprs.own).map((p) => [`${p.name}/own`, p.exprs.own]),
   ...progressions.map((p) => [`${p.name}/ownmel`, p.exprs.ownmel]),
-  ...progressions.flatMap((p) => ['context', 'calm', 'mid', 'hyper'].map((en) => [`${p.name}/ownmel_${en}`, p.exprs[`ownmel_${en}`]])),
   ...progressions.map((p) => [`${p.name}/bg`, `stack(${p.exprs.ownmel}, ${p.exprs.bgmel})`]),
   ...progressions.filter((p) => p.exprs.ownmel2).map((p) => [`${p.name}/ownmel2`, p.exprs.ownmel2]),
   ...progressions.filter((p) => p.src).map((p) => [`${p.name}/src`, p.src]),
@@ -361,7 +379,7 @@ const DATA = {
   progressions, figures, development,
   textures: [
     { id: 'own', label: 'own pattern', fig: 'the song’s own interval deployment' },
-    { id: 'ownmel', label: 'own + melody', fig: 'the D35 pipeline: a generated toby-fox melody over the own pattern' },
+    { id: 'ownmel', label: 'own + melody', fig: 'the D35 pipeline: a generated toby-fox melody over the own pattern — its rhythmic density is derived at generation time from the accompaniment (the hands must not compete)' },
     { id: 'ownmel2', label: 'melody T2', fig: 'tier 2 (D38): a melody AUTHORED by the model through the guard — 6 flagship songs; elsewhere falls back to the generated line' },
     { id: 'chords', label: 'true chords', fig: 'raw progression, real durations' },
   ].concat(TEXTURES.map(({ id, label, fig }) => ({ id, label, fig }))),
@@ -470,7 +488,30 @@ ${RUNTIME_JS}
 const DATA = ${JSON.stringify(DATA)};
 const LS = 'motif-engine:undertale-verdicts';
 let verdicts = {}; try { verdicts = JSON.parse(localStorage.getItem(LS) || '{}'); } catch {}
-let tab = 'progressions', texture = 'own', context = 'own', energy = 'auto', playing = null, sel = 0, visible = [];
+// UI settings survive a reload — tab, texture, filters, tempo, checkboxes.
+// Losing your place on every refresh makes a 165-card ear pass unusable.
+const PREFS = 'motif-engine:undertale-prefs';
+let prefs = { tab: 'progressions', texture: 'own', context: 'own', ctl: {} };
+try { prefs = Object.assign(prefs, JSON.parse(localStorage.getItem(PREFS) || '{}')); } catch {}
+const savePrefs = () => { try { localStorage.setItem(PREFS, JSON.stringify(prefs)); } catch {} };
+const CTL_IDS = ['fam', 'sec', 'cls', 'ear', 't2', 'bass', 'ctr', 'srcbpm', 'bpm', 'q'];
+function captureCtl() {
+  for (const id of CTL_IDS) {
+    const el = $(id);
+    if (el) prefs.ctl[id] = el.type === 'checkbox' ? el.checked : el.value;
+  }
+  savePrefs();
+}
+function applyCtl() {
+  for (const id of CTL_IDS) {
+    const el = $(id);
+    if (!el || !(id in prefs.ctl)) continue;
+    if (el.type === 'checkbox') el.checked = !!prefs.ctl[id];
+    else el.value = prefs.ctl[id];
+  }
+  if ($('bpm') && $('bpmv')) $('bpmv').textContent = $('bpm').value;
+}
+let tab = prefs.tab, texture = prefs.texture, context = prefs.context, playing = null, sel = 0, visible = [];
 const $ = (id) => document.getElementById(id);
 const save = () => localStorage.setItem(LS, JSON.stringify(verdicts));
 
@@ -488,10 +529,17 @@ function bpmFor(e) {
 }
 function codeFor(e, useSrc) {
   let body, factor = 1, beats = 4;
+  // belt and braces: an entry from another tab can still be referenced by a
+  // stale 'playing' reference after a switch. Return null rather than composing
+  // "p: undefined" and surfacing it as a JS/eval error.
+  const belongs = tab === 'progressions' ? !!(e.exprs && e.symbols)
+    : tab === 'figures' ? !!(e.exprs && e.labels)
+      : tab === 'development' ? !!e.expr : false;
+  if (!belongs) return null;
   if (tab === 'progressions') {
     beats = e.beats || 4;
     if (useSrc && e.src) body = e.src;
-    else if (texture === 'ownmel') body = (energy !== 'auto' && e.exprs['ownmel_' + energy]) || e.exprs.ownmel;
+    else if (texture === 'ownmel') body = e.exprs.ownmel;
     else if (texture === 'ownmel2') body = e.exprs.ownmel2 || e.exprs.ownmel;
     else if (texture === 'own' && !e.exprs.own) { body = e.exprs.chords; factor = 2; } // no own pattern extracted: fall back to true chords
     else if (texture === 'chords') { body = e.exprs.chords; factor = 2; }
@@ -505,6 +553,7 @@ function codeFor(e, useSrc) {
 }
 async function play(e, useSrc) {
   const code = codeFor(e, useSrc);
+  if (!code) { stop(); return; }
   $('now').textContent = RT.ready ? '…' : 'starting audio (first play loads the piano)…';
   const ok = await rtPlay(code);
   if (!ok) { playing = null; render(); return; }
@@ -551,8 +600,7 @@ function controls() {
   if (tab === 'progressions') {
     c.innerHTML = '<label class="ctl">texture <span id="tex"></span></label>' +
       '<label class="ctl"><input type="checkbox" id="bass"> bass</label>' +
-      '<label class="ctl"><input type="checkbox" id="ctr"> + counter (triangle)</label>' +
-      '<label class="ctl" id="energyRow">energy <span id="nrg"></span></label>' +
+      '<label class="ctl"><input type="checkbox" id="ctr"> + counter</label>' +
       '<label class="ctl"><input type="checkbox" id="srcbpm" checked> source bpm</label>' +
       '<label class="ctl">bpm <input type="range" id="bpm" min="60" max="180" value="110"><span id="bpmv">110</span></label>' +
       '<label class="ctl">mode <select id="fam"><option value="">all</option><option>major</option><option>minor</option></select></label>' +
@@ -564,22 +612,10 @@ function controls() {
     DATA.textures.forEach((t) => {
       const b = document.createElement('button');
       b.textContent = t.label; b.title = t.fig; b.className = t.id === texture ? 'on' : '';
-      b.onclick = () => { texture = t.id; controls(); render(); if (playing) { const e = DATA.progressions.find((x) => x.name === playing); if (e) play(e); } };
+      b.onclick = () => { texture = t.id; prefs.texture = t.id; savePrefs(); controls(); render(); if (playing) { const e = DATA.progressions.find((x) => x.name === playing); if (e) play(e); } };
       tw.appendChild(b);
     });
-    // energy: which density band the melody rhythm is retrieved from (D41).
-    // auto = the atlas context role decides (boss hot, cutscene calm), tempo as fallback
-    const nw = $('nrg');
-    for (const en of ['auto', 'context', 'calm', 'mid', 'hyper']) {
-      const b = document.createElement('button');
-      b.textContent = en; b.className = en === energy ? 'on' : '';
-      b.title = en === 'auto' ? 'tempo decides (the approved default)'
-        : en === 'context' ? 'the atlas context role decides: boss/battle hot, town mid, cutscene/character calm'
-        : 'pin the melody density band';
-      b.onclick = () => { energy = en; controls(); render(); if (playing) { const e = DATA.progressions.find((x) => x.name === playing); if (e) play(e); } };
-      nw.appendChild(b);
-    }
-    $('energyRow').style.display = texture === 'ownmel' ? '' : 'none';
+
   } else if (tab === 'figures') {
     c.innerHTML = '<label class="ctl">progression <span id="ctxb"></span></label>' +
       '<label class="ctl">bpm <input type="range" id="bpm" min="60" max="180" value="110"><span id="bpmv">110</span></label>' +
@@ -591,7 +627,7 @@ function controls() {
     DATA.contexts.forEach((x) => {
       const b = document.createElement('button');
       b.textContent = x.label; b.className = x.id === context ? 'on' : '';
-      b.onclick = () => { context = x.id; controls(); render(); if (playing) { const e = DATA.figures.find((f) => f.name === playing); if (e) play(e); } };
+      b.onclick = () => { context = x.id; prefs.context = x.id; savePrefs(); controls(); render(); if (playing) { const e = DATA.figures.find((f) => f.name === playing); if (e) play(e); } };
       cw.appendChild(b);
     });
   } else if (tab === 'development') {
@@ -600,10 +636,11 @@ function controls() {
   } else {
     c.innerHTML = '';
   }
-  if ($('bpm')) $('bpm').oninput = () => { $('bpmv').textContent = $('bpm').value; if ($('srcbpm')) $('srcbpm').checked = false; if (playing) { const e = items().find((x) => x.name === playing); if (e) play(e); } };
-  if ($('srcbpm')) $('srcbpm').oninput = () => { if (playing) { const e = items().find((x) => x.name === playing); if (e) play(e); } };
-  for (const id of ['fam', 'ear', 'q', 'cls', 'sec', 't2']) if ($(id)) $(id).oninput = render;
-  for (const id of ['bass', 'ctr']) if ($(id)) $(id).oninput = () => { render(); if (playing) { const e = items().find((x) => x.name === playing); if (e) play(e); } };
+  if ($('bpm')) $('bpm').oninput = () => { $('bpmv').textContent = $('bpm').value; if ($('srcbpm')) $('srcbpm').checked = false; captureCtl(); if (playing) { const e = items().find((x) => x.name === playing); if (e) play(e); } };
+  if ($('srcbpm')) $('srcbpm').oninput = () => { captureCtl(); if (playing) { const e = items().find((x) => x.name === playing); if (e) play(e); } };
+  applyCtl();
+  for (const id of ['fam', 'ear', 'q', 'cls', 'sec', 't2']) if ($(id)) $(id).oninput = () => { captureCtl(); render(); };
+  for (const id of ['bass', 'ctr']) if ($(id)) $(id).oninput = () => { captureCtl(); render(); if (playing) { const e = items().find((x) => x.name === playing); if (e) play(e); } };
   $('blurb').textContent = BLURB[tab];
 }
 
@@ -633,7 +670,9 @@ function render() {
       body = '<div class="num">' + e.numerals + '</div><div class="sym">' + e.symbols.join(' ') + '</div>';
       tags = e.song + ' · ' + e.loopBars + '-bar loop ×' + e.reps + ' · cov ' + e.coverage +
         (ctxBits ? '<br>' + ctxBits : '') + '<br><span class="sec">' + e.sectionLabel + '</span>';
-      card.title = e.name + '\\nsolved key ' + e.sourceKey + ' (margin ' + e.keyMargin + ')\\nbars per chord: ' + e.barsPerChord.join(', ') + '\\nfound at bar ' + e.atBar + atlasTip;
+      card.title = e.name + '\\nsolved key ' + e.sourceKey + ' (margin ' + e.keyMargin + ')\\nbars per chord: ' + e.barsPerChord.join(', ') + '\\nfound at bar ' + e.atBar
+        + '\\nmelody ' + e.melCell + ': ' + e.melDensity + ' onsets/bar (target ' + e.melTarget + ' = budget - ' + e.accDensity + ' acc)'
+        + '\\ncounter voice: ' + e.bgInstrument + atlasTip;
     } else if (tab === 'figures') {
       badge = e.cls + ' · ' + e.meter;
       head = e.needsEar ? '<span class="flag">needs ear</span>' : '';
@@ -679,14 +718,22 @@ function mark(e, verd) {
   save(); render();
 }
 async function copy(e, btn) {
-  const ok = await rtCopy(codeFor(e));
+  const ok = await rtCopy(codeFor(e) || '');
   const t = btn.textContent; btn.textContent = ok ? '✓' : '✗'; setTimeout(() => { btn.textContent = t; }, 900);
 }
 const tw = $('tabs');
 for (const t of ['progressions', 'figures', 'development', 'melody']) {
   const b = document.createElement('button');
   b.textContent = t; b.className = t === tab ? 'on' : '';
-  b.onclick = () => { tab = t; sel = 0; [...tw.children].forEach((c) => c.className = c.textContent === tab ? 'on' : ''); controls(); render(); };
+  // Switching tabs STOPS playback first. The old card belongs to the old tab,
+  // and codeFor()/labelOf() read the CURRENT tab — re-playing it after a switch threw
+  // (a progression has no .labels, a figure has no .exprs[texture]).
+  b.onclick = () => {
+    stop();
+    tab = t; sel = 0; prefs.tab = t; savePrefs();
+    [...tw.children].forEach((c) => { c.className = c.textContent === tab ? 'on' : ''; });
+    controls(); render();
+  };
   tw.appendChild(b);
 }
 $('stop').onclick = stop;
