@@ -7,7 +7,7 @@
 // Its job is to answer "does a click produce playable Strudel source", nothing more.
 import { readFileSync } from 'node:fs';
 
-export function runPage(path, { breakStrudel = false } = {}) {
+export function runPage(path, { breakStrudel = false, failSamples = null } = {}) {
   const html = readFileSync(path, 'utf8');
   const script = html.slice(html.lastIndexOf('<script>') + 8, html.lastIndexOf('</script>'));
   const ids = [...html.matchAll(/id="([^"]+)"/g)].map((m) => m[1]);
@@ -51,7 +51,12 @@ export function runPage(path, { breakStrudel = false } = {}) {
     strudel: breakStrudel ? undefined : {
       evaluate: async (c) => { calls.push(['evaluate', c]); },
       hush: () => calls.push(['hush']),
-      samples: async (u) => { calls.push(['samples', u]); },
+      // `failSamples` is a predicate: return true for URLs that should reject,
+      // so a test can simulate one mirror being unreachable
+      samples: async (u) => {
+        calls.push(['samples', u]);
+        if (failSamples && failSamples(u)) throw new Error('simulated fetch failure');
+      },
     },
     window: {
       initStrudel: async () => calls.push(['initStrudel']),

@@ -807,6 +807,21 @@ export function bindMelody(rhythmEntry, harmonyContext, meter = '4/4', opts = {}
     return 'answer';
   };
   const phraseCount = period / phraseBars;
+  // Repeat policy (D44). A restatement does NOT always have to differ: Ethan's
+  // round-7 note — "some beats of music are meant to be loops or even silence",
+  // and forcing a change can be what makes a phrase sound wrong. Three
+  // deterministic modes, decided here rather than sampled per bar:
+  //   vary   answer bars re-sample their tails on each restatement (D37)
+  //   exact  every restatement is identical — the phrase is a loop, and a loop
+  //          that keeps mutating stops being one
+  //   rest   later restatements drop their answer bar entirely; the silence is
+  //          the variation, which is how space gets written
+  // A short plan is always 'exact': a two-bar phrase is a riff, and varying a
+  // riff reads as a mistake rather than as development.
+  const repeatMode = opts.repeat && opts.repeat !== 'auto' ? opts.repeat
+    : (planBars <= 2 ? 'exact' : ['vary', 'exact', 'vary', 'rest'][seed % 4]);
+  if (!['vary', 'exact', 'rest'].includes(repeatMode)) throw new Error(`unknown repeat policy "${repeatMode}" (vary | exact | rest | auto)`);
+  const restedBar = (c) => repeatMode === 'rest' && c >= planBars && roleOf(c) === 'answer';
   // antecedent/consequent: odd phrases (and always the last) land STABLE
   const stablePhrase = (b) => { const p = Math.floor(b / phraseBars); return p % 2 === 1 || p === phraseCount - 1; };
   // Huron's melodic arch, in semitones over the phrase: rise, peak past the
@@ -856,7 +871,7 @@ export function bindMelody(rhythmEntry, harmonyContext, meter = '4/4', opts = {}
   const offsetsFor = (c, S) => {
     const role = cycleBars[c].role;
     if (role === 'answer') {
-      const kk = `${Math.floor(c / planBars)}|${S}`;
+      const kk = `${repeatMode === 'exact' ? 0 : Math.floor(c / planBars)}|${S}`;
       if (!answerTails.has(kk)) answerTails.set(kk, varyTail(cellFor(S), profile, rnd));
       return answerTails.get(kk);
     }
@@ -874,6 +889,7 @@ export function bindMelody(rhythmEntry, harmonyContext, meter = '4/4', opts = {}
     const scale = scaleOf(sym);
     if (baseCenter == null) baseCenter = snapToPcs(rootMidi, scale.anchor);
     const center = snapToPcs(baseCenter + ARCH[c % phraseBars], scale.anchor);
+    if (restedBar(c)) continue; // this bar is silence, and that is the point
     const offsets = offsetsFor(c, bar.steps.length);
     for (let i = 0; i < bar.steps.length; i++) {
       const accented = bar.accents[i] >= ACCENT_THRESHOLD;
@@ -956,6 +972,10 @@ export function bindMelody(rhythmEntry, harmonyContext, meter = '4/4', opts = {}
       });
       return name;
     });
+    if (!notes.length) { // a rested bar: emit real silence
+      noteCycles.push('~'); gainCycles.push(String(round2(gainRange[0]))); clipCycles.push('1');
+      continue;
+    }
     let steps = bar.steps, vals = values;
     if (bar.breath) {
       const holdTo = bar.G - Math.max(1, Math.round(bar.G / 8));
@@ -978,7 +998,7 @@ export function bindMelody(rhythmEntry, harmonyContext, meter = '4/4', opts = {}
     motif: null,
     rhythm: rhythmName,
     melody: { style, seed, cell: cell.slice(), approachProb, key: harmonyContext.key ?? 'C:major', tensions: profile.tensions ?? 'triadic' },
-    phrase: { phraseBars, planBars, restatements, roles: cycleBars.map((b) => b.role) },
+    phrase: { phraseBars, planBars, restatements, repeat: repeatMode, roles: cycleBars.map((b) => b.role) },
     onsets: r.onsets.map(([n, d]) => `${n}/${d}`),
     accents: r.accents,
     bars: B,

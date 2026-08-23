@@ -120,6 +120,19 @@
   counter instrument chosen by context role; playback bugs fixed (no overlap:
   generation-guarded + hush-before-evaluate; no JS error: stop on tab switch +
   codeFor tab guard; settings persist across refresh).
+  [D43/D44] ARRANGER built: src/lib/instruments.js (15 gm voices described in
+  words + properties) + src/binder/arrange.js (planArrangement/
+  renderArrangement; situation -> headroom -> slate -> casting -> lanes; two
+  costs: adds=new onsets vs mass=spectral weight; part-appropriate instrument
+  fit; edit-ready metadata per layer). Audition: "full mix" texture + solo row
+  (hear any single contribution alone) + full plan in the card tooltip.
+  Melody: interlock-scored cell choice (hyper allowed when it counters) and a
+  deterministic repeat policy (vary | exact | rest — loops and silence are
+  legitimate). 165/165 cards arranged, 10 instruments in play.
+  [D42 addendum] sample loading hardened after a live blackout: mirrors per
+  map (raw.githubusercontent -> jsdelivr), piano degrades to gm_acoustic_piano
+  when its map is unreachable, fatal only if NOTHING can sound; tested with a
+  simulated dead host.
   NEXT (Ethan's stated order): (1) HARMONY GENERATION — compose progressions,
   not just replay extracted loops; (2) LAYERING — harmonies + lead + ~2 more
   instruments, engine-side instrument palette decision (load gm_* soundfonts

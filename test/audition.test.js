@@ -118,3 +118,31 @@ test('audition pages: sample maps are full URLs, never the github: shorthand', (
     assert.ok(!/samples\(\s*['"`]github:/.test(html), `${page}: uses the github: shorthand, which appends strudel.json`);
   }
 });
+
+test('audition pages: a dead sample mirror is retried, not fatal', async () => {
+  // The failure Ethan hit: raw.githubusercontent refused both maps in the
+  // browser while answering fine everywhere else, and the page reported
+  // "everything would be silent". Each map now lists mirrors.
+  const r = runPage(join(ROOT, 'audition/progressions.html'), {
+    failSamples: (u) => u.includes('raw.githubusercontent.com'),
+  });
+  const code = await clickFirstCard(r);
+  await playable(code);
+  const urls = r.calls.filter((c) => c[0] === 'samples').map((c) => c[1]);
+  assert.ok(urls.some((u) => u.includes('raw.githubusercontent.com')), 'the primary host should be tried first');
+  assert.ok(urls.some((u) => u.includes('jsdelivr.net')), 'a failed primary must fall through to the mirror');
+});
+
+test('audition pages: every sample map lists at least one mirror', () => {
+  for (const page of ['audition/unison.html', 'audition/progressions.html', 'audition/undertale.html']) {
+    const html = readFileSync(join(ROOT, page), 'utf8');
+    const block = html.match(/const SAMPLE_MAPS = \{[\s\S]*?\n\};/);
+    assert.ok(block, `${page}: no SAMPLE_MAPS block found`);
+    for (const map of ['drums', 'piano']) {
+      const entry = block[0].match(new RegExp(map + ':\\s*\\[([\\s\\S]*?)\\]'));
+      assert.ok(entry, `${page}: ${map} map is not a mirror list`);
+      const hosts = [...entry[1].matchAll(/https:\/\/([^/]+)\//g)].map((m) => m[1]);
+      assert.ok(new Set(hosts).size >= 2, `${page}: ${map} needs mirrors on different hosts, got ${hosts.join(', ')}`);
+    }
+  }
+});

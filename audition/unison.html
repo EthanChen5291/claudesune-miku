@@ -72,10 +72,24 @@
 // "strudel.json" to any github: path, so github:.../piano.json resolves to
 // ".../piano.json/strudel.json" and 404s. Two maps, because the pages need both
 // a piano and Dirt-named drums, and initStrudel() prebakes neither.
+// Each map lists MIRRORS, tried in order until one answers. raw.githubusercontent
+// is the canonical host but browsers hit it inconsistently (rate limits, CORS
+// from file://, extensions blocking it); jsdelivr serves the identical files
+// from a CDN built for browser traffic. One flaky host must not mean silence.
 const SAMPLE_MAPS = {
-  drums: 'https://raw.githubusercontent.com/tidalcycles/dirt-samples/master/strudel.json',
-  piano: 'https://raw.githubusercontent.com/felixroos/dough-samples/main/piano.json',
+  drums: [
+    'https://raw.githubusercontent.com/tidalcycles/dirt-samples/master/strudel.json',
+    'https://cdn.jsdelivr.net/gh/tidalcycles/dirt-samples@master/strudel.json',
+  ],
+  piano: [
+    'https://raw.githubusercontent.com/felixroos/dough-samples/main/piano.json',
+    'https://cdn.jsdelivr.net/gh/felixroos/dough-samples@main/piano.json',
+  ],
 };
+// If the piano map is unreachable but the soundfont bank loaded, the page can
+// still play a piano — a General MIDI one. Losing the sampled piano is a
+// downgrade; losing the whole page is not acceptable.
+const PIANO_FALLBACK = 'gm_acoustic_piano';
 // General MIDI soundfonts (~128 instruments: gm_music_box, gm_vibraphone,
 // gm_epiano1, gm_pad_warm …). @strudel/web does NOT bundle these — it is a
 // separate ES module that registers the gm_* sound names; each font's audio is
@@ -84,7 +98,7 @@ const SAMPLE_MAPS = {
 // gm_* voice is rewritten to a bundled fallback before evaluation.
 const SOUNDFONT_URL = 'https://unpkg.com/@strudel/soundfonts@1.1.0/dist/index.mjs';
 const GM_FALLBACK = 'triangle';
-const RT = { ready: false, booting: null, note: '', soundfonts: false, gen: 0 };
+const RT = { ready: false, booting: null, note: '', soundfonts: false, gen: 0, maps: {} };
 
 function rtBanner(msg, kind) {
   let el = document.getElementById('rtbanner');
@@ -137,29 +151,51 @@ async function rtInit() {
       rtBanner('General MIDI soundfonts unavailable (' + (e && e.message ? e.message : e) + ') — those voices fall back to "' + GM_FALLBACK + '".', 'error');
     }
     rtStatus('loading samples…');
-    // Never block forever on a sample fetch, and never let one map take the other
-    // down: drums failing should not cost you the piano. A hung request is
-    // indistinguishable from a broken page from the outside.
-    const results = await Promise.allSettled(Object.entries(SAMPLE_MAPS).map(([name, url]) =>
-      Promise.race([
-        strudel.samples(url),
-        rtSleep(25000).then(() => { throw new Error('timed out'); }),
-      ]).catch((e) => { throw new Error(name + ' samples failed (' + url + '): ' + (e && e.message ? e.message : e)); })
-    ));
-    const failed = results.filter((r) => r.status === 'rejected').map((r) => r.reason.message);
+    // Never block forever on a sample fetch, and never let one map take the
+    // other down: drums failing should not cost you the piano. A hung request
+    // is indistinguishable from a broken page from the outside.
+    const loadMap = async (name, urls) => {
+      const errors = [];
+      for (const url of urls) {
+        try {
+          await Promise.race([
+            strudel.samples(url),
+            rtSleep(20000).then(() => { throw new Error('timed out'); }),
+          ]);
+          RT.maps[name] = url;
+          return { name, ok: true };
+        } catch (e) {
+          errors.push('  ' + url + ' — ' + (e && e.message ? e.message : e));
+        }
+      }
+      return { name, ok: false, detail: name + ' samples unreachable:\n' + errors.join('\n') };
+    };
+    const results = await Promise.all(Object.entries(SAMPLE_MAPS).map(([n, urls]) => loadMap(n, urls)));
+    const failed = results.filter((r) => !r.ok);
     RT.ready = true;
-    if (failed.length === results.length) throw new Error('no samples loaded — everything would be silent.\n' + failed.join('\n'));
-    if (failed.length) rtBanner('Some sounds are unavailable, the rest will play:\n' + failed.join('\n'), 'error');
-    else rtBanner('', null);
+    if (failed.length === results.length && !RT.soundfonts) {
+      throw new Error('nothing can sound: every sample mirror failed AND the soundfont bank did not load.\n'
+        + failed.map((f) => f.detail).join('\n')
+        + '\nCheck network access, or an extension blocking raw.githubusercontent.com and jsdelivr.net.');
+    }
+    if (failed.length) {
+      const pianoGone = !RT.maps.piano;
+      rtBanner('Some sample maps are unavailable'
+        + (pianoGone && RT.soundfonts ? ' — the piano falls back to the General MIDI "' + PIANO_FALLBACK + '"' : ', the rest will play')
+        + ':\n' + failed.map((f) => f.detail).join('\n'), 'error');
+    } else rtBanner('', null);
     rtStatus('ready');
   })();
   try { await RT.booting; } finally { RT.booting = null; }
 }
 
-/** gm_* voices -> a bundled sound when the soundfont module never loaded */
+/** Swap sounds whose source never loaded for ones that did, so a missing
+ *  dependency degrades the timbre instead of silencing the page. */
 function rtSubstituteSounds(code) {
-  if (RT.soundfonts) return code;
-  return String(code).replace(/\.s\("gm_[a-z0-9_]+"\)/g, '.s("' + GM_FALLBACK + '")');
+  let out = String(code);
+  if (!RT.soundfonts) out = out.replace(/\.s\("gm_[a-z0-9_]+"\)/g, '.s("' + GM_FALLBACK + '")');
+  if (!RT.maps.piano && RT.soundfonts) out = out.replace(/\.s\("piano"\)/g, '.s("' + PIANO_FALLBACK + '")');
+  return out;
 }
 
 /** play(code) -> true if it started, false if it reported a reason instead.

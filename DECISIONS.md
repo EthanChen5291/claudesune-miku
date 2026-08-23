@@ -1157,3 +1157,107 @@ The audition boot-order guard was updated (not weakened) to require that hush
 precedes every evaluate — the overlap fix is now a tested invariant.
 
 148/148 tests, 1863/1863 patterns green.
+
+## D43 — The arranger: casting instruments onto a song (2026-08-23)
+
+Ethan's brief: keep the piano as it is and layer on top; prefer a different
+octave but treat that as a preference, not a law; choose zero, one or several
+instruments from what we know of the song, choose each one's PART, and make
+every decision deterministic. Plus, mid-turn: record the metadata carefully so
+each instrument is remembered for what it is and what it contributes, for
+later edits.
+
+**src/lib/instruments.js** — 15 General MIDI voices, each described in words
+(`character`) as well as in properties (family, attack, sustain, cuts, weight,
+lanes, parts, moods). The prose matters: the chronological-editing phase has to
+reason about "swap the pad for something warmer", not about an opaque name.
+
+**src/binder/arrange.js** — `planArrangement()` (situation → plan) and
+`renderArrangement()` (plan → bound exprs). Procedure, all deterministic:
+situation → headroom → slate → casting → lanes. Two findings during the build,
+both from measurement rather than taste:
+
+1. **Two costs, not one.** The first model charged everything against a single
+   activity number and concluded a busy song could take NO layers (96 of 165
+   cards came out bare). That is wrong: a part playing the lead's own rhythm,
+   or holding one chord a bar, introduces no new attacks at all. Split into
+   `adds` (new onsets/bar, spent against headroom) and `mass` (spectral
+   weight, spent against a mass budget that tightens as the piano fills up).
+   Now a crowded song buys sustain and doubling; only a roomy one buys a new
+   independent line.
+2. **Fit depends on the PART, not just the tempo.** A tempo-only attack model
+   cast a synth bass as a sustained pad in 58 songs. Parts now declare what
+   they want (`sustain` | `quick` | `tempo`), which outranks tempo where they
+   disagree — and gm_synth_bass_1 lost `harmony_support` from its palette
+   entry, since an instrument with no sustain is not a pad.
+   Casting diversity went 2 instruments → 10 across the corpus.
+
+Lanes: low/mid/lead/high. Sharing the piano's lane is permitted only when the
+layer's touch contrasts (slow attack or long sustain) — tested, because a
+second struck voice in the piano's octave is mud. The pad voices ROOT AND
+FIFTH, never a triad: a sus chord has no third and a pad that supplied one
+would contradict the piano (also tested).
+
+Every layer records id, part, instrument, character, contributes, lane,
+octave, gain, rhythm source, seed, and the rule that fired — the edit-ready
+metadata Ethan asked for, asserted field-by-field in the tests.
+
+## D44 — Interlock, and repetition that is allowed to repeat (2026-08-23)
+
+Two corrections from Ethan's round-7 listen.
+
+**"Hyper is fine if the situation calls for it."** Busy left hand AND busy
+right hand is good when they counter each other — Gaster's Theme being the
+case in point (5 and 9 onsets a bar, interlocking). D42's rule treated a busy
+accompaniment purely as a reason to spend less, which is the wrong reading.
+Density is now a CENTRE rather than a ceiling: any mined cell within ±3 of the
+target is admissible, and the winner is the one that best COUNTERS the
+accompaniment — scored as gap-fill, plus agreement on strong beats, minus
+off-beat smearing, damped by sqrt(density) so a wall of sixteenths cannot win
+on volume alone. His Theme is unchanged; Gaster's moves 9 → 10 onsets, now
+chosen *because* it interlocks rather than by a hash; Megalovania relaxes from
+D42's over-corrected 3 back to 5.
+
+**"The second section does not always have to be different."** Some music is
+meant to loop, and some of it is meant to be silence; forcing a change is what
+makes a phrase sound wrong. `bindMelody` gained a deterministic repeat policy:
+`vary` (D37's re-sampled answer tails), `exact` (the restatement IS the
+statement), `rest` (later answer bars fall silent — the space is the
+variation). A plan of two bars or fewer is always `exact`: a riff that mutates
+reads as a mistake. The final cadence still resolves under every policy —
+the antecedent/consequent rule outranks the repeat policy. Reported in
+`boundMeta.phrase.repeat`; across the corpus: 67 vary, 65 exact, 33 rest.
+
+**Ear verification** (Ethan: "ensure there's clear and easy verification for me
+by ear"). The audition's `full mix` texture plays the arrangement, and a solo
+row under the controls plays any single contribution alone — piano
+accompaniment, piano lead, or each cast layer by name. Each card's tooltip
+prints the whole plan: budget, what the piano spends, headroom, and per layer
+the instrument, its character, what it contributes, and why it was chosen.
+2375/2375 patterns green, 158/158 tests.
+
+### D42 addendum — sample loading must survive a flaky host (2026-08-23)
+
+Ethan hit a total blackout: "no samples loaded — everything would be silent",
+both maps failing from raw.githubusercontent.com. Both URLs answered 200 from
+the shell at the same moment, so the host was refusing the BROWSER
+specifically — rate limiting, CORS from a file:// origin, or an extension. A
+single-host dependency for every sound in the project was the real defect;
+the network was only the trigger.
+
+Three changes:
+1. **Mirrors.** Each sample map is now a list tried in order:
+   raw.githubusercontent first (canonical), then cdn.jsdelivr.net, which
+   serves the identical files from a CDN built for browser traffic and sends
+   `access-control-allow-origin: *`.
+2. **The piano degrades instead of disappearing.** Soundfonts are registered
+   before samples load, so if the piano map is unreachable but the GM bank is
+   available, every `.s("piano")` is rewritten to `gm_acoustic_piano`. A worse
+   piano beats no page.
+3. **Fatal only when nothing at all can sound** — previously "all sample maps
+   failed" threw even though the gm_* layers would have played fine.
+
+Locked down by two tests: one drives the page with a shim that rejects every
+raw.githubusercontent URL and asserts playback still happens via the mirror
+(the DOM helper gained a `failSamples` predicate), and one asserts every map
+in every page lists mirrors on at least two distinct hosts. 160/160 tests.

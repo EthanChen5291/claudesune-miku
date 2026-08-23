@@ -34,6 +34,8 @@ import { bindFigure, bind, bindMelody, bindMelodySpec } from '../src/binder/bind
 import { ATLAS, ATLAS_SECTIONS } from '../src/lib/atlas.js';
 import { MELODIES_TIER2 } from '../src/lib/melodies-tier2.js';
 import { MELODY_RHYTHMS_UNDERTALE } from '../src/lib/rhythms-undertale.js';
+import { INSTRUMENTS } from '../src/lib/instruments.js';
+import { planArrangement, renderArrangement } from '../src/binder/arrange.js';
 import { RHYTHMS } from '../src/lib/rhythms.js';
 import { CONTOURS } from '../src/lib/contours.js';
 import { evaluateSong, hapsByLabel } from '../src/harness/evaluate.js';
@@ -148,29 +150,48 @@ function activityBudget(bpm) { return Math.max(8, Math.min(15, Math.round(16 - (
 function melodyDensityTarget(bpm, accDensity) {
   return Math.max(2, Math.min(12, Math.round(activityBudget(bpm) - accDensity)));
 }
-function melodyRhythm(meter, bpm, seedName, { target: forced = null, accDensity = 0 } = {}) {
+// INTERLOCK (D44). Ethan's round-7 correction: "hyper is fine if the situation
+// calls for it — lots of good songs have a busy left AND right hand, they just
+// complement each other." So density is no longer a ceiling, it is a CENTRE:
+// any cell within a band of the target is admissible, and the winner is the one
+// that best COUNTERS the accompaniment — filling its gaps, agreeing with it on
+// strong beats, and not blurring it off-beat. Gaster's Theme is the case that
+// proves it: two busy hands (5 and 9 onsets a bar) that interlock rather than
+// collide, which the old nearest-density-plus-hash rule found only by luck.
+const R48 = 48;
+const posOf = (o) => { const [n, d] = String(o).split('/').map(Number); return n / d; };
+const barSteps = (onsets) => onsets.map((o) => Math.round((posOf(o) % 1) * R48) % R48);
+function interlockScore(accSet, cell, beats) {
+  let lockStrong = 0, lockWeak = 0, fill = 0;
+  for (const p of barSteps(cell.onsets)) {
+    if (accSet.has(p)) { if (p % (R48 / beats) === 0) lockStrong++; else lockWeak++; }
+    else fill++;
+  }
+  // filling gaps is the point; agreeing on a strong beat is an accent shared;
+  // agreeing off-beat just smears two attacks together
+  return (fill * 1.0 + lockStrong * 0.8 - lockWeak * 0.6) / Math.sqrt(cell.onsets.length);
+}
+const DENSITY_BAND = 3;
+function melodyRhythm(meter, bpm, seedName, { target: forced = null, accDensity = 0, accOnsets = null, beats = 4 } = {}) {
   const target = forced ?? melodyDensityTarget(bpm, accDensity);
   let pool = MEL_CELLS.filter((c) => c.meter_class === meter);
   if (!pool.length) pool = MEL_CELLS.filter((c) => c.meter_class === '4/4');
-  const scored = pool
-    .map((c) => ({ c, d: Math.abs(c.density - target) }))
-    .sort((a, b) => a.d - b.d || b.c.seen - a.c.seen);
-  const near = scored.filter((x) => x.d <= scored[0].d + 1);
-  const pick = near[fnv(seedName) % near.length].c;
-  return { name: pick.name, onsets: pick.onsets, accents: pick.accents, artic: pick.artic, density: pick.density, target };
+  let band = pool.filter((c) => Math.abs(c.density - target) <= DENSITY_BAND);
+  if (!band.length) {
+    const sorted = pool.map((c) => ({ c, d: Math.abs(c.density - target) })).sort((a, b) => a.d - b.d);
+    band = sorted.filter((x) => x.d <= sorted[0].d + 1).map((x) => x.c);
+  }
+  const accSet = new Set(accOnsets ? barSteps(accOnsets) : []);
+  const ranked = band
+    .map((c) => ({ c, s: interlockScore(accSet, c, beats) }))
+    .sort((a, b) => b.s - a.s || b.c.seen - a.c.seen || (a.c.name < b.c.name ? -1 : 1));
+  const pick = ranked[0].c;
+  return { name: pick.name, onsets: pick.onsets, accents: pick.accents, artic: pick.artic, density: pick.density, target, interlock: Math.round(ranked[0].s * 100) / 100 };
 }
 
-// Which instrument the background counter-voice speaks in — also a generation
-// decision, from the atlas context role. Bell-family timbres sit under a piano
-// lead without fighting it (the register-lane principle, applied to timbre).
-const ROLE_INSTRUMENT = {
-  boss: 'gm_epiano1', battle: 'gm_epiano1', chase: 'gm_epiano1',
-  town: 'gm_vibraphone', overworld: 'gm_vibraphone', shop: 'gm_vibraphone', diegetic: 'gm_vibraphone',
-  menu: 'gm_kalimba', joke: 'gm_kalimba',
-  cutscene: 'gm_music_box', character: 'gm_music_box', credits: 'gm_music_box', ending: 'gm_music_box',
-};
-const counterInstrument = (role) => ROLE_INSTRUMENT[role] ?? 'gm_music_box';
 
+
+const ARRANGE_WARNINGS = [];
 const progressions = Object.entries(PROGRESSIONS_UNDERTALE).map(([name, e]) => {
   const key = e.sourceKey;
   const symbols = renderProgression(e, key);
@@ -190,23 +211,38 @@ const progressions = Object.entries(PROGRESSIONS_UNDERTALE).map(([name, e]) => {
   // rhythm's density is DERIVED (above), not chosen in the UI.
   const atlas = ATLAS.progressions[name];
   const role = atlas.context?.role ?? null;
+  const beats = Number(e.meter.split('/')[0]) || 4;
   const accDensity = e.ownFigure ? e.ownFigure.onsets.length / e.ownFigure.bars : 0;
+  const accOnsets = e.ownFigure ? e.ownFigure.onsets : null;
   const base = exprs.own ?? exprs[TEXTURES[0].id];
-  const leadCell = melodyRhythm(e.meter, e.bpm, name, { accDensity });
-  const mel = bindMelody(leadCell, ctxBar, e.meter, {
-    style: 'toby-fox', seed: fnv(name), octave: 5, sound: 'piano', fx: '.gain(0.85).room(0.25)',
-  }).expr;
-  exprs.ownmel = `stack(${base}, ${mel})`;
-  // the tier-1 line as a BACKGROUND voice (D41): a sparse counter an octave
-  // down on a soundfont instrument chosen from the song's role — a different
-  // timbre so the ear files it as texture, a different seed so it is a
-  // counter-line and not the lead's shadow. Its density is the leftover of
-  // the leftover: accompaniment + lead already spent the bar's budget.
-  const bgTarget = Math.max(2, Math.min(6, Math.round(activityBudget(e.bpm) - accDensity - leadCell.density / 2)));
-  const bgInstrument = counterInstrument(role);
-  exprs.bgmel = bindMelody(melodyRhythm(e.meter, e.bpm, name + '::bg', { target: bgTarget }), ctxBar, e.meter, {
-    style: 'toby-fox', seed: fnv(name + '::bg'), octave: 4, sound: bgInstrument, fx: '.gain(0.45)',
-  }).expr;
+  const leadCell = melodyRhythm(e.meter, e.bpm, name, { accDensity, accOnsets, beats });
+  const leadSeed = fnv(name);
+  const leadBound = bindMelody(leadCell, ctxBar, e.meter, {
+    style: 'toby-fox', seed: leadSeed, octave: 5, sound: 'piano', fx: '.gain(0.85).room(0.25)',
+  });
+  exprs.ownmel = `stack(${base}, ${leadBound.expr})`;
+
+  // ---- the arrangement (D43): which instruments join, and what they play ----
+  const plan = planArrangement({
+    name, song: e.song, family: e.family, role, moods: atlas.context?.moods ?? null,
+    bpm: e.bpm, meter: e.meter, loopBars: e.loopBars,
+    accDensity, accOctave: e.ownFigure?.octave ?? null,
+    leadDensity: leadCell.density, palette: INSTRUMENTS,
+  });
+  const rendered = renderArrangement(plan, {
+    harmonyContext: ctxBar, meter: e.meter, style: 'toby-fox',
+    leadRhythm: leadCell, leadSeed,
+    counterRhythmFor: (target, seedName) => melodyRhythm(e.meter, e.bpm, seedName, { target, accOnsets, beats }),
+    figureFor: () => FIGURATIONS_UNDERTALE[TEXTURES[0].fig],
+  });
+  for (const w of rendered.warnings) ARRANGE_WARNINGS.push(`${name}: ${w}`);
+  // full mix: piano accompaniment + piano lead (unless a layer takes it) + layers
+  const leadPart = plan.base.lead.silenced ? null : leadBound.expr;
+  const mixParts = [base, ...(leadPart ? [leadPart] : []), ...rendered.layers.map((l) => l.expr)];
+  exprs.mix = mixParts.length > 1 ? `stack(${mixParts.join(', ')})` : mixParts[0];
+  // solo: each layer alone, for ear-checking one contribution at a time
+  const soloExprs = { _base: base, _lead: leadBound.expr };
+  for (const l of rendered.layers) soloExprs[l.id] = l.expr;
   // tier 2 (D38): an AUTHORED melody through the bindMelodySpec guard — only
   // where a spec exists; the client falls back to the tier-1 line elsewhere
   if (MELODIES_TIER2[name]) {
@@ -233,7 +269,18 @@ const progressions = Object.entries(PROGRESSIONS_UNDERTALE).map(([name, e]) => {
     sourceKey: e.sourceKey, keyMargin: e.keyMargin,
     coverage: e.coverage, needsEar: !!e.needsEar, hasT2: !!exprs.ownmel2,
     melCell: leadCell.name, melDensity: leadCell.density, melTarget: leadCell.target,
-    accDensity: Math.round(accDensity * 10) / 10, bgInstrument,
+    melInterlock: leadCell.interlock, melRepeat: leadBound.boundMeta.phrase.repeat,
+    accDensity: Math.round(accDensity * 10) / 10,
+    plan: {
+      budget: plan.budget, spent: plan.spent, headroom: plan.headroomStart, notes: plan.notes,
+      leadSilenced: plan.base.lead.silenced,
+      layers: rendered.layers.map((l) => ({
+        id: l.id, part: l.part, instrument: l.instrument, character: l.instrumentCharacter,
+        contributes: l.contributes, lane: l.lane, octave: l.octave, gain: l.gain,
+        rhythmSource: l.rhythmSource, shares: l.sharesLaneWithPiano, why: l.why,
+      })),
+    },
+    solo: soloExprs,
     section: atlas.section, sectionLabel: ATLAS_SECTIONS.progressions[atlas.section].label,
     similar: atlas.neighbors.blend, context: atlas.context,
     exprs, bass, src: sourceExpr(e),
@@ -359,7 +406,8 @@ const all = [
   ...progressions.map((p) => [`${p.name}/chords`, p.exprs.chords]),
   ...progressions.filter((p) => p.exprs.own).map((p) => [`${p.name}/own`, p.exprs.own]),
   ...progressions.map((p) => [`${p.name}/ownmel`, p.exprs.ownmel]),
-  ...progressions.map((p) => [`${p.name}/bg`, `stack(${p.exprs.ownmel}, ${p.exprs.bgmel})`]),
+  ...progressions.map((p) => [`${p.name}/mix`, p.exprs.mix]),
+  ...progressions.flatMap((p) => Object.entries(p.solo).map(([id, x]) => [`${p.name}/solo:${id}`, x])),
   ...progressions.filter((p) => p.exprs.ownmel2).map((p) => [`${p.name}/ownmel2`, p.exprs.ownmel2]),
   ...progressions.filter((p) => p.src).map((p) => [`${p.name}/src`, p.src]),
   ...figures.flatMap((f) => Object.entries(f.exprs).map(([c, x]) => [`${f.name}/${c}`, x])),
@@ -380,6 +428,7 @@ const DATA = {
   textures: [
     { id: 'own', label: 'own pattern', fig: 'the song’s own interval deployment' },
     { id: 'ownmel', label: 'own + melody', fig: 'the D35 pipeline: a generated toby-fox melody over the own pattern — its rhythmic density is derived at generation time from the accompaniment (the hands must not compete)' },
+    { id: 'mix', label: 'full mix', fig: 'the arrangement (D43): piano accompaniment + lead + the instruments the arranger cast for this song. Hover the card to see who plays what and why; use the solo row to hear each contribution alone.' },
     { id: 'ownmel2', label: 'melody T2', fig: 'tier 2 (D38): a melody AUTHORED by the model through the guard — 6 flagship songs; elsewhere falls back to the generated line' },
     { id: 'chords', label: 'true chords', fig: 'raw progression, real durations' },
   ].concat(TEXTURES.map(({ id, label, fig }) => ({ id, label, fig }))),
@@ -403,6 +452,16 @@ console.log(`wrote audition/undertale.html`);
 console.log(`  progressions ${progressions.length} (${progressions.filter((p) => p.needsEar).length} flagged NEEDS EAR)`);
 console.log(`  figures      ${figures.length} (${figures.filter((f) => f.needsEar).length} flagged) — textures: ${TEXTURES.map((t) => t.fig).join(', ')}`);
 console.log(`  development  ${development.length} moves`);
+{
+  const layered = progressions.filter((p) => p.plan.layers.length).length;
+  const counts = {};
+  for (const p of progressions) for (const l of p.plan.layers) counts[l.instrument] = (counts[l.instrument] ?? 0) + 1;
+  console.log(`  arrangement  ${layered}/${progressions.length} cards have layers; instruments: ${Object.entries(counts).sort((a, b) => b[1] - a[1]).map(([i, n]) => `${i.replace('gm_', '')}×${n}`).join(', ')}`);
+  if (ARRANGE_WARNINGS.length) {
+    console.log(`  ${ARRANGE_WARNINGS.length} arrangement warnings (voicing substitutions):`);
+    for (const w of [...new Set(ARRANGE_WARNINGS.map((w) => w.replace(/^[^:]+: /, '')))].slice(0, 5)) console.log(`    ${w}`);
+  }
+}
 console.log(`  ${checked}${FULL ? '' : ' sampled'} of ${all.length} patterns evaluated green${FULL ? '' : ' (--full checks all)'}; page script parses (${(inline.length / 1024).toFixed(0)} KB)`);
 
 function page(DATA) {
@@ -470,6 +529,7 @@ function page(DATA) {
     <span class="dim" id="rtstatus">click any card to start audio</span>
   </div>
   <div class="row" style="margin-top:7px" id="controls"></div>
+  <div class="row" style="margin-top:6px" id="solo"></div>
 </header>
 <main>
   <div class="note" id="blurb"></div>
@@ -494,7 +554,7 @@ const PREFS = 'motif-engine:undertale-prefs';
 let prefs = { tab: 'progressions', texture: 'own', context: 'own', ctl: {} };
 try { prefs = Object.assign(prefs, JSON.parse(localStorage.getItem(PREFS) || '{}')); } catch {}
 const savePrefs = () => { try { localStorage.setItem(PREFS, JSON.stringify(prefs)); } catch {} };
-const CTL_IDS = ['fam', 'sec', 'cls', 'ear', 't2', 'bass', 'ctr', 'srcbpm', 'bpm', 'q'];
+const CTL_IDS = ['fam', 'sec', 'cls', 'ear', 't2', 'bass', 'srcbpm', 'bpm', 'q'];
 function captureCtl() {
   for (const id of CTL_IDS) {
     const el = $(id);
@@ -511,7 +571,7 @@ function applyCtl() {
   }
   if ($('bpm') && $('bpmv')) $('bpmv').textContent = $('bpm').value;
 }
-let tab = prefs.tab, texture = prefs.texture, context = prefs.context, playing = null, sel = 0, visible = [];
+let tab = prefs.tab, texture = prefs.texture, context = prefs.context, soloId = null, playing = null, sel = 0, visible = [];
 const $ = (id) => document.getElementById(id);
 const save = () => localStorage.setItem(LS, JSON.stringify(verdicts));
 
@@ -540,12 +600,13 @@ function codeFor(e, useSrc) {
     beats = e.beats || 4;
     if (useSrc && e.src) body = e.src;
     else if (texture === 'ownmel') body = e.exprs.ownmel;
+    else if (texture === 'mix') body = (soloId && e.solo[soloId]) ? e.solo[soloId] : e.exprs.mix;
     else if (texture === 'ownmel2') body = e.exprs.ownmel2 || e.exprs.ownmel;
     else if (texture === 'own' && !e.exprs.own) { body = e.exprs.chords; factor = 2; } // no own pattern extracted: fall back to true chords
     else if (texture === 'chords') { body = e.exprs.chords; factor = 2; }
     else if (texture === 'own') body = e.exprs.own;
     else body = ($('bass') && $('bass').checked) ? 'stack(' + e.exprs[texture] + ', ' + e.bass + ')' : e.exprs[texture];
-    if (!useSrc && $('ctr') && $('ctr').checked && e.exprs.bgmel) body = 'stack(' + body + ', ' + e.exprs.bgmel + ')';
+
   }
   else if (tab === 'figures') body = e.exprs[context] || e.exprs.axis;
   else body = e.expr;
@@ -600,7 +661,7 @@ function controls() {
   if (tab === 'progressions') {
     c.innerHTML = '<label class="ctl">texture <span id="tex"></span></label>' +
       '<label class="ctl"><input type="checkbox" id="bass"> bass</label>' +
-      '<label class="ctl"><input type="checkbox" id="ctr"> + counter</label>' +
+
       '<label class="ctl"><input type="checkbox" id="srcbpm" checked> source bpm</label>' +
       '<label class="ctl">bpm <input type="range" id="bpm" min="60" max="180" value="110"><span id="bpmv">110</span></label>' +
       '<label class="ctl">mode <select id="fam"><option value="">all</option><option>major</option><option>minor</option></select></label>' +
@@ -612,7 +673,7 @@ function controls() {
     DATA.textures.forEach((t) => {
       const b = document.createElement('button');
       b.textContent = t.label; b.title = t.fig; b.className = t.id === texture ? 'on' : '';
-      b.onclick = () => { texture = t.id; prefs.texture = t.id; savePrefs(); controls(); render(); if (playing) { const e = DATA.progressions.find((x) => x.name === playing); if (e) play(e); } };
+      b.onclick = () => { texture = t.id; prefs.texture = t.id; soloId = null; savePrefs(); controls(); render(); if (playing) { const e = DATA.progressions.find((x) => x.name === playing); if (e) play(e); } };
       tw.appendChild(b);
     });
 
@@ -640,8 +701,26 @@ function controls() {
   if ($('srcbpm')) $('srcbpm').oninput = () => { captureCtl(); if (playing) { const e = items().find((x) => x.name === playing); if (e) play(e); } };
   applyCtl();
   for (const id of ['fam', 'ear', 'q', 'cls', 'sec', 't2']) if ($(id)) $(id).oninput = () => { captureCtl(); render(); };
-  for (const id of ['bass', 'ctr']) if ($(id)) $(id).oninput = () => { captureCtl(); render(); if (playing) { const e = items().find((x) => x.name === playing); if (e) play(e); } };
+  for (const id of ['bass']) if ($(id)) $(id).oninput = () => { captureCtl(); render(); if (playing) { const e = items().find((x) => x.name === playing); if (e) play(e); } };
   $('blurb').textContent = BLURB[tab];
+}
+
+function soloRow() {
+  const row = $('solo');
+  if (!row) return;
+  const e = visible[sel];
+  if (tab !== 'progressions' || texture !== 'mix' || !e) { row.innerHTML = ''; row.style.display = 'none'; return; }
+  row.style.display = '';
+  row.innerHTML = '<span class="dim">hear alone:</span> ';
+  const opts = [['', 'full mix'], ['_base', 'piano acc'], ['_lead', 'piano lead']]
+    .concat(e.plan.layers.map(function (l) { return [l.id, l.instrument.replace('gm_', '') + ' (' + l.part.replace('_', ' ') + ')']; }));
+  for (const [id, label] of opts) {
+    const b = document.createElement('button');
+    b.textContent = label;
+    b.className = (soloId || '') === id ? 'on' : '';
+    b.onclick = () => { soloId = id || null; soloRow(); if (playing === e.name) play(e); else play(e); };
+    row.appendChild(b);
+  }
 }
 
 function render() {
@@ -671,8 +750,16 @@ function render() {
       tags = e.song + ' · ' + e.loopBars + '-bar loop ×' + e.reps + ' · cov ' + e.coverage +
         (ctxBits ? '<br>' + ctxBits : '') + '<br><span class="sec">' + e.sectionLabel + '</span>';
       card.title = e.name + '\\nsolved key ' + e.sourceKey + ' (margin ' + e.keyMargin + ')\\nbars per chord: ' + e.barsPerChord.join(', ') + '\\nfound at bar ' + e.atBar
-        + '\\nmelody ' + e.melCell + ': ' + e.melDensity + ' onsets/bar (target ' + e.melTarget + ' = budget - ' + e.accDensity + ' acc)'
-        + '\\ncounter voice: ' + e.bgInstrument + atlasTip;
+        + '\\nmelody ' + e.melCell + ': ' + e.melDensity + ' onsets/bar (target ' + e.melTarget + ', interlock ' + e.melInterlock + ', repeat ' + e.melRepeat + ')'
+        + '\\n\\nARRANGEMENT — budget ' + e.plan.budget + '/bar, piano spends ' + e.plan.spent + ', headroom ' + e.plan.headroom
+        + (e.plan.layers.length ? e.plan.layers.map(function (l) { return '\\n• ' + l.instrument + ' — ' + l.part + ' (oct ' + l.octave + ', gain ' + l.gain + ')\\n    ' + l.contributes + '\\n    ' + l.character + '\\n    why: ' + l.why; }).join('') : '\\n• no layers: ' + e.plan.notes.join('; '))
+        + atlasTip;
+      if (texture === 'mix') {
+        const line = e.plan.layers.length
+          ? e.plan.layers.map(function (l) { return l.instrument.replace('gm_', '') + '·' + l.part.replace('_', ' '); }).join(' + ')
+          : 'piano only (no headroom)';
+        tags += ' · ' + line;
+      }
     } else if (tab === 'figures') {
       badge = e.cls + ' · ' + e.meter;
       head = e.needsEar ? '<span class="flag">needs ear</span>' : '';
@@ -712,6 +799,7 @@ function render() {
   const k = Object.values(verdicts).filter((v) => v === 'keep').length;
   const x = Object.values(verdicts).filter((v) => v === 'kill').length;
   $('tally').innerHTML = '<b style="color:var(--keep)">' + k + ' kept</b> · <b style="color:var(--kill)">' + x + ' killed</b>';
+  soloRow();
 }
 function mark(e, verd) {
   if (verdicts[e.name] === verd) delete verdicts[e.name]; else verdicts[e.name] = verd;
