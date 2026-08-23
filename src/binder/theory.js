@@ -2,6 +2,7 @@
 // beyond the scale length they wrap with octave shifts, negatives go down.
 
 import { noteToMidi } from '@strudel/core';
+import { chordRootPc, chordQuality } from '../harness/chords.js';
 
 export const SCALES = {
   major:        [0, 2, 4, 5, 7, 9, 11],
@@ -137,6 +138,136 @@ export function keyUsesFlats(key) {
     const majorPc = (rootPc + (MODE_TO_MAJOR_OFFSET[scaleName] ?? 0)) % 12;
     return FLAT_MAJORS.has(majorPc);
   } catch { return true; }
+}
+
+// ---------------------------------------------------------------------------
+// Chord-scale assignment (D35 §2.2 step 2). Per chord IN KEY CONTEXT, the
+// 7-note (or symmetric) scale that supplies melody pitches over it — chord
+// tones plus consonant tensions, the "guarded but not chord-locked" vocabulary.
+//
+// Algorithm: PARENT-SCALE SEARCH. Try, in order, the key's own scale, then the
+// borrowed-chord sources (the parallel mode, harmonic minor, melodic minor);
+// the first parent containing the chord's core tones is rotated to the chord
+// root and IS the chord-scale. A diatonic chord thus gets its classical mode
+// (ii → dorian, V → mixolydian) with zero special-casing; a borrowed chord gets
+// its source mode (bVII in major → mixolydian via the parallel minor); V7 in
+// minor gets phrygian dominant via harmonic minor. Only a chord no parent
+// explains (secondary dominants, true chromatic planing) falls back to its
+// QUALITY's default scale. Avoid notes are derived, not listed: a scale tone a
+// semitone above a chord tone (the b9 rule, interval-grammar §4.1/§6) — plus
+// the major 3rd over sus, which is what sus suspends.
+// ---------------------------------------------------------------------------
+
+// core tones per ireal quality — the SHELL only, no auto-extensions (the
+// documented-exception colors chordTones() adds would break the subset test)
+const QUALITY_CORE = {
+  '': [0, 4, 7], m: [0, 3, 7], 5: [0, 7], 2: [0, 2, 7], sus: [0, 5, 7],
+  6: [0, 4, 7, 9], 69: [0, 2, 4, 7, 9], add9: [0, 2, 4, 7],
+  m6: [0, 3, 7, 9], madd9: [0, 2, 3, 7],
+  7: [0, 4, 7, 10], 9: [0, 2, 4, 7, 10], 13: [0, 4, 7, 9, 10],
+  '^7': [0, 4, 7, 11], '^9': [0, 2, 4, 7, 11],
+  m7: [0, 3, 7, 10], m9: [0, 2, 3, 7, 10], 'm^7': [0, 3, 7, 11],
+  o: [0, 3, 6], o7: [0, 3, 6, 9], h: [0, 3, 6, 10], m7b5: [0, 3, 6, 10],
+  '+': [0, 4, 8], aug: [0, 4, 8], '7sus': [0, 5, 7, 10],
+};
+
+// named scale rotations beyond SCALES, for a readable `mode` label
+const EXTRA_MODE_NAMES = {
+  '0,1,4,5,7,8,10': 'phrygianDominant', // harmonic minor mode 5
+  '0,2,4,6,7,9,10': 'lydianDominant',   // melodic minor mode 4
+  '0,1,3,4,6,8,10': 'altered',          // melodic minor mode 7
+  '0,2,3,5,6,8,10': 'locrianNat2',      // melodic minor mode 6
+  '0,2,3,5,6,8,9,11': 'wholeHalfDim',
+  '0,1,3,4,6,7,9,10': 'halfWholeDim',
+  '0,2,4,6,8,10': 'wholeTone',
+  '0,2,4,5,7,8,11': 'harmonicMajor',
+  '0,3,4,5,7,8,11': 'harmonicMinorM3',  // harmonic minor mode 3 shifted — rare
+};
+
+const DEFAULT_SCALE_BY_FAMILY = {
+  major: SCALES.ionian, dominant: SCALES.mixolydian, minor: SCALES.dorian,
+  halfdim: SCALES.locrian, dim: [0, 2, 3, 5, 6, 8, 9, 11], aug: [0, 2, 4, 6, 8, 10],
+  sus: SCALES.mixolydian,
+};
+
+function qualityFamily(q) {
+  if (/^(m7b5|h)/.test(q)) return 'halfdim';
+  if (/^o/.test(q)) return 'dim';
+  if (/^(\+|aug)/.test(q)) return 'aug';
+  if (/sus/.test(q)) return 'sus';
+  if (/^m(?!aj)/.test(q)) return 'minor';
+  if (/\^/.test(q)) return 'major';
+  if (/^(7|9|11|13)/.test(q)) return 'dominant';
+  return 'major';
+}
+
+function modeName(rel) {
+  const key = rel.join(',');
+  for (const [name, ivls] of Object.entries(SCALES)) if (ivls.join(',') === key) return name;
+  return EXTRA_MODE_NAMES[key] ?? 'custom';
+}
+
+/** The chord's CORE tones (triad/7th shell, pcs) — no auto-extensions.
+ *  What "the chord forces" for melody purposes: an anchor set, and the tones
+ *  a chromatic chord legitimately adds to a key-locked note supply. */
+export function chordCoreTones(symbol) {
+  const rootPc = chordRootPc(symbol);
+  if (rootPc == null) return new Set();
+  const core = QUALITY_CORE[chordQuality(symbol) ?? ''] ?? QUALITY_CORE[''];
+  return new Set(core.map((s) => (rootPc + s) % 12));
+}
+
+/**
+ * chordScale(symbol, key) -> {
+ *   root, quality, mode, parent ('key'|'parallelMinor'|'parallelMajor'|
+ *   'harmonicMinor'|'melodicMinor'|'quality'), rel (intervals above the chord
+ *   root), pcs (absolute Set), avoid (absolute Set), safe (pcs minus avoid) }
+ * Throws on an unresolvable chord root; unknown qualities use the major shell.
+ */
+export function chordScale(symbol, key) {
+  const { rootPc: keyPc, scaleName, intervals } = parseKey(key);
+  const rootPc = chordRootPc(symbol);
+  if (rootPc == null) throw new Error(`chordScale: unresolvable chord "${symbol}"`);
+  const quality = chordQuality(symbol) ?? '';
+  const core = QUALITY_CORE[quality] ?? QUALITY_CORE[''];
+  const corePcs = core.map((s) => (rootPc + s) % 12);
+
+  const abs = (ivls) => new Set(ivls.map((x) => (keyPc + x) % 12));
+  const majorish = ['major', 'ionian', 'lydian', 'mixolydian', 'majorPentatonic'].includes(scaleName);
+  const parents = [{ id: 'key', pcs: abs(intervals) }];
+  if (majorish) {
+    parents.push({ id: 'parallelMinor', pcs: abs(SCALES.minor) });
+    parents.push({ id: 'harmonicMinor', pcs: abs(SCALES.harmonicMinor) });
+    parents.push({ id: 'melodicMinor', pcs: abs(SCALES.melodicMinor) });
+  } else {
+    parents.push({ id: 'harmonicMinor', pcs: abs(SCALES.harmonicMinor) });
+    parents.push({ id: 'melodicMinor', pcs: abs(SCALES.melodicMinor) });
+    parents.push({ id: 'parallelMajor', pcs: abs(SCALES.major) });
+  }
+
+  let rel = null, parent = 'quality';
+  for (const p of parents) {
+    if (corePcs.every((pc) => p.pcs.has(pc))) {
+      rel = [...p.pcs].map((pc) => ((pc - rootPc) % 12 + 12) % 12).sort((a, b) => a - b);
+      parent = p.id;
+      break;
+    }
+  }
+  if (!rel) rel = DEFAULT_SCALE_BY_FAMILY[qualityFamily(quality)].slice();
+
+  const pcs = new Set(rel.map((s) => (rootPc + s) % 12));
+  const chordPcSet = new Set(corePcs);
+  const avoid = new Set();
+  for (const pc of pcs) {
+    if (chordPcSet.has(pc)) continue;
+    if (chordPcSet.has(((pc - 1) % 12 + 12) % 12)) avoid.add(pc); // b9 above a chord tone
+  }
+  if (qualityFamily(quality) === 'sus') {
+    const third = (rootPc + 4) % 12;
+    if (pcs.has(third)) avoid.add(third);
+  }
+  const safe = new Set([...pcs].filter((pc) => !avoid.has(pc)));
+  return { root: rootPc, quality, mode: modeName(rel), parent, rel, pcs, avoid, safe };
 }
 
 /** Sign sequence of a pitch/degree sequence: 1 up, -1 down, 0 same.

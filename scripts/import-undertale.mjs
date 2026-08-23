@@ -75,12 +75,25 @@ for (const f of files) {
   const tri = triage(midi);
   const { acc, mel, method } = splitHands(midi, barTicks);
   const key = solveKeyKS(midi.notes);
-  const timeline = chordTimeline(midi.notes, barTicks, totalBars, { melody: mel });
+  const timeline = chordTimeline(midi.notes, barTicks, totalBars, { melody: mel, key });
   const grid = acc.length ? pickGrid(acc, barTicks, midi.timeSig[0]) : null;
   const figs = grid ? barFigures(acc, timeline, barTicks, totalBars, grid.grid) : [];
+  // BAR-LOCKED timeline: every bar wears its bar-start chord. Own-figure tokens
+  // are computed against THIS (not the half-bar truth) so that re-rendering the
+  // figure over bar-start chords round-trips to the exact source pitches —
+  // notes the bar-start chord doesn't contain become '~n' literals, which
+  // preserve the interval verbatim.
+  const tlLocked = [];
+  for (let b = 0; b < totalBars; b++) {
+    const seg = chordAt(timeline, b * 2);
+    tlLocked.push(seg
+      ? { start: b * 2, end: b * 2 + 2, rootPc: seg.rootPc, quality: seg.quality, coverage: seg.coverage }
+      : { start: b * 2, end: b * 2 + 2, rootPc: 0, quality: '', coverage: 0 });
+  }
+  const figsLocked = grid ? barFigures(acc, tlLocked, barTicks, totalBars, grid.grid) : [];
   songs.push({
     file: f, title, slug: slug(title), midi, barTicks, totalBars, tri, acc, mel, method,
-    key, timeline, grid: grid?.grid ?? null, figs,
+    key, timeline, grid: grid?.grid ?? null, figs, figsLocked,
     meter: `${midi.timeSig[0]}/${midi.timeSig[1]}`,
     bpm: midi.tempoBpm ? Math.round(midi.tempoBpm) : null,
   });
@@ -142,6 +155,44 @@ function chordLoops(song) {
   return out;
 }
 
+/** The song's OWN accompaniment pattern over one loop period, as a multi-bar
+ *  figuration — "take those intervals and make them the thing along with the
+ *  chords" (Ethan, audition round 3). The harmony of these songs IS its
+ *  deployment: arpeggio order, spacing, register — not block voicings. */
+function buildOwnFigure(song, loop) {
+  const bars = loop.loopBars;
+  if (!song.figsLocked.length || !song.grid) return null;
+  const figs = [];
+  for (let k = 0; k < bars; k++) figs.push(song.figsLocked[loop.atBar + k] ?? null);
+  const present = figs.filter(Boolean);
+  if (present.length < Math.ceil(bars / 2)) return null;
+  let maxVel = 0;
+  for (const f of present) for (const v of f.vels) maxVel = Math.max(maxVel, v);
+  const onsets = [], figure = [], accents = [], micro = [];
+  let legN = 0, legSum = 0;
+  const G = song.grid;
+  for (let k = 0; k < bars; k++) {
+    const f = figs[k];
+    if (!f) continue;
+    for (let i = 0; i < f.steps.length; i++) {
+      onsets.push(frac(f.steps[i] + k * G, G));
+      figure.push(f.tokens[i]);
+      accents.push(round2(f.vels[i] / maxVel));
+      micro.push(song.tri.timingUsable ? Math.round(f.residuals[i] * 96) : 0);
+      const gap = ((i + 1 < f.steps.length ? f.steps[i + 1] : G) - f.steps[i]) / G;
+      legSum += Math.min(1, f.durs[i] / gap); legN++;
+    }
+  }
+  if (onsets.length < 2) return null;
+  const hasMicro = micro.some((r) => r !== 0);
+  return {
+    bars, onsets, figure, accents,
+    ...(hasMicro ? { microtiming: micro.map((r) => (r === 0 ? '0' : frac(r, 96))) } : {}),
+    legato: legN ? legSum / legN >= 0.8 : false,
+    octave: Math.max(1, Math.min(4, Math.floor((present[0].rootRef ?? 48) / 12) - 1)),
+  };
+}
+
 const progressions = [];
 for (const song of songs) {
   const loops = chordLoops(song);
@@ -163,6 +214,7 @@ for (const song of songs) {
       meter: song.meter, bpm: song.bpm,
       needsEar: loop.coverage < 0.62 || song.key.margin < 0.05,
       sourceFile: relative(ROOT, join(DIR, song.file)),
+      ownFigure: buildOwnFigure(song, loop),
     });
   });
 }
@@ -234,11 +286,12 @@ function makeCandidate(v) {
   const legato = mean(durs.map((d, i) => Math.min(1, d / gaps[i]))) >= 0.8;
   const meanMidi = mean(occ.map(({ fig }) => fig.meanMidi));
   const chordness = mean(occ.map(({ fig }) => fig.chordness));
+  const rootRef = mean(occ.map(({ fig }) => fig.rootRef ?? fig.meanMidi));
   const nonChordRatio = occ.reduce((a, { fig }) => a + fig.nonChord, 0) / Math.max(1, occ.reduce((a, { fig }) => a + fig.count, 0));
   const cls = classify(steps, tokens, chordness, meanMidi);
   return {
     meter: v.meter, grid: G, steps, tokens, accents, microtiming, legato,
-    seen, nSongs, bySong, topSong, meanMidi, chordness, nonChordRatio, cls,
+    seen, nSongs, bySong, topSong, meanMidi, rootRef, chordness, nonChordRatio, cls,
     sig: v.sig,
   };
 }
@@ -318,10 +371,11 @@ for (const fig of figEntries) {
   nameCount.set(base, n);
   fig.name = n === 1 ? base : `${base}_${n}`;
   fig.role = fig.cls === 'bass' ? 'bass' : fig.chordness >= 0.5 ? 'chords' : 'accompaniment';
-  // octave for the ROOT REFERENCE such that the rendered register matches the
-  // source: mean observed midi minus the figure's own mean offset above the root
-  const meanTok = mean(fig.tokens.flatMap((t) => t.split('.').map(tokenPitch)));
-  fig.octave = Math.max(1, Math.min(4, Math.round((fig.meanMidi - meanTok) / 12) - 1));
+  // octave for the ROOT REFERENCE = where the source actually anchored its root
+  // (barFigures' per-bar rootRef), not a mean-pitch estimate — the estimate sat
+  // some figures an octave low. floor, not round: bindFigure places the root
+  // pc AT OR ABOVE C<octave>, so floor(rootRef/12) reproduces the source note
+  fig.octave = Math.max(1, Math.min(4, Math.floor(fig.rootRef / 12) - 1));
   fig.onsets = fig.steps.map((s) => frac(s, fig.grid));
   fig.needsEar = fig.nonChordRatio > 0.2 || !fig.accents;
   figNameBySig.set(`${fig.meter}|${fig.sig}`, fig.name);
@@ -330,6 +384,101 @@ for (const fig of figEntries) {
 const moves = movesKept
   .map((m) => ({ ...m, fromFig: figNameBySig.get(m.from), toFig: figNameBySig.get(m.to) }))
   .sort((a, b) => b.seen - a.seen || a.fromFig.localeCompare(b.fromFig));
+
+// ---------------------------------------------------------------------------
+// Melodic RHYTHM cells (D40). Melody audition round 5: with articulation fixed
+// the melodies breathe, and what is left is rhythmic sameness — measured at 15
+// distinct patterns over 116 authored bars, density 3.54/bar (stdev 1.22)
+// against the corpus's 8.25 (stdev 5.08). The cure is in the corpus: mine the
+// melody streams for their RHYTHM — onsets, relative accents, articulation —
+// and nothing else.
+//
+// This stays inside the D30 melody ruling. Pitch content, phrases and contours
+// are still deliberately not taken; a rhythm cell is a habit, exactly like the
+// accompaniment skeletons already mined. Entries carry no pitch of any kind.
+//
+// Selection is STRATIFIED BY DENSITY, not by raw frequency: ranking purely by
+// recurrence would return the sparse cells (the most common bars) and rebuild
+// the very uniformity this pool exists to break. Each density band contributes
+// its own most-recurrent cells, so the pool spans one-note-a-bar to sixteenth
+// runs the way the source does.
+// ---------------------------------------------------------------------------
+const melRhythmMap = new Map();
+for (const song of songs) {
+  const mel = [...song.mel].sort((a, b) => a.tick - b.tick);
+  if (mel.length < 8) continue;
+  const beats = song.midi.timeSig[0];
+  const G = (beats % 3 === 0) ? 12 : 16; // triple/compound get a 12-grid
+  const meter = song.meter;
+  const byBar = new Map();
+  for (const n of mel) {
+    const b = Math.floor(n.tick / song.barTicks);
+    if (!byBar.has(b)) byBar.set(b, []);
+    byBar.get(b).push(n);
+  }
+  for (const [b, raw] of byBar) {
+    // one onset per grid step (a chord in the melody line counts once, highest note)
+    const slots = new Map();
+    for (const n of raw) {
+      const step = Math.round(((n.tick - b * song.barTicks) / song.barTicks) * G);
+      if (step < 0 || step >= G) continue;
+      const cur = slots.get(step);
+      if (!cur || n.midi > cur.midi) slots.set(step, n);
+    }
+    const steps = [...slots.keys()].sort((x, y) => x - y);
+    if (steps.length < 2 || steps.length > G) continue;
+    const notes = steps.map((s) => slots.get(s));
+    const maxVel = Math.max(...notes.map((n) => n.velocity)) || 1;
+    const accents = notes.map((n) => n.velocity / maxVel);
+    const artic = steps.map((s, i) => {
+      const nextTick = i + 1 < steps.length
+        ? b * song.barTicks + (steps[i + 1] / G) * song.barTicks
+        : (b + 1) * song.barTicks;
+      const ioi = nextTick - notes[i].tick;
+      return ioi > 0 ? Math.max(0.15, Math.min(1, notes[i].dur / ioi)) : 1;
+    });
+    const key = `${meter}|${G}|${steps.join(',')}`;
+    if (!melRhythmMap.has(key)) {
+      melRhythmMap.set(key, { meter, G, steps, seen: 0, songs: new Map(), accs: [], artics: [] });
+    }
+    const cell = melRhythmMap.get(key);
+    cell.seen++;
+    cell.songs.set(song.title, (cell.songs.get(song.title) ?? 0) + 1);
+    cell.accs.push(accents);
+    cell.artics.push(artic);
+  }
+}
+const MEL_BANDS = [[2, 3], [4, 5], [6, 8], [9, 12], [13, 99]];
+const MEL_PER_BAND = 8;
+const melRhythms = [];
+for (const [lo, hi] of MEL_BANDS) {
+  const inBand = [...melRhythmMap.values()]
+    .filter((c) => c.steps.length >= lo && c.steps.length <= hi)
+    .filter((c) => c.seen >= 4 || (c.songs.size >= 2 && c.seen >= 3))
+    .sort((a, b) => b.seen - a.seen || b.songs.size - a.songs.size)
+    .slice(0, MEL_PER_BAND);
+  for (const c of inBand) {
+    const col = (rows, i) => median(rows.map((r) => r[i]));
+    const topSong = [...c.songs.entries()].sort((a, b) => b[1] - a[1])[0][0];
+    melRhythms.push({
+      name: `utm_${shortSlug(topSong)}_${c.steps.length}on`,
+      meter: c.meter, grid: c.G, steps: c.steps,
+      onsets: c.steps.map((s) => frac(s, c.G)),
+      accents: c.steps.map((_, i) => Math.round(col(c.accs, i) * 100) / 100),
+      artic: c.steps.map((_, i) => Math.round(col(c.artics, i) * 100) / 100),
+      density: c.steps.length,
+      seen: c.seen, songs: [...c.songs.keys()].sort().slice(0, 4),
+    });
+  }
+}
+{ // unique names
+  const used = new Map();
+  for (const r of melRhythms) {
+    const n = (used.get(r.name) ?? 0) + 1;
+    used.set(r.name, n);
+    if (n > 1) r.name = `${r.name}_${n}`;
+  }
+}
 
 // ---------------------------------------------------------------------------
 // Melody observations (stats only — they feed undertale-melody.md, no entries)
@@ -430,6 +579,9 @@ function lit(v) {
     L.push(`    meter: ${lit(p.meter)}, bpm: ${lit(p.bpm)},`);
     L.push(`    sourceKey: ${lit(p.sourceKey)}, keyMargin: ${p.keyMargin}, coverage: ${p.coverage},`);
     L.push(`    needsEar: ${lit(p.needsEar)},`);
+    // the song's own interval deployment over this loop (bindFigure-ready) —
+    // the harmony as the song actually plays it, not as block voicings
+    L.push(`    ownFigure: ${p.ownFigure ? JSON.stringify(p.ownFigure) : 'null'},`);
     L.push(`    character: null,`);
     L.push(`  },`);
   }
@@ -527,6 +679,31 @@ function lit(v) {
     L.push(`    meter_class: ${lit(r.meter)}, tags: ['undertale', 'comp'],`);
     L.push(`    figures: ${lit(r.figures)}, seen: ${r.seen},`);
     L.push(`    character: null,`);
+    L.push(`  },`);
+  }
+  L.push('}', '');
+
+  // --- melodic rhythm cells (D40) — rhythm ONLY, no pitch ---
+  L.push('');
+  L.push('// MELODIC rhythm cells mined from the melody streams (D40). Rhythm, relative');
+  L.push('// accents and articulation only — no pitch content, no phrases, no contours:');
+  L.push('// the D30 melody ruling stands (habits, not tunes). `artic` is the median');
+  L.push('// duration/IOI per onset, which is what makes a line phrase rather than drone.');
+  L.push('// Selection is stratified by DENSITY so the pool spans sparse to busy — the');
+  L.push('// authored melodies were uniform at ~3.5 notes/bar where the corpus varies');
+  L.push('// 2..16, and ranking by raw recurrence would have re-created that flatness.');
+  L.push('export const MELODY_RHYTHMS_UNDERTALE = {');
+  for (const r of [...melRhythms].sort((a, b) => a.name.localeCompare(b.name))) {
+    L.push(`  ${r.name}: {`);
+    L.push(`    role: 'melodic', band: 'high', style: 'toby-fox', provenance: 'transcribed', ratified: false,`);
+    L.push(`    pack: 'undertale',`);
+    L.push(`    onsets: ${lit(r.onsets)},`);
+    L.push(`    accents: ${lit(r.accents)},`);
+    L.push(`    artic: ${lit(r.artic)},`);
+    L.push(`    meter_class: ${lit(r.meter)}, grid: ${r.grid}, density: ${r.density},`);
+    L.push(`    tags: ['undertale', 'melodic'],`);
+    L.push(`    songs: ${lit(r.songs)}, seen: ${r.seen},`);
+    L.push(`    needsEar: true, character: null,`);
     L.push(`  },`);
   }
   L.push('}', '');

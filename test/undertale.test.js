@@ -165,6 +165,37 @@ test('D30: rhythm skeletons normalize through the standard binder path', () => {
   }
 });
 
+test('D34: a progression\'s ownFigure round-trips to the source notes', async () => {
+  // The harmony of these songs IS its deployment (Ethan, audition round 3):
+  // rendering the extracted interval pattern over the extracted chords must
+  // reproduce the source accompaniment — including the bass line's register
+  // walk (D3 C3 B2 Bb2, not roots snapped into one octave) and mid-bar chord
+  // arrivals (captured as literal '~n' intervals).
+  const e = PROGRESSIONS_UNDERTALE.ut_megalovania_p1;
+  assert.ok(e.ownFigure, 'megalovania should carry its own figure');
+  const symbols = renderProgression(e, e.sourceKey);
+  const bars = [];
+  let ci = 0, acc = 0;
+  for (let b = 0; b < e.loopBars; b++) {
+    while (ci < e.barsPerChord.length - 1 && acc + e.barsPerChord[ci] <= b) { acc += e.barsPerChord[ci]; ci++; }
+    bars.push(symbols[ci]);
+  }
+  const { boundMeta } = bindFigure(e.ownFigure, { harmony: bars, barsPerChord: 1, key: e.sourceKey }, e.meter);
+  const cyc = (c) => boundMeta.notes.filter((n) => n.cycle === c).map((n) => n.note);
+  assert.deepEqual(cyc(0), Array(10).fill('D3'));
+  assert.deepEqual(cyc(1), Array(10).fill('C3'));
+  assert.deepEqual(cyc(2), Array(10).fill('B2')); // walks DOWN to B2, no octave snap
+  assert.deepEqual(cyc(3), ['Bb2', 'Bb2', 'Bb2', 'Bb2', 'C3', 'C3', 'C3', 'C3', 'C3', 'C3']);
+});
+
+test('D34: chord qualities come from the accompaniment, not the melody riff', () => {
+  const e = PROGRESSIONS_UNDERTALE.ut_megalovania_p1;
+  // the riff (D-A-Ab-G-F over each pedal) used to dress these labels as
+  // D5/Csus/Do/Co7; accompaniment-only voting + octave-double reassignment +
+  // diatonic completion must yield the plain famous descent
+  assert.deepEqual(renderProgression(e, e.sourceKey).slice(0, 4), ['Dm', 'C', 'Bm', 'Bb^7']);
+});
+
 test('D30: grid picking prefers the musical grid over absorbing the humanization', () => {
   const m = readMidi(join(ROOT, 'audios/Undertale MIDI/Undertale - Fallen Down.mid'));
   const barTicks = m.ppq * 4 * (3 / 4);

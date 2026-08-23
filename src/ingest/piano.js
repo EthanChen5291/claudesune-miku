@@ -84,9 +84,25 @@ export function splitHands(midi, barTicks) {
   for (const cl of onsetClusters(notes, barTicks)) {
     const sorted = [...cl.notes].sort((a, b) => a.midi - b.midi);
     const top = sorted[sorted.length - 1];
+    const isMelTop = top.midi >= split && gap >= 7;
+    // Toby's melodies travel thickened: in OCTAVES, and in parallel 3rds/6ths
+    // (Hopes and Dreams' theme). Only the top voice reaching the melody stream
+    // left the doubles/harmony voice in the accompaniment, where the chord
+    // labeler read them as harmony and figures replayed them (audition rounds
+    // 3-4). In a melody-topped cluster:
+    //   - an exact octave double of the top, still in melody territory, is
+    //     the melody (a LOW root doubling the tune — oom-pah bass — stays);
+    //   - a SINGLE companion within a 6th below the top, in melody territory,
+    //     is the parallel-harmony voice of the melody;
+    //   - two or more companions above the split are a CHORD (comping) and
+    //     stay accompaniment.
+    const isOctDouble = (n) => (top.midi - n.midi === 12 || top.midi - n.midi === 24) && n.midi >= split - 3;
+    const companions = sorted.filter((n) => n !== top && n.midi >= split - 3 && !isOctDouble(n));
     for (const n of sorted) {
-      if (n === top && n.midi >= split && gap >= 7) mel.push(n);
-      else acc.push(n);
+      if (n === top && isMelTop) { mel.push(n); continue; }
+      if (isMelTop && isOctDouble(n)) { mel.push(n); continue; }
+      if (isMelTop && companions.length === 1 && n === companions[0] && top.midi - n.midi <= 9) { mel.push(n); continue; }
+      acc.push(n);
     }
   }
   return { acc, mel, method: `pitch-split(${split.toFixed(1)},gap ${gap.toFixed(1)})` };
@@ -123,10 +139,10 @@ export function chordTemplates() {
  * `coverage` is the fraction of window weight the chosen chord explains — the
  * honesty number that later becomes needsEar.
  */
-export function chordTimeline(notes, barTicks, totalBars, { melody = null } = {}) {
+export function chordTimeline(notes, barTicks, totalBars, { melody = null, key = null } = {}) {
   const H = barTicks / 2;
   const nWin = Math.max(1, Math.ceil((totalBars * barTicks) / H));
-  const wins = Array.from({ length: nWin }, () => ({ w: new Map(), bass: null, total: 0 }));
+  const wins = Array.from({ length: nWin }, () => ({ w: new Map(), acc: new Map(), bass: null, total: 0 }));
   const mel = melody ? new Set(melody) : null;
   for (const n of notes) {
     let t = n.tick;
@@ -138,9 +154,11 @@ export function chordTimeline(notes, barTicks, totalBars, { melody = null } = {}
       const win = wins[wi];
       const dur = (wEnd - t) / barTicks;
       const onset = t === n.tick ? 1.5 : 1; // striking in the window counts extra
-      const wt = dur * onset * (mel && mel.has(n) ? 0.5 : 1);
+      const isMel = mel ? mel.has(n) : false;
+      const wt = dur * onset * (isMel ? 0.5 : 1);
       const pc = mod12(n.midi);
       win.w.set(pc, (win.w.get(pc) ?? 0) + wt);
+      if (!isMel) win.acc.set(pc, (win.acc.get(pc) ?? 0) + wt);
       win.total += wt;
       if (win.bass == null || n.midi < win.bass) win.bass = n.midi;
       t = wEnd;
@@ -148,15 +166,26 @@ export function chordTimeline(notes, barTicks, totalBars, { melody = null } = {}
   }
 
   const templates = chordTemplates();
+  // Chords are judged on the ACCOMPANIMENT alone wherever it sounds at all —
+  // audition round 3 (Ethan): melody tones were dressing the labels ("the
+  // chords are incorporating the melody"). The melody-notes map is only the
+  // fallback for windows where the accompaniment is silent (solo-melody
+  // intros), and those windows wear their coverage honestly.
+  const mapOf = (win) => {
+    let accTotal = 0;
+    for (const [, w] of win.acc) accTotal += w;
+    return accTotal > 0.05 ? { m: win.acc, total: accTotal } : { m: win.w, total: win.total };
+  };
   const score = (win, rootPc, pcs) => {
+    const { m, total } = mapOf(win);
     let inW = 0, outW = 0, present = 0;
-    for (const [pc, w] of win.w) {
+    for (const [pc, w] of m) {
       if (pcs.has(mod12(pc - rootPc))) { inW += w; present++; } else outW += w;
     }
     // absent template tones cost a little: without this, exotic 4-note labels
     // (o7) tie plain triads on windows that only sound a root and one colour
-    let s = inW - 0.7 * outW - 0.15 * ((pcs.size - present) / pcs.size) * win.total;
-    if (win.bass != null && mod12(win.bass) === rootPc) s += 0.3 * win.total;
+    let s = inW - 0.7 * outW - 0.15 * ((pcs.size - present) / pcs.size) * total;
+    if (win.bass != null && mod12(win.bass) === rootPc) s += 0.3 * total;
     return s;
   };
 
@@ -175,20 +204,26 @@ export function chordTimeline(notes, barTicks, totalBars, { melody = null } = {}
         if (!best || s > best.s + 1e-9) best = { rootPc, quality: t.quality, s };
       }
     }
+    const cover = (rootPc, quality) => {
+      const { m, total } = mapOf(win);
+      const qp = qualityPcs().get(quality);
+      let inW = 0;
+      for (const [pc, w] of m) if (qp?.has(mod12(pc - rootPc))) inW += w;
+      return { inW, total };
+    };
     if (cur) {
       const qp = qualityPcs().get(cur.quality);
       const keep = score(win, cur.rootPc, qp);
       if (keep >= best.s * 0.88) {
         cur.end = wi + 1;
-        cur.inW += keep; cur.totW += win.total;
+        const c = cover(cur.rootPc, cur.quality);
+        cur.inW += c.inW; cur.totW += c.total;
         continue;
       }
     }
     if (cur) segs.push(cur);
-    const qp2 = qualityPcs().get(best.quality);
-    let inW = 0;
-    for (const [pc, w] of win.w) if (qp2.has(mod12(pc - best.rootPc))) inW += w;
-    cur = { start: wi, end: wi + 1, rootPc: best.rootPc, quality: best.quality, inW, totW: win.total };
+    const c0 = cover(best.rootPc, best.quality);
+    cur = { start: wi, end: wi + 1, rootPc: best.rootPc, quality: best.quality, inW: c0.inW, totW: c0.total };
   }
   if (cur) segs.push(cur);
   // merge adjacent identical chords (hysteresis restarts can split them)
@@ -200,6 +235,64 @@ export function chordTimeline(notes, barTicks, totalBars, { melody = null } = {}
     } else out.push(s);
   }
   for (const s of out) s.coverage = s.totW > 0 ? s.inW / s.totW : 0;
+
+  // Diatonic completion of THIRDLESS labels. The missing-tone penalty makes
+  // minimal templates win wherever no third sounds — a pedal-bass bar over D in
+  // a D-minor song labels 'D5', a bar whose melody brushes the 4th labels
+  // 'Csus' — and .voicing() then PLAYS the bare fifth / sus wash: audibly wrong
+  // chords (the audition round that caught this heard power chords all over
+  // Megalovania). Ruling: a '5'/'sus'/'2' label is kept only when the
+  // ACCOMPANIMENT itself voices the colour (sus4's 4th, 2's 9th) while lacking
+  // any third — Snowdin's Db-Eb-Ab really is a Db2 and stays one. Otherwise
+  // the label completes to the solved key's diatonic triad for that root:
+  // absence of evidence is not a sus chord.
+  if (key) {
+    const scale = new Set((key.mode === 'minor' ? [0, 2, 3, 5, 7, 8, 10] : [0, 2, 4, 5, 7, 9, 11])
+      .map((i) => mod12(key.tonicPc + i)));
+    const accNotes = mel ? notes.filter((n) => !mel.has(n)) : notes;
+    for (const s of out) {
+      if (!['5', 'sus', '2'].includes(s.quality)) continue;
+      const t0 = s.start * H, t1 = s.end * H;
+      const inSeg = accNotes.filter((n) => n.tick < t1 && n.tick + n.dur > t0);
+      const colour = s.quality === 'sus' ? 5 : s.quality === '2' ? 2 : null;
+      const accPcs = new Set(inSeg.map((n) => mod12(n.midi)));
+      const accHasThird = accPcs.has(mod12(s.rootPc + 3)) || accPcs.has(mod12(s.rootPc + 4));
+      // a real sus/2 voices the colour AGAINST the root — the two notes must
+      // actually overlap in time (Snowdin strikes Db and Eb together). A colour
+      // tone that merely lives in the same window (the next chord's pedal
+      // starting mid-bar) does not make the previous chord a sus.
+      if (colour != null && !accHasThird) {
+        const roots = inSeg.filter((n) => mod12(n.midi) === s.rootPc);
+        const colours = inSeg.filter((n) => mod12(n.midi) === mod12(s.rootPc + colour));
+        const overlap = colours.some((c) => roots.some((r) => r.tick < c.tick + c.dur && c.tick < r.tick + r.dur));
+        if (overlap) continue; // genuinely voiced sus/2
+      }
+      // The accompaniment alone can't name this chord, so build the quality
+      // directly: the THIRD from whatever evidence exists (all notes — melody
+      // may cast this one binary vote), else the solved key's diatonic third;
+      // a SEVENTH only if one actually sounds. Melody can pick between m and
+      // maj, it can never invent sus/dim/exotic colour — that was the "chords
+      // are incorporating the melody" failure.
+      const fullW = new Map();
+      let total = 0;
+      for (let wi = s.start; wi < s.end && wi < wins.length; wi++) {
+        for (const [pc, wt] of wins[wi].w) {
+          if (mod12(pc - s.rootPc) === 0) continue;
+          fullW.set(mod12(pc - s.rootPc), (fullW.get(mod12(pc - s.rootPc)) ?? 0) + wt);
+          total += wt;
+        }
+      }
+      const w = (rel) => fullW.get(mod12(rel)) ?? 0;
+      let minor;
+      if (w(3) > 1.2 * w(4)) minor = true;
+      else if (w(4) > 1.2 * w(3)) minor = false;
+      else minor = scale.has(mod12(s.rootPc + 3)) && !scale.has(mod12(s.rootPc + 4));
+      const seventhTh = 0.2 * total;
+      const b7 = w(10) > seventhTh, M7 = !b7 && w(11) > seventhTh;
+      s.quality = minor ? (b7 ? 'm7' : 'm') : (b7 ? '7' : M7 ? '^7' : '');
+      s.completed = true;
+    }
+  }
   return out;
 }
 
@@ -280,7 +373,7 @@ export function barFigures(accNotes, timeline, barTicks, totalBars, grid = 16) {
     if (!clusters.length) { out.push(null); continue; }
     const lowest = Math.min(...notes.map((n) => n.midi));
     const steps = [], tokens = [], vels = [], durs = [];
-    let nonChord = 0, count = 0, midiSum = 0;
+    let nonChord = 0, count = 0, midiSum = 0, rootRefBar = null;
     let residuals = [];
     for (const cl of clusters) {
       const local = (cl.tick - bar * barTicks) / barTicks;
@@ -290,6 +383,7 @@ export function barFigures(accNotes, timeline, barTicks, totalBars, grid = 16) {
       const seg = chordAt(timeline, hw);
       if (!seg) continue;
       const rootRef = lowest - mod12(lowest - seg.rootPc);
+      if (rootRefBar == null) rootRefBar = rootRef;
       const relPcs = qualityPcs().get(seg.quality) ?? new Set([0, 4, 7]);
       const toks = [...new Set(cl.notes.map((n) => n.midi))].sort((a, b) => a - b)
         .map((m) => memberToken(m, rootRef, relPcs));
@@ -309,6 +403,7 @@ export function barFigures(accNotes, timeline, barTicks, totalBars, grid = 16) {
       residuals,
       nonChord, count,
       meanMidi: midiSum / notes.length,
+      rootRef: rootRefBar,
       chordness: tokens.filter((t) => t.includes('.')).length / tokens.length,
       sig: `${grid}|${steps.join(',')}|${tokens.join(' ')}`,
     });

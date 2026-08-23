@@ -30,10 +30,16 @@ import { PROGRESSIONS_UNDERTALE } from '../src/lib/progressions-undertale.js';
 import { FIGURATIONS_UNDERTALE, DEVELOPMENT_UNDERTALE } from '../src/lib/figurations-undertale.js';
 import { parseDegrees } from '../src/lib/progressions.js';
 import { renderProgression } from '../src/binder/harmony.js';
-import { bindFigure, bind } from '../src/binder/bind.js';
+import { bindFigure, bind, bindMelody, bindMelodySpec } from '../src/binder/bind.js';
+import { ATLAS, ATLAS_SECTIONS } from '../src/lib/atlas.js';
+import { MELODIES_TIER2 } from '../src/lib/melodies-tier2.js';
+import { MELODY_RHYTHMS_UNDERTALE } from '../src/lib/rhythms-undertale.js';
 import { RHYTHMS } from '../src/lib/rhythms.js';
 import { CONTOURS } from '../src/lib/contours.js';
 import { evaluateSong, hapsByLabel } from '../src/harness/evaluate.js';
+import { readMidi } from '../src/ingest/midi.js';
+import { onsetClusters } from '../src/ingest/piano.js';
+import { midiToNoteName, keyUsesFlats } from '../src/binder/theory.js';
 
 const ROOT = join(fileURLToPath(new URL('..', import.meta.url)));
 const OUT = join(ROOT, 'audition');
@@ -59,14 +65,146 @@ const TEXTURES = [
 ].filter((t) => t.fig);
 
 // ---- progressions ---------------------------------------------------------
+// Everything renders in the SOLVED KEY at the source's meter and bpm — audition
+// round 2 finding: transposing to C at a flat 110 destroyed recognizability
+// even where the extracted data was right. Two ground-truth references per
+// card: the 'true chords' texture (correct barsPerChord, at half-bar
+// resolution) and the verbatim source-MIDI slice of the loop span.
+
+/** legato token grid: steps (0..G) + values -> mini-notation for one bar */
+function grid(steps, values, G) {
+  const at = (v, k) => (k === 1 ? String(v) : `${v}@${k}`);
+  const toks = [];
+  if (steps[0] > 0) toks.push(at('~', steps[0]));
+  for (let i = 0; i < steps.length; i++) {
+    const next = i + 1 < steps.length ? steps[i + 1] : G;
+    toks.push(at(values[i], Math.max(1, next - steps[i])));
+  }
+  return toks.join(' ');
+}
+
+/** verbatim playback of the loop span, straight from the MIDI file */
+function sourceExpr(e) {
+  const midi = readMidi(join(ROOT, e.source));
+  const barTicks = midi.ppq * 4 * (midi.timeSig[0] / midi.timeSig[1]);
+  const bars = Math.min(e.loopBars, 8);
+  const t0 = e.atBar * barTicks;
+  const span = midi.notes.filter((n) => n.tick >= t0 && n.tick < t0 + bars * barTicks);
+  if (!span.length) return null;
+  const flats = keyUsesFlats(e.sourceKey);
+  const noteBars = [], gainBars = [];
+  for (let b = 0; b < bars; b++) {
+    const inBar = span.filter((n) => Math.floor((n.tick - t0) / barTicks) === b);
+    if (!inBar.length) { noteBars.push('~'); gainBars.push('0.5'); continue; }
+    const clusters = onsetClusters(inBar.map((n) => ({ ...n, tick: n.tick - t0 - b * barTicks })), barTicks, 1 / 96);
+    const steps = [], vals = [], gains = [];
+    for (const c of clusters) {
+      const step = Math.min(95, Math.round((c.tick / barTicks) * 96));
+      if (steps.length && steps[steps.length - 1] === step) continue;
+      steps.push(step);
+      const names = [...new Set(c.notes.map((n) => n.midi))].sort((a, b) => a - b).map((m) => midiToNoteName(m, { flats }));
+      vals.push(names.length === 1 ? names[0] : `[${names.join(',')}]`);
+      gains.push(String(Math.round((Math.max(...c.notes.map((n) => n.velocity)) / 127) * 100) / 100));
+    }
+    noteBars.push(grid(steps, vals, 96));
+    gainBars.push(grid(steps, gains, 96));
+  }
+  const wrap = (xs) => (xs.length === 1 ? xs[0] : `<${xs.map((x) => `[${x}]`).join(' ')}>`);
+  return `note("${wrap(noteBars)}").s("piano").gain("${wrap(gainBars)}").room(0.2)`;
+}
+
+/** chord sounding at each BAR START of the loop (barsPerChord walk) */
+function barChords(symbols, barsPerChord, loopBars) {
+  const out = [];
+  let i = 0, acc = 0;
+  for (let b = 0; b < loopBars; b++) {
+    while (i < barsPerChord.length - 1 && acc + barsPerChord[i] <= b) { acc += barsPerChord[i]; i++; }
+    out.push(symbols[i]);
+  }
+  return out;
+}
+
+// ---- melody demo (D35/D40): a bindMelody line over the own pattern ---------
+// The rhythm is RETRIEVED from the corpus's own mined melodic cells
+// (MELODY_RHYTHMS_UNDERTALE, D40) rather than authored: melody audition round 5
+// measured the remaining "same-y" as rhythmic monoculture — one hand-written
+// cell for all 165 cards. Selection is by meter, then by a tempo-appropriate
+// DENSITY target (a 16-note bar is a blur at 175bpm and a comfortable run at
+// 70), then seeded per progression so neighbours differ. Ties break by
+// recurrence, so a song gets a cell Toby actually played a lot.
+const fnv = (s) => { let h = 0x811c9dc5; for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 0x01000193); } return h >>> 0; };
+const MEL_CELLS = Object.entries(MELODY_RHYTHMS_UNDERTALE).map(([name, e]) => ({ name, ...e }));
+// Energy (D41): Ethan's toggle — the melody's rhythmic density chosen by WHAT
+// THE SONG IS FOR, not randomized. Explicit levels pin the density target;
+// 'context' derives it from the atlas context role (a boss theme runs hot, a
+// cutscene breathes); 'auto' stays the tempo rule — the default Ethan already
+// approved by ear must not change underneath him.
+const ENERGY_TARGETS = { calm: 3, mid: 6, hyper: 10 };
+const ROLE_ENERGY = {
+  battle: 10, boss: 10, chase: 10,
+  overworld: 6, town: 6, shop: 6, menu: 6, diegetic: 6, joke: 6,
+  cutscene: 4, character: 4, credits: 4, ending: 4,
+};
+function melodyRhythm(meter, bpm, seedName, { energy = 'auto', role = null } = {}) {
+  const target = ENERGY_TARGETS[energy]
+    ?? (energy === 'context' && role != null && ROLE_ENERGY[role] != null ? ROLE_ENERGY[role]
+      : Math.max(2, Math.min(12, Math.round(900 / (bpm || 110)))));
+  let pool = MEL_CELLS.filter((c) => c.meter_class === meter);
+  if (!pool.length) pool = MEL_CELLS.filter((c) => c.meter_class === '4/4');
+  const scored = pool
+    .map((c) => ({ c, d: Math.abs(c.density - target) }))
+    .sort((a, b) => a.d - b.d || b.c.seen - a.c.seen);
+  const near = scored.filter((x) => x.d <= scored[0].d + 1);
+  const pick = near[fnv(seedName) % near.length].c;
+  return { name: pick.name, onsets: pick.onsets, accents: pick.accents, artic: pick.artic };
+}
+
 const progressions = Object.entries(PROGRESSIONS_UNDERTALE).map(([name, e]) => {
-  const key = KEY_FOR(e.family);
+  const key = e.sourceKey;
   const symbols = renderProgression(e, key);
   const ctx = { harmony: symbols, barsPerChord: 1, key };
+  const ctxBar = { harmony: barChords(symbols, e.barsPerChord, e.loopBars), barsPerChord: 1, key };
   const exprs = {};
+  // the song's OWN interval deployment over its own chords — the default
+  // texture, because Toby's harmony IS its deployment, not block voicings
+  if (e.ownFigure) {
+    exprs.own = bindFigure(e.ownFigure, ctxBar, e.meter, { sound: 'piano', fx: '.room(0.25)' }).expr;
+  }
   for (const t of TEXTURES) {
     exprs[t.id] = bindFigure(FIGURATIONS_UNDERTALE[t.fig], ctx, '4/4', { sound: 'piano', fx: '.room(0.25)' }).expr;
   }
+  // own + melody: the D35 pipeline heard end-to-end — chord-scale note supply,
+  // anchors snapped, approach slots, toby-fox profile, seeded per entry.
+  // One expr per ENERGY level; 'auto' consults the atlas context role (D41).
+  const atlas = ATLAS.progressions[name];
+  const base = exprs.own ?? exprs[TEXTURES[0].id];
+  for (const energy of ['auto', 'context', 'calm', 'mid', 'hyper']) {
+    const mel = bindMelody(melodyRhythm(e.meter, e.bpm, name, { energy, role: atlas.context?.role ?? null }), ctxBar, e.meter, {
+      style: 'toby-fox', seed: fnv(name), octave: 5, sound: 'piano', fx: '.gain(0.85).room(0.25)',
+    }).expr;
+    exprs[energy === 'auto' ? 'ownmel' : `ownmel_${energy}`] = `stack(${base}, ${mel})`;
+  }
+  // the tier-1 line as a BACKGROUND voice (D41): a calm counter-line an octave
+  // down on triangle — a different instrument so the ear files it as texture,
+  // different seed so it is not the lead's shadow
+  exprs.bgmel = bindMelody(melodyRhythm(e.meter, e.bpm, name + '::bg', { energy: 'calm' }), ctxBar, e.meter, {
+    style: 'toby-fox', seed: fnv(name + '::bg'), octave: 4, sound: 'triangle', fx: '.gain(0.4)',
+  }).expr;
+  // tier 2 (D38): an AUTHORED melody through the bindMelodySpec guard — only
+  // where a spec exists; the client falls back to the tier-1 line elsewhere
+  if (MELODIES_TIER2[name]) {
+    const t2 = bindMelodySpec(MELODIES_TIER2[name], ctxBar, e.meter, { sound: 'piano', fx: '.gain(0.9).room(0.25)' });
+    if (t2.warnings.length) throw new Error(`tier-2 spec ${name} has guard warnings — fix the spec: ${t2.warnings.join('; ')}`);
+    exprs.ownmel2 = `stack(${exprs.own ?? exprs[TEXTURES[0].id]}, ${t2.expr})`;
+  }
+  // true chord rhythm: one cycle = HALF a bar (cpm factor 2), each chord
+  // weighted by its real duration, so 0.5-bar passing chords stop being
+  // stretched to whole bars
+  const weighted = symbols.map((sym, i) => {
+    const w = Math.round(e.barsPerChord[i] * 2);
+    return w === 1 ? sym : `${sym}@${w}`;
+  }).join(' ');
+  exprs.chords = `chord("<${weighted}>").dict('ireal').voicing().s("piano").room(0.25)`;
   const bass = bind(RHYTHMS.offbeat_8ths, CONTOURS.bass_root_five, ctx, '4/4', {
     octave: 2, sound: 'piano', fx: '.gain(0.7)',
   }).expr;
@@ -74,9 +212,12 @@ const progressions = Object.entries(PROGRESSIONS_UNDERTALE).map(([name, e]) => {
     name, song: e.song, family: e.family, numerals: e.numerals, symbols,
     length: parseDegrees(e.degrees).length,
     barsPerChord: e.barsPerChord, loopBars: e.loopBars, reps: e.reps, atBar: e.atBar,
-    meter: e.meter, bpm: e.bpm, sourceKey: e.sourceKey, keyMargin: e.keyMargin,
-    coverage: e.coverage, needsEar: !!e.needsEar,
-    exprs, bass,
+    meter: e.meter, beats: Number(e.meter.split('/')[0]), bpm: e.bpm ?? 110,
+    sourceKey: e.sourceKey, keyMargin: e.keyMargin,
+    coverage: e.coverage, needsEar: !!e.needsEar, hasT2: !!exprs.ownmel2,
+    section: atlas.section, sectionLabel: ATLAS_SECTIONS.progressions[atlas.section].label,
+    similar: atlas.neighbors.blend, context: atlas.context,
+    exprs, bass, src: sourceExpr(e),
   };
 });
 
@@ -117,11 +258,15 @@ const figures = figList.map(([name, e]) => {
     exprs[c.id] = bindFigure(e, ctxHarmony(c), e.meter_class, { sound: 'piano', fx: '.room(0.25)' }).expr;
     labels[c.id] = c.label;
   }
+  const atlas = ATLAS.figures[name];
   return {
     name, cls: e.class, role: e.role, meter: e.meter_class, grid: e.grid,
     figure: e.figure, onsets: e.onsets.length, octave: e.octave, legato: e.legato,
     seen: e.seen, songs: e.songs, fit: e.fit, needsEar: !!e.needsEar,
-    micro: !!e.microtiming, exprs, labels,
+    micro: !!e.microtiming,
+    section: atlas.section, sectionLabel: ATLAS_SECTIONS.figures[atlas.section].label,
+    similar: atlas.neighbors.blend, context: atlas.context,
+    exprs, labels,
   };
 });
 
@@ -192,6 +337,13 @@ function mdToHtml(md) {
 // ---- verify every generated pattern actually evaluates --------------------
 const all = [
   ...progressions.flatMap((p) => TEXTURES.map((t) => [`${p.name}/${t.id}`, `stack(${p.exprs[t.id]}, ${p.bass})`])),
+  ...progressions.map((p) => [`${p.name}/chords`, p.exprs.chords]),
+  ...progressions.filter((p) => p.exprs.own).map((p) => [`${p.name}/own`, p.exprs.own]),
+  ...progressions.map((p) => [`${p.name}/ownmel`, p.exprs.ownmel]),
+  ...progressions.flatMap((p) => ['context', 'calm', 'mid', 'hyper'].map((en) => [`${p.name}/ownmel_${en}`, p.exprs[`ownmel_${en}`]])),
+  ...progressions.map((p) => [`${p.name}/bg`, `stack(${p.exprs.ownmel}, ${p.exprs.bgmel})`]),
+  ...progressions.filter((p) => p.exprs.ownmel2).map((p) => [`${p.name}/ownmel2`, p.exprs.ownmel2]),
+  ...progressions.filter((p) => p.src).map((p) => [`${p.name}/src`, p.src]),
   ...figures.flatMap((f) => Object.entries(f.exprs).map(([c, x]) => [`${f.name}/${c}`, x])),
   ...development.map((d) => [d.name, d.expr]),
 ];
@@ -207,9 +359,18 @@ for (const [id, expr] of sample) {
 
 const DATA = {
   progressions, figures, development,
-  textures: TEXTURES.map(({ id, label, fig }) => ({ id, label, fig })),
+  textures: [
+    { id: 'own', label: 'own pattern', fig: 'the song’s own interval deployment' },
+    { id: 'ownmel', label: 'own + melody', fig: 'the D35 pipeline: a generated toby-fox melody over the own pattern' },
+    { id: 'ownmel2', label: 'melody T2', fig: 'tier 2 (D38): a melody AUTHORED by the model through the guard — 6 flagship songs; elsewhere falls back to the generated line' },
+    { id: 'chords', label: 'true chords', fig: 'raw progression, real durations' },
+  ].concat(TEXTURES.map(({ id, label, fig }) => ({ id, label, fig }))),
   contexts: CONTEXTS.map(({ id, label }) => ({ id, label })),
   classes: [...new Set(figures.map((f) => f.cls))].sort(),
+  sections: {
+    progressions: Object.fromEntries([...new Set(progressions.map((p) => p.section))].sort().map((id) => [id, ATLAS_SECTIONS.progressions[id].label])),
+    figures: Object.fromEntries([...new Set(figures.map((f) => f.section))].sort().map((id) => [id, ATLAS_SECTIONS.figures[id].label])),
+  },
   melodyHtml: mdToHtml(melodyMd),
   piano: PIANO,
 };
@@ -262,7 +423,9 @@ function page(DATA) {
   .sym { font-weight:650; font-size:13.5px; margin:2px 0 4px; }
   .fig { font-family:ui-monospace, Menlo, monospace; font-size:12.5px; color:#ffd7ae; margin:2px 0 4px; word-break:break-all; }
   .tags { font-size:11.5px; color:var(--dim); min-height:15px; }
+  .sec { color:#7ea0d6; font-size:10.5px; }
   .flag { display:inline-block; font-size:10px; text-transform:uppercase; letter-spacing:.07em; color:#1a1208; background:var(--warn); border-radius:3px; padding:0 5px; margin-right:5px; font-weight:700; }
+  .flag.t2 { background:#4c8dff; color:#04102a; }
   .badge { position:absolute; top:8px; right:10px; font-size:10px; text-transform:uppercase; letter-spacing:.07em; color:#6b7086; }
   .acts { display:flex; gap:5px; margin-top:7px; flex-wrap:wrap; }
   .acts button { padding:2px 8px; font-size:11.5px; }
@@ -298,7 +461,7 @@ function page(DATA) {
 <footer>
   <span id="tally"></span>
   <span style="flex:1"></span>
-  <span class="dim"><kbd>&larr;&rarr;&uarr;&darr;</kbd> move <kbd>space</kbd> play <kbd>k</kbd> keep <kbd>x</kbd> kill <kbd>esc</kbd> stop</span>
+  <span class="dim"><kbd>&larr;&rarr;&uarr;&darr;</kbd> move <kbd>space</kbd> play <kbd>a</kbd> source MIDI <kbd>k</kbd> keep <kbd>x</kbd> kill <kbd>esc</kbd> stop</span>
   <button id="export">copy verdicts JSON</button>
 </footer>
 <script src="${WEB_BUNDLE}"></script>
@@ -307,32 +470,46 @@ ${RUNTIME_JS}
 const DATA = ${JSON.stringify(DATA)};
 const LS = 'motif-engine:undertale-verdicts';
 let verdicts = {}; try { verdicts = JSON.parse(localStorage.getItem(LS) || '{}'); } catch {}
-let tab = 'progressions', texture = DATA.textures[0] ? DATA.textures[0].id : 'arp', context = 'axis', playing = null, sel = 0, visible = [];
+let tab = 'progressions', texture = 'own', context = 'own', energy = 'auto', playing = null, sel = 0, visible = [];
 const $ = (id) => document.getElementById(id);
 const save = () => localStorage.setItem(LS, JSON.stringify(verdicts));
 
 const BLURB = {
-  progressions: 'Chord loops these songs actually cycle. NO labels existed: the key is solved from the notes (keyMargin = confidence) and every chord label carries a coverage score — NEEDS EAR marks thin evidence. Played at 1 bar per chord even where the source moved faster (barsPerChord shows the truth), voiced by the corpus\\u2019s own figurations.',
-  figures: 'The left hand with the chord factored out — R=root, 3/5/7/9 the sounding chord\\u2019s members, ~n a literal colour, + an octave, a.b together. Switch the progression to hear the SAME movement re-voice itself over different harmony: that portability is what is being auditioned. \\u201cown song\\u201d plays it over a loop extracted from the song it came from.',
+  progressions: 'Chord loops these songs actually cycle, played IN THE SOLVED KEY at the source tempo. Default texture \\u201cown pattern\\u201d = the song\\u2019s OWN interval deployment (its arpeggio order/spacing/register) bound to its chords — the harmony as the song plays it. \\u201cown + melody\\u201d = a GENERATED toby-fox-profile melody over it (the D35 pipeline: chord-scale note supply, anchors snapped, approach tones — nothing here is quoted from any song). \\u201ctrue chords\\u201d = block voicings at real durations; the rest re-voice through other songs\\u2019 figures. Press a (or ▶ src) for the VERBATIM source MIDI — the ground truth. Cards are GROUPED BY ATLAS SECTION (the blue line; similar patterns sit together, hover for neighbors + song context). NEEDS EAR marks thin evidence.',
+  figures: 'The left hand with the chord factored out — R=root, 3/5/7/9 the sounding chord\\u2019s members, ~n a literal colour, + an octave, a.b together. \\u201cown song\\u201d (default) plays it over the loop extracted from its source song; switch progressions to hear the SAME movement re-voice itself over different harmony — that portability is what is being auditioned.',
   development: 'Observed A\\u2192B moves between figures: 4 bars of A, then 4 bars of B, over i VI III VII. The relation tag says what changes (repitch keeps the rhythm and moves the pitches; blockify fuses an arp into chords; …). This is how the corpus develops an accompaniment without abandoning it.',
   melody: 'Notes only — no entries were extracted from the melodies, by design (see the bottom of the page).',
 };
 
-function codeFor(e) {
-  const bpm = Number($('bpm') && $('bpm').value) || 110;
-  let body;
-  if (tab === 'progressions') body = ($('bass') && $('bass').checked) ? 'stack(' + e.exprs[texture] + ', ' + e.bass + ')' : e.exprs[texture];
+function bpmFor(e) {
+  const srcOn = $('srcbpm') && $('srcbpm').checked;
+  if (srcOn && e && e.bpm) return e.bpm;
+  return Number($('bpm') && $('bpm').value) || 110;
+}
+function codeFor(e, useSrc) {
+  let body, factor = 1, beats = 4;
+  if (tab === 'progressions') {
+    beats = e.beats || 4;
+    if (useSrc && e.src) body = e.src;
+    else if (texture === 'ownmel') body = (energy !== 'auto' && e.exprs['ownmel_' + energy]) || e.exprs.ownmel;
+    else if (texture === 'ownmel2') body = e.exprs.ownmel2 || e.exprs.ownmel;
+    else if (texture === 'own' && !e.exprs.own) { body = e.exprs.chords; factor = 2; } // no own pattern extracted: fall back to true chords
+    else if (texture === 'chords') { body = e.exprs.chords; factor = 2; }
+    else if (texture === 'own') body = e.exprs.own;
+    else body = ($('bass') && $('bass').checked) ? 'stack(' + e.exprs[texture] + ', ' + e.bass + ')' : e.exprs[texture];
+    if (!useSrc && $('ctr') && $('ctr').checked && e.exprs.bgmel) body = 'stack(' + body + ', ' + e.exprs.bgmel + ')';
+  }
   else if (tab === 'figures') body = e.exprs[context] || e.exprs.axis;
   else body = e.expr;
-  return 'setcpm(' + bpm + '/4)\\np: ' + body;
+  return 'setcpm(' + (bpmFor(e) * factor) + '/' + beats + ')\\np: ' + body;
 }
-async function play(e) {
-  const code = codeFor(e);
+async function play(e, useSrc) {
+  const code = codeFor(e, useSrc);
   $('now').textContent = RT.ready ? '…' : 'starting audio (first play loads the piano)…';
   const ok = await rtPlay(code);
   if (!ok) { playing = null; render(); return; }
   playing = e.name;
-  $('now').textContent = '▶ ' + labelOf(e);
+  $('now').textContent = '▶ ' + (useSrc ? '[SOURCE MIDI] ' : '') + labelOf(e);
   render();
 }
 function stop() { rtStop(); playing = null; $('now').textContent = '— stopped —'; render(); }
@@ -353,23 +530,35 @@ function matches(e) {
   if (q && !JSON.stringify([e.name, e.song || '', e.numerals || '', (e.songs || []).join(' '), e.cls || '', e.from || '', e.to || '']).toLowerCase().includes(q)) return false;
   if (tab === 'progressions') {
     if ($('fam').value && e.family !== $('fam').value) return false;
+    if ($('sec') && $('sec').value && e.section !== $('sec').value) return false;
     if ($('ear').checked && !e.needsEar) return false;
+    if ($('t2') && $('t2').checked && !e.hasT2) return false;
   }
   if (tab === 'figures') {
     if ($('cls').value && e.cls !== $('cls').value) return false;
+    if ($('sec') && $('sec').value && e.section !== $('sec').value) return false;
     if ($('ear').checked && !e.needsEar) return false;
   }
   return true;
+}
+function sectionOpts(kind) {
+  return '<option value="">all</option>' + Object.entries(DATA.sections[kind]).map(([id, label]) =>
+    '<option value="' + id + '">' + label + '</option>').join('');
 }
 
 function controls() {
   const c = $('controls');
   if (tab === 'progressions') {
     c.innerHTML = '<label class="ctl">texture <span id="tex"></span></label>' +
-      '<label class="ctl"><input type="checkbox" id="bass" checked> bass</label>' +
+      '<label class="ctl"><input type="checkbox" id="bass"> bass</label>' +
+      '<label class="ctl"><input type="checkbox" id="ctr"> + counter (triangle)</label>' +
+      '<label class="ctl" id="energyRow">energy <span id="nrg"></span></label>' +
+      '<label class="ctl"><input type="checkbox" id="srcbpm" checked> source bpm</label>' +
       '<label class="ctl">bpm <input type="range" id="bpm" min="60" max="180" value="110"><span id="bpmv">110</span></label>' +
       '<label class="ctl">mode <select id="fam"><option value="">all</option><option>major</option><option>minor</option></select></label>' +
+      '<label class="ctl">section <select id="sec">' + sectionOpts('progressions') + '</select></label>' +
       '<label class="ctl"><input type="checkbox" id="ear"> only NEEDS EAR</label>' +
+      '<label class="ctl"><input type="checkbox" id="t2"> only TIER 2</label>' +
       '<input type="search" id="q" placeholder="search song / numerals">';
     const tw = $('tex');
     DATA.textures.forEach((t) => {
@@ -378,10 +567,24 @@ function controls() {
       b.onclick = () => { texture = t.id; controls(); render(); if (playing) { const e = DATA.progressions.find((x) => x.name === playing); if (e) play(e); } };
       tw.appendChild(b);
     });
+    // energy: which density band the melody rhythm is retrieved from (D41).
+    // auto = the atlas context role decides (boss hot, cutscene calm), tempo as fallback
+    const nw = $('nrg');
+    for (const en of ['auto', 'context', 'calm', 'mid', 'hyper']) {
+      const b = document.createElement('button');
+      b.textContent = en; b.className = en === energy ? 'on' : '';
+      b.title = en === 'auto' ? 'tempo decides (the approved default)'
+        : en === 'context' ? 'the atlas context role decides: boss/battle hot, town mid, cutscene/character calm'
+        : 'pin the melody density band';
+      b.onclick = () => { energy = en; controls(); render(); if (playing) { const e = DATA.progressions.find((x) => x.name === playing); if (e) play(e); } };
+      nw.appendChild(b);
+    }
+    $('energyRow').style.display = texture === 'ownmel' ? '' : 'none';
   } else if (tab === 'figures') {
     c.innerHTML = '<label class="ctl">progression <span id="ctxb"></span></label>' +
       '<label class="ctl">bpm <input type="range" id="bpm" min="60" max="180" value="110"><span id="bpmv">110</span></label>' +
       '<label class="ctl">class <select id="cls"><option value="">all</option>' + DATA.classes.map((x) => '<option>' + x + '</option>').join('') + '</select></label>' +
+      '<label class="ctl">section <select id="sec">' + sectionOpts('figures') + '</select></label>' +
       '<label class="ctl"><input type="checkbox" id="ear"> only NEEDS EAR</label>' +
       '<input type="search" id="q" placeholder="search figure / song">';
     const cw = $('ctxb');
@@ -397,8 +600,10 @@ function controls() {
   } else {
     c.innerHTML = '';
   }
-  if ($('bpm')) $('bpm').oninput = () => { $('bpmv').textContent = $('bpm').value; if (playing) { const e = items().find((x) => x.name === playing); if (e) play(e); } };
-  for (const id of ['fam', 'ear', 'q', 'bass', 'cls']) if ($(id)) $(id).oninput = render;
+  if ($('bpm')) $('bpm').oninput = () => { $('bpmv').textContent = $('bpm').value; if ($('srcbpm')) $('srcbpm').checked = false; if (playing) { const e = items().find((x) => x.name === playing); if (e) play(e); } };
+  if ($('srcbpm')) $('srcbpm').oninput = () => { if (playing) { const e = items().find((x) => x.name === playing); if (e) play(e); } };
+  for (const id of ['fam', 'ear', 'q', 'cls', 'sec', 't2']) if ($(id)) $(id).oninput = render;
+  for (const id of ['bass', 'ctr']) if ($(id)) $(id).oninput = () => { render(); if (playing) { const e = items().find((x) => x.name === playing); if (e) play(e); } };
   $('blurb').textContent = BLURB[tab];
 }
 
@@ -408,24 +613,34 @@ function render() {
   $('prose').style.display = prose ? '' : 'none';
   if (prose) { $('prose').innerHTML = DATA.melodyHtml; $('count').textContent = ''; return; }
   visible = items().filter(matches);
+  // atlas grouping: similar patterns sit together (D35 sections)
+  if (tab === 'progressions' || tab === 'figures') {
+    visible = visible.slice().sort((a, b) => (a.section < b.section ? -1 : a.section > b.section ? 1 : 0));
+  }
   if (sel >= visible.length) sel = Math.max(0, visible.length - 1);
   const grid = $('grid'); grid.innerHTML = '';
   visible.forEach((e, i) => {
     const card = document.createElement('div');
     card.className = 'card' + (i === sel ? ' sel' : '') + (playing === e.name ? ' playing' : '') + (verdicts[e.name] ? ' ' + verdicts[e.name] : '');
     let head = '', body = '', tags = '', badge = '';
+    const ctxBits = e.context ? [e.context.role, e.context.character, (e.context.motifs || []).join('/')].filter(Boolean).join(' · ') : '';
+    const atlasTip = (e.sectionLabel ? '\\nsection: ' + e.sectionLabel : '') +
+      (e.similar && e.similar.length ? '\\nsimilar: ' + e.similar.join(', ') : '') +
+      (e.context && e.context.notes ? '\\n' + e.context.notes : '');
     if (tab === 'progressions') {
       badge = e.meter + (e.bpm ? ' · ' + e.bpm : '');
-      head = e.needsEar ? '<span class="flag">needs ear</span>' : '';
+      head = (e.needsEar ? '<span class="flag">needs ear</span>' : '') + (e.hasT2 ? '<span class="flag t2">tier 2</span>' : '');
       body = '<div class="num">' + e.numerals + '</div><div class="sym">' + e.symbols.join(' ') + '</div>';
-      tags = e.song + ' · ' + e.loopBars + '-bar loop ×' + e.reps + ' · cov ' + e.coverage;
-      card.title = e.name + '\\nsolved key ' + e.sourceKey + ' (margin ' + e.keyMargin + ')\\nbars per chord: ' + e.barsPerChord.join(', ') + '\\nfound at bar ' + e.atBar;
+      tags = e.song + ' · ' + e.loopBars + '-bar loop ×' + e.reps + ' · cov ' + e.coverage +
+        (ctxBits ? '<br>' + ctxBits : '') + '<br><span class="sec">' + e.sectionLabel + '</span>';
+      card.title = e.name + '\\nsolved key ' + e.sourceKey + ' (margin ' + e.keyMargin + ')\\nbars per chord: ' + e.barsPerChord.join(', ') + '\\nfound at bar ' + e.atBar + atlasTip;
     } else if (tab === 'figures') {
       badge = e.cls + ' · ' + e.meter;
       head = e.needsEar ? '<span class="flag">needs ear</span>' : '';
       body = '<div class="fig">' + e.figure.join(' ') + '</div>';
-      tags = e.seen + ' bars · ' + e.songs.slice(0, 2).join(', ') + (e.micro ? ' · feel' : '');
-      card.title = e.name + '\\nrole ' + e.role + ' · octave ' + e.octave + (e.legato ? ' · legato' : '') + '\\nfit: ' + JSON.stringify(e.fit) + '\\nsongs: ' + e.songs.join(', ');
+      tags = e.seen + ' bars · ' + e.songs.slice(0, 2).join(', ') + (e.micro ? ' · feel' : '') +
+        '<br><span class="sec">' + e.sectionLabel + '</span>';
+      card.title = e.name + '\\nrole ' + e.role + ' · octave ' + e.octave + (e.legato ? ' · legato' : '') + '\\nfit: ' + JSON.stringify(e.fit) + '\\nsongs: ' + e.songs.join(', ') + atlasTip;
     } else {
       badge = '×' + e.seen;
       body = '<div class="sym">' + e.from.replace(/^ut_/, '') + ' → ' + e.to.replace(/^ut_/, '') + '</div>' +
@@ -440,6 +655,12 @@ function render() {
       b.className = cls + (verdicts[e.name] === verd ? ' on' : ''); b.textContent = verd;
       b.onclick = (ev) => { ev.stopPropagation(); mark(e, verd); };
       acts.appendChild(b);
+    }
+    if (tab === 'progressions' && e.src) {
+      const sb = document.createElement('button'); sb.textContent = '▶ src';
+      sb.title = 'play the verbatim source MIDI of these bars';
+      sb.onclick = (ev) => { ev.stopPropagation(); sel = i; play(e, true); };
+      acts.appendChild(sb);
     }
     const cp = document.createElement('button'); cp.textContent = 'copy';
     cp.onclick = (ev) => { ev.stopPropagation(); copy(e, cp); };
@@ -484,6 +705,7 @@ document.onkeydown = (ev) => {
   if (ev.key === 'Escape') return stop();
   if (ev.key === 'k' && visible[sel]) return mark(visible[sel], 'keep');
   if (ev.key === 'x' && visible[sel]) return mark(visible[sel], 'kill');
+  if (ev.key === 'a' && tab === 'progressions' && visible[sel] && visible[sel].src) return play(visible[sel], true);
 };
 controls(); render();
 </script>

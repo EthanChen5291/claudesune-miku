@@ -670,3 +670,445 @@ Per the house pattern (interval-grammar.md), this landed as a RESEARCH DOC —
   queued, not faked.
 - **Build order defers to the D24 queue**: the §1 operators are implemented AS
   the already-queued binder revoicing pass's vocabulary, not before it.
+
+## D33 — Undertale audition round: "the notes are wrong" diagnosed as three stacked faults (2026-08-20)
+
+Ethan's first listen said the extraction failed — nothing sounded like
+Undertale and the notes were wrong. A ground-truth diff (extracted loops vs the
+literal source MIDI, per half-bar) showed the ROOTS were faithful all along
+(Megalovania 16/16, Snowdin 7/8, Fallen Down 12/16 half-bars) and located the
+audible wrongness in three places, each now fixed:
+
+1. **Thirdless chord labels (the real wrong-notes bug).** D30's
+   missing-template-tone penalty made minimal templates win wherever the
+   accompaniment voices no third — Megalovania came out `D5 Csus Bm7 Bb^7`
+   and `.voicing()` PLAYED the power chords and sus washes. Ruling: a
+   '5'/'sus'/'2' label survives only when the ACCOMPANIMENT itself voices the
+   colour tone while lacking any third (Snowdin's Db-Eb-Ab stays Db2);
+   otherwise the label completes to the solved key's diatonic triad —
+   absence of evidence is not a sus chord. Megalovania now reads
+   `Dm C Bm7 Bb^7`. Implemented as a post-pass in chordTimeline, so both
+   progressions and figuration tokens benefit.
+2. **Figure register.** The octave heuristic (mean pitch minus mean token
+   offset) sat some figures an octave under the source. Now the octave comes
+   from the observed per-bar root reference (barFigures records rootRef),
+   i.e. where the hand actually anchored.
+3. **The audition page destroyed recognizability on top of correct data.**
+   Everything played in C at a flat 110 bpm, chord durations were flattened to
+   1 bar each (half-bar passing chords stretched double), and the default
+   texture was ANOTHER song's figure. Rulings: progressions audition in the
+   SOLVED key at the source bpm/meter; a 'true chords' texture plays the raw
+   progression at half-bar resolution with real durations (cpm factor 2,
+   mini-notation @weights); the figures tab defaults to the OWN-song
+   progression; and every progression card carries a **verbatim source-MIDI
+   playback** ('a' / ▶ src) — the loop span rendered note-for-note from the
+   file at 1/96 resolution with velocity gains. Extraction is now judged
+   against its own ground truth in one keypress, which is what "test by ear"
+   should have meant from the start.
+
+Corpus-wide effect: figure pool 85→89 (cleaner tokens re-clustered), moves
+11→14; all 1353 audition patterns evaluate green; 112/112 tests.
+
+## D34 — The harmony IS its deployment: ownFigure + accompaniment-only chords (2026-08-20)
+
+Audition round 3 (Ethan): the chords still heard melody in them, and even
+correct labels didn't capture the songs — "undertale notes are meant for a
+certain kind of interval … so just take those intervals and make them the thing
+along with the chords." Three changes, one per layer of that report:
+
+- **Melody octave-doubles were polluting the accompaniment stream.** Toby
+  writes melody in octaves constantly; the pitch split sent the top note to
+  melody and left its lower double in acc, so the labeler read riff tones as
+  harmony (Megalovania bars labeled Do/Co7/Csus). splitHands now reassigns a
+  note exactly 1-2 octaves under the melody top to the melody — unless it sits
+  below the split line (an oom-pah bass doubling the tune stays acc).
+- **Chord quality is judged on the accompaniment alone**; the all-notes map is
+  only the fallback where acc is silent. Where acc alone can't name a chord,
+  the quality is BUILT, not voted: third from evidence (melody gets this one
+  binary vote), else the solved key's diatonic third; a seventh only if one
+  sounds. Melody can choose m vs maj; it can never invent sus/dim/exotic
+  colour. The sus/2 keep-test now requires the colour tone to OVERLAP the root
+  in time (Snowdin's struck Db-Eb-Ab keeps its Db2; a next chord's pedal
+  starting mid-window no longer makes the previous chord a sus).
+  Megalovania: `Dm C Bm Bb^7` at coverage 1.0.
+- **Every progression carries `ownFigure`** (127/163): the song's OWN interval
+  deployment over one loop period as a multi-bar figuration, tokens computed
+  against BAR-LOCKED chords so re-rendering round-trips — notes outside the
+  bar chord become '~n' literals that preserve the interval verbatim.
+  bindFigure gained bass-line root placement (each cycle's root lands nearest
+  the previous root, so descents walk D3-C3-B2-Bb2 instead of snapping into
+  one octave). Regression test: Megalovania's ownFigure reproduces the source
+  accompaniment NOTE-FOR-NOTE, mid-bar chord arrival included. The audition
+  page's default texture is now "own pattern" — the chords played the way the
+  song plays them, which is what "capture the undertale songs" turned out to
+  mean.
+
+163 progressions (loop shapes shifted slightly under cleaner labels), 95
+figures, 21 moves; 1496 audition patterns green; 114/114 tests.
+
+**D34 addendum (audition round 4, 2026-08-20):** Ethan heard the melody
+persisting in Hopes and Dreams' own pattern — a high line entering mid-loop.
+Cause: the theme there is harmonized in parallel 3rds/6ths, and only the TOP
+voice reached the melody stream; the parallel-harmony voice (F5/G5, entering
+at bar 20) fell into the accompaniment and the figure replayed it. splitHands
+rule extended: in a melody-topped cluster, a SINGLE companion note within a
+6th below the top, in melody territory, is the melody's harmony voice and
+follows it; two or more companions above the split remain a chord (comping
+stays accompaniment). Verified: bars 21/23 acc now tops at A#3, was F5/G5.
+Melody thickening handled: octaves (round 3) + parallel 3rds/6ths (round 4).
+
+## D35 — Pattern atlas + melody pipeline: researched design (2026-08-21)
+
+Ethan's two-part ask, researched online (AI music generation, music theory,
+MIR) and designed in `atlas-and-melody.md`. Rulings:
+
+- **The atlas.** Patterns organize into SECTIONS (clusters) over three axis
+  groups: vibe (mode, modal color/borrowed degrees, quality mix, harmonic
+  rhythm, root motion, cadence class, tension curve — grounded in the
+  harmony-emotion literature), speed (bpm band, density, subdivision,
+  syncopation, chordness, articulation — the standard MIR rhythm-similarity
+  feature set, plus onset-set edit distance for pattern shape), and CONTEXT —
+  Ethan's addition mid-session: soundtrack/song background as first-class
+  metadata (in-game role, character, leitmotif family, arc position, free
+  notes). Undertale's documented leitmotif index makes motif families REAL
+  similarity ground truth no feature vector could compute; context blocks are
+  curated from cited sources, never invented. Anti-copy-paste ruling:
+  retrieval returns a NEIGHBORHOOD, never one entry — the binder samples
+  within it, seeded, and may transform; entries are examples of a family.
+  Emission: generated src/lib/atlas.js spanning all pools + section grouping
+  and "similar" actions on the audition pages.
+- **The melody pipeline.** The "guarded but not chord-locked" middle ground
+  is chord-scale theory + Impro-Visor's note-category grammar (chord tones /
+  color / approach / scale tones — style-recognized at 85-95% in listening
+  tests), and Hooktheory's 40k-song relative-notation dataset independently
+  validates the engine's degree-based abstraction. Pipeline: intake (built —
+  chordTimeline+solveKeyKS take ANY midi/progression to chords+key) →
+  per-chord chord-scale assignment (new; §6 tension tables give the pecking
+  order) → rhythm via atlas retrieval → guard hierarchy per onset (anchors
+  snap to chord tones/Safe [D14, unchanged]; NEW approach slots resolving
+  into anchors; weak onsets draw from the chord-scale, weighted by the §5
+  grammar and §7 profiles) → cell-first shape (generate ONE bar-cell, repitch
+  it through the progression — the melodic mirror of ownFigure, backed by the
+  corpus's 73% bar-repetition habit) → verifier checks per note category.
+- **Models in three tiers**: (1) grammar pipeline, LLM decides at spec level —
+  build this; (2) LLM freehand THROUGH the guard as a legalizing filter;
+  (3) trained models (AMT-style accompaniment-conditioned infilling, or a
+  Hooktheory-trained scale-degree model) explicitly deferred, and gated by
+  the audition loop like everything else (A6.1).
+
+## D36 — Atlas + melody pipeline: built (2026-08-21)
+
+D35's build hooks implemented, same session. What exists now, and the judgment
+calls made while building:
+
+- **chordScale(sym, key)** (src/binder/theory.js): PARENT-SCALE SEARCH rather
+  than a function-table — try the key's own scale, then the borrowed-chord
+  sources (parallel mode, harmonic minor, melodic minor); first parent
+  containing the chord's core tones is rotated to the chord root. Diatonic
+  chords get their classical mode with zero special-casing (ii→dorian,
+  V→mixolydian), borrowed chords their source mode (bVII in major →
+  mixolydian; V7 in minor → phrygian dominant), and only a chord no parent
+  explains (secondary dominants) falls back to a quality default. Avoid notes
+  are DERIVED, not listed: a scale tone a semitone above a chord tone (the b9
+  rule) + the major 3rd over sus — this reproduces the §6 table.
+- **bindMelody(rhythm, ctx, meter, opts)** + **melodyReport()** (bind.js):
+  cell-first (ONE bar-cell of scale-step offsets, generated from the style
+  profile by a seeded PRNG or passed explicitly, resampled shape-preserving
+  [D26 machinery] for odd bars), realized per bar on the chord-scale ladder
+  from a voice-led center (nearest safe chord tone to last bar's center — the
+  melodic sibling of the D34 bass-line root walk). Guards: anchors snap to
+  chord tones minus avoid; a two-pass approach fill (anchors placed first, so
+  approach tones aim at RESOLVED pitches); weak avoid-tones slide one scale
+  step down. Every note carries its category in boundMeta; melodyReport
+  measures anchor/approach violations, interval histogram, leap recovery,
+  cell repetition. Zero violations by construction, regression-tested.
+- **src/lib/melody-profiles.js**: toby-fox weights are the undertale-melody.md
+  measurements verbatim (34% step, P4-first leaps, 79% gap-fill, octave 6.6%,
+  range ≈ P8+m3, chromatic approach "careful"); a step-dominated `default`
+  profile from §5.1's pop-ballad column. All numbers audition-tunable.
+- **The atlas** (scripts/build-atlas.mjs → src/lib/atlas.js, generated +
+  byte-guarded): 425 progressions / 95 figures / 84 rhythms across ALL pools,
+  each with vibe features (from the degrees grammar), speed features (from
+  onsets/bpm; ownFigure supplies them for undertale progressions), per-axis
+  k=5 neighbor lists (vibe / speed / context / blend; speed distance includes
+  Levenshtein over 48-step onset strings), and sections per (kind, pool) by
+  average-linkage agglomerative clustering on the blend distance
+  (deterministic: sorted iteration, lexicographic tie-breaks, K ≈ N/12
+  clamped 3..15). Runtime: neighborhood() returns NAMES plural (the
+  anti-copy-paste ruling enforced at the API), sectionOf(), seeded pickFrom().
+- **src/lib/undertale-context.js** (HAND-CURATED, the one non-generated file):
+  the context pass over the 88 songs the pools reference — role / character /
+  leitmotif family / arc / notes, from the Leitmotif Index, Jason Yu's
+  analyses, and the Undertale Wiki. Where the sources don't settle a field it
+  stays null, and six obscure tracks say "not curated" outright — tested:
+  a null role must carry the not-curated note and claim no motifs. 308 atlas
+  entries carry context; Megalovania's context neighbors come out as its own
+  other loops + the documented sans family, which is the axis working.
+- **Audition page**: cards grouped by atlas section (blue section line,
+  section filter, neighbors + song context in the tooltip), and a new
+  "own + melody" texture — the full D35 pipeline audible per progression
+  (toby-fox profile, seeded per entry, dotted-chain push cell in 4/4, per-beat
+  + anacrusis elsewhere). 1676/1676 patterns evaluate green.
+
+Deliberately NOT built (unchanged from D35): tier-2/3 models, §5-grammar
+weighting of weak-beat choice beyond the profile moves, curve-integrated
+interval profiles. Next ear pass decides whether the generated melodies earn
+those layers.
+
+### D36 addendum — melody audition round 1: "notes don't sound legal" (2026-08-21)
+
+Ethan's ear on the "own + melody" texture: some lines good, many off in the
+familiar pure-Claude way — notes that sound out of key. Measured: **13% of all
+generated notes were outside the solved key** (640 of 4,910 across the 165
+progressions). Cause: v1 gave every style the full jazz chord-scale as its
+weak-beat note supply — a chromatic chord (quality-fallback: 66% of offenders)
+sprayed its entire 7-note root scale, and a borrowed chord imported its whole
+source mode (Ab over a borrowed Bb in C major). Interval-grammar §6 had
+already ruled this: toby-fox tension depth is TRIADIC, not full.
+
+Fix: profiles carry `tensions: 'triadic' | 'full'`. Triadic (toby-fox,
+default): the weak-beat supply is **(chord-scale ∩ key scale) ∪ the chord's
+core tones** — a borrowed/chromatic chord contributes exactly the notes it
+forces (which the accompaniment is sounding anyway), never its source mode's
+other colors. Anchors tightened to CORE chord tones (chordCoreTones(), new in
+theory.js) instead of the extension-laden chordTones() set; avoid notes stay
+in the ladder geometry (passing on weak slots is idiomatic) but are never sat
+on (no anchors). The old weak-note avoid-slide is gone with them.
+
+After: **unforced out-of-key notes 640 → 0**; the 545 remaining out-of-key
+pitches are all core tones of chromatic chords or declared approach tones.
+melodyReport() now measures `offKeyUnforced` so this failure class is
+machine-caught (regression: borrowed-bVII progression must never import
+parallel-minor color; 8 seeds). 'full' tension depth is kept for the future
+jazz-bossa profile — the mechanism was right, the default was wrong.
+
+## D37 — Melody form: from layer to lead singer (2026-08-21)
+
+Melody audition round 2 (Ethan): key-legal now, but the lines "repeat over and
+over… almost function as harmonies, a layer, not the lead singer"; wanted
+stories, longer notes, stepwise runs ("Mary had a little lamb"), and
+restatements "slightly different BUT the same melody". Researched before
+building (melody-form.md, sources there): the complaint is exactly the
+structure problem the current systems solve — MeloForm develops motif→phrase→
+section via three operators (sequence/transformation/ending), MELONS
+generates a structure graph FIRST, Theme Transformer/Museformer exist because
+sequence models loop instead of develop. Phrase theory names the story
+(antecedent asks with a weak ending, consequent answers the same head with a
+strong one); Huron supplies the physics (phrases arch, and note durations
+LENGTHEN into phrase ends); Chiu & Temperley's step inertia is the run-maker
+(a step tends to continue stepping the same direction — v1's iid move
+sampling could never produce a scale run).
+
+bindMelody v2 (all deterministic, all in boundMeta):
+- **Phrase plan**: bars get ROLES — motif · answer · motif · cadence over a
+  phrase spanning the harmony (4 bars default; 2/3-bar harmonies get 2/3-bar
+  phrases), the whole plan stated twice. Motif bars restate the cell EXACTLY
+  (the theme must recur recognizably); answer bars keep its head and
+  re-sample the tail per restatement (MeloForm's transformation, and the
+  "same melody, slightly different" ask); the arch transposes the second
+  motif bar (sequence, for free).
+- **Cadence bars** (the ending operator): rhythm thinned to the first
+  half-bar plus ONE HELD NOTE cut off before the barline — phrase-final
+  lengthening plus a breath. Landing pitch: antecedent phrases on the chord's
+  3rd/5th (never the root — the question stays open), consequent and final
+  phrases on the root. Emission grew per-cycle gain grids and an explicit
+  rest token for the breath.
+- **Arch contour**: per-bar centers ride Huron's arch (rise, peak past the
+  middle, fall to the cadence) instead of flat voice-leading.
+- **Step inertia**: new profile knob (toby-fox 0.55, default 0.65 —
+  literature-grounded, audition-tunable); leap-recovery unchanged at the
+  corpus's 0.79.
+Guard hierarchy, key-locked supply (D36), and determinism unchanged —
+corpus-wide: 0 unforced out-of-key notes, 0 anchor/approach violations across
+all 165 progressions. 137/137 tests, 1676/1676 audition patterns green.
+
+## D38 — Tier 2 built: authored melodies through the guard (2026-08-21)
+
+Melody round 3 (Ethan): still "a gamble… not a complete story" — plus the
+question of how trained models do it. Answer (researched, sources in the
+session): SOTA models never apply a per-note rule — every note is conditioned
+on the ENTIRE piece so far (audio-token transformers: Suno/Udio) and the
+strongest symbolic systems generate TOP-DOWN (whole-song cascade: form →
+reduced lead sheet → lead sheet → accompaniment). Tier-1's per-move sampling
+is structurally a gamble; more rules can't fix amnesia. So D35's tier 2 is
+now built:
+
+- **bindMelodySpec(spec, ctx, meter, opts)** (bind.js): a trained model (an
+  LLM now, a fine-tuned model later) AUTHORS the melody as an explicit,
+  key-agnostic spec — per-bar onsets/accents/scale-degrees (D28 grammar),
+  `breath` flags — and this function is the GUARD it must pass: accented
+  unaltered notes snap to core chord tones (D14, with a warning naming the
+  note), altered degrees are declared color and stand (D26), weak off-supply
+  notes either resolve into the next note by ≤2 semitones (approach) or get
+  snapped in loudly. Deterministic — no sampling anywhere. melodyReport
+  applies unchanged (`color` excluded from offKeyUnforced — the author's
+  call). Shared supply logic factored into makeScaleOf() (used by both tiers).
+- **src/lib/melodies-tier2.js** (HAND-WRITTEN, not generated): six melodies
+  composed by Claude reduction-first over flagship loops (Megalovania,
+  Snowdin Town, Spider Dance, Once Upon A Time, Waterfall, His Theme) —
+  ORIGINAL lines over the extracted chords, not transcriptions (D30's
+  no-tune-copying ruling). A6.1 discipline: ratified:false, needsEar:true,
+  character:null — model output is a candidate like any import. First render
+  produced 3 guard warnings (an accented 4̂ over Csus, an accented 2̂ over F,
+  a 6th over D); all fixed AT THE SPEC, and the audition build now FAILS if
+  any spec carries warnings — the author corrects, the guard never
+  quietly repairs.
+- **Audition**: new "melody T2" texture on the six flagship cards (falls back
+  to the tier-1 line elsewhere) — A/B tier 1 vs tier 2 on the same page.
+  1682/1682 patterns green, 144/144 tests.
+- **The spec format IS tier 3's target representation**: a model trained on
+  Hooktheory-style relative data would emit exactly this shape, so nothing
+  built here is throwaway. Tier-3 note ($15k AWS credits available):
+  training a small scale-degree melody transformer on HLSD-scale data
+  (~20-30k lead sheets, tens of millions of params, single-GPU
+  hours-to-days) costs a few hundred to low-thousands in compute — credits
+  are ample; DATA licensing/prep is the real cost. Parked in A11 until the
+  tier-2 ear pass says the guard and spec are right.
+
+### D38 addendum — tier-2 ear pass: 22 songs, full meter/tempo spread (2026-08-21)
+
+Six specs was too thin a basis for a verdict, so the authored set is now 22 —
+chosen for coverage, not convenience: meters 2/4, 2/2, 3/4, 4/4, 4/2, 5/4, 6/8;
+tempos 47-175; both modes; diatonic loops AND chromatic ones (Neapolitan
+pedals, borrowed iv, secondary sevenths) where the chord's own tones are
+written as DECLARED colour and the guard lets them stand.
+
+Method note worth keeping: before composing, the anchor tables were computed
+per bar (legal anchor degrees + supply + which chord tones are chromatic) and
+the melodies were written against them. All 16 new specs passed the guard on
+the FIRST render — zero warnings. That is the tier-2 loop working as designed:
+the engine tells the composer what is legal, the composer composes, the guard
+verifies. (Round 1, written without the tables, took 3 corrections.)
+
+Audition: cards carry a blue "tier 2" flag, plus an "only TIER 2" filter next
+to "only NEEDS EAR" — the ear pass is now 22 cards, A/B-able against
+"own + melody" (tier 1) and "▶ src" (the real MIDI). 1698/1698 patterns green,
+144/144 tests.
+
+## D39 — "clean but same-y / lifeless": the renderer was half the problem (2026-08-21)
+
+Melody audition round 4 (Ethan, on the 22-song tier-2 set): "clean but
+same-y/lifeless". Rather than take that straight to tier 3, the two words were
+measured separately against the corpus's OWN melody streams (the same 22
+songs, right-hand side, which D30 deliberately never turned into entries):
+
+|                     | Toby's melodies | ours (before) |
+|---------------------|-----------------|---------------|
+| articulation dur/IOI| 0.88, stdev 0.33 | **1.00, stdev 0.00** |
+| staccato/detached/legato | 24% / 25% / 51% | **0% / 0% / 100%** |
+| notes per bar       | 8.25, stdev 5.08 | 3.54, stdev 1.22 |
+| silent bars         | 9%              | 0% |
+| distinct onset patterns | —           | 15 over 116 bars; top 5 = 82% |
+
+Two separable causes, and only one of them is the composer:
+
+1. **LIFELESS = the renderer had no expression layer.** Every melodic note was
+   emitted holding to the next onset — articulation variance of exactly zero,
+   where the corpus is half detached-or-shorter. A note that never lets go
+   cannot phrase. This is the important finding for the roadmap: **tier 3
+   would have inherited it** — a trained model's notes played through a
+   legato-flat renderer sound just as dead, so this had to be fixed before any
+   training spend could pay off.
+2. **SAME-Y = the authoring.** 15 distinct rhythms over 116 bars with the top
+   five covering 82%, and density less than half the corpus's with a quarter
+   of its variance. That IS the composer bottleneck the tier-3 case rests on.
+
+Fix for (1) — articulation, in both melody tiers: each note now carries a
+DURATION RATIO (its share of the gap to the next onset), rendered with
+`.clip()`. The default rule is deterministic and musical, not random: gap
+length sets the base (long notes ring, sixteenths pop), then the things a
+player's hand actually responds to — a step to the next note CONNECTS (×1.1),
+a leap LIFTS (×0.86), a repeat re-articulates (×0.85), an accent sustains
+(×1.06), a light note lets go (×0.9), and a note before a breath is held full
+(D37's phrase-final lengthening). Gap alone was tried first and rejected by
+measurement: it just moved the uniformity to a new value. Profiles carry the
+base ratios (toby-fox crisp, default smooth) and an authored spec may override
+any note with `artic`.
+
+Result: **22% / 30% / 48%** staccato/detached/legato at mean 0.86 (target
+24/25/51 at 0.88), 23 distinct duration values where there was 1. Regression
+test asserts the spread, since "uniform touch" is exactly the bug.
+
+(2) is unfixed by design — it is the question tier 3 exists to answer, and it
+is now isolated from the rendering confound. 146/146 tests, 1698/1698 green.
+
+## D40 — Melodic rhythm cells: the corpus supplies the rhythm (2026-08-21)
+
+Melody audition round 5 (Ethan, on the articulated tier-2 set): "it is actually
+much better." That confirms the D39 split — expression was most of "lifeless" —
+and leaves the measured half that remained: rhythmic monoculture. The authored
+specs used 15 distinct rhythms across 116 bars (top five = 82% of them) at 3.54
+notes/bar, stdev 1.22, where the corpus's own melodies run 8.25, stdev 5.08.
+Tier 1 was worse: ONE hand-written cell for all 165 cards.
+
+Rather than train a model to fix my rhythmic habits, take the rhythms from the
+source. New mining pass in the importer emits MELODY_RHYTHMS_UNDERTALE — 37
+cells from the melody streams carrying onsets, relative accents (velocity/bar
+max, median across occurrences) and `artic` (median duration/IOI per onset).
+
+Two rulings:
+- **Rhythm only.** No pitch, no phrases, no contours — the D30 melody ruling
+  stands. A rhythm cell is a habit exactly like the accompaniment skeletons
+  already mined; a contour would be a tune. A test asserts no pitch-bearing
+  field can appear on these entries.
+- **Stratified by density, not ranked by recurrence.** Ranking by frequency
+  returns the sparse cells (most bars are sparse) and would rebuild the very
+  uniformity the pool exists to break. Each density band (2-3, 4-5, 6-8, 9-12,
+  13+) contributes its own most-recurrent cells. Result: pool density mean 7.08,
+  stdev 3.99, spanning 2..16.
+
+Wiring: bindMelody accepts a rhythm entry's `artic` and applies the SOURCE's
+articulation per onset (cadence bars keep D37's held-note rule, since they are
+re-shaped). The audition retrieves per progression by meter, then by a
+tempo-appropriate density target (~900/bpm: a 16-note bar is a blur at 175 and
+a comfortable run at 70), seeded by name so neighbours differ, ties broken by
+recurrence. Tier 1 now draws **26 distinct cells across the 165 cards** at
+density mean 7.25 (stdev 1.92) — from 1 cell at 3.5.
+
+Tier 2 specs still carry MY rhythms, deliberately: that makes the next ear pass
+a clean comparison — corpus rhythm + generated pitch ("own + melody") against
+authored rhythm + authored pitch ("melody T2"). 148/148 tests, 1698/1698 green.
+
+## D41 — Round 6: the two-hand principles, the energy toggle, the counter voice (2026-08-23)
+
+Ethan's round-6 verdict: His Theme and Gaster's Theme "own + melody" are very
+good; the rest good-but-different-styles ("very hyper"); keep it, add a
+non-random rhythm variation toggle driven by what the song is for; and try the
+tier-1 line as a BACKGROUND instrument. Analysis of the two praised cards
+(measured, in the session) found five two-hand principles worth engineering
+toward — recorded here as the layering phase's starting rules:
+
+1. **Density complementarity** — the hands never compete at the same density
+   (His Theme: acc 0.5 onsets/bar vs melody 12; Gaster: 5 vs 9 but opposite
+   articulation). 2. **Register lanes** — a clean octave-plus gap between the
+   hands (§4.4 vindicated by ear). 3. **Articulation contrast** — one hand
+   detached, the other legato; contrast in touch is what makes two lines read
+   as two voices on one instrument. 4. **Interlock at anchors only** — Gaster:
+   5/9 melody onsets lock to acc onsets (the snapped beats), 4/9 fill its
+   gaps. 5. **Role split: frame vs colour** — both accompaniments are
+   THIRDLESS (R/5 only); the melody's third completes the chord. And a
+   provenance note: His Theme's melody rhythm was mined from His Theme itself
+   (the only 4/2 cell) — retrieval provenance audibly matters.
+
+Built:
+- **Energy toggle** (audition, progressions tab, own+melody texture):
+  auto | context | calm | mid | hyper. Explicit levels pin the D40 density-band
+  target (3/6/10); 'context' maps the atlas context role to a target
+  (battle/boss/chase→10, town/overworld/shop/menu→6, cutscene/character/
+  credits→4); **'auto' stays the tempo rule and stays default** — the sanity
+  check showed role-mapping would have changed the very Gaster card Ethan
+  praised, and an approved sound must never change underneath its approval.
+  Deterministic throughout (seeded per card, per level).
+- **Counter voice**: "+ counter (triangle)" checkbox — the tier-1 melody as a
+  background inner line, calm density band, octave 4, triangle at gain 0.4,
+  DIFFERENT seed so it is not the lead's shadow. First deliberate second
+  instrument in the engine; triangle because the page's sound palette today is
+  piano + the synth waveforms (initStrudel registers sine/triangle/square/
+  sawtooth; sample banks and gm_* soundfonts are a loading decision for the
+  layering phase).
+
+2523/2523 patterns green, 148/148 tests. Ethan's stated next phases, in order:
+harmony GENERATION (not hardcoded loops), layering (multiple harmonies + lead
++ ~2 added instruments, using the five principles above), then chronological
+editing (prompt-driven edits: add/change notes/instruments/vibe, escalation,
+drops).
