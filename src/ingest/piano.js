@@ -176,6 +176,12 @@ export function chordTimeline(notes, barTicks, totalBars, { melody = null, key =
     for (const [, w] of win.acc) accTotal += w;
     return accTotal > 0.05 ? { m: win.acc, total: accTotal } : { m: win.w, total: win.total };
   };
+  // Scale of the solved key — used both as a root prior here and to complete
+  // thirdless labels further down.
+  const scale = key
+    ? new Set((key.mode === 'minor' ? [0, 2, 3, 5, 7, 8, 10] : [0, 2, 4, 5, 7, 9, 11])
+      .map((i) => mod12(key.tonicPc + i)))
+    : null;
   const score = (win, rootPc, pcs) => {
     const { m, total } = mapOf(win);
     let inW = 0, outW = 0, present = 0;
@@ -186,6 +192,11 @@ export function chordTimeline(notes, barTicks, totalBars, { melody = null, key =
     // (o7) tie plain triads on windows that only sound a root and one colour
     let s = inW - 0.7 * outW - 0.15 * ((pcs.size - present) / pcs.size) * total;
     if (win.bass != null && mod12(win.bass) === rootPc) s += 0.3 * total;
+    // Diatonic-root prior (D45). A chromatic root is a much bigger claim than a
+    // diatonic one and is correspondingly rarer, so it has to be earned rather
+    // than won on a coin-flip. This is small enough to only break near-ties: a
+    // real secondary dominant still wins outright on its own evidence.
+    if (scale && !scale.has(rootPc)) s -= 0.1 * total;
     return s;
   };
 
@@ -247,8 +258,6 @@ export function chordTimeline(notes, barTicks, totalBars, { melody = null, key =
   // the label completes to the solved key's diatonic triad for that root:
   // absence of evidence is not a sus chord.
   if (key) {
-    const scale = new Set((key.mode === 'minor' ? [0, 2, 3, 5, 7, 8, 10] : [0, 2, 4, 5, 7, 9, 11])
-      .map((i) => mod12(key.tonicPc + i)));
     const accNotes = mel ? notes.filter((n) => !mel.has(n)) : notes;
     for (const s of out) {
       if (!['5', 'sus', '2'].includes(s.quality)) continue;
@@ -292,6 +301,126 @@ export function chordTimeline(notes, barTicks, totalBars, { melody = null, key =
       s.quality = minor ? (b7 ? 'm7' : 'm') : (b7 ? '7' : M7 ? '^7' : '');
       s.completed = true;
     }
+
+    // ---- Evidence gate on every OTHER quality (D45) ----------------------
+    // The rule above says "absence of evidence is not a sus chord". The corpus
+    // audit says the same failure runs through every colour, only louder: 1014
+    // of 1355 '^7' labels had no third anywhere in the accompaniment, and 'o'
+    // labels sat on a chromatic root with no third 153 times. The template
+    // search can win on a root plus one colour tone, and .voicing() then PLAYS
+    // the tones the source never had — an A^7 in Bb major, four bars into
+    // Dating Start, over an accompaniment sounding only Ab/D/Eb/F/A.
+    //
+    // Generalised ruling: absence of evidence is not a colour of ANY kind. The
+    // root and the key stand; every tone the label names has to be heard.
+    //   third    3 vs 4 by weight; if neither sounds, the key's diatonic third
+    //   fifth    b5 / #5 only when that tone sounds AND no perfect fifth does
+    //   7th/6th  only when that exact tone sounds
+    // On a well-voiced chord this re-derives the label it already had, so it
+    // corrects the unearned ones and leaves the earned ones alone.
+    for (const s of out) {
+      if (['5', 'sus', '2'].includes(s.quality)) continue;
+      const rel = new Map();
+      let total = 0, accTotal = 0;
+      const relAcc = new Map();
+      for (let wi = s.start; wi < s.end && wi < wins.length; wi++) {
+        for (const [pc, wt] of wins[wi].w) {
+          const r = mod12(pc - s.rootPc);
+          if (r === 0) continue;
+          rel.set(r, (rel.get(r) ?? 0) + wt); total += wt;
+        }
+        for (const [pc, wt] of wins[wi].acc) {
+          const r = mod12(pc - s.rootPc);
+          if (r === 0) continue;
+          relAcc.set(r, (relAcc.get(r) ?? 0) + wt); accTotal += wt;
+        }
+      }
+      // D34 stands: COLOUR is the accompaniment's word alone. The melody riff
+      // over Megalovania's bare B pedal sweeps through F, and letting it vote
+      // turned that bar into B-diminished — precisely the failure D34 named.
+      // The melody keeps the one vote the completion rule already gave it: the
+      // binary major/minor third, where the accompaniment is silent.
+      const thirdW = accTotal > 0.05 ? relAcc : rel;
+      const thirdTot = accTotal > 0.05 ? accTotal : total;
+      if (thirdTot <= 0) continue;
+      const tw = (r) => thirdW.get(mod12(r)) ?? 0;
+      const cw = (r) => relAcc.get(mod12(r)) ?? 0;
+      const thirdTh = 0.12 * thirdTot; // a third may be struck once and still be real
+      const colourTh = 0.2 * accTotal; // sevenths/sixths/altered fifths cost more
+      const m3 = tw(3), M3 = tw(4);
+      const thirdHeard = m3 > thirdTh || M3 > thirdTh;
+      const minor = thirdHeard
+        ? m3 > M3
+        : scale.has(mod12(s.rootPc + 3)) && !scale.has(mod12(s.rootPc + 4));
+      const colourHeard = accTotal > 0.05;
+      const p5 = cw(7) > colourTh;
+      const b7 = colourHeard && cw(10) > colourTh;
+      const M7 = colourHeard && !b7 && cw(11) > colourTh;
+      const six = colourHeard && cw(9) > colourTh;
+      const dim = colourHeard && minor && cw(6) > colourTh && !p5;
+      const aug = colourHeard && !minor && thirdHeard && cw(8) > colourTh && !p5 && !six;
+      let q;
+      if (dim) q = six ? 'o7' : b7 ? 'm7b5' : 'o';
+      else if (aug) q = 'aug';
+      else if (minor) q = b7 ? 'm7' : (six && thirdHeard) ? 'm6' : 'm';
+      else q = b7 ? '7' : M7 ? '^7' : (six && thirdHeard) ? '6' : '';
+      if (q !== s.quality) { s.gatedFrom = s.quality; s.quality = q; }
+      s.thirdHeard = thirdHeard;
+    }
+
+    // coverage is the honesty number that later becomes needsEar, so it has to
+    // describe the FINAL label, not the one the template search proposed
+    const coverOf = (rootPc, quality, startWi, endWi) => {
+      const qp = qualityPcs().get(quality) ?? new Set([0, 4, 7]);
+      let inW = 0, tot = 0, accIn = 0, accTot = 0;
+      for (let wi = startWi; wi < endWi && wi < wins.length; wi++) {
+        for (const [pc, wt] of wins[wi].w) { tot += wt; if (qp.has(mod12(pc - rootPc))) inW += wt; }
+        for (const [pc, wt] of wins[wi].acc) { accTot += wt; if (qp.has(mod12(pc - rootPc))) accIn += wt; }
+      }
+      const [i, t] = accTot > 0.05 ? [accIn, accTot] : [inW, tot];
+      return t > 0 ? i / t : 0;
+    };
+    for (const s of out) s.coverage = coverOf(s.rootPc, s.quality, s.start, s.end);
+
+    // ---- Passing sonorities are not chords (D45) --------------------------
+    // What is left after the gate is the other half of the Dating Start defect:
+    // a HALF-BAR whose label explains a third of the weight. Ab -> A -> Bb is a
+    // bass walk into the tonic, and a walking bass note is not a harmony — but
+    // the template search names every window, so it named this one, and the
+    // progression then wore an A chord in a Bb major song. Note the root there
+    // is perfectly DIATONIC: what disqualifies it is not chromaticism but that
+    // its label explains almost nothing. Coverage is the test.
+    //
+    // Rule: a one-window segment that its own label covers poorly is absorbed
+    // by whichever neighbour covers that window BETTER. It has to lose on the
+    // neighbour's terms, so a real secondary dominant — which explains its own
+    // window far better than the chords either side do — survives untouched.
+    const PASSING_COV = 0.7;
+    for (let i = 0; i < out.length; i++) {
+      const s = out[i];
+      if (s.end - s.start !== 1 || s.coverage >= PASSING_COV) continue;
+      const prev = out[i - 1], next = out[i + 1];
+      let take = null, takeCov = s.coverage;
+      for (const nb of [prev, next]) {
+        if (!nb || nb.absorbed) continue;
+        const c = coverOf(nb.rootPc, nb.quality, s.start, s.end);
+        if (c > takeCov + 1e-9) { take = nb; takeCov = c; }
+      }
+      if (!take) continue;
+      s.absorbed = true;
+      s.rootPc = take.rootPc; s.quality = take.quality;
+      s.coverage = takeCov; s.passing = true;
+    }
+    // re-merge anything the absorb pass made identical to its neighbour
+    let w = 0;
+    for (let i = 0; i < out.length; i++) {
+      const last = w > 0 ? out[w - 1] : null;
+      if (last && last.rootPc === out[i].rootPc && last.quality === out[i].quality && last.end === out[i].start) {
+        last.end = out[i].end;
+        last.coverage = coverOf(last.rootPc, last.quality, last.start, last.end);
+      } else out[w++] = out[i];
+    }
+    out.length = w;
   }
   return out;
 }

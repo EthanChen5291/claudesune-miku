@@ -35,7 +35,7 @@ import { ATLAS, ATLAS_SECTIONS } from '../src/lib/atlas.js';
 import { MELODIES_TIER2 } from '../src/lib/melodies-tier2.js';
 import { MELODY_RHYTHMS_UNDERTALE } from '../src/lib/rhythms-undertale.js';
 import { INSTRUMENTS } from '../src/lib/instruments.js';
-import { planArrangement, renderArrangement } from '../src/binder/arrange.js';
+import { planArrangement, renderArrangement, planForm, renderForm } from '../src/binder/arrange.js';
 import { RHYTHMS } from '../src/lib/rhythms.js';
 import { CONTOURS } from '../src/lib/contours.js';
 import { evaluateSong, hapsByLabel } from '../src/harness/evaluate.js';
@@ -226,6 +226,7 @@ const progressions = Object.entries(PROGRESSIONS_UNDERTALE).map(([name, e]) => {
   const plan = planArrangement({
     name, song: e.song, family: e.family, role, moods: atlas.context?.moods ?? null,
     bpm: e.bpm, meter: e.meter, loopBars: e.loopBars,
+    leadPeriod: leadBound.boundMeta.period,
     accDensity, accOctave: e.ownFigure?.octave ?? null,
     leadDensity: leadCell.density, palette: INSTRUMENTS,
   });
@@ -236,11 +237,15 @@ const progressions = Object.entries(PROGRESSIONS_UNDERTALE).map(([name, e]) => {
     figureFor: () => FIGURATIONS_UNDERTALE[TEXTURES[0].fig],
   });
   for (const w of rendered.warnings) ARRANGE_WARNINGS.push(`${name}: ${w}`);
-  // full mix: piano accompaniment + piano lead (unless a layer takes it) + layers
-  const leadPart = plan.base.lead.silenced ? null : leadBound.expr;
-  const mixParts = [base, ...(leadPart ? [leadPart] : []), ...rendered.layers.map((l) => l.expr)];
+  // ---- the form (D47): who plays WHEN, across the loop's repetitions --------
+  const form = planForm(plan);
+  const shaped = renderForm(rendered.layers, leadBound.expr, form);
+  // full mix: the accompaniment runs throughout (it is the song's identity);
+  // the lead and every layer are masked to the sections that own them
+  const mixParts = [base, ...(shaped.lead ? [shaped.lead] : []), ...shaped.layers.map((l) => l.formExpr)];
   exprs.mix = mixParts.length > 1 ? `stack(${mixParts.join(', ')})` : mixParts[0];
-  // solo: each layer alone, for ear-checking one contribution at a time
+  // solo: each layer alone, UNMASKED, for ear-checking one contribution at a
+  // time — plus a "_form" that plays the mix so the shape itself is audible
   const soloExprs = { _base: base, _lead: leadBound.expr };
   for (const l of rendered.layers) soloExprs[l.id] = l.expr;
   // tier 2 (D38): an AUTHORED melody through the bindMelodySpec guard — only
@@ -271,13 +276,26 @@ const progressions = Object.entries(PROGRESSIONS_UNDERTALE).map(([name, e]) => {
     melCell: leadCell.name, melDensity: leadCell.density, melTarget: leadCell.target,
     melInterlock: leadCell.interlock, melRepeat: leadBound.boundMeta.phrase.repeat,
     accDensity: Math.round(accDensity * 10) / 10,
+    form: {
+      sectionBars: form.sectionBars, totalBars: form.totalBars, notes: form.notes,
+      sections: form.sections.map((s) => ({
+        i: s.index, archetype: s.archetype, startBar: s.startBar, bars: s.bars,
+        energy: s.energy, lead: s.lead, mass: s.massSounding, why: s.why,
+        active: s.active.map((id) => {
+          const l = rendered.layers.find((x) => x.id === id);
+          return l ? l.instrument.replace('gm_', '') : id;
+        }),
+      })),
+    },
     plan: {
       budget: plan.budget, spent: plan.spent, headroom: plan.headroomStart, notes: plan.notes,
-      leadSilenced: plan.base.lead.silenced,
-      layers: rendered.layers.map((l) => ({
+      massAtOnce: plan.massAtOnce,
+      layers: shaped.layers.map((l) => ({
         id: l.id, part: l.part, instrument: l.instrument, character: l.instrumentCharacter,
         contributes: l.contributes, lane: l.lane, octave: l.octave, gain: l.gain,
+        range: l.range, clamped: l.clampedToRange, level: l.level,
         rhythmSource: l.rhythmSource, shares: l.sharesLaneWithPiano, why: l.why,
+        sections: l.sections, mask: l.formMask,
       })),
     },
     solo: soloExprs,
@@ -504,6 +522,19 @@ function page(DATA) {
   .flag { display:inline-block; font-size:10px; text-transform:uppercase; letter-spacing:.07em; color:#1a1208; background:var(--warn); border-radius:3px; padding:0 5px; margin-right:5px; font-weight:700; }
   .flag.t2 { background:#4c8dff; color:#04102a; }
   .badge { position:absolute; top:8px; right:10px; font-size:10px; text-transform:uppercase; letter-spacing:.07em; color:#6b7086; }
+  /* the form strip (D47): the arrangement's shape over time, drawn */
+  .form { display:flex; gap:3px; width:100%; margin-top:8px; }
+  .formsec { flex:1; border-radius:5px; padding:5px 7px; display:flex; flex-direction:column; gap:1px;
+             font-size:10.5px; line-height:1.35; border:1px solid var(--line); min-width:0; }
+  .formsec b { font-size:11.5px; letter-spacing:.02em; }
+  .formsec span { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .formsec.e1 { background:#171a22; color:#767c92; }
+  .formsec.e2 { background:#1b2130; color:#8e97b3; }
+  .formsec.e3 { background:#1f2a3f; color:#a8b4d4; }
+  .formsec.e4 { background:#25344f; color:#c2cbe6; }
+  .formsec.e5 { background:#2d4062; color:#e2e8f7; }
+  .formsec.muted { opacity:.45; }
+  .formcap { font-size:10.5px; margin-top:4px; }
   .acts { display:flex; gap:5px; margin-top:7px; flex-wrap:wrap; }
   .acts button { padding:2px 8px; font-size:11.5px; }
   .acts button.k.on { background:var(--keep); border-color:var(--keep); color:#fff; }
@@ -713,7 +744,9 @@ function soloRow() {
   row.style.display = '';
   row.innerHTML = '<span class="dim">hear alone:</span> ';
   const opts = [['', 'full mix'], ['_base', 'piano acc'], ['_lead', 'piano lead']]
-    .concat(e.plan.layers.map(function (l) { return [l.id, l.instrument.replace('gm_', '') + ' (' + l.part.replace('_', ' ') + ')']; }));
+    .concat(e.plan.layers.map(function (l) {
+      return [l.id, l.instrument.replace('gm_', '') + ' (' + l.part.replace('_', ' ') + ' @' + l.octave + ')'];
+    }));
   for (const [id, label] of opts) {
     const b = document.createElement('button');
     b.textContent = label;
@@ -721,6 +754,32 @@ function soloRow() {
     b.onclick = () => { soloId = id || null; soloRow(); if (playing === e.name) play(e); else play(e); };
     row.appendChild(b);
   }
+  // The FORM, drawn (D47). Each section is a block wide in proportion to its
+  // bars, labelled with its archetype, who has the tune, and who is playing.
+  // The whole point of the feature is that the arrangement changes over time,
+  // so the page has to show the shape as well as sound it.
+  if (!e.form) return;
+  const strip = document.createElement('div');
+  strip.className = 'form';
+  const secs = e.form.sections;
+  for (const s of secs) {
+    const cell = document.createElement('div');
+    cell.className = 'formsec e' + s.energy + (soloId ? ' muted' : '');
+    const who = s.lead === 'none' ? 'no melody'
+      : s.lead === 'piano' ? 'piano leads' : (s.lead.replace('gm_', '') + ' takes over');
+    cell.innerHTML = '<b>' + s.archetype + '</b>'
+      + '<span>' + who + '</span>'
+      + '<span class="dim">' + (s.active.length ? s.active.join(', ') : 'piano only') + '</span>';
+    cell.title = 'bars ' + s.startBar + '-' + (s.startBar + s.bars - 1)
+      + ' · energy ' + s.energy + '/5 · mass ' + s.mass + '\\n' + s.why;
+    strip.appendChild(cell);
+  }
+  const cap = document.createElement('div');
+  cap.className = 'dim formcap';
+  cap.textContent = 'form: ' + secs.length + ' sections × ' + e.form.sectionBars + ' bars = '
+    + e.form.totalBars + ' bars, then it loops';
+  row.appendChild(strip);
+  row.appendChild(cap);
 }
 
 function render() {
@@ -752,13 +811,33 @@ function render() {
       card.title = e.name + '\\nsolved key ' + e.sourceKey + ' (margin ' + e.keyMargin + ')\\nbars per chord: ' + e.barsPerChord.join(', ') + '\\nfound at bar ' + e.atBar
         + '\\nmelody ' + e.melCell + ': ' + e.melDensity + ' onsets/bar (target ' + e.melTarget + ', interlock ' + e.melInterlock + ', repeat ' + e.melRepeat + ')'
         + '\\n\\nARRANGEMENT — budget ' + e.plan.budget + '/bar, piano spends ' + e.plan.spent + ', headroom ' + e.plan.headroom
-        + (e.plan.layers.length ? e.plan.layers.map(function (l) { return '\\n• ' + l.instrument + ' — ' + l.part + ' (oct ' + l.octave + ', gain ' + l.gain + ')\\n    ' + l.contributes + '\\n    ' + l.character + '\\n    why: ' + l.why; }).join('') : '\\n• no layers: ' + e.plan.notes.join('; '))
+        + ', mass ' + e.plan.massAtOnce + ' sounding at once'
+        + (e.plan.layers.length ? e.plan.layers.map(function (l) {
+          return '\\n• ' + l.instrument + ' — ' + l.part
+            + ' (oct ' + l.octave + ' of ' + (l.range ? l.range.join('-') : '?') + (l.clamped ? ', clamped from lane ' + l.lane : '')
+            + ', gain ' + l.gain + ' at level ' + l.level + (l.shares ? ', SHARES an octave with the piano' : '') + ')'
+            + '\\n    plays in sections ' + (l.sections && l.sections.length ? l.sections.join(', ') : '(lead only)') + ' — mask <' + l.mask + '>'
+            + '\\n    ' + l.contributes + '\\n    ' + l.character + '\\n    why: ' + l.why;
+        }).join('') : '\\n• no layers: ' + e.plan.notes.join('; '))
+        + (e.form ? '\\n\\nFORM — ' + e.form.sections.length + ' sections × ' + e.form.sectionBars + ' bars ('
+          + e.form.totalBars + ' bars, then it loops)'
+          + e.form.sections.map(function (s) {
+            return '\\n' + s.i + '. ' + s.archetype + ' @bar ' + s.startBar + ' — energy ' + s.energy + '/5, '
+              + (s.lead === 'none' ? 'NO melody' : s.lead === 'piano' ? 'piano leads' : s.lead + ' takes the tune')
+              + (s.active.length ? ', with ' + s.active.join(' + ') : ', piano alone')
+              + '\\n     ' + s.why;
+          }).join('')
+          + '\\nform notes: ' + e.form.notes.join('\\n  ') : '')
+        + '\\n\\nplan notes: ' + e.plan.notes.join('\\n  ')
         + atlasTip;
       if (texture === 'mix') {
         const line = e.plan.layers.length
-          ? e.plan.layers.map(function (l) { return l.instrument.replace('gm_', '') + '·' + l.part.replace('_', ' '); }).join(' + ')
+          ? e.plan.layers.map(function (l) { return l.instrument.replace('gm_', '') + '·' + l.part.replace('_', ' ') + '@' + l.octave; }).join(' + ')
           : 'piano only (no headroom)';
-        tags += ' · ' + line;
+        const takes = e.form ? e.form.sections.filter(function (s) { return s.lead !== 'piano' && s.lead !== 'none'; }) : [];
+        tags += ' · ' + line
+          + (e.form ? '<br><span class="sec">' + e.form.sections.map(function (s) { return s.archetype; }).join(' → ')
+            + (takes.length ? ' · ' + takes[0].lead.replace('gm_', '') + ' takes the tune' : '') + '</span>' : '');
       }
     } else if (tab === 'figures') {
       badge = e.cls + ' · ' + e.meter;

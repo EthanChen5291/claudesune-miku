@@ -1536,11 +1536,34 @@ export const PROGRESSIONS = {
 import { VOICINGS } from './voicings.js';
 import { PROGRESSIONS_UNISON } from './progressions-unison.js';
 import { PROGRESSIONS_UNDERTALE } from './progressions-undertale.js';
+import { PROGRESSIONS_VGMUSIC } from './progressions-vgmusic.js';
+import { VERDICTS } from './verdicts.js';
 
 /** All pools in one registry. `pack` says where an entry came from; the ldrolez
  *  set is Roman-numeral source data, the unison set is extracted from labeled
  *  MIDI (D29), the undertale set is solved from unlabeled full songs (D30). */
-export const ALL_PROGRESSIONS = { ...PROGRESSIONS, ...PROGRESSIONS_UNISON, ...PROGRESSIONS_UNDERTALE };
+export const ALL_PROGRESSIONS = {
+  ...PROGRESSIONS, ...PROGRESSIONS_UNISON, ...PROGRESSIONS_UNDERTALE, ...PROGRESSIONS_VGMUSIC,
+};
+
+// D51: the ear, overlaid. `ratified` was false on all 421 entries because the
+// audition pages' keep/kill verdicts had no path back into the library; A6.1
+// says ratification is earned by ear, and this is where that earning lands.
+// Applied HERE, once, so nothing downstream has to know verdicts exist —
+// `findProgressions({ ratifiedOnly: true })` and exemplarPool() just work.
+// A verdict judges THE MUSIC THAT PLAYED. If the entry has been re-transcribed
+// since, the verdict is about a different piece and is not honoured — D52's
+// percussion fix moved both Amalgam entries from B:minor to D:major, so the two
+// kills recorded against them were kills of music that no longer exists. Such
+// entries go back to needing an ear rather than silently keeping a stale label.
+for (const [name, v] of Object.entries(VERDICTS)) {
+  const e = ALL_PROGRESSIONS[name];
+  if (!e) continue;
+  if (v.judged != null && v.judged !== e.degrees) { e.verdictStale = v.verdict; continue; }
+  e.ratified = v.verdict === 'keep';
+  e.verdict = v.verdict;
+  e.needsEar = false;       // heard, whichever way it went
+}
 
 /** 'degrees' string -> [{ semis, spell, quality }] ('spell' = source accidental) */
 export function parseDegrees(degrees) {

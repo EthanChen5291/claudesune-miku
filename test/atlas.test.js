@@ -4,8 +4,8 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { execFileSync } from 'node:child_process';
-import { readFileSync } from 'node:fs';
-import { join } from 'node:path';
+import { readFileSync, readdirSync } from 'node:fs';
+import { basename, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { ATLAS, ATLAS_SECTIONS, neighborhood, sectionOf, pickFrom } from '../src/lib/atlas.js';
 import { ALL_PROGRESSIONS } from '../src/lib/progressions.js';
@@ -65,12 +65,22 @@ test('D35: vibe features read the harmony honestly (Megalovania as ground truth)
 });
 
 test('D35: context is curated, never invented — and the leitmotif axis works', () => {
-  // every context key is a song the corpus actually references
+  // Every context key names a song that really exists. The check is against the
+  // SOURCE FILES, not against what survived extraction: whether a given song
+  // contributes an entry this run depends on the recurrence gate, so keying the
+  // guard to that made curated knowledge evaporate when a figure fell below the
+  // bar (Dogbass, when D45's relabelling changed its tokens). A filename is the
+  // stable thing to check against, and it still catches the typo this guards.
+  const files = new Set(readdirSync(join(ROOT, 'audios/Undertale MIDI'))
+    .filter((f) => f.endsWith('.mid'))
+    .map((f) => basename(f, '.mid').replace(/^Undertale - /, '').trim()));
+  for (const key of Object.keys(UNDERTALE_CONTEXT)) {
+    assert.ok(files.has(key), `context for unknown song "${key}" — no such MIDI in the corpus`);
+  }
+  // and the corpus never invents a song the context table has not curated
   const songs = new Set(Object.values(PROGRESSIONS_UNDERTALE).map((e) => e.song));
   for (const e of Object.values(FIGURATIONS_UNDERTALE)) for (const s of e.songs) songs.add(s.replace(/ \(\d+\)$/, ''));
-  for (const key of Object.keys(UNDERTALE_CONTEXT)) {
-    assert.ok(songs.has(key), `context for unknown song "${key}"`);
-  }
+  for (const song of songs) assert.ok(files.has(song), `corpus names a song with no source file: "${song}"`);
   // every undertale progression got its song's context merged
   for (const [name, e] of Object.entries(PROGRESSIONS_UNDERTALE)) {
     const r = ATLAS.progressions[name];

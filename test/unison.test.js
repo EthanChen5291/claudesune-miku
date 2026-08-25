@@ -10,6 +10,7 @@ import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { readMidi, triage, loopPeriod, chordEvents } from '../src/ingest/midi.js';
 import { parseNumeral, numeralsFromFilename, parseKeyDir, bestQuality } from '../src/ingest/numerals.js';
+import { KEPT } from '../src/lib/verdicts.js';
 import { PROGRESSIONS_UNISON } from '../src/lib/progressions-unison.js';
 import { RHYTHMS_UNISON, INTERLOCKS_UNISON } from '../src/lib/rhythms-unison.js';
 import { VOICING_OBSERVATIONS, FILLS_GAPS } from '../src/lib/voicings-unison.js';
@@ -169,10 +170,16 @@ test('D29: observed voicings cover qualities the library has no shape for', () =
 });
 
 test('D29: both corpora share one retrieval entry point, distinguishable by pack', () => {
-  // 188 ldrolez + 72 unison + the undertale pool (D30, counted by its own tests)
-  assert.equal(Object.keys(ALL_PROGRESSIONS).length, 260 + findProgressions({ pack: 'undertale' }).length);
+  // 188 ldrolez + 72 unison + the undertale pool (D30) + the vgmusic pool (D52),
+  // each counted by its own tests
+  assert.equal(Object.keys(ALL_PROGRESSIONS).length,
+    260 + findProgressions({ pack: 'undertale' }).length + findProgressions({ pack: 'vgmusic' }).length);
   assert.equal(findProgressions({ pack: 'ldrolez' }).length, 188);
   assert.equal(findProgressions({ pack: ['unison-famous', 'unison-dark', 'unison-emotional'] }).length, 72);
   assert.equal(findProgressions({ pack: 'unison-dark' }).every((r) => r.entry.moods.includes('Dark')), true);
-  assert.equal(findProgressions({ ratifiedOnly: true }).length, 0);
+  // D51: every ratified entry came from a keep verdict, and none is a unison one
+  // KEPT minus any whose verdict a re-transcription voided (D52)
+  assert.ok(findProgressions({ ratifiedOnly: true }).length <= KEPT.length);
+  assert.ok(findProgressions({ ratifiedOnly: true }).length > 0);
+  assert.equal(findProgressions({ ratifiedOnly: true, pack: 'unison-famous' }).length, 0);
 });

@@ -154,8 +154,12 @@ export const MELODIES_TIER2 = {
     ],
     character: null,
   },
-  // Abm Db Abm B^7 (Ab:minor, 6/8) — driving compound-time arpeggio up to the
+  // Abm Db Abm B (Ab:minor, 6/8) — driving compound-time arpeggio up to the
   // downbeat of each pulse; the IV bar's major third written as colour ('#5').
+  // The cadence bar turns UP to the third of the bIII rather than descending
+  // past it: NGAHHH's accompaniment is a bare bass line with no thirds and no
+  // sevenths anywhere, so the B chord it walks to is a plain triad (D45 pulled
+  // the invented ^7 off it) and the old descent's last note was its maj7.
   ut_ngahhh_p3: {
     for: 'ut_ngahhh_p3', style: 'toby-fox', pack: 'undertale',
     provenance: 'authored-tier2', author: 'claude', ratified: false, needsEar: true,
@@ -164,7 +168,7 @@ export const MELODIES_TIER2 = {
       { onsets: ['0', '1/6', '1/3', '1/2', '2/3', '5/6'], degrees: [0, 2, 4, 7, 4, 2], accents: [1, 0.55, 0.6, 0.9, 0.55, 0.6] },
       { onsets: ['0', '1/6', '1/3', '1/2', '2/3', '5/6'], degrees: [3, 4, '#5', 7, '#5', 4], accents: [1, 0.55, 0.6, 0.9, 0.55, 0.6] },
       { onsets: ['0', '1/6', '1/3', '1/2', '2/3', '5/6'], degrees: [0, 2, 4, 7, 4, 2], accents: [1, 0.55, 0.6, 0.9, 0.55, 0.6] },
-      { onsets: ['0', '1/6', '1/3', '1/2'], degrees: [6, 4, 2, 1], accents: [0.85, 0.55, 0.7, 0.9], breath: true },
+      { onsets: ['0', '1/6', '1/3', '1/2'], degrees: [6, 4, 2, 4], accents: [0.85, 0.55, 0.7, 0.9], breath: true },
     ],
     character: null,
   },
@@ -261,21 +265,24 @@ export const MELODIES_TIER2 = {
     ],
     character: null,
   },
-  // Bb2 Bb2 D7 Bb2 ×2-ish + A (D:minor) — noble march; the D7 bars take their
-  // raised third as colour ('#1'), the close lands on the dominant's root.
+  // Gm7 | Dm | Bb^7 | Am, twice (D:minor, 4/4, 114bpm) — noble march. Rewritten
+  // for D45: the old spec was authored against a Bb2/D7 loop that turned out to
+  // be a mislabelling, and the loop finder now lands on this one instead. Rising
+  // arpeggio through the first half, stepwise fall off the peak in the second,
+  // both halves closing on the natural-minor dominant.
   ut_asgore_p2: {
     for: 'ut_asgore_p2', style: 'toby-fox', pack: 'undertale',
     provenance: 'authored-tier2', author: 'claude', ratified: false, needsEar: true,
     octave: 4,
     bars: [
-      { onsets: ['0', '1/2', '3/4'], degrees: [5, 6, 9], accents: [0.9, 0.7, 0.6] },
-      { onsets: ['0', '1/2', '3/4'], degrees: [9, 6, 5], accents: [0.9, 0.7, 0.6] },
-      { onsets: ['0', '1/4', '1/2', '3/4'], degrees: [7, 6, 4, '#1'], accents: [0.9, 0.6, 0.8, 0.6] },
-      { onsets: ['0', '1/2'], degrees: [5, 2], accents: [0.85, 0.7] },
-      { onsets: ['0', '1/2', '3/4'], degrees: [5, 6, 9], accents: [0.9, 0.7, 0.6] },
-      { onsets: ['0', '1/2', '3/4'], degrees: [9, 11, 12], accents: [0.85, 0.6, 0.9] },
-      { onsets: ['0', '1/4', '1/2', '3/4'], degrees: [11, '#8', 7, 6], accents: [0.9, 0.6, 0.8, 0.6] },
-      { onsets: ['0', '1/2'], degrees: [8, 4], accents: [0.7, 0.95], breath: true },
+      { onsets: ['0', '1/4', '1/2', '3/4'], degrees: [3, 4, 5, 7], accents: [0.9, 0.55, 0.75, 0.6] },
+      { onsets: ['0', '1/4', '1/2', '3/4'], degrees: [7, 8, 9, 11], accents: [0.85, 0.55, 0.75, 0.7] },
+      { onsets: ['0', '1/4', '1/2', '3/4'], degrees: [12, 11, 10, 9], accents: [0.95, 0.7, 0.55, 0.8] },
+      { onsets: ['0', '1/2', '3/4'], degrees: [8, 6, 4], accents: [0.8, 0.6, 0.9] },
+      { onsets: ['0', '1/4', '1/2', '3/4'], degrees: [3, 4, 5, 7], accents: [0.9, 0.55, 0.75, 0.6] },
+      { onsets: ['0', '1/4', '1/2', '3/4'], degrees: [11, 10, 9, 7], accents: [0.9, 0.55, 0.75, 0.7] },
+      { onsets: ['0', '1/4', '1/2', '3/4'], degrees: [9, 11, 12, 14], accents: [0.85, 0.7, 0.8, 0.95] },
+      { onsets: ['0', '1/2'], degrees: [13, 11], accents: [0.8, 0.95], breath: true },
     ],
     character: null,
   },
@@ -329,8 +336,11 @@ export const MELODIES_TIER2 = {
     ],
     character: null,
   },
-  // Bb Fm7 A^7 Gm7 (Bb:major) — bright and chatty; the chromatic A^7 bar is
-  // written almost entirely as declared colour and still passes the guard.
+  // Bb Fm7 Ab Gm7 (Bb:major) — bright and chatty; the same X-Y-X-Z chatter
+  // shape in every bar, re-voiced per chord. Bar 2 used to sit on a chromatic
+  // A^7 written as declared colour; that chord was the Ab->A->Bb bass walk the
+  // labeller mistook for a harmony (D45 — this is the card Ethan heard go
+  // wrong), so the bar now takes the bVII's own tones and the A naturals go.
   ut_dating_start_p3: {
     for: 'ut_dating_start_p3', style: 'toby-fox', pack: 'undertale',
     provenance: 'authored-tier2', author: 'claude', ratified: false, needsEar: true,
@@ -338,7 +348,7 @@ export const MELODIES_TIER2 = {
     bars: [
       { onsets: ['0', '1/4', '1/2', '3/4'], degrees: [4, 5, 4, 2], accents: [0.9, 0.6, 0.75, 0.6] },
       { onsets: ['0', '1/4', '1/2', '3/4'], degrees: [3, 4, 3, 1], accents: [0.85, 0.6, 0.75, 0.6] },
-      { onsets: ['0', '1/4', '1/2', '3/4'], degrees: [6, '#5', 6, '#3'], accents: [0.85, 0.6, 0.75, 0.6] },
+      { onsets: ['0', '1/4', '1/2', '3/4'], degrees: [3, 'b6', 3, 1], accents: [0.85, 0.6, 0.75, 0.6] },
       { onsets: ['0', '1/2'], degrees: [5, 2], accents: [0.7, 0.95], breath: true },
     ],
     character: null,

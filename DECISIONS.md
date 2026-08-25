@@ -1261,3 +1261,959 @@ Locked down by two tests: one drives the page with a shim that rejects every
 raw.githubusercontent URL and asserts playback still happens via the mirror
 (the DOM helper gained a `failSamples` predicate), and one asserts every map
 in every page lists mirrors on at least two distinct hosts. 160/160 tests.
+
+### D45 — a chord label is a claim, and the accompaniment has to have made it (2026-08-23)
+
+Ethan, on the Dating Start card (`Bb Ab Fm7 Ab A^7 Bb Gm7 Bb`): "this song
+sounds really weird after the first two measures." Bar 3 is the `A^7`. The
+accompaniment there sounds Ab, D, Eb, F and A; `A^7` names A, C#, E and G#,
+and `.voicing()` duly played a C# and an E that are in neither the chord nor
+the key. The real music is a bass walk — Ab → A → Bb, chromatic approach into
+the tonic — and a walking bass note is not a harmony.
+
+Auditing all 9,394 labelled segments against the notes that actually sound
+showed this was not one bad bar:
+
+| quality | n | avg missing tones | third absent |
+|---|---|---|---|
+| `^7` | 1355 | 1.62 of 4 | **1014 (75%)** |
+| `o7` | 574 | 1.57 of 4 | 335 |
+| `o` | 273 | 0.89 of 3 | 239 |
+| `m7b5` | 206 | 0.56 of 4 | 82 |
+
+Three causes, three rules.
+
+1. **Evidence gate on colour.** The template search can win a window on a root
+   plus one tone — the missing-tone penalty is too small to stop an exotic
+   4-note label beating a triad — and nothing downstream re-checked it. So
+   every segment's quality is now re-derived from the tones that actually
+   sound: the third by weight (falling back to the key's diatonic third), the
+   b5/#5 only when that exact tone sounds and no perfect fifth does, the 7th
+   and 6th only when they sound. This generalises the existing sus/'5'/'2'
+   completion rule — *absence of evidence is not a sus chord* becomes *absence
+   of evidence is not a colour of any kind* — and it is idempotent on
+   well-voiced chords, so it corrects the unearned labels and leaves the
+   earned ones alone. `o7` 574→20, `m7b5` 206→14, `aug` 122→8, `^7` 1355→832.
+
+2. **D34 still binds inside the gate.** The first cut let the melody vote on
+   colour, and Megalovania's riff — which sweeps through F over a bare B pedal
+   — promptly turned that bar into B-diminished. Colour is the accompaniment's
+   word alone; the melody keeps exactly the one vote the completion rule
+   already gave it, the binary major/minor third where the accompaniment is
+   silent. Megalovania's last chord also drops from `Bb^7` to `Bb`: nothing in
+   that bar sounds an A.
+
+3. **Passing sonorities are not chords.** A one-window segment whose own label
+   covers it poorly (<0.7) is absorbed by whichever neighbour covers that
+   window better. It has to lose on the neighbour's terms, so a real secondary
+   dominant — which explains its own window far better than the chords either
+   side do — survives untouched. Note the Dating Start root is perfectly
+   DIATONIC (A is the 7th of Bb major): what disqualifies it is not
+   chromaticism but that its label explains almost nothing. Coverage is the
+   test, not the key signature. 9394 → 8163 segments.
+
+Also: a small diatonic-root prior in the template search (a chromatic root is
+a bigger claim and correspondingly rarer, so it must be earned rather than won
+on a coin flip — small enough to break only near-ties), and `coverage` is now
+recomputed from the FINAL label, because it becomes `needsEar` and was
+previously advertising a fit the entry no longer had (Amalgam bar 8: 1.00 →
+0.48, honestly).
+
+Consequences, all of them the point: two tier-2 melody specs were authored
+against labels that turned out to be inventions and were rewritten — Dating
+Start's bar 3 (its A-naturals were the phantom chord) and NGAHHH's cadence
+(the accompaniment there is a bare bass line with no thirds and no sevenths
+anywhere, so the `Cb^7` it landed on is a plain triad). ASGORE's p2 loop moved
+entirely once the labels were honest, and its spec was rewritten for the loop
+that is actually there. The atlas context test now checks context keys against
+the SOURCE FILENAMES rather than against what survived extraction: keying it
+to the corpus made curated knowledge evaporate when a figure fell below the
+recurrence bar.
+
+### D46 — a lane is a plan, a range is a fact (2026-08-23)
+
+Round-9 ear pass, three complaints, and the casting histogram agreed with all
+three before a note was changed.
+
+**"The musicbox should not be that high for melody — it sounds like a high
+pitch ring."** It was landing on the 'high' lane, octave 6, in all 24 songs
+that cast it. A lane names a register in the arrangement; an instrument has a
+tessitura of its own, and the two are different claims. Instruments now carry
+`range: [lo, hi]`, the lane proposes and the range clamps, and — this is the
+part that matters — occupancy is tracked by the OCTAVE THAT RESULTS rather
+than the lane's name. Two layers in nominally different lanes can clamp onto
+one octave, and calling that "different registers" would be a lie the plan
+then tells the edit pass.
+
+**"Didn't really hear the flute."** It was cast 34 times. GM soundfonts differ
+by a factor of two in absolute loudness and `cuts` does not describe that: a
+flute has a bright, penetrating tone (cuts 0.75) and a quiet sample. Added
+`level`, a per-voice gain correction measured against the piano, capped so
+nothing can shout over it. Flute 1.5, glockenspiel 0.7.
+
+**"The cello could sometimes also get its own voice, it's not confined the
+melody."** It was 70 of 234 layers — 30% — and mostly the sustained R.5 drone.
+Two fixes: the cello's `parts` gained `melody_takeover` and `alternate_melody`
+(it sings as readily as it supports), and the slate stopped being one fixed
+list per role. `harmony_support` was 54% of every layer in the corpus — over
+half the arrangement was a drone, the opposite of what Ethan heard and liked
+in Gaster's Theme, two busy voices countering each other. Each role now offers
+several slates and the song picks one by a stable hash of its own name: the
+same move as varying a rhythm, chosen from context, never sampled.
+
+**"Maybe expand to more instruments now?"** 15 → 43, and the mood vocabulary
+grew with it (a dozen words in the palette — 'comic', 'sneaking', 'heroic',
+'questing', 'baroque' — matched nothing in any role table and were dead
+weight).
+
+Two more rules fell out of the octave change:
+- A **takeover** claims the lead octave, because it silenced the piano melody.
+  Without this the layer was pushed down into a register the piano had just
+  vacated and the song lost its top voice entirely.
+- Sharing the piano ACCOMPANIMENT's octave is the existing contrast bargain (a
+  slow swell under a struck figure reads as depth). Sharing the piano LEAD's
+  octave is not the same bargain — two independent melodic lines in one
+  register is the mud the rule exists to prevent — so it is allowed only for a
+  part playing the lead's own notes, where it is doubling. And sharing is
+  struck with the piano, never with another layer.
+- When the best-fitting instrument has nowhere to stand, the ranking is tried
+  behind it rather than the whole PART being dropped (that left 14 songs with
+  no arrangement at all).
+
+Result across 161 cards: 237 layers, 32 of 43 instruments in play, no single
+instrument above 16%, parts spread 60/58/40/39/33/7 across the six. Every card
+still prints its whole plan on hover — now including each layer's octave, its
+instrument's range, whether it was clamped, its level, and whether it shares
+an octave with the piano — and the solo row hears any one layer alone. 166/166
+tests.
+
+### D47 — form: who is playing WHEN (2026-08-23)
+
+Ethan, round 10: more layers and more instruments; "some songs may vary in
+layers — not all layers playing at once but like one section with layers, one
+with different layers, one with all layers, one without melody, melody comes in
+after build up"; and on the takeover, "it shouldn't just be random song
+takeover, sometimes the lead melody just stops... it should be planned and
+incorporated smoother and more deliberately within the song and have a clear
+lead — currently I can only hear the music box and the piano."
+
+The measurement agreed before anything changed: **mean 1.47 layers per song**,
+because every slate listed at most two parts, and every cast layer played from
+bar one to the end.
+
+**Why a constant texture stops being heard.** From the music-psychology
+literature: repetition buys processing fluency, which is pleasurable, but it
+also buys habituation — a decline in responsiveness as novelty recedes — and
+"the more one particular layer doesn't change, the more your ears adjust to
+hear beyond it." The entrance of an instrument is the event that resets
+attention. So an arrangement where everything has been sounding since bar one
+is not a rich arrangement; it is a wash, and Ethan was hearing exactly the two
+voices with the most attack in it.
+
+**The vocabulary is game audio's.** VERTICAL LAYERING is fading stems of one
+piece in and out; HORIZONTAL RESEQUENCING is moving between distinct sections.
+The two are usually presented as alternatives; a looping engine wants both, so
+a section here is a horizontal unit whose contents are a vertical mix.
+
+**The entry order is Toby Fox's own.** From the Undertale composition
+deconstruction: "the ostinato is introduced first, then the midground, then the
+melody" with its drums, and "everything melodic is repeated twice" before new
+material arrives. Parts therefore declare an `entry` group — bed, motion,
+double — and sections admit them in that order.
+
+Implementation:
+
+- `planForm(plan)` divides the song into sections one loop long (or one melodic
+  phrase, when that is longer — a section must contain whole phrases of
+  everything inside it or a masked layer restarts mid-thought). Each section is
+  an ARCHETYPE: `ostinato`, `bed`, `statement`, `answer`, `handoff`, `full`,
+  `fullHandoff`, `breakdown`, `tag`, each declaring who has the tune, which
+  entry groups sound, and an energy 1-5.
+- Shapes are per-role lists — arch contours — but the shape is **chosen against
+  the roster it will be applied to**, not by hash alone. A shape is scored on
+  how many distinct states it produces and how few adjacent repeats: on a
+  roster with no doubling voice, `answer` takes exactly what `full` takes, and
+  the pair measured as `answer:348 full:348` haps — two sections the ear cannot
+  tell apart. Ties break on the song's hash, so the choice is still the song's.
+- Where a shape still plateaus, the repair **thins the earlier section** rather
+  than padding the later one: that keeps the contour rising and costs no mass.
+  Adjacent identical sections: 3.5% of transitions.
+- `.mask("<0@8 1@24>")` gates a layer per bar. Verified patternable at 1.1.0.
+  A layer that plays throughout carries no mask at all.
+
+**A slate is a roster, not a simultaneity.** That is the change that buys the
+layers. Casting is against a roster budget (2.1× the standing mass ceiling) and
+each section admits voices only up to what the song can sound AT ONCE — except
+the peak, which is allowed 1.35× because a peak is by definition the one moment
+denser than the rest, and it only lasts a section. Result: rosters of 1/2/3/4
+across 7/64/70/20 songs, but sections sounding 0-4 voices with a mode of 1.
+
+**The takeover, rewritten.** `replacesLead` (silence the piano for the whole
+song) became `canLead` (this voice may be handed the tune at a boundary), and
+one rule outranks the entire form: **once the tune has arrived, something is
+always carrying it.** A section that would have had no lead after the melody
+had already entered has the piano restored, with a note saying so. Two further
+rules fell out of measuring it: a shape that uses an available leader scores +3
+(the takeover was cast in 43 songs and led in 5 — in the other 38 it was forced
+into the peak by the every-voice-must-be-heard rule, where it played the lead
+line in unison with the piano, a doubling wearing a takeover's name); and a
+`canLead` layer sounds ONLY where it leads. Now: cast 43, leads 43, and every
+handoff has a section of piano lead before it to hand off from.
+
+The every-voice-must-be-heard repair also stopped overriding the mass ceiling —
+it now finds the busiest section with room, or trades against the heaviest
+voice already at the peak, and only one that still sounds elsewhere.
+
+**Verification by ear.** Each card in the mix texture draws its form as a strip
+of blocks shaded by energy, each naming its archetype, who has the tune and who
+is playing, with the full reasoning on hover; the hover text lists every
+layer's sections and its literal mask. The solo row still hears any one voice
+alone, unmasked.
+
+9 new tests, 175/175, and all 2500 patterns on the page evaluate green.
+
+### D48 — the General MIDI bank never actually loaded (2026-08-23)
+
+Ethan: "all of the soundfonts sound as the same synth (triangle synth i think).
+this includes everything except piano."
+
+That is `GM_FALLBACK`. Every `gm_*` voice was being rewritten to `triangle`
+before evaluation, which is the documented degradation path for "the soundfont
+module did not load" — so the whole D43/D46/D47 palette, 43 instruments, was
+one oscillator. It had presumably never worked.
+
+**Cause.** `@strudel/soundfonts` ships UNBUNDLED. Its `dist/index.mjs` opens:
+
+    import { freqToMidi, noteToMidi, ... } from "@strudel/core";
+    import { registerSound, getADSRValues, ... } from "@strudel/webaudio";
+    import { startPresetNote, loadSoundfont as ... } from "sfumato";
+
+Bare specifiers. A browser has no resolver for those, so `import(SOUNDFONT_URL)`
+throws `Failed to resolve module specifier` every single time, on every network,
+forever. Not a CDN problem — a packaging assumption. The package expects a
+bundler, and the audition pages have none by design.
+
+**Why the obvious fixes are wrong.** Pulling it from a CDN that bundles
+dependencies (esm.sh and friends) resolves the imports but breaks the thing
+that matters: `registerSound` would write into a SECOND copy of
+`@strudel/webaudio`, whose registry the running scheduler never reads. The
+sounds would still not play, and now silently. Module identity is the
+requirement, not module availability.
+
+**The fix.** Fetch the source, repoint the two strudel specifiers at blob
+modules that re-export the already-running instance off the strudel global,
+point `sfumato` at a real ESM build (it parses soundfont binaries and holds no
+strudel state, so a second copy is harmless), and import the rewritten source
+as a blob. No import map, and it works from a `file://` origin. Both CDN copies
+are listed as mirrors. All eleven names the module imports were checked against
+the `@strudel/web` bundle's own namespace object before writing the shims.
+
+If an unrecognised bare specifier survives the rewrite the loader throws by
+name: the package growing a dependency should fail loudly, not import halfway.
+
+**The second bug, which is why nothing said so.** `rtBanner('', null)` ran
+whenever the sample maps loaded — clearing the banner, and with it the
+soundfont warning that had been posted seconds earlier. Every subsystem now
+appends to `RT.problems` and the banner reports all of them together. The
+soundfont message also names the symptom in the user's terms: "the whole
+General MIDI palette sounds like one synth".
+
+**Testability was the real gap.** The loader had no test because the harness had
+no `fetch`, no `Blob`, no `URL.createObjectURL` — so the one code path that was
+100% broken was also the only one nothing exercised. The logic now lives in
+exported functions (`shimSource`, `rewriteSoundfontSource`) interpolated into
+the runtime string, so there is one source of truth. The DOM helper gained the
+three stubs, and `URL.createObjectURL` returns a `data:` URL there — Node cannot
+import `blob:` but can import `data:`, so the page's own `import()` really runs
+and the loader is exercised end to end rather than mocked at the interesting
+step.
+
+6 new tests, 181/181. Verified against the real published module from both
+mirrors: 116KB, 4 imports, parses after rewrite, exports `registerSoundfonts`,
+and the shims cover every name it asks for with no gaps.
+
+### D48 addendum — the dependency below the dependency (2026-08-23)
+
+The rewrite worked; the failure moved one level down.
+
+    General MIDI soundfonts unavailable:
+      https://unpkg.com/@strudel/soundfonts@1.1.0/dist/index.mjs
+        - Importing binding name 'DEFAULT_GENERATOR_VALUES' is not found.
+
+So `@strudel/soundfonts` loaded, and `sfumato` — pointed at esm.sh, the "it is
+standalone, any copy will do" hop — did not.
+
+`sfumato`'s single import is
+`{ DEFAULT_GENERATOR_VALUES, SoundFont2 } from "soundfont2"`. And `soundfont2`'s
+package.json points its **`module`** field at `lib/SoundFont2.js`, which is not
+an ES module at all: a 174KB UMD bundle whose only export statement is
+`export{K as default}` — after esm.sh has processed it, that is. The original
+has none. So every autobuilder produces a `soundfont2` with a default and
+nothing named, and the browser correctly refuses sfumato. esm.sh and jsdelivr's
+`+esm` fail identically; I checked both, and with a browser User-Agent, since
+esm.sh varies its build by client.
+
+The fix is the same trick one level further down. Imported as an ES module the
+UMD still runs — `exports`, `module` and `define` are all undefined in module
+scope, so it falls through to its browser-global branch and assigns
+`window.SoundFont2`. So the chain is now:
+
+    @strudel/soundfonts  ->  @strudel/core     shim -> live strudel global
+                         ->  @strudel/webaudio shim -> live strudel global
+                         ->  sfumato (its own dist, fetched and rewritten)
+                                   ->  soundfont2 shim -> UMD side effect,
+                                                          names off the global
+
+Every hop is fetched with mirrors, rewritten, and blobbed, so one flaky host
+still cannot cost the palette.
+
+Two things this turned up that no amount of reading would have:
+
+- **`PIANO_FALLBACK` was wrong.** It named `gm_acoustic_piano`, which appears in
+  the package's tables but is NOT among the 125 names `registerSoundfonts()`
+  actually registers. The real one is `gm_piano`. That fallback would have been
+  silence with extra steps, in exactly the situation where the page is already
+  degraded.
+- **All 43 palette instruments register.** Checked against a real
+  `registerSoundfonts()` run rather than against the GM name list.
+
+Verified by running the whole chain end to end against the live packages: 125
+sounds registered, every palette instrument among them. My first attempt at a
+module-graph checker reported this graph clean — it followed `export *` targets
+for their exports but never traversed them for their own imports, which is
+precisely where the broken binding was. Two bad checkers and one real error
+message; the error message was right both times.
+
+4 new tests, 185/185.
+
+### D48 addendum 2 — the page has to report what it loaded (2026-08-23)
+
+Ethan, after the addendum: "all of the instruments besides piano are still
+triangle synth."
+
+I stopped guessing and drove the real page in real headless Chrome, from a
+file:// origin, clicking a card exactly as a person would. Everything passed:
+`RT.soundfonts=true`, 125 voices registered, the evaluated code carrying
+`gm_xylophone, gm_kalimba, gm_bassoon` with no substitution, `getSound()`
+returning real `{onTrigger, data}` soundfont handlers with `type: "soundfont"`,
+the lazy font audio loading for gm_music_box / gm_flute / gm_cello, and the
+webaudiofont host answering 200. The files on disk were correct; the browser
+that reported triangle was running a stale page.
+
+**That is the actual defect.** Not the stale copy — the fact that nobody could
+tell. Once the loader stopped erroring, the page said nothing at all about
+whether the General MIDI bank was live, so "still triangle" and "working
+perfectly" looked identical from the outside and cost two rounds of guessing.
+
+The status line now always states the answer, and a build stamp with it:
+
+    ready · 125 GM voices · build 2026-08-23 22:43
+    ready · GM UNAVAILABLE, every instrument is the "triangle" synth · build …
+
+The count is real, not assumed: `registerSound` is wrapped for the duration of
+the load and gm_ registrations are counted, and registering ZERO voices is now
+a failure rather than a success. Verified end to end in Chrome.
+
+That counter had a bug the test suite caught immediately, and it is the same
+shape as the original D48 bug one level up: `shimSource()` captures
+registerSound BY VALUE when the shim module evaluates, so a wrapper installed
+after the shims are built is invisible to every call the bank makes. Counting
+zero every time, it then disabled the whole bank. The counter goes on before
+the shims are built. **A shim freezes what it re-exports at evaluation time —
+that is now twice this has bitten, and it is the thing to remember about this
+whole mechanism.**
+
+Also, for the third time in this file: a backtick inside a comment inside the
+RUNTIME_JS template literal terminated the string. Comments in that file cannot
+contain backticks.
+
+185/185. Diagnosis method worth keeping: `--headless --dump-dom
+--virtual-time-budget` against a copy of the page with a probe script appended
+runs the genuine article, and would have answered the first "still triangle" in
+one step instead of three.
+
+## D49 — Harmony generation: measure the corpus, then let it be the rule (2026-08-23)
+
+Phase 1 of Ethan's stated order. Ethan also pointed at `awesome-midi-sources` as
+a possible data source. Research + design + build in `harmony-generation.md`;
+the rulings:
+
+**Almost no textbook rule survives this corpus.** Every candidate hard rule was
+tested against all 421 entries before being written down. "Every chord has a
+declared function" holds 100% and "a degree keeps its third inside one loop"
+97.2%. After that it falls off a cliff: no-immediate-repeat 96.4%, no D→S
+retrogression 93.7%, starts-on-tonic 55.3%, ends-on-tonic 32.5%, vii°→T 48.3%.
+Only the top two are laws. **Everything else is a cost, priced by counting.**
+
+**Array position is the extractor's, not the music's.** Corpus entries are
+LOOPS cut wherever the repetition was found, so "the progression starts on the
+tonic" is a fact about the cut. A start prior learned from index 0 would be
+learning the extractor. The `first[]` table is emitted anyway, labelled
+PROVENANCE ONLY with the caveat next to it, because the next reader will reach
+for it otherwise.
+
+**The cadence is at the WRAP.** The transition from a loop's last chord back to
+its first is a real musical position regardless of the cut, and it carries the
+cadence: landing on the tonic is 41/47/68% (major/minor/modal) there against
+18-22% inside the loop, and the top motions are V-I, IV-I, bVII-i and — in
+modal, correctly — the Phrygian bII-I. Counted as its own table; the final slot
+is scored against it. A declared cadence type is a hard filter on the final
+chord's function class; declaring nothing gets the corpus's own habits.
+
+**Factored, because the joint model does not fit.** As `degree:quality` tokens
+the corpus is 155 symbols and 729 bigrams with 58% hapax — memorization. As
+root-only it is 12 symbols, 123 of 144 cells, 17% hapax, with
+quality-given-degree separately well populated. So: root motion first, quality
+second. This also lines up with D34 (qualities come from the accompaniment; the
+skeleton is its own object).
+
+**Long loops are periodic.** 37 of the 54 eight-chord entries have halves
+differing in ≤2 of 4 (11 are exact). Length 8 is generated as a 4-cell plus a
+varied answer, changes drawn from the corpus's own distribution and taken from
+the END (same head, different tail). This reproduces the distinct-degree ratio
+structurally (gen 0.803/0.494 vs corpus 0.878/0.574) instead of by tuning a
+repetition penalty.
+
+**The third is pinned, colour is free.** Only 43 of 1513 (entry, degree) pairs
+flip major↔minor inside a loop, and all 43 are named devices (IV→iv, v→V, I→i).
+So a degree keeps its third for the cycle; `mixture: true` unlocks it, and never
+at slot 0 — a cycle establishes its mode before it borrows against it. The home
+chord must also SOUND a third: a loop whose tonic is only ever `Isus` states no
+mode at all. Suspensions are 'none' and neither fix nor violate a third, which
+is why `IVsus → ivm7` is allowed and `IV → ivm7` is not.
+
+**Two seeded streams, not one.** `colour` was in the root stream's seed, so
+asking for "the same progression with richer chords" silently produced a
+different progression. Roots and qualities now draw from independent
+mulberry32 streams keyed on disjoint parts of the request. Caught by a test
+asserting that colour changes qualities *and only* qualities.
+
+**Style tables must be family-split.** A per-pack table lumps a pack's major and
+minor songs together; the unsplit undertale table put a major triad on 40% of
+minor-key tonics and the style prior overrode the mode. `packs[pack][family]`.
+
+**An evidence gate on the model input** (D45's principle, applied upstream): six
+entries excluded. `un_famous_elton_john_rocket_man_…` labelled every one of its
+nine chords `-#5` — a minor triad with a raised fifth — over a filename reading
+`I-IV-I-IV`, with `match.agree: 0` recorded on the entry and `needsEar: false`
+shipped anyway. Plus one more `agree: 0` entry and four Undertale entries under
+0.6 coverage. **The importer knew and shipped it regardless**; that is the part
+worth fixing generally, and it is on the todo.
+
+**Anti-copy is REPORTED, not enforced.** `novel` says whether the root cycle
+already exists in the corpus up to rotation (rotation matters: `5 0 7 9` and
+`0 7 9 5` are one cycle). 47% of 4-chord output is new, >90% at length 8.
+Refusing to compose `I-V-vi-IV` because the corpus contains it would be a worse
+failure than composing it — it is the vernacular, not a copy. A caller who wants
+novelty filters the field.
+
+**`derivation` is the deliverable, not a debug aid.** Every slot records the
+candidates it ranked and why the winner won, including restated slots in a
+periodic answer. Phase 3 (chronological editing) cannot change a choice it
+cannot see.
+
+**On `awesome-midi-sources`:** wrong tree for harmony. Every source on it is
+performance MIDI with no chord labels, so each would have to pass through our
+own labeller — and D45 was a whole round spent finding that 75% of our `^7`
+labels had no third sounding. Scaling that pipeline 1000× scales its mistakes
+1000×. The measurement also says the root model does not need more data (123 of
+144 cells, 17% hapax); what more data buys is STYLE BREADTH and thicker cadence
+tables. Ruling: (1) ear-pass what exists first; (2) if importing, **When-in-Rome**
+(~2000 RomanText analyses, CC BY-SA) — Roman numerals are our `degrees` grammar
+and need a transcoder, not a labeller; then CoCoPops / McGill Billboard for pop,
+and ChoCo read first since it may have aggregated the work already; (3) VGMusic
+is the one entry on Ethan's list worth taking, for the game-music idiom the
+project already targets. Lakh last, probably never.
+
+Built: `scripts/build-harmony-model.mjs` (+`--check`), `src/lib/harmony-model.js`
+(counted, 415 entries after the gate), `src/lib/harmony-gen.js`, 18 tests in
+`test/harmony-gen.test.js` covering both the mechanical contract and the
+CALIBRATION against corpus statistics. 96 composed progressions now sit on
+`audition/progressions.html` beside the 188 imported ones behind a `source`
+filter, same three textures, derivation in the tooltip. 203/203.
+
+## D50 — Legal is not the same as good: exemplar variation (2026-08-24)
+
+Ethan, on reading D49: *"i wanted like nice harmonies, not just 'valid' ones.
+because some procedurally generated chords didn't sound good although they were
+legal… the idea is that we use popular ones we know to be successful as
+foundations then edit the rhythm / patterns a tiny bit and blend them
+accordingly. is this a valid strategy or are there possibly better ones?"*
+
+**He is right, and D49 drifted from a ruling this project had already made.**
+The atlas ruling is "retrieval returns a NEIGHBORHOOD, never a single entry as
+the answer; an entry is an example of a family, the family is the unit of
+style". D49 built a from-scratch sampler anyway.
+
+**Why the counted sampler cannot reach quality, and why no amount of better
+counting fixes it:**
+1. *Goodness is not local.* A bigram model chains individually-common moves into
+   a progression with no arc — the classic Markov-music failure, and exactly
+   what Ethan describes hearing.
+2. *The prior is fitted to what EXISTS, not what WORKS.* 161 of the 421 entries
+   are whatever happened to repeat inside an Undertale file.
+3. *There is no quality signal in the corpus at all.* 0 of 421 entries are
+   ratified; no field anywhere records that one progression is better.
+
+Exemplar variation sidesteps all three: quality is INHERITED from something that
+already works instead of synthesized from statistics.
+
+**The one correction to the brief.** "Edit a tiny bit" is not safe: one chord of
+a four-chord loop is 25% of the harmony, and on the cadence it destroys the very
+thing that made the loop work. So a variation is never a perturbation — it is
+one of eight operations theory guarantees preserve function, each DECLARING what
+it keeps, with a `cost` that is an audibility ladder (0 = barely, 1 =
+unmistakable) rather than a cleverness ranking:
+`recolour .15 · suspend .30 · rotate .45 · third_sub .50 · mixture .55 ·
+make_ii_V .70 · secondary_dominant .80 · tritone_sub 1.0`. The `intensity` knob
+is expressed in those units, so gentle and bold requests reach for different
+operators. Same shape as D32's octave-displacement ruling: a closed operator set
+over the existing representation, not an enumerated library of results.
+
+**D49 becomes the verifier, and the bar is the exemplar itself.** After every
+operator the result is scored against the counted model; a variation may not be
+less idiomatic than the progression it came from — on root motion, on chord
+quality, or on the cadence. Setting the threshold from the exemplar rather than
+from a hand-picked constant is the whole trick, because the exemplar's own worst
+move is often the interesting one.
+
+**Three bugs the build found, all of them the same shape — a check that could
+not see what it was supposed to police:**
+- *The flat candidate pool.* Ranking every (operator, site) pair together made
+  an operator's chance proportional to how many sites it happened to have;
+  `recolour` offers one on nearly every chord, `tritone_sub` only when a
+  dominant is already resolving by semitone, so `suspend` took ~90% of every
+  variation and `third_sub`/`rotate` never fired at all. Fixed with a TWO-STAGE
+  pick: choose the operator from `intensity`, then choose where.
+- *The gate was blind to colour.* `cycleScore` scored root motion only, so
+  `mixture`, `recolour` and `suspend` — which move no root — passed unexamined.
+  `mixture` put bIII minor in a minor key and the verifier reported no change.
+  Added a quality term, gated on the same exemplar-relative bar.
+- *Neither the gate nor the model could see a collapsed substitution.* A
+  `third_sub` turned Ab into its relative minor Cm in a cycle whose tonic was
+  already Cm, producing `Cm Cm Eb Bb`. The counted model cannot object — the
+  corpus repeats chords, so P(0→0) is ordinary — but a substitution whose result
+  is its own neighbour has substituted nothing. Now a hard filter in the ops
+  layer, and only for NEWLY introduced duplicates. Separately, a `third_sub`
+  round-tripped `Cm7 → Eb → Cm` and spent the whole budget dropping a seventh;
+  the varier now refuses to revisit a cycle it has already passed through.
+
+**THE EXEMPLAR POOL IS THE REAL DEPENDENCY, and it is Ethan's to fill.**
+`exemplarPool()` wants entries ratified by ear. There are none — and the
+audition pages have been writing keep/kill verdicts to `localStorage` since D28
+with **no path back into the library**. Until that loop closes the pool falls
+back to the `unison-famous` pack, whose provenance IS commercial success, and
+returns a `caveat` field saying so; a test asserts the caveat is present exactly
+while nothing is ratified. The strategy is only as good as its foundations, and
+right now the engine cannot tell a good progression from a present one.
+
+**Other strategies weighed:** rank candidates by a learned quality score (right
+long game, blocked on the same missing labels — the verdicts are the bootstrap);
+global optimization over a whole cycle rather than chord-by-chord (attacks
+"goodness is not local" directly, the strongest complement to D50, not built);
+a neural chord LM (needs data we lack, gives up the explainability every other
+decision here keeps — no).
+
+Built: `src/lib/harmony-prior.js` (the counted prior extracted so the generator
+and the varier cannot hold different opinions about plausibility),
+`src/lib/harmony-ops.js`, `src/lib/harmony-vary.js`, 15 tests in
+`test/harmony-vary.test.js`. `audition/progressions.html` now carries 372 cards
+in four arms — 188 imported, 96 composed, and 22 foundations each followed
+immediately by its variations, so the page reads as "here is the thing that
+works, here is what it became". 13 of the 22 foundations are voiceable by the
+`me_*` dictionaries; the other 9 need qualities from D28's deferred tail.
+218/218.
+
+## D51 — The ear, written down; and what the first pass actually measured (2026-08-24)
+
+Ethan pasted 37 keep/kill verdicts and asked *"how am i supposed to give you
+'good songs' outside of this?"*. Both halves mattered.
+
+**The loop is closed.** `scripts/import-verdicts.mjs` takes an audition page's
+exported JSON and writes `src/lib/verdicts.js`; `progressions-tail.js` overlays
+it onto `ALL_PROGRESSIONS` once, so `ratified` finally means something and
+`findProgressions({ ratifiedOnly: true })` and `exemplarPool()` just work. 36 of
+the 37 landed (`ut_spooktune_spookwave_p3` no longer exists — a stale verdict
+from an older build, reported rather than dropped silently). **Kills are kept**:
+25 rejections are the only negative evidence this project has ever had.
+
+**A verdict answers `needsEar`, whichever way it went.** A killed entry has been
+heard; it is not still waiting for an ear. Four existing tests asserted the
+pre-D51 world ("nothing is ratified", "needsEar follows coverage") and were
+updated to the stronger invariant: a verdict overrides the automatic honesty
+flags, and only a verdict may.
+
+**THE FINDING, AND IT IS NOT ABOUT TASTE.** Measured 19 features across keep vs
+kill. The single strongest separator is **`coverage`** — how much of the
+sounding material the chord labels explain — at **0.95 for keeps against 0.84
+for kills (d = 0.96)**. Coverage measures TRANSCRIPTION quality. Six kills sit
+under 0.80 (Your Best Nightmare twice at 0.57, Amalgam 0.65, Ghouliday 0.65,
+Waterfall 0.67, Undertale 0.74). **So a large share of the first ear pass was
+Ethan rejecting bad transcriptions, not expressing preference** — those are the
+D45 labeller's problem and no generator change addresses them.
+
+**The real taste signal is simplicity of chord quality**, and it appears three
+independent ways: kept entries are 85% plain triads against 59% (d = 0.84), use
+fewer distinct qualities (2.1 vs 2.8, d = -0.64), and score far better on
+quality-given-degree under the counted model (-0.81 vs -1.94, d = 0.94). The
+kills are full of m6, diminished, 6ths and ^7 on chromatic degrees. That is what
+makes it credible — not the effect sizes, which n = 36 cannot support on their
+own, but that three separate measures of one underlying thing all moved
+together. Recorded as `tasteProfile()` in `src/lib/taste.js`, DERIVED from the
+verdict file rather than hard-coded, reporting its own n and refusing to call
+itself more than `confidence: 'low'`.
+
+**What predicts nothing: cadence strength, transition plausibility, chords per
+bar, whether the loop starts on the tonic — all |d| < 0.1.** Those are precisely
+what D49's verifier measures. **The verifier is orthogonal to the only taste
+data that exists.** Worth knowing before trusting it, and a reason not to bolt
+the taste profile onto the generator defaults yet.
+
+**The ear outranks the proxy.** `exemplarPool()` gained a coverage floor on the
+strength of the finding above — and it immediately excluded two entries Ethan
+KEPT (Gaster's Theme 0.83, Alphys 0.84). That is the proxy overruling the
+evidence it exists to approximate. The floor now applies only to entries nobody
+has judged. General rule, worth keeping: a measured stand-in never overrides the
+thing it stands in for.
+
+**The pool is now three-state, and says which.** 0 ratified → the unison-famous
+pack alone, with a caveat. Fewer than 20 → ratified first, famous supplementing,
+caveat naming the shortfall (currently 11 + 22 = 33). 20+ → the ear alone, no
+caveat. A silent stand-in passing itself off as Ethan's ear is the failure mode
+the tests are pointed at.
+
+**On the question.** Keep/kill on cards is the narrowest channel available and
+this round proves it: the strongest thing it measured was transcription error.
+The ranked answer, recorded in `harmony-generation.md` §9 — (1) drop MIDI in
+`audios/`, which is the highest-bandwidth channel and already has the D30/D45
+machinery behind it; (2) name songs and let the pipeline find them; (3) point at
+one moment and say what about it, which is what produced D41's two-hand
+principles and D47's form work and is the highest value per minute of his time;
+(4) A/B pairs rather than keep/kill, which is easier to judge and yields a
+ranking instead of a binary — not built, cheap to build.
+
+223/223.
+
+## D52 — A second corpus, and an instrument that asks better questions (2026-08-24)
+
+Ethan: *"can you extract midi from here then build the necessary ui to improve
+our music generation, whether that's A/B or open answer questions etc? ... since
+these are complete songs, feel free to separate harmony from melody and leverage
+each to improve its corresponding thing."*
+
+**VGMusic, not Lakh.** Of everything on awesome-midi-sources, VGMusic is the one
+whose FORMAT suits the brief: sequenced game MIDI, one instrument per track, the
+melody usually alone on a channel. Separating melody from harmony was the point,
+and a scraped piano-roll performance has no part structure to recover. 400 files
+/ 354 games, ≤2 per game (breadth of progressions beats depth of one
+soundtrack), 8-90KB, deterministic hash so a re-run fetches the same corpus. The
+`.mid` files are gitignored; the manifest is committed and credits every
+sequencer.
+
+**One pipeline, not a copy.** `src/ingest/corpus.js` holds `loadSong()` and
+`chordLoops()`, lifted out of import-undertale.mjs. Verified behaviour-
+preserving by reconstructing the pre-refactor importer and diffing all three
+generated files: byte-identical.
+
+**PERCUSSION WAS NEVER FILTERED, and it broke three things at once.** GM channel
+10 is drums. Undertale is piano arrangements (0.3% of notes, 2 files) so this
+never surfaced; game MIDI is **24% of notes across 52 of 60 files**. It meant:
+`splitHands()` picks the highest-mean-pitch track and a hi-hat pattern WINS
+that, so the "melody" was a drum part; the chord labeller counted drum-slot
+pitch classes as harmony, pushing coverage under the gate and yielding **33
+progressions from 391 songs**; and drums voted in the Krumhansl-Schmuckler key
+solve. Filtered in `loadSong()`, and the yield went 33 -> 88.
+
+**The fix reached backwards into the ear data.** Both Amalgam entries — which
+Ethan KILLED — had their key mis-solved as B:minor when it is D:major. He was
+rejecting a broken transcription, precisely the failure mode D51 measured.
+Ruling: **a verdict judges the music that played.** `verdicts.js` now records
+the `degrees` snapshot it judged, and the library overlay refuses to honour a
+verdict whose entry has since been re-transcribed — the entry returns to
+`needsEar` rather than silently carrying a stale label. Two kills voided.
+
+**A third of the "melodies" were arpeggio channels.** After the percussion fix
+the profile still read 9 onsets/bar and 90% bar-rhythm repetition — an
+ostinato's fingerprint, not a tune's. Game MIDI routinely puts a fast
+broken-chord part above the melody. `looksLikeArpeggio()` needs all three
+signatures together (bar rhythm repeats nearly every bar, >=6 onsets/bar, >35%
+leaps); 123 of 364 dropped.
+
+**Melody is a PROFILE, never a tune.** D30's ruling stands — "extracting the
+melody of X would be copying a tune, not abstracting a habit" — and the
+sanctioned artifact already existed: melody-profiles.js's toby-fox numbers came
+from 37,464 measured Undertale intervals. So the melody side of this corpus
+emits a distribution, and the validation is that **two independently measured
+corpora now agree**: step .323 vs .34, octave .061 vs .066, upBias .533 vs .53,
+stepInertia .559 vs .55. Before the two filters, octave read .137 and step .193
+— the divergence WAS the contamination. (`cellRepetitionFloor` is not comparable
+between them and the file says so.)
+
+**Harmony gated on what the ear actually rejects.** The vgmusic pack requires
+coverage >= 0.90 where the Undertale pack keeps entries down to 0.48, because
+D51 measured coverage as the strongest predictor of a kill. 88 entries, mean
+coverage 0.951.
+
+**The judging instrument** (`audition/judge.html`, 36 trials) is built around
+the three things D51 found broken about keep/kill:
+- **22 A/B pairs** — same texture, tempo, key. Which side is A is hashed from
+  the pair, so an arm never sits on one side and a side bias cannot read as a
+  preference. Each pair states the question it settles: variation vs statistical
+  composition (6), does a substitution help or hurt (8), is composed harmony
+  competitive (4), which corpus is worth mining (4).
+- **10 layer trials** — chords / chord rhythm / voicing / sound / nothing. The
+  direct fix for the confound.
+- **4 open trials** — free text, the channel that produced D41 and D47.
+
+`import-verdicts.mjs` detects the judge format and **tallies** it, printing
+`TOO FEW TRIALS to call` whenever n < 8 so a 4-2 cannot read as a result.
+
+229/229. Registry now spans four packs, 511 progressions.
+
+### D52 addendum — the judge page never asked for the bundle (2026-08-24)
+
+Ethan hit "Could not play: the strudel bundle did not load" on the new page.
+Cause: `audition-judge.mjs` declared `WEB_BUNDLE` and **never emitted the
+`<script src>` tag**. The page had no Strudel at all, and the runtime's message
+blamed unpkg, a content blocker, or the network — none of which were involved.
+
+**Why no test caught it.** `runPage()` supplies a stub `strudel` global, so a
+page that never references the bundle passes every behavioural test in the
+suite. The DOM shim can prove the handlers work; only the HTML can prove the
+page asked for its dependency. New test reads the four pages' HTML directly and
+requires an actual `<script src>` naming `@strudel/web@`.
+
+**The bigger miss, fixed while here: the bundle had no mirror.** D42's addendum
+gave the SAMPLE MAPS mirrors after a live blackout, but the bundle everything
+depends on kept a single hard-coded unpkg URL — so one blocked host takes the
+whole page down. `WEB_BUNDLE_URLS` now lists unpkg + jsdelivr (byte-identical,
+458641 bytes each, same pinned 1.1.0 — a test asserts the mirrors agree on
+version, since a silent fallback to a different engine would be worse than
+failing). `rtLoadBundle()` injects mirrors in turn when the page's own tag did
+not take, and the failure message now NAMES every mirror it tried instead of
+guessing at the reader's network.
+
+Verified in real headless Chrome from `file://`: the page loads the bundle, 36
+trials render, no banner. Then verified the fallback by pointing both the tag
+and the first mirror at a dead host — `bundleGlobal=true`, still no banner.
+231/231.
+
+## D53 — taste is recorded per FACET, not per card (2026-08-24)
+
+Ethan's notes after the judge page, three sentences that all say the same thing:
+
+> "Cm Bm is a pretty good transition. Cm B is also pretty good. i rejected the
+>  ones that had these simply because the progression itself sounded weird but
+>  these pairs themselves are good (perhaps by themselves or in a different
+>  progression)"
+>
+> "the C sus followed by the resolved version of it could also be good as a
+>  resolver last 2/4 measures ... as it's usually done in the music industry"
+>
+> "some of the chords i rejected sound worse only in the format they were
+>  delivered. there will also be different formats."
+
+**The ruling: one bit per card is an average over facets Ethan judges
+separately, and averaging them destroys the evidence.** D51 recorded `keep`/
+`kill` per library entry. A kill on a cycle threw away everything true about the
+pairs inside it — which is literally what happened to `Cm→Bm`. Verdicts now name
+which facet they judge: `pair` (root motion), `wrap` (the same motion as a
+cadence), `chord` (a quality on a degree), `texture` (a rendering format),
+`cadence` (a device at the loop seam), `cycle` (D51, unchanged).
+
+**A facet verdict is pseudo-counts, not an override.** `EAR_COUNT = 8` — the
+same constant as `BACKOFF_C`, so one click is worth exactly the evidence at
+which a table half-owns its own row. A liked pair adds 8 observations of that
+transition to the family row; a disliked one adds 8 observations of "something
+else happened from here", spread proportionally over what the corpus does play.
+The ear therefore speaks in the corpus's own currency, composes with the
+existing backoff instead of sitting beside it as a second opinion, and degrades
+correctly: on a 500-observation row one vote moves nothing, on a thin row it
+moves a lot — which is right, because a thin row is where the corpus knows
+least. `ctx.ear === false` reproduces the pre-D53 model exactly, so the overlay
+stays falsifiable.
+
+**A transition is not a cadence, and conflating them was a measured bug.** The
+minor wrap row out of the tonic holds 57 observations against the inner row's
+287. Folding the two `Cm→Bm` votes into both tables took P(0→11) *as an ending*
+from 0.07% to 19.8% — second-likeliest cadence in the family, off a side note
+about a transition. `pairs` now feeds `inner` only; `wraps` is a separate bag
+with its own probe. Inner moved 3.4% → 8.4%, which is the intended size of a
+nudge. This is D49's loop-wrap ruling applied to the ear.
+
+**`suspend` was position-blind; `cadential_sus` is the fix.** A suspension is a
+delayed arrival, not a colour, so it means nothing unless the arrival follows
+it. The new operator offers exactly two sites — the last chord becomes a sus on
+the FIRST chord's root (so the loop seam is `Xsus → X`, the real cadential
+figure for a cycle), or slot n−2 becomes a sus on slot n−1's root (the literal
+"last two measures"). Cost 0.35: gentler-sounding than `suspend` but it consumes
+the chord it replaces.
+
+Two guards came out of it, both caught by tests rather than by argument:
+- `legal()`'s neighbour-collapse exemption is for ONE named index, not the whole
+  move. Waving it entirely turned `... bVII I7 bVII |` into `... I7 Isus I7 |` —
+  the resolution ahead of the sus was the device, the duplicate behind it was
+  still a collapse.
+- **a suspension must resolve, and operators compose.** `cadential_sus` put a sus
+  at the wrap resolving into the tonic; a later plain `suspend` suspended the
+  tonic, leaving `Csus | Csus` across the seam. Both sites individually legal,
+  the pair resolving nothing. The check has to live in `legal()` because it can
+  only be evaluated after every later edit.
+
+**audition/facets.html** collects all of it. Three tabs: 467 pair tiles (every
+attested root motion as a two-chord loop, the destination offered under the two
+qualities the corpus puts there — because Ethan liked the motion under *both*
+`Bm` and `B`, and a page playing only one could not have learned that); 31
+harmonies × 7 formats, **multi-select**, four of them library figurations rather
+than voicing comps, because "arpeggio vs stacked" is the distinction he named;
+and 20 harmonies × 3 endings built by the real operator.
+
+**Selected is not the opposite of rejected.** Three states everywhere — unjudged,
+✓, ✗ — because in a select-all grid the unclicked tiles are overwhelmingly
+"didn't get to it", and reading those as dislikes manufactures negative evidence
+out of an attention span. A ✓ on a pair tile writes the motion AND the chord as
+two separate facts, so ✓ `Cm→Bm` and ✗ `Cm→B` cannot cancel to nothing.
+
+The pair grid sorts by **leverage** by default — `EAR_COUNT / (n + EAR_COUNT)`,
+thin rows first — so the clicks land where an opinion actually changes what the
+generator reaches for.
+
+`src/lib/facet-seeds.js` is hand-written and never generated; the importer merges
+it UNDER every import, so deleting the output and re-importing cannot lose what
+Ethan said in conversation. Ethan's two pairs are seeded there with the sentence
+that produced them. **Nothing is seeded into `cadences`**: "could also be good"
+is a hypothesis, and the honest response was to build the probe, not bank the
+guess.
+
+Also fixed here: the DOM shim's `localStorage` was a no-op, so a page that saved
+nothing would have passed every test. 245/245.
+
+## D54 — the judge card plays six interval patterns, and every trial takes a note (2026-08-24)
+
+> "rebuild the judge.html card, using a variety of interval patterns for each
+>  chord progression. also allow a 'custom comments' box (small) on the side"
+
+**Why the obvious implementation is wrong.** Giving side A one pattern and side
+B another would destroy the only property that makes an A/B worth anything: that
+a single thing differs. So the pattern switch is **global and applies to both
+sides at once**. At every instant the contrast is still controlled; what changes
+is that format becomes a dimension you can sweep rather than a constant you are
+stuck with. Switching while a side is sounding **hot-swaps under the running
+transport**, so "does my preference survive being arpeggiated" is one keystroke.
+
+Six patterns, ordered stacked → spread. Two are voicing-dictionary comps; four
+are corpus figurations (D30) — how the source material actually distributes a
+chord in time, not something invented here:
+
+| | |
+|---|---|
+| block | all tones at once, pushed comp — the D52 original |
+| wide pad | sustained, spread across a tenth |
+| arpeggio | `R+ 3+ 5 3+` |
+| wide arp | `5 R+ 3+ 5+ 3+ R+` — over an octave and a half |
+| oom-pah | `R 3.5 R 3.5` |
+| roots only | `R R+` octaves — **no thirds at all**: does the progression survive? |
+
+**Every trial ships every pattern, unconditionally.** A switcher with a dead
+button is worse than no switcher: you would form an impression of A under four
+patterns and B under six without noticing. A test asserts both sides offer
+identical pattern sets, and all 348 (trial × side × pattern) combinations are
+evaluated through the engine's own transpiler at build — not sampled, because a
+switcher is only trustworthy if every button on it has been proven to sound.
+
+**Answers now record `pattern` and `heard`.** What was sounding at the moment of
+decision, and every pattern auditioned on that trial. The importer prints the
+pooled tally *and* the same contrasts split by pattern, plus the median number
+of patterns auditioned — flagging `MOSTLY ONE PATTERN: these are not
+texture-robust results` when it is under 2. A preference that flips between
+block and arpeggio is a finding about texture; one that holds across six is a
+finding about harmony. Reading a pooled tally as a harmony result without that
+split would be D51's confound again in a new costume. A/B trials also gain a
+**"depends on the pattern"** answer, since that is now a thing the page can
+actually mean.
+
+**A note box on every trial.** The first build offered free text only on `layer`
+and `open` — three quarters of the page had nowhere to put one. Every genuinely
+load-bearing thing Ethan has said this project (the two-hand principles, the
+whole form model, "Cm Bm is a pretty good transition") arrived as an unsolicited
+aside. Notes save on every keystroke into their own localStorage key, survive a
+skip, and **notes on trials that were never answered still export** as
+`strayNotes`. Also fixed: `Cmd+Enter` in the box used to answer `skip`, throwing
+the trial away mid-sentence; it now submits an `open` trial and otherwise just
+blurs so the single-key shortcuts work again.
+
+**A bug I shipped in D53, found while here.** Adding the facets branch to
+`import-verdicts.mjs` left the judge branch nested inside the `--facets` block
+*after* a `process.exit(0)` — dead code referencing an out-of-scope variable. The
+judge import path was completely broken and nothing caught it, because every
+test exercised the library and none exercised the script's routing. Fixed, with
+a regression test that runs the importer as a subprocess against a fixture.
+
+Verified in real headless Chrome: 6 pattern buttons, hot-swap mid-playback keeps
+the transport, `heard` accumulates, and a keyboard answer carries the note,
+`pattern: "arp"` and `heard: ["block","arp"]`. 248/248.
+
+### D55 — a tone is a choice you vote on, not a mode the page is in (2026-08-24)
+
+> "the tones shouldnt be a 'turn on' option, it should just be a choice. so
+>  instead of 'play', it should be '[tone x]' with a triangle play button on the
+>  right side of the button. pressing it hihghlights it and all the tones i
+>  highlight under both chords are the ones i like. I can also choose to dislike
+>  a tone from a chord with a thumbs down icon button to the right of the play
+>  button (small)."
+
+D54's global lockstep switcher was the wrong shape. It made the tone a **mode**
+the whole page was in, which meant the only thing you could express about a tone
+was which one you were currently listening through. Ethan wants to express
+whether it *works* — and that is a per-chord fact, not a page state.
+
+So the switcher is gone and the standalone play button with it. Each side now
+lists all six tones as rows:
+
+```
+[ arpeggio          ] [ ▶ ] [ 👎 ]
+  ↑ click = works here   ↑ play   ↑ does not work here
+```
+
+**The vote is keyed by the HARMONY, not the trial** — by the progression's
+`degrees` string, because the same progression appears in several trials and an
+opinion about how it should be voiced does not depend on what it was being
+compared against. A tone liked on **both** sides of a trial gets a `BOTH` badge:
+that held across two different harmonies, which is the stronger claim, and it is
+the literal reading of "all the tones i highlight under both chords".
+
+**Three states, never two**, as in D53: untouched means "haven't decided", and
+only the thumbs down is a rejection. Reading silence as rejection would
+manufacture negative evidence out of how far down the list you got.
+
+**These votes reach the model.** They are the same evidence `audition/facets.html`
+collects on its textures tab, so the importer merges them into the same facet
+bags rather than stranding them in `judgments.js` where nothing reads them. Two
+pages, one opinion about which renderings work; the raw clicks stay in their own
+`toneDetail` bag only because the key spaces differ (facets keys by library name,
+judge by `degrees`, since a generated progression has no name).
+
+Losing the lockstep switch costs the guarantee that both sides were always heard
+under the same tone. That is now something the data reports rather than something
+the UI enforces: `pattern` and `heard` are still recorded per answer, and the
+importer still prints the contrasts split by tone and warns when the median
+tones-per-trial is under 2.
+
+**Two bugs Ethan reported alongside it, both real:**
+
+- **`back` moved nothing.** The counter and progress bar were both driven by
+  `Object.keys(answers).length` — the *answered* count — so stepping back looked
+  like it had failed. Position and progress are different facts: the bright bar
+  and the counter now track where you are, a dimmer fill behind shows how much is
+  answered, and revisiting an answered trial says so.
+- **Position was not persisted.** `i` was recomputed as "first unanswered" on
+  every load, so a refresh jumped straight past whatever you had gone back to
+  look at. Now written to `localStorage` on every move. Guarded on key
+  *presence* rather than parsed value, because `Number(null)` is `0` — testing
+  the number alone would read "never saved" as "saved position 0" and strand a
+  returning user at trial 1 instead of their first unanswered trial.
+
+Verified in real headless Chrome: 12 tone rows across two sides, no stray play
+button, likes on both sides raise the `BOTH` badge, thumbs-down strikes the row,
+skip/back move the counter and bar, and a reload lands back on the same trial
+with the answered count intact. 249/249.

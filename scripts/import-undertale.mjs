@@ -26,8 +26,8 @@
 import { writeFileSync, readdirSync } from 'node:fs';
 import { join, basename, relative } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { readMidi, triage } from '../src/ingest/midi.js';
 import { splitHands, chordTimeline, solveKeyKS, barFigures, pickGrid, chordAt } from '../src/ingest/piano.js';
+import { loadSong, chordLoops, mean, median, slug } from '../src/ingest/corpus.js';
 import { qualityPcs } from '../src/ingest/numerals.js';
 
 const ROOT = join(fileURLToPath(new URL('..', import.meta.url)));
@@ -38,9 +38,6 @@ const PC_NAMES = ['C', 'Db', 'D', 'Eb', 'E', 'F', 'Gb', 'G', 'Ab', 'A', 'Bb', 'B
 const mod12 = (x) => ((x % 12) + 12) % 12;
 const round2 = (x) => Math.round(x * 100) / 100;
 const round3 = (x) => Math.round(x * 1000) / 1000;
-const mean = (xs) => (xs.length ? xs.reduce((a, b) => a + b, 0) / xs.length : 0);
-const median = (xs) => { const s = [...xs].sort((a, b) => a - b); return s.length ? s[Math.floor(s.length / 2)] : 0; };
-const slug = (s) => s.toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/^_|_$/g, '').slice(0, 40);
 // entry names stay readable: cut at word boundaries past 22 chars
 const shortSlug = (s) => slug(s).split('_').reduce((a, w) => (a.length + w.length + 1 <= 22 ? (a ? a + '_' + w : w) : a), '');
 function gcd(a, b) { return b ? gcd(b, a % b) : a; }
@@ -66,95 +63,14 @@ const songs = [];
 const skipped = [];
 
 for (const f of files) {
-  let midi;
-  try { midi = readMidi(join(DIR, f)); } catch (e) { skipped.push(`${f} — ${e.message}`); continue; }
-  if (!midi.notes.length) { skipped.push(`${f} — no notes`); continue; }
-  const title = basename(f, '.mid').replace(/^Undertale - /, '').trim();
-  const barTicks = midi.ppq * 4 * (midi.timeSig[0] / midi.timeSig[1]);
-  const totalBars = Math.max(1, Math.round(midi.endTick / barTicks));
-  const tri = triage(midi);
-  const { acc, mel, method } = splitHands(midi, barTicks);
-  const key = solveKeyKS(midi.notes);
-  const timeline = chordTimeline(midi.notes, barTicks, totalBars, { melody: mel, key });
-  const grid = acc.length ? pickGrid(acc, barTicks, midi.timeSig[0]) : null;
-  const figs = grid ? barFigures(acc, timeline, barTicks, totalBars, grid.grid) : [];
-  // BAR-LOCKED timeline: every bar wears its bar-start chord. Own-figure tokens
-  // are computed against THIS (not the half-bar truth) so that re-rendering the
-  // figure over bar-start chords round-trips to the exact source pitches —
-  // notes the bar-start chord doesn't contain become '~n' literals, which
-  // preserve the interval verbatim.
-  const tlLocked = [];
-  for (let b = 0; b < totalBars; b++) {
-    const seg = chordAt(timeline, b * 2);
-    tlLocked.push(seg
-      ? { start: b * 2, end: b * 2 + 2, rootPc: seg.rootPc, quality: seg.quality, coverage: seg.coverage }
-      : { start: b * 2, end: b * 2 + 2, rootPc: 0, quality: '', coverage: 0 });
-  }
-  const figsLocked = grid ? barFigures(acc, tlLocked, barTicks, totalBars, grid.grid) : [];
-  songs.push({
-    file: f, title, slug: slug(title), midi, barTicks, totalBars, tri, acc, mel, method,
-    key, timeline, grid: grid?.grid ?? null, figs, figsLocked,
-    meter: `${midi.timeSig[0]}/${midi.timeSig[1]}`,
-    bpm: midi.tempoBpm ? Math.round(midi.tempoBpm) : null,
-  });
+  const song = loadSong(join(DIR, f), { titleOf: (n) => basename(n, '.mid').replace(/^Undertale - /, '').trim() });
+  if (song.skipped) { skipped.push(song.skipped); continue; }
+  songs.push(song);
 }
 
 // ---------------------------------------------------------------------------
 // Progressions: the chord loops each song actually cycles
 // ---------------------------------------------------------------------------
-function chordLoops(song) {
-  // Half-bar ROOT sequence. Loop matching runs on roots only: the quality
-  // labeler flaps between colour spellings of one chord (Bb5 -> Bb6 while a 6th
-  // passes through) and matching on full labels shredded real loops into
-  // 13-"chord" runs. Root movement IS the progression; each merged segment's
-  // quality is then the coverage-weighted majority of its half-bar labels.
-  const nHalf = song.totalBars * 2;
-  const roots = [], quals = [], covs = [];
-  for (let h = 0; h < nHalf; h++) {
-    const seg = chordAt(song.timeline, h);
-    roots.push(seg ? seg.rootPc : -1);
-    quals.push(seg ? seg.quality : null);
-    covs.push(seg ? seg.coverage : 0);
-  }
-  const eqSeg = (i, j, L) => { for (let k = 0; k < L; k++) if (roots[i + k] !== roots[j + k]) return false; return true; };
-  const spans = [];
-  for (const L of [16, 12, 8, 6, 4]) {
-    for (let i = 0; i + 2 * L <= nHalf; i++) {
-      let reps = 1;
-      while (i + (reps + 1) * L <= nHalf && eqSeg(i, i + reps * L, L)) reps++;
-      if (reps >= 2) spans.push({ start: i, L, reps, covered: L * reps });
-    }
-  }
-  spans.sort((a, b) => b.covered - a.covered || a.start - b.start);
-  const out = [];
-  const seen = new Set();
-  const taken = [];
-  for (const s of spans) {
-    // RLE the loop window into root segments, quality by weighted vote
-    const chords = [];
-    for (let k = 0; k < s.L; k++) {
-      const h = s.start + k;
-      if (roots[h] < 0) { chords.length = 0; break; }
-      const last = chords[chords.length - 1];
-      if (last && last.rootPc === roots[h]) { last.half++; last.votes.set(quals[h], (last.votes.get(quals[h]) ?? 0) + Math.max(0.01, covs[h])); }
-      else chords.push({ rootPc: roots[h], half: 1, votes: new Map([[quals[h], Math.max(0.01, covs[h])]]) });
-    }
-    if (chords.length < 2) continue;
-    for (const c of chords) c.quality = [...c.votes.entries()].sort((a, b) => b[1] - a[1] || String(a[0]).localeCompare(String(b[0])))[0][0];
-    // a "loop" that is one chord split by a passing label isn't a progression
-    if (new Set(chords.map((c) => c.rootPc)).size < 2) continue;
-    const sig = chords.map((c) => `${c.rootPc}:${c.quality}x${c.half}`).join(' ');
-    if (seen.has(sig)) continue;
-    if (taken.some(([a, b]) => s.start < b && s.start + s.covered > a)) continue; // overlaps a better span
-    seen.add(sig);
-    taken.push([s.start, s.start + s.covered]);
-    const cov = mean(covs.slice(s.start, s.start + s.L));
-    out.push({ chords, loopBars: s.L / 2, reps: s.reps, atBar: s.start / 2, coverage: cov });
-    if (out.length >= 3) break;
-  }
-  return out;
-}
-
 /** The song's OWN accompaniment pattern over one loop period, as a multi-bar
  *  figuration — "take those intervals and make them the thing along with the
  *  chords" (Ethan, audition round 3). The harmony of these songs IS its

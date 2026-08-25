@@ -3,7 +3,7 @@
 
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { planArrangement, renderArrangement, PARTS } from '../src/binder/arrange.js';
+import { planArrangement, renderArrangement, planForm, renderForm, maskFor, PARTS } from '../src/binder/arrange.js';
 import { INSTRUMENTS } from '../src/lib/instruments.js';
 import { bindMelody, melodyReport } from '../src/binder/bind.js';
 import { evaluateSong, hapsByLabel } from '../src/harness/evaluate.js';
@@ -43,18 +43,63 @@ test('D43: every layer records what it is and what it contributes (edit-ready)',
   assert.ok(plan.notes.length > 0, 'the plan must explain its own reasoning');
 });
 
-test('D43: layers never double up on an instrument or a register lane', () => {
+test('D43/D46: layers never double up on an instrument or a register', () => {
+  // The register a layer occupies is its OCTAVE, not the name of the lane that
+  // proposed it: an instrument's range can clamp two different lanes onto the
+  // same octave, and two lanes can survive as different octaves.
   for (const role of ['boss', 'cutscene', 'town', 'joke', null]) {
     for (const bpm of [70, 112, 175]) {
       const plan = planArrangement({ ...SITUATION, role, bpm, name: `s_${role}_${bpm}` });
       const instruments = plan.layers.map((l) => l.instrument);
-      const lanes = plan.layers.map((l) => l.lane);
+      const octaves = plan.layers.map((l) => l.octave);
       assert.equal(new Set(instruments).size, instruments.length, 'an instrument was cast twice');
-      assert.equal(new Set(lanes).size, lanes.length, 'two layers claim the same lane');
-      assert.ok(!lanes.includes('lead') || plan.base.lead.silenced,
-        'nothing may sit in the piano lead lane unless the lead was taken over');
+      assert.equal(new Set(octaves).size, octaves.length, 'two layers claim the same octave');
+      for (const l of plan.layers) {
+        assert.ok(l.octave !== 5 || plan.base.lead.silenced || l.derives === 'lead',
+          `${l.instrument} plays its own line in the piano lead's octave`);
+      }
     }
   }
+});
+
+test('D46: every layer plays in a register its instrument actually has', () => {
+  for (const role of ['boss', 'cutscene', 'town', 'joke', 'character', 'overworld', null]) {
+    for (const bpm of [70, 112, 175]) {
+      for (const accOctave of [2, 3, 4]) {
+        const plan = planArrangement({ ...SITUATION, role, bpm, accOctave, name: `r_${role}_${bpm}_${accOctave}` });
+        for (const l of plan.layers) {
+          const [lo, hi] = INSTRUMENTS[l.instrument].range;
+          assert.ok(l.octave >= lo && l.octave <= hi,
+            `${l.instrument} was put at octave ${l.octave}, outside its ${lo}-${hi} range`);
+          assert.equal(l.range.join('-'), `${lo}-${hi}`, 'the plan must record the range it clamped to');
+          assert.ok(l.gain > 0 && l.gain <= 0.9, `${l.id} gain ${l.gain} is out of bounds`);
+        }
+      }
+    }
+  }
+  // the specific ear complaint: a music box may never be handed the top octave
+  const boxes = [];
+  for (let i = 0; i < 400; i++) {
+    const plan = planArrangement({ ...SITUATION, role: 'cutscene', name: `box_${i}` });
+    for (const l of plan.layers) if (l.instrument === 'gm_music_box') boxes.push(l.octave);
+  }
+  assert.ok(boxes.length > 0, 'the music box should be cast somewhere in 400 cutscenes');
+  assert.ok(Math.max(...boxes) <= 5, `a music box was placed at octave ${Math.max(...boxes)} — that is the high-pitched ring`);
+});
+
+test('D46: a role does not arrange every one of its songs identically', () => {
+  // one fixed slate per role made harmony_support 54% of the whole corpus; the
+  // slate is picked from the song's own name, so a role spreads across its
+  // options without anything being sampled at random
+  const seen = new Set();
+  for (let i = 0; i < 60; i++) {
+    const plan = planArrangement({ ...SITUATION, role: 'cutscene', name: `v_${i}` });
+    seen.add(plan.layers.map((l) => l.part).join('+'));
+  }
+  assert.ok(seen.size >= 3, `60 cutscenes produced only ${seen.size} distinct part combinations`);
+  // and it is still the same plan every time for the same song
+  assert.deepEqual(planArrangement({ ...SITUATION, role: 'cutscene', name: 'v_7' }),
+    planArrangement({ ...SITUATION, role: 'cutscene', name: 'v_7' }));
 });
 
 test('D43: a lane may only be shared with the piano when the touch contrasts', () => {
@@ -147,4 +192,168 @@ test('D44: a silent bar still evaluates and still holds the guard', async () => 
   const ev = await evaluateSong(`setcpm(110/4)\np: ${expr}`);
   const h = hapsByLabel(ev, 0, boundMeta.period).get('p');
   assert.ok(h && !h.error && h.haps.length > 0);
+});
+
+// ---------------------------------------------------------------------------
+// D47: the form — who is playing WHEN.
+// ---------------------------------------------------------------------------
+
+const ROLES = ['boss', 'battle', 'cutscene', 'character', 'town', 'overworld',
+  'credits', 'ending', 'shop', 'joke', 'menu', 'diegetic', 'chase', null];
+
+/** every (role × bpm × density) plan+form this suite reasons about */
+function everyForm() {
+  const out = [];
+  for (const role of ROLES) {
+    for (const bpm of [70, 112, 175]) {
+      for (const [accDensity, leadDensity] of [[1, 3], [5, 4], [10, 9]]) {
+        const name = `f_${role}_${bpm}_${accDensity}`;
+        const plan = planArrangement({ ...SITUATION, role, bpm, accDensity, leadDensity, name, leadPeriod: 8 });
+        out.push({ plan, form: planForm(plan) });
+      }
+    }
+  }
+  return out;
+}
+
+test('D47: once the tune has arrived, something is always carrying it', () => {
+  // Ethan's round-10 note: "sometimes the lead melody just stops". A takeover
+  // is a HANDOFF at a section boundary; there is no such thing as a section
+  // where the melody has been and then simply is not.
+  for (const { form } of everyForm()) {
+    let arrived = false;
+    for (const s of form.sections) {
+      if (s.lead !== 'none') { arrived = true; continue; }
+      const isTail = s.index === form.sections.length - 1;
+      assert.ok(!arrived || (isTail && s.archetype === 'tag'),
+        `section ${s.index} (${s.archetype}) has no lead after the tune had already arrived`);
+    }
+    assert.ok(form.sections.some((s) => s.lead !== 'none'), 'a form with no melody in it at all');
+  }
+});
+
+test('D47: a voice cast to take the tune is given the tune, not stacked on the piano', () => {
+  for (const { plan, form } of everyForm()) {
+    for (const l of plan.layers.filter((x) => x.canLead)) {
+      const leads = form.sections.filter((s) => s.leadLayerId === l.id);
+      assert.ok(leads.length > 0, `${l.instrument} was cast as a takeover and never took over`);
+      // and where it is sounding, it IS the lead — otherwise it is doubling the
+      // piano's own line in unison, which is a different part entirely
+      for (const s of form.sections) {
+        if (!s.active.includes(l.id)) continue;
+        assert.equal(s.leadLayerId, l.id,
+          `${l.instrument} sounds in section ${s.index} without holding the tune — that is a doubling, not a takeover`);
+      }
+      // the piano must be leading somewhere too: a handoff needs a hand-off-er
+      assert.ok(form.sections.some((s) => s.pianoLead),
+        `${l.instrument} takes over a song the piano never led — that is a swap, not a handoff`);
+    }
+  }
+});
+
+test('D47: no section sounds the same as the one before it', () => {
+  const state = (s) => `${[...s.active].sort().join(',')}|${s.lead}`;
+  let dupes = 0, total = 0;
+  for (const { form } of everyForm()) {
+    for (let i = 1; i < form.sections.length; i++) {
+      total++;
+      if (state(form.sections[i]) === state(form.sections[i - 1])) dupes++;
+    }
+  }
+  // not zero — a roster of one has only so many states to offer — but a form
+  // whose sections mostly repeat is not a form
+  assert.ok(dupes / total < 0.12, `${dupes}/${total} section transitions change nothing`);
+});
+
+test('D47: no section exceeds what the song can sound at once', () => {
+  for (const { plan, form } of everyForm()) {
+    for (const s of form.sections) {
+      // the peak is allowed past the standing ceiling, and only the peak
+      const ceiling = plan.massAtOnce * (/^full/.test(s.archetype) ? 1.35 : 1) + 1e-9;
+      const mass = s.active
+        .map((id) => plan.layers.find((l) => l.id === id))
+        .filter((l) => l && !l.canLead)
+        .reduce((a, l) => a + l.mass, 0);
+      assert.ok(mass <= ceiling,
+        `section ${s.index} (${s.archetype}) sounds ${mass.toFixed(2)} of mass against a ${ceiling.toFixed(2)} ceiling`);
+    }
+  }
+});
+
+test('D47: every voice on the roster is heard somewhere', () => {
+  for (const { plan, form } of everyForm()) {
+    const heard = new Set(form.sections.flatMap((s) => s.active));
+    for (const l of plan.layers) {
+      assert.ok(heard.has(l.id), `${l.instrument} was cast and never plays — dead weight in the plan`);
+    }
+  }
+});
+
+test('D47: the form is deterministic and its sections tile the song exactly', () => {
+  const plan = planArrangement({ ...SITUATION, leadPeriod: 8, name: 'tile' });
+  assert.deepEqual(planForm(plan), planForm(plan));
+  const f = planForm(plan);
+  let bar = 0;
+  for (const s of f.sections) {
+    assert.equal(s.startBar, bar, `section ${s.index} does not start where the previous one ended`);
+    bar += s.bars;
+  }
+  assert.equal(bar, f.totalBars);
+  // a section holds whole phrases of everything inside it, or a masked layer
+  // would be cut off mid-phrase when the section ends
+  assert.equal(f.sectionBars % plan.loopBars, 0);
+  assert.equal(f.sectionBars % plan.leadPeriod, 0);
+});
+
+test('D47: masks gate the right bars, and a full-time layer carries no mask', async () => {
+  const plan = planArrangement({ ...SITUATION, leadPeriod: 8, name: 'mask_test' });
+  const form = planForm(plan);
+  const { layers, warnings } = renderArrangement(plan, renderCtx);
+  assert.deepEqual(warnings.filter((w) => /failed to render/.test(w)), []);
+  const shaped = renderForm(layers, 'note("c5").s("piano")', form);
+  for (const l of shaped.layers) {
+    const onBars = form.sections.filter((s) => s.active.includes(l.id)).length * form.sectionBars;
+    if (onBars === form.totalBars) {
+      assert.ok(!/\.mask\(/.test(l.formExpr), `${l.instrument} plays throughout and should carry no mask`);
+      continue;
+    }
+    assert.match(l.formExpr, /\.mask\("<[01@ \d]+>"\)/, `${l.instrument} needs a mask and has none`);
+    // and it really is silent where the form says so
+    const ev = await evaluateSong(`setcpm(110/4)\np: ${l.formExpr}`);
+    const h = hapsByLabel(ev, 0, form.totalBars).get('p');
+    assert.ok(h && !h.error, `${l.id}: ${h && h.error}`);
+    for (const s of form.sections) {
+      const inSec = h.haps.filter((x) => x.whole.begin >= s.startBar && x.whole.begin < s.startBar + s.bars);
+      if (s.active.includes(l.id)) assert.ok(inSec.length > 0, `${l.instrument} is silent in section ${s.index} but the form says it plays`);
+      else assert.equal(inSec.length, 0, `${l.instrument} sounds in section ${s.index} but the form says it does not`);
+    }
+  }
+});
+
+test('D47: the piano lead is masked to the sections the piano actually leads', async () => {
+  // find a plan whose form really does hand the tune over, and prove the two
+  // leads interlock: exactly one voice has the melody in every section
+  const cases = everyForm().filter(({ form }) => form.sections.some((s) => s.leadLayerId));
+  assert.ok(cases.length > 0, 'no situation in the grid ever hands the melody over');
+  const { plan, form } = cases[0];
+  const { layers } = renderArrangement(plan, renderCtx);
+  const shaped = renderForm(layers, 'note("c5").s("piano").gain(0.85)', form);
+  assert.match(shaped.lead, /\.mask\(/, 'the piano lead should stand down where a layer takes over');
+  const ev = await evaluateSong(`setcpm(110/4)\np: ${shaped.lead}`);
+  const h = hapsByLabel(ev, 0, form.totalBars).get('p');
+  for (const s of form.sections) {
+    const inSec = h.haps.filter((x) => x.whole.begin >= s.startBar && x.whole.begin < s.startBar + s.bars);
+    assert.equal(inSec.length > 0, s.pianoLead, `piano lead disagrees with the form in section ${s.index}`);
+  }
+});
+
+test('D47: the arrangement rises — a form is a contour, not a plateau', () => {
+  // measured as: the peak section sounds strictly more than the first one
+  let rose = 0, flat = 0;
+  for (const { plan, form } of everyForm()) {
+    if (plan.layers.length < 2) continue;
+    const counts = form.sections.map((s) => s.active.length);
+    if (Math.max(...counts) > counts[0]) rose++; else flat++;
+  }
+  assert.ok(rose > flat * 6, `${flat} of ${rose + flat} forms never grow past their opening section`);
 });

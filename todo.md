@@ -165,3 +165,244 @@ these are very good in the own + melody version. analyze the patterns here betwe
 in general, the "own + melody" is very hyper and sounds good music-wise but it's two different styles. i think keep this, but add like a variation toggle for the rhythm (not randomized of course) depending on what the user is building the song for and their context. moreover i think the current "own + melody" melodies could also be kept as like a background instrument in the harmony with a different instrument or something (what are strudle's other instruments we could use)? 
 
 i think the music currently is up to an ok standard (still want to test actual harmony generation though rather than just using hardcoded harmonies). my next focus will be the harmony creation ofc and layering of different notes (like layering of different harmonies and a lead melody and instrument management with like 2 added instruments) and then after that, chrnological editing (like editing a song to add or change the notes/instruments/vibhe and/or adding stuff to it (like requesting escalation or drops etc via prompt)
+____
+
+ROUND 9 (2026-08-23) — done:
+- D45 chord-label evidence gate. Dating Start's weird bar was an `A^7` invented
+  over an Ab->A->Bb bass walk; the corpus audit found 75% of `^7` labels had no
+  third sounding anywhere. Colour must now be heard in the accompaniment; a
+  poorly-covered one-window segment is absorbed by a neighbour that explains it
+  better. Corpus relabelled; 3 tier-2 specs rewritten to match.
+- D46 instrument palette 15 -> 43, with `range` (music box no longer at oct 6)
+  and `level` (the flute is now audible). Slates vary per song, so
+  harmony_support fell from 54% of layers to 25%.
+
+NEXT (Ethan's stated order):
+1. HARMONY GENERATION — compose progressions rather than replay extracted loops
+2. LAYERING — continue; encode the five D41 two-hand principles as lints
+3. CHRONOLOGICAL EDITING — prompt-driven edits (escalation, drops, swaps);
+   the D43/D46 layer metadata exists to serve this
+
+Open questions for the next ear pass:
+- 11 instruments are still never cast (glockenspiel, epiano1, nylon guitar,
+  harp, ocarina, oboe, string ensemble, pad_halo, pad_new_age, choir_aahs,
+  calliope). Dominated rather than excluded — worth checking whether the mood
+  vocabulary or the tempo-fit curve is what shuts them out.
+- melody_takeover silences the piano lead in 33 of 161 cards (20%). Ethan's
+  brief was "keep piano the same and layer on top", so this may want capping.
+
+ROUND 10 (2026-08-23) — done:
+- D47 FORM. Songs are now sections, not one constant texture: ostinato → bed →
+  statement → answer → full → breakdown/tag, chosen per role AND per roster,
+  masked per bar. Mean layers 1.47 → 2.6; 161/161 cards have layers; 34
+  instruments in play. Takeover is now a HANDOFF at a section boundary — cast
+  43, leads 43, zero lead gaps after the tune arrives.
+
+STILL OPEN after round 10:
+- Transitions are hard cuts at phrase boundaries (correct for chiptune, and
+  what horizontal resequencing does). Per-cycle .gain() is verified patternable
+  if a swell is wanted for pads specifically.
+- The piano accompaniment never drops out. A breakdown that strips IT would be
+  the most dramatic move available and is not yet reachable.
+- 9 instruments still never cast (glockenspiel is now 1×, so the tail is
+  thinning): epiano1, nylon guitar, harp, ocarina, string_ensemble_1,
+  choir_aahs, pizzicato, synth_bass_1, calliope.
+- Section length is one loop/phrase. Real songs vary section LENGTH too
+  (an 8-bar verse, a 4-bar pre-chorus); everything here is uniform.
+
+ROUND 11 (2026-08-23) — done:
+- D48: the GM soundfont bank had NEVER loaded. @strudel/soundfonts ships with
+  bare import specifiers a browser cannot resolve, so every gm_* voice was
+  silently rewritten to the triangle fallback — the whole 43-instrument palette
+  was one oscillator. Fixed by rewriting the specifiers to blob shims bound to
+  the RUNNING strudel instance (module identity matters: a second copy of
+  @strudel/webaudio registers into a registry the scheduler never reads).
+  Also: the banner no longer clears one subsystem's warning when another
+  succeeds, which is why this was invisible.
+- D48 addendum: sfumato's own dep (soundfont2) ships a UMD as its "module"
+  entry, so no CDN autobuild of sfumato works. Now fetched and rewritten too,
+  with the soundfont2 shim reading the global the UMD sets. Also found
+  PIANO_FALLBACK named a sound the bank never registers (gm_piano, not
+  gm_acoustic_piano). All 43 palette instruments confirmed registering.
+- D48 addendum 2: pages now report "ready · N GM voices · build <stamp>" so a
+  stale copy is visible without an ear. Real-Chrome probe harness documented in
+  DECISIONS (headless --dump-dom against the page + an appended probe script).
+
+ROUND 12 (2026-08-23) — done:
+- D49 HARMONY GENERATION (phase 1). Progressions are now COMPOSED, not
+  retrieved: a counted prior (root bigram + quality-given-degree + a separate
+  loop-WRAP cadence table, per family and per family-split pack) ranked under
+  D32's procedure. Research + the data-source answer in harmony-generation.md.
+  96 composed progressions are on audition/progressions.html beside the 188
+  imported ones behind a `source` filter — that A/B is the ear pass.
+- Found and gated 6 corpus entries whose labels the source never supported
+  (Rocket Man: all 9 chords `-#5`, match.agree 0, shipped needsEar:false).
+
+NEXT:
+1. EAR PASS on audition/progressions.html — filter to `generated`, A/B against
+   `imported`. Nothing composed has been heard. Specifically worth judging:
+   - is 0.80 distinct-degree (vs the corpus's 0.88) "solid" or "dull"?
+   - the rare tail: `o` on degree 7, `bviim` in minor (corpus-attested at n=1-2)
+   - do the composed CADENCES land, given they came from the wrap table?
+2. Wire the generator into song generation (audition-undertale.mjs still binds
+   extracted entries only). Deliberately not done until the ear pass passes.
+3. LAYERING — continue; encode the five D41 two-hand principles as lints.
+4. CHRONOLOGICAL EDITING — the D49 `derivation` exists to serve this.
+
+STILL OPEN after round 12:
+- Only CYCLES are generated. A through-composed phrase with a real ending is
+  not expressible, and the corpus cannot teach it (the corpus is all loops).
+- The unison importer RECORDS that it agreed with nothing (`match.agree: 0`) and
+  ships the entry as `needsEar: false` anyway. The gate is currently in the
+  model builder; it belongs in the importer.
+- Style breadth is still the real data gap (bossa/waltz/cinematic/synth). If
+  importing: When-in-Rome first (RomanText, CC BY-SA, transcoder not labeller),
+  then CoCoPops/Billboard, then VGMusic. NOT Lakh.
+- (carried) transitions are hard cuts; the piano accompaniment never drops out;
+  9 instruments never cast; section length is uniform.
+
+ROUND 13 (2026-08-24) — done:
+- D50 EXEMPLAR VARIATION, after Ethan's pushback that D49 produced "valid" not
+  "nice". Progressions with outside evidence of success are now the FOUNDATION,
+  changed by a closed set of 8 typed substitutions that each declare what they
+  preserve. D49's counted model survives as the VERIFIER, with the bar set by
+  the exemplar itself. audition/progressions.html: 372 cards, foundations
+  followed immediately by their own variations.
+
+NEXT — and (1) is now blocking, not optional:
+1. *** RATIFY SOME PROGRESSIONS. *** exemplarPool() wants entries Ethan has kept
+   by ear; there are ZERO. The audition pages have been writing keep/kill to
+   localStorage since D28 with no path back into the library, so the pool falls
+   back to `unison-famous` and says so in a caveat. D50 is only as good as its
+   foundations. Two jobs:
+   (a) Ethan: open audition/progressions.html, keep/kill, hit "copy verdicts
+       JSON". Filter source=foundation and source=varied first — that A/B is
+       the fastest way to judge whether the strategy works at all.
+   (b) then build scripts/import-verdicts.mjs so the JSON lands in the library
+       and exemplarPool() returns ratified entries instead of a stand-in.
+2. Global (whole-cycle) scoring — tension curve, voice-leading across the loop,
+   cadential strength. Attacks "goodness is not local" head on and is the
+   strongest complement to D50. Wait for the ear pass to say which variations
+   landed before building it.
+3. Wire harmony into song generation (audition-undertale.mjs still binds
+   extracted entries only). Blocked on the ear pass.
+4. LAYERING — the five D41 two-hand principles as lints.
+5. CHRONOLOGICAL EDITING — D49 `derivation` and D50 `lineage` exist for this.
+
+STILL OPEN after round 13:
+- 9 of the 22 foundations cannot be voiced by any me_* dictionary (they need
+  13sus, 6, ^7#5, add9 — D28's deferred, ear-gated tail). Those exemplars are
+  unhearable on the audition page, so their variations cannot be judged.
+- Only CYCLES. A through-composed phrase with a real ending is still not
+  expressible, and the corpus (all loops) cannot teach it.
+- The unison importer records `match.agree: 0` and ships the entry as
+  `needsEar: false` anyway. Gate lives in the model builder; belongs upstream.
+- (carried) transitions are hard cuts; the piano accompaniment never drops out;
+  9 instruments never cast; section length is uniform.
+
+ROUND 14 (2026-08-24) — done:
+- D51: the ear loop is CLOSED. scripts/import-verdicts.mjs + src/lib/verdicts.js
+  + an overlay in progressions-tail.js, so `ratified` finally means something.
+  36 verdicts landed (11 keep / 25 kill); 1 was stale and is reported.
+- Measured what the verdicts correlate with. HEADLINE: the strongest separator
+  is label COVERAGE (0.95 keep vs 0.84 kill) — a transcription metric, not
+  taste. Much of the first pass was Ethan rejecting bad D45 transcriptions.
+  The real taste signal is PLAIN TRIADS (85% vs 59%, three independent measures
+  agreeing). Cadence/plausibility/chords-per-bar predict NOTHING (|d|<0.1) —
+  which is what D49's verifier measures. Recorded in src/lib/taste.js, derived
+  from the verdict file, confidence: low.
+
+NEXT:
+1. Re-transcribe or drop the low-coverage Undertale entries. The ear pass says
+   6+ of them are simply wrong, and they are polluting both the corpus and the
+   counted model. Cheapest real win available.
+2. MORE EXEMPLARS, and not via keep/kill — that channel measured transcription
+   error. Ranked in harmony-generation.md §9: (a) Ethan drops MIDI of songs he
+   likes into audios/ — highest bandwidth, machinery already exists; (b) he
+   names songs; (c) he points at ONE moment and says what about it (this is
+   what produced D41 and D47 — highest value per minute); (d) build A/B pair
+   judging into the audition pages, which is easier to answer than keep/kill
+   and yields a ranking.
+3. Do NOT wire tasteProfile() into generator defaults yet — n=36, and the
+   profile's strongest term is a transcription artifact.
+4. Global (whole-cycle) scoring — still the strongest complement to D50, and
+   now better motivated: the per-transition scoring D49 does predicts nothing
+   about what Ethan keeps.
+5. (carried) wire harmony into song generation; LAYERING lints; CHRONOLOGICAL
+   EDITING.
+
+STILL OPEN after round 14:
+- The exemplar pool is 11 ratified + 22 famous. Want 20+ ratified, and from
+  more than one idiom — every current keep is Undertale.
+- (carried) 9 of 22 famous foundations are unvoiceable by any me_* dictionary;
+  only cycles, no through-composed phrases; the unison importer ships
+  `match.agree: 0` entries as needsEar:false; hard-cut transitions; the piano
+  never drops out; 9 instruments never cast; uniform section length.
+
+ROUND 15 (2026-08-24) — done:
+- D52: VGMusic corpus (400 files / 354 games) + one shared ingest
+  (src/ingest/corpus.js, proven byte-identical on the Undertale output) +
+  audition/judge.html, a 36-trial A/B + layer + open-text instrument.
+- Found: PERCUSSION was never filtered. 24% of game-MIDI notes are channel 10;
+  it corrupted the melody split, the chord labelling AND the key solve. Yield
+  33 -> 88 progressions. It also mis-solved both Amalgam entries' key, which
+  is very likely why Ethan killed them.
+- Ruling: a verdict judges the music that played. verdicts.js snapshots the
+  degrees it judged; re-transcribed entries lose their verdict.
+- Found: a third of "melodies" were arpeggio channels. Filtered.
+
+FIXED IMMEDIATELY AFTER (D52 addendum): judge.html shipped with no
+<script src> for the strudel bundle — declared the constant, never emitted the
+tag. No test caught it because the DOM shim provides a stub `strudel` global,
+so a page that never loads the bundle passes everything. Added an HTML-level
+test, and gave the bundle the mirror fallback the sample maps have had since
+D42 (unpkg + jsdelivr, version-matched, tried in turn).
+
+- [done, D53] TASTE IS NOW RECORDED PER FACET, not per card. Ethan's notes
+  ("Cm Bm is a pretty good transition ... i rejected the ones that had these
+  simply because the progression itself sounded weird") showed one keep/kill bit
+  averages over things he judges separately. Verdicts now name a facet: pair,
+  wrap, chord, texture, cadence, cycle. A vote is EAR_COUNT=8 pseudo-observations
+  on the family count row, so the ear speaks in the corpus's currency and
+  `ctx.ear === false` still reproduces the old model exactly. `pairs` feeds the
+  INNER table only — folding it into the wrap too took P(0->11) as a minor
+  CADENCE from 0.07% to 19.8%. New `cadential_sus` operator puts a suspension
+  only where something resolves it. audition/facets.html: 467 pair tiles ·
+  31 harmonies × 7 formats multi-select · 20 harmonies × 3 endings.
+  Seeds in src/lib/facet-seeds.js are hand-written and survive every import.
+
+NEXT:
+1. *** RUN audition/facets.html AND audition/judge.html. *** facets first — it
+   is where the two things Ethan already noticed by ear get generalised, and it
+   is the only page whose votes reach the generator directly. Both export JSON;
+   `node scripts/import-verdicts.mjs <file.json>` handles either format and
+   prints the tally. judge.html (36 trials, ~10 min) settles whether D50
+   exemplar variation beats D49 statistical composition by ear — and since D54
+   every trial plays through SIX interval patterns switched in lockstep, so
+   sweep at least two per trial or the tally is not texture-robust (the
+   importer prints the median and warns when it is under 2). Notes box on every
+   trial; it exports even on trials you skip.
+   On facets.html, the highest-value clicks are the top of the leverage sort:
+   thin corpus rows where one opinion actually moves the model.
+1b. Open question the cadence tab exists to settle: is `Xsus -> X` at the loop
+   wrap good in general, or was Ethan describing one specific case? Nothing is
+   seeded there on purpose.
+1c. `wraps` is empty and only the cadence tab fills it. Until it has votes, the
+   ear has said nothing about endings at all.
+2. The melody profile is measured but NOT WIRED IN. melody-profiles-vgmusic.js
+   exists; nothing reads it yet. Wire it as a selectable style once the ear
+   pass says the game-midi habits are wanted.
+3. Re-transcribe or drop the remaining low-coverage Undertale entries (the
+   percussion fix already repaired 2; the rest are genuinely thin).
+4. Consider re-auditioning the two Amalgam entries now that their key is right.
+5. (carried) global whole-cycle scoring; wire harmony into song generation;
+   LAYERING lints; CHRONOLOGICAL EDITING.
+
+STILL OPEN after round 15:
+- Only 88 of 391 VGMusic songs yielded a progression. The gates are strict on
+  purpose, but worth checking whether coverage>=0.9 is leaving good music out.
+- vgmusic entries are all needsEar:true and unheard — same candidate-pool
+  discipline as every other import.
+- (carried) only cycles, no through-composed phrases; 9 of 22 famous
+  foundations unvoiceable by me_*; the unison importer ships agree:0 entries as
+  needsEar:false; hard-cut transitions; piano never drops out; uniform sections.

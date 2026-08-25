@@ -15,6 +15,7 @@ import { FIGURATIONS_UNDERTALE, DEVELOPMENT_UNDERTALE } from '../src/lib/figurat
 import { RHYTHMS_UNDERTALE } from '../src/lib/rhythms-undertale.js';
 import { parseDegrees, findProgressions, ALL_PROGRESSIONS } from '../src/lib/progressions.js';
 import { renderProgression } from '../src/binder/harmony.js';
+import { VERDICTS } from '../src/lib/verdicts.js';
 import { chordTones } from '../src/harness/chords.js';
 import { bindFigure, normalizeRhythm } from '../src/binder/bind.js';
 import { evaluateSong, hapsByLabel } from '../src/harness/evaluate.js';
@@ -128,7 +129,8 @@ test('D30: figuration entries carry the discipline fields', () => {
 test('D30: undertale progressions render in any key and every quality resolves', () => {
   for (const [name, e] of Object.entries(PROGRESSIONS_UNDERTALE)) {
     assert.equal(e.pack, 'undertale', name);
-    assert.equal(e.ratified, false, name);
+    // D51: ratified iff Ethan kept it. An entry he has not heard stays false.
+    assert.equal(e.ratified, VERDICTS[name]?.verdict === 'keep', name);
     const chords = parseDegrees(e.degrees);
     assert.ok(chords.length >= 2, `${name} has ${chords.length} chords`);
     assert.equal(chords.length, e.barsPerChord.length, `${name}: barsPerChord shape`);
@@ -192,8 +194,81 @@ test('D34: chord qualities come from the accompaniment, not the melody riff', ()
   const e = PROGRESSIONS_UNDERTALE.ut_megalovania_p1;
   // the riff (D-A-Ab-G-F over each pedal) used to dress these labels as
   // D5/Csus/Do/Co7; accompaniment-only voting + octave-double reassignment +
-  // diatonic completion must yield the plain famous descent
-  assert.deepEqual(renderProgression(e, e.sourceKey).slice(0, 4), ['Dm', 'C', 'Bm', 'Bb^7']);
+  // diatonic completion must yield the plain famous descent.
+  // The last chord is Bb, NOT Bb^7 (D45): the accompaniment sounds only Bb and
+  // C there — no A anywhere — so the major 7th was never earned. The riff's F
+  // likewise may not turn the bare B pedal into B-diminished: colour is the
+  // accompaniment's word, and the melody's only vote is the binary third.
+  assert.deepEqual(renderProgression(e, e.sourceKey).slice(0, 4), ['Dm', 'C', 'Bm', 'Bb']);
+});
+
+// ---------------------------------------------------------------------------
+// D45: a chord label is a claim, and .voicing() will PLAY every tone it names.
+// ---------------------------------------------------------------------------
+
+// one bar of notes at a fixed grid; `spans` is [[startBeat, endBeat, midis]]
+function bar(spans, { ppq = 96 } = {}) {
+  const notes = [];
+  for (const [b0, b1, midis] of spans) {
+    for (const midi of midis) notes.push({ midi, tick: Math.round(b0 * ppq), dur: Math.round((b1 - b0) * ppq), vel: 100 });
+  }
+  return notes;
+}
+const C_MAJOR = { tonicPc: 0, mode: 'major' };
+
+test('D45: a colour the accompaniment never sounds is not part of the label', () => {
+  // one bar of a fully voiced Cmaj7 (C E G B), then one bar of bare F octaves.
+  // The first has earned its seventh; the second has not, and the old labeller
+  // handed it one anyway — a root plus one tone can out-score a plain triad on
+  // the missing-tone penalty alone, and .voicing() then plays the invention.
+  const notes = bar([[0, 4, [48, 52, 55, 59]], [4, 8, [53, 65]]]);
+  const tl = chordTimeline(notes, 96 * 4, 2, { key: C_MAJOR });
+  assert.deepEqual(tl.map((s) => `${s.rootPc}${s.quality}`), ['0^7', '5'],
+    'a bare octave claimed a colour it never plays');
+});
+
+test('D45: colour is the accompaniment’s word — a melody sweep cannot alter a chord', () => {
+  // bare C pedal in the left hand; the right hand runs C-D-E-Gb over it. Let
+  // the melody vote on colour and that Gb makes the bar C-diminished. It is a
+  // run: the melody's only vote is the binary third (D34), never the fifth.
+  const acc = bar([[0, 4, [36, 48]]]);
+  const riff = bar([[0, 1, [72]], [1, 2, [74]], [2, 3, [76]], [3, 4, [78]]]);
+  const tl = chordTimeline([...acc, ...riff], 96 * 4, 1, { key: C_MAJOR, melody: new Set(riff) });
+  assert.deepEqual(tl.map((s) => `${s.rootPc}${s.quality}`), ['0'],
+    'the riff dressed a bare C pedal as something exotic');
+});
+
+test('D45: a bass walk under a ringing harmony is not a chord of its own', () => {
+  // Dating Start, bars 36-38: Ab -> A -> Bb walking into the tonic. The A got
+  // labelled A^7 in a Bb major song — an A, a C#, an E and a G# where the
+  // accompaniment sounded Ab/D/Eb/F/A. This is the card Ethan heard go wrong.
+  const e = PROGRESSIONS_UNDERTALE.ut_dating_start_p3;
+  const syms = renderProgression(e, e.sourceKey);
+  assert.ok(!syms.some((s) => /^A(?![b#])/.test(s)), `an A chord survived in Bb major: ${syms.join(' ')}`);
+  // ...but a bass walk that IS the harmony still reads as chords: Megalovania's
+  // D-C-B-Bb is four bare octave pedals and must stay four chords (D30 above).
+  // The two are told apart by coverage, not by chromaticism — the A in Bb major
+  // is diatonic, and the B in D minor is not.
+  const m = PROGRESSIONS_UNDERTALE.ut_megalovania_p1;
+  assert.equal(new Set(renderProgression(m, m.sourceKey).slice(0, 4)).size, 4);
+});
+
+test('D45: coverage describes the label the entry actually carries', () => {
+  for (const [name, entry] of Object.entries(PROGRESSIONS_UNDERTALE)) {
+    assert.ok(entry.coverage > 0 && entry.coverage <= 1, `${name}: coverage ${entry.coverage}`);
+    // `needsEar` is a REQUEST for a listen, so an entry that has been listened
+    // to is answered whichever way the verdict went (D51). Only unjudged
+    // entries still follow the automatic honesty numbers.
+    const v = VERDICTS[name];
+    // ...unless the verdict was voided by a re-transcription (D52), in which
+    // case the entry is back to its automatic honesty numbers.
+    if (v && (v.judged == null || v.judged === entry.degrees)) {
+      assert.equal(entry.needsEar, false, `${name}: judged, but still asking for an ear`);
+      continue;
+    }
+    assert.equal(entry.needsEar, entry.coverage < 0.62 || entry.keyMargin < 0.05,
+      `${name}: needsEar disagrees with its own honesty numbers`);
+  }
 });
 
 test('D30: grid picking prefers the musical grid over absorbing the humanization', () => {

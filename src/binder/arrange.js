@@ -49,80 +49,158 @@ import { bindMelody, bindFigure } from './bind.js';
 // `wants` says what the PART needs from an instrument, independent of tempo:
 // a sustained pad needs an instrument that can actually sustain, however fast
 // the song is, and a figure needs one that speaks quickly.
+// `entry` is the order a part joins the arrangement over time (D47). Toby Fox's
+// own paradigm, from the Undertale deconstruction: the ostinato is introduced
+// first, then the midground, then the melody. Bed before motion before doubling.
 export const PARTS = {
   melody_backup: {
-    adds: 0, mass: 0.45, needsCut: 0.5, derives: 'lead', wants: 'tempo',
+    adds: 0, mass: 0.45, needsCut: 0.5, derives: 'lead', wants: 'tempo', entry: 'double',
     contributes: 'doubles the lead line so it reads louder and wider without adding any new rhythm',
   },
   melody_takeover: {
-    wants: 'tempo', adds: 0, mass: 0.3, needsCut: 0.7, derives: 'lead', replacesLead: true,
-    contributes: 'plays the lead instead of the piano, changing the song’s voice without adding density',
+    wants: 'tempo', adds: 0, mass: 0.3, needsCut: 0.7, derives: 'lead', canLead: true, entry: 'lead',
+    contributes: 'takes the melody over from the piano at a section boundary — the tune changes voice without a gap',
   },
   alternate_melody: {
-    wants: 'tempo', adds: 0, mass: 0.5, needsCut: 0.55, derives: 'lead-rhythm',
+    wants: 'tempo', adds: 0, mass: 0.5, needsCut: 0.55, derives: 'lead-rhythm', entry: 'motion',
     contributes: 'a second melody on the lead’s rhythm but its own pitches — thickens the tune while staying rhythmically locked to it',
   },
   counter_melody: {
-    wants: 'tempo', adds: 3, mass: 0.5, needsCut: 0.5, derives: 'independent',
+    wants: 'tempo', adds: 3, mass: 0.5, needsCut: 0.5, derives: 'independent', entry: 'motion',
     contributes: 'an independent sparse line that moves in the gaps of the other parts',
   },
   additional_harmony: {
-    wants: 'quick', adds: 4, mass: 0.6, needsCut: 0.4, derives: 'figuration',
+    wants: 'quick', adds: 4, mass: 0.6, needsCut: 0.4, derives: 'figuration', entry: 'bed',
     contributes: 'a second accompaniment figure — more harmonic motion underneath',
   },
   harmony_support: {
-    wants: 'sustain', adds: 0, mass: 0.7, needsCut: 0.2, derives: 'chords',
+    wants: 'sustain', adds: 0, mass: 0.7, needsCut: 0.2, derives: 'chords', entry: 'bed',
     contributes: 'sustained chord tones underneath, adding body and weight but no motion',
   },
 };
 
 // Which parts each dramatic role wants, best first. Truncated by headroom.
+//
+// Each role offers SEVERAL slates and the song picks one by a stable hash of its
+// own name (D46). One fixed slate per role gave 43 cutscenes the same two parts
+// and made harmony_support 54% of every layer in the corpus — over half the
+// arrangement was a sustained drone, which is the opposite of what Ethan heard
+// and liked in Gaster's Theme: two busy voices countering each other. Varying
+// the slate is the same move as varying a rhythm — chosen from the song's
+// context, never sampled — so the corpus stops sounding like one arrangement.
+// A slate is a ROSTER, not a simultaneity (D47). Before the form existed every
+// cast layer played from bar one to the end, so the roster had to be small or
+// the song was mud — mean 1.47 layers per song, which is why Ethan could hear
+// "only the music box and the piano". Now that sections decide who is playing
+// when, a song can carry four voices and still only sound two or three at once,
+// and the extra ones become the arrangement's events rather than its texture.
 const ROLE_SLATE = {
-  boss: ['harmony_support', 'melody_backup', 'counter_melody'],
-  battle: ['harmony_support', 'melody_backup', 'counter_melody'],
-  chase: ['melody_backup', 'harmony_support'],
-  cutscene: ['counter_melody', 'harmony_support'],
-  character: ['counter_melody', 'alternate_melody'],
-  credits: ['harmony_support', 'counter_melody'],
-  ending: ['harmony_support', 'counter_melody'],
-  town: ['additional_harmony', 'counter_melody'],
-  overworld: ['counter_melody', 'harmony_support'],
-  shop: ['additional_harmony', 'counter_melody'],
-  diegetic: ['additional_harmony'],
-  menu: ['counter_melody'],
-  joke: ['alternate_melody', 'counter_melody'],
+  boss: [
+    ['melody_backup', 'counter_melody', 'harmony_support'],
+    ['harmony_support', 'melody_backup', 'additional_harmony', 'counter_melody'],
+    ['counter_melody', 'additional_harmony', 'harmony_support', 'melody_takeover'],
+    ['counter_melody', 'harmony_support', 'melody_backup', 'alternate_melody'],
+  ],
+  battle: [
+    ['melody_backup', 'counter_melody', 'harmony_support'],
+    ['harmony_support', 'counter_melody', 'additional_harmony'],
+    ['counter_melody', 'additional_harmony', 'melody_backup', 'harmony_support'],
+  ],
+  chase: [
+    ['melody_backup', 'additional_harmony', 'harmony_support'],
+    ['counter_melody', 'harmony_support', 'melody_backup', 'additional_harmony'],
+  ],
+  cutscene: [
+    ['counter_melody', 'harmony_support', 'melody_backup'],
+    ['melody_backup', 'harmony_support', 'alternate_melody'],
+    ['alternate_melody', 'harmony_support', 'counter_melody', 'melody_takeover'],
+    ['counter_melody', 'melody_backup', 'harmony_support', 'additional_harmony'],
+    ['melody_takeover', 'counter_melody', 'harmony_support'],
+  ],
+  character: [
+    ['counter_melody', 'alternate_melody', 'harmony_support'],
+    ['melody_takeover', 'counter_melody', 'additional_harmony'],
+    ['alternate_melody', 'additional_harmony', 'harmony_support', 'counter_melody'],
+  ],
+  credits: [
+    ['harmony_support', 'counter_melody', 'melody_backup'],
+    ['melody_backup', 'harmony_support', 'alternate_melody', 'counter_melody'],
+  ],
+  ending: [
+    ['harmony_support', 'counter_melody', 'melody_backup'],
+    ['melody_takeover', 'harmony_support', 'counter_melody', 'alternate_melody'],
+  ],
+  town: [
+    ['additional_harmony', 'counter_melody', 'harmony_support'],
+    ['counter_melody', 'alternate_melody', 'harmony_support', 'melody_backup'],
+    ['melody_takeover', 'additional_harmony', 'counter_melody', 'harmony_support'],
+  ],
+  overworld: [
+    ['counter_melody', 'harmony_support', 'melody_backup'],
+    ['melody_backup', 'harmony_support', 'additional_harmony'],
+    ['alternate_melody', 'counter_melody', 'harmony_support', 'melody_backup'],
+    ['melody_takeover', 'harmony_support', 'counter_melody'],
+  ],
+  shop: [
+    ['additional_harmony', 'counter_melody', 'harmony_support'],
+    ['alternate_melody', 'additional_harmony', 'counter_melody', 'harmony_support'],
+  ],
+  diegetic: [
+    ['additional_harmony', 'counter_melody', 'harmony_support'],
+    ['melody_takeover', 'additional_harmony', 'harmony_support', 'counter_melody'],
+  ],
+  menu: [['counter_melody', 'harmony_support'], ['melody_takeover', 'harmony_support', 'counter_melody']],
+  joke: [
+    ['alternate_melody', 'counter_melody', 'additional_harmony'],
+    ['melody_takeover', 'additional_harmony', 'counter_melody', 'harmony_support'],
+  ],
 };
-const DEFAULT_SLATE = ['counter_melody', 'harmony_support'];
+const DEFAULT_SLATE = [
+  ['counter_melody', 'harmony_support', 'melody_backup'],
+  ['melody_backup', 'counter_melody', 'harmony_support', 'additional_harmony'],
+  ['alternate_melody', 'harmony_support', 'counter_melody'],
+];
 
 // Mood words used to score instrument fit. Mode alone is far too coarse — it
 // says "minor" for half the corpus and would cast the same favourite every
 // time — so the song's curated dramatic ROLE contributes the more specific
 // half of the vocabulary and the harmonic family fills in behind it.
 const FAMILY_MOODS = {
-  minor: ['sad', 'dark', 'eerie', 'grave'],
-  major: ['warm', 'bright', 'hopeful', 'gentle'],
-  modal: ['eerie', 'dreamy', 'spacious'],
+  minor: ['sad', 'dark', 'eerie', 'grave', 'ominous'],
+  major: ['warm', 'bright', 'hopeful', 'gentle', 'innocent'],
+  modal: ['eerie', 'dreamy', 'spacious', 'lonely'],
 };
 const ROLE_MOODS = {
-  boss: ['epic', 'driving', 'dark', 'noble'],
-  battle: ['epic', 'driving', 'dark'],
-  chase: ['driving', 'retro', 'dark'],
-  cutscene: ['tender', 'nostalgic', 'plaintive'],
-  character: ['quirky', 'playful', 'eerie', 'intimate'],
-  credits: ['nostalgic', 'noble', 'sacred'],
-  ending: ['nostalgic', 'sacred', 'tender'],
-  town: ['warm', 'folk', 'relaxed', 'gentle'],
-  overworld: ['spacious', 'pastoral', 'airy'],
-  shop: ['playful', 'folk', 'retro'],
-  diegetic: ['retro', 'warm', 'jazzy'],
-  menu: ['bright', 'magical'],
-  joke: ['quirky', 'playful', 'bright'],
+  boss: ['epic', 'driving', 'dark', 'noble', 'heroic', 'ominous', 'tense'],
+  battle: ['epic', 'driving', 'dark', 'tense', 'triumphant'],
+  chase: ['driving', 'retro', 'dark', 'tense', 'sneaking'],
+  cutscene: ['tender', 'nostalgic', 'plaintive', 'intimate', 'dreamy', 'sad'],
+  character: ['quirky', 'playful', 'eerie', 'intimate', 'comic', 'sly'],
+  credits: ['nostalgic', 'noble', 'sacred', 'sweeping', 'hopeful'],
+  ending: ['nostalgic', 'sacred', 'tender', 'grave', 'sweeping'],
+  town: ['warm', 'folk', 'relaxed', 'gentle', 'jazzy'],
+  overworld: ['spacious', 'pastoral', 'airy', 'lonely', 'questing', 'calm'],
+  shop: ['playful', 'folk', 'retro', 'jazzy', 'quirky'],
+  diegetic: ['retro', 'warm', 'jazzy', 'sly'],
+  menu: ['bright', 'magical', 'calm'],
+  joke: ['quirky', 'playful', 'bright', 'comic', 'baroque'],
 };
 
-// Register lanes and the octave each one plays in. 'lead' is the piano
-// melody's lane and 'acc' the piano accompaniment's — both are occupied
-// before any layer is cast.
+// Register lanes and the octave each one PROPOSES. 'lead' is the piano melody's
+// lane; the piano accompaniment's octave is occupied before any layer is cast.
+//
+// A lane is a plan for the arrangement; an instrument's `range` is a fact about
+// the instrument (D46). Where they disagree the instrument wins — a music box
+// on the 'high' lane is a needle, a cello there is nothing at all — so the lane
+// proposes and the range clamps. Occupancy is then tracked by the OCTAVE THAT
+// RESULTS, never by the lane's name: two layers in nominally different lanes
+// can clamp onto the same octave, and calling that "different registers" would
+// be a lie the plan then tells the edit pass.
 const LANE_OCTAVE = { low: 3, mid: 4, lead: 5, high: 6 };
+const octaveFor = (lane, inst) => {
+  const [lo, hi] = inst.range ?? [1, 7];
+  return Math.max(lo, Math.min(hi, LANE_OCTAVE[lane]));
+};
 
 const fnv = (s) => {
   let h = 0x811c9dc5;
@@ -144,7 +222,7 @@ const fnv = (s) => {
  */
 export function planArrangement(s) {
   const palette = s.palette;
-  const maxLayers = s.maxLayers ?? 3;
+  const maxLayers = s.maxLayers ?? 4;
   const notes = [];
 
   // ---- 2. headroom -------------------------------------------------------
@@ -159,11 +237,21 @@ export function planArrangement(s) {
   // A crowded song can still take a layer — it just cannot take a BUSY one.
   // The mass budget tightens as the piano fills the bar, so what survives is
   // sustain and doubling rather than new independent lines.
-  let massBudget = Math.max(0.7, Math.min(1.8, 0.7 + Math.max(0, headroom) / 8));
-  notes.push(`mass budget ${massBudget.toFixed(2)}`);
+  const massAtOnce = Math.max(0.7, Math.min(1.8, 0.7 + Math.max(0, headroom) / 8));
+  // ...but the SLATE is a roster, not a simultaneity (D47). The form decides who
+  // plays in which section, so a song may carry more voices than it ever sounds
+  // at once; `massAtOnce` is the ceiling any one section must respect, and this
+  // looser number is what the roster may hold. Before the form existed these
+  // were the same number and the arrangement averaged 1.47 voices.
+  const ROSTER_SLACK = 2.1;
+  let massBudget = massAtOnce * ROSTER_SLACK;
+  notes.push(`mass ${massAtOnce.toFixed(2)}/section sounding at once, roster budget ${massBudget.toFixed(2)}`);
 
   // ---- 3. slate ----------------------------------------------------------
-  let slate = (ROLE_SLATE[s.role] ?? DEFAULT_SLATE).slice();
+  const options = ROLE_SLATE[s.role] ?? DEFAULT_SLATE;
+  const slateIx = fnv(`${s.name}|slate`) % options.length;
+  let slate = options[slateIx].slice();
+  notes.push(`slate ${slateIx + 1}/${options.length} for role "${s.role ?? 'none'}": ${slate.join(' + ')}`);
   if (headroom <= 0.5) {
     const free = slate.filter((p) => PARTS[p].adds === 0);
     slate = free.length ? free : ['melody_takeover'];
@@ -176,10 +264,11 @@ export function planArrangement(s) {
     ...(ROLE_MOODS[s.role] ?? []),
     ...(FAMILY_MOODS[s.family] ?? []),
   ].map((m) => String(m).toLowerCase());
-  const takenLanes = new Set(['lead']);
-  if (s.accOctave != null) {
-    for (const [lane, oct] of Object.entries(LANE_OCTAVE)) if (oct === s.accOctave) takenLanes.add(lane);
-  }
+  // the piano's own two octaves are spoken for before anything is cast
+  const pianoOctaves = new Set([LANE_OCTAVE.lead]);
+  if (s.accOctave != null) pianoOctaves.add(s.accOctave);
+  const takenOctaves = new Set(pianoOctaves);
+  const sharedOctaves = new Set();
   const usedInstruments = new Set();
   const layers = [];
 
@@ -231,22 +320,57 @@ export function planArrangement(s) {
     // Among instruments that fit this song about equally well, the pick is a
     // stable hash of the song — deterministic, but not the same favourite for
     // every card. Only near-equals are eligible; a clearly better fit wins
-    // outright.
+    // outright. The tied band is tried in hash-rotated order and the rest of
+    // the ranking behind it, because an instrument can fit the part perfectly
+    // and still have nowhere to stand: dropping the whole PART when the first
+    // pick has no free octave left 14 songs with no arrangement at all.
     const best = candidates[0].score;
     const tied = candidates.filter((c) => c.score >= best - 0.5);
-    const chosen = tied[fnv(`${s.name}|${part}`) % tied.length];
+    const rot = fnv(`${s.name}|${part}`) % tied.length;
+    const order = [...tied.slice(rot), ...tied.slice(0, rot), ...candidates.slice(tied.length)];
 
-    // lane: first preference that is free; otherwise share, but only when the
-    // touch contrasts (slow-attack sustain under a struck piano)
-    let lane = chosen.inst.lanes.find((l) => !takenLanes.has(l));
-    let shared = false;
-    if (!lane) {
-      const contrasts = chosen.inst.attack === 'slow' || chosen.inst.sustain === 'long';
-      if (!contrasts) { notes.push(`skipped ${part}/${chosen.name}: every lane it wants is taken and its attack would collide`); continue; }
-      lane = chosen.inst.lanes[0];
-      shared = true;
-    }
-    takenLanes.add(lane);
+    // Lane: the first preference whose CLAMPED octave is still free. Otherwise
+    // share an octave, but only when the touch contrasts — a slow swell under a
+    // struck piano reads as depth, a second struck voice in the same octave
+    // reads as mud. Ethan's rule: a different octave is the preference, not a
+    // law, because instruments can stand apart on touch alone.
+    // A takeover silences the piano melody, so the lead octave is its to claim;
+    // otherwise the layer is pushed down into a register the piano has just
+    // vacated and the song loses its top voice entirely.
+    const free = new Set(takenOctaves);
+    if (spec.canLead) free.delete(LANE_OCTAVE.lead);
+    const place = (c) => {
+      let lane = c.inst.lanes.find((l) => !free.has(octaveFor(l, c.inst)));
+      let shared = false;
+      if (!lane) {
+        const contrasts = c.inst.attack === 'slow' || c.inst.sustain === 'long';
+        // Sharing is a bargain struck with the PIANO — its touch is known and
+        // the contrast is the whole justification. Two LAYERS in one octave is
+        // just a collision: neither was written to be heard through the other.
+        // ...and only ONCE per piano octave. The piano can carry one voice
+        // alongside it; a second sharer is two layers in one register, which is
+        // the collision the free-octave search was avoiding in the first place.
+        lane = contrasts
+          ? c.inst.lanes.find((l) => pianoOctaves.has(octaveFor(l, c.inst)) && !sharedOctaves.has(octaveFor(l, c.inst)))
+          : null;
+        if (!lane) return null;
+        shared = true;
+      }
+      const octave = octaveFor(lane, c.inst);
+      // Sharing the piano ACCOMPANIMENT's octave is the contrast case above.
+      // Sharing the piano LEAD's octave is not the same bargain: two
+      // independent melodic lines in one register is the mud this rule exists
+      // to prevent. Allowed only for a part playing the lead's own notes.
+      if (octave === LANE_OCTAVE.lead && !spec.canLead && spec.derives !== 'lead') return null;
+      return { lane, octave, shared };
+    };
+    let chosen = null, spot = null;
+    for (const c of order) { spot = place(c); if (spot) { chosen = c; break; } }
+    if (!chosen) { notes.push(`skipped ${part}: no instrument that plays it has an octave left to stand in`); continue; }
+    const { lane, octave, shared } = spot;
+    if (shared) sharedOctaves.add(octave);
+    const clamped = octave !== LANE_OCTAVE[lane];
+    takenOctaves.add(octave);
     usedInstruments.add(chosen.name);
     headroom -= spec.adds;
     massBudget -= spec.mass;
@@ -261,34 +385,379 @@ export function planArrangement(s) {
       attack: chosen.inst.attack,
       sustain: chosen.inst.sustain,
       lane,
-      octave: LANE_OCTAVE[lane],
+      octave,
+      range: chosen.inst.range ?? null,
+      clampedToRange: clamped,
       sharesLaneWithPiano: shared,
       derives: spec.derives,
-      replacesLead: !!spec.replacesLead,
+      canLead: !!spec.canLead,
+      entry: spec.entry,
       addsDensity: spec.adds,
       mass: spec.mass,
       gain: gainFor(part, chosen.inst),
+      level: chosen.inst.level ?? 1,
       seed: fnv(`${s.name}::${part}`),
-      why: shared
-        ? `${part}: ${chosen.name} picked from ${tied.length} near-equal fits (mood ${chosen.moodHit}, cuts ${chosen.inst.cuts}, speaks-at-tempo ${chosen.attackFit.toFixed(2)}); shares the ${lane} lane with the piano, allowed because its ${chosen.inst.attack} attack / ${chosen.inst.sustain} sustain contrasts`
-        : `${part}: ${chosen.name} picked from ${tied.length} near-equal fits (mood ${chosen.moodHit}, cuts ${chosen.inst.cuts}, speaks-at-tempo ${chosen.attackFit.toFixed(2)}) in the free ${lane} lane`,
+      why: [
+        `${part}: ${chosen.name} picked from ${tied.length} near-equal fits`,
+        `(mood ${chosen.moodHit}, cuts ${chosen.inst.cuts}, speaks-at-tempo ${chosen.attackFit.toFixed(2)})`,
+        shared
+          ? `sharing octave ${octave} with the piano, allowed because its ${chosen.inst.attack} attack / ${chosen.inst.sustain} sustain contrasts`
+          : `in the free ${lane} lane`,
+        clamped
+          ? `at octave ${octave}, not the lane's ${LANE_OCTAVE[lane]}: its range is ${chosen.inst.range.join('-')}`
+          : `at octave ${octave}`,
+        `gain ${gainFor(part, chosen.inst)} (part base × level ${chosen.inst.level ?? 1})`,
+      ].join('; '),
     });
   }
 
   return {
     name: s.name, song: s.song, role: s.role ?? null, family: s.family,
+    loopBars: s.loopBars ?? 4, leadPeriod: s.leadPeriod ?? null,
     budget, spent: Math.round(spent * 10) / 10,
     headroomStart: Math.round((budget - spent) * 10) / 10,
     headroomLeft: Math.round(headroom * 10) / 10,
+    massAtOnce: Math.round(massAtOnce * 100) / 100,
     massLeft: Math.round(massBudget * 100) / 100,
     base: {
       instrument: 'piano',
       accompaniment: { density: s.accDensity ?? 0, octave: s.accOctave ?? null },
-      lead: { density: s.leadDensity ?? 0, octave: 5, silenced: layers.some((l) => l.replacesLead) },
+      lead: { density: s.leadDensity ?? 0, octave: 5 },
     },
     layers,
     notes,
   };
+}
+
+// ---------------------------------------------------------------------------
+// FORM (D47) — who is playing WHEN.
+//
+// Everything above decides the cast. This decides the arrangement over time,
+// and it exists because a constant texture stops being heard. From the music-
+// psychology literature: repetition buys processing fluency, but it also buys
+// habituation — "the more one particular layer doesn't change, the more your
+// ears adjust to hear beyond it" — and the entrance of an instrument is the
+// event that resets attention. Ethan heard exactly that failure: "currently I
+// can only hear the music box and the piano", in an arrangement where every
+// voice had been sounding continuously since bar one.
+//
+// The vocabulary is game audio's: VERTICAL LAYERING (stems fading in and out of
+// one piece) crossed with HORIZONTAL RESEQUENCING (distinct sections in
+// sequence). The entry ORDER is Toby Fox's own, from the Undertale composition
+// deconstruction: the ostinato is introduced first, then the midground, then
+// the melody with its drums — and "everything melodic is repeated twice" before
+// new material arrives, which is why sections come in pairs.
+//
+// One rule outranks the rest, and it is the answer to "sometimes the lead
+// melody just stops": ONCE THE TUNE HAS ARRIVED, SOMETHING IS ALWAYS CARRYING
+// IT. A takeover is a handoff at a section boundary, never a gap.
+// ---------------------------------------------------------------------------
+
+// What each archetype asks for. `take` names which entry groups are sounding;
+// `lead` names who has the tune.
+const ARCHETYPES = {
+  ostinato: {
+    lead: null, take: [], energy: 1,
+    why: 'the accompaniment alone — the ostinato states the groove before anything is asked of it',
+  },
+  bed: {
+    lead: null, take: ['bed'], energy: 2,
+    why: 'sustain joins underneath, still with no tune, so that the melody’s entry is an event and not a texture',
+  },
+  statement: {
+    lead: 'piano', take: ['bed'], energy: 3,
+    why: 'the melody arrives over the bed it has been waiting behind',
+  },
+  answer: {
+    lead: 'piano', take: ['bed', 'motion'], energy: 4,
+    why: 'a second line answers the tune — the two-hand counterpoint, not more of the same',
+  },
+  handoff: {
+    lead: 'takeover', take: ['bed', 'motion'], energy: 4,
+    why: 'the tune changes voice at a phrase boundary: the piano hands it over rather than dropping it',
+  },
+  // The peak is allowed past the standing mass ceiling. That ceiling is what a
+  // song can carry INDEFINITELY without turning to mud; a peak is by definition
+  // the one moment that is denser than the rest, and it only lasts a section.
+  full: {
+    lead: 'piano', take: ['bed', 'motion', 'double'], energy: 5, massMul: 1.35,
+    why: 'everything at once, the doubling included — the peak the rest of the form was building toward',
+  },
+  fullHandoff: {
+    lead: 'takeover', take: ['bed', 'motion', 'double'], energy: 5, massMul: 1.35,
+    why: 'the peak, with the new voice carrying the tune',
+  },
+  breakdown: {
+    lead: 'piano', take: ['motion'], energy: 2,
+    why: 'strip back to the tune and one line so the return lands',
+  },
+  tag: {
+    lead: null, take: ['bed'], energy: 1,
+    why: 'the tune withdraws and the bed closes it out before the loop comes round',
+  },
+};
+
+// Form shapes, per role, chosen by the song's own hash. Each is an energy
+// contour over the loop's repetitions: something rises, peaks, and gives way.
+// `handoff` degrades to its non-handoff twin when no layer can lead.
+const ROLE_FORM = {
+  boss: [
+    ['statement', 'full', 'breakdown', 'full'],
+    ['bed', 'statement', 'answer', 'full'],
+    ['statement', 'answer', 'full', 'fullHandoff'],
+    ['ostinato', 'statement', 'full', 'full'],
+  ],
+  battle: [
+    ['statement', 'answer', 'full', 'breakdown'],
+    ['bed', 'statement', 'full', 'full'],
+    ['statement', 'full', 'handoff', 'full'],
+  ],
+  chase: [
+    ['statement', 'full', 'full', 'breakdown'],
+    ['bed', 'statement', 'answer', 'full'],
+  ],
+  cutscene: [
+    ['ostinato', 'bed', 'statement', 'answer'],
+    ['bed', 'statement', 'answer', 'full'],
+    ['ostinato', 'statement', 'answer', 'full', 'tag'],
+    ['statement', 'answer', 'handoff', 'full'],
+    ['bed', 'statement', 'full', 'breakdown', 'full'],
+  ],
+  character: [
+    ['statement', 'answer', 'handoff', 'full'],
+    ['ostinato', 'statement', 'answer', 'full'],
+    ['statement', 'breakdown', 'answer', 'full'],
+  ],
+  credits: [
+    ['ostinato', 'bed', 'statement', 'answer', 'full'],
+    ['bed', 'statement', 'answer', 'full', 'tag'],
+  ],
+  ending: [
+    ['ostinato', 'bed', 'statement', 'full', 'tag'],
+    ['bed', 'statement', 'handoff', 'full', 'tag'],
+  ],
+  town: [
+    ['statement', 'answer', 'full', 'breakdown'],
+    ['bed', 'statement', 'answer', 'full'],
+    ['statement', 'handoff', 'answer', 'full'],
+  ],
+  overworld: [
+    ['ostinato', 'bed', 'statement', 'answer'],
+    ['bed', 'statement', 'answer', 'full'],
+    ['ostinato', 'statement', 'full', 'breakdown', 'full'],
+    ['statement', 'answer', 'handoff', 'full'],
+  ],
+  shop: [
+    ['statement', 'answer', 'full', 'answer'],
+    ['bed', 'statement', 'answer', 'full'],
+  ],
+  diegetic: [
+    ['ostinato', 'statement', 'answer', 'full'],
+    ['statement', 'answer', 'handoff', 'full'],
+  ],
+  menu: [['statement', 'answer'], ['bed', 'statement', 'answer', 'full']],
+  joke: [
+    ['statement', 'handoff', 'answer', 'full'],
+    ['statement', 'answer', 'breakdown', 'full'],
+  ],
+};
+const DEFAULT_FORM = [
+  ['ostinato', 'statement', 'answer', 'full'],
+  ['bed', 'statement', 'answer', 'full'],
+  ['statement', 'answer', 'full', 'breakdown'],
+];
+
+/**
+ * planForm(plan) -> { sectionBars, totalBars, sections, notes }
+ *
+ * A section is one pass of the loop (or of the melody's phrase, when that is
+ * longer — the two must stay aligned or a masked layer would restart mid-
+ * phrase). Every section records which layer ids sound, who holds the tune,
+ * and why, so the whole shape is inspectable and later editable.
+ */
+export function planForm(plan, opts = {}) {
+  const notes = [];
+  const loop = Math.max(1, plan.loopBars ?? 4);
+  const lead = plan.leadPeriod ?? loop;
+  // sections must contain whole phrases of everything inside them
+  const sectionBars = lead % loop === 0 ? lead : loop * lead;
+  const byEntry = (g) => plan.layers.filter((l) => l.entry === g);
+  const leaders = plan.layers.filter((l) => l.canLead);
+
+  // Build the sections one shape would produce. Called for every candidate,
+  // because whether a shape is any good depends on the roster it is applied to.
+  const build = (shape) => {
+    const secs = [];
+    let bar = 0;
+    for (let i = 0; i < shape.length; i++) {
+      const arch = ARCHETYPES[shape[i]];
+      // who plays: the requested entry groups, admitted in Toby's order and
+      // stopped at the mass this song can sound AT ONCE (the roster is allowed
+      // to be bigger than any one moment of it)
+      const wanted = [];
+      for (const g of ['bed', 'motion', 'double']) if (arch.take.includes(g)) wanted.push(...byEntry(g));
+      const ceiling = plan.massAtOnce * (arch.massMul ?? 1);
+      const active = [];
+      let mass = 0;
+      const dropped = [];
+      for (const l of wanted) {
+        if (mass + l.mass > ceiling + 1e-9) { dropped.push(l.instrument); continue; }
+        active.push(l.id); mass += l.mass;
+      }
+      // who has the tune. A takeover only ever REPLACES the piano; it never
+      // leaves the lead empty, and it is only reachable at a section boundary.
+      let leadVoice = 'piano', leadId = null;
+      if (arch.lead === null) leadVoice = 'none';
+      else if (arch.lead === 'takeover' && leaders.length) {
+        const t = leaders[fnv(`${plan.name}|handoff|${i}`) % leaders.length];
+        leadVoice = t.instrument; leadId = t.id;
+        if (!active.includes(t.id)) { active.push(t.id); mass += t.mass; }
+      }
+      secs.push({
+        index: i, archetype: shape[i], startBar: bar, bars: sectionBars,
+        energy: arch.energy, lead: leadVoice, leadLayerId: leadId,
+        pianoLead: leadVoice === 'piano', active,
+        massSounding: Math.round(mass * 100) / 100,
+        why: arch.why + (dropped.length ? ` (${dropped.join(', ')} held back: this section is already at its mass ceiling)` : ''),
+      });
+      bar += sectionBars;
+    }
+    return secs;
+  };
+  // A section is only an EVENT if it does not sound like the one before it. On
+  // a roster with no doubling layer, 'full' takes exactly what 'answer' took
+  // and the pair plateaus — measured as `answer:348 full:348` haps, two bars of
+  // arrangement that the ear cannot tell apart. So a shape is judged against
+  // the roster it will actually be applied to: how many distinct states it
+  // produces, and how few adjacent repeats. Ties break on the song's hash, so
+  // the choice is still the song's own and still deterministic.
+  const options = (ROLE_FORM[plan.role] ?? DEFAULT_FORM).map((shape) => {
+    let s = shape.slice();
+    // A handoff with nobody to hand off to is a dropout — the exact failure the
+    // lead rule exists to stop. Degrade to the equivalent ordinary archetype.
+    if (!leaders.length) s = s.map((a) => (a === 'handoff' ? 'answer' : a === 'fullHandoff' ? 'full' : a));
+    // Nor is an arrangement with no tune in it a form.
+    if (!s.some((a) => ARCHETYPES[a].lead)) s = ['statement', ...s.slice(1)];
+    const secs = build(s);
+    const state = (x) => `${[...x.active].sort().join(',')}|${x.lead}`;
+    const distinct = new Set(secs.map(state)).size;
+    let repeats = 0;
+    for (let i = 1; i < secs.length; i++) if (state(secs[i]) === state(secs[i - 1])) repeats++;
+    // If a voice was cast specifically to be able to take the tune, a shape
+    // that hands it the tune is doing the job the casting intended. Without
+    // this the takeover was cast in 43 songs and led in 5, and in the other 38
+    // it was forced into the peak by the every-layer-must-be-heard rule — where
+    // it played the lead line in unison with the piano, which is a doubling
+    // wearing a takeover's name.
+    const usesLeader = leaders.length && secs.some((x) => x.leadLayerId);
+    return { shape: s, secs, score: distinct * 2 - repeats + (usesLeader ? 3 : 0) };
+  }).sort((a, b) => b.score - a.score);
+  const top = options.filter((o) => o.score >= options[0].score);
+  const pick = top[fnv(`${plan.name}|form`) % top.length];
+  const sections = pick.secs;
+  notes.push(`form: ${pick.shape.join(' → ')} — ${new Set(pick.secs.map((x) => [...x.active].sort().join(',') + x.lead)).size} distinct states from a roster of ${plan.layers.length}, best of ${options.length} shapes for role "${plan.role ?? 'none'}"`);
+  let bar = pick.secs.length ? pick.secs[pick.secs.length - 1].startBar + sectionBars : 0;
+
+  // The rule that outranks the shape: once the tune has arrived it never
+  // vanishes again except into a deliberate tag at the very end.
+  let arrived = false;
+  for (const sec of sections) {
+    if (sec.lead !== 'none') { arrived = true; continue; }
+    const isTail = sec.index === sections.length - 1;
+    if (arrived && !(isTail && sec.archetype === 'tag')) {
+      sec.lead = 'piano'; sec.pianoLead = true; sec.archetype = 'statement';
+      sec.why = `${ARCHETYPES.statement.why} (the shape asked for no melody here, but the tune had already arrived and dropping it reads as a fault)`;
+      notes.push(`section ${sec.index}: restored the piano lead — a silent lead after the tune has arrived is the "melody just stops" failure`);
+    }
+  }
+  // every layer on the roster must be heard SOMEWHERE, or it is dead weight the
+  // plan is carrying and the edit pass would have to explain
+  const heard = new Set(sections.flatMap((sec) => sec.active));
+  for (const l of plan.layers) {
+    if (heard.has(l.id)) continue;
+    const peak = sections.reduce((a, b) => (b.energy > a.energy ? b : a));
+    if (l.canLead) {
+      // A voice cast to CARRY the tune must be given the tune, not stacked on
+      // top of the piano playing the same line — that is a doubling, and it is
+      // how a "takeover" came to sound like nothing in particular.
+      peak.lead = l.instrument; peak.leadLayerId = l.id; peak.pianoLead = false;
+      peak.archetype = peak.archetype === 'full' ? 'fullHandoff' : 'handoff';
+      peak.why = `${ARCHETYPES[peak.archetype].why} (no section had claimed the handoff, and a takeover voice that never takes over is just a second piano)`;
+      notes.push(`${l.instrument} was cast to lead but no section handed it the tune — it takes over at the peak instead`);
+      peak.active.push(l.id);
+      heard.add(l.id);
+      continue;
+    }
+    // An unheard voice has to go SOMEWHERE with room for it — forcing it into
+    // the peak regardless is how a mass ceiling stops meaning anything. Take
+    // the busiest section that can still afford it; failing that, trade it
+    // against the heaviest voice already in the peak, so the roster is heard
+    // and the ceiling holds.
+    const ceilOf = (sec) => plan.massAtOnce * (ARCHETYPES[sec.archetype]?.massMul ?? 1);
+    const room = sections
+      .filter((sec) => sec.lead !== 'none' && sec.massSounding + l.mass <= ceilOf(sec) + 1e-9)
+      .sort((a, b) => b.energy - a.energy)[0];
+    if (room) {
+      room.active.push(l.id);
+      room.massSounding = Math.round((room.massSounding + l.mass) * 100) / 100;
+      notes.push(`${l.instrument} was cast but no section wanted it — it enters at section ${room.index}, the busiest one with room for it`);
+    } else {
+      // ...and only against a voice that still sounds somewhere else, or the
+      // trade just moves the problem onto the layer it displaced
+      const elsewhere = (id) => sections.some((sec) => sec !== peak && sec.active.includes(id));
+      const heaviest = peak.active
+        .map((id) => plan.layers.find((x) => x.id === id))
+        .filter((x) => x && !x.canLead && x.mass >= l.mass && elsewhere(x.id))
+        .sort((a, b) => b.mass - a.mass)[0];
+      if (!heaviest) { notes.push(`${l.instrument} was cast and cannot be fitted anywhere — left silent rather than making the peak mud`); continue; }
+      peak.active = peak.active.filter((id) => id !== heaviest.id).concat(l.id);
+      peak.massSounding = Math.round((peak.massSounding - heaviest.mass + l.mass) * 100) / 100;
+      notes.push(`${l.instrument} traded places with ${heaviest.instrument} at the peak: both were cast, only one fits, and the lighter one is the one that fits`);
+    }
+    heard.add(l.id);
+  }
+
+  // Two adjacent sections that sound the same are one section wearing two
+  // names, and the second one is not the event the form promised. Where a shape
+  // still plateaus after selection — usually 'answer' into 'full' on a roster
+  // with nothing to double the tune — THIN THE EARLIER ONE, so the later
+  // becomes a genuine entry. Thinning backwards rather than padding forwards
+  // keeps the contour rising and costs no extra mass.
+  const stateOf = (x) => `${[...x.active].sort().join(',')}|${x.lead}`;
+  for (let i = 1; i < sections.length; i++) {
+    if (stateOf(sections[i]) !== stateOf(sections[i - 1])) continue;
+    const prev = sections[i - 1];
+    // give up the last voice to have joined — the one whose entry is most
+    // recent is the one the ear will most readily hear arrive
+    const give = prev.active[prev.active.length - 1];
+    if (!give || prev.leadLayerId === give) continue;
+    prev.active = prev.active.filter((id) => id !== give);
+    const gl = plan.layers.find((l) => l.id === give);
+    prev.massSounding = Math.round((prev.massSounding - (gl ? gl.mass : 0)) * 100) / 100;
+    prev.why += ` — and holds ${gl ? gl.instrument : give} back, so its arrival in the next section is something the ear can catch`;
+    notes.push(`sections ${i - 1} and ${i} would have sounded identical: ${gl ? gl.instrument : give} now enters at ${i} instead of ${i - 1}`);
+  }
+
+
+  return { sectionBars, totalBars: bar, sections, notes };
+}
+
+/** the per-bar mask a layer needs to sound only in the sections it belongs to */
+export function maskFor(id, form) {
+  const on = form.sections.map((sec) => (sec.active.includes(id) ? 1 : 0));
+  return runLengths(on, form.sectionBars);
+}
+/** the piano lead's mask: the sections where the piano itself holds the tune */
+export function pianoLeadMask(form) {
+  return runLengths(form.sections.map((sec) => (sec.pianoLead ? 1 : 0)), form.sectionBars);
+}
+function runLengths(on, bars) {
+  const out = [];
+  for (const v of on) {
+    const last = out[out.length - 1];
+    if (last && last.v === v) last.n += bars; else out.push({ v, n: bars });
+  }
+  return out.map(({ v, n }) => (n === 1 ? `${v}` : `${v}@${n}`)).join(' ');
 }
 
 function gainFor(part, inst) {
@@ -298,7 +767,12 @@ function gainFor(part, inst) {
   }[part] ?? 0.4;
   // loud instruments that cut are pulled back so the piano stays the subject
   const trim = inst.cuts > 0.8 ? 0.85 : 1;
-  return Math.round(base * trim * 100) / 100;
+  // ...and then the per-voice level correction (D46). GM soundfonts differ by
+  // a factor of two in absolute loudness and `cuts` does not describe that: a
+  // flute has a bright penetrating tone AND a quiet sample, which is how 34
+  // flute layers went unheard. Capped so nothing can shout over the piano.
+  const level = inst.level ?? 1;
+  return Math.round(Math.min(0.9, base * trim * level) * 100) / 100;
 }
 
 /**
@@ -358,4 +832,37 @@ export function renderArrangement(plan, ctx) {
     if (expr) out.push({ ...layer, rhythmSource, expr });
   }
   return { layers: out, warnings };
+}
+
+/**
+ * renderForm(renderedLayers, leadExpr, form) -> { parts, sectionsHtmlSafe }
+ *
+ * Applies the form to already-rendered expressions: each layer is masked to the
+ * sections it belongs to, and the piano lead is masked to the sections where
+ * the piano itself holds the tune. `.mask()` gates per bar, so the mask cycles
+ * with the whole form while each pattern keeps its own period — which is why
+ * planForm() sizes a section to contain whole phrases of everything in it.
+ *
+ * Returns the layer list with a `formExpr` on each, plus the masked lead.
+ */
+export function renderForm(layers, leadExpr, form) {
+  const out = layers.map((l) => {
+    const m = maskFor(l.id, form);
+    // a layer that plays in every section needs no mask at all
+    const always = /^1(@\d+)?$/.test(m);
+    return {
+      ...l,
+      formMask: m,
+      sections: form.sections.filter((s) => s.active.includes(l.id)).map((s) => s.index),
+      formExpr: always ? l.expr : `${l.expr}.mask("<${m}>")`,
+    };
+  });
+  const lm = pianoLeadMask(form);
+  const leadAlways = /^1(@\d+)?$/.test(lm);
+  return {
+    layers: out,
+    leadMask: lm,
+    lead: leadExpr == null ? null
+      : leadAlways ? leadExpr : `${leadExpr}.mask("<${lm}>")`,
+  };
 }

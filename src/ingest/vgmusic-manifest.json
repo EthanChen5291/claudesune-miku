@@ -1,0 +1,3613 @@
+{
+  "source": "https://www.vgmusic.com/",
+  "note": "Third-party transcriptions of game music, fetched for statistical extraction only. The .mid files are NOT committed (audios/vgmusic/ is gitignored); re-run scripts/fetch-corpus.mjs to reproduce them. Every entry credits its sequencer.",
+  "filters": {
+    "minBytes": 8000,
+    "maxBytes": 90000,
+    "perGame": 2,
+    "limit": 400
+  },
+  "count": 400,
+  "files": [
+    {
+      "system": "gameboy",
+      "game": "Dragon Warrior Monsters 2",
+      "title": "Town",
+      "file": "08-Raining_town.mid",
+      "bytes": 27884,
+      "sequencer": "Solis",
+      "path": "audios/vgmusic/gameboy/08-Raining_town.mid"
+    },
+    {
+      "system": "gameboy",
+      "game": "Mega Man 4",
+      "title": "Wily's Castle: Stage 2",
+      "file": "24-WilyStage2.mid",
+      "bytes": 10308,
+      "sequencer": "TurquoiseStar",
+      "path": "audios/vgmusic/gameboy/24-WilyStage2.mid"
+    },
+    {
+      "system": "gameboy",
+      "game": "Animaniacs",
+      "title": "Song Test 8",
+      "file": "Animaniacs_-_Song_Test_8.mid",
+      "bytes": 15225,
+      "sequencer": "Darren",
+      "path": "audios/vgmusic/gameboy/Animaniacs_-_Song_Test_8.mid"
+    },
+    {
+      "system": "gameboy",
+      "game": "Balloon Kid",
+      "title": "Stage 1 and Stage 5 (2)",
+      "file": "Balloon_Kid_Stage1.mid",
+      "bytes": 19012,
+      "sequencer": "Troy Davis",
+      "path": "audios/vgmusic/gameboy/Balloon_Kid_Stage1.mid"
+    },
+    {
+      "system": "gameboy",
+      "game": "Balloon Kid",
+      "title": "Stage 1 and Stage 5 (Remix) (2)",
+      "file": "Balloon_Kid.mid",
+      "bytes": 33795,
+      "sequencer": "Andrew Estrada",
+      "path": "audios/vgmusic/gameboy/Balloon_Kid.mid"
+    },
+    {
+      "system": "gameboy",
+      "game": "Batman",
+      "title": "Ending",
+      "file": "Batman_Ending.mid",
+      "bytes": 13681,
+      "sequencer": "Philipp Strahl",
+      "path": "audios/vgmusic/gameboy/Batman_Ending.mid"
+    },
+    {
+      "system": "gameboy",
+      "game": "Dragon Ball Z 2",
+      "title": "Battle 1",
+      "file": "Battle_1_%28Ver._X.X%29.mid",
+      "bytes": 16516,
+      "sequencer": "HHMKrillin",
+      "path": "audios/vgmusic/gameboy/Battle_1_%28Ver._X.X%29.mid"
+    },
+    {
+      "system": "gameboy",
+      "game": "Pokémon Pinball",
+      "title": "Blue Table",
+      "file": "BlueTableMain.mid",
+      "bytes": 14411,
+      "sequencer": "AI Musicware Productions",
+      "path": "audios/vgmusic/gameboy/BlueTableMain.mid"
+    },
+    {
+      "system": "gameboy",
+      "game": "Dragon Warrior 2",
+      "title": "Overworld 1 - \"Endless Journey\"",
+      "file": "DQ1_2_-_Endless_Journey.mid",
+      "bytes": 9979,
+      "sequencer": "Jay Reichard",
+      "path": "audios/vgmusic/gameboy/DQ1_2_-_Endless_Journey.mid"
+    },
+    {
+      "system": "gameboy",
+      "game": "Dragon Warrior",
+      "title": "Overworld - \"Unknown World\" (2)",
+      "file": "DQ1_2_-_Unknown_World.mid",
+      "bytes": 14805,
+      "sequencer": "Jay Reichard",
+      "path": "audios/vgmusic/gameboy/DQ1_2_-_Unknown_World.mid"
+    },
+    {
+      "system": "gameboy",
+      "game": "Dragon Warrior 3",
+      "title": "Dark World - \"Unknown World\"",
+      "file": "DQ3_-_Unknown_World.mid",
+      "bytes": 8907,
+      "sequencer": "Jay Reichard",
+      "path": "audios/vgmusic/gameboy/DQ3_-_Unknown_World.mid"
+    },
+    {
+      "system": "gameboy",
+      "game": "Dr. Mario",
+      "title": "Chill (Remix) (XG)",
+      "file": "Dr_Mario_Chill_rmx_XG.mid",
+      "bytes": 43297,
+      "sequencer": "Paper_Luigi",
+      "path": "audios/vgmusic/gameboy/Dr_Mario_Chill_rmx_XG.mid"
+    },
+    {
+      "system": "gameboy",
+      "game": "Dr. Mario",
+      "title": "Tree Cinema (XG)",
+      "file": "DrMario-EndingXG.mid",
+      "bytes": 25500,
+      "sequencer": "The Ultimate Koopa",
+      "path": "audios/vgmusic/gameboy/DrMario-EndingXG.mid"
+    },
+    {
+      "system": "gameboy",
+      "game": "Donkey Kong Land 2",
+      "title": "Hive - \"Flight of the Zingers\" (2)",
+      "file": "FlightOfTheZinger.mid",
+      "bytes": 8710,
+      "sequencer": "SNN",
+      "path": "audios/vgmusic/gameboy/FlightOfTheZinger.mid"
+    },
+    {
+      "system": "gameboy",
+      "game": "Castlevania II: Belmont's Revenge",
+      "title": "Final Battle - \"Sons of Satan\"",
+      "file": "GB_Castlevania_2_Belmonts_Revenge_Final_Battle.mid",
+      "bytes": 30704,
+      "sequencer": "Mayika",
+      "path": "audios/vgmusic/gameboy/GB_Castlevania_2_Belmonts_Revenge_Final_Battle.mid"
+    },
+    {
+      "system": "gameboy",
+      "game": "Gameboy Camera",
+      "title": "Space Fever II Boss",
+      "file": "GBC-Boss.mid",
+      "bytes": 28802,
+      "sequencer": "TheUltimateKoopa",
+      "path": "audios/vgmusic/gameboy/GBC-Boss.mid"
+    },
+    {
+      "system": "gameboy",
+      "game": "Gameboy Camera",
+      "title": "Credits 2 (v1.2)",
+      "file": "GBCam_CreditsPart2.mid",
+      "bytes": 16387,
+      "sequencer": "Mike Ives",
+      "path": "audios/vgmusic/gameboy/GBCam_CreditsPart2.mid"
+    },
+    {
+      "system": "gameboy",
+      "game": "Godzilla",
+      "title": "Comical Intro",
+      "file": "godzilla-comical.mid",
+      "bytes": 13444,
+      "sequencer": "Grimm Teather",
+      "path": "audios/vgmusic/gameboy/godzilla-comical.mid"
+    },
+    {
+      "system": "gameboy",
+      "game": "Hamtaro, Ham-Hams Unite!",
+      "title": "Sky Garden",
+      "file": "H-garden.mid",
+      "bytes": 12907,
+      "sequencer": "FireMario",
+      "path": "audios/vgmusic/gameboy/H-garden.mid"
+    },
+    {
+      "system": "gameboy",
+      "game": "Hamtaro, Ham-Hams Unite!",
+      "title": "Ruins",
+      "file": "H-ruins.mid",
+      "bytes": 8713,
+      "sequencer": "FireMario",
+      "path": "audios/vgmusic/gameboy/H-ruins.mid"
+    },
+    {
+      "system": "gameboy",
+      "game": "Battletoads",
+      "title": "Level 4",
+      "file": "JDC_BTGBLvl4_1_1.mid",
+      "bytes": 54097,
+      "sequencer": "Joseph Collins",
+      "path": "audios/vgmusic/gameboy/JDC_BTGBLvl4_1_1.mid"
+    },
+    {
+      "system": "gameboy",
+      "game": "Solar Striker",
+      "title": "Stage 4",
+      "file": "JDC_SSArea4_120.mid",
+      "bytes": 35821,
+      "sequencer": "Joseph Collins",
+      "path": "audios/vgmusic/gameboy/JDC_SSArea4_120.mid"
+    },
+    {
+      "system": "gameboy",
+      "game": "Kid Icarus",
+      "title": "Fortress",
+      "file": "KI_Fortress.mid",
+      "bytes": 18231,
+      "sequencer": "The Triforce of Music",
+      "path": "audios/vgmusic/gameboy/KI_Fortress.mid"
+    },
+    {
+      "system": "gameboy",
+      "game": "Kirby's Star Stacker",
+      "title": "Kirby Explains The Rules",
+      "file": "kssrules.mid",
+      "bytes": 79631,
+      "sequencer": "Merit Celaire",
+      "path": "audios/vgmusic/gameboy/kssrules.mid"
+    },
+    {
+      "system": "gameboy",
+      "game": "Adventures of Lolo",
+      "title": "Level 2",
+      "file": "L1-lvlB.mid",
+      "bytes": 13058,
+      "sequencer": "FireMario",
+      "path": "audios/vgmusic/gameboy/L1-lvlB.mid"
+    },
+    {
+      "system": "gameboy",
+      "game": "Legend of Zelda, The: Link's Awakening DX",
+      "title": "Color Dungeon",
+      "file": "LAColorD.mid",
+      "bytes": 8518,
+      "sequencer": "Princess Peach Toadstool",
+      "path": "audios/vgmusic/gameboy/LAColorD.mid"
+    },
+    {
+      "system": "gameboy",
+      "game": "Mario Golf",
+      "title": "Complete",
+      "file": "mggbcComplete.mid",
+      "bytes": 12676,
+      "sequencer": "Dentelle",
+      "path": "audios/vgmusic/gameboy/mggbcComplete.mid"
+    },
+    {
+      "system": "gameboy",
+      "game": "Mousetrap Hotel",
+      "title": "Deep Explorations",
+      "file": "mhde.mid",
+      "bytes": 46394,
+      "sequencer": "Merit Celaire",
+      "path": "audios/vgmusic/gameboy/mhde.mid"
+    },
+    {
+      "system": "gameboy",
+      "game": "Mortal Kombat 3",
+      "title": "Level 1 - Pit III",
+      "file": "mk3_zb_pit3_gb.mid",
+      "bytes": 17460,
+      "sequencer": "Zero Beats",
+      "path": "audios/vgmusic/gameboy/mk3_zb_pit3_gb.mid"
+    },
+    {
+      "system": "gameboy",
+      "game": "Mole Mania",
+      "title": "Level 4",
+      "file": "MManiaLevel4.mid",
+      "bytes": 54726,
+      "sequencer": "Jayster",
+      "path": "audios/vgmusic/gameboy/MManiaLevel4.mid"
+    },
+    {
+      "system": "gameboy",
+      "game": "Nemesis",
+      "title": "Boss (XG)",
+      "file": "Nemesis_Boss.mid",
+      "bytes": 54787,
+      "sequencer": "Teck",
+      "path": "audios/vgmusic/gameboy/Nemesis_Boss.mid"
+    },
+    {
+      "system": "gameboy",
+      "game": "Pokémon Crystal",
+      "title": "Battle Tower (Outside)",
+      "file": "pc_btower_outside.mid",
+      "bytes": 27410,
+      "sequencer": "Dr. Fruitcake",
+      "path": "audios/vgmusic/gameboy/pc_btower_outside.mid"
+    },
+    {
+      "system": "gameboy",
+      "game": "Pokemon (Red, Blue, Yellow)",
+      "title": "Route 3/4/22 (Arranged)",
+      "file": "Pkmn_RB_Route_3_Arranged.mid",
+      "bytes": 36471,
+      "sequencer": "Darkmind",
+      "path": "audios/vgmusic/gameboy/Pkmn_RB_Route_3_Arranged.mid"
+    },
+    {
+      "system": "gameboy",
+      "game": "Pokémon Card GB2 (Japan)",
+      "title": "Great Rocket Battle (XG)",
+      "file": "PKMNTCG2_-_GreatRocketBattle.mid",
+      "bytes": 36917,
+      "sequencer": "Jace",
+      "path": "audios/vgmusic/gameboy/PKMNTCG2_-_GreatRocketBattle.mid"
+    },
+    {
+      "system": "gameboy",
+      "game": "Pokémon Trading Card Game",
+      "title": "Closing Credits",
+      "file": "Pktccred.mid",
+      "bytes": 44178,
+      "sequencer": "unknown",
+      "path": "audios/vgmusic/gameboy/Pktccred.mid"
+    },
+    {
+      "system": "gameboy",
+      "game": "Powerpuff Girls, The",
+      "title": "Stage 1",
+      "file": "ppggbcst1.mid",
+      "bytes": 33903,
+      "sequencer": "Merit Celaire",
+      "path": "audios/vgmusic/gameboy/ppggbcst1.mid"
+    },
+    {
+      "system": "gameboy",
+      "game": "Rolan's Curse",
+      "title": "Dungeon 2",
+      "file": "rc_dungeon2_1.mid",
+      "bytes": 14869,
+      "sequencer": "Zero Beats",
+      "path": "audios/vgmusic/gameboy/rc_dungeon2_1.mid"
+    },
+    {
+      "system": "gameboy",
+      "game": "Gensomaden Saiyuki (Japan)",
+      "title": "For Real (Remix) (2)",
+      "file": "Saiyuki-_For_Real_%28piano_version%29.mid",
+      "bytes": 25122,
+      "sequencer": "unknown",
+      "path": "audios/vgmusic/gameboy/Saiyuki-_For_Real_%28piano_version%29.mid"
+    },
+    {
+      "system": "gameboy",
+      "game": "Wario Land",
+      "title": "Ice Levels",
+      "file": "SherbetLandStage2ByCryogen_2.mid",
+      "bytes": 8644,
+      "sequencer": "Cryogen Glacien (Edited by Joe Cortez)",
+      "path": "audios/vgmusic/gameboy/SherbetLandStage2ByCryogen_2.mid"
+    },
+    {
+      "system": "gameboy",
+      "game": "Shi Kin Jyo",
+      "title": "Chinese Mode: Level 50",
+      "file": "SKJ-50a.mid",
+      "bytes": 12456,
+      "sequencer": "Stefan Goodreau",
+      "path": "audios/vgmusic/gameboy/SKJ-50a.mid"
+    },
+    {
+      "system": "gameboy",
+      "game": "Bionic Commando",
+      "title": "Introduction: Part 2",
+      "file": "T_BionicCommandoGB_Introduction2.mid",
+      "bytes": 18125,
+      "sequencer": "Tsu Ryu",
+      "path": "audios/vgmusic/gameboy/T_BionicCommandoGB_Introduction2.mid"
+    },
+    {
+      "system": "gameboy",
+      "game": "DiGi Charat",
+      "title": "Only One No.1",
+      "file": "T_DigiCharat_Onlyone_TvSize12Final.mid",
+      "bytes": 24441,
+      "sequencer": "Tsu Ryu",
+      "path": "audios/vgmusic/gameboy/T_DigiCharat_Onlyone_TvSize12Final.mid"
+    },
+    {
+      "system": "gameboy",
+      "game": "Tetris DX",
+      "title": "Music B (2)",
+      "file": "tet_b.mid",
+      "bytes": 14465,
+      "sequencer": "octahedron80",
+      "path": "audios/vgmusic/gameboy/tet_b.mid"
+    },
+    {
+      "system": "gameboy",
+      "game": "Tetris Plus",
+      "title": "World Map",
+      "file": "TetrisPlus_Map.mid",
+      "bytes": 13797,
+      "sequencer": "FuzzballFox",
+      "path": "audios/vgmusic/gameboy/TetrisPlus_Map.mid"
+    },
+    {
+      "system": "gameboy",
+      "game": "Tiny Toon Adventures: Babs's Big Break",
+      "title": "Montana Max's Mansion",
+      "file": "ttagbmmsn.mid",
+      "bytes": 41048,
+      "sequencer": "Merit Celaire",
+      "path": "audios/vgmusic/gameboy/ttagbmmsn.mid"
+    },
+    {
+      "system": "gameboy",
+      "game": "Walt Disney World Quest",
+      "title": "Disney Studios",
+      "file": "wdwqmrtds.mid",
+      "bytes": 38407,
+      "sequencer": "Merit Celaire",
+      "path": "audios/vgmusic/gameboy/wdwqmrtds.mid"
+    },
+    {
+      "system": "gameboy",
+      "game": "X (Japan)",
+      "title": "Tunnel Scene 2",
+      "file": "x-tunnelscene2.mid",
+      "bytes": 15784,
+      "sequencer": "Total Yosh",
+      "path": "audios/vgmusic/gameboy/x-tunnelscene2.mid"
+    },
+    {
+      "system": "gameboy",
+      "game": "Legend of Zelda, The: Link's Awakening DX",
+      "title": "Color Dungeon (2)",
+      "file": "Zelda_IV_DX_-_Color_Dungeon.mid",
+      "bytes": 15491,
+      "sequencer": "Jay Reichard",
+      "path": "audios/vgmusic/gameboy/Zelda_IV_DX_-_Color_Dungeon.mid"
+    },
+    {
+      "system": "gameboy",
+      "game": "Legend of Zelda, The: Oracle of Seasons",
+      "title": "Level 6: Ancient Ruins (XG) (v.2)",
+      "file": "ZeldaOoSeasons_Level6_2.mid",
+      "bytes": 65287,
+      "sequencer": "Teck",
+      "path": "audios/vgmusic/gameboy/ZeldaOoSeasons_Level6_2.mid"
+    },
+    {
+      "system": "genesis",
+      "game": "Battle Squadron",
+      "title": "Main",
+      "file": "a-bsq.mid",
+      "bytes": 55860,
+      "sequencer": "Chuck Dodgers",
+      "path": "audios/vgmusic/genesis/a-bsq.mid"
+    },
+    {
+      "system": "genesis",
+      "game": "Aero the Acrobat 2",
+      "title": "Snowboarding",
+      "file": "aero2_snow.mid",
+      "bytes": 17744,
+      "sequencer": "Katsumi No",
+      "path": "audios/vgmusic/genesis/aero2_snow.mid"
+    },
+    {
+      "system": "genesis",
+      "game": "Aerobiz Supersonic",
+      "title": "Title Screen",
+      "file": "aerobiz2-title.mid",
+      "bytes": 21060,
+      "sequencer": "Z-Man",
+      "path": "audios/vgmusic/genesis/aerobiz2-title.mid"
+    },
+    {
+      "system": "genesis",
+      "game": "After Burner",
+      "title": "After Burner (SC-88)",
+      "file": "Aftpro.mid",
+      "bytes": 86337,
+      "sequencer": "unknown",
+      "path": "audios/vgmusic/genesis/Aftpro.mid"
+    },
+    {
+      "system": "genesis",
+      "game": "Asterix and the Great Rescue",
+      "title": "Level 1",
+      "file": "AGR-W-1.mid",
+      "bytes": 38711,
+      "sequencer": "Erik the Not-So-Great",
+      "path": "audios/vgmusic/genesis/AGR-W-1.mid"
+    },
+    {
+      "system": "genesis",
+      "game": "Virtua Fighter 2",
+      "title": "Burning (v1.1)",
+      "file": "AkiraVF2Gen1_1.mid",
+      "bytes": 28672,
+      "sequencer": "Marcio Diego",
+      "path": "audios/vgmusic/genesis/AkiraVF2Gen1_1.mid"
+    },
+    {
+      "system": "genesis",
+      "game": "Alien Soldier",
+      "title": "Slap-Up (2)",
+      "file": "AS-Slap-Up.mid",
+      "bytes": 29102,
+      "sequencer": "JexuBandicoot527",
+      "path": "audios/vgmusic/genesis/AS-Slap-Up.mid"
+    },
+    {
+      "system": "genesis",
+      "game": "Gunstar Heroes",
+      "title": "Bravoo Man (2)",
+      "file": "bravoo.mid",
+      "bytes": 67080,
+      "sequencer": "Aaron Kearns",
+      "path": "audios/vgmusic/genesis/bravoo.mid"
+    },
+    {
+      "system": "genesis",
+      "game": "Castlevania Bloodlines",
+      "title": "Calling from Heaven (3)",
+      "file": "Calling_From_Heaven3.mid",
+      "bytes": 54436,
+      "sequencer": "Aaron",
+      "path": "audios/vgmusic/genesis/Calling_From_Heaven3.mid"
+    },
+    {
+      "system": "genesis",
+      "game": "Crack Down",
+      "title": "Level Music Type 2",
+      "file": "cd2.mid",
+      "bytes": 13073,
+      "sequencer": "Oedipus",
+      "path": "audios/vgmusic/genesis/cd2.mid"
+    },
+    {
+      "system": "genesis",
+      "game": "Castlevania Bloodlines",
+      "title": "Beating in the Darkness",
+      "file": "Cvbl-st1.mid",
+      "bytes": 31877,
+      "sequencer": "unknown",
+      "path": "audios/vgmusic/genesis/Cvbl-st1.mid"
+    },
+    {
+      "system": "genesis",
+      "game": "Dashin' Desperadoes",
+      "title": "Plane Boss",
+      "file": "DDB3-6.mid",
+      "bytes": 19644,
+      "sequencer": "Erik the Not-So-Great",
+      "path": "audios/vgmusic/genesis/DDB3-6.mid"
+    },
+    {
+      "system": "genesis",
+      "game": "Dr. Robotnik's Mean Bean Machine",
+      "title": "Dr. Robotnik's Final Rant",
+      "file": "Dr_R_cutscene.mid",
+      "bytes": 13076,
+      "sequencer": "Mike Seddon",
+      "path": "audios/vgmusic/genesis/Dr_R_cutscene.mid"
+    },
+    {
+      "system": "genesis",
+      "game": "Eternal Champions",
+      "title": "Xavier",
+      "file": "EC-Xavier.mid",
+      "bytes": 16823,
+      "sequencer": "Joo *Johnnyz* Buaes",
+      "path": "audios/vgmusic/genesis/EC-Xavier.mid"
+    },
+    {
+      "system": "genesis",
+      "game": "F-22 Interceptor",
+      "title": "Take Off",
+      "file": "F-22_2.mid",
+      "bytes": 13196,
+      "sequencer": "Matze",
+      "path": "audios/vgmusic/genesis/F-22_2.mid"
+    },
+    {
+      "system": "genesis",
+      "game": "Fantastic Dizzy",
+      "title": "Puzzle",
+      "file": "FDPuzzle.mid",
+      "bytes": 14352,
+      "sequencer": "Scrambled Eggman",
+      "path": "audios/vgmusic/genesis/FDPuzzle.mid"
+    },
+    {
+      "system": "genesis",
+      "game": "Flashback",
+      "title": "Intro",
+      "file": "Flashback_Intro.mid",
+      "bytes": 10166,
+      "sequencer": "Simon Agozzino",
+      "path": "audios/vgmusic/genesis/Flashback_Intro.mid"
+    },
+    {
+      "system": "genesis",
+      "game": "Gaiares",
+      "title": "Opening Cinema #2",
+      "file": "GAI-oc2.mid",
+      "bytes": 19730,
+      "sequencer": "Jose'",
+      "path": "audios/vgmusic/genesis/GAI-oc2.mid"
+    },
+    {
+      "system": "genesis",
+      "game": "Golden Axe 3",
+      "title": "BGM 18",
+      "file": "GAXE3_BGM18.mid",
+      "bytes": 48372,
+      "sequencer": "Azaroth",
+      "path": "audios/vgmusic/genesis/GAXE3_BGM18.mid"
+    },
+    {
+      "system": "genesis",
+      "game": "Global Gladiators",
+      "title": "Dance Tune",
+      "file": "gg_dancetune.mid",
+      "bytes": 14131,
+      "sequencer": "Patrick May",
+      "path": "audios/vgmusic/genesis/gg_dancetune.mid"
+    },
+    {
+      "system": "genesis",
+      "game": "Fantasia",
+      "title": "Title Screen",
+      "file": "gothic.mid",
+      "bytes": 9589,
+      "sequencer": "Meezo",
+      "path": "audios/vgmusic/genesis/gothic.mid"
+    },
+    {
+      "system": "genesis",
+      "game": "Herzog Zwei",
+      "title": "The Mournful War",
+      "file": "herzog_mournfulwar.mid",
+      "bytes": 20468,
+      "sequencer": "Meezo",
+      "path": "audios/vgmusic/genesis/herzog_mournfulwar.mid"
+    },
+    {
+      "system": "genesis",
+      "game": "Sensible Soccer",
+      "title": "In Game",
+      "file": "homage_to_sensible_soccer.mid",
+      "bytes": 23336,
+      "sequencer": "Jonty",
+      "path": "audios/vgmusic/genesis/homage_to_sensible_soccer.mid"
+    },
+    {
+      "system": "genesis",
+      "game": "Thunder Force III",
+      "title": "Hydra (3)",
+      "file": "Hydra_Plus.mid",
+      "bytes": 18332,
+      "sequencer": "Savanahue",
+      "path": "audios/vgmusic/genesis/Hydra_Plus.mid"
+    },
+    {
+      "system": "genesis",
+      "game": "Incredible Hulk",
+      "title": "Boss 4",
+      "file": "IH-boss4.mid",
+      "bytes": 22880,
+      "sequencer": "Jose'",
+      "path": "audios/vgmusic/genesis/IH-boss4.mid"
+    },
+    {
+      "system": "genesis",
+      "game": "Kid Chameleon",
+      "title": "Woods",
+      "file": "KC-woods.mid",
+      "bytes": 21575,
+      "sequencer": "Jose'",
+      "path": "audios/vgmusic/genesis/KC-woods.mid"
+    },
+    {
+      "system": "genesis",
+      "game": "Light Crusader",
+      "title": "Castle, Ice World",
+      "file": "Light_Crusader_-_Castle_Ice_World.mid",
+      "bytes": 20217,
+      "sequencer": "Brendan Maloney",
+      "path": "audios/vgmusic/genesis/Light_Crusader_-_Castle_Ice_World.mid"
+    },
+    {
+      "system": "genesis",
+      "game": "Dark Wizard",
+      "title": "Amon",
+      "file": "LM-amon.mid",
+      "bytes": 8068,
+      "sequencer": "Larry McCormick",
+      "path": "audios/vgmusic/genesis/LM-amon.mid"
+    },
+    {
+      "system": "genesis",
+      "game": "Lotus 2",
+      "title": "Lotus 2 Radio Track 3 (Remix)",
+      "file": "Lotus_2_track_3_Remix.mid",
+      "bytes": 38012,
+      "sequencer": "Stephen Malcolm",
+      "path": "audios/vgmusic/genesis/Lotus_2_track_3_Remix.mid"
+    },
+    {
+      "system": "genesis",
+      "game": "Strider",
+      "title": "Mass of Cloud",
+      "file": "Mass_of_Cloud.mid",
+      "bytes": 12760,
+      "sequencer": "Arthur Prawitt",
+      "path": "audios/vgmusic/genesis/Mass_of_Cloud.mid"
+    },
+    {
+      "system": "genesis",
+      "game": "Wiz'n'Liz",
+      "title": "Snow Land",
+      "file": "Matt_Furniss_-_Snow_Land.mid",
+      "bytes": 41138,
+      "sequencer": "Matt Furniss",
+      "path": "audios/vgmusic/genesis/Matt_Furniss_-_Snow_Land.mid"
+    },
+    {
+      "system": "genesis",
+      "game": "Maui Mallard in Cold Shadow",
+      "title": "The Test of Duckhood",
+      "file": "maui_mallard_the_test_of_duckhood_v1-1.mid",
+      "bytes": 19084,
+      "sequencer": "Jon King",
+      "path": "audios/vgmusic/genesis/maui_mallard_the_test_of_duckhood_v1-1.mid"
+    },
+    {
+      "system": "genesis",
+      "game": "Mega Bomberman",
+      "title": "Area 2 - Vexin' Volcano",
+      "file": "Mega_Bomberman_Area_2_dw.mid",
+      "bytes": 20923,
+      "sequencer": "Daniel Wright",
+      "path": "audios/vgmusic/genesis/Mega_Bomberman_Area_2_dw.mid"
+    },
+    {
+      "system": "genesis",
+      "game": "Mega Bomberman",
+      "title": "Area 4 - Crankin' Castle",
+      "file": "Mega_Bomberman_Area_4_dw.mid",
+      "bytes": 33533,
+      "sequencer": "Daniel Wright",
+      "path": "audios/vgmusic/genesis/Mega_Bomberman_Area_4_dw.mid"
+    },
+    {
+      "system": "genesis",
+      "game": "Top Gear 2",
+      "title": "Auckland",
+      "file": "MrRK_-_Top_Gear_2_-_Track_4.mid",
+      "bytes": 48408,
+      "sequencer": "Mr. RK",
+      "path": "audios/vgmusic/genesis/MrRK_-_Top_Gear_2_-_Track_4.mid"
+    },
+    {
+      "system": "genesis",
+      "game": "Musha Aleste",
+      "title": "Theme",
+      "file": "Musha_Aleste-Theme.mid",
+      "bytes": 25427,
+      "sequencer": "DEF",
+      "path": "audios/vgmusic/genesis/Musha_Aleste-Theme.mid"
+    },
+    {
+      "system": "genesis",
+      "game": "Marvel Land",
+      "title": "World 3 (Sweets 'n' Such)",
+      "file": "MvL_World_3.mid",
+      "bytes": 32805,
+      "sequencer": "Alexander Reed-Lofts",
+      "path": "audios/vgmusic/genesis/MvL_World_3.mid"
+    },
+    {
+      "system": "genesis",
+      "game": "Zero Wing",
+      "title": "Natols (Arranged)",
+      "file": "Natols.mid",
+      "bytes": 61436,
+      "sequencer": "MarsJenkar",
+      "path": "audios/vgmusic/genesis/Natols.mid"
+    },
+    {
+      "system": "genesis",
+      "game": "Outrun",
+      "title": "Passing Breeze",
+      "file": "pass-brz.mid",
+      "bytes": 56281,
+      "sequencer": "unknown",
+      "path": "audios/vgmusic/genesis/pass-brz.mid"
+    },
+    {
+      "system": "genesis",
+      "game": "Pebble Beach Golf Links",
+      "title": "Menu (2)",
+      "file": "PBGL-menu.mid",
+      "bytes": 52586,
+      "sequencer": "Z-Man",
+      "path": "audios/vgmusic/genesis/PBGL-menu.mid"
+    },
+    {
+      "system": "genesis",
+      "game": "Phantasy Star 2",
+      "title": "Shop - \"Step Up\"",
+      "file": "PS2-Shop1.mid",
+      "bytes": 8695,
+      "sequencer": "Joo *Johnnyz* Buaes",
+      "path": "audios/vgmusic/genesis/PS2-Shop1.mid"
+    },
+    {
+      "system": "genesis",
+      "game": "Phantasy Star 3",
+      "title": "Town",
+      "file": "PS3-Town.mid",
+      "bytes": 15794,
+      "sequencer": "Sensei Le Roof",
+      "path": "audios/vgmusic/genesis/PS3-Town.mid"
+    },
+    {
+      "system": "genesis",
+      "game": "Pulseman (Japan)",
+      "title": "India Stage B",
+      "file": "Pulseman_india2.mid",
+      "bytes": 20134,
+      "sequencer": "Mark Jansen",
+      "path": "audios/vgmusic/genesis/Pulseman_india2.mid"
+    },
+    {
+      "system": "genesis",
+      "game": "Puyo Puyo 2 (Japan)",
+      "title": "Pinch!",
+      "file": "PuyoPuyo2_Pinch_GM.mid",
+      "bytes": 23254,
+      "sequencer": "MaliceX",
+      "path": "audios/vgmusic/genesis/PuyoPuyo2_Pinch_GM.mid"
+    },
+    {
+      "system": "genesis",
+      "game": "Cool Spot",
+      "title": "Rave Dancetune",
+      "file": "ravetune.mid",
+      "bytes": 24523,
+      "sequencer": "Ben Funk",
+      "path": "audios/vgmusic/genesis/ravetune.mid"
+    },
+    {
+      "system": "genesis",
+      "game": "Road Rash",
+      "title": "Pacific Coast",
+      "file": "RoadRash_PC.mid",
+      "bytes": 36866,
+      "sequencer": "Conversion",
+      "path": "audios/vgmusic/genesis/RoadRash_PC.mid"
+    },
+    {
+      "system": "genesis",
+      "game": "Rolling Thunder 2",
+      "title": "The Selection",
+      "file": "RT2_selection.mid",
+      "bytes": 16362,
+      "sequencer": "Matze",
+      "path": "audios/vgmusic/genesis/RT2_selection.mid"
+    },
+    {
+      "system": "genesis",
+      "game": "Aladdin",
+      "title": "Rug Ride",
+      "file": "Rug_Ride.mid",
+      "bytes": 52134,
+      "sequencer": "Bonyea Killebrew",
+      "path": "audios/vgmusic/genesis/Rug_Ride.mid"
+    },
+    {
+      "system": "genesis",
+      "game": "Batman",
+      "title": "Sky Over Gotham City - Part 2",
+      "file": "Ryan_Bury_-_Genesis_-_Batman_-_Sky_Over_Gotham_City_-_Part_2.mid",
+      "bytes": 38252,
+      "sequencer": "Ryan Bury",
+      "path": "audios/vgmusic/genesis/Ryan_Bury_-_Genesis_-_Batman_-_Sky_Over_Gotham_City_-_Part_2.mid"
+    },
+    {
+      "system": "genesis",
+      "game": "Shining Force",
+      "title": "Ship Battle (2)",
+      "file": "shiningforce-shipbattle.mid",
+      "bytes": 22922,
+      "sequencer": "Rexy",
+      "path": "audios/vgmusic/genesis/shiningforce-shipbattle.mid"
+    },
+    {
+      "system": "genesis",
+      "game": "Sonic & Knuckles",
+      "title": "Lava Reef Zone / Hidden Palace Zone (2)",
+      "file": "sk_sg_21.mid",
+      "bytes": 51192,
+      "sequencer": "John Weeks",
+      "path": "audios/vgmusic/genesis/sk_sg_21.mid"
+    },
+    {
+      "system": "genesis",
+      "game": "Ristar",
+      "title": "Planet Sonata Act 2 - \"On Parade\"",
+      "file": "Sonata_2.mid",
+      "bytes": 59892,
+      "sequencer": "Teck",
+      "path": "audios/vgmusic/genesis/Sonata_2.mid"
+    },
+    {
+      "system": "genesis",
+      "game": "Streets of Rage 2",
+      "title": "Stage 2-2",
+      "file": "sor2_stage_2b.mid",
+      "bytes": 38819,
+      "sequencer": "Kit Smith",
+      "path": "audios/vgmusic/genesis/sor2_stage_2b.mid"
+    },
+    {
+      "system": "genesis",
+      "game": "Adventures of Batman & Robin, The",
+      "title": "Space Boss",
+      "file": "Space_Boss_No_Panning_Added_1_0.mid",
+      "bytes": 70418,
+      "sequencer": "MrMoonshining",
+      "path": "audios/vgmusic/genesis/Space_Boss_No_Panning_Added_1_0.mid"
+    },
+    {
+      "system": "genesis",
+      "game": "Sparkster",
+      "title": "Boss Battle",
+      "file": "Sparkster_-_BossBattle.mid",
+      "bytes": 64158,
+      "sequencer": "Jace",
+      "path": "audios/vgmusic/genesis/Sparkster_-_BossBattle.mid"
+    },
+    {
+      "system": "genesis",
+      "game": "Dune: the Battle for Arrakis",
+      "title": "Spice Trip",
+      "file": "Spice_Trip.mid",
+      "bytes": 13788,
+      "sequencer": "Cloudburst",
+      "path": "audios/vgmusic/genesis/Spice_Trip.mid"
+    },
+    {
+      "system": "genesis",
+      "game": "Streets of Rage 3",
+      "title": "Stage 2-1 - Downtown",
+      "file": "StR3-Downtown.mid",
+      "bytes": 60282,
+      "sequencer": "Joo *Johnnyz* Buaes",
+      "path": "audios/vgmusic/genesis/StR3-Downtown.mid"
+    },
+    {
+      "system": "genesis",
+      "game": "Streets of Rage",
+      "title": "Syndicate Boss",
+      "file": "SyndBoss%5Bfinal%5D.mid",
+      "bytes": 30467,
+      "sequencer": "Jose'",
+      "path": "audios/vgmusic/genesis/SyndBoss%5Bfinal%5D.mid"
+    },
+    {
+      "system": "genesis",
+      "game": "Altered Beast",
+      "title": "Ruins",
+      "file": "T_AlteredBeast_Ruins.mid",
+      "bytes": 47615,
+      "sequencer": "Tsu Ryu",
+      "path": "audios/vgmusic/genesis/T_AlteredBeast_Ruins.mid"
+    },
+    {
+      "system": "genesis",
+      "game": "Raiden Trad",
+      "title": "Mission 1 - \"Gallantry\" (Arrangement)",
+      "file": "T_RaidenTrad_Gallantry.mid",
+      "bytes": 78850,
+      "sequencer": "Tsu Ryu",
+      "path": "audios/vgmusic/genesis/T_RaidenTrad_Gallantry.mid"
+    },
+    {
+      "system": "genesis",
+      "game": "Street Smart",
+      "title": "Staff Roll",
+      "file": "t_smart6.mid",
+      "bytes": 17261,
+      "sequencer": "Tsu Ryu",
+      "path": "audios/vgmusic/genesis/t_smart6.mid"
+    },
+    {
+      "system": "genesis",
+      "game": "Splatter House 3",
+      "title": "West Mansion: 1st Floor",
+      "file": "T_SplatterHouse3_FirstFloorTheme.mid",
+      "bytes": 26445,
+      "sequencer": "Tsu Ryu",
+      "path": "audios/vgmusic/genesis/T_SplatterHouse3_FirstFloorTheme.mid"
+    },
+    {
+      "system": "genesis",
+      "game": "Splatter House 3",
+      "title": "Hiding",
+      "file": "T_SplatterHouse3_Hiding.mid",
+      "bytes": 37288,
+      "sequencer": "Tsu Ryu",
+      "path": "audios/vgmusic/genesis/T_SplatterHouse3_Hiding.mid"
+    },
+    {
+      "system": "genesis",
+      "game": "Twin Cobra",
+      "title": "Stages 1 and 6 - \"Challenge + Break a Leg!\"",
+      "file": "Tcstage1.mid",
+      "bytes": 28504,
+      "sequencer": "nZero",
+      "path": "audios/vgmusic/genesis/Tcstage1.mid"
+    },
+    {
+      "system": "genesis",
+      "game": "Thunder Force III",
+      "title": "Seiren (GS)",
+      "file": "Tf3seirn.mid",
+      "bytes": 54115,
+      "sequencer": "nZero",
+      "path": "audios/vgmusic/genesis/Tf3seirn.mid"
+    },
+    {
+      "system": "genesis",
+      "game": "Lightening Force",
+      "title": "Omake 10",
+      "file": "TF4-omake10.mid",
+      "bytes": 30817,
+      "sequencer": "Jose'",
+      "path": "audios/vgmusic/genesis/TF4-omake10.mid"
+    },
+    {
+      "system": "genesis",
+      "game": "ToeJam & Earl",
+      "title": "Introduction",
+      "file": "ToeJam%26Earl.mid",
+      "bytes": 12910,
+      "sequencer": "LOVEY_Pai",
+      "path": "audios/vgmusic/genesis/ToeJam%26Earl.mid"
+    },
+    {
+      "system": "genesis",
+      "game": "Theme Park",
+      "title": "Ghost House",
+      "file": "tpghosthouse.mid",
+      "bytes": 19776,
+      "sequencer": "Mark Jansen",
+      "path": "audios/vgmusic/genesis/tpghosthouse.mid"
+    },
+    {
+      "system": "genesis",
+      "game": "Truxton",
+      "title": "Boss",
+      "file": "TruxtionBoss.mid",
+      "bytes": 11453,
+      "sequencer": "Chow",
+      "path": "audios/vgmusic/genesis/TruxtionBoss.mid"
+    },
+    {
+      "system": "genesis",
+      "game": "Jurassic Park",
+      "title": "Visitor Center",
+      "file": "Visitor_Center.mid",
+      "bytes": 13460,
+      "sequencer": "Ben M.W.",
+      "path": "audios/vgmusic/genesis/Visitor_Center.mid"
+    },
+    {
+      "system": "genesis",
+      "game": "Vectorman",
+      "title": "Ocean Level (2)",
+      "file": "Vm_Tidal_Surge-KM.mid",
+      "bytes": 24325,
+      "sequencer": "King Meteor",
+      "path": "audios/vgmusic/genesis/Vm_Tidal_Surge-KM.mid"
+    },
+    {
+      "system": "genesis",
+      "game": "World of Illusion Starring Mickey & Donald",
+      "title": "Library",
+      "file": "woi12.mid",
+      "bytes": 8349,
+      "sequencer": "Gigasoft",
+      "path": "audios/vgmusic/genesis/woi12.mid"
+    },
+    {
+      "system": "genesis",
+      "game": "X-Men 2: Clone Wars",
+      "title": "Stage 3a",
+      "file": "xmen2stg3a.mid",
+      "bytes": 26715,
+      "sequencer": "Mark Jansen",
+      "path": "audios/vgmusic/genesis/xmen2stg3a.mid"
+    },
+    {
+      "system": "nes",
+      "game": "3D Battles of Worldrunner, The",
+      "title": "Main",
+      "file": "3D_Worldrunner_Main.mid",
+      "bytes": 18866,
+      "sequencer": "Electric Concerto",
+      "path": "audios/vgmusic/nes/3D_Worldrunner_Main.mid"
+    },
+    {
+      "system": "nes",
+      "game": "8 Eyes",
+      "title": "Spain",
+      "file": "8eyes-spain1.mid",
+      "bytes": 11897,
+      "sequencer": "B. Busta",
+      "path": "audios/vgmusic/nes/8eyes-spain1.mid"
+    },
+    {
+      "system": "nes",
+      "game": "Adventure Island 3",
+      "title": "First Stage",
+      "file": "A3_over.mid",
+      "bytes": 23246,
+      "sequencer": "FireMario",
+      "path": "audios/vgmusic/nes/A3_over.mid"
+    },
+    {
+      "system": "nes",
+      "game": "Armed Dragon Fantasy Villgust (Japan)",
+      "title": "Battle",
+      "file": "ADFV_-_Battle_Theme.mid",
+      "bytes": 21400,
+      "sequencer": "Willow",
+      "path": "audios/vgmusic/nes/ADFV_-_Battle_Theme.mid"
+    },
+    {
+      "system": "nes",
+      "game": "Adventure Island 2",
+      "title": "Island Boss",
+      "file": "Adventure_Island_II-Island_Boss.mid",
+      "bytes": 8290,
+      "sequencer": "Joe Cortez",
+      "path": "audios/vgmusic/nes/Adventure_Island_II-Island_Boss.mid"
+    },
+    {
+      "system": "nes",
+      "game": "Adventures of Bayou Billy",
+      "title": "BGM A",
+      "file": "Adventures_of_Bayou_Billy_BGM_A_Electric_Remix.mid",
+      "bytes": 38166,
+      "sequencer": "Jake Heft",
+      "path": "audios/vgmusic/nes/Adventures_of_Bayou_Billy_BGM_A_Electric_Remix.mid"
+    },
+    {
+      "system": "nes",
+      "game": "Airwolf",
+      "title": "Title Screen",
+      "file": "airwolf_title.mid",
+      "bytes": 11212,
+      "sequencer": "Matthew Chalcraft",
+      "path": "audios/vgmusic/nes/airwolf_title.mid"
+    },
+    {
+      "system": "nes",
+      "game": "Archon",
+      "title": "Battle",
+      "file": "archon_battle.mid",
+      "bytes": 17347,
+      "sequencer": "Walter F. Williams III",
+      "path": "audios/vgmusic/nes/archon_battle.mid"
+    },
+    {
+      "system": "nes",
+      "game": "Bad Dudes",
+      "title": "Stage 2 (2)",
+      "file": "baddudes_train.mid",
+      "bytes": 11816,
+      "sequencer": "Takua1",
+      "path": "audios/vgmusic/nes/baddudes_train.mid"
+    },
+    {
+      "system": "nes",
+      "game": "Bad Dudes",
+      "title": "Stage 2",
+      "file": "baddudes-stage2.mid",
+      "bytes": 30212,
+      "sequencer": "Stockman",
+      "path": "audios/vgmusic/nes/baddudes-stage2.mid"
+    },
+    {
+      "system": "nes",
+      "game": "Batman",
+      "title": "Stage 3 - Underground Conduit",
+      "file": "BatmanNESlvl3.mid",
+      "bytes": 30444,
+      "sequencer": "The Jade Emperor",
+      "path": "audios/vgmusic/nes/BatmanNESlvl3.mid"
+    },
+    {
+      "system": "nes",
+      "game": "Bubble Bobble",
+      "title": "Main (Mega Remix)",
+      "file": "Bbremiv2.mid",
+      "bytes": 34253,
+      "sequencer": "unknown",
+      "path": "audios/vgmusic/nes/Bbremiv2.mid"
+    },
+    {
+      "system": "nes",
+      "game": "Beetlejuice",
+      "title": "Level 1",
+      "file": "BEETLEJUICE.mid",
+      "bytes": 19566,
+      "sequencer": "JILost",
+      "path": "audios/vgmusic/nes/BEETLEJUICE.mid"
+    },
+    {
+      "system": "nes",
+      "game": "Sesame Street ABC",
+      "title": "Victory Dance",
+      "file": "bigbirddance.mid",
+      "bytes": 13691,
+      "sequencer": "Matthew Seldon",
+      "path": "audios/vgmusic/nes/bigbirddance.mid"
+    },
+    {
+      "system": "nes",
+      "game": "Bomberman 2",
+      "title": "Battle Mode",
+      "file": "bmbr2battle.mid",
+      "bytes": 30968,
+      "sequencer": "Stockman",
+      "path": "audios/vgmusic/nes/bmbr2battle.mid"
+    },
+    {
+      "system": "nes",
+      "game": "Blaster Master",
+      "title": "Stage 3",
+      "file": "bmstg3.mid",
+      "bytes": 24754,
+      "sequencer": "unknown",
+      "path": "audios/vgmusic/nes/bmstg3.mid"
+    },
+    {
+      "system": "nes",
+      "game": "Bignose the Caveman",
+      "title": "Cave",
+      "file": "bntcmcave.mid",
+      "bytes": 65430,
+      "sequencer": "John Duggan",
+      "path": "audios/vgmusic/nes/bntcmcave.mid"
+    },
+    {
+      "system": "nes",
+      "game": "Bucky O'Hare",
+      "title": "Blue Planet (2)",
+      "file": "boh-blueplanet.mid",
+      "bytes": 12347,
+      "sequencer": "TurquoiseStar",
+      "path": "audios/vgmusic/nes/boh-blueplanet.mid"
+    },
+    {
+      "system": "nes",
+      "game": "Bucky O'Hare",
+      "title": "Yellow Planet",
+      "file": "bohyellow.mid",
+      "bytes": 14720,
+      "sequencer": "Pongball",
+      "path": "audios/vgmusic/nes/bohyellow.mid"
+    },
+    {
+      "system": "nes",
+      "game": "Quattro Adventure",
+      "title": "Boomerange Kid: Outback",
+      "file": "BoomerangKid-Outback.mid",
+      "bytes": 13929,
+      "sequencer": "Dalez",
+      "path": "audios/vgmusic/nes/BoomerangKid-Outback.mid"
+    },
+    {
+      "system": "nes",
+      "game": "WWF Wrestlemania Challenge",
+      "title": "Brutus The Barber Beefcake",
+      "file": "BrutusPF.mid",
+      "bytes": 9920,
+      "sequencer": "Clinton Bartlett",
+      "path": "audios/vgmusic/nes/BrutusPF.mid"
+    },
+    {
+      "system": "nes",
+      "game": "Circus Caper",
+      "title": "Stage 4",
+      "file": "CC-Level4.mid",
+      "bytes": 9951,
+      "sequencer": "TurquoiseStar",
+      "path": "audios/vgmusic/nes/CC-Level4.mid"
+    },
+    {
+      "system": "nes",
+      "game": "Chip 'n' Dale's Rescue Rangers 2",
+      "title": "Shipyard",
+      "file": "cdrr2sy.mid",
+      "bytes": 44703,
+      "sequencer": "Merit Celaire",
+      "path": "audios/vgmusic/nes/cdrr2sy.mid"
+    },
+    {
+      "system": "nes",
+      "game": "Chaos World",
+      "title": "Boss Battle",
+      "file": "chaosworldboss.mid",
+      "bytes": 27092,
+      "sequencer": "Bodger",
+      "path": "audios/vgmusic/nes/chaosworldboss.mid"
+    },
+    {
+      "system": "nes",
+      "game": "StarTropics 2: Zoda's Revenge",
+      "title": "Chatpter 2: The Stone Age",
+      "file": "Chapter2-TheStoneAge.mid",
+      "bytes": 9842,
+      "sequencer": "Brian Joseph",
+      "path": "audios/vgmusic/nes/Chapter2-TheStoneAge.mid"
+    },
+    {
+      "system": "nes",
+      "game": "Clash at Demonhead",
+      "title": "Climbing Mountains",
+      "file": "ClashD.mid",
+      "bytes": 63809,
+      "sequencer": "Converted by nsf2midi",
+      "path": "audios/vgmusic/nes/ClashD.mid"
+    },
+    {
+      "system": "nes",
+      "game": "Commando",
+      "title": "Title",
+      "file": "cmmando.mid",
+      "bytes": 10256,
+      "sequencer": "John N. Engelmann",
+      "path": "audios/vgmusic/nes/cmmando.mid"
+    },
+    {
+      "system": "nes",
+      "game": "Code Name: Viper",
+      "title": "Mission Briefing",
+      "file": "Code_Name_Viper-Mission_Briefing.mid",
+      "bytes": 13949,
+      "sequencer": "Jedi QuestMaster",
+      "path": "audios/vgmusic/nes/Code_Name_Viper-Mission_Briefing.mid"
+    },
+    {
+      "system": "nes",
+      "game": "Conquest of the Crystal Palace",
+      "title": "Stage 1 (v1.1)",
+      "file": "CotCP-Stage1.mid",
+      "bytes": 62289,
+      "sequencer": "Sword-Bolt",
+      "path": "audios/vgmusic/nes/CotCP-Stage1.mid"
+    },
+    {
+      "system": "nes",
+      "game": "Crystalis",
+      "title": "Ending Theme",
+      "file": "Crysta~1.mid",
+      "bytes": 13008,
+      "sequencer": "Chris Nadeau",
+      "path": "audios/vgmusic/nes/Crysta~1.mid"
+    },
+    {
+      "system": "nes",
+      "game": "Super Mario Bros. 3",
+      "title": "Overworld 2 (2)",
+      "file": "da_smb3-overworld2.mid",
+      "bytes": 9492,
+      "sequencer": "David Alberto",
+      "path": "audios/vgmusic/nes/da_smb3-overworld2.mid"
+    },
+    {
+      "system": "nes",
+      "game": "Dash Galaxy in the Alien Asylum",
+      "title": "Intro",
+      "file": "Dash_Galaxy_-_Intro.mid",
+      "bytes": 25279,
+      "sequencer": "Jedi QuestMaster",
+      "path": "audios/vgmusic/nes/Dash_Galaxy_-_Intro.mid"
+    },
+    {
+      "system": "nes",
+      "game": "Fantastic Adventures of Dizzy, The",
+      "title": "Intro",
+      "file": "DIZZY.mid",
+      "bytes": 14230,
+      "sequencer": "Zagro",
+      "path": "audios/vgmusic/nes/DIZZY.mid"
+    },
+    {
+      "system": "nes",
+      "game": "Double Dragon 2",
+      "title": "Mission 5 - Forest of Death",
+      "file": "Double_Dragon_2-Mission_5_-_Forest_Of_Death.mid",
+      "bytes": 35201,
+      "sequencer": "Jedi QuestMaster",
+      "path": "audios/vgmusic/nes/Double_Dragon_2-Mission_5_-_Forest_Of_Death.mid"
+    },
+    {
+      "system": "nes",
+      "game": "Dragon Warrior 3",
+      "title": "Credits",
+      "file": "dq3credt.mid",
+      "bytes": 15821,
+      "sequencer": "unknown",
+      "path": "audios/vgmusic/nes/dq3credt.mid"
+    },
+    {
+      "system": "nes",
+      "game": "Dragon's Lair",
+      "title": "Title Screen",
+      "file": "Dragonslairts.mid",
+      "bytes": 27316,
+      "sequencer": "Fredrik Klingwall",
+      "path": "audios/vgmusic/nes/Dragonslairts.mid"
+    },
+    {
+      "system": "nes",
+      "game": "Duck Tales 2",
+      "title": "Scotland Castle (2)",
+      "file": "Duck_Tales_2_-_Ancient_Castle.mid",
+      "bytes": 13373,
+      "sequencer": "Black Ace",
+      "path": "audios/vgmusic/nes/Duck_Tales_2_-_Ancient_Castle.mid"
+    },
+    {
+      "system": "nes",
+      "game": "Dragon Warrior",
+      "title": "Overworld",
+      "file": "Dw1out.mid",
+      "bytes": 19625,
+      "sequencer": "Ryu Hokoru",
+      "path": "audios/vgmusic/nes/Dw1out.mid"
+    },
+    {
+      "system": "nes",
+      "game": "Dragon Warrior 4",
+      "title": "Battle (Arranged)",
+      "file": "dw4batlr.mid",
+      "bytes": 15673,
+      "sequencer": "Erik",
+      "path": "audios/vgmusic/nes/dw4batlr.mid"
+    },
+    {
+      "system": "nes",
+      "game": "Flintstones, The",
+      "title": "Jungle Stage",
+      "file": "F_jungle.mid",
+      "bytes": 10414,
+      "sequencer": "FireMario",
+      "path": "audios/vgmusic/nes/F_jungle.mid"
+    },
+    {
+      "system": "nes",
+      "game": "Faxanadu",
+      "title": "Overworld (Orchestrated)",
+      "file": "Faxanadu_Overworld_Arranged_dw.mid",
+      "bytes": 35660,
+      "sequencer": "Daniel Wright",
+      "path": "audios/vgmusic/nes/Faxanadu_Overworld_Arranged_dw.mid"
+    },
+    {
+      "system": "nes",
+      "game": "Flappy (Japan)",
+      "title": "Music A",
+      "file": "FlappyBGM.mid",
+      "bytes": 8313,
+      "sequencer": "Jace",
+      "path": "audios/vgmusic/nes/FlappyBGM.mid"
+    },
+    {
+      "system": "nes",
+      "game": "Friday the 13th",
+      "title": "Map (Dark Arrangement)",
+      "file": "FridayThe13th_-_MapDark.mid",
+      "bytes": 19988,
+      "sequencer": "Jace",
+      "path": "audios/vgmusic/nes/FridayThe13th_-_MapDark.mid"
+    },
+    {
+      "system": "nes",
+      "game": "Flintstones, The: Surprise At Dinosaur Peak",
+      "title": "Bonus Game",
+      "file": "FS2-BonusGame.mid",
+      "bytes": 8113,
+      "sequencer": "TurquoiseStar",
+      "path": "audios/vgmusic/nes/FS2-BonusGame.mid"
+    },
+    {
+      "system": "nes",
+      "game": "Terminator 2: Judgement Day",
+      "title": "Stage 1",
+      "file": "G_Terminator2_Stage1.mid",
+      "bytes": 23943,
+      "sequencer": "Gecko Yamori",
+      "path": "audios/vgmusic/nes/G_Terminator2_Stage1.mid"
+    },
+    {
+      "system": "nes",
+      "game": "Ghostbusters 2",
+      "title": "Ecto-1 Stage",
+      "file": "Ghostbusters2-Ecto1Stage.mid",
+      "bytes": 19853,
+      "sequencer": "unknown",
+      "path": "audios/vgmusic/nes/Ghostbusters2-Ecto1Stage.mid"
+    },
+    {
+      "system": "nes",
+      "game": "Ghostbusters 2",
+      "title": "Statue of Liberty Stage",
+      "file": "Ghostbusters2-StatueOfLibertyStage.mid",
+      "bytes": 35640,
+      "sequencer": "unknown",
+      "path": "audios/vgmusic/nes/Ghostbusters2-StatueOfLibertyStage.mid"
+    },
+    {
+      "system": "nes",
+      "game": "Ghoul School",
+      "title": "Main Hallways",
+      "file": "ghoulshall.mid",
+      "bytes": 41074,
+      "sequencer": "Converted by nsf2midi",
+      "path": "audios/vgmusic/nes/ghoulshall.mid"
+    },
+    {
+      "system": "nes",
+      "game": "G.I. Joe: The Atlantis Factor",
+      "title": "Abandoned Land",
+      "file": "GIJOEAF.mid",
+      "bytes": 18177,
+      "sequencer": "Isaac Mabry",
+      "path": "audios/vgmusic/nes/GIJOEAF.mid"
+    },
+    {
+      "system": "nes",
+      "game": "Gimmick!",
+      "title": "Stage 2 - \"Good Weather\"",
+      "file": "gimmick2_midi.mid",
+      "bytes": 11543,
+      "sequencer": "Hinz",
+      "path": "audios/vgmusic/nes/gimmick2_midi.mid"
+    },
+    {
+      "system": "nes",
+      "game": "Ganbare Goemon 2 (Japan)",
+      "title": "Credits",
+      "file": "goemon.mid",
+      "bytes": 14904,
+      "sequencer": "unknown",
+      "path": "audios/vgmusic/nes/goemon.mid"
+    },
+    {
+      "system": "nes",
+      "game": "Gotcha!",
+      "title": "Level 2",
+      "file": "gotcha_level2.mid",
+      "bytes": 15617,
+      "sequencer": "jad8721",
+      "path": "audios/vgmusic/nes/gotcha_level2.mid"
+    },
+    {
+      "system": "nes",
+      "game": "SD Gundam Gachapon Senshi 2 (Japan)",
+      "title": "Turn of 1P/2P",
+      "file": "gs2_1P-2P.mid",
+      "bytes": 12831,
+      "sequencer": "cyahin",
+      "path": "audios/vgmusic/nes/gs2_1P-2P.mid"
+    },
+    {
+      "system": "nes",
+      "game": "Guerilla War",
+      "title": "Stage 4",
+      "file": "Gwstage4.mid",
+      "bytes": 12637,
+      "sequencer": "Heat Man",
+      "path": "audios/vgmusic/nes/Gwstage4.mid"
+    },
+    {
+      "system": "nes",
+      "game": "Gyromite",
+      "title": "Stage Music",
+      "file": "gyro-g.mid",
+      "bytes": 23413,
+      "sequencer": "tdkim at umich.edu",
+      "path": "audios/vgmusic/nes/gyro-g.mid"
+    },
+    {
+      "system": "nes",
+      "game": "Hokuto No Ken (Japan)",
+      "title": "Stage 1 (Arranged)",
+      "file": "Hokuto_No_Ken_Stage_1_-_Arranged.mid",
+      "bytes": 16141,
+      "sequencer": "Maximo",
+      "path": "audios/vgmusic/nes/Hokuto_No_Ken_Stage_1_-_Arranged.mid"
+    },
+    {
+      "system": "nes",
+      "game": "Iron Tank",
+      "title": "Overland Battle",
+      "file": "iron_tank.mid",
+      "bytes": 10939,
+      "sequencer": "unknown",
+      "path": "audios/vgmusic/nes/iron_tank.mid"
+    },
+    {
+      "system": "nes",
+      "game": "Indians West",
+      "title": "Level Two:  Buffalo Jump",
+      "file": "IW-World2.mid",
+      "bytes": 21282,
+      "sequencer": "unknown",
+      "path": "audios/vgmusic/nes/IW-World2.mid"
+    },
+    {
+      "system": "nes",
+      "game": "Jackal",
+      "title": "Stage 1",
+      "file": "jackal.mid",
+      "bytes": 32256,
+      "sequencer": "unknown",
+      "path": "audios/vgmusic/nes/jackal.mid"
+    },
+    {
+      "system": "nes",
+      "game": "Who Framed Roger Rabbit?",
+      "title": "Continue?",
+      "file": "JDC_RRContin.mid",
+      "bytes": 14133,
+      "sequencer": "Joseph Collins",
+      "path": "audios/vgmusic/nes/JDC_RRContin.mid"
+    },
+    {
+      "system": "nes",
+      "game": "Journey to Silius",
+      "title": "Stage 3",
+      "file": "jts-st3.mid",
+      "bytes": 19945,
+      "sequencer": "tdkim",
+      "path": "audios/vgmusic/nes/jts-st3.mid"
+    },
+    {
+      "system": "nes",
+      "game": "Jurassic Park",
+      "title": "Level 1",
+      "file": "jurassic_nes_stage1.mid",
+      "bytes": 19067,
+      "sequencer": "Meezo",
+      "path": "audios/vgmusic/nes/jurassic_nes_stage1.mid"
+    },
+    {
+      "system": "nes",
+      "game": "KickMaster",
+      "title": "BGM 02",
+      "file": "KickMaster_final_.mid",
+      "bytes": 12003,
+      "sequencer": "Roman A.Morozov",
+      "path": "audios/vgmusic/nes/KickMaster_final_.mid"
+    },
+    {
+      "system": "nes",
+      "game": "Kirby's Adventure",
+      "title": "Boss (2)",
+      "file": "Kirby_Boss.mid",
+      "bytes": 87566,
+      "sequencer": "Converted by nsf2midi",
+      "path": "audios/vgmusic/nes/Kirby_Boss.mid"
+    },
+    {
+      "system": "nes",
+      "game": "Kung Fu Heroes",
+      "title": "Stage 1-2",
+      "file": "Kung-Fu_Heroes-Stage_1-2.mid",
+      "bytes": 12538,
+      "sequencer": "Jedi Questmaster",
+      "path": "audios/vgmusic/nes/Kung-Fu_Heroes-Stage_1-2.mid"
+    },
+    {
+      "system": "nes",
+      "game": "Kung Fu Heroes",
+      "title": "Stage 1-4",
+      "file": "Kung-Fu_Heroes-Stage_1-4.mid",
+      "bytes": 11915,
+      "sequencer": "Jedi QuestMaster",
+      "path": "audios/vgmusic/nes/Kung-Fu_Heroes-Stage_1-4.mid"
+    },
+    {
+      "system": "nes",
+      "game": "Wai Wai World",
+      "title": "Stonehead Boss",
+      "file": "KW-stone.mid",
+      "bytes": 19594,
+      "sequencer": "FireMario",
+      "path": "audios/vgmusic/nes/KW-stone.mid"
+    },
+    {
+      "system": "nes",
+      "game": "Lemmings",
+      "title": "Tailor-Made For Blockers",
+      "file": "lemmin3p.mid",
+      "bytes": 8851,
+      "sequencer": "unknown",
+      "path": "audios/vgmusic/nes/lemmin3p.mid"
+    },
+    {
+      "system": "nes",
+      "game": "Adventures of Lolo 3",
+      "title": "Level (2)",
+      "file": "Lolo3lvl.mid",
+      "bytes": 9316,
+      "sequencer": "Sivak Drac",
+      "path": "audios/vgmusic/nes/Lolo3lvl.mid"
+    },
+    {
+      "system": "nes",
+      "game": "Legacy of the Wizard",
+      "title": "1st Dungeon (4)",
+      "file": "LOTW_Dungeon1.mid",
+      "bytes": 9938,
+      "sequencer": "IlGreven",
+      "path": "audios/vgmusic/nes/LOTW_Dungeon1.mid"
+    },
+    {
+      "system": "nes",
+      "game": "Low G Man",
+      "title": "Stage 1 - Iron Nail",
+      "file": "LowGmanIronNailStage1.mid",
+      "bytes": 42912,
+      "sequencer": "Washudoll",
+      "path": "audios/vgmusic/nes/LowGmanIronNailStage1.mid"
+    },
+    {
+      "system": "nes",
+      "game": "Legend of Zelda, The",
+      "title": "Title Screen (2)",
+      "file": "LoZ_Title-KM.mid",
+      "bytes": 66271,
+      "sequencer": "King Meteor",
+      "path": "audios/vgmusic/nes/LoZ_Title-KM.mid"
+    },
+    {
+      "system": "nes",
+      "game": "Might and Magic",
+      "title": "Title Screen",
+      "file": "m%26magic.mid",
+      "bytes": 30116,
+      "sequencer": "Little Chiba",
+      "path": "audios/vgmusic/nes/m%26magic.mid"
+    },
+    {
+      "system": "nes",
+      "game": "Magician",
+      "title": "Town",
+      "file": "mag_town.mid",
+      "bytes": 23315,
+      "sequencer": "Timothy Peters",
+      "path": "audios/vgmusic/nes/mag_town.mid"
+    },
+    {
+      "system": "nes",
+      "game": "Xenon 2: Megablast",
+      "title": "Megablast",
+      "file": "Megablast.mid",
+      "bytes": 49937,
+      "sequencer": "Aaron Saraco",
+      "path": "audios/vgmusic/nes/Megablast.mid"
+    },
+    {
+      "system": "nes",
+      "game": "Metroid",
+      "title": "Escape!",
+      "file": "metend.mid",
+      "bytes": 26085,
+      "sequencer": "Erik",
+      "path": "audios/vgmusic/nes/metend.mid"
+    },
+    {
+      "system": "nes",
+      "game": "Metal Storm",
+      "title": "Level 1 - \"Electric Wind\"",
+      "file": "Metlstrm.mid",
+      "bytes": 13053,
+      "sequencer": "Ryu Hokoru",
+      "path": "audios/vgmusic/nes/Metlstrm.mid"
+    },
+    {
+      "system": "nes",
+      "game": "Mighty Final Fight",
+      "title": "Final Victory (Final Boss Fight)",
+      "file": "mff-finalvictory.mid",
+      "bytes": 24967,
+      "sequencer": "bucky o'hare",
+      "path": "audios/vgmusic/nes/mff-finalvictory.mid"
+    },
+    {
+      "system": "nes",
+      "game": "Mike Tyson's Punchout",
+      "title": "Password  (Remix)",
+      "file": "mike_tyson%27s_punch-out_-__jog_jam.mid",
+      "bytes": 9448,
+      "sequencer": "unknown",
+      "path": "audios/vgmusic/nes/mike_tyson%27s_punch-out_-__jog_jam.mid"
+    },
+    {
+      "system": "nes",
+      "game": "Mission: Impossible",
+      "title": "Sinister 7 Hideout",
+      "file": "MIS7WE.mid",
+      "bytes": 12400,
+      "sequencer": "Same name as above",
+      "path": "audios/vgmusic/nes/MIS7WE.mid"
+    },
+    {
+      "system": "nes",
+      "game": "Mega Man",
+      "title": "Stage Select (6)",
+      "file": "MM-Stage_Select.mid",
+      "bytes": 8325,
+      "sequencer": "Sword-Bolt",
+      "path": "audios/vgmusic/nes/MM-Stage_Select.mid"
+    },
+    {
+      "system": "nes",
+      "game": "Mega Man III",
+      "title": "Snake Man's Stage (Remix) (3)",
+      "file": "MM3_SnakeMan.mid",
+      "bytes": 46908,
+      "sequencer": "Levi Buffum",
+      "path": "audios/vgmusic/nes/MM3_SnakeMan.mid"
+    },
+    {
+      "system": "nes",
+      "game": "Mega Man IV",
+      "title": "Drill Man's Stage (XG)",
+      "file": "MM4_Drillman.mid",
+      "bytes": 34754,
+      "sequencer": "Teck",
+      "path": "audios/vgmusic/nes/MM4_Drillman.mid"
+    },
+    {
+      "system": "nes",
+      "game": "Magic of Scheherazade, The",
+      "title": "Waltz",
+      "file": "ms_waltz.mid",
+      "bytes": 11708,
+      "sequencer": "Timothy Peters",
+      "path": "audios/vgmusic/nes/ms_waltz.mid"
+    },
+    {
+      "system": "nes",
+      "game": "NARC",
+      "title": "Level 1 (Arranged)",
+      "file": "narc.mid",
+      "bytes": 13164,
+      "sequencer": "stockman",
+      "path": "audios/vgmusic/nes/narc.mid"
+    },
+    {
+      "system": "nes",
+      "game": "Samurai Zombie Nation",
+      "title": "Boss Battle 3 - \"No Problem\"",
+      "file": "NES__Samurai_Zombie_Nation__Boss_Battle_3.mid",
+      "bytes": 14409,
+      "sequencer": "spoonybard13",
+      "path": "audios/vgmusic/nes/NES__Samurai_Zombie_Nation__Boss_Battle_3.mid"
+    },
+    {
+      "system": "nes",
+      "game": "Ninja Gaiden 2",
+      "title": "Castle Demonic",
+      "file": "ng2_cstl.mid",
+      "bytes": 8939,
+      "sequencer": "Shawn Lewis",
+      "path": "audios/vgmusic/nes/ng2_cstl.mid"
+    },
+    {
+      "system": "nes",
+      "game": "Laser Invasion",
+      "title": "Helicopter 2",
+      "file": "OLlaserhelecopter2.mid",
+      "bytes": 16766,
+      "sequencer": "Octal Livershite",
+      "path": "audios/vgmusic/nes/OLlaserhelecopter2.mid"
+    },
+    {
+      "system": "nes",
+      "game": "Mickey's Adventure in Numberland",
+      "title": "Pete's Hideout",
+      "file": "PetesHideout.mid",
+      "bytes": 13467,
+      "sequencer": "TurquoiseStar",
+      "path": "audios/vgmusic/nes/PetesHideout.mid"
+    },
+    {
+      "system": "nes",
+      "game": "Dragon Ball Z 2",
+      "title": "Goku Transform",
+      "file": "picorobout.mid",
+      "bytes": 15574,
+      "sequencer": "Patricio stiglich",
+      "path": "audios/vgmusic/nes/picorobout.mid"
+    },
+    {
+      "system": "nes",
+      "game": "Castlevania",
+      "title": "Boss - \"Poison Mind\" (3)",
+      "file": "Poison_Mind.mid",
+      "bytes": 17375,
+      "sequencer": "Timothy Childress",
+      "path": "audios/vgmusic/nes/Poison_Mind.mid"
+    },
+    {
+      "system": "nes",
+      "game": "P.O.W",
+      "title": "Ending Credits",
+      "file": "pow.mid",
+      "bytes": 30646,
+      "sequencer": "unknown",
+      "path": "audios/vgmusic/nes/pow.mid"
+    },
+    {
+      "system": "nes",
+      "game": "Power Blade",
+      "title": "Stage 1",
+      "file": "PowerbladeLv1.mid",
+      "bytes": 11629,
+      "sequencer": "Eric Stokes",
+      "path": "audios/vgmusic/nes/PowerbladeLv1.mid"
+    },
+    {
+      "system": "nes",
+      "game": "Power Blade",
+      "title": "Stage 7",
+      "file": "PowerbladeLv7.mid",
+      "bytes": 15752,
+      "sequencer": "Eric Stokes",
+      "path": "audios/vgmusic/nes/PowerbladeLv7.mid"
+    },
+    {
+      "system": "nes",
+      "game": "Princess Tomato in the Salad Kingdom",
+      "title": "Level 1 (Arranged)",
+      "file": "PRINCESSTOMATOSTAGE1.mid",
+      "bytes": 9229,
+      "sequencer": "Bodger",
+      "path": "audios/vgmusic/nes/PRINCESSTOMATOSTAGE1.mid"
+    },
+    {
+      "system": "nes",
+      "game": "Kid Dracula",
+      "title": "Stage 1-2",
+      "file": "r10k_kiddrac1.mid",
+      "bytes": 27019,
+      "sequencer": "Rynen10K",
+      "path": "audios/vgmusic/nes/r10k_kiddrac1.mid"
+    },
+    {
+      "system": "nes",
+      "game": "Rescue: The Embassy Mission",
+      "title": "Sniper Setup",
+      "file": "RescueEmbassyMission_-_SniperSetup.mid",
+      "bytes": 54438,
+      "sequencer": "Jace",
+      "path": "audios/vgmusic/nes/RescueEmbassyMission_-_SniperSetup.mid"
+    },
+    {
+      "system": "nes",
+      "game": "Who Framed Roger Rabbit?",
+      "title": "L.A. Map (Jazz Remix)",
+      "file": "rrabbitmap.mid",
+      "bytes": 54444,
+      "sequencer": "SquareTex",
+      "path": "audios/vgmusic/nes/rrabbitmap.mid"
+    },
+    {
+      "system": "nes",
+      "game": "Street Fighter 2010",
+      "title": "Level 14",
+      "file": "SF2010.mid",
+      "bytes": 30710,
+      "sequencer": "JackRabbit",
+      "path": "audios/vgmusic/nes/SF2010.mid"
+    },
+    {
+      "system": "nes",
+      "game": "Shatterhand",
+      "title": "Area B: Refinery",
+      "file": "Shatterhand_Refinery_Area_B.mid",
+      "bytes": 28885,
+      "sequencer": "Steven C. King",
+      "path": "audios/vgmusic/nes/Shatterhand_Refinery_Area_B.mid"
+    },
+    {
+      "system": "nes",
+      "game": "Silver Surfer",
+      "title": "Game Introduction",
+      "file": "silvers2.mid",
+      "bytes": 40513,
+      "sequencer": "Steven C. King",
+      "path": "audios/vgmusic/nes/silvers2.mid"
+    },
+    {
+      "system": "nes",
+      "game": "Simpsons, The: Bart Vs. the Space Mutants",
+      "title": "Boss Music Type 1",
+      "file": "simpsbs1.mid",
+      "bytes": 21302,
+      "sequencer": "Merit Celaire",
+      "path": "audios/vgmusic/nes/simpsbs1.mid"
+    },
+    {
+      "system": "nes",
+      "game": "Super Mario Bros.",
+      "title": "Overworld (6)",
+      "file": "smb_overw.mid",
+      "bytes": 10676,
+      "sequencer": "Kilgayne",
+      "path": "audios/vgmusic/nes/smb_overw.mid"
+    },
+    {
+      "system": "nes",
+      "game": "Snake Rattle 'N' Roll",
+      "title": "High Altitude",
+      "file": "snakerattle_highaltitude.mid",
+      "bytes": 26415,
+      "sequencer": "Chuck Dodgers",
+      "path": "audios/vgmusic/nes/snakerattle_highaltitude.mid"
+    },
+    {
+      "system": "nes",
+      "game": "Super Off Road",
+      "title": "Track 6 - Cliffhanger (2)",
+      "file": "softr6.mid",
+      "bytes": 12528,
+      "sequencer": "DurfarC",
+      "path": "audios/vgmusic/nes/softr6.mid"
+    },
+    {
+      "system": "nes",
+      "game": "Little Nemo: The Dream Master",
+      "title": "Dream 8 - Nightmare Land (Budai Remix)",
+      "file": "st8nemoremix.mid",
+      "bytes": 46398,
+      "sequencer": "Budai the Idiot",
+      "path": "audios/vgmusic/nes/st8nemoremix.mid"
+    },
+    {
+      "system": "nes",
+      "game": "Star Wars",
+      "title": "Han Solo",
+      "file": "starwar_han.mid",
+      "bytes": 16052,
+      "sequencer": "Meezo",
+      "path": "audios/vgmusic/nes/starwar_han.mid"
+    },
+    {
+      "system": "nes",
+      "game": "Stinger",
+      "title": "In-game with Power-up",
+      "file": "stingigp.mid",
+      "bytes": 16753,
+      "sequencer": "John N. Engelmann",
+      "path": "audios/vgmusic/nes/stingigp.mid"
+    },
+    {
+      "system": "nes",
+      "game": "Super C",
+      "title": "Level 2",
+      "file": "super_contra_stage2.mid",
+      "bytes": 31055,
+      "sequencer": "krzychu",
+      "path": "audios/vgmusic/nes/super_contra_stage2.mid"
+    },
+    {
+      "system": "nes",
+      "game": "Mickey's Safari in Letterland",
+      "title": "Swamp / Jungle",
+      "file": "Swamp-Jungle.mid",
+      "bytes": 12247,
+      "sequencer": "TurquoiseStar",
+      "path": "audios/vgmusic/nes/Swamp-Jungle.mid"
+    },
+    {
+      "system": "nes",
+      "game": "Bionic Commando",
+      "title": "Enemy Map Battle",
+      "file": "T_BionicCommando_Encounter.mid",
+      "bytes": 42847,
+      "sequencer": "Tsu Ryu",
+      "path": "audios/vgmusic/nes/T_BionicCommando_Encounter.mid"
+    },
+    {
+      "system": "nes",
+      "game": "Hiryu No Ken: Ougi No Shou (Japan)",
+      "title": "Boss Battle",
+      "file": "T_HiryuNoKenOugi_BossBattleTheme.mid",
+      "bytes": 10613,
+      "sequencer": "Tsu Ryu",
+      "path": "audios/vgmusic/nes/T_HiryuNoKenOugi_BossBattleTheme.mid"
+    },
+    {
+      "system": "nes",
+      "game": "Hokuto No Ken (Japan)",
+      "title": "Main Game Theme",
+      "file": "T_HokutoNoKen_InGameTheme.mid",
+      "bytes": 13566,
+      "sequencer": "Tsu Ryu",
+      "path": "audios/vgmusic/nes/T_HokutoNoKen_InGameTheme.mid"
+    },
+    {
+      "system": "nes",
+      "game": "Hokuto No Ken II: Seikimatsus Kyuseishu Densetsu (Japan)",
+      "title": "Courtyard/Fortress Stage",
+      "file": "T_HokutoNoKenII_InGameTheme.mid",
+      "bytes": 16400,
+      "sequencer": "Tsu Ryu",
+      "path": "audios/vgmusic/nes/T_HokutoNoKenII_InGameTheme.mid"
+    },
+    {
+      "system": "nes",
+      "game": "Metal Gear",
+      "title": "Metal Gear Super Computer",
+      "file": "T_MetalGear_SuperComputer102.mid",
+      "bytes": 62358,
+      "sequencer": "Tsu Ryu & Takeuchi Yuka",
+      "path": "audios/vgmusic/nes/T_MetalGear_SuperComputer102.mid"
+    },
+    {
+      "system": "nes",
+      "game": "Mission: Impossible",
+      "title": "Enemy Alert",
+      "file": "T_MissionImpossible_Enemy.mid",
+      "bytes": 28564,
+      "sequencer": "Tsu Ryu",
+      "path": "audios/vgmusic/nes/T_MissionImpossible_Enemy.mid"
+    },
+    {
+      "system": "nes",
+      "game": "Mega Man VI",
+      "title": "Title (4)",
+      "file": "T_RockMan6_TitleTheme.mid",
+      "bytes": 12788,
+      "sequencer": "Tsu Ryu",
+      "path": "audios/vgmusic/nes/T_RockMan6_TitleTheme.mid"
+    },
+    {
+      "system": "nes",
+      "game": "Snake's Revenge",
+      "title": "Enemy Detection",
+      "file": "T_SnakesRevenge_Enemy.mid",
+      "bytes": 29801,
+      "sequencer": "Tsu Ryu",
+      "path": "audios/vgmusic/nes/T_SnakesRevenge_Enemy.mid"
+    },
+    {
+      "system": "nes",
+      "game": "Sweet Home (Japan)",
+      "title": "The Cursed",
+      "file": "T_SweetHome_Allies.mid",
+      "bytes": 79518,
+      "sequencer": "Tsu Ryu",
+      "path": "audios/vgmusic/nes/T_SweetHome_Allies.mid"
+    },
+    {
+      "system": "nes",
+      "game": "Tecmo World Wrestling (Japan)",
+      "title": "Staff Roll (Yuka-Ryu Remix)",
+      "file": "T_TecmoWrestling_StaffRoll.mid",
+      "bytes": 59437,
+      "sequencer": "Tsu Ryu & Takeuchi Yuka",
+      "path": "audios/vgmusic/nes/T_TecmoWrestling_StaffRoll.mid"
+    },
+    {
+      "system": "nes",
+      "game": "Captain Tsubasa Volume 2 \"Super Striker\"",
+      "title": "Schneider's Theme (Germany Team)",
+      "file": "T_Tsub20.mid",
+      "bytes": 35857,
+      "sequencer": "Tsu Ryu",
+      "path": "audios/vgmusic/nes/T_Tsub20.mid"
+    },
+    {
+      "system": "nes",
+      "game": "Captain Tsubasa Volume 2 \"Super Striker\"",
+      "title": "\"Super Striker\"",
+      "file": "T_Tsuba0.mid",
+      "bytes": 34642,
+      "sequencer": "Tsu Ryu",
+      "path": "audios/vgmusic/nes/T_Tsuba0.mid"
+    },
+    {
+      "system": "nes",
+      "game": "Tetris (BPS)",
+      "title": "Technotris",
+      "file": "Technotris.mid",
+      "bytes": 22806,
+      "sequencer": "Conversion",
+      "path": "audios/vgmusic/nes/Technotris.mid"
+    },
+    {
+      "system": "nes",
+      "game": "Tecmo Bowl",
+      "title": "Intro",
+      "file": "tecmobowlintro.mid",
+      "bytes": 18561,
+      "sequencer": "luigidrummer",
+      "path": "audios/vgmusic/nes/tecmobowlintro.mid"
+    },
+    {
+      "system": "nes",
+      "game": "Tetris (BPS)",
+      "title": "Troika (Ska Remix)",
+      "file": "tet_t.mid",
+      "bytes": 15888,
+      "sequencer": "octahedron80",
+      "path": "audios/vgmusic/nes/tet_t.mid"
+    },
+    {
+      "system": "nes",
+      "game": "Tetris",
+      "title": "Music A",
+      "file": "tetris-1.mid",
+      "bytes": 9075,
+      "sequencer": "PJ Barnes",
+      "path": "audios/vgmusic/nes/tetris-1.mid"
+    },
+    {
+      "system": "nes",
+      "game": "Teenage Mutant Ninja Turtles 2",
+      "title": "Stage 1 - Fire! (Arranged)",
+      "file": "tmnt2-stg1stk.mid",
+      "bytes": 23868,
+      "sequencer": "Stockman",
+      "path": "audios/vgmusic/nes/tmnt2-stg1stk.mid"
+    },
+    {
+      "system": "nes",
+      "game": "Track & Field 2",
+      "title": "Hang Gliding",
+      "file": "Track_and_Field_II_-_Hang_Gliding.mid",
+      "bytes": 10803,
+      "sequencer": "Tino Pena",
+      "path": "audios/vgmusic/nes/Track_and_Field_II_-_Hang_Gliding.mid"
+    },
+    {
+      "system": "nes",
+      "game": "Strider Hiryu",
+      "title": "Phantom Train - \"Tireless Sprinter\"",
+      "file": "Train.mid",
+      "bytes": 46071,
+      "sequencer": "Ryu Hokoru",
+      "path": "audios/vgmusic/nes/Train.mid"
+    },
+    {
+      "system": "nes",
+      "game": "Treasure Master",
+      "title": "Title Theme",
+      "file": "treasure_master_-_title_theme.mid",
+      "bytes": 36566,
+      "sequencer": "Steven C. King (Jago)",
+      "path": "audios/vgmusic/nes/treasure_master_-_title_theme.mid"
+    },
+    {
+      "system": "nes",
+      "game": "Twinbee",
+      "title": "Stage",
+      "file": "Twinbee_-_StageBGM.mid",
+      "bytes": 81917,
+      "sequencer": "Jace",
+      "path": "audios/vgmusic/nes/Twinbee_-_StageBGM.mid"
+    },
+    {
+      "system": "nes",
+      "game": "Yo! Noid",
+      "title": "Stage 13: Apartment Building Climb",
+      "file": "vgYoNoidStg13AptBuild.mid",
+      "bytes": 10897,
+      "sequencer": "Yomendou",
+      "path": "audios/vgmusic/nes/vgYoNoidStg13AptBuild.mid"
+    },
+    {
+      "system": "nes",
+      "game": "Vs. Excitebike",
+      "title": "Original Excite: Racing",
+      "file": "VsExcitebikeRace.mid",
+      "bytes": 16192,
+      "sequencer": "Chow",
+      "path": "audios/vgmusic/nes/VsExcitebikeRace.mid"
+    },
+    {
+      "system": "nes",
+      "game": "Wizardry",
+      "title": "Combat",
+      "file": "Wiz1combat.mid",
+      "bytes": 72771,
+      "sequencer": "Conversion",
+      "path": "audios/vgmusic/nes/Wiz1combat.mid"
+    },
+    {
+      "system": "nes",
+      "game": "Wizardry II: The Legacy of Llylgamyn",
+      "title": "Title Theme",
+      "file": "Wizardry_II_Opening_Theme.mid",
+      "bytes": 13538,
+      "sequencer": "Yatorl Ogalbana",
+      "path": "audios/vgmusic/nes/Wizardry_II_Opening_Theme.mid"
+    },
+    {
+      "system": "nes",
+      "game": "Wizards and Warriors 3",
+      "title": "Wizard's Guild Test (2)",
+      "file": "Wiztest2.mid",
+      "bytes": 11590,
+      "sequencer": "JILost",
+      "path": "audios/vgmusic/nes/Wiztest2.mid"
+    },
+    {
+      "system": "nes",
+      "game": "WCW World Championship Wrestling",
+      "title": "Single Match",
+      "file": "World_Championship_Wrestling-Single_Match.mid",
+      "bytes": 50565,
+      "sequencer": "Jedi Questmaster",
+      "path": "audios/vgmusic/nes/World_Championship_Wrestling-Single_Match.mid"
+    },
+    {
+      "system": "nes",
+      "game": "Felix The Cat",
+      "title": "World 4-1 and 4-2",
+      "file": "world4felixthecat.mid",
+      "bytes": 49247,
+      "sequencer": "Luigi the Homie",
+      "path": "audios/vgmusic/nes/world4felixthecat.mid"
+    },
+    {
+      "system": "nes",
+      "game": "Xexyz",
+      "title": "Level One",
+      "file": "Xexyz_Lev1.mid",
+      "bytes": 12835,
+      "sequencer": "ChrisRJ",
+      "path": "audios/vgmusic/nes/Xexyz_Lev1.mid"
+    },
+    {
+      "system": "nes",
+      "game": "California Games",
+      "title": "Flying Disk Event (Remix)",
+      "file": "XkyFlyDisk.mid",
+      "bytes": 17500,
+      "sequencer": "Xky Rauh",
+      "path": "audios/vgmusic/nes/XkyFlyDisk.mid"
+    },
+    {
+      "system": "nes",
+      "game": "Zelda II: The Adventure of Link",
+      "title": "Title Screen (Punk Rock Remix)",
+      "file": "Z2TitleScreenPunkRockRemixFixed.mid",
+      "bytes": 20647,
+      "sequencer": "CarboHydroM",
+      "path": "audios/vgmusic/nes/Z2TitleScreenPunkRockRemixFixed.mid"
+    },
+    {
+      "system": "nes",
+      "game": "Zelda II: The Adventure of Link",
+      "title": "Overworld (Zelda 3 Mix)",
+      "file": "Zelda2ov.mid",
+      "bytes": 28584,
+      "sequencer": "JILost",
+      "path": "audios/vgmusic/nes/Zelda2ov.mid"
+    },
+    {
+      "system": "snes",
+      "game": "Mega Man 7",
+      "title": "Burst Man's Stage (2)",
+      "file": "12-BurstMan.mid",
+      "bytes": 23359,
+      "sequencer": "Jarel Jones",
+      "path": "audios/vgmusic/snes/12-BurstMan.mid"
+    },
+    {
+      "system": "snes",
+      "game": "Mega Man 7",
+      "title": "Wily's Last Stand",
+      "file": "32-WilyTheme.mid",
+      "bytes": 50945,
+      "sequencer": "Jarel Jones",
+      "path": "audios/vgmusic/snes/32-WilyTheme.mid"
+    },
+    {
+      "system": "snes",
+      "game": "Aerobiz Supersonic",
+      "title": "Southeast Asia",
+      "file": "AerobizSupersonic_SoutheastAsia.mid",
+      "bytes": 19818,
+      "sequencer": "Alain Racette",
+      "path": "audios/vgmusic/snes/AerobizSupersonic_SoutheastAsia.mid"
+    },
+    {
+      "system": "snes",
+      "game": "Aero the Acro-Bat",
+      "title": "Start Screen",
+      "file": "aeroe.mid",
+      "bytes": 23256,
+      "sequencer": "unknown",
+      "path": "audios/vgmusic/snes/aeroe.mid"
+    },
+    {
+      "system": "snes",
+      "game": "Alcahest (Japan)",
+      "title": "Floor",
+      "file": "Alcahest_-_Floor.mid",
+      "bytes": 40515,
+      "sequencer": "Jace",
+      "path": "audios/vgmusic/snes/Alcahest_-_Floor.mid"
+    },
+    {
+      "system": "snes",
+      "game": "Tokimeki Memorial",
+      "title": "An Orange at the Kotatsu - Winter Break",
+      "file": "AltWinterTokimekiByCryogen.mid",
+      "bytes": 12619,
+      "sequencer": "Cryogen Glacien",
+      "path": "audios/vgmusic/snes/AltWinterTokimekiByCryogen.mid"
+    },
+    {
+      "system": "snes",
+      "game": "Animaniacs",
+      "title": "Main Theme",
+      "file": "Animorch.mid",
+      "bytes": 20786,
+      "sequencer": "unknown",
+      "path": "audios/vgmusic/snes/Animorch.mid"
+    },
+    {
+      "system": "snes",
+      "game": "Lagoon",
+      "title": "Atland",
+      "file": "Atland.mid",
+      "bytes": 22119,
+      "sequencer": "Eric Mackle",
+      "path": "audios/vgmusic/snes/Atland.mid"
+    },
+    {
+      "system": "snes",
+      "game": "Breath of Fire 2",
+      "title": "World Map - \"Breath of Fire\"",
+      "file": "b2field2.mid",
+      "bytes": 17101,
+      "sequencer": "unknown",
+      "path": "audios/vgmusic/snes/b2field2.mid"
+    },
+    {
+      "system": "snes",
+      "game": "Super Mario RPG",
+      "title": "Big Boss Battle (3)",
+      "file": "Battle_2.mid",
+      "bytes": 23020,
+      "sequencer": "Jason Zaffary",
+      "path": "audios/vgmusic/snes/Battle_2.mid"
+    },
+    {
+      "system": "snes",
+      "game": "BreakThru!",
+      "title": "Berlin",
+      "file": "Berlin.mid",
+      "bytes": 39349,
+      "sequencer": "unknown",
+      "path": "audios/vgmusic/snes/Berlin.mid"
+    },
+    {
+      "system": "snes",
+      "game": "Biker Mice from Mars",
+      "title": "Level 1",
+      "file": "biker_mice_from_mars.mid",
+      "bytes": 35233,
+      "sequencer": "Chris Arnot",
+      "path": "audios/vgmusic/snes/biker_mice_from_mars.mid"
+    },
+    {
+      "system": "snes",
+      "game": "Doomsday Warrior",
+      "title": "Staff Roll",
+      "file": "BL_doomsday_staffroll.mid",
+      "bytes": 14290,
+      "sequencer": "Blitz Lunar",
+      "path": "audios/vgmusic/snes/BL_doomsday_staffroll.mid"
+    },
+    {
+      "system": "snes",
+      "game": "Farland Story (Japan)",
+      "title": "Boss Battle",
+      "file": "BL_fls_boss.mid",
+      "bytes": 23403,
+      "sequencer": "Blitz Lunar",
+      "path": "audios/vgmusic/snes/BL_fls_boss.mid"
+    },
+    {
+      "system": "snes",
+      "game": "Pilotwings",
+      "title": "Hang Glider",
+      "file": "BL_pilotwings_hangglider_v2.mid",
+      "bytes": 18447,
+      "sequencer": "Blitz Lunar",
+      "path": "audios/vgmusic/snes/BL_pilotwings_hangglider_v2.mid"
+    },
+    {
+      "system": "snes",
+      "game": "Robotrek",
+      "title": "Hometown In Autumn",
+      "file": "BL_robotrek_hometownautumn.mid",
+      "bytes": 12803,
+      "sequencer": "Blitz Lunar",
+      "path": "audios/vgmusic/snes/BL_robotrek_hometownautumn.mid"
+    },
+    {
+      "system": "snes",
+      "game": "Breath of Fire 2",
+      "title": "Grand Church - \"Decadence of God\" (4)",
+      "file": "bof2god.mid",
+      "bytes": 8524,
+      "sequencer": "Sephiroth3",
+      "path": "audios/vgmusic/snes/bof2god.mid"
+    },
+    {
+      "system": "snes",
+      "game": "Mega Man X",
+      "title": "Boomer Kuwanger's Stage (2)",
+      "file": "boomer_kuwanger.mid",
+      "bytes": 39951,
+      "sequencer": "Dave Phaneuf",
+      "path": "audios/vgmusic/snes/boomer_kuwanger.mid"
+    },
+    {
+      "system": "snes",
+      "game": "Teenage Mutant Ninja Turtles 4: Turtles in Time",
+      "title": "Bury My Shell at Wounded Knee",
+      "file": "Burymysh.mid",
+      "bytes": 27858,
+      "sequencer": "Leopold McGinnis",
+      "path": "audios/vgmusic/snes/Burymysh.mid"
+    },
+    {
+      "system": "snes",
+      "game": "Bust-a-Move",
+      "title": "Versus Mode",
+      "file": "bust_vs.mid",
+      "bytes": 8910,
+      "sequencer": "Joe Cortez",
+      "path": "audios/vgmusic/snes/bust_vs.mid"
+    },
+    {
+      "system": "snes",
+      "game": "Super Royal Blood",
+      "title": "Winter Strategy - \"Snow\" (v2.0)",
+      "file": "CB_RBSnow.mid",
+      "bytes": 16205,
+      "sequencer": "Corlen Belspar",
+      "path": "audios/vgmusic/snes/CB_RBSnow.mid"
+    },
+    {
+      "system": "snes",
+      "game": "Adventures of Dr. Franken",
+      "title": "Title Screen - \"Moonlight Sonata\"",
+      "file": "CBmoonlightv2.mid",
+      "bytes": 13003,
+      "sequencer": "Corlen Belspar",
+      "path": "audios/vgmusic/snes/CBmoonlightv2.mid"
+    },
+    {
+      "system": "snes",
+      "game": "Chrono Trigger",
+      "title": "Cathedral 2 & Cathedral 1",
+      "file": "Chrono2.mid",
+      "bytes": 13160,
+      "sequencer": "Tiffany",
+      "path": "audios/vgmusic/snes/Chrono2.mid"
+    },
+    {
+      "system": "snes",
+      "game": "Super Contra",
+      "title": "Level 1",
+      "file": "contra_1.mid",
+      "bytes": 27599,
+      "sequencer": "unknown",
+      "path": "audios/vgmusic/snes/contra_1.mid"
+    },
+    {
+      "system": "snes",
+      "game": "Super Castlevania IV",
+      "title": "Secret Room",
+      "file": "CV4-_Secret_Room.mid",
+      "bytes": 49222,
+      "sequencer": "Jorge D. Fuentes",
+      "path": "audios/vgmusic/snes/CV4-_Secret_Room.mid"
+    },
+    {
+      "system": "snes",
+      "game": "Castlevania: Dracula X",
+      "title": "Illusionary Dance",
+      "file": "CVDX_-_Illusionary_Dance.mid",
+      "bytes": 32060,
+      "sequencer": "Jay Reichard",
+      "path": "audios/vgmusic/snes/CVDX_-_Illusionary_Dance.mid"
+    },
+    {
+      "system": "snes",
+      "game": "Super Star Wars",
+      "title": "Imperial March",
+      "file": "Darth_Vader_Theme_Electro_Remix.mid",
+      "bytes": 27130,
+      "sequencer": "Sonic Wolf",
+      "path": "audios/vgmusic/snes/Darth_Vader_Theme_Electro_Remix.mid"
+    },
+    {
+      "system": "snes",
+      "game": "Dragon Ball Z: The Legend of Super Son Goku (Japan)",
+      "title": "Budokai (2)",
+      "file": "dbz_story_budokai.mid",
+      "bytes": 43220,
+      "sequencer": "nk",
+      "path": "audios/vgmusic/snes/dbz_story_budokai.mid"
+    },
+    {
+      "system": "snes",
+      "game": "Dragon Ball Z Super Butouden (Japan)",
+      "title": "Theme of Piccolo (2)",
+      "file": "DBZ1-GokuBattle.mid",
+      "bytes": 28749,
+      "sequencer": "Robert Hansson",
+      "path": "audios/vgmusic/snes/DBZ1-GokuBattle.mid"
+    },
+    {
+      "system": "snes",
+      "game": "Dragon Ball Z Super Butouden 3 (Japan)",
+      "title": "Budoukai Final Round",
+      "file": "dbzfight.mid",
+      "bytes": 18015,
+      "sequencer": "Patricio stiglich",
+      "path": "audios/vgmusic/snes/dbzfight.mid"
+    },
+    {
+      "system": "snes",
+      "game": "Donkey Kong Country 3",
+      "title": "Kastle Kaos (2)",
+      "file": "dk3lastboss.mid",
+      "bytes": 20350,
+      "sequencer": "Hazvex",
+      "path": "audios/vgmusic/snes/dk3lastboss.mid"
+    },
+    {
+      "system": "snes",
+      "game": "Dragon Knight 4 (Japan)",
+      "title": "Town 2",
+      "file": "Dragon_Knight_4_Town_2_Theme.mid",
+      "bytes": 16896,
+      "sequencer": "Yatorl Ogalbana",
+      "path": "audios/vgmusic/snes/Dragon_Knight_4_Town_2_Theme.mid"
+    },
+    {
+      "system": "snes",
+      "game": "Pocky & Rocky 2",
+      "title": "Dragon Ride",
+      "file": "Dragon_Ride_%28Ver._X.X%29.mid",
+      "bytes": 24724,
+      "sequencer": "HHMKrillin",
+      "path": "audios/vgmusic/snes/Dragon_Ride_%28Ver._X.X%29.mid"
+    },
+    {
+      "system": "snes",
+      "game": "Dream TV",
+      "title": "Title Screen",
+      "file": "DreamTVTitle.mid",
+      "bytes": 26111,
+      "sequencer": "Friendly Floyd",
+      "path": "audios/vgmusic/snes/DreamTVTitle.mid"
+    },
+    {
+      "system": "snes",
+      "game": "Castlevania Dracula X",
+      "title": "Bloodlines",
+      "file": "dxstage1.mid",
+      "bytes": 69204,
+      "sequencer": "unknown",
+      "path": "audios/vgmusic/snes/dxstage1.mid"
+    },
+    {
+      "system": "snes",
+      "game": "EarthBound",
+      "title": "Threed (4)",
+      "file": "EB_Threed.mid",
+      "bytes": 33895,
+      "sequencer": "Andy Smith",
+      "path": "audios/vgmusic/snes/EB_Threed.mid"
+    },
+    {
+      "system": "snes",
+      "game": "Energy Breaker (Japan)",
+      "title": "The Prayer Bells Do Not Toll",
+      "file": "energy_breaker_-_the_prayer_bells.mid",
+      "bytes": 71723,
+      "sequencer": "Robert Hansson",
+      "path": "audios/vgmusic/snes/energy_breaker_-_the_prayer_bells.mid"
+    },
+    {
+      "system": "snes",
+      "game": "Gundam F-91 (Japan)",
+      "title": "Act 12 Battle Scene",
+      "file": "F91btl12.mid",
+      "bytes": 45450,
+      "sequencer": "nZero",
+      "path": "audios/vgmusic/snes/F91btl12.mid"
+    },
+    {
+      "system": "snes",
+      "game": "Fire Emblem 4 (Japan)",
+      "title": "The Empire (2nd Generation)",
+      "file": "felast.mid",
+      "bytes": 14974,
+      "sequencer": "unknown",
+      "path": "audios/vgmusic/snes/felast.mid"
+    },
+    {
+      "system": "snes",
+      "game": "Final Fight",
+      "title": "Level 4-3 Boss",
+      "file": "ff4-3.mid",
+      "bytes": 50388,
+      "sequencer": "unknown",
+      "path": "audios/vgmusic/snes/ff4-3.mid"
+    },
+    {
+      "system": "snes",
+      "game": "Fighter's History",
+      "title": "Mizoguchi",
+      "file": "FighHis_Miz-ST.mid",
+      "bytes": 16708,
+      "sequencer": "Robert Hansson",
+      "path": "audios/vgmusic/snes/FighHis_Miz-ST.mid"
+    },
+    {
+      "system": "snes",
+      "game": "Raiden Trad",
+      "title": "Fighting Thunder (AirAttack Remix)",
+      "file": "Flight2.mid",
+      "bytes": 41062,
+      "sequencer": "unknown",
+      "path": "audios/vgmusic/snes/Flight2.mid"
+    },
+    {
+      "system": "snes",
+      "game": "Front Mission: Gun Hazard (Japan)",
+      "title": "Emotion",
+      "file": "FMGH_Emotion.mid",
+      "bytes": 68628,
+      "sequencer": "KDS",
+      "path": "audios/vgmusic/snes/FMGH_Emotion.mid"
+    },
+    {
+      "system": "snes",
+      "game": "Front Mission (Japan)",
+      "title": "Final Battle",
+      "file": "FrontMission_Final_Battle.mid",
+      "bytes": 13473,
+      "sequencer": "David Power",
+      "path": "audios/vgmusic/snes/FrontMission_Final_Battle.mid"
+    },
+    {
+      "system": "snes",
+      "game": "Mario Paint",
+      "title": "Gnat Attack: Round 2",
+      "file": "GnatAttackR2.mid",
+      "bytes": 15554,
+      "sequencer": "Jose E. Felix",
+      "path": "audios/vgmusic/snes/GnatAttackR2.mid"
+    },
+    {
+      "system": "snes",
+      "game": "Gradius III",
+      "title": "Mechanical Base (4)",
+      "file": "grad3-mb-SNES-F.mid",
+      "bytes": 53374,
+      "sequencer": "Ren Revolt",
+      "path": "audios/vgmusic/snes/grad3-mb-SNES-F.mid"
+    },
+    {
+      "system": "snes",
+      "game": "Gundam Wing: Endless Duel (Japan)",
+      "title": "Antarctic Base  (2)",
+      "file": "GWtgeese.mid",
+      "bytes": 21832,
+      "sequencer": "Sivak Drac",
+      "path": "audios/vgmusic/snes/GWtgeese.mid"
+    },
+    {
+      "system": "snes",
+      "game": "Hiryuu no Ken - Golden Fighter (Japan)",
+      "title": "BGM Tournament",
+      "file": "HiryunoKenGF_Tournament.mid",
+      "bytes": 14256,
+      "sequencer": "Marcio Diego",
+      "path": "audios/vgmusic/snes/HiryunoKenGF_Tournament.mid"
+    },
+    {
+      "system": "snes",
+      "game": "Hana no Keiji - Kumo no Kanata Ni (Japan)",
+      "title": "Candlestick Room Battle",
+      "file": "HNK_KNKN_-_Armor_Battle_Theme.mid",
+      "bytes": 14038,
+      "sequencer": "Robert Hansson",
+      "path": "audios/vgmusic/snes/HNK_KNKN_-_Armor_Battle_Theme.mid"
+    },
+    {
+      "system": "snes",
+      "game": "Illusion of Gaia",
+      "title": "Final Battle",
+      "file": "IoGfinal.mid",
+      "bytes": 82070,
+      "sequencer": "Jeff Daily",
+      "path": "audios/vgmusic/snes/IoGfinal.mid"
+    },
+    {
+      "system": "snes",
+      "game": "Jaki Crush (Japan)",
+      "title": "Main Table",
+      "file": "jaki_crush_japan_-_main_table.mid",
+      "bytes": 84805,
+      "sequencer": "Robert Hansson",
+      "path": "audios/vgmusic/snes/jaki_crush_japan_-_main_table.mid"
+    },
+    {
+      "system": "snes",
+      "game": "Battletoads in Battlemaniacs",
+      "title": "Bonus Level 1 (2) (v1.1)",
+      "file": "JDC_BMBonus1-1.mid",
+      "bytes": 38032,
+      "sequencer": "Joseph Collins",
+      "path": "audios/vgmusic/snes/JDC_BMBonus1-1.mid"
+    },
+    {
+      "system": "snes",
+      "game": "Raiden Trad",
+      "title": "Stage 1 - \"Gallantry\"",
+      "file": "JILost_-_SNES_-_Raiden_Trad_-_Gallantry_DXv3.mid",
+      "bytes": 86517,
+      "sequencer": "JILost",
+      "path": "audios/vgmusic/snes/JILost_-_SNES_-_Raiden_Trad_-_Gallantry_DXv3.mid"
+    },
+    {
+      "system": "snes",
+      "game": "Jurassic Park",
+      "title": "Jungle (v1.1)",
+      "file": "Jungle%28V1.1%29.mid",
+      "bytes": 33636,
+      "sequencer": "Lychee Akana",
+      "path": "audios/vgmusic/snes/Jungle%28V1.1%29.mid"
+    },
+    {
+      "system": "snes",
+      "game": "Kirby's Dream Course",
+      "title": "Course 3",
+      "file": "KirbyDC-Course3.mid",
+      "bytes": 30064,
+      "sequencer": "The Jade Emperor",
+      "path": "audios/vgmusic/snes/KirbyDC-Course3.mid"
+    },
+    {
+      "system": "snes",
+      "game": "Kishin Douji Zenki 1 - Rettou Raiden (Japan)",
+      "title": "Opening Premonition - \"Nightmare\"",
+      "file": "KishinDoujiZenki-Intro.mid",
+      "bytes": 19685,
+      "sequencer": "Robert Hansson",
+      "path": "audios/vgmusic/snes/KishinDoujiZenki-Intro.mid"
+    },
+    {
+      "system": "snes",
+      "game": "Shin Nekketsu Kouha Kunio Tachi No Bannka (Japan)",
+      "title": "Jail Fight",
+      "file": "ktb-jailfight.mid",
+      "bytes": 24112,
+      "sequencer": "Stockman",
+      "path": "audios/vgmusic/snes/ktb-jailfight.mid"
+    },
+    {
+      "system": "snes",
+      "game": "Kid Klown In Crazy Chase",
+      "title": "Stage 3",
+      "file": "laval.mid",
+      "bytes": 31049,
+      "sequencer": "Daniel Gajardo Pulgar",
+      "path": "audios/vgmusic/snes/laval.mid"
+    },
+    {
+      "system": "snes",
+      "game": "Legend",
+      "title": "Title",
+      "file": "Legend-Title.mid",
+      "bytes": 20916,
+      "sequencer": "Jedi QuestMaster",
+      "path": "audios/vgmusic/snes/Legend-Title.mid"
+    },
+    {
+      "system": "snes",
+      "game": "Lemmings 2",
+      "title": "Classic Tribe",
+      "file": "LEM2CLSC.mid",
+      "bytes": 17785,
+      "sequencer": "Zagro",
+      "path": "audios/vgmusic/snes/LEM2CLSC.mid"
+    },
+    {
+      "system": "snes",
+      "game": "Lemmings",
+      "title": "Intro (2)",
+      "file": "LemOpening.mid",
+      "bytes": 8880,
+      "sequencer": "Brandon Hudson",
+      "path": "audios/vgmusic/snes/LemOpening.mid"
+    },
+    {
+      "system": "snes",
+      "game": "Lufia and the Fortress of Doom",
+      "title": "Doom Island",
+      "file": "luf1doom.mid",
+      "bytes": 8372,
+      "sequencer": "SinclairC",
+      "path": "audios/vgmusic/snes/luf1doom.mid"
+    },
+    {
+      "system": "snes",
+      "game": "X-Men: Mutant Apocalypse",
+      "title": "Mission 1 - Psylocke",
+      "file": "M1Psylocke.mid",
+      "bytes": 73103,
+      "sequencer": "Washudoll",
+      "path": "audios/vgmusic/snes/M1Psylocke.mid"
+    },
+    {
+      "system": "snes",
+      "game": "Macross: Scrambled Valkyrie",
+      "title": "Guardian Of Final Boss",
+      "file": "macross-m.mid",
+      "bytes": 10314,
+      "sequencer": "Aero",
+      "path": "audios/vgmusic/snes/macross-m.mid"
+    },
+    {
+      "system": "snes",
+      "game": "Magic Sword",
+      "title": "At Brokmar's Gate",
+      "file": "Magic_Sword_-_At_Brokmars_Gate.mid",
+      "bytes": 39178,
+      "sequencer": "Aaron \"Willow\" Eason",
+      "path": "audios/vgmusic/snes/Magic_Sword_-_At_Brokmars_Gate.mid"
+    },
+    {
+      "system": "snes",
+      "game": "Mahou Poipoi Poitto (Japan)",
+      "title": "Stage 1",
+      "file": "mahou_poipoi_poitto_japan_-_stage_1.mid",
+      "bytes": 27517,
+      "sequencer": "Robert Hansson",
+      "path": "audios/vgmusic/snes/mahou_poipoi_poitto_japan_-_stage_1.mid"
+    },
+    {
+      "system": "snes",
+      "game": "Addams Family, The: Pugsley's Scavenger Hunt",
+      "title": "The Attic",
+      "file": "Mansion_Attic.mid",
+      "bytes": 40762,
+      "sequencer": "Teck",
+      "path": "audios/vgmusic/snes/Mansion_Attic.mid"
+    },
+    {
+      "system": "snes",
+      "game": "Battle Soccer 2",
+      "title": "Main Menu",
+      "file": "Melto_BattleSoccer2.mid",
+      "bytes": 10058,
+      "sequencer": "Melto Rheo",
+      "path": "audios/vgmusic/snes/Melto_BattleSoccer2.mid"
+    },
+    {
+      "system": "snes",
+      "game": "Metal Warriors",
+      "title": "Stage 1 (2)",
+      "file": "Metal_Warriors-Vital_Mission.mid",
+      "bytes": 49177,
+      "sequencer": "-=Metal Warrior=-",
+      "path": "audios/vgmusic/snes/Metal_Warriors-Vital_Mission.mid"
+    },
+    {
+      "system": "snes",
+      "game": "Mickey 3 - Mickey and Donald",
+      "title": "Emperor Pete's Castle",
+      "file": "mickey3_castle.mid",
+      "bytes": 25583,
+      "sequencer": "Rynen10K",
+      "path": "audios/vgmusic/snes/mickey3_castle.mid"
+    },
+    {
+      "system": "snes",
+      "game": "Mickey Mania",
+      "title": "The Giant's Table",
+      "file": "MickeyManiaTable.mid",
+      "bytes": 24306,
+      "sequencer": "SNN",
+      "path": "audios/vgmusic/snes/MickeyManiaTable.mid"
+    },
+    {
+      "system": "snes",
+      "game": "Alien 3",
+      "title": "Sealing Door/ Key Ignition Mission",
+      "file": "mission4.mid",
+      "bytes": 29068,
+      "sequencer": "unknown",
+      "path": "audios/vgmusic/snes/mission4.mid"
+    },
+    {
+      "system": "snes",
+      "game": "Rockman & Forte (Japan)",
+      "title": "Ground Man's Stage (4)",
+      "file": "MM-B_Ground_Man-KM.mid",
+      "bytes": 44474,
+      "sequencer": "King Meteor",
+      "path": "audios/vgmusic/snes/MM-B_Ground_Man-KM.mid"
+    },
+    {
+      "system": "snes",
+      "game": "Magical Quest Starring Mickey Mouse, The",
+      "title": "Ending",
+      "file": "mmq14.mid",
+      "bytes": 8055,
+      "sequencer": "Gigasoft",
+      "path": "audios/vgmusic/snes/mmq14.mid"
+    },
+    {
+      "system": "snes",
+      "game": "Mega Man Soccer",
+      "title": "Wily Field",
+      "file": "MMS_WilyField.mid",
+      "bytes": 25725,
+      "sequencer": "Robert Hansson",
+      "path": "audios/vgmusic/snes/MMS_WilyField.mid"
+    },
+    {
+      "system": "snes",
+      "game": "Metal Warriors",
+      "title": "Stage 1",
+      "file": "mwstg1.mid",
+      "bytes": 12519,
+      "sequencer": "Mark Jansen",
+      "path": "audios/vgmusic/snes/mwstg1.mid"
+    },
+    {
+      "system": "snes",
+      "game": "NBA Jam",
+      "title": "Title Screen (v2.0)",
+      "file": "NBAJamRK3Kv2.mid",
+      "bytes": 16321,
+      "sequencer": "Rapidkirby3k",
+      "path": "audios/vgmusic/snes/NBAJamRK3Kv2.mid"
+    },
+    {
+      "system": "snes",
+      "game": "Clay Fighter 2",
+      "title": "Blob's Stage - \"Oozevila\"",
+      "file": "oozevila.mid",
+      "bytes": 11494,
+      "sequencer": "DC",
+      "path": "audios/vgmusic/snes/oozevila.mid"
+    },
+    {
+      "system": "snes",
+      "game": "WWF Raw Is War",
+      "title": "Owen Hart",
+      "file": "owenhart.mid",
+      "bytes": 18714,
+      "sequencer": "TakerDude",
+      "path": "audios/vgmusic/snes/owenhart.mid"
+    },
+    {
+      "system": "snes",
+      "game": "Phalanx",
+      "title": "Level 1: \"Assault\"",
+      "file": "Phalanx-Assault.mid",
+      "bytes": 23879,
+      "sequencer": "darkgreen_orange",
+      "path": "audios/vgmusic/snes/Phalanx-Assault.mid"
+    },
+    {
+      "system": "snes",
+      "game": "Pop'n Twinbee",
+      "title": "Title Screen",
+      "file": "PNTB_title.mid",
+      "bytes": 78449,
+      "sequencer": "Sean Bee",
+      "path": "audios/vgmusic/snes/PNTB_title.mid"
+    },
+    {
+      "system": "snes",
+      "game": "Prince of Persia",
+      "title": "Stage 6",
+      "file": "POP_Sound7_Gs.mid",
+      "bytes": 30476,
+      "sequencer": "Daniel Marjenburgh",
+      "path": "audios/vgmusic/snes/POP_Sound7_Gs.mid"
+    },
+    {
+      "system": "snes",
+      "game": "Paladin's Quest",
+      "title": "Boss Battle (2)",
+      "file": "pq1_bbt.mid",
+      "bytes": 31831,
+      "sequencer": "Marine",
+      "path": "audios/vgmusic/snes/pq1_bbt.mid"
+    },
+    {
+      "system": "snes",
+      "game": "Pushover",
+      "title": "Title Screen",
+      "file": "Push_Title.mid",
+      "bytes": 18343,
+      "sequencer": "CtrlAltDestroy",
+      "path": "audios/vgmusic/snes/Push_Title.mid"
+    },
+    {
+      "system": "snes",
+      "game": "Radical Rex",
+      "title": "Stages 5 & 6 - Lakeside",
+      "file": "RadicalRexLakesideByCryogen.mid",
+      "bytes": 45505,
+      "sequencer": "Cryogen Glacien",
+      "path": "audios/vgmusic/snes/RadicalRexLakesideByCryogen.mid"
+    },
+    {
+      "system": "snes",
+      "game": "Radical Dreamers (Japan)",
+      "title": "Girl Who Stole the Stars",
+      "file": "rd-star_stealing_girl.mid",
+      "bytes": 13178,
+      "sequencer": "Joe Schwebke",
+      "path": "audios/vgmusic/snes/rd-star_stealing_girl.mid"
+    },
+    {
+      "system": "snes",
+      "game": "Tin Star",
+      "title": "Gallop Stage",
+      "file": "RH_TinStar_GallopStage.mid",
+      "bytes": 44675,
+      "sequencer": "Robert Hansson",
+      "path": "audios/vgmusic/snes/RH_TinStar_GallopStage.mid"
+    },
+    {
+      "system": "snes",
+      "game": "Rockman & Forte (Japan)",
+      "title": "Ground Man's Stage (2)",
+      "file": "Rockman_and_Forte-Groundman.mid",
+      "bytes": 25820,
+      "sequencer": "unknown",
+      "path": "audios/vgmusic/snes/Rockman_and_Forte-Groundman.mid"
+    },
+    {
+      "system": "snes",
+      "game": "Romancing SaGa 3 (Japan)",
+      "title": "Voyage",
+      "file": "RomancingSaga3_voyag.mid",
+      "bytes": 17851,
+      "sequencer": "Chiba",
+      "path": "audios/vgmusic/snes/RomancingSaga3_voyag.mid"
+    },
+    {
+      "system": "snes",
+      "game": "Romancing SaGa",
+      "title": "Battle Theme 2 - \"Beat Them Up!\" (v2.0)",
+      "file": "rs1_bt2.mid",
+      "bytes": 42011,
+      "sequencer": "Marine",
+      "path": "audios/vgmusic/snes/rs1_bt2.mid"
+    },
+    {
+      "system": "snes",
+      "game": "Sailor Moon R (Japan)",
+      "title": "Jungle River",
+      "file": "SailorMoonR_Jungle.mid",
+      "bytes": 50560,
+      "sequencer": "Daniel Lippert",
+      "path": "audios/vgmusic/snes/SailorMoonR_Jungle.mid"
+    },
+    {
+      "system": "snes",
+      "game": "Bassins Black Bass",
+      "title": "Title Screen",
+      "file": "sbb2-02.mid",
+      "bytes": 49940,
+      "sequencer": "Guy Chronister",
+      "path": "audios/vgmusic/snes/sbb2-02.mid"
+    },
+    {
+      "system": "snes",
+      "game": "Super Bomberman",
+      "title": "Battle",
+      "file": "SBomb1-Battle.mid",
+      "bytes": 12845,
+      "sequencer": "João *Johnnyz* Buaes",
+      "path": "audios/vgmusic/snes/SBomb1-Battle.mid"
+    },
+    {
+      "system": "snes",
+      "game": "Street Fighter Alpha 2",
+      "title": "Adon",
+      "file": "sfa2adon.mid",
+      "bytes": 35581,
+      "sequencer": "unknown",
+      "path": "audios/vgmusic/snes/sfa2adon.mid"
+    },
+    {
+      "system": "snes",
+      "game": "King Arthur's World",
+      "title": "Sheep Shamble",
+      "file": "sheep_shamble.mid",
+      "bytes": 10162,
+      "sequencer": "unknown",
+      "path": "audios/vgmusic/snes/sheep_shamble.mid"
+    },
+    {
+      "system": "snes",
+      "game": "Super Ice Hockey",
+      "title": "Game Match 1",
+      "file": "SIH_Game_Match_1-KM.mid",
+      "bytes": 40800,
+      "sequencer": "King Meteor",
+      "path": "audios/vgmusic/snes/SIH_Game_Match_1-KM.mid"
+    },
+    {
+      "system": "snes",
+      "game": "Sim City",
+      "title": "Title",
+      "file": "simcity.mid",
+      "bytes": 8056,
+      "sequencer": "John Engelmann",
+      "path": "audios/vgmusic/snes/simcity.mid"
+    },
+    {
+      "system": "snes",
+      "game": "Super Mario All-Stars",
+      "title": "Super Mario Bros. 2: Underground",
+      "file": "SMB2_Underground.mid",
+      "bytes": 23549,
+      "sequencer": "Dave Phaneuf",
+      "path": "audios/vgmusic/snes/SMB2_Underground.mid"
+    },
+    {
+      "system": "snes",
+      "game": "Metal Max Returns (Japan)",
+      "title": "Dr. Minchi's Theme",
+      "file": "SNES_Metal_Max_Returns_Minchi.mid",
+      "bytes": 20150,
+      "sequencer": "Mayika",
+      "path": "audios/vgmusic/snes/SNES_Metal_Max_Returns_Minchi.mid"
+    },
+    {
+      "system": "snes",
+      "game": "Metal Max Returns (Japan)",
+      "title": "Town 3",
+      "file": "SNES_Metal_Max_Returns_Town_3.mid",
+      "bytes": 29111,
+      "sequencer": "Mayika",
+      "path": "audios/vgmusic/snes/SNES_Metal_Max_Returns_Town_3.mid"
+    },
+    {
+      "system": "snes",
+      "game": "Akazukin ChaCha (Japan)",
+      "title": "Title Screen",
+      "file": "SNESChaChaTitle.mid",
+      "bytes": 34810,
+      "sequencer": "AI Musicware Productions",
+      "path": "audios/vgmusic/snes/SNESChaChaTitle.mid"
+    },
+    {
+      "system": "snes",
+      "game": "Super Nazo Puyo 2",
+      "title": "Puzzle 1 (v3.0)",
+      "file": "SNPuyo2_Puzzle1_GMXGv3.mid",
+      "bytes": 83895,
+      "sequencer": "MaliceX",
+      "path": "audios/vgmusic/snes/SNPuyo2_Puzzle1_GMXGv3.mid"
+    },
+    {
+      "system": "snes",
+      "game": "Secret of Evermore",
+      "title": "Populated Gothica Town (Ivor Tower/Ebon Keep) - White Castle Town",
+      "file": "SoE-_Ivor_Tower.mid",
+      "bytes": 32482,
+      "sequencer": "Jorge D. Fuentes",
+      "path": "audios/vgmusic/snes/SoE-_Ivor_Tower.mid"
+    },
+    {
+      "system": "snes",
+      "game": "Secret of Evermore",
+      "title": "Rat's Chamber (GS)",
+      "file": "Soerat.mid",
+      "bytes": 80058,
+      "sequencer": "The Jade Emperor",
+      "path": "audios/vgmusic/snes/Soerat.mid"
+    },
+    {
+      "system": "snes",
+      "game": "Secret of Mana",
+      "title": "Lofty Mountains - \"Where the Wind Ends\" (Relaxing Remix)",
+      "file": "SOM_WindEnds_Relaxing_Remix.mid",
+      "bytes": 11429,
+      "sequencer": "Sam Wolff",
+      "path": "audios/vgmusic/snes/SOM_WindEnds_Relaxing_Remix.mid"
+    },
+    {
+      "system": "snes",
+      "game": "Secret of Mana",
+      "title": "Undine's Cave - \"Eternal Recurrence\" (2)",
+      "file": "som23%21.mid",
+      "bytes": 23231,
+      "sequencer": "Amber Ritchie",
+      "path": "audios/vgmusic/snes/som23%21.mid"
+    },
+    {
+      "system": "snes",
+      "game": "Pushover",
+      "title": "World 3: Outer Space",
+      "file": "Spaceup.mid",
+      "bytes": 11820,
+      "sequencer": "Iceplug",
+      "path": "audios/vgmusic/snes/Spaceup.mid"
+    },
+    {
+      "system": "snes",
+      "game": "Sparkster",
+      "title": "Password Screen",
+      "file": "spkpaswd.mid",
+      "bytes": 11633,
+      "sequencer": "Mr. Kleen",
+      "path": "audios/vgmusic/snes/spkpaswd.mid"
+    },
+    {
+      "system": "snes",
+      "game": "Star Fox 2 (Unreleased)",
+      "title": "Character Select (XG)",
+      "file": "StarFox2FB_CharSelMapTrnMode_XG.mid",
+      "bytes": 27651,
+      "sequencer": "MaliceX",
+      "path": "audios/vgmusic/snes/StarFox2FB_CharSelMapTrnMode_XG.mid"
+    },
+    {
+      "system": "snes",
+      "game": "Super Godzilla",
+      "title": "Title Screen",
+      "file": "super_godzilla_-_title_screen.mid",
+      "bytes": 21142,
+      "sequencer": "Robert Hansson",
+      "path": "audios/vgmusic/snes/super_godzilla_-_title_screen.mid"
+    },
+    {
+      "system": "snes",
+      "game": "Super Bonk",
+      "title": "Water Level (XG)",
+      "file": "SuperBonk-WaterLevel_XG.mid",
+      "bytes": 45080,
+      "sequencer": "SwordBolt",
+      "path": "audios/vgmusic/snes/SuperBonk-WaterLevel_XG.mid"
+    },
+    {
+      "system": "snes",
+      "game": "Super R-Type",
+      "title": "Boss Battle",
+      "file": "SuperR-Type-Boss.mid",
+      "bytes": 51950,
+      "sequencer": "The Jade Emperor",
+      "path": "audios/vgmusic/snes/SuperR-Type-Boss.mid"
+    },
+    {
+      "system": "snes",
+      "game": "Tenchi Muyo!",
+      "title": "Battle 3",
+      "file": "Tenchi_Muyo_-_Background_Music_Battle_2.mid",
+      "bytes": 84068,
+      "sequencer": "Edenilson Orlando",
+      "path": "audios/vgmusic/snes/Tenchi_Muyo_-_Background_Music_Battle_2.mid"
+    },
+    {
+      "system": "snes",
+      "game": "Tenchi Muyo!",
+      "title": "Select Stage 3",
+      "file": "Tenchi_Muyo_-_Select_Stage_3.mid",
+      "bytes": 53338,
+      "sequencer": "Edenilson Orlando",
+      "path": "audios/vgmusic/snes/Tenchi_Muyo_-_Select_Stage_3.mid"
+    },
+    {
+      "system": "snes",
+      "game": "Tetris Battle Gaiden (Japan)",
+      "title": "Halloween",
+      "file": "Tetris_battle_gaiden.mid",
+      "bytes": 40289,
+      "sequencer": "unknown",
+      "path": "audios/vgmusic/snes/Tetris_battle_gaiden.mid"
+    },
+    {
+      "system": "snes",
+      "game": "Treasure Hunter G",
+      "title": "Sad Freedom",
+      "file": "Thg_kana.mid",
+      "bytes": 58150,
+      "sequencer": "unknown",
+      "path": "audios/vgmusic/snes/Thg_kana.mid"
+    },
+    {
+      "system": "snes",
+      "game": "Mario's Time Machine",
+      "title": "Time Surfing",
+      "file": "TimeSurfing.mid",
+      "bytes": 28703,
+      "sequencer": "Cryogen Glacien",
+      "path": "audios/vgmusic/snes/TimeSurfing.mid"
+    },
+    {
+      "system": "snes",
+      "game": "Tokimeki Memorial (Japan)",
+      "title": "Fuj's Theme",
+      "file": "tmm_Fuj_Theme.mid",
+      "bytes": 18989,
+      "sequencer": "unknown",
+      "path": "audios/vgmusic/snes/tmm_Fuj_Theme.mid"
+    },
+    {
+      "system": "snes",
+      "game": "Teenage Mutant Ninja Turtles 4: Turtles in Time",
+      "title": "Alley Cat Blues (2)",
+      "file": "tmnt404.mid",
+      "bytes": 14380,
+      "sequencer": "Sephiroth3",
+      "path": "audios/vgmusic/snes/tmnt404.mid"
+    },
+    {
+      "system": "snes",
+      "game": "Terranigma",
+      "title": "Creation",
+      "file": "TN_-_Creation.mid",
+      "bytes": 22140,
+      "sequencer": "Setzer-",
+      "path": "audios/vgmusic/snes/TN_-_Creation.mid"
+    },
+    {
+      "system": "snes",
+      "game": "Goof Troop",
+      "title": "Level 1: To the South",
+      "file": "To_the_South.mid",
+      "bytes": 31589,
+      "sequencer": "Matthew Seldon",
+      "path": "audios/vgmusic/snes/To_the_South.mid"
+    },
+    {
+      "system": "snes",
+      "game": "Tales of Phantasia (Japan)",
+      "title": "Castle Of The Dhaos",
+      "file": "topdhaos.mid",
+      "bytes": 50594,
+      "sequencer": "Tete",
+      "path": "audios/vgmusic/snes/topdhaos.mid"
+    },
+    {
+      "system": "snes",
+      "game": "Lufia 2: Rise of the Sinistrals",
+      "title": "Tower (2)",
+      "file": "Tower.mid",
+      "bytes": 15308,
+      "sequencer": "Mr. Kleen",
+      "path": "audios/vgmusic/snes/Tower.mid"
+    },
+    {
+      "system": "snes",
+      "game": "Troddlers",
+      "title": "Crossed",
+      "file": "troddlers_-_crossed.mid",
+      "bytes": 29103,
+      "sequencer": "Robert Hansson",
+      "path": "audios/vgmusic/snes/troddlers_-_crossed.mid"
+    },
+    {
+      "system": "snes",
+      "game": "Tiny Toon Adventures: Wacky Sports Challenge",
+      "title": "Birdman Contest",
+      "file": "ttawsc-birdmanv1_01.mid",
+      "bytes": 23842,
+      "sequencer": "M. S. T. O. P.",
+      "path": "audios/vgmusic/snes/ttawsc-birdmanv1_01.mid"
+    },
+    {
+      "system": "snes",
+      "game": "Umi Hara Kawa Se (Japan)",
+      "title": "Kawanabe Theme",
+      "file": "umi_hara_kawa_se_japan_-_kawanabe_theme.mid",
+      "bytes": 26800,
+      "sequencer": "Robert Hansson",
+      "path": "audios/vgmusic/snes/umi_hara_kawa_se_japan_-_kawanabe_theme.mid"
+    },
+    {
+      "system": "snes",
+      "game": "Uniracers",
+      "title": "Demo Play",
+      "file": "UNITITLE2v2.mid",
+      "bytes": 12382,
+      "sequencer": "SkyYoshi",
+      "path": "audios/vgmusic/snes/UNITITLE2v2.mid"
+    },
+    {
+      "system": "snes",
+      "game": "Wario's Woods",
+      "title": "Introduction",
+      "file": "wariowoodsintro.mid",
+      "bytes": 23489,
+      "sequencer": "Glovey",
+      "path": "audios/vgmusic/snes/wariowoodsintro.mid"
+    },
+    {
+      "system": "snes",
+      "game": "Wing Commander",
+      "title": "Space Flight",
+      "file": "wc1sf.mid",
+      "bytes": 10436,
+      "sequencer": "B. Kehler",
+      "path": "audios/vgmusic/snes/wc1sf.mid"
+    },
+    {
+      "system": "snes",
+      "game": "Wing Commander",
+      "title": "Title Screen (2)",
+      "file": "WingCommander.mid",
+      "bytes": 8969,
+      "sequencer": "Chow",
+      "path": "audios/vgmusic/snes/WingCommander.mid"
+    },
+    {
+      "system": "snes",
+      "game": "X-Men: Mutant Apocalypse",
+      "title": "Wolverine Stage",
+      "file": "Wolverine.mid",
+      "bytes": 77221,
+      "sequencer": "Jos Navarrete",
+      "path": "audios/vgmusic/snes/Wolverine.mid"
+    },
+    {
+      "system": "snes",
+      "game": "Wonder Project J (Japan)",
+      "title": "March",
+      "file": "WPJ_-_March.mid",
+      "bytes": 25877,
+      "sequencer": "Maxwill",
+      "path": "audios/vgmusic/snes/WPJ_-_March.mid"
+    },
+    {
+      "system": "snes",
+      "game": "Yoshi's Cookie",
+      "title": "Music A",
+      "file": "YcookieA_zb.mid",
+      "bytes": 19643,
+      "sequencer": "Zero Beats",
+      "path": "audios/vgmusic/snes/YcookieA_zb.mid"
+    },
+    {
+      "system": "snes",
+      "game": "Ys V",
+      "title": "Lost Kingdom (Remix)",
+      "file": "Ys_V_Lost_Kingdom_Remix_dw.mid",
+      "bytes": 26546,
+      "sequencer": "Daniel Wright",
+      "path": "audios/vgmusic/snes/Ys_V_Lost_Kingdom_Remix_dw.mid"
+    },
+    {
+      "system": "snes",
+      "game": "Yuu Yuu Hakusho (Japan)",
+      "title": "Sadness",
+      "file": "yuu_yuu_hakusho_japan_-_kuramas_theme.mid",
+      "bytes": 14091,
+      "sequencer": "Robert Hansson",
+      "path": "audios/vgmusic/snes/yuu_yuu_hakusho_japan_-_kuramas_theme.mid"
+    },
+    {
+      "system": "snes",
+      "game": "Zombies Ate My Neighbors",
+      "title": "Day of the Tentacle",
+      "file": "zamn0.mid",
+      "bytes": 20897,
+      "sequencer": "Evilyam",
+      "path": "audios/vgmusic/snes/zamn0.mid"
+    }
+  ]
+}

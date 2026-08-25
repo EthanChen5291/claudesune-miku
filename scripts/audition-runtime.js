@@ -5,6 +5,114 @@
 // "I click and nothing happens" has at least five causes (CDN blocked, audio
 // context suspended pending a gesture, sample fetch hanging, a bad pattern, a JS
 // error) and the page has to say WHICH.
+// ---------------------------------------------------------------------------
+// Soundfont loading (D48), as real exported values and functions so it can be
+// TESTED. They are interpolated into RUNTIME_JS below rather than duplicated,
+// so the thing that broke has exactly one source of truth.
+//
+// @strudel/soundfonts ships UNBUNDLED: its dist/index.mjs opens with bare
+// specifiers — "@strudel/core", "@strudel/webaudio", "sfumato" — which a browser
+// cannot resolve on its own. A plain import() of it throws "Failed to resolve
+// module specifier", every gm_* voice was then rewritten to the triangle
+// fallback, and the entire General MIDI palette silently became one synth.
+//
+// It cannot simply be pulled from a CDN that bundles dependencies either: the
+// two strudel imports have to resolve to the ALREADY-RUNNING instance, because
+// registering a sound into a second copy of @strudel/webaudio writes it into a
+// registry the live scheduler never reads. So — fetch the source, repoint those
+// two specifiers at blob shims that re-export the running instance off the
+// strudel global, point "sfumato" at a real ESM build, and import the result.
+// No import map required, and it works from a file:// origin.
+// ---------------------------------------------------------------------------
+
+/** CDN copies of @strudel/soundfonts, tried in order */
+// The audio bundle everything else depends on. D42's addendum gave the SAMPLE
+// MAPS mirrors after a live blackout, but never the bundle itself — so one
+// blocked host took the whole page down with a message that read like a user
+// problem. Mirrored now, same as the maps.
+export const WEB_BUNDLE_URLS = [
+  'https://unpkg.com/@strudel/web@1.1.0/dist/index.js',
+  'https://cdn.jsdelivr.net/npm/@strudel/web@1.1.0/dist/index.js',
+];
+
+export const SOUNDFONT_URLS = [
+  'https://unpkg.com/@strudel/soundfonts@1.1.0/dist/index.mjs',
+  'https://cdn.jsdelivr.net/npm/@strudel/soundfonts@1.1.0/dist/index.mjs',
+];
+// sfumato parses soundfont binaries and holds no strudel state, so a second
+// copy of it is harmless — but no CDN autobuild of it actually WORKS, because
+// of what its own dependency ships (D48 addendum).
+//
+// sfumato's one import is `{ DEFAULT_GENERATOR_VALUES, SoundFont2 } from
+// "soundfont2"`. soundfont2's package.json points its "module" field at
+// lib/SoundFont2.js — which is not an ES module at all, it is a UMD bundle with
+// no export statements in it. So every autobuilder (esm.sh, jsdelivr's +esm)
+// produces a soundfont2 with a default export and nothing named, and the
+// browser refuses sfumato with "Importing binding name
+// 'DEFAULT_GENERATOR_VALUES' is not found."
+//
+// Imported as an ES module the UMD still runs — `exports`, `module` and
+// `define` are all undefined in module scope, so it falls through to its
+// browser-global branch and assigns window.SoundFont2. So: load it for that
+// side effect and re-export the two names off the global it sets. Same trick as
+// the strudel shims, one level further down the graph.
+export const SFUMATO_URLS = [
+  'https://unpkg.com/sfumato@0.1.2/dist/sfumato.js',
+  'https://cdn.jsdelivr.net/npm/sfumato@0.1.2/dist/sfumato.js',
+];
+export const SOUNDFONT2_URLS = [
+  'https://unpkg.com/soundfont2@0.4.0/lib/SoundFont2.js',
+  'https://cdn.jsdelivr.net/npm/soundfont2@0.4.0/lib/SoundFont2.js',
+];
+/** the only two names sfumato asks of soundfont2 */
+export const SOUNDFONT2_EXPORTS = ['DEFAULT_GENERATOR_VALUES', 'SoundFont2'];
+
+/** source of a module that runs the soundfont2 UMD and re-exports its global */
+export function soundfont2ShimSource(url, names) {
+  return 'await import(' + JSON.stringify(url) + ');\n'
+    + 'const ns = globalThis.SoundFont2;\n'
+    + 'if (!ns) throw new Error("soundfont2 loaded but set no global to read");\n'
+    + names.map((n) => 'export const ' + n + ' = ns.' + n + ';').join('\n');
+}
+/** exactly the names dist/index.mjs imports, each verified present on the
+ *  @strudel/web bundle's own global namespace object */
+export const SHIM_EXPORTS = {
+  '@strudel/core': ['freqToMidi', 'noteToMidi', 'getSoundIndex', 'Pattern', 'getPlayableNoteValue'],
+  '@strudel/webaudio': ['registerSound', 'getADSRValues', 'getAudioContext', 'getParamADSR',
+    'getVibratoOscillator', 'getPitchEnvelope'],
+};
+
+/** source of a module that re-exports the live strudel globals under `names` */
+export function shimSource(names) {
+  return 'const s = globalThis.strudel;\n'
+    + names.map((n) => 'export const ' + n + ' = s.' + n + ';').join('\n');
+}
+
+/**
+ * Repoint every bare import in the soundfont source at something a browser can
+ * resolve; `shims` maps specifier -> URL.
+ *
+ * Throws if an unresolvable specifier survives. One that got through means the
+ * package grew a dependency these shims do not know about and the import would
+ * fail halfway — saying so beats degrading mutely to a single synth.
+ */
+export function rewriteSoundfontSource(src, shims) {
+  let out = String(src);
+  for (const [spec, target] of Object.entries(shims)) {
+    out = out.split('"' + spec + '"').join('"' + target + '"');
+    out = out.split("'" + spec + "'").join("'" + target + "'");
+  }
+  const left = [];
+  const re = /\bfrom\s*["']([^"']+)["']/g;
+  let m;
+  while ((m = re.exec(out))) if (!/^(https?:|blob:|data:|\.{0,2}\/)/.test(m[1])) left.push(m[1]);
+  if (left.length) {
+    throw new Error('unresolvable imports survived the rewrite (' + [...new Set(left)].join(', ')
+      + ') - @strudel/soundfonts changed its dependencies');
+  }
+  return out;
+}
+
 export const RUNTIME_JS = String.raw`
 // Full https URLs, NOT the github: shorthand: strudel's samples() appends
 // "strudel.json" to any github: path, so github:.../piano.json resolves to
@@ -27,16 +135,112 @@ const SAMPLE_MAPS = {
 // If the piano map is unreachable but the soundfont bank loaded, the page can
 // still play a piano — a General MIDI one. Losing the sampled piano is a
 // downgrade; losing the whole page is not acceptable.
-const PIANO_FALLBACK = 'gm_acoustic_piano';
+// NOT gm_acoustic_piano — that name appears in the package's tables but is not
+// one of the 125 the bank actually registers. Verified against a real
+// registerSoundfonts() run; a fallback that names a sound nobody registered is
+// no fallback at all.
+const PIANO_FALLBACK = 'gm_piano';
 // General MIDI soundfonts (~128 instruments: gm_music_box, gm_vibraphone,
 // gm_epiano1, gm_pad_warm …). @strudel/web does NOT bundle these — it is a
 // separate ES module that registers the gm_* sound names; each font's audio is
 // then fetched lazily the first time that instrument sounds, so registering is
-// cheap. If it fails (offline, CDN blocked) the page must not go silent: every
-// gm_* voice is rewritten to a bundled fallback before evaluation.
-const SOUNDFONT_URL = 'https://unpkg.com/@strudel/soundfonts@1.1.0/dist/index.mjs';
+// cheap. If it fails the page must not go silent: every gm_* voice is rewritten
+// to a bundled fallback before evaluation. See D48 in the generator for why
+// this needs a rewrite pass rather than a plain import().
+const WEB_BUNDLE_URLS = ${JSON.stringify(WEB_BUNDLE_URLS)};
+const SOUNDFONT_URLS = ${JSON.stringify(SOUNDFONT_URLS)};
+const SFUMATO_URLS = ${JSON.stringify(SFUMATO_URLS)};
+const SOUNDFONT2_URLS = ${JSON.stringify(SOUNDFONT2_URLS)};
+const SOUNDFONT2_EXPORTS = ${JSON.stringify(SOUNDFONT2_EXPORTS)};
+const SHIM_EXPORTS = ${JSON.stringify(SHIM_EXPORTS)};
 const GM_FALLBACK = 'triangle';
-const RT = { ready: false, booting: null, note: '', soundfonts: false, gen: 0, maps: {} };
+const BUILD = '${new Date().toISOString().slice(0, 16).replace('T', ' ')}';
+const RT = { ready: false, booting: null, note: '', soundfonts: false, gmVoices: 0, gen: 0, maps: {}, problems: [] };
+
+${shimSource.toString()}
+${soundfont2ShimSource.toString()}
+${rewriteSoundfontSource.toString()}
+
+const rtBlob = (src) => URL.createObjectURL(new Blob([src], { type: 'text/javascript' }));
+/** a module re-exporting the live strudel globals, addressable by URL */
+function rtShim(names) {
+  const missing = names.filter((n) => !(n in (globalThis.strudel || {})));
+  if (missing.length) {
+    throw new Error('the strudel bundle is missing ' + missing.join(', ')
+      + ' - the soundfont shim cannot be built against it');
+  }
+  return rtBlob(shimSource(names));
+}
+/** first mirror that answers, as text */
+async function rtFetchText(urls, what) {
+  const errors = [];
+  for (const url of urls) {
+    try {
+      const res = await Promise.race([
+        fetch(url),
+        rtSleep(20000).then(() => { throw new Error('timed out'); }),
+      ]);
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      return await res.text();
+    } catch (e) {
+      errors.push('  ' + url + ' - ' + (e && e.message ? e.message : e));
+    }
+  }
+  throw new Error(what + ' unreachable:\n' + errors.join('\n'));
+}
+/** sfumato, with its broken soundfont2 import repointed at a working shim */
+async function rtSfumatoShim() {
+  // the UMD is fetched and blobbed like everything else rather than imported
+  // by URL, so it gets the same mirror list as the rest of the chain
+  const umd = rtBlob(await rtFetchText(SOUNDFONT2_URLS, 'soundfont2'));
+  const sf2 = rtBlob(soundfont2ShimSource(umd, SOUNDFONT2_EXPORTS));
+  const src = await rtFetchText(SFUMATO_URLS, 'sfumato');
+  return rtBlob(rewriteSoundfontSource(src, { soundfont2: sf2 }));
+}
+async function rtLoadSoundfonts() {
+  const errors = [];
+  // Count what actually registers rather than trusting that the import
+  // succeeded: "the module loaded" and "there are 125 playable instruments" are
+  // different claims, and only the second is the one an ear can hear.
+  //
+  // The counter has to go on BEFORE the shims are built. shimSource() captures
+  // registerSound BY VALUE when the shim module evaluates, so a wrapper
+  // installed afterwards is invisible to every call the bank makes — the first
+  // version of this counted zero every time and disabled the whole bank.
+  let count = 0;
+  const realRegister = globalThis.strudel && globalThis.strudel.registerSound;
+  if (realRegister) {
+    globalThis.strudel.registerSound = function (name) {
+      if (/^gm_/.test(name)) count++;
+      return realRegister.apply(this, arguments);
+    };
+  }
+  try {
+    let shims;
+    try {
+      shims = { sfumato: await rtSfumatoShim() };
+      for (const [spec, names] of Object.entries(SHIM_EXPORTS)) shims[spec] = rtShim(names);
+    } catch (e) {
+      return { ok: false, detail: 'General MIDI soundfonts unavailable:\n  ' + (e && e.message ? e.message : e) };
+    }
+    for (const url of SOUNDFONT_URLS) {
+      try {
+        const src = await rtFetchText([url], 'soundfonts');
+        const mod = await import(rtBlob(rewriteSoundfontSource(src, shims)));
+        if (typeof mod.registerSoundfonts !== 'function') throw new Error('no registerSoundfonts export');
+        const before = count;
+        mod.registerSoundfonts();
+        if (count === before) throw new Error('registerSoundfonts() ran but registered no gm_ voices');
+        return { ok: true, url, count: count - before };
+      } catch (e) {
+        errors.push('  ' + url + ' - ' + (e && e.message ? e.message : e));
+      }
+    }
+  } finally {
+    if (realRegister) globalThis.strudel.registerSound = realRegister;
+  }
+  return { ok: false, detail: 'General MIDI soundfonts unavailable:\n' + errors.join('\n') };
+}
 
 function rtBanner(msg, kind) {
   let el = document.getElementById('rtbanner');
@@ -63,12 +267,48 @@ function rtStatus(s) {
 
 const rtSleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
+const rtBundleReady = () => typeof strudel !== 'undefined' && typeof window.initStrudel === 'function';
+
+function rtInjectScript(url) {
+  return new Promise((resolve, reject) => {
+    const el = document.createElement('script');
+    el.src = url;
+    el.onload = () => resolve();
+    el.onerror = () => reject(new Error('blocked or unreachable'));
+    document.head.appendChild(el);
+  });
+}
+
+/** The page's own <script src> is the first attempt; if that host is blocked,
+ *  try the mirrors before declaring the page dead. Returns the errors so the
+ *  message can name what was actually tried rather than blaming the user. */
+async function rtLoadBundle() {
+  if (rtBundleReady()) return { ok: true };
+  const errors = [];
+  for (const url of WEB_BUNDLE_URLS) {
+    try {
+      await rtInjectScript(url);
+      if (rtBundleReady()) return { ok: true, url };
+      errors.push('  ' + url + ' — loaded but set no global');
+    } catch (e) {
+      errors.push('  ' + url + ' — ' + (e && e.message ? e.message : e));
+    }
+  }
+  return { ok: false, errors };
+}
+
 async function rtInit() {
   if (RT.ready) return;
   if (RT.booting) return RT.booting;
   RT.booting = (async () => {
-    if (typeof strudel === 'undefined' || typeof window.initStrudel !== 'function') {
-      throw new Error('the strudel bundle did not load (unpkg blocked, offline, or an extension stripped it). The page needs network access the first time.');
+    if (!rtBundleReady()) {
+      rtStatus('fetching the audio bundle…');
+      const got = await rtLoadBundle();
+      if (!got.ok) {
+        throw new Error('the strudel audio bundle could not be loaded from any mirror:\n'
+          + got.errors.join('\n')
+          + '\nThe page needs network access the first time. A content blocker on CDN scripts will do this too.');
+      }
     }
     rtStatus('starting audio…');
     await window.initStrudel();
@@ -79,14 +319,12 @@ async function rtInit() {
       if (ac && ac.state !== 'running') await ac.resume();
     } catch (e) { /* older bundles expose no context getter */ }
     rtStatus('loading soundfonts…');
-    try {
-      const sf = await Promise.race([
-        import(SOUNDFONT_URL),
-        rtSleep(20000).then(() => { throw new Error('timed out'); }),
-      ]);
-      if (typeof sf.registerSoundfonts === 'function') { sf.registerSoundfonts(); RT.soundfonts = true; }
-    } catch (e) {
-      rtBanner('General MIDI soundfonts unavailable (' + (e && e.message ? e.message : e) + ') — those voices fall back to "' + GM_FALLBACK + '".', 'error');
+    const sf = await rtLoadSoundfonts();
+    RT.soundfonts = sf.ok;
+    RT.gmVoices = sf.count || 0;
+    if (!sf.ok) {
+      RT.problems.push(sf.detail + '\nEvery gm_* voice falls back to "' + GM_FALLBACK
+        + '", so the whole General MIDI palette sounds like one synth.');
     }
     rtStatus('loading samples…');
     // Never block forever on a sample fetch, and never let one map take the
@@ -118,11 +356,21 @@ async function rtInit() {
     }
     if (failed.length) {
       const pianoGone = !RT.maps.piano;
-      rtBanner('Some sample maps are unavailable'
+      RT.problems.push('Some sample maps are unavailable'
         + (pianoGone && RT.soundfonts ? ' — the piano falls back to the General MIDI "' + PIANO_FALLBACK + '"' : ', the rest will play')
-        + ':\n' + failed.map((f) => f.detail).join('\n'), 'error');
-    } else rtBanner('', null);
-    rtStatus('ready');
+        + ':\n' + failed.map((f) => f.detail).join('\n'));
+    }
+    // Report EVERY subsystem that degraded, not just the last to fail. The old
+    // code cleared the banner whenever the sample maps loaded, which wiped the
+    // soundfont warning off the screen — so the page quietly reduced the whole
+    // GM palette to one synth and then said nothing at all about it.
+    rtBanner(RT.problems.join('\n\n'), RT.problems.length ? 'error' : null);
+    // Say what is actually loaded, every time. "Still triangle" cost two rounds
+    // of guessing because the page reported nothing once it stopped erroring:
+    // there was no way to tell a working build from a stale one without an ear.
+    rtStatus(RT.soundfonts
+      ? 'ready · ' + RT.gmVoices + ' GM voices · build ' + BUILD
+      : 'ready · GM UNAVAILABLE, every instrument is the "' + GM_FALLBACK + '" synth · build ' + BUILD);
   })();
   try { await RT.booting; } finally { RT.booting = null; }
 }

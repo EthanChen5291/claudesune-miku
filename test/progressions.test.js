@@ -8,6 +8,7 @@ import { fileURLToPath } from 'node:url';
 import { PROGRESSIONS, parseDegrees, progressionQualities, playableWith, findProgressions } from '../src/lib/progressions.js';
 import { VOICINGS } from '../src/lib/voicings.js';
 import { renderProgression, resolveHarmony } from '../src/binder/harmony.js';
+import { KEPT } from '../src/lib/verdicts.js';
 import { chordTones } from '../src/harness/chords.js';
 import { lintSong } from '../src/harness/lint.js';
 import { compile } from '../src/compiler/compile.js';
@@ -112,7 +113,11 @@ test('D28: retrieval filters by family, mood, length and playable shape', () => 
   assert.equal(findProgressions({ length: 4, family: 'major' }).every((r) => r.length === 4), true);
   assert.ok(findProgressions({ moods: 'Cadence' }).length >= 6);
   assert.ok(findProgressions({ moods: ['nostalgic'] }).length > 20); // case-insensitive
-  assert.equal(findProgressions({ ratifiedOnly: true }).length, 0);  // nothing ratified yet
+  // D51: ratification is real now — it comes from Ethan's keep verdicts, via
+  // scripts/import-verdicts.mjs, and nothing else may set it.
+  const ratified = findProgressions({ ratifiedOnly: true });
+  assert.equal(ratified.length, KEPT.length);
+  assert.ok(ratified.every((r) => KEPT.includes(r.name)));
   assert.equal(findProgressions({ pack: 'ldrolez' }).length, 188);
 
   // 174 of 188 are playable with the shapes that exist today; the rest need one

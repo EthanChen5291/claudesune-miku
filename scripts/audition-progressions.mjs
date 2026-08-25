@@ -16,6 +16,8 @@ import { writeFileSync, mkdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { PROGRESSIONS, parseDegrees, progressionQualities } from '../src/lib/progressions.js';
+import { generateProgression, explainProgression } from '../src/lib/harmony-gen.js';
+import { exemplarPool, variationsOf, explainVariation } from '../src/lib/harmony-vary.js';
 import { renderProgression } from '../src/binder/harmony.js';
 import { bindComp, bind } from '../src/binder/bind.js';
 import { RHYTHMS } from '../src/lib/rhythms.js';
@@ -54,10 +56,50 @@ if (!SAMPLE_NAMES.has(BASS.sound)) throw new Error(`bass sound "${BASS.sound}" i
 
 const keyFor = (family) => (family === 'minor' ? 'C:minor' : 'C:major');
 
+// D49: composed progressions sit on the SAME page as the imported ones, playing
+// through the same three textures, so the judgment on offer is "does this belong
+// next to the corpus" rather than "does this sound like anything". The `source`
+// filter is how you A/B them. Every voicing dictionary here covers the same 10
+// qualities, so generating against one makes a card playable in all three.
+const GEN_SHAPE = 'shell_37';
+const generated = [];
+for (const family of ['major', 'minor', 'modal']) {
+  for (const length of [4, 8]) {
+    for (const style of [null, 'undertale', 'unison', 'ldrolez']) {
+      for (const colour of [0.2, 0.6]) {
+        for (const seed of ['a', 'b']) {
+          const e = generateProgression({ family, length, style, colour, shape: GEN_SHAPE, seed });
+          const tag = `${family[0]}${length}${style ? style[0] : '-'}${colour === 0.2 ? 'p' : 'c'}${seed}`;
+          generated.push([`gen_${tag}`, e]);
+        }
+      }
+    }
+  }
+}
+
+// D50: the exemplar arm. Every foundation is followed IMMEDIATELY by its own
+// variations, so the page reads as "here is the thing that works, here is what
+// it became" rather than as two unrelated piles. The `source` filter separates
+// `foundation` from `varied`, but the default ordering is the comparison.
+const EXEMPLARS = exemplarPool();
+const varied = [];
+for (const [name, e] of EXEMPLARS.entries) {
+  varied.push([name, e, 'foundation']);
+  for (const [i, intensity] of [0.2, 0.5, 0.85].entries()) {
+    for (const v of variationsOf(name, { count: 1, intensity, budget: intensity > 0.6 ? 3 : 2, seed: `p${i}` })) {
+      varied.push([`${name}__v${i}`, v, 'varied']);
+    }
+  }
+}
+
 const entries = [];
-for (const [name, e] of Object.entries(PROGRESSIONS)) {
+for (const [name, e, arm] of [
+  ...Object.entries(PROGRESSIONS).map(([n, x]) => [n, x, null]),
+  ...generated.map(([n, x]) => [n, x, null]),
+  ...varied,
+]) {
   const key = keyFor(e.family);
-  const symbols = renderProgression(name, key);
+  const symbols = renderProgression(e, key);
   const ctx = { harmony: symbols, barsPerChord: 1, key };
   const exprs = {};
   const missing = {};
@@ -79,6 +121,27 @@ for (const [name, e] of Object.entries(PROGRESSIONS)) {
     symbols, length: parseDegrees(e.degrees).length,
     qualities: [...progressionQualities(e)].sort(),
     exprs, missing, bass,
+    song: e.song ?? null,
+    source: arm ?? (e.provenance === 'generated' ? 'generated' : 'imported'),
+    // D50: what this came from and what each substitution guaranteed
+    vary: e.lineage
+      ? {
+        exemplar: e.lineage.exemplarSong ?? e.lineage.exemplar,
+        from: e.lineage.exemplarDegrees,
+        ops: e.lineage.ops.map((o) => o.op),
+        why: explainVariation(e),
+      }
+      : null,
+    // What the generator was asked for and how it answered, so a card that
+    // sounds wrong can be traced to the slot that made it wrong.
+    gen: e.provenance === 'generated'
+      ? {
+        brief: `${e.request.family} · ${e.request.length} chords · style ${e.request.style ?? 'none'} · colour ${e.request.colour}`,
+        novel: e.novel,
+        matches: e.matches.slice(0, 3),
+        why: explainProgression(e),
+      }
+      : null,
   });
 }
 
@@ -88,12 +151,14 @@ for (const [name, e] of Object.entries(PROGRESSIONS)) {
 const preamble = [...new Set(TEXTURES.map((t) => t.dict))].map(voicingRegistration).join('\n');
 const sample = [];
 for (const fam of ['major', 'minor', 'modal']) {
-  const of = entries.filter((e) => e.family === fam);
-  for (const t of TEXTURES) {
-    const e = of.find((x) => x.exprs[t.id]);
-    if (e) sample.push([e, t.id]);
+  for (const src of ['imported', 'generated', 'foundation', 'varied']) {
+    const of = entries.filter((e) => e.family === fam && e.source === src);
+    for (const t of TEXTURES) {
+      const e = of.find((x) => x.exprs[t.id]);
+      if (e) sample.push([e, t.id]);
+    }
+    if (of.length) sample.push([of.at(-1), TEXTURES[0].id]);
   }
-  sample.push([of.at(-1), TEXTURES[0].id]);
 }
 const FULL = process.argv.includes('--full');
 const toCheck = FULL
@@ -197,6 +262,7 @@ function page(DATA) {
     <label class="ctl">transpose <input type="range" id="tr" min="-6" max="6" value="0"><span id="trv">0</span></label>
   </div>
   <div class="row" style="margin-top:7px">
+    <label class="ctl">source <select id="fSrc"><option value="">all</option><option value="imported">imported</option><option value="generated">composed (D49)</option><option value="foundation">foundations (D50)</option><option value="varied">variations (D50)</option></select></label>
     <label class="ctl">family <select id="fFam"><option value="">all</option><option>major</option><option>minor</option><option>modal</option></select></label>
     <label class="ctl">mood <select id="fMood"><option value="">all</option></select></label>
     <label class="ctl">chords <select id="fLen"><option value="">all</option></select></label>
@@ -253,6 +319,7 @@ async function play(e) {
 function stop() { rtStop(); playing = null; $('now').textContent = '— stopped —'; render(); }
 
 function matches(e) {
+  if ($('fSrc').value && e.source !== $('fSrc').value) return false;
   if ($('fFam').value && e.family !== $('fFam').value) return false;
   if ($('fMood').value && !e.moods.includes($('fMood').value)) return false;
   if ($('fLen').value && String(e.length) !== $('fLen').value) return false;
@@ -275,14 +342,29 @@ function render() {
     const card = document.createElement('div');
     card.className = 'card' + (i === sel ? ' sel' : '') + (playing === e.name ? ' playing' : '') +
       (verdicts[e.name] ? ' ' + verdicts[e.name] : '') + (voiceable ? '' : ' unvoiceable');
-    card.title = voiceable ? e.name
+    let tip = voiceable ? e.name
       : e.name + ' — this texture has no voicing shape for: ' + e.missing[texture].join(', ') +
         '. Try another texture, or add the quality to src/lib/voicings.js (ear-gated, D28).';
+    if (e.vary) {
+      tip += '\\n\\nVARIED FROM A FOUNDATION (D50)\\n' + e.vary.why.join('\\n');
+    }
+    if (e.gen) {
+      tip += '\\n\\nCOMPOSED (D49)\\n  brief: ' + e.gen.brief
+        + '\\n  ' + (e.gen.novel ? 'this root cycle is not in the corpus'
+          : 'same root cycle as: ' + e.gen.matches.join(', '))
+        + '\\n\\n' + e.gen.why.join('\\n');
+    }
+    card.title = tip;
     card.innerHTML =
-      '<div class="fam">' + e.family + '</div>' +
+      '<div class="fam">' + e.family +
+        (e.source === 'generated' ? ' · composed'
+          : e.source === 'foundation' ? ' · FOUNDATION'
+            : e.source === 'varied' ? ' · varied' : '') + '</div>' +
       '<div class="num">' + e.numerals + '</div>' +
       '<div class="sym">' + e.symbols.join(' ') + '</div>' +
-      '<div class="tags">' + e.moods.join(' · ') + '</div>';
+      '<div class="tags">' + (e.vary ? '↳ ' + e.vary.ops.join(' + ')
+        : e.gen ? e.gen.brief
+          : (e.song ? e.song + ' · ' : '') + e.moods.join(' · ')) + '</div>';
     const acts = document.createElement('div');
     acts.className = 'acts';
     for (const [cls, verd, txt] of [['k', 'keep', 'keep'], ['x', 'kill', 'kill']]) {
@@ -331,7 +413,7 @@ DATA.textures.forEach((t) => {
 DATA.moods.forEach((m) => $('fMood').add(new Option(m, m)));
 DATA.lengths.forEach((n) => $('fLen').add(new Option(n + ' chords', n)));
 $('bassLabel').textContent = '(' + DATA.bassLabel + ')';
-for (const id of ['fFam', 'fMood', 'fLen', 'fVerd', 'fVoice', 'fText']) $(id).oninput = render;
+for (const id of ['fSrc', 'fFam', 'fMood', 'fLen', 'fVerd', 'fVoice', 'fText']) $(id).oninput = render;
 $('bpm').oninput = () => { $('bpmv').textContent = $('bpm').value; if (playing) play(DATA.entries.find((e) => e.name === playing)); };
 $('tr').oninput = () => { $('trv').textContent = $('tr').value; if (playing) play(DATA.entries.find((e) => e.name === playing)); };
 $('bass').onchange = () => { if (playing) play(DATA.entries.find((e) => e.name === playing)); };
