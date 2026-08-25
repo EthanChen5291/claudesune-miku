@@ -162,7 +162,12 @@ test('D53: a verdict in one family never moves another', () => {
 });
 
 test('D53: pairVotes and chordVotes read only the bag they are asked for', () => {
-  assert.equal(pairVotes(0, 'minor', 'wrap').size, Object.keys(FACET_VERDICTS.wraps).length ? 1 : 0);
+  // The two bags are keyed the same way but hold different claims, so a lookup
+  // must see only its own. `minor|0>11` is an inner transition; `minor|7>0` is a
+  // cadence. Asking the wrap table about degree 0 must not surface the pair.
+  assert.equal(pairVotes(0, 'minor', 'wrap').size, 0, 'a pair verdict leaked into the wrap bag');
+  assert.ok(pairVotes(7, 'minor', 'wrap').has(0), 'the seeded V->i cadence is not on the wrap table');
+  assert.equal(pairVotes(7, 'minor', 'inner').size, 0, 'a wrap verdict leaked into the inner bag');
   const inner = pairVotes(0, 'minor', 'inner');
   assert.ok(inner.has(11), 'the seeded Cm->Bm vote is not visible on the inner table');
   assert.equal(inner.get(11).good, 2, 'the two agreeing chord colours should weigh the motion at 2');

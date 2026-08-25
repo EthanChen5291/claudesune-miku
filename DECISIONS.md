@@ -2217,3 +2217,169 @@ Verified in real headless Chrome: 12 tone rows across two sides, no stray play
 button, likes on both sides raise the `BOTH` badge, thumbs-down strikes the row,
 skip/back move the counter and bar, and a reload lands back on the same trial
 with the answered count intact. 249/249.
+
+## D56 — what the first real judge pass found (2026-08-25)
+
+Ethan ran the page and returned 15 A/B answers, **177 tone votes** and 14 notes.
+The notes were worth more than the answers, and three of them turned out to name
+mechanical defects that a lint can now find on its own.
+
+**Read the A/B tally with care: he mostly did not answer it.** "I didn't press
+any of the choose A/B, I just pressed the individual chord types that sounded
+good." Of the 15 that came back, 7 are `neither` and 3 are `same` — so the
+headline is that the contrast itself was usually not the interesting question.
+The tone votes are the real data from this pass.
+
+### The three defects his ear found
+
+**1. Figurations flatten every chord to a triad.** "all the chord types besides
+block and wide pad kinda made some of the chord progressions generic (like if it
+was a G7 it'd go back to root G or something) ... vibe-wise it loses some of the
+vibe that the wide pad gave."
+
+Measured: every figuration tone on the page draws from `{R, 3, 5}` only —
+`R+ 3+ 5 3+`, `R 3.5 R 3.5`, `R R+`. Through any of them a **G7, a G6 and a
+plain G are literally the same notes**. That is D45's rule inverted: a chord
+label is a claim, and an accompaniment that never sounds the 7th is not
+supporting it. `bindFigure` gains an opt-in `stateExtensions` that re-points ONE
+repeated onset per chord at the chord's 7th/6th/9th — the last such onset, so the
+chord is stated plainly before it colours, and never the only third.
+
+Caught immediately while building it: the first version read `chordTones()`,
+which returns the wider tone SUPPLY, so a plain C (supply includes the 9th) got a
+D in every bar. That is exactly the unasked-for colouring D51 found in the killed
+progressions, which are 84% bare triads. It reads `chordCoreTones()` now, and a
+test asserts a triad-only progression comes out byte-identical.
+
+**2. The bass was clashing, and it was worst where he heard it.** "in the wide
+pad the lower left hand notes sounded kinda weird at times - sounds like the left
+hand of 'block' playing through."
+
+It *was* the same layer, and it was wrong. The bass came from the CONTOUR
+`bass_root_five`, whose degrees are read against the **key**, and `bind()` only
+snaps ACCENTED contour notes onto chord tones. Under the second bar of
+`C A Em F^7` it played `B1 C2 A2 C2` while an **A major** chord sounded above:
+C natural against C#, a semitone clash in the lowest register. The busy block
+texture masked it; the sparse pad exposed it. Now bound from `ut_bass_room_of_dog`
+(`R 5 R 5`) — a figuration names chord MEMBERS and cannot make that mistake.
+
+The broader finding is left standing for the layering phase: **a key-degree
+contour used as a bass will play the key's tonic under a chromatic chord.**
+
+**3. Loops double a bar at the seam.** Three notes, one cause:
+
+> t23 "the last Cm should be replaced ... the double Cm back to back doesn't sound too good"
+> t27 "fourth Cm should be replaced ... back to back Cm is ok sometimes but sounds uniform"
+> t30 "another G added to the end is strange because it makes it 5 chords and it's back to back G"
+
+A transcriber ends a progression where it resolves — `Cm Ab Bb Cm` means "and
+back to Cm". Looped, that final chord is already there, so the seam plays
+`... Ab Bb Cm | Cm Ab ...` forever. **77 of 511 library entries end on their own
+first root**; narrowing to the ones that add nothing gives **54**, with 20 being
+colour changes (`I ... I^7`) and 3 being the D53 cadential suspension. New
+`src/lib/loops.js` trims only that 54-shaped case, at RENDER time.
+
+Rendering rather than data, deliberately: rewriting the entries would rename them
+(`min_i_iv_VII_i` is not `min_i_iv_VII`), change the music they name, and void
+every verdict against them under D52. The entry keeps recording what the source
+said; the loop is what gets trimmed, and the card shows a ↺.
+
+**The lint reproduces his complaints by trial number** — t23, t26, t27, t30 all
+light up, and on t26 it independently reports "5 chords — an odd loop against a
+4/4 bar grid" against his "five chords - sounds awkward in timing but the chords
+work". Odd length is reported and never auto-fixed: he proposed splitting that
+one into two phrases, which is not a decision a trim can make.
+
+**An open fork for Ethan.** Trimming keeps the harmony and can leave an odd loop
+(`Cm Ab Bb Cm` → 3 bars). He proposed the other answer himself in t23 — *replace*
+the last chord, keeping four bars. Both are one operator away; I have defaulted
+to trim because "back to back" was the complaint he repeated, but which one
+should be the default is his call.
+
+### The background-tab bug
+
+"if i leave the page the music doesnt slow down dramatically."
+
+Not a CPU problem, a wake-up problem. Strudel 1.1.0's clock is
+`createClock(getTime, tick, duration=.05, interval=.1, overlap=.1,
+r = globalThis.setInterval, ...)`: it wakes every 100ms and schedules only 200ms
+of audio ahead. Chrome clamps main-thread `setInterval` to **one second** in a
+hidden tab, so the scheduler wakes 5× too slowly for its own lookahead and the
+graph starves.
+
+The timer functions are read off `globalThis` as **default parameters**, so
+replacing them before `initStrudel()` is the whole fix — no fork, no patched
+bundle. Ticks now come from a Web Worker, which a hidden tab does not clamp the
+same way. Only intervals ≤250ms are rerouted; longer ones are UI housekeeping
+that *should* idle when the tab is hidden.
+
+Verified from `file://` that a `blob:` Worker constructs and round-trips there —
+a `blob:` AudioWorklet does not, so this is the one unthrottled clock available
+to a page opened straight off disk.
+
+**With a watchdog, because this fix could have been worse than the bug.** A
+worker that never ticks would not stagger the audio, it would stop it dead. Every
+rerouted timer now carries a deadline: no tick by the time several were due and
+it silently reverts to a native timer, with `RT.workerClockFellBack` recording
+it. That path is the one headless Chrome actually exercises (virtual time does
+not drive worker timers), so it is verified: `workerClock=true fellBack=true
+ready=true`, audio playing.
+
+`RT` is also exposed on `globalThis` now — when a page will not play, "read RT in
+the console" is the whole diagnosis.
+
+### Tone votes, and what they are allowed to say
+
+177 votes: arp/arpwide/oompah/ostinato 37 good each, pad 27 good 1 bad, **block
+1 good**. Read naively that ranks block last. Ethan said why not to: "i didnt
+choose many of the blocks because i didnt listen to a lot of them not because
+they're bad, but some of them are bad and contain a bit of dissonance."
+
+`textureRanking()` now reports **exposure** — block was judged on 1 of the 37
+harmonies offered — and flags `underExposed` below half, with the caveat spelled
+out in `explainEar()`. Related: `confidence` is computed from pairs + wraps +
+chords only. Texture votes are the easiest to collect in bulk and shape nothing
+about which chords get chosen, so counting them would have reported a harmony
+model as well-founded on the strength of clicking through a tone list. It reads
+`LOW on harmony (6 votes that move the chord model)`.
+
+Ethan also asked for a tone (t22): "maybe like oom-pah but keeping the wide pad's
+notes". Added as **wide oom-pah** — the rhythmic bones of `ut_oompah_dogsong`
+verbatim (40 bars of Dogsong and Reunited), tokens changed to `R 5.3+`, the
+intervals `me_spread_tenth` voices. Marked page-local: a hybrid, not a corpus
+entry, and it does not claim to be one.
+
+### Two seeds from t20
+
+The card was `Cm Ab Gm G` — "love the Gm to G as an ending pair":
+
+- `chords: minor|7:` — the raised V in a minor key, reached by the `mixture`
+  operator v→V. The counted prior puts a major triad on degree 7 in minor at 15%
+  against 47% for the minor one, so this is a move the corpus under-proposes and
+  he singled out unprompted. 15% → 19%.
+- `wraps: minor|7>0` — V→i as a cadence, the first thing ever to land in that
+  bag. Confirmatory (the corpus already rates it 60%), recorded anyway, because a
+  cadence he named is worth more than one he merely did not object to.
+
+### Two research items, not built
+
+**Tone switching through the song.** "switching between the different tones could
+be good throughout the song. not randomly, and not all of them (some are better
+than others for given songs) ... should research more."
+
+The corpus already has a head start: `DEVELOPMENT_UNDERTALE` records 23 observed
+FROM→TO accompaniment transitions with counts, and of 112 development moves
+**53 (47%) change the texture** — blockify 23, arpeggiate 7, pattern_swap 7,
+sparsify 6, densify 4, octave_drop 4, octave_lift 2 — against 59 that keep the
+texture and repitch. So the answer to "does the source material do this" is yes,
+about half the time, and the moves are already named and counted. What is missing
+is WHERE in the form they land.
+
+**Variation as a placed event.** "songs naturally have variation in the harmony to
+change it up sometimes, a sweet treat without changing the song itself. these
+have their place in the song and shouldn't be randomly thrown in." Plus t21: "the
+fourth G could be changed to something else as a variation ... so it's not
+uniform." D50 builds the variations; nothing yet decides where they go. This is
+the chronological-editing phase's first real requirement.
+
+257/257.

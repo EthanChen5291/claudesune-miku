@@ -86,13 +86,60 @@ import { RHYTHMS } from '../src/lib/rhythms.js';
 import { CONTOURS } from '../src/lib/contours.js';
 import { VOICINGS, voicingRegistration } from '../src/lib/voicings.js';
 import { FIGURATIONS_UNDERTALE } from '../src/lib/figurations-undertale.js';
+import { trimLoopWrap, loopIssues } from '../src/lib/loops.js';
 import { evaluateSong, hapsByLabel } from '../src/harness/evaluate.js';
 import * as acorn from 'acorn';
+import { toDegrees } from '../src/lib/harmony-prior.js';
 import { RUNTIME_JS } from './audition-runtime.js';
 
 const ROOT = join(fileURLToPath(new URL('..', import.meta.url)));
 const OUT = join(ROOT, 'audition');
 const WEB_BUNDLE = 'https://unpkg.com/@strudel/web@1.1.0/dist/index.js';
+
+/** a pattern's figuration entry: a library name, or an inline hybrid */
+const figOf = (p) => (typeof p.fig === 'string' ? FIGURATIONS_UNDERTALE[p.fig] : p.fig);
+
+/**
+ * WIDE OOM-PAH — the one tone on this page Ethan asked for rather than the
+ * corpus supplying (t22): "wide pad is fine but I feel like this pattern isn't
+ * meant to be jamming the full chord each time. maybe like oom-pah but keeping
+ * the wide pad's notes of the actual chord progression."
+ *
+ * It is a HYBRID, not an invention: the rhythmic bones — onsets, accents,
+ * microtiming, legato — are `ut_oompah_dogsong` verbatim (40 bars of Dogsong and
+ * Reunited), and only the tokens change, to the intervals `me_spread_tenth`
+ * voices: root, fifth, and the third an octave up (0 / 7 / 16). So the oom-pah
+ * alternation is the corpus's and the spacing is the wide pad's, which is
+ * exactly the request. Marked page-local: it is NOT a library entry and does not
+ * claim to be transcribed from anything (A6.1).
+ */
+const WIDE_OOMPAH = {
+  ...FIGURATIONS_UNDERTALE.ut_oompah_dogsong,
+  figure: ['R', '5.3+', 'R', '5.3+'],
+  octave: 2,
+  provenance: 'page-local hybrid (D56): ut_oompah_dogsong rhythm × me_spread_tenth intervals',
+  songs: [], seen: 0,
+};
+
+/**
+ * THE BASS IS CHORD-RELATIVE NOW, and this was a real bug (D56).
+ *
+ * Ethan: "in the wide pad the lower left hand notes sounded kinda weird at times
+ * - sounds like the left hand of 'block' playing through."
+ *
+ * It WAS the same layer, and it was wrong. The bass was bound from the CONTOUR
+ * `bass_root_five`, whose degrees are read against the KEY, not against the
+ * chord — and bind() only snaps ACCENTED contour notes onto chord tones. So under
+ * the second bar of `C A Em F^7` the bass played B1 C2 A2 C2 while an A major
+ * chord sounded above it: C natural against C#, a semitone clash in the lowest
+ * register. Under the busy block texture it was masked; under the sparse pad it
+ * was naked, which is exactly where he heard it.
+ *
+ * A figuration cannot make that mistake: `R 5 R 5` names CHORD MEMBERS, so it
+ * re-points at every chord by construction. The contour bass stays available for
+ * melodies, where a key-relative line is the point.
+ */
+const BASS_FIG = 'ut_bass_room_of_dog';
 
 // The six ways to deploy the same chord in time, ordered from most stacked to
 // most spread. `blurb` is shown on the button's tooltip, because the point of
@@ -124,11 +171,16 @@ const PATTERNS = [
     fx: '.room(0.2)', bass: false, blurb: 'R 3.5 R 3.5 — bass alternating with the upper tones',
   },
   {
+    id: 'wideoompah', label: 'wide oom-pah', kind: 'figure', fig: WIDE_OOMPAH,
+    fx: '.room(0.35)', bass: false,
+    blurb: "R 5.3+ — the oom-pah motion with the wide pad's spacing (Ethan's t22 request)",
+  },
+  {
     id: 'ostinato', label: 'roots only', kind: 'figure', fig: 'ut_ostinato_core',
     fx: '.room(0.2)', bass: false, blurb: 'R R+ octaves — NO THIRDS AT ALL: does the progression survive?',
   },
 ];
-const BASS = { rhythm: 'offbeat_8ths', contour: 'bass_root_five', octave: 2, fx: '.gain(0.7)' };
+
 const SOUND = 'piano';
 const KEY = { major: 'C:major', minor: 'C:minor', modal: 'C:minor' };
 // Voicing gate. Every comp dictionary on this page covers the same ten
@@ -149,7 +201,7 @@ for (const p of PATTERNS) {
   if (p.kind === 'comp') {
     if (!RHYTHMS[p.rhythm]) throw new Error(`pattern "${p.id}" names unknown rhythm "${p.rhythm}"`);
     if (!VOICINGS[p.dict]) throw new Error(`pattern "${p.id}" names unknown voicing "${p.dict}"`);
-  } else if (!FIGURATIONS_UNDERTALE[p.fig]) {
+  } else if (!figOf(p)) {
     throw new Error(`pattern "${p.id}" names unknown figuration "${p.fig}"`);
   }
 }
@@ -171,22 +223,32 @@ const playable = (e) => [...progressionQualities(e)].every((q) => q in VOICINGS[
  */
 function render(entry) {
   const key = KEY[entry.family] ?? KEY.major;
-  const symbols = renderProgression(entry, key);
+  // D56: play the LOOP, not the written-out list. A trailing chord that repeats
+  // the first is a transcription convention ("and back to Cm"), and looping it
+  // doubles that bar every time round — which Ethan flagged three separate times
+  // in one pass. The entry's own `degrees` is untouched, so a tone vote keyed by
+  // it still lines up with the votes already recorded.
+  const cycle = trimLoopWrap(parseDegrees(entry.degrees));
+  const symbols = renderProgression({ degrees: toDegrees(cycle), numerals: entry.numerals }, key);
   const ctx = { harmony: symbols, barsPerChord: 1, key };
   const pats = {};
   for (const p of PATTERNS) {
     pats[p.id] = p.kind === 'comp'
       ? bindComp(RHYTHMS[p.rhythm], ctx, '4/4', { dict: p.dict, sound: SOUND, bounceSound: SOUND, fx: p.fx }).expr
       // a figuration names CHORD MEMBERS, so it voices any quality the chord
-      // parser understands — there is no dictionary gap to check
-      : bindFigure(FIGURATIONS_UNDERTALE[p.fig], ctx, '4/4', { sound: SOUND, fx: p.fx }).expr;
+      // parser understands — there is no dictionary gap to check.
+      // stateExtensions (D56) re-points ONE repeated onset per chord at its
+      // 7th/6th/9th, so a G7 stops sounding identical to a G.
+      : bindFigure(figOf(p), ctx, '4/4', { sound: SOUND, fx: p.fx, stateExtensions: true }).expr;
     if (!pats[p.id]) throw new Error(`pattern "${p.id}" produced nothing for ${entry.degrees}`);
   }
   return {
     symbols,
+    trimmed: cycle.length !== parseDegrees(entry.degrees).length,
+    issues: loopIssues(parseDegrees(entry.degrees)),
     pats,
-    bass: bind(RHYTHMS[BASS.rhythm], CONTOURS[BASS.contour], ctx, '4/4', {
-      octave: BASS.octave, sound: SOUND, fx: BASS.fx,
+    bass: bindFigure(FIGURATIONS_UNDERTALE[BASS_FIG], ctx, '4/4', {
+      sound: SOUND, fx: '.gain(0.7)',
     }).expr,
   };
 }
@@ -219,8 +281,8 @@ function ab(question, a, b, meta) {
     type: 'ab',
     question,
     meta,
-    a: { label: x.label, arm: x.arm, degrees: x.entry.degrees, symbols: rx.symbols, pats: rx.pats, bass: rx.bass },
-    b: { label: y.label, arm: y.arm, degrees: y.entry.degrees, symbols: ry.symbols, pats: ry.pats, bass: ry.bass },
+    a: { label: x.label, arm: x.arm, degrees: x.entry.degrees, ...rx },
+    b: { label: y.label, arm: y.arm, degrees: y.entry.degrees, ...ry },
   });
 }
 
@@ -296,9 +358,7 @@ for (const [name, entry] of layerPicks) {
     name,
     label: entry.song ?? name,
     degrees: entry.degrees,
-    symbols: r.symbols,
-    pats: r.pats,
-    bass: r.bass,
+    ...r,
     options: ['nothing — this is good', 'the chords themselves', 'the chord rhythm / timing',
       'the voicing / register', 'the sound', 'only this pattern — it works in another',
       'something else (say in the notes)'],
@@ -320,9 +380,7 @@ for (const [name, entry] of openPicks) {
     name,
     label: entry.song ?? name,
     degrees: entry.degrees,
-    symbols: r.symbols,
-    pats: r.pats,
-    bass: r.bass,
+    ...r,
     meta: { asks: 'a principle, not a verdict' },
   });
 }
@@ -354,9 +412,11 @@ const DATA = {
   preamble,
   patterns: PATTERNS.map(({ id, label, kind, blurb, bass, rhythm, dict, fig }) => ({
     id, label, kind, blurb, bass,
-    detail: kind === 'comp' ? `${rhythm} × me_${dict}` : `${fig} · ${FIGURATIONS_UNDERTALE[fig].seen} bars in the corpus`,
+    detail: kind === 'comp' ? `${rhythm} × me_${dict}`
+      : typeof fig === 'string' ? `${fig} · ${FIGURATIONS_UNDERTALE[fig].seen} bars in the corpus`
+        : fig.provenance,
   })),
-  bassLabel: `${BASS.rhythm} × ${BASS.contour}`,
+  bassLabel: `${BASS_FIG} — chord-relative`,
 };
 const html = page(DATA);
 const inline = html.slice(html.lastIndexOf('<script>') + 8, html.lastIndexOf('</script>'));
@@ -369,6 +429,10 @@ const byType = (t) => trials.filter((x) => x.type === t).length;
 console.log(`wrote audition/judge.html — ${trials.length} trials (${byType('ab')} A/B, ${byType('layer')} layer, ${byType('open')} open)`);
 console.log(`  ${PATTERNS.length} tones per SIDE per trial — each one playable, likeable and dislikeable:`);
 for (const p of PATTERNS) console.log(`     ${p.label.padEnd(10)} ${p.blurb}`);
+const trimmedSides = trials.flatMap((t) => (t.type === 'ab' ? [t.a, t.b] : [t])).filter((x) => x.trimmed).length;
+if (trimmedSides) {
+  console.log(`  ${trimmedSides} sides had a trailing chord that repeated the first — trimmed for loop playback (D56)`);
+}
 console.log(`  ${checked} patterns evaluated green through the engine's own transpiler (all of them)`);
 console.log(`  inline page script parses clean (${(inline.length / 1024).toFixed(0)} KB)`);
 for (const q of [...new Set(trials.map((t) => t.meta?.asks).filter(Boolean))]) {
@@ -407,6 +471,7 @@ function page(DATA) {
   .side { border:1px solid var(--line); border-radius:10px; padding:15px; background:#171823; }
   .side h3 { margin:0 0 7px; font-size:13px; color:var(--dim); font-weight:500; }
   .syms { font:14px ui-monospace,monospace; margin-bottom:11px; word-spacing:.3em; }
+  .trim { color:var(--warn); cursor:help; }
   button { font:inherit; color:var(--fg); background:#22243244; border:1px solid var(--line); border-radius:7px; padding:9px 14px; cursor:pointer; }
   button:hover { border-color:var(--dim); }
   button.pick { width:100%; font-weight:600; margin-top:10px; }
@@ -691,6 +756,13 @@ function draw() {
       const s = document.createElement('div');
       s.className = 'syms';
       s.textContent = side.symbols.join('  ');
+      if (side.trimmed) {
+        const w = document.createElement('span');
+        w.className = 'trim';
+        w.textContent = ' \u21ba';
+        w.title = 'the written progression ended by repeating its first chord; looped, that doubles a bar, so it is trimmed here (D56)';
+        s.appendChild(w);
+      }
       d.appendChild(s);
       d.appendChild(toneRows(side, k, other));
       const cb = document.createElement('button');
@@ -724,7 +796,7 @@ function draw() {
   // single-stimulus trials — same tone list, one card
   const lab = document.createElement('div');
   lab.className = 'hint';
-  lab.textContent = t.label + '  ·  ' + t.symbols.join('  ');
+  lab.textContent = t.label + '  ·  ' + t.symbols.join('  ') + (t.trimmed ? '  \u21ba trimmed' : '');
   m.appendChild(lab);
   const card = document.createElement('div');
   card.className = 'side';

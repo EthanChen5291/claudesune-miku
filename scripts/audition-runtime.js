@@ -155,7 +155,14 @@ const SOUNDFONT2_EXPORTS = ${JSON.stringify(SOUNDFONT2_EXPORTS)};
 const SHIM_EXPORTS = ${JSON.stringify(SHIM_EXPORTS)};
 const GM_FALLBACK = 'triangle';
 const BUILD = '${new Date().toISOString().slice(0, 16).replace('T', ' ')}';
-const RT = { ready: false, booting: null, note: '', soundfonts: false, gmVoices: 0, gen: 0, maps: {}, problems: [] };
+const RT = { ready: false, booting: null, note: '', soundfonts: false, gmVoices: 0, gen: 0, maps: {}, problems: [],
+  // D56: set once the scheduler tick is running off a Web Worker, so a hidden
+  // tab cannot clamp it to 1s. workerTicks is how a probe proves it is live.
+  workerClock: false, workerTimers: 0, workerTicks: 0, workerClockFellBack: false };
+// Exposed deliberately: when a page will not play, "open the console and read
+// RT" is the whole diagnosis — which mirrors loaded, whether the soundfont bank
+// registered, whether the background-safe clock is live, and what went wrong.
+globalThis.RT = RT;
 
 ${shimSource.toString()}
 ${soundfont2ShimSource.toString()}
@@ -297,6 +304,105 @@ async function rtLoadBundle() {
   return { ok: false, errors };
 }
 
+/**
+ * A TIMER THAT A BACKGROUND TAB CANNOT THROTTLE (D56).
+ *
+ * Ethan: "if i leave the page the music doesnt slow down dramatically".
+ *
+ * Strudel's scheduler clock is, in the 1.1.0 bundle:
+ *
+ *   function ol(getTime, tick, duration=.05, interval=.1, overlap=.1,
+ *               r = globalThis.setInterval, s = globalThis.clearInterval)
+ *
+ * It wakes every 100ms and schedules only (interval + overlap) = 200ms of audio
+ * ahead. Chrome clamps main-thread setInterval to ONE SECOND in a hidden tab, so
+ * the scheduler wakes 5x too slowly for the lookahead it keeps — the audio graph
+ * starves and the music staggers. That is the whole bug: not a CPU problem, a
+ * wake-up problem.
+ *
+ * Timers inside a Web Worker are not clamped the same way, so the tick is moved
+ * there. createClock reads the timer functions off globalThis as DEFAULT
+ * PARAMETERS, evaluated when the clock is constructed, so replacing them is all
+ * it takes — no fork, no patched bundle.
+ *
+ * ONLY SHORT INTERVALS ARE REROUTED. Anything at or under RT_TICK_MAX_MS is an
+ * audio scheduler; longer ones are UI housekeeping that SHOULD idle when the tab
+ * is hidden, and stealing those into a worker would keep the tab awake for no
+ * benefit.
+ *
+ * Verified from file://: a blob: Worker constructs and round-trips there, which
+ * is not true of blob: AudioWorklets — so this is the one unthrottled clock
+ * available to a page opened straight off disk.
+ */
+const RT_TICK_MAX_MS = 250;
+
+function rtInstallWorkerClock() {
+  if (RT.workerClock || typeof Worker === 'undefined') return;
+  const src = 'const t = {};'
+    + 'onmessage = (e) => { const d = e.data;'
+    + ' if (d.a === "set") { t[d.id] = setInterval(() => postMessage(d.id), d.ms); }'
+    + ' else if (d.a === "clear") { clearInterval(t[d.id]); delete t[d.id]; } };';
+  let w;
+  try {
+    w = new Worker(URL.createObjectURL(new Blob([src], { type: 'text/javascript' })));
+  } catch (e) {
+    // No worker (a stricter file:// policy, an extension). Native timers still
+    // work; the tab just throttles when hidden, which is the old behaviour.
+    RT.problems.push('background-safe timer unavailable (' + e.message
+      + ') — audio may stagger while this tab is in the background');
+    return;
+  }
+  const cbs = new Map();
+  const live = new Map();   // id -> { native, seen }
+  let next = 1;
+  w.onmessage = (e) => {
+    const rec = live.get(e.data);
+    if (rec) rec.seen = true;
+    const fn = cbs.get(e.data);
+    if (fn) { RT.workerTicks++; fn(); }
+  };
+  const nativeSet = globalThis.setInterval.bind(globalThis);
+  const nativeClear = globalThis.clearInterval.bind(globalThis);
+  const nativeTimeout = globalThis.setTimeout.bind(globalThis);
+
+  globalThis.setInterval = (fn, ms, ...rest) => {
+    if (!(ms <= RT_TICK_MAX_MS)) return nativeSet(fn, ms, ...rest);
+    const id = 'w' + (next++);
+    cbs.set(id, fn);
+    live.set(id, { native: null, seen: false });
+    RT.workerTimers++;
+    w.postMessage({ a: 'set', id, ms });
+    // WATCHDOG. Rerouting the clock is only worth doing if it cannot make things
+    // WORSE than the bug it fixes, and a worker that never ticks would not
+    // stagger the audio — it would stop it dead. So every rerouted timer is
+    // given a deadline: if the worker has produced nothing by the time several
+    // ticks were due, that timer silently reverts to a native one and RT says so.
+    const rec = live.get(id);
+    rec.native = nativeTimeout(() => {
+      if (rec.seen || !live.has(id)) return;
+      w.postMessage({ a: 'clear', id });
+      RT.workerClockFellBack = true;
+      const fallback = nativeSet(fn, ms, ...rest);
+      rec.fallbackId = fallback;
+    }, Math.max(600, ms * 5));
+    return id;
+  };
+  globalThis.clearInterval = (id) => {
+    if (typeof id === 'string' && id[0] === 'w') {
+      const rec = live.get(id);
+      if (rec) {
+        if (rec.native != null) clearTimeout(rec.native);
+        if (rec.fallbackId != null) nativeClear(rec.fallbackId);
+      }
+      cbs.delete(id); live.delete(id);
+      w.postMessage({ a: 'clear', id });
+      return;
+    }
+    return nativeClear(id);
+  };
+  RT.workerClock = true;
+}
+
 async function rtInit() {
   if (RT.ready) return;
   if (RT.booting) return RT.booting;
@@ -311,6 +417,9 @@ async function rtInit() {
       }
     }
     rtStatus('starting audio…');
+    // BEFORE initStrudel(), which is where the scheduler clock is constructed
+    // and where it captures its timer functions off globalThis.
+    rtInstallWorkerClock();
     await window.initStrudel();
     // Browsers start the AudioContext suspended until a user gesture. Every call
     // path here is inside a click, but resume() explicitly rather than assuming.

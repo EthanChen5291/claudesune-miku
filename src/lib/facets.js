@@ -174,6 +174,7 @@ export function earStats() {
 export function explainEar() {
   const s = earStats();
   const total = s.pairs.n + s.wraps.n + s.chords.n + s.textures.n + s.cadences.n;
+  const harmonyN = s.pairs.n + s.wraps.n + s.chords.n;
   if (!total) return ['no facet verdicts yet — run audition/facets.html'];
   const line = (name, c) => `  ${name.padEnd(9)} ${String(c.good).padStart(3)} good  ${String(c.bad).padStart(3)} bad`;
   return [
@@ -183,22 +184,52 @@ export function explainEar() {
     line('chords', s.chords),
     line('textures', s.textures),
     line('cadences', s.cadences),
-    total < 40 ? '  confidence: LOW — indicative only, and every vote is visible in the counts'
+    // Confidence is about the bags that MOVE THE COUNTED MODEL — pairs, wraps and
+    // chords. Texture votes are the easiest to collect in bulk (one judge pass
+    // produced 177 of them) and shape nothing about which chords get chosen, so
+    // letting them into this number would report a harmony model as well-founded
+    // on the strength of clicking through a tone list.
+    harmonyN < 40
+      ? `  confidence: LOW on harmony (${harmonyN} votes that move the chord model) — indicative only`
       : '  confidence: usable',
+    ...textureRanking()
+      .filter((t) => t.underExposed)
+      .map((t) => `  caveat: "${t.id}" was judged on ${t.judged}/${t.offered} harmonies — too thin to rank, `
+        + 'and a low score there means "not listened to", not "not good"'),
   ];
 }
 
-/** what the ear says about each texture, best first — for the arranger, once the
- *  matrix has been run. `share` is good/(good+bad) with a Laplace floor so one
- *  vote does not read as 100%. */
+/**
+ * What the ear says about each rendering format, best first.
+ *
+ * REPORTS EXPOSURE, AND THIS IS NOT DECORATION. Ethan, after the first judge
+ * pass: "i didnt choose many of the blocks because i didnt listen to a lot of
+ * them not because they're bad". He is right and the numbers prove it — block
+ * carries 1 vote where the arpeggio carries 37, out of 37 harmonies offered. A
+ * bare share would rank block last on a sample of one.
+ *
+ * So every row states how many of the harmonies on offer it was actually judged
+ * on, and `underExposed` is set when that is under half. `share` keeps a Laplace
+ * floor so a single vote cannot read as certainty, but the honest summary of a
+ * thinly-heard format is "not enough listening", never "not good".
+ */
 export function textureRanking() {
   const bag = FACET_VERDICTS.textures ?? {};
+  const detail = { ...(FACET_VERDICTS.textureDetail ?? {}), ...(FACET_VERDICTS.toneDetail ?? {}) };
+  // keys are `<harmony>|<format>`, and a harmony key may itself contain spaces
+  // and colons (the degrees string), so split from the RIGHT
+  const offered = new Set(Object.keys(detail).map((k) => k.slice(0, k.lastIndexOf('|')))).size;
   return Object.entries(bag)
-    .map(([id, r]) => ({
-      id,
-      good: r.good ?? 0,
-      bad: r.bad ?? 0,
-      share: ((r.good ?? 0) + 1) / ((r.good ?? 0) + (r.bad ?? 0) + 2),
-    }))
+    .map(([id, r]) => {
+      const good = r.good ?? 0;
+      const bad = r.bad ?? 0;
+      const judged = good + bad;
+      return {
+        id, good, bad, judged, offered,
+        exposure: offered ? judged / offered : 0,
+        share: (good + 1) / (judged + 2),
+        underExposed: offered > 0 && judged * 2 < offered,
+      };
+    })
     .sort((a, b) => b.share - a.share || b.good - a.good);
 }

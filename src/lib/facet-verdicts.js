@@ -23,7 +23,15 @@ export const FACET_VERDICTS = {
       "note": "Cm->Bm and Cm->B both good as PAIRS; the cycles containing them were killed for other reasons"
     }
   },
-  wraps: {},
+  wraps: {
+    "minor|7>0": {
+      "verdict": "good",
+      "n": 1,
+      "at": "2026-08-25",
+      "from": "notes",
+      "note": "the G of \"Gm to G as an ending pair\" resolving back to Cm"
+    }
+  },
   chords: {
     "minor|11:m": {
       "verdict": "good",
@@ -38,9 +46,41 @@ export const FACET_VERDICTS = {
       "at": "2026-08-24",
       "from": "notes",
       "note": "the B of Cm->B"
+    },
+    "minor|7:": {
+      "verdict": "good",
+      "n": 1,
+      "at": "2026-08-25",
+      "from": "notes",
+      "note": "the G of \"Gm to G as an ending pair\" — raised V in minor, v->V mixture"
     }
   },
-  textures: {},
+  textures: {
+    "pad": {
+      "good": 27,
+      "bad": 1
+    },
+    "arp": {
+      "good": 37,
+      "bad": 0
+    },
+    "arpwide": {
+      "good": 37,
+      "bad": 0
+    },
+    "oompah": {
+      "good": 37,
+      "bad": 0
+    },
+    "ostinato": {
+      "good": 37,
+      "bad": 0
+    },
+    "block": {
+      "good": 1,
+      "bad": 0
+    }
+  },
   cadences: {},
 
   // raw clicks behind the two aggregates above, so the next import is not lossy
@@ -48,5 +88,714 @@ export const FACET_VERDICTS = {
   cadenceDetail: {},
 
   // per-(harmony, tone) votes from audition/judge.html; keyed by degrees
-  toneDetail: {},
+  toneDetail: {
+    "0:m 5:m 10:6 3|pad": {
+      "verdict": "good",
+      "from": "facets"
+    },
+    "0:m 5:m 10:6 3|arp": {
+      "verdict": "good",
+      "from": "facets"
+    },
+    "0:m 5:m 10:6 3|arpwide": {
+      "verdict": "good",
+      "from": "facets"
+    },
+    "0:m 5:m 10:6 3|oompah": {
+      "verdict": "good",
+      "from": "facets"
+    },
+    "0:m 5:m 10:6 3|ostinato": {
+      "verdict": "good",
+      "from": "facets"
+    },
+    "0:m 10 8 10|block": {
+      "verdict": "good",
+      "from": "facets"
+    },
+    "0:m 10 8 10|pad": {
+      "verdict": "good",
+      "from": "facets"
+    },
+    "0:m 10 8 10|arp": {
+      "verdict": "good",
+      "from": "facets"
+    },
+    "0:m 10 8 10|arpwide": {
+      "verdict": "good",
+      "from": "facets"
+    },
+    "0:m 10 8 10|oompah": {
+      "verdict": "good",
+      "from": "facets"
+    },
+    "0:m 10 8 10|ostinato": {
+      "verdict": "good",
+      "from": "facets"
+    },
+    "0 7 2:o 7:7|arp": {
+      "verdict": "good",
+      "from": "facets"
+    },
+    "0 7 2:o 7:7|arpwide": {
+      "verdict": "good",
+      "from": "facets"
+    },
+    "0 7 2:o 7:7|oompah": {
+      "verdict": "good",
+      "from": "facets"
+    },
+    "0 7 2:o 7:7|ostinato": {
+      "verdict": "good",
+      "from": "facets"
+    },
+    "9:m 2:m 7 0|pad": {
+      "verdict": "good",
+      "from": "facets"
+    },
+    "9:m 2:m 7 0|arp": {
+      "verdict": "good",
+      "from": "facets"
+    },
+    "9:m 2:m 7 0|arpwide": {
+      "verdict": "good",
+      "from": "facets"
+    },
+    "9:m 2:m 7 0|oompah": {
+      "verdict": "good",
+      "from": "facets"
+    },
+    "9:m 2:m 7 0|ostinato": {
+      "verdict": "good",
+      "from": "facets"
+    },
+    "7 5|pad": {
+      "verdict": "good",
+      "from": "facets"
+    },
+    "7 5|arp": {
+      "verdict": "good",
+      "from": "facets"
+    },
+    "7 5|arpwide": {
+      "verdict": "good",
+      "from": "facets"
+    },
+    "7 5|oompah": {
+      "verdict": "good",
+      "from": "facets"
+    },
+    "7 5|ostinato": {
+      "verdict": "good",
+      "from": "facets"
+    },
+    "2:m7 7|arp": {
+      "verdict": "good",
+      "from": "facets"
+    },
+    "2:m7 7|arpwide": {
+      "verdict": "good",
+      "from": "facets"
+    },
+    "2:m7 7|oompah": {
+      "verdict": "good",
+      "from": "facets"
+    },
+    "2:m7 7|ostinato": {
+      "verdict": "good",
+      "from": "facets"
+    },
+    "0 2 5 0|arp": {
+      "verdict": "good",
+      "from": "facets"
+    },
+    "0 2 5 0|arpwide": {
+      "verdict": "good",
+      "from": "facets"
+    },
+    "0 2 5 0|oompah": {
+      "verdict": "good",
+      "from": "facets"
+    },
+    "0 2 5 0|ostinato": {
+      "verdict": "good",
+      "from": "facets"
+    },
+    "2 5 0:7 0|pad": {
+      "verdict": "bad",
+      "from": "facets"
+    },
+    "2 5 0:7 0|arp": {
+      "verdict": "good",
+      "from": "facets"
+    },
+    "2 5 0:7 0|arpwide": {
+      "verdict": "good",
+      "from": "facets"
+    },
+    "2 5 0:7 0|oompah": {
+      "verdict": "good",
+      "from": "facets"
+    },
+    "2 5 0:7 0|ostinato": {
+      "verdict": "good",
+      "from": "facets"
+    },
+    "8 10 0:sus 8 10 0:m 11 10:^7 9:m|pad": {
+      "verdict": "good",
+      "from": "facets"
+    },
+    "8 10 0:sus 8 10 0:m 11 10:^7 9:m|arp": {
+      "verdict": "good",
+      "from": "facets"
+    },
+    "8 10 0:sus 8 10 0:m 11 10:^7 9:m|arpwide": {
+      "verdict": "good",
+      "from": "facets"
+    },
+    "8 10 0:sus 8 10 0:m 11 10:^7 9:m|oompah": {
+      "verdict": "good",
+      "from": "facets"
+    },
+    "8 10 0:sus 8 10 0:m 11 10:^7 9:m|ostinato": {
+      "verdict": "good",
+      "from": "facets"
+    },
+    "0:m 10 9:m 8 10 0:m 10 9:m 8 10|pad": {
+      "verdict": "good",
+      "from": "facets"
+    },
+    "0:m 10 9:m 8 10 0:m 10 9:m 8 10|arp": {
+      "verdict": "good",
+      "from": "facets"
+    },
+    "0:m 10 9:m 8 10 0:m 10 9:m 8 10|arpwide": {
+      "verdict": "good",
+      "from": "facets"
+    },
+    "0:m 10 9:m 8 10 0:m 10 9:m 8 10|oompah": {
+      "verdict": "good",
+      "from": "facets"
+    },
+    "0:m 10 9:m 8 10 0:m 10 9:m 8 10|ostinato": {
+      "verdict": "good",
+      "from": "facets"
+    },
+    "7:m 8 7:m 8|pad": {
+      "verdict": "good",
+      "from": "facets"
+    },
+    "7:m 8 7:m 8|arp": {
+      "verdict": "good",
+      "from": "facets"
+    },
+    "7:m 8 7:m 8|arpwide": {
+      "verdict": "good",
+      "from": "facets"
+    },
+    "7:m 8 7:m 8|oompah": {
+      "verdict": "good",
+      "from": "facets"
+    },
+    "7:m 8 7:m 8|ostinato": {
+      "verdict": "good",
+      "from": "facets"
+    },
+    "8 7:m 0:m 7:m|arp": {
+      "verdict": "good",
+      "from": "facets"
+    },
+    "8 7:m 0:m 7:m|arpwide": {
+      "verdict": "good",
+      "from": "facets"
+    },
+    "8 7:m 0:m 7:m|oompah": {
+      "verdict": "good",
+      "from": "facets"
+    },
+    "8 7:m 0:m 7:m|ostinato": {
+      "verdict": "good",
+      "from": "facets"
+    },
+    "8 10 8:^7 10|pad": {
+      "verdict": "good",
+      "from": "facets"
+    },
+    "8 10 8:^7 10|arp": {
+      "verdict": "good",
+      "from": "facets"
+    },
+    "8 10 8:^7 10|arpwide": {
+      "verdict": "good",
+      "from": "facets"
+    },
+    "8 10 8:^7 10|oompah": {
+      "verdict": "good",
+      "from": "facets"
+    },
+    "8 10 8:^7 10|ostinato": {
+      "verdict": "good",
+      "from": "facets"
+    },
+    "8 7:m 8 10|pad": {
+      "verdict": "good",
+      "from": "facets"
+    },
+    "8 7:m 8 10|arp": {
+      "verdict": "good",
+      "from": "facets"
+    },
+    "8 7:m 8 10|arpwide": {
+      "verdict": "good",
+      "from": "facets"
+    },
+    "8 7:m 8 10|oompah": {
+      "verdict": "good",
+      "from": "facets"
+    },
+    "8 7:m 8 10|ostinato": {
+      "verdict": "good",
+      "from": "facets"
+    },
+    "0:m 8 5:m 7:m 0:m 8:^7 10 0:m|pad": {
+      "verdict": "good",
+      "from": "facets"
+    },
+    "0:m 8 5:m 7:m 0:m 8:^7 10 0:m|arp": {
+      "verdict": "good",
+      "from": "facets"
+    },
+    "0:m 8 5:m 7:m 0:m 8:^7 10 0:m|arpwide": {
+      "verdict": "good",
+      "from": "facets"
+    },
+    "0:m 8 5:m 7:m 0:m 8:^7 10 0:m|oompah": {
+      "verdict": "good",
+      "from": "facets"
+    },
+    "0:m 8 5:m 7:m 0:m 8:^7 10 0:m|ostinato": {
+      "verdict": "good",
+      "from": "facets"
+    },
+    "0:m 8 5:m 7:m 0:m 8 7:m 0:m|arp": {
+      "verdict": "good",
+      "from": "facets"
+    },
+    "0:m 8 5:m 7:m 0:m 8 7:m 0:m|arpwide": {
+      "verdict": "good",
+      "from": "facets"
+    },
+    "0:m 8 5:m 7:m 0:m 8 7:m 0:m|oompah": {
+      "verdict": "good",
+      "from": "facets"
+    },
+    "0:m 8 5:m 7:m 0:m 8 7:m 0:m|ostinato": {
+      "verdict": "good",
+      "from": "facets"
+    },
+    "10 0:7 10 0:7 10 0:7 10 0:7|arp": {
+      "verdict": "good",
+      "from": "facets"
+    },
+    "10 0:7 10 0:7 10 0:7 10 0:7|arpwide": {
+      "verdict": "good",
+      "from": "facets"
+    },
+    "10 0:7 10 0:7 10 0:7 10 0:7|oompah": {
+      "verdict": "good",
+      "from": "facets"
+    },
+    "10 0:7 10 0:7 10 0:7 10 0:7|ostinato": {
+      "verdict": "good",
+      "from": "facets"
+    },
+    "0:7 7:m 0:7 10 0:7 10 0:7 10|arp": {
+      "verdict": "good",
+      "from": "facets"
+    },
+    "0:7 7:m 0:7 10 0:7 10 0:7 10|arpwide": {
+      "verdict": "good",
+      "from": "facets"
+    },
+    "0:7 7:m 0:7 10 0:7 10 0:7 10|oompah": {
+      "verdict": "good",
+      "from": "facets"
+    },
+    "0:7 7:m 0:7 10 0:7 10 0:7 10|ostinato": {
+      "verdict": "good",
+      "from": "facets"
+    },
+    "8:^7 10 3 5:m|pad": {
+      "verdict": "good",
+      "from": "facets"
+    },
+    "8:^7 10 3 5:m|arp": {
+      "verdict": "good",
+      "from": "facets"
+    },
+    "8:^7 10 3 5:m|arpwide": {
+      "verdict": "good",
+      "from": "facets"
+    },
+    "8:^7 10 3 5:m|oompah": {
+      "verdict": "good",
+      "from": "facets"
+    },
+    "8:^7 10 3 5:m|ostinato": {
+      "verdict": "good",
+      "from": "facets"
+    },
+    "2:m 7 4 5:^7|pad": {
+      "verdict": "good",
+      "from": "facets"
+    },
+    "2:m 7 4 5:^7|arp": {
+      "verdict": "good",
+      "from": "facets"
+    },
+    "2:m 7 4 5:^7|arpwide": {
+      "verdict": "good",
+      "from": "facets"
+    },
+    "2:m 7 4 5:^7|oompah": {
+      "verdict": "good",
+      "from": "facets"
+    },
+    "2:m 7 4 5:^7|ostinato": {
+      "verdict": "good",
+      "from": "facets"
+    },
+    "0 5 0:sus 10|arp": {
+      "verdict": "good",
+      "from": "facets"
+    },
+    "0 5 0:sus 10|arpwide": {
+      "verdict": "good",
+      "from": "facets"
+    },
+    "0 5 0:sus 10|oompah": {
+      "verdict": "good",
+      "from": "facets"
+    },
+    "0 5 0:sus 10|ostinato": {
+      "verdict": "good",
+      "from": "facets"
+    },
+    "0:m 10 9:m 8 7:m 8 10 9:m 8 10|pad": {
+      "verdict": "good",
+      "from": "facets"
+    },
+    "0:m 3 5:m 0:m 10 0:m 3 5:m7 0:m 8|pad": {
+      "verdict": "good",
+      "from": "facets"
+    },
+    "0:m 3 5:m 0:m 10 0:m 3 5:m7 0:m 8|arp": {
+      "verdict": "good",
+      "from": "facets"
+    },
+    "0:m 3 5:m 0:m 10 0:m 3 5:m7 0:m 8|arpwide": {
+      "verdict": "good",
+      "from": "facets"
+    },
+    "0:m 3 5:m 0:m 10 0:m 3 5:m7 0:m 8|oompah": {
+      "verdict": "good",
+      "from": "facets"
+    },
+    "0:m 3 5:m 0:m 10 0:m 3 5:m7 0:m 8|ostinato": {
+      "verdict": "good",
+      "from": "facets"
+    },
+    "0:m 10 9:m 8 7:m 8 10 9:m 8 10|arp": {
+      "verdict": "good",
+      "from": "facets"
+    },
+    "0:m 10 9:m 8 7:m 8 10 9:m 8 10|arpwide": {
+      "verdict": "good",
+      "from": "facets"
+    },
+    "0:m 10 9:m 8 7:m 8 10 9:m 8 10|oompah": {
+      "verdict": "good",
+      "from": "facets"
+    },
+    "0:m 10 9:m 8 7:m 8 10 9:m 8 10|ostinato": {
+      "verdict": "good",
+      "from": "facets"
+    },
+    "8 10 8 3|pad": {
+      "verdict": "good",
+      "from": "facets"
+    },
+    "8 10 8 3|arp": {
+      "verdict": "good",
+      "from": "facets"
+    },
+    "8 10 8 3|arpwide": {
+      "verdict": "good",
+      "from": "facets"
+    },
+    "8 10 8 3|oompah": {
+      "verdict": "good",
+      "from": "facets"
+    },
+    "8 10 8 3|ostinato": {
+      "verdict": "good",
+      "from": "facets"
+    },
+    "0:m 7:7 0:m 7|pad": {
+      "verdict": "good",
+      "from": "facets"
+    },
+    "0:m 7:7 0:m 7|arp": {
+      "verdict": "good",
+      "from": "facets"
+    },
+    "0:m 7:7 0:m 7|arpwide": {
+      "verdict": "good",
+      "from": "facets"
+    },
+    "0:m 7:7 0:m 7|oompah": {
+      "verdict": "good",
+      "from": "facets"
+    },
+    "0:m 7:7 0:m 7|ostinato": {
+      "verdict": "good",
+      "from": "facets"
+    },
+    "0 9 4:m 5:^7 0 9 4:m 5|pad": {
+      "verdict": "good",
+      "from": "facets"
+    },
+    "0 9 4:m 5:^7 0 9 4:m 5|arp": {
+      "verdict": "good",
+      "from": "facets"
+    },
+    "0 9 4:m 5:^7 0 9 4:m 5|arpwide": {
+      "verdict": "good",
+      "from": "facets"
+    },
+    "0 9 4:m 5:^7 0 9 4:m 5|oompah": {
+      "verdict": "good",
+      "from": "facets"
+    },
+    "0 9 4:m 5:^7 0 9 4:m 5|ostinato": {
+      "verdict": "good",
+      "from": "facets"
+    },
+    "0 9:m 2:m 9:m|arp": {
+      "verdict": "good",
+      "from": "facets"
+    },
+    "0 9:m 2:m 9:m|arpwide": {
+      "verdict": "good",
+      "from": "facets"
+    },
+    "0 9:m 2:m 9:m|oompah": {
+      "verdict": "good",
+      "from": "facets"
+    },
+    "0 9:m 2:m 9:m|ostinato": {
+      "verdict": "good",
+      "from": "facets"
+    },
+    "9:m 5 4:m 7|pad": {
+      "verdict": "good",
+      "from": "facets"
+    },
+    "9:m 5 4:m 7|arp": {
+      "verdict": "good",
+      "from": "facets"
+    },
+    "9:m 5 4:m 7|arpwide": {
+      "verdict": "good",
+      "from": "facets"
+    },
+    "9:m 5 4:m 7|oompah": {
+      "verdict": "good",
+      "from": "facets"
+    },
+    "9:m 5 4:m 7|ostinato": {
+      "verdict": "good",
+      "from": "facets"
+    },
+    "7:m 0:m 5:m 10|pad": {
+      "verdict": "good",
+      "from": "facets"
+    },
+    "7:m 0:m 5:m 10|arp": {
+      "verdict": "good",
+      "from": "facets"
+    },
+    "7:m 0:m 5:m 10|arpwide": {
+      "verdict": "good",
+      "from": "facets"
+    },
+    "7:m 0:m 5:m 10|oompah": {
+      "verdict": "good",
+      "from": "facets"
+    },
+    "7:m 0:m 5:m 10|ostinato": {
+      "verdict": "good",
+      "from": "facets"
+    },
+    "0:m 3 5:m 0:m|pad": {
+      "verdict": "good",
+      "from": "facets"
+    },
+    "0:m 3 5:m 0:m|arp": {
+      "verdict": "good",
+      "from": "facets"
+    },
+    "0:m 3 5:m 0:m|arpwide": {
+      "verdict": "good",
+      "from": "facets"
+    },
+    "0:m 3 5:m 0:m|oompah": {
+      "verdict": "good",
+      "from": "facets"
+    },
+    "0:m 3 5:m 0:m|ostinato": {
+      "verdict": "good",
+      "from": "facets"
+    },
+    "0:m 10 0:m 7:m|pad": {
+      "verdict": "good",
+      "from": "facets"
+    },
+    "0:m 10 0:m 7:m|arp": {
+      "verdict": "good",
+      "from": "facets"
+    },
+    "0:m 10 0:m 7:m|arpwide": {
+      "verdict": "good",
+      "from": "facets"
+    },
+    "0:m 10 0:m 7:m|oompah": {
+      "verdict": "good",
+      "from": "facets"
+    },
+    "0:m 10 0:m 7:m|ostinato": {
+      "verdict": "good",
+      "from": "facets"
+    },
+    "5 4:m 9:m 7 5 4:m 9:m 7|pad": {
+      "verdict": "good",
+      "from": "facets"
+    },
+    "5 4:m 9:m 7 5 4:m 9:m 7|arp": {
+      "verdict": "good",
+      "from": "facets"
+    },
+    "5 4:m 9:m 7 5 4:m 9:m 7|arpwide": {
+      "verdict": "good",
+      "from": "facets"
+    },
+    "5 4:m 9:m 7 5 4:m 9:m 7|oompah": {
+      "verdict": "good",
+      "from": "facets"
+    },
+    "5 4:m 9:m 7 5 4:m 9:m 7|ostinato": {
+      "verdict": "good",
+      "from": "facets"
+    },
+    "8:^7 0:m 1 0:m|pad": {
+      "verdict": "good",
+      "from": "facets"
+    },
+    "8:^7 0:m 1 0:m|arp": {
+      "verdict": "good",
+      "from": "facets"
+    },
+    "8:^7 0:m 1 0:m|arpwide": {
+      "verdict": "good",
+      "from": "facets"
+    },
+    "8:^7 0:m 1 0:m|oompah": {
+      "verdict": "good",
+      "from": "facets"
+    },
+    "8:^7 0:m 1 0:m|ostinato": {
+      "verdict": "good",
+      "from": "facets"
+    },
+    "0:m 8 7:m 7|pad": {
+      "verdict": "good",
+      "from": "facets"
+    },
+    "0:m 8 7:m 7|arp": {
+      "verdict": "good",
+      "from": "facets"
+    },
+    "0:m 8 7:m 7|arpwide": {
+      "verdict": "good",
+      "from": "facets"
+    },
+    "0:m 8 7:m 7|oompah": {
+      "verdict": "good",
+      "from": "facets"
+    },
+    "0:m 8 7:m 7|ostinato": {
+      "verdict": "good",
+      "from": "facets"
+    },
+    "0 7 9:m 7|pad": {
+      "verdict": "good",
+      "from": "facets"
+    },
+    "0 7 9:m 7|arp": {
+      "verdict": "good",
+      "from": "facets"
+    },
+    "0 7 9:m 7|arpwide": {
+      "verdict": "good",
+      "from": "facets"
+    },
+    "0 7 9:m 7|oompah": {
+      "verdict": "good",
+      "from": "facets"
+    },
+    "0 7 9:m 7|ostinato": {
+      "verdict": "good",
+      "from": "facets"
+    },
+    "9:m 7 5 4|pad": {
+      "verdict": "good",
+      "from": "facets"
+    },
+    "9:m 7 5 4|arp": {
+      "verdict": "good",
+      "from": "facets"
+    },
+    "9:m 7 5 4|arpwide": {
+      "verdict": "good",
+      "from": "facets"
+    },
+    "9:m 7 5 4|oompah": {
+      "verdict": "good",
+      "from": "facets"
+    },
+    "9:m 7 5 4|ostinato": {
+      "verdict": "good",
+      "from": "facets"
+    },
+    "0 7 9:m 4:m 5 0 5 7|pad": {
+      "verdict": "good",
+      "from": "facets"
+    },
+    "0 7 9:m 4:m 5 0 5 7|arp": {
+      "verdict": "good",
+      "from": "facets"
+    },
+    "0 7 9:m 4:m 5 0 5 7|arpwide": {
+      "verdict": "good",
+      "from": "facets"
+    },
+    "0 7 9:m 4:m 5 0 5 7|oompah": {
+      "verdict": "good",
+      "from": "facets"
+    },
+    "0 7 9:m 4:m 5 0 5 7|ostinato": {
+      "verdict": "good",
+      "from": "facets"
+    }
+  },
 };

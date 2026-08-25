@@ -27,17 +27,37 @@ export const FACET_SEEDS = {
     },
   },
 
-  // The same motion AS A CADENCE. Deliberately empty. The minor wrap row out of
-  // the tonic holds 57 observations against the inner row's 287, so folding the
-  // Cm->Bm votes in here too would have taken P(0->11) as an ending from 0.07%
-  // to 19.8% — second-likeliest in the family, off a side note about a
-  // transition. A move Ethan likes mid-loop is not yet an ending he likes, and
-  // the cadence tab asks that question on its own.
-  wraps: {},
+  // Motion AS A CADENCE — a separate bag from `pairs` on purpose. The minor wrap
+  // row out of the tonic holds 57 observations against the inner row's 287, so
+  // folding the Cm->Bm votes in here too would have taken P(0->11) as an ending
+  // from 0.07% to 19.8%, second-likeliest in the family, off a side note about a
+  // transition. A move Ethan likes mid-loop is not yet an ending he likes.
+  // Nothing lands here except a verdict that named an ENDING.
+  wraps: {
+    // t20, on `Cm Ab Gm G`: "love the Gm to G as an ending pair". The loop ends
+    // on G and wraps back to Cm, so this is a vote on V -> i AS A CADENCE, which
+    // is the only thing that writes to this bag (see facets.js). The corpus
+    // already rates it highly, so this is confirmatory rather than corrective —
+    // recorded anyway, because a cadence he named is worth more than one he
+    // merely did not object to.
+    'minor|7>0': {
+      verdict: 'good', n: 1, at: '2026-08-25', from: 'notes',
+      note: 'the G of "Gm to G as an ending pair" resolving back to Cm',
+    },
+  },
 
   chords: {
     'minor|11:m': { verdict: 'good', n: 1, at: '2026-08-24', from: 'notes', note: 'the Bm of Cm->Bm' },
     'minor|11:': { verdict: 'good', n: 1, at: '2026-08-24', from: 'notes', note: 'the B of Cm->B' },
+    // t20: "love the Gm to G as an ending pair" (the card was `Cm Ab Gm G`).
+    // The raised V in a minor key — the harmonic-minor leading tone, reached by
+    // the `mixture` operator v -> V. The counted prior puts a major triad on
+    // degree 7 in minor at only 15% against 47% for the minor one, so this is a
+    // move the corpus alone under-proposes and Ethan singled out unprompted.
+    'minor|7:': {
+      verdict: 'good', n: 1, at: '2026-08-25', from: 'notes',
+      note: 'the G of "Gm to G as an ending pair" — raised V in minor, v->V mixture',
+    },
   },
 
   // Nothing recorded. "the C sus followed by the resolved version of it COULD

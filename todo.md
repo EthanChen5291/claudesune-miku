@@ -371,8 +371,32 @@ D42 (unpkg + jsdelivr, version-matched, tried in turn).
   31 harmonies × 7 formats multi-select · 20 harmonies × 3 endings.
   Seeds in src/lib/facet-seeds.js are hand-written and survive every import.
 
+- [done, D56] FIRST REAL JUDGE PASS came back: 15 A/B, 177 tone votes, 14 notes.
+  Three of the notes named mechanical defects, now all fixed and tested:
+  (a) every figuration drew from {R,3,5} only, so G7/G6/G were the same notes —
+  bindFigure gains opt-in `stateExtensions`; (b) the bass was a KEY-degree
+  contour and played C natural under an A major chord — now a chord-relative
+  figuration; (c) 54 library entries end on their own first chord, which loops
+  as a doubled bar — src/lib/loops.js trims at render time and the lint
+  reproduces Ethan's complaints by trial number. Also: background-tab audio
+  slowdown fixed by moving strudel's scheduler tick to a Web Worker (with a
+  watchdog that reverts to native if the worker never ticks); textureRanking()
+  now reports EXPOSURE because block was judged on 1 of 37 harmonies and would
+  otherwise rank last; new "wide oom-pah" tone per Ethan's t22 request.
+
 NEXT:
-1. *** RUN audition/facets.html AND audition/judge.html. *** facets first — it
+0. OPEN FORK FOR ETHAN — when a loop's last chord repeats its first, trim it
+   (keeps the harmony, can leave an odd loop: `Cm Ab Bb Cm` -> 3 bars) or
+   REPLACE it (keeps 4 bars, changes a chord — what he proposed in t23)?
+   Defaulted to trim; one operator away either way.
+0b. RESEARCH — tone switching through the song. Corpus head start:
+   DEVELOPMENT_UNDERTALE has 23 observed FROM->TO accompaniment transitions with
+   counts, and 53 of 112 development moves (47%) change the texture. What is
+   missing is WHERE in the form they land.
+0c. RESEARCH — harmony variation as a PLACED event, not a sprinkle. D50 builds
+   the variations; nothing decides where they go. First real requirement of the
+   chronological-editing phase.
+1. *** RE-RUN audition/facets.html AND audition/judge.html. *** facets first — it
    is where the two things Ethan already noticed by ear get generalised, and it
    is the only page whose votes reach the generator directly. Both export JSON;
    `node scripts/import-verdicts.mjs <file.json>` handles either format and

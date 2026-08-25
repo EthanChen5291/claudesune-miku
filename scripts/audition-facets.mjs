@@ -56,6 +56,7 @@ import { exemplarPool } from '../src/lib/harmony-vary.js';
 import { OPS } from '../src/lib/harmony-ops.js';
 import { FACET_VERDICTS } from '../src/lib/facet-verdicts.js';
 import { EAR_COUNT } from '../src/lib/facets.js';
+import { trimLoopWrap, loopIssues } from '../src/lib/loops.js';
 import { evaluateSong, hapsByLabel } from '../src/harness/evaluate.js';
 import { RUNTIME_JS } from './audition-runtime.js';
 
@@ -123,14 +124,18 @@ const bassFor = (ctx) => bind(RHYTHMS[BASS.rhythm], CONTOURS[BASS.contour], ctx,
 }).expr;
 
 /** [{semis,quality}] -> {symbols, exprs, bass} in `family`'s key */
-function build(cycle, family, textures) {
+function build(cycle0, family, textures) {
   const key = keyFor(family);
+  // D56: a written progression that ends by repeating its first chord doubles
+  // that bar every time the loop comes round. Trim for playback; the entry's own
+  // degrees are untouched.
+  const cycle = trimLoopWrap(cycle0);
   const symbols = renderProgression({ degrees: toDegrees(cycle), numerals: '?' }, key);
   const ctx = { harmony: symbols, barsPerChord: 1, key };
   const quals = new Set(cycle.map((c) => c.quality));
   const exprs = {};
   for (const t of textures) exprs[t.id] = render(t, ctx, quals);
-  return { symbols, exprs, bass: bassFor(ctx) };
+  return { symbols, exprs, bass: bassFor(ctx), trimmed: cycle.length !== cycle0.length };
 }
 
 // ---------------------------------------------------------------------------

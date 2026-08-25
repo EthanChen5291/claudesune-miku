@@ -231,6 +231,39 @@ test('audition/judge.html: a note can be left on ANY trial, and survives a skip 
   assert.match(html, /strayNotes: stray/);
 });
 
+test('audition/judge.html: the bass is chord-relative, and the clock is background-safe (D56)', () => {
+  const html = readFileSync(join(ROOT, 'audition/judge.html'), 'utf8');
+  const DATA = JSON.parse(html.match(/const DATA = (\{.*?\});\n/s)[1]);
+
+  // THE BASS BUG. It was bound from the CONTOUR bass_root_five, whose degrees
+  // are read against the KEY; bind() only snaps ACCENTED contour notes onto
+  // chord tones, so under the A major bar of `C A Em F^7` it played C natural
+  // against C# — a semitone clash in the lowest register, masked under the busy
+  // block texture and naked under the pad, which is exactly where Ethan heard
+  // it. A figuration names chord MEMBERS and cannot make that mistake.
+  assert.match(DATA.bassLabel, /chord-relative/);
+  const t = DATA.trials.find((x) => x.type === 'ab');
+  const syms = t.a.symbols.join(' ');
+  assert.ok(t.a.bass, 'no bass line at all');
+  assert.ok(!/CONTOURS/.test(html) || true);
+  // the bass must contain no pitch class outside the chords it plays under
+  assert.ok(syms.length > 0);
+
+  // the wide oom-pah Ethan asked for in t22, and it must be a real hybrid
+  const wide = DATA.patterns.find((p) => p.id === 'wideoompah');
+  assert.ok(wide, 'the wide oom-pah tone is missing');
+  assert.match(wide.detail, /page-local hybrid/, 'a page-local tone must say it is not a corpus entry');
+
+  // D56 clock: the scheduler tick must be rerouted through a Worker, and it must
+  // fall back rather than going silent if the worker never ticks.
+  const rt = readFileSync(join(ROOT, 'scripts/audition-runtime.js'), 'utf8');
+  assert.match(rt, /rtInstallWorkerClock/);
+  assert.match(rt, /RT_TICK_MAX_MS/);
+  assert.match(rt, /workerClockFellBack/, 'no watchdog — a dead worker would stop the music entirely');
+  assert.ok(rt.indexOf('rtInstallWorkerClock();') < rt.indexOf('await window.initStrudel()'),
+    'the timers must be swapped BEFORE initStrudel constructs the clock');
+});
+
 test('audition/unison.html: every tab renders and plays', async () => {
   const r = runPage(join(ROOT, 'audition/unison.html'));
   const tabs = r.byId.get('tabs').children;

@@ -472,6 +472,74 @@ function memberSemis(member, rel, warnings, sym) {
 }
 
 /**
+ * Which member token states a chord tone beyond the triad — the note that makes
+ * a G7 a G7 rather than a G.
+ *
+ * WHY (D56). Ethan, after the judge pass: "all the chord types besides block and
+ * wide pad kinda made some of the chord progressions generic (like if it was a
+ * G7 it'd go back to root G or something) ... vibe-wise it loses some of the
+ * vibe that the wide pad gave the chord progression."
+ *
+ * He was hearing a real defect, not a preference. Every corpus figuration on the
+ * judge page draws from {R, 3, 5} only — `R+ 3+ 5 3+`, `R 3.5 R 3.5`, `R R+`.
+ * Rendered through any of them a G7, a G6 and a plain G are the SAME NOTES, so a
+ * progression whose character lives in its extensions is flattened to triads.
+ * That is D45's rule turned around: a chord label is a claim, and an
+ * accompaniment that never sounds the 7th is not supporting it.
+ */
+const EXTENSION_TOKEN = [[10, '7'], [11, '7'], [9, '6'], [2, '9'], [1, '9'], [8, '6']];
+
+/**
+ * The extension must come from the chord's CORE tones — what the label asserts —
+ * and never from chordTones(), which returns the wider tone SUPPLY a soloist may
+ * draw on. Caught immediately: supply for a plain C includes the 9th, so the
+ * first version put a D in every triad, which is precisely the unasked-for
+ * colouring D51 found Ethan rejecting (kept progressions are 84% bare triads).
+ * A plain triad must come out a plain triad.
+ */
+function extensionMember(core, rootPc) {
+  const rel = new Set([...core].map((p) => ((p - rootPc) % 12 + 12) % 12));
+  const triad = new Set([0, 3, 4, 6, 7, 8]);
+  for (const [semis, token] of EXTENSION_TOKEN) {
+    if (rel.has(semis) && !triad.has(semis)) return { semis, token };
+  }
+  return null;
+}
+
+/**
+ * Pick ONE onset in the bar to carry the extension, or null to leave the figure
+ * alone. Deliberately conservative — a figuration is a corpus artefact and the
+ * point is to state the chord, not to rewrite the pattern:
+ *
+ *   - only single-member tokens (never a struck cluster like `3.5`)
+ *   - only a member the bar plays MORE THAN ONCE, so nothing unique is lost
+ *   - the LAST such occurrence, so the chord is stated plainly before it colours
+ *   - never the only 3, since the third carries the mode
+ */
+function extensionSlot(toks, rel, core, rootPc) {
+  const ext = extensionMember(core, rootPc);
+  if (!ext) return null;
+  const parsed = toks.map((t) => {
+    const m = FIGURE_TOKEN.exec(t);
+    return m && !t.includes('.') ? { member: m[1], plus: m[2] } : null;
+  });
+  // already stated? then there is nothing to fix
+  for (const p of parsed) {
+    if (!p) continue;
+    if (memberSemis(p.member, rel, [], null) === ext.semis) return null;
+  }
+  const counts = {};
+  for (const p of parsed) if (p) counts[p.member] = (counts[p.member] ?? 0) + 1;
+  for (let i = parsed.length - 1; i >= 0; i--) {
+    const p = parsed[i];
+    if (!p || p.member === '3' && counts['3'] < 2) continue;
+    if ((counts[p.member] ?? 0) < 2) continue;
+    return { i, token: ext.token + p.plus };
+  }
+  return null;
+}
+
+/**
  * bindFigure(figEntry, harmonyContext, meter, opts) -> { expr, period, boundMeta, warnings }
  * figEntry: { onsets, accents, figure, bars?, microtiming?, legato?, octave? }
  * opts: { octave=figEntry.octave??3, sound='piano', fx='', gainRange, rhythmName }
@@ -495,7 +563,9 @@ export function bindFigure(figEntry, harmonyContext, meter = '4/4', opts = {}) {
   const {
     octave = figEntry.octave ?? 3, sound = 'piano', fx = '',
     gainRange = DEFAULT_GAIN_RANGE, rhythmName = figEntry.name ?? null,
+    stateExtensions = false,
   } = opts;
+  let extended = 0;
 
   // pair onsets with accent + token, apply microtiming with the pairing intact
   // (normalizeRhythm re-sorts after shifting and would orphan the tokens)
@@ -561,9 +631,16 @@ export function bindFigure(figEntry, harmonyContext, meter = '4/4', opts = {}) {
     }
     prevRoot = rootRef;
     const values = [];
+    // D56: opt-in, so every existing binding is byte-identical. The judge page
+    // turns it on for its figuration tones; nothing else does yet.
+    const swap = stateExtensions && rel.size && sym
+      ? extensionSlot(bar.toks, rel, chordCoreTones(sym), rootPc ?? 0)
+      : null;
+    if (swap) extended++;
     for (let i = 0; i < bar.steps.length; i++) {
       const accented = bar.accents[i] >= ACCENT_THRESHOLD;
-      const names = bar.toks[i].split('.').map((m) => {
+      const tok = swap && swap.i === i ? swap.token : bar.toks[i];
+      const names = tok.split('.').map((m) => {
         const [, member, plus] = FIGURE_TOKEN.exec(m);
         const midi = rootRef + memberSemis(member, rel, warnings, sym) + 12 * plus.length;
         const name = midiToNoteName(midi, { flats });
@@ -594,6 +671,8 @@ export function bindFigure(figEntry, harmonyContext, meter = '4/4', opts = {}) {
     gains: accents.map((a) => round2(gainRange[0] + a * (gainRange[1] - gainRange[0]))),
     period,
     notes: boundNotes,
+    // how many chords had an onset re-pointed at their 7th/6th/9th (D56)
+    extendedChords: extended,
   };
   return { expr, period, boundMeta, warnings };
 }
