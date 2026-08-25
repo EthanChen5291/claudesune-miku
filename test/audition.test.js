@@ -46,9 +46,10 @@ test('audition pages: both are regenerated exactly by their scripts', () => {
 
 test('audition/progressions.html: renders, and a card click emits playable source', async () => {
   const r = runPage(join(ROOT, 'audition/progressions.html'));
-  // 188 imported (D28) + 96 composed (D49) + 33 foundations and their variations
-  // (D50/D51), on one page so every arm can be A/B'd against the others
-  assert.equal(r.byId.get('grid').children.length, 416);
+  // 188 imported (D28) + 18 video-transcribed (D57) + 96 composed (D49) + 33
+  // foundations and their variations (D50/D51), on one page so every arm can be
+  // A/B'd against the others
+  assert.equal(r.byId.get('grid').children.length, 434);
   const code = await clickFirstCard(r);
   await playable(code);
   // every sample map must be requested before anything is evaluated, or the sounds

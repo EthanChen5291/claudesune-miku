@@ -103,3 +103,72 @@ test('D56: a plain triad comes out a plain triad', () => {
     assert.equal(on.expr, off.expr, `${id} changed a triad-only progression`);
   }
 });
+
+// ---------------------------------------------------------------------------
+// D56 addendum: the wrap policy is meter-first (Ethan, 2026-08-25): "time
+// signature + other general framework info is decided first before we pick
+// chords. if it's even ... leans towards replacing it ... if it's odd ... it's
+// not necessarily needed".
+// ---------------------------------------------------------------------------
+import { resolveLoopWrap, wrapReplacements } from '../src/lib/loops.js';
+
+const QUALITIES = new Set(['', 'm', '7', 'm7', '^7', '6', 'm9', 'sus', 'o', 'o7']);
+const CTX = { family: 'minor', home: 0, qualities: QUALITIES };
+
+test('D56: even meter replaces the duplicate; odd meter trims it', () => {
+  const t27 = cyc('0:m 8 10 0:m'); // "fourth Cm should be replaced" — his words
+  const even = resolveLoopWrap(t27, { ...CTX, meter: '4/4' });
+  assert.equal(even.action, 'replace');
+  assert.equal(even.cycle.length, 4, 'even meter must keep the bar count');
+  assert.notEqual(even.cycle.at(-1).semis, 0, 'the replacement recreated the doubled bar');
+  const odd = resolveLoopWrap(t27, { ...CTX, meter: '3/4' });
+  assert.equal(odd.action, 'trim');
+  assert.equal(odd.cycle.length, 3);
+  // a loop with a distinct ending is untouched in any meter
+  for (const meter of ['4/4', '3/4', '7/8']) {
+    assert.equal(resolveLoopWrap(cyc('0:m 8 10 7'), { ...CTX, meter }).action, 'none');
+  }
+});
+
+test('D56: the replacement is legal, voiceable, deterministic, and never a neighbour clone', () => {
+  for (const d of ['0:m 8 10 0:m', '0:m 8 5:m 7:m 0:m 8 7:m 0:m', '0 5 7 0', '7 0 7:sus 2:sus 7']) {
+    const fam = /^0:m/.test(d) ? 'minor' : 'major';
+    const r1 = resolveLoopWrap(cyc(d), { meter: '4/4', family: fam, home: 0, qualities: QUALITIES });
+    const r2 = resolveLoopWrap(cyc(d), { meter: '4/4', family: fam, home: 0, qualities: QUALITIES });
+    assert.deepEqual(r1.cycle, r2.cycle, `${d}: not deterministic`);
+    if (r1.action !== 'replace') continue;
+    const c = r1.cycle;
+    const last = c.at(-1), prev = c.at(-2), first = c[0];
+    assert.ok(QUALITIES.has(last.quality), `${d}: unvoiceable replacement quality "${last.quality}"`);
+    assert.notEqual(last.semis, first.semis, `${d}: still doubles the first bar`);
+    assert.ok(!(last.semis === prev.semis && last.quality === prev.quality), `${d}: cloned its neighbour`);
+    assert.ok(r1.options.length >= 2, `${d}: no alternates for in-song variation`);
+  }
+});
+
+test('D56: the parallel-flip device is in the palette even when the score buries it', () => {
+  // t23's cycle. Ethan proposed ending it "...Gm G" — the raised-V flip. The
+  // score is honest that flips are rare (2.84% in the corpus), so it ranks 6th
+  // of 11, but a variation palette that omits the one move he asked for by name
+  // is not his palette. It rides along flagged as the device it is.
+  const t23 = cyc('0:m 8 5:m 7:m 0:m 8 7:m 0:m');
+  const r = resolveLoopWrap(t23, { ...CTX, meter: '4/4' });
+  assert.equal(r.action, 'replace');
+  const flip = r.options.find((o) => o.note);
+  assert.ok(flip, 'the flip device is missing from the options');
+  assert.equal(flip.semis, 7);
+  assert.equal(thirdClass(flip.quality), 'maj', 'the flip of Gm must carry a major third — the "G" of "Gm to G"');
+  // and the flip never proposes the chord that is already there
+  assert.ok(!(flip.semis === 7 && flip.quality === 'm'));
+});
+
+test('D56: wrapReplacements scores through the ear-informed prior, not a private one', () => {
+  // The wrap term must feel the seeded V->i cadence vote: with the ear off, the
+  // V candidate scores strictly lower. If this fails, the replacement picker has
+  // grown its own opinion channel, which is the exact split D50 forbade.
+  const t23 = cyc('0:m 8 5:m 7:m 0:m 8 7:m 0:m');
+  const on = wrapReplacements(t23, CTX).find((o) => o.semis === 7);
+  const off = wrapReplacements(t23, { ...CTX, ear: false }).find((o) => o.semis === 7);
+  assert.ok(on && off, 'the V candidate vanished');
+  assert.ok(on.score > off.score, `ear on ${on.score} should beat ear off ${off.score}`);
+});

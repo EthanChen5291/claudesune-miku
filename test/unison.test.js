@@ -170,10 +170,11 @@ test('D29: observed voicings cover qualities the library has no shape for', () =
 });
 
 test('D29: both corpora share one retrieval entry point, distinguishable by pack', () => {
-  // 188 ldrolez + 72 unison + the undertale pool (D30) + the vgmusic pool (D52),
-  // each counted by its own tests
+  // 188 ldrolez + 72 unison + the undertale pool (D30) + the vgmusic pool (D52)
+  // + the video pool (D57), each counted by its own tests
   assert.equal(Object.keys(ALL_PROGRESSIONS).length,
-    260 + findProgressions({ pack: 'undertale' }).length + findProgressions({ pack: 'vgmusic' }).length);
+    260 + findProgressions({ pack: 'undertale' }).length + findProgressions({ pack: 'vgmusic' }).length
+      + findProgressions({ pack: 'igvideo' }).length);
   assert.equal(findProgressions({ pack: 'ldrolez' }).length, 188);
   assert.equal(findProgressions({ pack: ['unison-famous', 'unison-dark', 'unison-emotional'] }).length, 72);
   assert.equal(findProgressions({ pack: 'unison-dark' }).every((r) => r.entry.moods.includes('Dark')), true);

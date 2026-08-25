@@ -385,10 +385,13 @@ D42 (unpkg + jsdelivr, version-matched, tried in turn).
   otherwise rank last; new "wide oom-pah" tone per Ethan's t22 request.
 
 NEXT:
-0. OPEN FORK FOR ETHAN — when a loop's last chord repeats its first, trim it
-   (keeps the harmony, can leave an odd loop: `Cm Ab Bb Cm` -> 3 bars) or
-   REPLACE it (keeps 4 bars, changes a chord — what he proposed in t23)?
-   Defaulted to trim; one operator away either way.
+0. [RESOLVED — D56 addendum] The wrap fork is METER-FIRST (Ethan): even meter
+   -> replace the duplicate (keeps bar count; ranked alternates carried as
+   variation material), odd meter -> trim. resolveLoopWrap() in loops.js; both
+   4/4 audition pages replace now. The parallel-flip device (v->V, "Gm to G")
+   always rides in the options palette even though the score honestly ranks it
+   low. NEXT for this: song generation must pass its actual meter instead of
+   assuming 4/4.
 0b. RESEARCH — tone switching through the song. Corpus head start:
    DEVELOPMENT_UNDERTALE has 23 observed FROM->TO accompaniment transitions with
    counts, and 53 of 112 development moves (47%) change the texture. What is
@@ -396,7 +399,20 @@ NEXT:
 0c. RESEARCH — harmony variation as a PLACED event, not a sprinkle. D50 builds
    the variations; nothing decides where they go. First real requirement of the
    chronological-editing phase.
-1. *** RE-RUN audition/facets.html AND audition/judge.html. *** facets first — it
+0d. [done, D57] TWELVE VIDEOS TRANSCRIBED BY EYE -> pack 'igvideo': 18 section
+   entries (Fujii Kaze x3, jazz ballad in E, neo-soul in F, dim chain in C#,
+   city-pop in C x3, modulation etude x3), 2 flourishes as placed events with
+   placement+function, video-corpus.md research doc (8 missing harmony
+   techniques + the layering doctrine + melody habits). All needsEar; Ethan
+   endorsed the SOURCES (sourceEndorsed:true), not my transcriptions of them.
+   Hear them: audition/progressions.html, source filter "from the videos".
+   NEXT from the doc: sus-then-alter + end-on-9sus4 as cadence probes (D53
+   wraps bag); altered-dominant-once-per-phrase as a placed operator; lead-lane
+   turn-taking (call & response) in the layer scheduler.
+1. *** RE-RUN audition/facets.html AND audition/judge.html, plus
+   audition/progressions.html filtered to "from the videos" (18 sections to
+   keep/kill — they are eye-reads of videos you like, so a kill likely means I
+   misread; notes welcome). *** facets first — it
    is where the two things Ethan already noticed by ear get generalised, and it
    is the only page whose votes reach the generator directly. Both export JSON;
    `node scripts/import-verdicts.mjs <file.json>` handles either format and

@@ -15,7 +15,7 @@
 import { writeFileSync, mkdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { PROGRESSIONS, parseDegrees, progressionQualities } from '../src/lib/progressions.js';
+import { PROGRESSIONS, ALL_PROGRESSIONS, parseDegrees, progressionQualities } from '../src/lib/progressions.js';
 import { generateProgression, explainProgression } from '../src/lib/harmony-gen.js';
 import { exemplarPool, variationsOf, explainVariation } from '../src/lib/harmony-vary.js';
 import { renderProgression } from '../src/binder/harmony.js';
@@ -93,8 +93,12 @@ for (const [name, e] of EXEMPLARS.entries) {
 }
 
 const entries = [];
+// D57: the video pack rides on this page too — Ethan asked to hear transcribed
+// progressions "in different tones", and this is the page with the textures.
+const VIDEO_ENTRIES = Object.entries(ALL_PROGRESSIONS).filter(([, e]) => e.pack === 'igvideo');
 for (const [name, e, arm] of [
   ...Object.entries(PROGRESSIONS).map(([n, x]) => [n, x, null]),
+  ...VIDEO_ENTRIES.map(([n, x]) => [n, x, 'video']),
   ...generated.map(([n, x]) => [n, x, null]),
   ...varied,
 ]) {
@@ -262,7 +266,7 @@ function page(DATA) {
     <label class="ctl">transpose <input type="range" id="tr" min="-6" max="6" value="0"><span id="trv">0</span></label>
   </div>
   <div class="row" style="margin-top:7px">
-    <label class="ctl">source <select id="fSrc"><option value="">all</option><option value="imported">imported</option><option value="generated">composed (D49)</option><option value="foundation">foundations (D50)</option><option value="varied">variations (D50)</option></select></label>
+    <label class="ctl">source <select id="fSrc"><option value="">all</option><option value="imported">imported</option><option value="generated">composed (D49)</option><option value="foundation">foundations (D50)</option><option value="varied">variations (D50)</option><option value="video">from the videos (D57)</option></select></label>
     <label class="ctl">family <select id="fFam"><option value="">all</option><option>major</option><option>minor</option><option>modal</option></select></label>
     <label class="ctl">mood <select id="fMood"><option value="">all</option></select></label>
     <label class="ctl">chords <select id="fLen"><option value="">all</option></select></label>

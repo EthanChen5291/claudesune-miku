@@ -1537,6 +1537,7 @@ import { VOICINGS } from './voicings.js';
 import { PROGRESSIONS_UNISON } from './progressions-unison.js';
 import { PROGRESSIONS_UNDERTALE } from './progressions-undertale.js';
 import { PROGRESSIONS_VGMUSIC } from './progressions-vgmusic.js';
+import { PROGRESSIONS_VIDEOS } from './progressions-videos.js';
 import { VERDICTS } from './verdicts.js';
 
 /** All pools in one registry. `pack` says where an entry came from; the ldrolez
@@ -1544,6 +1545,9 @@ import { VERDICTS } from './verdicts.js';
  *  MIDI (D29), the undertale set is solved from unlabeled full songs (D30). */
 export const ALL_PROGRESSIONS = {
   ...PROGRESSIONS, ...PROGRESSIONS_UNISON, ...PROGRESSIONS_UNDERTALE, ...PROGRESSIONS_VGMUSIC,
+  // D57: hand-transcribed by eye from the igexport-* videos — the only pack
+  // with no MIDI behind it (coverage: null on every entry, see the file header)
+  ...PROGRESSIONS_VIDEOS,
 };
 
 // D51: the ear, overlaid. `ratified` was false on all 421 entries because the

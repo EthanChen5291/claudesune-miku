@@ -56,7 +56,7 @@ import { exemplarPool } from '../src/lib/harmony-vary.js';
 import { OPS } from '../src/lib/harmony-ops.js';
 import { FACET_VERDICTS } from '../src/lib/facet-verdicts.js';
 import { EAR_COUNT } from '../src/lib/facets.js';
-import { trimLoopWrap, loopIssues } from '../src/lib/loops.js';
+import { resolveLoopWrap } from '../src/lib/loops.js';
 import { evaluateSong, hapsByLabel } from '../src/harness/evaluate.js';
 import { RUNTIME_JS } from './audition-runtime.js';
 
@@ -126,10 +126,14 @@ const bassFor = (ctx) => bind(RHYTHMS[BASS.rhythm], CONTOURS[BASS.contour], ctx,
 /** [{semis,quality}] -> {symbols, exprs, bass} in `family`'s key */
 function build(cycle0, family, textures) {
   const key = keyFor(family);
-  // D56: a written progression that ends by repeating its first chord doubles
-  // that bar every time the loop comes round. Trim for playback; the entry's own
-  // degrees are untouched.
-  const cycle = trimLoopWrap(cycle0);
+  // D56 meter-first: this page is 4/4, so a written progression that ends by
+  // repeating its first chord gets that duplicate REPLACED rather than trimmed —
+  // an even meter wants the bar count kept. The entry's own degrees are
+  // untouched, so vote keys still line up.
+  const cycle = resolveLoopWrap(cycle0, {
+    meter: '4/4', family, home: 0,
+    qualities: new Set(Object.keys(VOICINGS.shell_37.shapes)),
+  }).cycle;
   const symbols = renderProgression({ degrees: toDegrees(cycle), numerals: '?' }, key);
   const ctx = { harmony: symbols, barsPerChord: 1, key };
   const quals = new Set(cycle.map((c) => c.quality));

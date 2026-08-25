@@ -86,7 +86,7 @@ import { RHYTHMS } from '../src/lib/rhythms.js';
 import { CONTOURS } from '../src/lib/contours.js';
 import { VOICINGS, voicingRegistration } from '../src/lib/voicings.js';
 import { FIGURATIONS_UNDERTALE } from '../src/lib/figurations-undertale.js';
-import { trimLoopWrap, loopIssues } from '../src/lib/loops.js';
+import { resolveLoopWrap, loopIssues } from '../src/lib/loops.js';
 import { evaluateSong, hapsByLabel } from '../src/harness/evaluate.js';
 import * as acorn from 'acorn';
 import { toDegrees } from '../src/lib/harmony-prior.js';
@@ -223,12 +223,17 @@ const playable = (e) => [...progressionQualities(e)].every((q) => q in VOICINGS[
  */
 function render(entry) {
   const key = KEY[entry.family] ?? KEY.major;
-  // D56: play the LOOP, not the written-out list. A trailing chord that repeats
-  // the first is a transcription convention ("and back to Cm"), and looping it
-  // doubles that bar every time round — which Ethan flagged three separate times
-  // in one pass. The entry's own `degrees` is untouched, so a tone vote keyed by
-  // it still lines up with the votes already recorded.
-  const cycle = trimLoopWrap(parseDegrees(entry.degrees));
+  // D56 (meter-first, per Ethan 2026-08-25): a trailing chord that repeats the
+  // first is a transcription convention ("and back to Cm") that loops as a
+  // doubled bar. This page is 4/4 — an even meter — so the duplicate is
+  // REPLACED, keeping the bar count, with the runner-up candidates carried as
+  // variation material. The entry's own `degrees` is untouched, so tone votes
+  // keyed by it still line up.
+  const wrap = resolveLoopWrap(parseDegrees(entry.degrees), {
+    meter: '4/4', family: entry.family, home: 0,
+    qualities: new Set(Object.keys(VOICINGS[GATE].shapes)),
+  });
+  const cycle = wrap.cycle;
   const symbols = renderProgression({ degrees: toDegrees(cycle), numerals: entry.numerals }, key);
   const ctx = { harmony: symbols, barsPerChord: 1, key };
   const pats = {};
@@ -244,7 +249,10 @@ function render(entry) {
   }
   return {
     symbols,
-    trimmed: cycle.length !== parseDegrees(entry.degrees).length,
+    wrap: wrap.action === 'none' ? null : {
+      action: wrap.action,
+      options: wrap.options.map((o) => `${o.semis}${o.quality ? ':' + o.quality : ''}`),
+    },
     issues: loopIssues(parseDegrees(entry.degrees)),
     pats,
     bass: bindFigure(FIGURATIONS_UNDERTALE[BASS_FIG], ctx, '4/4', {
@@ -326,7 +334,7 @@ for (const [i, family] of ['major', 'minor', 'major', 'minor'].entries()) {
 }
 
 // 4. Which CORPUS is worth mining? Same question, different packs.
-const PACKS = ['ldrolez', 'undertale', 'unison-famous', 'vgmusic'];
+const PACKS = ['ldrolez', 'undertale', 'unison-famous', 'vgmusic', 'igvideo'];
 for (const [i, family] of ['minor', 'major', 'minor', 'major'].entries()) {
   const pa = PACKS[i % PACKS.length];
   const pb = PACKS[(i + 1) % PACKS.length];
@@ -429,9 +437,10 @@ const byType = (t) => trials.filter((x) => x.type === t).length;
 console.log(`wrote audition/judge.html — ${trials.length} trials (${byType('ab')} A/B, ${byType('layer')} layer, ${byType('open')} open)`);
 console.log(`  ${PATTERNS.length} tones per SIDE per trial — each one playable, likeable and dislikeable:`);
 for (const p of PATTERNS) console.log(`     ${p.label.padEnd(10)} ${p.blurb}`);
-const trimmedSides = trials.flatMap((t) => (t.type === 'ab' ? [t.a, t.b] : [t])).filter((x) => x.trimmed).length;
-if (trimmedSides) {
-  console.log(`  ${trimmedSides} sides had a trailing chord that repeated the first — trimmed for loop playback (D56)`);
+const wrapFixed = trials.flatMap((t) => (t.type === 'ab' ? [t.a, t.b] : [t])).filter((x) => x.wrap);
+if (wrapFixed.length) {
+  const rep = wrapFixed.filter((x) => x.wrap.action === 'replace').length;
+  console.log(`  ${wrapFixed.length} sides ended by repeating their first chord — ${rep} replaced (even meter), ${wrapFixed.length - rep} trimmed (D56 meter-first)`);
 }
 console.log(`  ${checked} patterns evaluated green through the engine's own transpiler (all of them)`);
 console.log(`  inline page script parses clean (${(inline.length / 1024).toFixed(0)} KB)`);
@@ -756,11 +765,13 @@ function draw() {
       const s = document.createElement('div');
       s.className = 'syms';
       s.textContent = side.symbols.join('  ');
-      if (side.trimmed) {
+      if (side.wrap) {
         const w = document.createElement('span');
         w.className = 'trim';
         w.textContent = ' \u21ba';
-        w.title = 'the written progression ended by repeating its first chord; looped, that doubles a bar, so it is trimmed here (D56)';
+        w.title = side.wrap.action === 'replace'
+          ? 'the written progression ended by repeating its first chord; looped, that doubles a bar. 4/4 is an even meter, so the duplicate is REPLACED (D56 meter-first). Alternates for in-song variation: ' + side.wrap.options.join(', ')
+          : 'the written progression ended by repeating its first chord; trimmed for loop playback (D56)';
         s.appendChild(w);
       }
       d.appendChild(s);
@@ -796,7 +807,8 @@ function draw() {
   // single-stimulus trials — same tone list, one card
   const lab = document.createElement('div');
   lab.className = 'hint';
-  lab.textContent = t.label + '  ·  ' + t.symbols.join('  ') + (t.trimmed ? '  \u21ba trimmed' : '');
+  lab.textContent = t.label + '  ·  ' + t.symbols.join('  ')
+    + (t.wrap ? '  \u21ba ' + (t.wrap.action === 'replace' ? 'last chord replaced (was a repeat of the first)' : 'trimmed') : '');
   m.appendChild(lab);
   const card = document.createElement('div');
   card.className = 'side';

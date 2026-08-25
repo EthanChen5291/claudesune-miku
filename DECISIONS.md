@@ -2383,3 +2383,96 @@ uniform." D50 builds the variations; nothing yet decides where they go. This is
 the chronological-editing phase's first real requirement.
 
 257/257.
+
+### D56 addendum — the wrap policy is meter-first (2026-08-25)
+
+Ethan resolved the open fork: "it depends on the desired time signature. time
+signature + other general framework info is decided first before we pick chords.
+if it's even, we can either keep that last chord or replace it (but leans
+towards replacing it -> moreover, there can be multiple replacements as
+variations if they make sense in the song). if it's odd (let's say 3/4 for the
+example), then it's not necessarily needed."
+
+So trim-vs-replace is not a taste constant — it is a CONSEQUENCE of a framework
+decision made earlier in the pipeline, which slots exactly into the standing
+phase order (framework → harmony). `resolveLoopWrap(cycle, {meter, family, home,
+qualities})` in loops.js:
+
+- **odd meter** → trim (a 3-chord loop is at home in 3/4)
+- **even meter** → REPLACE the duplicate, keeping the bar count. The replacement
+  is scored through the ear-informed prior on three terms: how it follows the
+  chord before it (inner), how it resolves back to the top of the loop (the WRAP
+  table — that slot IS the cadence), and its quality-on-degree. Legality: never
+  the first chord's root, never a clone of its neighbour, pinned thirds hold —
+  EXCEPT on the previous chord's own root, where a different third is the named
+  parallel-flip device (v→V), allowed deliberately.
+
+His two examples resolve idiomatically: t27 `Cm Ab Bb Cm` → `Cm Ab Bb Ab`
+(i bVI bVII bVI, the classic), t23 `... Cm Ab Gm Cm` → `... Cm Ab^7 Bb Ab`.
+
+**The flip he proposed ranks 6th of 11 and the score is not rigged to fix that.**
+`inner P(7→7) = 0.027` — the corpus rarely restates a root mid-loop (flips are
+2.84%, D49), and that is the model's honest opinion. But `options` is a
+VARIATION PALETTE, not a probability ranking, so the flip rides along flagged as
+the device it is whenever legal: a palette that omits the one move Ethan asked
+for by name ("Gm to G") is not his palette. A test locks the distinction, and
+another asserts the ear seeds reach the scorer through the shared prior (ear off
+→ the V candidate scores strictly lower) rather than through a private channel.
+
+"there can be multiple replacements as variations" is now load-bearing: the
+ranked `options` are carried onto the judge cards (tooltip on ↺) and are the
+first concrete input to item 0c, variation-as-a-placed-event. Both 4/4 audition
+pages now replace instead of trim: 10 of 10 affected judge sides. 261/261.
+
+## D57 — the video corpus: twelve videos transcribed by eye (2026-08-25)
+
+Ethan dropped twelve Instagram videos in the repo root (piano-roll / falling-
+note renderings with on-screen chord labels; three files were duplicates) with
+the brief: analyze the layering and the harmony/melody techniques, cut the
+chord progressions into SECTIONS ("the chords that went into 8 or 4 measures
+... not 8 or 4 chords"), keep each song's "special thing" (a quick arpeggio
+etc.) OUT of the progression but recorded with its intervals, speed, placement
+and function — and note that he is "a fan of how all the songs sound."
+
+**Method.** Frames sampled at 1–2 fps, montaged into sheets, chord labels and
+rolls read by eye (~60 sheet reads). Ten of twelve videos were fully mapped;
+video 5's exact pitches and video 12's second stab chord were left out on
+confidence grounds and noted as such.
+
+**What landed where:**
+
+- `src/lib/progressions-videos.js` — 18 section entries, pack `igvideo`,
+  hand-written (the first pack with NO MIDI behind it): 3× Fujii Kaze
+  (quiz clip, Yasashisa, Prema with its parallel-key modulation), a jazz
+  ballad study in E, a neo-soul loop in F, the complete descending-diminished
+  chain in C#, a 3-section city-pop catalogue in C, and 3 sections of a
+  four-key modulation etude. Every entry: `coverage: null` (no labeller ran),
+  `voicedAs` preserving the full displayed labels (F7(9,13) etc.) that the
+  degrees grammar simplifies, `song`+`section`+`sectionBars` so sections can
+  be recombined ("they can be mixed"), and `sourceEndorsed: true` — which does
+  NOT pre-ratify: the endorsement is of the source, my transcription still
+  needs the ear (A6.1).
+- `src/lib/figurations-videos.js` — flourishes as PLACED EVENTS with
+  `placement` and `function` fields: the ascending o7 run (all chord tones —
+  fast but consonant — on a held dim pivot), and the stepwise walk-up
+  connector (back half of a bar, aimed at the next chord's downbeat). Both
+  bind and play through bindFigure today.
+- `video-corpus.md` — the research doc: 8 harmony techniques the corpus lacks
+  (9sus4 as structure, one-altered-dominant-per-phrase, bV7(#11) slides,
+  chromatic planing, the dim chain, borrowed-maj7 "hopeful lift" endings,
+  never-state-the-tonic loops, modulation via shared V / sus9 pivots), the
+  layering doctrine the four production videos agree on (one function per
+  layer, extreme sparsity, absolute register lanes, call & response as
+  lead-lane TURN-TAKING, the six-step Animal Crossing recipe ending in "a
+  splash of dissonance"), and melody habits kept as profiles per D30.
+
+**Registered and audible.** The pack joins ALL_PROGRESSIONS (523 entries,
+2691 transitions in the rebuilt counted model — the videos' transitions now
+inform the prior, which is defensible because their LABELS are displayed, not
+inferred), rides audition/progressions.html as its own source filter ("from
+the videos"), and joins the judge page's which-corpus contrast. Atlas rebuilt.
+
+**Genre boundary respected.** Per Ethan ("notably jazz ... will mix
+differently"), every entry carries a style tag (jazz-ballad, neo-soul,
+city-pop, jpop-rnb, gospel, jpop-ballad) so retrieval can keep idioms apart
+until blending rules exist. 266/266.
