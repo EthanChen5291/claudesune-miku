@@ -23,6 +23,18 @@
 // transcription of it — a verdict on my reading of a video is still the ear's
 // to give (A6.1), so ratified stays false and needsEar stays true.
 //
+// D64 — A THIRTEENTH SOURCE, AND A STRONGER EVIDENCE CLASS. Ethan added a
+// screen recording of an Instagram reel (not an igexport-* file) and asked for
+// it to be analyzed. That one was read TWICE and independently: the on-screen
+// labels at 4 fps, and the audio — onset detection plus iterative harmonic
+// subtraction over the FFT, which recovers the sounding pitches per strike.
+// All 15 strikes agreed with their label, so the entry carries
+// `provenance: 'video+audio-transcribed'` and `audioConfirmed: true` to keep it
+// distinct from the eye-only reads above. `coverage` stays null regardless: the
+// D45 labeller works on MIDI and still has not run on any of this. That entry
+// also carries `observedVoicing` — the measured register/inversion of each
+// chord, which no eye-read in this pack can supply.
+//
 // GENRE NOTE (Ethan): several of these are jazz/city-pop/neo-soul — "different
 // genre from ours ... will be more intricate to mix around and such and will
 // mix differently." The style tags say which idiom each came from so retrieval
@@ -339,5 +351,503 @@ export const PROGRESSIONS_VIDEOS = {
     notes: 'After the parallel-key lift: IV–iii–ii diatonic walk that never states the tonic, then '
       + 'the chromatic bass descent Bb–A–Ab–G (bVImaj7 -> vm9 -> bV7#11 -> IVmaj7), the Ab7(#11) '
       + 'rainbow-flagged. Same never-touch-home trick as the quiz clip\'s A section, in major.',
+  },
+
+  // -------------------------------------------------------------------------
+  // ScreenRecording_08-26-2026 00-35-16_1.MP4 — Instagram reel by @eunyu_pia,
+  // captioned "Chord progression". 14.85s, one right hand playing block chords
+  // on a digital piano, handwritten yellow labels burned into the frame.
+  // 15 strikes on an even ~0.92s grid (=> ~131 BPM in 4/4, two chords/bar at
+  // the ii-V pairs, one elsewhere); the recording clips bar 1's downbeat.
+  // Voicings are RH-only, no bass part, every note inside E3-E4 — see
+  // `observedVoicing`. Top voice sits on E4 for nine strikes then D4 for the
+  // rest; the bottom of the voicing does all the walking
+  // (G3-G#3-G3-F3-G3-F3-E3-G3-F3-F3).
+  // -------------------------------------------------------------------------
+  vid_eunyu_circle: {
+    family: 'major', pack: 'igvideo', role: 'harmony', style: 'city-pop',
+    provenance: 'video+audio-transcribed', audioConfirmed: true,
+    ratified: false, needsEar: true, sourceEndorsed: false,
+    song: '@eunyu_pia chord progression reel (C major)', section: 'A', sectionBars: 8,
+    source: 'ScreenRecording_08-26-2026 00-35-16_1.MP4',
+    numerals: 'I-III7-vim7-vm7-I7-IV^7-iiim7-VI7-iim7-V7',
+    degrees: '0 4:7 9:m7 7:m7 0:7 5:^7 4:m7 9:7 2:m7 7:7',
+    voicedAs: ['C', 'E7', 'Am7', 'Gm7', 'C7', 'FM7', 'Em7', 'A7', 'Dm7', 'G7'],
+    observedVoicing: [
+      ['G3', 'C4', 'E4'],          // C, second inversion, plain triad
+      ['G#3', 'B3', 'D4', 'E4'],   // E7
+      ['G3', 'A3', 'C4', 'E4'],    // Am7
+      ['F3', 'G3', 'Bb3', 'D4'],   // Gm7
+      ['G3', 'Bb3', 'C4', 'E4'],   // C7
+      ['F3', 'A3', 'C4', 'E4'],    // FM7, root position
+      ['E3', 'G3', 'B3', 'D4'],    // Em7, root position
+      ['G3', 'A3', 'C#4', 'E4'],   // A7
+      ['F3', 'A3', 'C4', 'D4'],    // Dm7
+      ['F3', 'G3', 'B3', 'D4'],    // G7
+    ],
+    sourceKey: 'C:major', coverage: null, moods: ['warm', 'cycling'],
+    character: null,
+    notes: 'A descending circle-of-fifths chain with a secondary dominant at EVERY turn: '
+      + 'E7->Am7, C7->FM7, A7->Dm7, and the closing V7. Four dominants in eight bars, all of them '
+      + 'plain and unaltered — the exact inverse of the rest of this pack, where the rule read off '
+      + 'the videos was one ALTERED dominant per phrase and never two in a row (video-corpus.md). '
+      + 'Kept as the contrast case: the chain, not the spice, is what carries it, and what makes it '
+      + 'sound smooth rather than restless is the static top voice over a walking bottom voice. '
+      + 'The two connector chords (Gm7-C7 = ii-V into IV, Em7-A7 = iii-VI7 into ii) take half a bar '
+      + 'each while everything else takes a full one. Label and audio agreed on all 15 strikes.',
+  },
+
+  // ==========================================================================
+  // BATCH 2 (D68, session 2026-08-26): seventeen new igexport reels + five
+  // screen recordings, transcribed by a 22-agent frame-read pass (full
+  // per-video analyses in video-corpus.md). Ethan's brief for this batch:
+  // "analyze the extra stuff they do in the harmony between chords to give
+  // that song personality, as well as ... the harmony pattern itself (e.g the
+  // chord up the octaves pattern)". The between-chord devices went to
+  // figurations-videos.js; the progressions are below. sourceEndorsed: false
+  // on every one — the D57 blanket ("i am a fan of how all the songs sound")
+  // was said about the original twelve and does not reach a later source
+  // (the D64 rule). needsEar throughout.
+  // ==========================================================================
+
+  // -------------------------------------------------------------------------
+  // igexport-DcY-6NdSCFY — "Tyler, the Creator Type Chords" (his named ask).
+  // ~81bpm, F major, one 2-bar loop. LH low root + RH rootless upper structure
+  // a 10th+ up. Almost every change lands on an offbeat "and" — the lilt is
+  // written into the harmonic rhythm. The famous "two extra notes" (E5+G#5
+  // dyad converting Csus13 into C9b13) is vid_tag_sus_melt in figurations.
+  // -------------------------------------------------------------------------
+  vid_tyler_loop: {
+    family: 'major', pack: 'igvideo', role: 'harmony', style: 'neo-soul',
+    provenance: 'video-transcribed', ratified: false, needsEar: true, sourceEndorsed: false,
+    song: 'Tyler, the Creator type chords (F major)', section: 'A', sectionBars: 2,
+    source: 'igexport-DcY-6NdSCFY.mp4',
+    numerals: 'iim9-Vsus13-V9b13-I^9-viim9-III7alt',
+    degrees: '2:m9 7:sus 7:7 0:^9 11:m9 4:7',
+    voicedAs: ['Gm9', 'Csus13', 'C9b13', 'Fmaj9', 'Em9', 'A7b9b13'],
+    sourceKey: 'F:major', coverage: null, moods: ['dreamy', 'warm', 'sly'],
+    character: null,
+    notes: 'ii-V-I in F with a iii-VI7alt turnaround. Csus13 recycles Gm9’s EXACT upper '
+      + 'structure (Bb-D-F-A) over the new C bass — suspension by recycling, then the sus melts '
+      + 'to C9b13 via the two-note dyad tag. Top voice sings A-A-G#-G across the first four chords. '
+      + 'On the long chords the top two notes are RELEASED one at a time (9th first, then the 7th) '
+      + '— the loop breathes by decay, not by fills. Voicings read off the lit-key overlay.',
+  },
+
+  // -------------------------------------------------------------------------
+  // igexport-DceNMCmuYZV — the G#m9 octave-climb reel (his named ask).
+  // ~80bpm, outdoor stage piano. The whole rootless cluster is RESTRUCK as a
+  // block one octave higher per beat (3 positions; 2 for the bII), bass only
+  // under position 1, fully detached between strikes. The two-note walk-down
+  // tag after the top octave is vid_tag_climb_walkdown in figurations.
+  // -------------------------------------------------------------------------
+  vid_gsharp_climb: {
+    family: 'minor', pack: 'igvideo', role: 'harmony', style: 'cinematic-rnb',
+    provenance: 'video-transcribed', ratified: false, needsEar: true, sourceEndorsed: false,
+    song: 'G#m9 octave-climb reel (G# minor)', section: 'A', sectionBars: 4,
+    source: 'igexport-DceNMCmuYZV.mp4',
+    numerals: 'im9-ivm9-V7#5#9-bII9#11',
+    degrees: '0:m9 5:m9 7:7 1:9',
+    voicedAs: ['G#m9', 'C#m9', 'D#7#5#9', 'A9#11(no3)'],
+    sourceKey: 'G#:minor', coverage: null, moods: ['lush', 'melancholic', 'dramatic'],
+    character: null,
+    notes: 'Displayed with roman numerals on screen: i-iv-V-bII. Minor-9 clusters put the 9 a '
+      + 'HALF-STEP under the b3 (A#-B-D#-F#-A#); the altered V transplants the same rub onto '
+      + '#9-3 (F#-G-B-C#-F#); the bII is a pure major-3rd stack (G-B-D#-G-B), Lydian-dominant '
+      + 'shimmer. Each chord climbs the 88 in block restrikes — terraced echoes, not a swell. '
+      + 'Voicings pixel-decoded from the lit-key strip at 20fps; all matched the labels.',
+  },
+
+  // -------------------------------------------------------------------------
+  // igexport-DbEktz0I_j8 — "Use these chords" (Donner piano, bedroom studio).
+  // ~107bpm. Chromatic m9/maj9 planing; every RH voicing is the same shape,
+  // a 4-note stack of 3rds built FROM the chord's 3rd. Its b3->9 two-note tag
+  // is folded into vid_tag_two_note_pickup in figurations.
+  // -------------------------------------------------------------------------
+  vid_use_these_planing: {
+    family: 'minor', pack: 'igvideo', role: 'harmony', style: 'neo-soul',
+    provenance: 'video-transcribed', ratified: false, needsEar: true, sourceEndorsed: false,
+    song: 'Use-these-chords planing loop (C minor)', section: 'A', sectionBars: 4,
+    source: 'igexport-DbEktz0I_j8.mp4',
+    numerals: 'iim9-bII^9-im9-V7sus2',
+    degrees: '2:m9 1:^9 0:m9 7:7sus',
+    voicedAs: ['Dm9', 'Dbmaj9', 'Cm9', 'G7 sus2'],
+    sourceKey: 'C:minor', coverage: null, moods: ['dreamy', 'warm'],
+    character: null,
+    notes: 'Two 9th chords sliding down by semitone into the tonic minor, then a sus V. '
+      + 'Dm9→Dbmaj9 keeps F and C as common tones while A→Ab and E→Eb sink — the '
+      + 'planing is voice-leading, not parallel blocks. RH shape: play the 7th chord a 3rd up over '
+      + 'the bass root (Fmaj7/D, Fm7/Db, Ebmaj7/C). G7sus2 label kept in voicedAs; grammar has 7sus.',
+  },
+
+  // -------------------------------------------------------------------------
+  // igexport-DYP1T7zRAYJ — the "+1 octave" stack reel (G-centered, ~69bpm,
+  // 12/8 feel). Each chord = a close R-3-5-7 stack ROLLED bottom-to-top, then
+  // restated at +1 and +2 octaves, one statement per beat. F#dim7 breaks the
+  // pattern: stated ONCE low, its climb replaced by an octave-doubled
+  // 9->1->maj7 walk-down into the returning Gmaj7 (vid_tag_climb_walkdown).
+  // -------------------------------------------------------------------------
+  vid_octave_stack: {
+    family: 'major', pack: 'igvideo', role: 'harmony', style: 'ballad',
+    provenance: 'video-transcribed', ratified: false, needsEar: true, sourceEndorsed: false,
+    song: 'Octave-stack reel (G)', section: 'A', sectionBars: 4,
+    numerals: 'I^7-im6-viim7-viio7',
+    degrees: '0:^7 0:m6 11:m7 11:o7',
+    voicedAs: ['Gmaj7', 'Gm6', 'F#m7', 'F#dim7'],
+    source: 'igexport-DYP1T7zRAYJ.mp4',
+    sourceKey: 'G:major', coverage: null, moods: ['tender', 'nostalgic', 'dreamy'],
+    character: null,
+    notes: 'Four-voice chromatic glide: G-B-D-F# → G-Bb-D-E → F#-A-C#-E → F#-A-C-D#. '
+      + 'Major to parallel-minor-6 to the m7 a half-step down to its own dim7 — every move is '
+      + 'one or two voices sliding a semitone. The octave climb (x3 per chord) is the texture; '
+      + 'the harmony is the four labels. On-screen captions literally say "+1 octave".',
+  },
+
+  // -------------------------------------------------------------------------
+  // igexport-DbuFbACtERO — "K-Pop/R&B Chords" (~98bpm, D minor).
+  // -------------------------------------------------------------------------
+  vid_kpop_rnb: {
+    family: 'minor', pack: 'igvideo', role: 'harmony', style: 'kpop-rnb',
+    provenance: 'video-transcribed', ratified: false, needsEar: true, sourceEndorsed: false,
+    song: 'K-Pop/R&B chords (D minor)', section: 'A', sectionBars: 5,
+    source: 'igexport-DbuFbACtERO.mp4',
+    numerals: 'bVI^7-V7#5-im7-bviim7-bIII7',
+    degrees: '8:^7 7:7 0:m7 10:m7 3:7',
+    voicedAs: ['Bbmaj7', 'A7#5', 'Dm7', 'Cm7', 'F7'],
+    sourceKey: 'D:minor', coverage: null, moods: ['dreamy', 'tender'],
+    character: null,
+    notes: 'bVI-V7#5-i plus a ii-V (Cm7-F7) pointing back at Bb — the loop’s exit ramp is '
+      + 'built in. Block pads, one strike per chord, pedal down; the one ornament is the A7#5 top '
+      + 'voice re-striking root→b7 mid-bar (label changed "C# F A"→"C# F G" on screen). '
+      + 'LH root + RH close rootless shell; on A7#5 the LH takes root AND b7 itself.',
+  },
+
+  // -------------------------------------------------------------------------
+  // igexport-DceFyBnsRB1 — "Try this these chords:" (Eb major, spelled in
+  // sharps on screen; rubato, ~1 chord/sec). Medium confidence: no MIDI
+  // overlay, voicings read from hand positions + audio onsets.
+  // -------------------------------------------------------------------------
+  vid_try_these_eb: {
+    family: 'major', pack: 'igvideo', role: 'harmony', style: 'gospel-ballad',
+    provenance: 'video-transcribed', ratified: false, needsEar: true, sourceEndorsed: false,
+    song: 'Try-these-chords loop (Eb major)', section: 'A', sectionBars: 5,
+    source: 'igexport-DceFyBnsRB1.mp4',
+    numerals: 'iim9-V^7-Vaug-I-IV^9',
+    degrees: '2:m9 7:^7 7:aug 0 5:^9',
+    voicedAs: ['Fmin9', 'A#maj7', 'A#aug', 'D#maj', 'G#maj9'],
+    sourceKey: 'Eb:major', coverage: null, moods: ['warm', 'sacred'],
+    character: null,
+    notes: 'ii9 → V^7 → Vaug → I → IV^9: the augmented V is the passing event '
+      + '(F#→G motion inside the Bb chord) before the tonic lands. Pass 2 ends on D#maj7 '
+      + 'instead of G#maj9. Bass-first attacks: the low root sounds alone ~0.3s before each RH '
+      + 'stack. Eye-read from hands, no MIDI overlay — medium confidence.',
+  },
+
+  // -------------------------------------------------------------------------
+  // igexport-DZ5k5-xKqzH — "@ChordCamera by Haltber: C minor Fast Cycle with
+  // 3-Note Chords" (~112bpm). Three linked sections. EVERY chord is exactly
+  // 3 notes: lone bass root octaves 1-2 + two guide tones around middle C
+  // (7ths: 3rd-as-10th + 7th; triads: root + 5th + 10th).
+  // -------------------------------------------------------------------------
+  vid_cmfast_cycle: {
+    family: 'minor', pack: 'igvideo', role: 'harmony', style: 'cinematic',
+    provenance: 'video-transcribed', ratified: false, needsEar: true, sourceEndorsed: false,
+    song: 'C minor fast cycle, 3-note chords', section: 'A', sectionBars: 3,
+    source: 'igexport-DZ5k5-xKqzH.mp4',
+    numerals: 'ivm7-bVII7-bIII^7-bVI^7-iio-V7',
+    degrees: '5:m7 10:7 3:^7 8:^7 2:o 7:7',
+    voicedAs: ['Fm7', 'Bb7', 'EbΔ7', 'AbΔ7', 'D°', 'G7'],
+    sourceKey: 'C:minor', coverage: null, moods: ['driving', 'noble'],
+    character: null,
+    notes: 'A fast minor circle: iv-bVII-bIII-bVI-iio-V, two chords per bar — the harmonic '
+      + 'rhythm IS the energy. Three-note spread voicings keep it clean at speed: the D51 lesson '
+      + '(sparse voicings survive fast cycles) stated as a whole video.',
+  },
+  vid_cmfast_tag: {
+    family: 'minor', pack: 'igvideo', role: 'harmony', style: 'cinematic',
+    provenance: 'video-transcribed', ratified: false, needsEar: true, sourceEndorsed: false,
+    song: 'C minor fast cycle, 3-note chords', section: 'B', sectionBars: 1,
+    source: 'igexport-DZ5k5-xKqzH.mp4',
+    numerals: 'im-bVII6-bIII-im7',
+    degrees: '0:m 10 3 0:m7',
+    voicedAs: ['Cm', 'Bb/D', 'Eb', 'Cm7'],
+    sourceKey: 'C:minor', coverage: null, moods: ['driving'],
+    character: null,
+    notes: 'The landing bar: quarter-note passing-chord walk, bass C→D→Eb→C '
+      + '(Bb/D is a first-inversion passing chord). A written-out walk instead of a held tonic.',
+  },
+  vid_cmfast_ending: {
+    family: 'minor', pack: 'igvideo', role: 'harmony', style: 'cinematic',
+    provenance: 'video-transcribed', ratified: false, needsEar: true, sourceEndorsed: false,
+    song: 'C minor fast cycle, 3-note chords', section: 'C', sectionBars: 2,
+    source: 'igexport-DZ5k5-xKqzH.mp4',
+    numerals: 'iio-Vaug-V-im',
+    degrees: '2:o 7:aug 7 0:m',
+    voicedAs: ['D°', 'G#5', 'G', 'Cm'],
+    sourceKey: 'C:minor', coverage: null, moods: ['grave', 'noble'],
+    character: null,
+    notes: 'The notated "G#5 > G": over a held G bass + B, the #5 (D#) is struck on beat 3 and '
+      + 'falls one half-step to the natural 5th (D) on beat 4, then Cm. A one-note chromatic '
+      + 'inner-voice slide as the entire cadence ornament — the cheapest possible "extra".',
+  },
+
+  // -------------------------------------------------------------------------
+  // igexport-Daa21N3RUlX — "Take these damn chords / Write a damn song"
+  // (acoustic upright, ~120bpm, metronomic quarter-note blocks, F minor).
+  // One close RH shape morphing by half-steps; NO fills at all — the
+  // personality is entirely voicing motion (b9 slide, aug rub).
+  // -------------------------------------------------------------------------
+  vid_damn_fm_loop: {
+    family: 'minor', pack: 'igvideo', role: 'harmony', style: 'neo-soul',
+    provenance: 'video-transcribed', ratified: false, needsEar: true, sourceEndorsed: false,
+    song: 'Damn chords, F minor upright', section: 'A', sectionBars: 6,
+    source: 'igexport-Daa21N3RUlX.mp4',
+    numerals: 'im(add9)-Vaug/3-bIII7/b7-bviim7-bIII7-bVI^7-Vaug7',
+    degrees: '0:m 7:aug 3:7 10:m7 3:7 8:^7 7:7',
+    voicedAs: ['Fmi9', 'C#5/E', 'Ab7/Eb', 'Ebm7', 'Ab7', 'Dbmaj7', 'C7#5'],
+    sourceKey: 'F:minor', coverage: null, moods: ['plaintive', 'warm'],
+    character: null,
+    notes: 'The bottom voice of one fixed RH shape walks down chromatically (F→E→Eb…) while '
+      + 'the top anchors on C for nearly the whole loop. On the Ab7 the top two voices each '
+      + 'drop a half-step (Db→C = 3rd, Bb→A = b9) over held Eb+Gb — a rootless 7b9/dim '
+      + 'shimmer for two beats before Dbmaj7. On-screen chord card names the whole loop.',
+  },
+
+  // -------------------------------------------------------------------------
+  // igexport-DcB52lyPaNg — "Take these damn chords" (Ab walkdown). The
+  // detector-label reel: color tones stacked one finger at a time on TOP of
+  // held chords, whole-shape chromatic slides INTO the next chord.
+  // -------------------------------------------------------------------------
+  vid_damn_walkdown: {
+    family: 'major', pack: 'igvideo', role: 'harmony', style: 'neo-soul',
+    provenance: 'video-transcribed', ratified: false, needsEar: true, sourceEndorsed: false,
+    song: 'Damn chords, Ab walkdown', section: 'A', sectionBars: 6,
+    source: 'igexport-DcB52lyPaNg.mp4',
+    numerals: 'I^7-bVII^13-vim7-vm7-bV7#5-IV^13',
+    degrees: '0:^7 10:^7 9:m7 7:m7 6:7 5:^7',
+    voicedAs: ['AbMaj7', 'F#Maj13(no9)', 'Fmin7', 'Ebmin7(13)', 'D7#5', 'DbMaj13(no9)'],
+    sourceKey: 'Ab:major', coverage: null, moods: ['dreamy', 'sly'],
+    character: null,
+    notes: 'Descending-bass walkdown Ab→Gb→F→Eb→D→Db: I → bVII^13 → vi → MINOR v '
+      + '(no dominant anywhere) → passing D7#5 → IV^13, then an ending twist the grammar '
+      + 'cannot hold: E-natural slipped under a Dbm color (detector: Bbmin7b5(11)/E) — a '
+      + 'minor-plagal noir ending left hanging. Maj13 chords enter as plain ^7 and get their '
+      + '13th STACKED ON one finger at a time while the chord rings (the detector relabels live).',
+  },
+
+  // -------------------------------------------------------------------------
+  // igexport-DbOexm8RS5a — "Take these damn chords" (Db gospel turnaround,
+  // rubato, roll-in shells: every chord introduced as bass root + ONE high
+  // color note held alone before the inner voices roll in).
+  // -------------------------------------------------------------------------
+  vid_damn_gospel: {
+    family: 'major', pack: 'igvideo', role: 'harmony', style: 'gospel-ballad',
+    provenance: 'video-transcribed', ratified: false, needsEar: true, sourceEndorsed: false,
+    song: 'Damn chords, Db gospel turnaround', section: 'A', sectionBars: 8,
+    source: 'igexport-DbOexm8RS5a.mp4',
+    numerals: 'IV^7-V13b9-vim9-ivm^7-iiim7-iiio7-iim9-V7b9-I^7',
+    degrees: '5:^7 7:7 8:m9 5:m 3:m7 3:o7 1:m9 7:7 0:^7',
+    voicedAs: ['F#Maj13(no9)', 'Ab13(b9)', 'Bbmin9', 'F#minMaj7(13)', 'Fmin7', 'Fdim7', 'Ebmin9', 'Ab7(b9)', 'DbMaj7'],
+    sourceKey: 'Db:major', coverage: null, moods: ['sacred', 'warm', 'sweeping'],
+    character: null,
+    notes: 'Full gospel turnaround: IV-V-vi, borrowed minor-iv(maj7), iii into a passing dim7, '
+      + 'then ii-V7b9-I. The roll-in shell is the signature: "F# Major 7th" first sounds as just '
+      + 'F#3+F5 (root + maj7 two octaves apart), naked, before the middle fills in — the chord '
+      + 'arrives as a QUESTION and resolves into itself.',
+  },
+
+  // -------------------------------------------------------------------------
+  // igexport-DaHBG7LtDab — "Use these damn chords" (Db constant-structure
+  // planing). ONE fixed upper-structure (Bbm triad: Bb-Db-F, the 6th/root/3rd
+  // of Db) held while the bottom note of the same hand walks: the harmony is
+  // the bass line. Every ~2s a single Eb6 lands above the held Db6, making a
+  // major-2nd cluster and re-naming the chord (the "+13" move).
+  // -------------------------------------------------------------------------
+  vid_damn_planing: {
+    family: 'major', pack: 'igvideo', role: 'harmony', style: 'neo-soul',
+    provenance: 'video-transcribed', ratified: false, needsEar: true, sourceEndorsed: false,
+    song: 'Damn chords, Db constant-structure', section: 'A', sectionBars: 5,
+    source: 'igexport-DaHBG7LtDab.mp4',
+    numerals: 'IV^7-III7#5-I6-ivm7b5... (bass-walk reading)',
+    degrees: '5:^7 3:7 0:6 6:m7b5 0',
+    voicedAs: ['F#Maj7', 'F7#5', 'DbMaj6/Ab', 'Gm7b5', 'Db/Ab'],
+    sourceKey: 'Db:major', coverage: null, moods: ['dreamy', 'floating'],
+    character: null,
+    notes: 'Constant-structure planing: the upper Bbm triad NEVER moves; the bass walks '
+      + 'Gb→F→Ab→G→(Gb→A)→Db and each stop renames the same three notes. Ends on Db '
+      + 'inversions (Db/Ab, Db/F). The one ornament: Eb pressed above the held Db — a '
+      + 'major-2nd cluster that converts whatever chord is ringing into its (no9)13 form.',
+  },
+
+  // -------------------------------------------------------------------------
+  // igexport-DZ93AHcBuac — hand-cam bubble-label loop, D major, 120bpm,
+  // one right hand, NO bass register at all (measured: zero low-band energy).
+  // -------------------------------------------------------------------------
+  vid_dmaj_circle: {
+    family: 'major', pack: 'igvideo', role: 'harmony', style: 'jpop-rnb',
+    provenance: 'video-transcribed', ratified: false, needsEar: true, sourceEndorsed: false,
+    song: 'D-major bubble-label circle', section: 'A', sectionBars: 8,
+    source: 'igexport-DZ93AHcBuac.mp4',
+    numerals: 'I-viim7b5-III7-vim7-vm7-I7-IV-I-II7-V7',
+    degrees: '0 11:m7b5 4:7 9:m7 7:m7 0:7 5 0 2:7 7:7',
+    voicedAs: ['D', 'C#m7(b5)', 'F#7', 'Bm7', 'Am7', 'D7', 'G', 'D', 'E7', 'A7'],
+    sourceKey: 'D:major', coverage: null, moods: ['warm', 'circling'],
+    character: null,
+    notes: 'The city-pop workhorse: I → viiø-III7 (into vi) → v-I7 (into IV) → II7-V7 turn. '
+      + 'Same family as vid_eunyu_circle — frequent PLAIN dominants, none altered — second '
+      + 'witness for that fork. Its metronomic end-of-bar pickup cell (re-strike on and-of-3, '
+      + 'two 8ths walking UP into the next downbeat) is vid_tag_two_note_pickup.',
+  },
+
+  // -------------------------------------------------------------------------
+  // igexport-DYcEDDITmvV — "City Pop Type Piano Chords" (Ab, ~103bpm,
+  // workstation). Two statements of one cadence with a mode flip.
+  // -------------------------------------------------------------------------
+  vid_citypop_ab_minor: {
+    family: 'minor', pack: 'igvideo', role: 'harmony', style: 'city-pop',
+    provenance: 'video-transcribed', ratified: false, needsEar: true, sourceEndorsed: false,
+    song: 'City pop cadence pair (Ab)', section: 'A', sectionBars: 4,
+    source: 'igexport-DYcEDDITmvV.mp4',
+    numerals: 'ivm9-V7alt-im9',
+    degrees: '5:m9 7:7 0:m9',
+    voicedAs: ['Dbm9', 'Ebalt7', 'Abm9'],
+    sourceKey: 'Ab:minor', coverage: null, moods: ['jazzy', 'nocturnal'],
+    character: null,
+    notes: 'Phrase 1: iv9-V7alt-i9, the minor resolution. Every chord is framed by a stepwise '
+      + 'CLIMB INTO it (four 8ths: 5-6-b7-1 of the coming chord) and a high 9th-in-octaves bell '
+      + 'tag rung ~0.15s AFTER it lands — enter early, decorate late (vid_climb_into_nine).',
+  },
+  vid_citypop_ab_major: {
+    family: 'major', pack: 'igvideo', role: 'harmony', style: 'city-pop',
+    provenance: 'video-transcribed', ratified: false, needsEar: true, sourceEndorsed: false,
+    song: 'City pop cadence pair (Ab)', section: 'B', sectionBars: 4,
+    source: 'igexport-DYcEDDITmvV.mp4',
+    numerals: 'ivm9-V7-I^7',
+    degrees: '5:m9 7:7 0:^7',
+    voicedAs: ['Dbm9', 'Eb7', 'AbM7'],
+    sourceKey: 'Ab:major', coverage: null, moods: ['jazzy', 'hopeful'],
+    character: null,
+    notes: 'Phrase 2 answers phrase 1 with the picardy flip: same iv9-V7 but the dominant '
+      + 'un-alters and lands on the MAJOR tonic. A two-phrase question/answer built from one '
+      + 'cadence and one mode flip — the cheapest possible A/B contrast.',
+  },
+
+  // -------------------------------------------------------------------------
+  // ScreenRecording 13-20-27 — @vanrivermusic "Make it sla..." (chord-app
+  // overlay, Eb). The app logs every sub-shape struck between full chords,
+  // so the fills are directly readable (root+b7 / root+b3 dyad taps).
+  // -------------------------------------------------------------------------
+  vid_slap_eb: {
+    family: 'major', pack: 'igvideo', role: 'harmony', style: 'neo-soul',
+    provenance: 'video-transcribed', ratified: false, needsEar: true, sourceEndorsed: false,
+    song: 'vanriver Eb loop', section: 'A', sectionBars: 4,
+    source: 'ScreenRecording_08-26-2026 13-20-27_1.MP4',
+    numerals: 'I6/9-iim7(11)-vim7-bVII^9(13)',
+    degrees: '0:6 2:m7 9:m7 10:^9',
+    voicedAs: ['Eb 6/9', 'Fmin7(11)', 'Cmin7', 'DbMaj9(13)'],
+    sourceKey: 'Eb:major', coverage: null, moods: ['warm', 'relaxed'],
+    character: null,
+    notes: 'I-ii-vi-bVII (backdoor color) voiced as close 2nds+4ths cluster stacks over plain '
+      + 'LH roots. The Fm7(11) bar sometimes climbs the whole voicing two octaves — the same '
+      + 'climb family as vid_gsharp_climb, one chord only. Between chords: bare dyad taps '
+      + '(root+b7, root+b3, root+9) logged by the app — shells as connective tissue.',
+  },
+
+  // -------------------------------------------------------------------------
+  // ScreenRecording 13-25-13 — @bronikbeats "Impossible" (his named ask: the
+  // black-shirt facecam synth build). C minor, 102bpm, five Serum 2 layers.
+  // The full layering breakdown is in video-corpus.md; the harmony is below.
+  // -------------------------------------------------------------------------
+  vid_bronik_descent: {
+    family: 'minor', pack: 'igvideo', role: 'harmony', style: 'melodic-trap',
+    provenance: 'video-transcribed', ratified: false, needsEar: true, sourceEndorsed: false,
+    song: 'bronikbeats Impossible (C minor)', section: 'A', sectionBars: 4,
+    source: 'ScreenRecording_08-26-2026 13-25-13_1.MP4',
+    numerals: 'im(add9)-bIII^7/5-bVI^7#11-v(b13)',
+    degrees: '0:m 3:^7 8:^7 7',
+    voicedAs: ['Cm(add9)', 'Cm/Bb', 'Abmaj7(#11)', 'G(b13)'],
+    sourceKey: 'C:minor', coverage: null, moods: ['dark', 'epic', 'driving'],
+    character: null,
+    notes: 'The reharmonized-pedal trick: the upper three-note cell D-Eb-G NEVER moves; only '
+      + 'the bottom note descends C→Bb→Ab→G (i→bVII→bVI→v), re-naming the same cell as '
+      + 'add9, maj7-color, lydian #11, then a b13 rub. Read off the FL piano roll (note-name '
+      + 'labels visible). Ethan on the opening figure: "that sounds good".',
+  },
+
+  // -------------------------------------------------------------------------
+  // igexport-Db-2YGCvU68 — pixel-font modulation reel (Ab minor → A minor).
+  // Three sections, one song: two parallel minor loops a semitone apart
+  // sharing one m7(11) grip, welded by a chromatic dominant elevator.
+  // -------------------------------------------------------------------------
+  vid_pixel_abm: {
+    family: 'minor', pack: 'igvideo', role: 'harmony', style: 'neo-soul',
+    provenance: 'video-transcribed', ratified: false, needsEar: true, sourceEndorsed: false,
+    song: 'Pixel-font modulation reel', section: 'A', sectionBars: 4,
+    source: 'igexport-Db-2YGCvU68.mp4',
+    numerals: 'im7(11)-iim7-III^7',
+    degrees: '0:m7 2:m7 3:^7',
+    voicedAs: ['Abm7(11)', 'Bbm7', 'BM7'],
+    sourceKey: 'Ab:minor', coverage: null, moods: ['dreamy', 'nocturnal'],
+    character: null,
+    notes: 'i7(11)-ii7-III^7 loop; after the III the upper voicing HOLDS while the bass walks '
+      + 'down chromatically B→Bb→A→Ab (root→maj7→b7→new root, the labels "/Bb" "/A") as '
+      + 'quick 16ths in the last half-beat — the walkdown IS the turnaround. The m7(11) grip '
+      + '(root under a quartal b7-b3-11-5 stack) is the identity sound of the whole reel.',
+  },
+  vid_pixel_elevator: {
+    family: 'minor', pack: 'igvideo', role: 'harmony', style: 'neo-soul',
+    provenance: 'video-transcribed', ratified: false, needsEar: true, sourceEndorsed: false,
+    song: 'Pixel-font modulation reel', section: 'B', sectionBars: 2,
+    source: 'igexport-Db-2YGCvU68.mp4',
+    numerals: 'III7b13-#IV7b13-V7alt-VI7 (chromatic climb)',
+    degrees: '4:7 6:7 7:7 8:7',
+    voicedAs: ['C7b13', 'D7b13', 'Eb7alt', 'E7'],
+    sourceKey: 'Ab:minor', coverage: null, moods: ['tense', 'rising'],
+    character: null,
+    notes: 'The modulation machine: four dominants climbing by whole then half steps, each '
+      + 'b13-flavored, landing a half-step up in A minor. Frequent AND altered — the one thing '
+      + 'the D57 corpus said was not in evidence anywhere. It is now: the exception exists, and '
+      + 'its job is MODULATION, not phrase color.',
+  },
+  vid_pixel_am: {
+    family: 'minor', pack: 'igvideo', role: 'harmony', style: 'neo-soul',
+    provenance: 'video-transcribed', ratified: false, needsEar: true, sourceEndorsed: false,
+    song: 'Pixel-font modulation reel', section: 'C', sectionBars: 6,
+    source: 'igexport-Db-2YGCvU68.mp4',
+    numerals: 'im7(11)-iim7-III^7-VI7-vm7(11)-bII7',
+    degrees: '0:m7 2:m7 3:^7 8:7 7:m7 1:7',
+    voicedAs: ['Am7(11)', 'Bm7', 'CM7', 'F7', 'Em7(11)', 'Bb7'],
+    sourceKey: 'A:minor', coverage: null, moods: ['dreamy', 'resolved'],
+    character: null,
+    notes: 'The A-section grip transposed up a semitone and EXTENDED: same i-ii-III core plus '
+      + 'F7 (VI7, tritone-adjacent color) and a bII7 (Bb7) before the loop. Proof the modulation '
+      + 'landed: the listener hears the same identity in a new key — planing at song scale. '
+      + 'Ends ringing on F/Eb, unresolved.',
+  },
+
+  // -------------------------------------------------------------------------
+  // igexport-DZKQMVQsj79 — "aquatic ambience" by scizzie (PianoKiwis app):
+  // solo-piano cover of Aquatic Ambience (Donkey Kong Country, David Wise).
+  // F# minor, ~141bpm, one chord per 2-bar phrase (figure bar + hold bar).
+  // The 23rd source, added mid-session with the interval-walk brief; the walk
+  // itself is vid_ladder_quintal in figurations. Sheet + note labels + audio
+  // all agreed — strongest eye-read in the batch.
+  // -------------------------------------------------------------------------
+  vid_aquatic_ladder: {
+    family: 'minor', pack: 'igvideo', role: 'harmony', style: 'vgm-ambient',
+    provenance: 'video-transcribed', ratified: false, needsEar: true, sourceEndorsed: false,
+    song: 'Aquatic Ambience cover (F# minor)', section: 'A', sectionBars: 10,
+    source: 'igexport-DZKQMVQsj79.mp4',
+    numerals: 'im9-bVI^9#11-ivm7add11-ivm13-vm7b13',
+    degrees: '0:m9 8:^9 5:m7 5:m7 7:m7',
+    voicedAs: ['F#m9', 'Dmaj9(#11)', 'Bm7(add11)', 'Bm13', 'C#m7(b13)'],
+    sourceKey: 'F#:minor', coverage: null, moods: ['dreamy', 'spacious', 'aquatic'],
+    character: null,
+    notes: 'i-bVI-iv-iv-v with NO cadential V anywhere — the loop closes on the minor v and '
+      + 'falls back to i. The iv is stated twice with a recolor (add11, then dorian 13 with the '
+      + 'natural 6 over minor). Root register walks DOWN across the cycle (F#3-D3-B2-B2-C#3) '
+      + 'while the melodic peak walks UP (E6...A6 climax) — contrary motion at phrase scale. '
+      + 'A cascade tag ends the cycle: b6-5-b3 of the v falling from the top of the piano. '
+      + 'The engine relevance is direct: this IS our water vibe, done as one voice + pedal.',
   },
 };

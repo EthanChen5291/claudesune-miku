@@ -558,6 +558,56 @@ MY PERSONAL TODO:
 
 What you can do: reload undertale.html and play some mix cards — you'll hear melodies change by letter, dialogues trade phrases, and the harmony treat at the last reprise (hover the strip for exactly what varied). Then the standing re-run: facets.html (cadence tab has the two new devices; the wraps bag is still empty until you vote there) and the video cards with their new tone buttons.
 
+ROUND 3 VERDICTS LANDED (D67): 10 keep / water's 3rd kill (mix-faulted —
+harmony KEPT via keepBase) + 7 new notes, all actioned — CROSS-BAR repeats
+now re-pitched (the gap that kept kitchen/sad-shop "hyper": within-bar
+merge can't tie over a barline, so the note moves; zero repeats measured
+across all 11 leads), pads BREATHE (per-bar gain waves, soft base rising
+in the development, ×1.3 bump removed — "too loud" ×4), ENVIRONMENT PADS
+START AT BAR 1 (your snow principle: the setting begins as it starts
+playing — cave/snow/aftermath/water), aftermath un-uniformed (its AA
+scheme never travelled → forced AB, alberti 8ths→16ths at B), construction
+articFloor 0.9 (short notes lengthened), pedal piano wetter (room 0.7) +
+softer (×0.55), happy shop intro halved (64→56) + dp_slowton, kitchen →
+dp_boom_tap light, fight strings 0.3. NOTE: sad shop / boss / aftermath /
+drop notes arrived verbatim from round 2 (the page keeps note boxes filled)
+— actioned their remaining gaps; clear a box if a note no longer applies.
+306/306. RE-LISTEN: audition/songs.html.
+
+ROUND 2.5 (D66): your two scope fixes — string pads are now ROOTLESS
+VOICE-LED REDUCTIONS (upper core tones, rotating inversions, fewer notes —
+a variation of the chord, not its restatement; sus-safe), and the MERGE is
+scoped to the melody only (lead + tune-carrying layers; alternate/counter
+lines may repeat again). 306/306. Same page: audition/songs.html.
+
+ROUND 2 VERDICTS LANDED (D65): 10 keep / 1 kill + 11 notes, all actioned —
+THE MERGE (consecutive same-pitch notes combine into one held note — your
+spec verbatim — on every lead), THE REACH (hold/merge now reaches arranger-
+bound layers: the boss trumpet holds, finally), your STRINGS RULE (pads are
+real chord voicings over a low frame, ×1.3 gain, swell at the peak;
+cave/snow/aftermath demand the string ensemble), fight's texture layer
+(fnd_offbeat_chords oct 4) + held guide-tone counterline, drums re-seated
+(cymbal 0.22, busy-voice trim for the boss spam, lead boost 0.18, kitchen →
+dp_tikoflow swing), pedal vibes softer (×0.65) + wetter (room 0.55) + no
+melodic layer above the lead (cave's high flute drops), aftermath moves
+(alberti arp + 3 voices), calm water rebuilt AGAIN (killed base banned from
+retrieval, lead at octave 6): ut_once_upon_a_time_p3 "0 2 5:^7 0:7". Kept
+songs now pin BASE + degrees. All 10 keeps verified stable. 306/306.
+RE-LISTEN: same page — audition/songs.html.
+STILL PARKED: melody-on-a-different-instrument (construction — you repeated
+the staccato half, which the merge addresses; the instrument half waits on
+the instrument-idiom build), busy-line-as-support (fight).
+
+ROUND 1 VERDICTS LANDED (D64): 9 keep / 1 kill + 10 notes, all actioned —
+held/sparser/softer leads on pedal + fast songs, consecutive-pitch cap,
+intros halved on slow songs, drums seated (gains down, cymbal trim, lead up
+vs foreground drums), strings support on snow/cave/aftermath, aftermath
+2 voices, calm water rebuilt (plain-triad rule + octave floor), kitchen on
+dp_nuevayol. KEPT SONGS PIN their judged harmony (drift measured; pin
+tested). PARKED: melody-on-a-different-instrument (construction), busy-line-
+as-support (fight) — both belong to the instrument-idiom build.
+RE-LISTEN: same page, same links — audition/songs.html.
+
 NEW (D63 + addendum) — LISTEN: audition/songs.html, now ELEVEN songs.
 - 10 vibe songs: letter-form melody, varied kept harmony + last-reprise
   treat, foundation accompaniment that TRAVELS between letters,
@@ -577,3 +627,15 @@ Also standing: foundations.html per-pattern clicks outrank the D62 blanket;
 remaining design approvals (keys policy module, instrument additions) in
 research/README.md.
 
+
+VIDEO BATCH 2 LANDED (D68): 23 new sources analyzed (17 reels + 5 screen
+recordings + the Aquatic Ambience cover added mid-session). Your three asks
+answered in video-corpus.md BATCH 2 (Tyler dyad = 3+b13 under the lifted
+4+13; G#m9 climb = BLOCK RESTRIKES +1 octave/beat with 9->1->b7 walk-down
+tags; bronik = fixed D-Eb-G cell over a descending bass, five octave-height
+layers). 21+1 new vid_ progressions (needsEar), 6 new flourishes incl.
+vid_tag_sus_melt, vid_climb_block_restrike, vid_arp_undershadow ("add a
+note below every arp note" — direct fix for our robotic-arp complaints),
+vid_ladder_quintal (the Aquatic Ambience water ladder — candidate DEFAULT
+texture for the water vibe when you next audition it). None ear-ratified:
+they will surface via progressions.html / future song builds.

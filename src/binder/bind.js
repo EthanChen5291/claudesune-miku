@@ -858,6 +858,25 @@ export function bindMelody(rhythmEntry, harmonyContext, meter = '4/4', opts = {}
     style = 'toby-fox', seed = 1, octave = 5, cadence = null,
     sound = null, fx = '', gainRange = DEFAULT_GAIN_RANGE, legato = true,
     rhythmName = rhythmEntry.name ?? null,
+    // D64 (songs round 1): `hold` fills every note to the next onset (his
+    // "increase the duration fully to fill the space"); `maxRepeat` caps
+    // consecutive same-pitch notes ("less repeated notes consecutively" /
+    // "too robotic"). Both opt-in — absent, behaviour is unchanged.
+    hold = false, maxRepeat = null,
+    // D65 (songs round 2): `mergeRepeats` COMBINES consecutive same-pitch
+    // notes into one longer note instead of re-pitching them — his spec
+    // verbatim: "if there are consecutive notes, just combine them and make
+    // them hold". Runs after maxRepeat (callers usually pass one or the
+    // other); merges within a bar. D67 (round 3): a BAR-LINE repeat cannot
+    // be tied across the cycle boundary, and round 3 heard exactly those
+    // (kitchen's 2/4 bars are so short the within-bar merge had almost
+    // nothing to do) — so a cross-bar repeat MOVES instead: re-pitched one
+    // ladder step, anchors staying on the chord's own tones.
+    mergeRepeats = false,
+    // D67 (construction: "make the notes with the really short durations
+    // hold for longer - it sounds robotic"): a floor under the articulation
+    // ratios — short notes lengthen, the style's longer notes are untouched.
+    articFloor = null,
   } = opts;
   const profile = MELODY_PROFILES[style];
   if (!profile) throw new Error(`unknown melody style "${style}" (have: ${Object.keys(MELODY_PROFILES).join(', ')})`);
@@ -961,7 +980,7 @@ export function bindMelody(rhythmEntry, harmonyContext, meter = '4/4', opts = {}
   // anchors snapped to core tones), centers riding the phrase arch
   const rootMidi = noteToMidi(key.rootName.toUpperCase().replace(/^([A-G])B$/, '$1b') + String(octave));
   let baseCenter = null;
-  const flat = []; // every note of the whole period, in time order
+  let flat = []; // every note of the whole period, in time order
   for (let c = 0; c < period; c++) {
     const bar = cycleBars[c];
     const sym = harmony[Math.floor(c / barsPerChord) % harmony.length];
@@ -1017,6 +1036,25 @@ export function bindMelody(rhythmEntry, harmonyContext, meter = '4/4', opts = {}
     cur.resolvesTo = target;
   }
 
+  // D64: cap consecutive same-pitch repeats. Anchors, cadences and approaches
+  // keep their pitches (they are load-bearing); a weak note past the cap steps
+  // away on the supply ladder, toward the next different pitch when one exists.
+  if (maxRepeat != null && maxRepeat >= 1) {
+    let run = 1;
+    for (let n = 1; n < flat.length; n++) {
+      const cur = flat[n];
+      run = cur.midi === flat[n - 1].midi ? run + 1 : 1;
+      if (run <= maxRepeat) continue;
+      if (cur.category === 'anchor' || cur.category === 'cadence' || cur.category === 'approach') continue;
+      const scale = scaleOf(cur.chord);
+      const next = flat[n + 1];
+      const dir = next && next.midi !== cur.midi ? Math.sign(next.midi - cur.midi) : (n % 2 ? 1 : -1);
+      cur.midi = ladderStep(cur.midi, dir, scale.supply);
+      cur.category = scale.core.has(((cur.midi % 12) + 12) % 12) ? 'chord' : 'scale';
+      run = 1;
+    }
+  }
+
   // cadence: final onset of the phrase lands on the tonic (or chord root)
   if (cadence && flat.length) {
     const last = flat[flat.length - 1];
@@ -1024,6 +1062,56 @@ export function bindMelody(rhythmEntry, harmonyContext, meter = '4/4', opts = {}
     last.midi = snapToPcs(last.midi, new Set([targetPc]));
     last.category = 'anchor';
     delete last.resolvesTo;
+  }
+
+  // D65: combine consecutive same-pitch notes into one held note. Last of all
+  // the pitch passes, so nothing after it can split a run back apart. The
+  // survivor inherits the strongest claim of its run (a swallowed cadence
+  // landing or anchor keeps its meaning in the meta and the reports).
+  if (mergeRepeats) {
+    const RANK = { cadence: 4, anchor: 3, approach: 2, chord: 1, scale: 0 };
+    const mergeWithinBars = (list) => {
+      const merged = [];
+      for (const n of list) {
+        const p = merged[merged.length - 1];
+        if (p && p.cycle === n.cycle && p.midi === n.midi) {
+          if ((RANK[n.category] ?? 0) > (RANK[p.category] ?? 0)) {
+            p.category = n.category;
+            if (n.resolvesTo != null) p.resolvesTo = n.resolvesTo; else delete p.resolvesTo;
+          }
+          p.accented = p.accented || n.accented;
+          continue;
+        }
+        merged.push(n);
+      }
+      return merged;
+    };
+    flat = mergeWithinBars(flat);
+    // D67: cross-bar repeats — the note a hand would keep holding cannot be
+    // tied across the cycle boundary, so it moves: one ladder step toward
+    // wherever the line goes next. Anchors land on another of the chord's
+    // own anchor tones (D14 holds); cadence landings and approaches stand.
+    for (let i = 1; i < flat.length; i++) {
+      const p = flat[i - 1], n = flat[i];
+      if (p.cycle === n.cycle || p.midi !== n.midi) continue;
+      if (n.category === 'cadence' || n.category === 'approach') continue;
+      const scale = scaleOf(n.chord);
+      const after = flat[i + 1];
+      const dir = after && after.midi !== n.midi ? Math.sign(after.midi - n.midi) : (i % 2 ? 1 : -1);
+      let midi = ladderStep(n.midi, dir, scale.supply);
+      if (after && midi === after.midi) midi = ladderStep(n.midi, -dir, scale.supply);
+      if (n.category === 'anchor') {
+        const others = new Set([...scale.anchor].filter((pc) => pc !== ((n.midi % 12) + 12) % 12));
+        if (!others.size) continue; // a one-tone anchor set has nowhere to go
+        midi = snapToPcs(midi, others);
+        n.midi = midi;
+      } else {
+        n.midi = midi;
+        n.category = scale.core.has(((midi % 12) + 12) % 12) ? 'chord' : 'scale';
+      }
+    }
+    // a re-pitch may have created a fresh within-bar adjacency — collapse it
+    flat = mergeWithinBars(flat);
   }
 
   // emission — per-cycle note AND gain grids (cadence bars differ), with the
@@ -1035,11 +1123,18 @@ export function bindMelody(rhythmEntry, harmonyContext, meter = '4/4', opts = {}
   for (let c = 0; c < period; c++) {
     const bar = cycleBars[c];
     const notes = flat.filter((n) => n.cycle === c);
+    // grids follow the SURVIVING notes (a merge may have thinned the bar);
+    // with no merge these are exactly the bar's own steps/accents
+    const noteSteps = notes.map((n) => n.step);
+    const noteAccents = notes.map((n) => bar.accents[n.i]);
     // a mined melodic rhythm (D40) carries the SOURCE's articulation per onset;
     // cadence bars keep the D37 held-note rule instead (they are re-shaped)
     const srcArtic = (rhythmEntry.artic && !rhythmEntry.microtiming && rhythmEntry.artic.length === r.onsets.length && bar.role !== 'cadence')
-      ? bar.srcIdx.map((i) => rhythmEntry.artic[i]) : null;
-    const ratios = articRatios(bar.steps, bar.accents, bar.G, bar.breath, profile, srcArtic, notes.map((n) => n.midi));
+      ? notes.map((n) => rhythmEntry.artic[bar.srcIdx[n.i]]) : null;
+    const ratios0 = articRatios(noteSteps, noteAccents, bar.G, bar.breath, profile, srcArtic, notes.map((n) => n.midi));
+    const ratios = hold ? ratios0.map(() => 1)
+      : articFloor ? ratios0.map((r) => Math.max(articFloor, r))
+      : ratios0;
     const values = notes.map((n, i) => {
       const name = midiToNoteName(n.midi, { flats });
       boundNotes.push({
@@ -1055,15 +1150,15 @@ export function bindMelody(rhythmEntry, harmonyContext, meter = '4/4', opts = {}
       noteCycles.push('~'); gainCycles.push(String(round2(gainRange[0]))); clipCycles.push('1');
       continue;
     }
-    let steps = bar.steps, vals = values;
+    let steps = noteSteps, vals = values;
     if (bar.breath) {
       const holdTo = bar.G - Math.max(1, Math.round(bar.G / 8));
       if (holdTo > steps[steps.length - 1]) { steps = [...steps, holdTo]; vals = [...values, '~']; }
     }
     noteCycles.push(tokens(steps, vals, bar.G, { legato }));
-    const gv = bar.accents.map((a) => round2(gainRange[0] + a * (gainRange[1] - gainRange[0])));
-    gainCycles.push(tokens(bar.steps, gv.map(String), bar.G, { legato: true, fillLeading: String(gv[0] ?? round2(gainRange[0])) }));
-    clipCycles.push(tokens(bar.steps, ratios.map(String), bar.G, { legato: true, fillLeading: String(ratios[0] ?? 1) }));
+    const gv = noteAccents.map((a) => round2(gainRange[0] + a * (gainRange[1] - gainRange[0])));
+    gainCycles.push(tokens(noteSteps, gv.map(String), bar.G, { legato: true, fillLeading: String(gv[0] ?? round2(gainRange[0])) }));
+    clipCycles.push(tokens(noteSteps, ratios.map(String), bar.G, { legato: true, fillLeading: String(ratios[0] ?? 1) }));
   }
   const wrapCycles = (xs) => (period === 1 ? xs[0] : `<${xs.map((t) => `[${t}]`).join(' ')}>`);
   let expr = `note("${wrapCycles(noteCycles)}")`;

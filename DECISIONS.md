@@ -3027,3 +3027,353 @@ plan", "overtime", "swag with sunglasses on"...).
   removed too" (a voice-subset variant — dpStack can drop voices when a
   song wants it); "go with funky basslines" as a pairing constraint for
   dp_to_go_with_funky_basslines. 305/305.
+
+## D64 — a thirteenth video, read twice (2026-08-26)
+
+Ethan dropped `ScreenRecording_08-26-2026 00-35-16_1.MP4` in the repo root
+"just to test analysis" — analyze it for the chords, then say which notes came
+out. On the result: "ok good, add this as a chord progression."
+
+**The source.** An Instagram reel by @eunyu_pia captioned "Chord progression",
+14.85s, one right hand playing block chords on a digital piano with handwritten
+yellow labels burned into the frame. Same idiom as the D57 twelve, but NOT one
+of the `igexport-*` files — a screen capture he made himself.
+
+**Method, and why it outranks D57.** The D57 entries were read by eye and could
+not be checked: no MIDI, so the D45 label-vs-notes labeller never ran. This one
+was read TWICE, independently:
+
+- the label band cropped and sampled at 4 fps (59 frames), giving the sequence
+  and the exact change points;
+- the audio pulled out and analyzed — spectral-flux onset detection found 15
+  strikes on an even ~0.92s grid, then iterative harmonic subtraction over a
+  32k FFT (harmonic-summation salience, each detected note's partials notched
+  out before the next pick) recovered the sounding pitches per strike.
+
+All 15 strikes agreed with their on-screen label. That is a genuine
+label-vs-notes check, just not the D45 one, so the record says so precisely:
+`provenance: 'video+audio-transcribed'` and `audioConfirmed: true`, while
+`coverage` stays **null** — coverage means the D45 labeller's number and the
+labeller still has not run on any video entry. The pack's honesty test grew a
+branch for the new provenance rather than having the new entry pretend to be
+an eye-read.
+
+**vid_eunyu_circle**, 8 bars in C major, pack `igvideo`:
+`I–III7–vim7–vm7–I7–IV^7–iiim7–VI7–iim7–V7`
+(C, E7, Am7, Gm7, C7, FM7, Em7, A7, Dm7, G7). Renders chord-for-chord identical
+to the displayed labels and transposes clean.
+
+- IT IS THE PACK'S CONTRAST CASE. `video-corpus.md` reads off the twelve that
+  the rule is *one ALTERED dominant per phrase, at the turn, never two in a
+  row*. This one runs a descending circle-of-fifths chain with a secondary
+  dominant at EVERY turn — E7→Am7, C7→FM7, A7→Dm7, then V7 — four dominants in
+  eight bars and not one of them altered. The chain carries it, not the spice.
+  Kept deliberately as the counterexample rather than smoothed into the trend.
+- FIRST MEASURED VOICINGS IN THE PACK. `observedVoicing` holds the actual
+  register and inversion of all ten chords — RH only, no bass part, every note
+  inside E3–E4. No eye-read can supply this; it fell out of the audio pass for
+  free. The shape it exposes: the top voice sits on E4 for nine strikes then D4
+  for the rest, and the BOTTOM of the voicing does all the walking
+  (G3–G#3–G3–F3–G3–F3–E3–G3–F3–F3). That static-top/moving-bottom split is why
+  four relentless dominants still sound smooth rather than restless.
+- NOT ENDORSED, AND THE TEST ENFORCES IT. The standing "i am a fan of how all
+  the songs sound" was said about the twelve; it does not reach a source added
+  later. He approved ADDING this one, which is not a statement about how it
+  sounds, so `sourceEndorsed: false`, `ratified: false`, `needsEar: true`. It
+  goes to the ear like anything else (A6.1).
+- Rebuilt `harmony-model.js` — the counted model is derived from the corpus, so
+  a new entry makes it stale by construction (525 entries, 2704 transitions).
+
+**Queued, not built:** the analysis path here (labels at 4 fps + onset/FFT
+pitch recovery) is a script's worth of work that currently lives in a
+scratchpad. If more videos arrive, it is worth `scripts/import-video-audio.mjs`
+— and if it ever runs against real MIDI, that is the D45 labeller's job, not
+this one's.
+
+## D64 — songs round 1: nine keeps, ten notes, and the pin (2026-08-26)
+
+First verdict pass on the vibe songs: 9 keep / 1 kill (calm water), notes on
+all ten judged. Every note was actioned the same session:
+
+- HELD LEAD, three ways in. bindMelody gained an opt-in `hold` (every note
+  fills to the next onset — his "increase the duration fully to fill the
+  space") and `maxRepeat` (consecutive same-pitch cap; anchors/cadences/
+  approaches keep their pitches, weak notes step away on the supply ladder —
+  his "less repeated notes consecutively" / "too robotic"). Wired: pedal
+  vibes hold + repeat-cap 2 + density ×0.6 + velocity ×0.75 (his three
+  "damper pedal with hold notes / less velocity" notes); staccato vibes
+  repeat-cap 2 + density ×0.75 (both "too hyper" songs); and a FAST-SONG
+  rule from his fight note ("even though it's meant to be energetic, there
+  should be a long held melody") — bpm ≥ 140 holds the lead and halves its
+  density. Melody-carrying LAYERS on sustaining instruments (trumpet,
+  strings, winds, voices) hold and repeat-cap regardless — his trumpet-idiom
+  note, which is the orch-research per-part rule arriving by ear.
+- INTROS HALVED on slow songs (≤80bpm): leading no-tune sections drop to
+  half while whole harmony loops still fit — his "reduce the beginning time
+  before the melody comes in by half", said three times. Aftermath 120→72
+  bars, sad shop and cave 32→28.
+- DRUMS SEATED IN THE MIX: dp gains dropped (~0.85→0.6 at foreground — his
+  "drums are drowning everything"), cymbal rows trimmed to 0.35 (they map to
+  crash samples — his "too much cymbal"), and the lead rides +0.12 louder
+  when foreground drums play (his "melody could be a bit louder"). Kitchen's
+  grooveless engine drums swapped for his vouched dp_nuevayol ("upbeat beat
+  groove"), the 4/4 grid nested over two 2/4 bars.
+- SOFT STRINGS AS SUPPORT: string ensemble joins the snow/cave/aftermath
+  timbre boosts (his ask on all three); the calliope is banned from cave
+  ("way too high and doesn't sound good") — the flute took its chair.
+  Aftermath's dial went [0,1]→[1,2] ("a bit too uniform… more layers as
+  soft support") — it now carries voice-oohs + cello.
+- CALM WATER REBUILT (the kill): low-chromaticism vibes now prefer
+  PLAIN-TRIAD exemplars (the D51 taste signal made a retrieval rule; the
+  gospel dim chain was maximal chromatic under a calm prompt), and water
+  gained an accompaniment FLOOR (octave 3 — "too low to represent water";
+  the floor lifts, never lowers, so wide oom-pah keeps its cellar). The new
+  water sits on an Alphys-derived vamp.
+- THE PIN (the ruling that outlives the round): a KEPT song's harmony is
+  pinned to the degrees Ethan judged. Measured cause: variationsOf's seeded
+  output can flip operators as the libraries evolve under it (kitchen's
+  second op flipped between builds; root cause bracketed to upstream
+  evolution, not chased further because the pin makes it moot). A verdict
+  judges the music that played — the judged snapshot outranks regeneration,
+  exactly as D51 ruled for library entries. Regression test: no kept song
+  may drift from its judged degrees.
+- Also fixed en route: CARD_NOTES with a real degrees snapshot failed the
+  importer's --check round-trip (emitted as `judged`, re-read as `degrees`);
+  and a songs-format export (derived-only) tripped the importer's bare-map
+  fallback.
+- PARKED on the ledger: construction's "melody should be a different
+  instrument (staccato string or synth)" — a lead-instrument policy beyond
+  the takeover machinery; and fight's "put the current piano melody as
+  another instrument as support" — the demoted-busy-line-as-layer device.
+  Both want the instrument-idiom build (research/design-instruments.md).
+  306/306.
+
+## D65 — songs round 2: ten keeps, the merge, and the reach (2026-08-26)
+
+Ethan re-listened to the round-1 fixes. Ten keeps (happy shop joined),
+calm water killed a SECOND time, eleven notes — and the loudest theme was
+that round 1's melody fixes had not fully landed: five songs still said
+"too many consecutive notes / too staccato", and this time he specified
+the mechanism himself: "if there are consecutive notes, just combine them
+and make them hold."
+
+- THE MERGE (bindMelody `mergeRepeats`): consecutive same-pitch notes now
+  COMBINE into one longer note — his spec verbatim — replacing D64's
+  repeat CAP (which re-pitched weak notes but left anchor/cadence runs
+  untouched, which is exactly the machine-gun he kept hearing). Merging
+  never moves a pitch, so nothing needs immunity; the survivor inherits
+  the strongest category of its run; within-bar only, so the barline
+  re-articulation survives as the one idiomatic repeat. On by default for
+  every song lead (the merged note's longer gap also makes the staccato
+  vibes "hold a bit longer on some notes" — his festival note — for free).
+- THE REACH (the round-1 bug his trumpet note exposed): hold/merge never
+  reached layers bound INSIDE renderArrangement — the script only rebound
+  single-letter non-A layers, so the boss trumpet ("still should much more
+  hold") and every 'A'-section voice kept the unheld bind. renderArrangement
+  now takes ctx.leadOpts and threads the lead's manner into every melodic
+  layer; sustaining instruments hold and merge unconditionally. Opt-in, so
+  the already-judged undertale page is byte-identical.
+- HIS STRINGS RULE (stated in the snow note, applied everywhere): a soft
+  harmony pad is "chord variations supporting, and multiple notes (and
+  typically multiple octaves)". The old R.5 lone fifth was inaudible AS
+  HARMONY. Support pads (opt-in ctx.padVoicing) are now the chord's REAL
+  dict voicing — a sus stays a sus, a 7th sounds its 7th, no invented
+  third — over a root+fifth frame an octave below; pad gains ride ×1.3
+  ("can't hear them", twice); and the pad SWELLS ×1.5 in the form's peak
+  section (snow: "louder in the part with the flute and arpeggio as a
+  magical development"). Cave/snow/aftermath can now DEMAND the string
+  ensemble (SONG_OPTS stringsPad: retint the cast pad, or add one when the
+  dial cast none — his explicit ask outranks the ensemble cap; cave's roll
+  had cast NO pad at all, which is why he couldn't hear strings).
+- FIGHT'S TWO ASKS, built: a mid-octave TEXTURE layer from an offbeat-class
+  foundation (fnd_offbeat_chords at octave 4, busy sections only), and a
+  COUNTERLINE — "hold notes that act as a melody itself": the sounding
+  chord's own third, one held note per bar, voice-led by the binder's
+  nearest-root walk, strings, wherever the tune plays.
+- DRUMS SEATED, round 2: cymbal trim 0.35→0.22 ("cymbals still too loud");
+  a BUSY-VOICE trim in dpStack (≥12 onsets/bar → ×0.6, ≥8 → ×0.8 — "the
+  spamming thing is still drowning everything": a machine-gun voice carries
+  motion, not punch, and sits back the way a drummer feathers hats);
+  DP_GAIN down another step; the foreground lead boost 0.12→0.18 ("melody
+  could still be a bit louder"). Kitchen's drums swapped again — nuevayol's
+  straight grid "still don't have groove" — to dp_tikoflow, the SWING he
+  vouched ("upbeat with swing").
+- SOFTER AND WETTER where the pedal is down: pedal-vibe leads gain ×0.65
+  (was 0.75 — "less velocity", third time) and room 0.55 (was 0.4 — "more
+  reverb", cave + snow); staccato-vibe leads thin to densityMul 0.6
+  (kitchen "STILL way too hyper"); detached leads 0.9. In a pedal vibe no
+  melodic layer stands ABOVE the lead — cave's octave-6 flute ("way too
+  high", second time) drops below the tune instead.
+- AFTERMATH'S UNIFORMITY: the song may demand a MOVING accompaniment class
+  (accClassPrefer 'arp' → fnd_alberti_8ths instead of block chords), its
+  dial went [1,2]→[2,3], and a third voice (the strings pad) joined music
+  box + cello.
+- CALM WATER, second rebuild: a killed song's BASE is now EXCLUDED from its
+  next retrieval ("chord progression isn't good" twice is a verdict on the
+  ingredient) — and a KEPT song now pins its BASE, not just its degrees,
+  so retrieval-rule changes can never re-roll what a judged card says it
+  was built from (the D64 pin, completed). Water's lead register rose to
+  octave 6 ("too low to represent water", twice — the shimmer register IS
+  the environment). New water: ut_once_upon_a_time_p3, "0 2 5:^7 0:7".
+- All 10 keeps verified byte-stable on degrees AND base against his export;
+  27/27 exprs green; the adversarial verify pass ran one refuting agent per
+  song against the built page. 306/306.
+
+D65 addendum — what the adversarial verify pass caught (same day): eleven
+refuting agents, one per song, against the built page; four claims fell and
+each was a real defect. (1) The busy-voice trim keyed on a voice's AVERAGE
+onsets/bar — boss's spamming cowbell (16/bar peaks, 11.25 average) slipped
+into the mild tier; the trim is now PER BAR, so machine-gun bars feather
+while punchy bars keep their punch. (2) Cave's flute octave PARAMETER
+dropped but the melody walk still climbed to D#6, above the lead — and the
+vibe-wide cap would also have dragged down snow's high flute, which he
+PRAISED; the cap is now song-scoped (capMelody, cave only) and unconditional
+at leadOctave−2 (flute now peaks D#5, its breathy low register). (3) Snow's
+pad swell targeted the max-ENERGY section while the flute+arpeggio
+development was a different section the pad never played in; the swell now
+follows the bars where another melodic voice is active, and the pad is
+forced to play there. (4) Aftermath's demanded strings pad was cast but
+masked <0@72> — the mass ceiling had refused it every section, a voice on
+paper; a demanded pad the form leaves unheard now joins every tune section.
+Re-verified: 11/11 pass, 0 refuted. 306/306.
+
+## D66 — pad reductions, and the merge belongs to the melody (2026-08-26)
+
+Two scope corrections from Ethan on the D65 build, same day.
+
+- PADS ARE VARIATIONS, NOT STATEMENTS: "they should be slightly different
+  from just the chord progression though. like a different inversion or
+  variation or less notes or something." The D65 pad had answered "chord
+  variations supporting" with the chord's full dict voicing — a plain
+  restatement. The pad is now a ROOTLESS, VOICE-LED REDUCTION: each chord's
+  upper core tones only (3rd+5th; guide tones for a 7th; 4th+5th for a sus —
+  core tones, so nothing is invented and a sus stays a sus), each bar moving
+  to the nearest inversion of the next chord, over the root+fifth frame an
+  octave below. Fewer notes than the statement, different notes from the
+  accompaniment, inversions rotating as the harmony walks. Measured on
+  cave's Bsus B Bm F#: [E,F#] [D#,F#] [D,F#] [C#,A#] — the inner voice
+  descends chromatically, which is what voice-led support sounds like.
+- THE MERGE IS THE MELODY'S: "it should only be for the melody - i have no
+  problem with non-melody parts doing that." mergeRepeats now applies only
+  to the tune — the piano lead (and its letters) and layers that carry the
+  lead line itself (derives 'lead': backup, takeover — the boss/fight
+  trumpets keep merging). Alternate melodies and counter lines may repeat
+  notes again; sustaining instruments keep their HOLD either way (that rule
+  was about instrument idiom, not repetition).
+- 10 keeps byte-stable, 27/27 exprs green, kitchen's lead still merge-clean,
+  cave's pad verified rootless + sus-safe. 306/306.
+
+
+## D67 — songs round 3: the barline repeat, breathing pads, and the setting that starts (2026-08-26)
+
+Ten keeps again; calm water killed a THIRD time — but this note faults the
+MIX ("more reverb… pad too loud… vary fluidly"), not the harmony, so the
+base held. Seven notes were new; sad shop / boss / aftermath / drop carried
+their round-2 text verbatim (the page's note boxes persist) — actioned
+where a real mechanism gap remained, flagged as possibly stale.
+
+- THE BARLINE REPEAT (why "STILL too hyper/repetitive" survived two merge
+  rounds): the merge is within-bar, and kitchen's 2/4 bars at 162 are so
+  short it had almost nothing to do; sad shop's sparse bars repeated at
+  every barline. A cross-bar repeat cannot be TIED over the cycle boundary,
+  so it now MOVES: re-pitched one ladder step toward where the line goes
+  next, anchors landing on another of the chord's own anchor tones (D14
+  holds), cadences and approaches standing. Measured after: zero within-bar
+  AND zero cross-bar repeats across all eleven leads. The same pass reaches
+  the tune-carrying trumpets.
+- BREATHING PADS (his cave/snow/water words: dynamics "should fluctuate not
+  sound constant" / "vary fluidly … to represent the flow of water"): the
+  D65 flat swell became per-bar gain WAVES — a soft base band (×0.72 of the
+  pad's level, undulating ±~15%) rising to a higher band (×1.15) where
+  another melodic voice plays. The ×1.3 audibility bump is gone ("way too
+  loud and drown out the piano" — fight, construction, water, cave all said
+  so); the fight counterline dropped 0.42→0.3. Pad SOLOS carry the base
+  wave too (verify-pass finding: the solo played the flat inner gains the
+  mix overrides).
+- THE SETTING STARTS WITH THE SONG (his snow principle, quoted): "if it's
+  environment, the setting should begin as it starts playing (as its in the
+  snow)". padFromStart: cave/snow/aftermath/water pads sound from bar 1,
+  very soft, and develop by dynamics instead of by entrance.
+- AFTERMATH'S UNIFORMITY, actually diagnosed: its hash-picked AA scheme had
+  ONE letter, so the accompaniment never travelled — 72 bars of one
+  figuration. Forced scheme AB; it now travels alberti_8ths → alberti_16ths
+  (same_family) at the B section.
+- CONSTRUCTION'S ROBOTIC SHORTS: bindMelody articFloor — a floor (0.9)
+  under the articulation ratios, so the really short notes lengthen while
+  the style's longer values stand.
+- MIX MOVES: pedal piano wetter still (lead room 0.7, acc 0.5 — "more
+  reverb" for the third time) and softer (pedal gainMul 0.55); DP foreground
+  0.45 (boss "still drowning", carried note); happy shop's piano-only
+  opening halved by name (64→56 bars, opts.halveIntro at 101bpm) and its
+  drums traded boom_tap → dp_slowton ("groovy chill beat" — "not groovy
+  enough" + "lighter", ×0.85); kitchen's drums traded tikoflow →
+  dp_boom_tap ×0.8 ("too heavy for this one since it's so fast" — at a fast
+  2/4 the sparsest vouched beat reads light).
+- keepBase (the water ruling): a kill whose note faults the mix keeps its
+  harmony base — the D65 killed-base exclusion applies only when the
+  ingredient itself was the complaint.
+- Verify pass: eleven refuting agents; 8 clean; water/snow "failures" were
+  the verifiers cross-matching cave's segments (re-measured directly:
+  values inside the claimed caps), and the one real finding (flat pad
+  solos) was fixed same-build. 11/11 harmonies held. 306/306.
+
+
+## D68 — video corpus batch 2: twenty-two sources, three named asks (2026-08-26)
+
+Ethan added seventeen new igexport reels + five screen recordings and asked
+for the full treatment — "most importantly, analyze the 'extra' stuff they
+do in the harmony between chords to give that song personality", the harmony
+pattern itself (octave climbs, chord intervals, vibe), and layering — plus
+three named deep-dives. A 22-agent frame-read pass transcribed all of them
+(montage sheets + per-agent full-res frame extraction; several videos'
+voicings pixel-decoded from lit-key overlays or read off FL piano-roll
+labels). Full analyses in video-corpus.md BATCH 2.
+
+- HIS THREE ASKS, all found and answered (video-corpus.md carries the
+  detail): (a) the Tyler reel (DcY-6NdSCFY) — the "two extra notes" are an
+  E+G# dyad struck a half-step under the lifted 4th+13th, melting Csus13
+  into C9b13 while the top voice sings A-A-G#-G; (b) the G#m9 reel
+  (DceNMCmuYZV) — the octave technique is BLOCK RESTRIKES of the whole
+  rootless cluster (+1 octave per beat, full releases — terraced echoes),
+  and the post-top two-note walk-down is octave-root then b7, flipping to
+  announce the NEXT chord on the V; (c) @bronikbeats (sr 13-25-13) — the
+  upward figure is 1-9-b3-5 over two octaves whose upper D-Eb-G cell never
+  moves while the bass descends i-bVII-bVI-v, then five Serum layers echo
+  one 1-2-b3-4 vocabulary at five octave heights.
+- LIBRARIES: 21 new PROGRESSIONS_VIDEOS entries (14 sources; multi-section
+  songs preserved for recombination) and 5 new FIGURATIONS_VIDEOS
+  flourishes: vid_climb_block_restrike, vid_tag_climb_walkdown,
+  vid_tag_two_note_pickup, vid_tag_sus_melt (the Tyler dyad),
+  vid_arp_undershadow ("add a note below every arp note"). All
+  needsEar/unratified.
+- ENDORSEMENT SCOPE: sourceEndorsed false on every batch-2 entry — the D57
+  blanket covers exactly the original twelve files, and the test now
+  enforces that set membership (the D64 rule made mechanical).
+- CROSS-VIDEO PATTERNS (the technique book grew): the climb-then-tag shape
+  (3 sources); two-note tags in three flavors (the batch's answer to "extra
+  stuff between chords" is almost always exactly two notes); FIXED UPPER
+  STRUCTURE OVER A MOVING BASS at three scales (within a chord, a loop, a
+  section) — reharmonization by bass alone; the altered-dominant fork
+  RESOLVED (Db-2YGCvU68 runs four alt dominants in a row — as a modulation
+  elevator between keys, not phrase color; DZ93AHcBuac seconds the
+  frequent-and-plain side); roll-in shells; the 9-under-b3 crunch cluster;
+  the arp under-shadow.
+- Also this session: Ethan's happy-shop note — he LIKED the marimba
+  alternate-melody complementing the piano (mallet second-melody against
+  piano lead: a ratified-by-ear pairing, recorded in memory).
+- The counted harmony model went stale under 21 new corpus entries and was
+  regenerated (its staleness test caught it). 306/306.
+
+D68 addendum — the 23rd source, added mid-session with a sharper brief:
+"copy the interval progression (how it progresses each note relative to the
+key)". igexport-DZKQMVQsj79 turned out to be an Aquatic Ambience cover
+(Donkey Kong Country) — F# minor, i-bVI-iv-iv-v, no cadential V — and the
+interval walk reduced to ONE chord-relative rule: stacked 5ths from the
+root (1-5-9), a semitone blur into the adjacent chord tone (9->b3 minor /
+#11->5 major, sounding in every bar), climb to the b7/9 two octaves up; LH
+takes notes 1-4, RH 5-8, pedal accumulates the ladder into the chord; roots
+walk down across the cycle while peaks walk up. Note-by-note walks recorded
+in video-corpus.md; entry vid_aquatic_ladder + figuration
+vid_ladder_quintal (the 8 tokens re-voice as m9/^9#11/m7 exactly as the
+source's five chords do). This is the water vibe played by its best
+witness. 306/306.

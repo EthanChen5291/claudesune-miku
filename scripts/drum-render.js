@@ -31,6 +31,17 @@ export function dpStack(base, { from = 0, to = null, gainMul = 0.8 } = {}) {
     const slots = Array(G * span).fill('~');
     const gains = Array(G * span).fill('0');
     let any = false;
+    // D65 ("the spamming thing in the drums is still drowning everything"):
+    // a voice striking at machine-gun rate carries the pattern's motion, not
+    // its punch — it sits back, the way a drummer feathers hats. PER BAR
+    // (the verify pass caught the average hiding a 16-onset bar behind
+    // sparse ones): only the machine-gun bars are feathered, the punchy
+    // bars keep their punch.
+    const perBar = Array(e.bars).fill(0);
+    e.onsets.forEach((o) => {
+      const [n, d] = o.split('/').map(Number);
+      perBar[Math.floor(n / d)] += 1;
+    });
     e.onsets.forEach((o, i) => {
       const [n, d] = o.split('/').map(Number);
       const pos = n / d;
@@ -39,7 +50,13 @@ export function dpStack(base, { from = 0, to = null, gainMul = 0.8 } = {}) {
       if (ix >= slots.length) return;
       slots[ix] = VOICE_SOUND[e.voice];
       const a = e.accents ? e.accents[i] : 0.78;
-      gains[ix] = String(Math.round(a * gainMul * 100) / 100);
+      const cnt = perBar[Math.floor(pos)];
+      const busyTrim = cnt >= 12 ? 0.6 : cnt >= 8 ? 0.8 : 1;
+      // D64/D65: cymbal rows map to crash samples and wash ("too much
+      // cymbal", twice) — trimmed hard; open-hat doubles the closed-hat
+      // sample, trimmed a little
+      const trim = { cy: 0.22, oh: 0.7 }[e.voice] ?? 1;
+      gains[ix] = String(Math.round(a * gainMul * trim * busyTrim * 100) / 100);
       any = true;
     });
     if (!any) continue;

@@ -36,6 +36,20 @@ test('songs page: 10 prompts build, every expr green, structure varied', () => {
   assert.equal(readFileSync(join(ROOT, 'audition/songs.html'), 'utf8'), first);
 });
 
+test('a KEPT song never drifts from the harmony that was judged (D64 pin)', async () => {
+  const html = readFileSync(join(ROOT, 'audition/songs.html'), 'utf8');
+  const data = JSON.parse(html.slice(html.indexOf('const DATA = ') + 13, html.indexOf(';\n', html.indexOf('const DATA = '))));
+  const { DERIVED_VERDICTS } = await import('../src/lib/verdicts.js');
+  let checked = 0;
+  for (const s of data.songs) {
+    const v = DERIVED_VERDICTS?.[s.name];
+    if (v?.verdict !== 'keep' || !v.degrees) continue;
+    assert.equal(s.degrees, v.degrees, `${s.name} drifted from its judged harmony`);
+    checked++;
+  }
+  assert.ok(checked >= 5, 'expected several kept songs to verify against');
+});
+
 test('drums page: shortlist builds; taiko and 8-bit kits are on it', () => {
   const log = execFileSync('node', ['scripts/audition-drums.mjs'], { cwd: ROOT, encoding: 'utf8' });
   assert.match(log, /\d+ shortlisted patterns \(7 taiko, \d 8-bit/);

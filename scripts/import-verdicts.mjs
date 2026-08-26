@@ -48,7 +48,10 @@ const merged = { ...(await existing()) };
 // merged like the verdicts so a session that leaves the box empty cannot erase
 // what an earlier session said. Notes are evidence with or without a verdict —
 // the judge page's strayNotes taught that lesson (t16/t20/t23 arrived as notes).
-const mergedNotes = { ...((existsSync(OUT) ? (await import(OUT)).CARD_NOTES : null) ?? {}) };
+const mergedNotes = Object.fromEntries(Object.entries((existsSync(OUT) ? (await import(OUT)).CARD_NOTES : null) ?? {})
+  // the file spells the snapshot `judged` (same normalization as existing()) —
+  // without this, a note with a real snapshot re-emitted as null on --check
+  .map(([n, v]) => [n, { ...v, degrees: v.degrees ?? v.judged ?? null }]));
 // Verdicts on PAGE-LOCAL cards (D60): the progressions page auditions varied
 // and generated entries that exist only on the page, so their verdicts cannot
 // key into ALL_PROGRESSIONS — they land here instead, with the degrees the
@@ -370,7 +373,7 @@ if (!CHECK) {
   // later analysis can tell an inference from a click, and NEVER allowed to
   // overwrite a click from any session.
   const implied = raw.impliedVerdicts != null;
-  const verdicts = raw.verdicts ?? raw.impliedVerdicts ?? raw;
+  const verdicts = raw.verdicts ?? raw.impliedVerdicts ?? (raw.derived ? {} : raw);
   const pageTag = implied ? `${page ?? raw.page ?? 'unknown'}-implied` : page;
   const at = (raw.generated ?? new Date().toISOString()).slice(0, 10);
 

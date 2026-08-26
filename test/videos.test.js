@@ -10,6 +10,11 @@ import { ALL_PROGRESSIONS, parseDegrees } from '../src/lib/progressions.js';
 import { renderProgression } from '../src/binder/harmony.js';
 import { bindFigure } from '../src/binder/bind.js';
 import { evaluateSong, hapsByLabel } from '../src/harness/evaluate.js';
+import { readdirSync } from 'node:fs';
+
+// the video files actually sitting in the repo root — an entry may only cite one
+const videoFiles = new Set(readdirSync(new URL('../', import.meta.url))
+  .filter((f) => /\.(mp4|MP4)$/.test(f)));
 
 test('D57: every video entry is honest about what it is', () => {
   const entries = Object.entries(PROGRESSIONS_VIDEOS);
@@ -23,10 +28,37 @@ test('D57: every video entry is honest about what it is', () => {
     if (e.provenance === 'ear-derived') {
       assert.equal(e.earProposed, true, `${name}: ear-derived without earProposed`);
       assert.notEqual(e.sourceEndorsed, true, `${name}: an ear-derived cell is not what the video endorsed`);
+    } else if (e.provenance === 'video+audio-transcribed') {
+      // D64: read twice — labels by eye AND pitches out of the audio. The claim
+      // that the two agreed is what earns the stronger provenance, so it must be
+      // stated, and the measured voicings must be there chord-for-chord.
+      assert.equal(e.audioConfirmed, true, `${name}: claims audio confirmation without the flag`);
+      assert.ok(Array.isArray(e.observedVoicing)
+        && e.observedVoicing.length === parseDegrees(e.degrees).length,
+        `${name}: audio-confirmed but no measured voicing per chord`);
+      for (const v of e.observedVoicing) {
+        assert.ok(Array.isArray(v) && v.length >= 3, `${name}: a voicing of under 3 notes is not a chord`);
+        for (const n of v) assert.match(n, /^[A-G][#b]?[0-8]$/, `${name}: "${n}" is not a pitch`);
+      }
+      // Ethan's blanket "i am a fan of how all the songs sound" was said about
+      // the twelve igexport videos. This is a thirteenth source he added later;
+      // he approved ADDING it, which is not the same as endorsing how it sounds.
+      assert.notEqual(e.sourceEndorsed, true, `${name}: the standing endorsement does not reach a later source`);
     } else {
       assert.equal(e.provenance, 'video-transcribed', name);
-      // Ethan endorsed the SOURCES; that must not leak into ratification (A6.1)
-      assert.equal(e.sourceEndorsed, true, name);
+      // Ethan endorsed the SOURCES; that must not leak into ratification (A6.1).
+      // D68: the blanket was said about the ORIGINAL TWELVE igexport files —
+      // batch-2 sources (added 2026-08-26) are not covered by it (the D64
+      // rule: a standing endorsement does not reach a later source), so their
+      // entries must NOT claim it.
+      const BATCH1 = new Set([
+        'igexport-DRIEseyk294.mp4', 'igexport-DXNX1y0k7-W.mp4', 'igexport-DYhxb2VTGbm.mp4',
+        'igexport-DYsBsQ-z8cm.mp4', 'igexport-Da-2jFHBTYT.mp4', 'igexport-Da7g_WLKDhY.mp4',
+        'igexport-Db04jWHop4_.mp4', 'igexport-DbbI6uyTKD3.mp4', 'igexport-Dbn9IrqTPAI.mp4',
+        'igexport-DcPlz2QhN4M.mp4', 'igexport-DcRXC2RTLZB.mp4', 'igexport-DcbbGuNCfGv.mp4',
+      ]);
+      assert.equal(e.sourceEndorsed, BATCH1.has(e.source),
+        `${name}: sourceEndorsed must be ${BATCH1.has(e.source)} — the blanket covers exactly the original twelve`);
     }
     // sourceEndorsed must not pre-ratify — but the D51 overlay DOES ratify
     // where Ethan's ear kept the card (the 2026-08-26 pass kept 12 of these)
@@ -34,7 +66,10 @@ test('D57: every video entry is honest about what it is', () => {
     assert.equal(e.needsEar, e.verdict == null, name);
     // sections must say where they came from and how long they ran
     assert.ok(e.song && e.section && e.sectionBars > 0, `${name} has no section identity`);
-    assert.ok(e.source?.startsWith('igexport-'), `${name} does not name its video`);
+    // every entry names the file it was read from; the pack is igexport-* plus
+    // the D64 screen recording, so the check is that the file EXISTS in the repo
+    // root, not that it matches one naming scheme
+    assert.ok(e.source && videoFiles.has(e.source), `${name} does not name a video in the repo root`);
     // the display labels survive even where the grammar simplified them
     assert.ok(Array.isArray(e.voicedAs) && e.voicedAs.length === parseDegrees(e.degrees).length,
       `${name}: voicedAs does not match the degrees chord-for-chord`);

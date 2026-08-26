@@ -33,7 +33,10 @@
 // Nothing here samples randomness: given the same song and the same libraries,
 // planArrangement() returns the same plan forever.
 
+import { noteToMidi } from '@strudel/core';
 import { bindMelody, bindFigure } from './bind.js';
+import { midiToNoteName, keyUsesFlats, chordCoreTones } from './theory.js';
+import { chordRootPc } from '../harness/chords.js';
 
 // ---------------------------------------------------------------------------
 // Parts — what a layer can be FOR, and what it COSTS. The two costs are
@@ -1000,6 +1003,27 @@ function gainFor(part, inst) {
 export function renderArrangement(plan, ctx) {
   const warnings = [];
   const out = [];
+  // D65 (songs round 2): the lead's MANNER — hold / merged repeats / repeat
+  // caps (D64) — must reach every melodic layer the arranger binds, not just
+  // the caller's own rebinds; round 2 heard the gap ("trumpet still should
+  // much more hold"). Opt-in via ctx.leadOpts so existing pages are
+  // byte-identical. A sustaining instrument holds regardless of what the
+  // piano lead does: winds and bowed lines fill to the next note.
+  // D66 (round 3): the MERGE is scoped to THE MELODY — "it should only be
+  // for the melody - i have no problem with non-melody parts doing that".
+  // Only layers that carry the tune itself (derives 'lead': backup and
+  // takeover) merge; alternate melodies and counter lines may repeat.
+  const SUSTAINY = /trumpet|trombone|horn|oboe|clarinet|flute|recorder|ocarina|voice|choir|string|cello|violin|viola|bassoon|pan_flute/;
+  const melodicOpts = (layer) => {
+    if (!ctx.leadOpts) return {};
+    const sustainy = SUSTAINY.test(layer.instrument);
+    const carriesTune = layer.derives === 'lead';
+    return {
+      hold: sustainy || !!ctx.leadOpts.hold,
+      mergeRepeats: carriesTune && (sustainy || !!ctx.leadOpts.mergeRepeats),
+      ...(ctx.leadOpts.maxRepeat != null && !sustainy ? { maxRepeat: ctx.leadOpts.maxRepeat } : {}),
+    };
+  };
   for (const layer of plan.layers) {
     const common = {
       style: ctx.style ?? 'toby-fox', octave: layer.octave,
@@ -1011,12 +1035,12 @@ export function renderArrangement(plan, ctx) {
         // backup/takeover reuse the lead's exact line (same seed); an alternate
         // melody keeps the rhythm and takes its own pitches (own seed)
         const seed = layer.derives === 'lead' ? ctx.leadSeed : layer.seed;
-        const r = bindMelody(ctx.leadRhythm, ctx.harmonyContext, ctx.meter, { ...common, seed });
+        const r = bindMelody(ctx.leadRhythm, ctx.harmonyContext, ctx.meter, { ...common, seed, ...melodicOpts(layer) });
         expr = r.expr; rhythmSource = ctx.leadRhythm.name ?? 'lead';
         warnings.push(...r.warnings);
       } else if (layer.derives === 'independent') {
         const rhythm = ctx.counterRhythmFor(Math.max(2, Math.round(layer.addsDensity)), layer.id);
-        const r = bindMelody(rhythm, ctx.harmonyContext, ctx.meter, { ...common, seed: layer.seed });
+        const r = bindMelody(rhythm, ctx.harmonyContext, ctx.meter, { ...common, seed: layer.seed, ...melodicOpts(layer) });
         expr = r.expr; rhythmSource = rhythm.name ?? 'counter';
         warnings.push(...r.warnings);
       } else if (layer.derives === 'figuration') {
@@ -1030,13 +1054,60 @@ export function renderArrangement(plan, ctx) {
         // supplies one anyway would contradict the harmony the piano is
         // playing. The open fifth is the frame; the piano keeps the colour —
         // the frame/colour split the two-hand analysis (D41) turned up.
-        const pad = {
-          name: 'sustain', bars: 1, onsets: ['0'], figure: ['R.5'],
-          accents: [0.7], octave: layer.octave, legato: true,
-        };
-        const r = bindFigure(pad, ctx.harmonyContext, ctx.meter, { octave: layer.octave, sound: layer.instrument, fx: `.gain(${layer.gain})` });
-        expr = r.expr; rhythmSource = 'sustained';
-        warnings.push(...r.warnings);
+        if (ctx.padVoicing) {
+          // D65/D66 (Ethan's strings rule, rounds 2-3): a soft harmony pad
+          // is "chord variations supporting" — and round 3 sharpened what a
+          // variation IS: "slightly different from just the chord
+          // progression … a different inversion or variation or less
+          // notes". So the pad is a ROOTLESS, VOICE-LED REDUCTION: each
+          // chord's upper CORE tones only (3rd+5th; guide tones for a 7th;
+          // 4th+5th for a sus — nothing the chord doesn't carry), each bar
+          // moving to the nearest inversion of the next chord, over the
+          // root+fifth frame an octave below. Fewer notes than the
+          // statement, different notes from the accompaniment, and the
+          // inversion rotates as the harmony walks. Opt-in, so
+          // already-judged pages keep the pad they were judged with.
+          const harmony = ctx.harmonyContext.harmony;
+          const bpc = ctx.harmonyContext.barsPerChord ?? 1;
+          const period = harmony.length * bpc;
+          const flats = keyUsesFlats(ctx.harmonyContext.key ?? 'C:major');
+          const baseC = noteToMidi('C' + String(layer.octave));
+          let ref = baseC + 7;
+          const padBars = [];
+          for (let c = 0; c < period; c++) {
+            const sym = harmony[Math.floor(c / bpc) % harmony.length];
+            const rootPc = chordRootPc(sym) ?? 0;
+            let pcs = [...chordCoreTones(sym)].filter((pc) => pc !== rootPc);
+            if (pcs.length < 2) pcs = [...chordCoreTones(sym)];
+            const midis = pcs.map((pc) => {
+              let m = pc + 12 * Math.round((ref - pc) / 12);
+              while (m < baseC - 5) m += 12;
+              while (m > baseC + 19) m -= 12;
+              return m;
+            }).sort((a, b) => a - b);
+            ref = Math.round(midis.reduce((a, b) => a + b, 0) / midis.length);
+            padBars.push(`[${midis.map((m) => midiToNoteName(m, { flats })).join(',')}]`);
+          }
+          const upper = `note("<${padBars.join(' ')}>").s("${layer.instrument}").gain(${layer.gain})`;
+          const frame = bindFigure({
+            name: 'pad-frame', bars: 1, onsets: ['0'], figure: ['R.5'],
+            accents: [0.55], octave: Math.max(1, layer.octave - 1), legato: true,
+          }, ctx.harmonyContext, ctx.meter, {
+            octave: Math.max(1, layer.octave - 1), sound: layer.instrument,
+            fx: `.gain(${Math.round(layer.gain * 0.8 * 100) / 100})`,
+          });
+          expr = `stack(${upper}, ${frame.expr})`;
+          rhythmSource = 'pad-reduction';
+          warnings.push(...frame.warnings);
+        } else {
+          const pad = {
+            name: 'sustain', bars: 1, onsets: ['0'], figure: ['R.5'],
+            accents: [0.7], octave: layer.octave, legato: true,
+          };
+          const r = bindFigure(pad, ctx.harmonyContext, ctx.meter, { octave: layer.octave, sound: layer.instrument, fx: `.gain(${layer.gain})` });
+          expr = r.expr; rhythmSource = 'sustained';
+          warnings.push(...r.warnings);
+        }
       }
     } catch (e) {
       warnings.push(`layer ${layer.id} failed to render: ${e.message}`);

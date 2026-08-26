@@ -29,7 +29,7 @@ import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { compileVibe } from '../src/lib/vibes.js';
 import { exemplarPool, variationsOf, varyProgression } from '../src/lib/harmony-vary.js';
-import { VERDICTS } from '../src/lib/verdicts.js';
+import { VERDICTS, DERIVED_VERDICTS } from '../src/lib/verdicts.js';
 import { renderProgression } from '../src/binder/harmony.js';
 import { parseDegrees } from '../src/lib/progressions.js';
 import { dpStack } from './drum-render.js';
@@ -153,11 +153,21 @@ const ENERGY = { ostinato: 1, bed: 2, statement: 3, dialogue: 3.5, answer: 4, ha
 // Ethan's vibe notes and assigned where the note matches the song's vibe.
 // Every other song keeps engine percussion (or none).
 const DP_DRUMS = {
-  vs_happy_shop: { pattern: 'dp_boom_tap', note: 'very very chill beat, like waiting room or something' },
+  // round 3: "not groovy enough and should be a bit lighter" — boom_tap's
+  // waiting-room chill traded for the groove he vouched, seated lighter
+  vs_happy_shop: { pattern: 'dp_slowton', note: 'groovy chill beat', gainMul: 0.85 },
   vs_x_construction: { pattern: 'dp_working', note: 'relaxed chill beat. first two measures are a bit more energetic than last two' },
   vs_tense_fight: { pattern: 'dp_residual_stress_study', note: 'rising tension (video game)' },
   vs_triumphant_boss: { pattern: 'dp_8obit_electrowerk66', note: 'hot' },
+  // rounds 1-2 chased groove (nuevayol → tikoflow); round 3: "drums may
+  // actually be too heavy for this one since it's so fast - need lighter
+  // one" — the sparsest beat he vouched, at a fast 2/4 it reads light
+  vs_goofy_kitchen: { pattern: 'dp_boom_tap', note: 'very very chill beat, like waiting room or something', gainMul: 0.8 },
 };
+// round 1, his boss note: "drums are drowning everything" — dp mixes sit well
+// under the old presence gains; rounds 2-3 ("STILL drowning") stepped down
+// twice more, on top of drum-render's per-bar busy-voice trim
+const DP_GAIN = { light: 0.45, driving: 0.5, foreground: 0.45 };
 
 const songs = [];
 const CHECKS = [];
@@ -167,17 +177,56 @@ function buildSong(prompt, name, opts = {}) {
   const key = `${v.keyHint}:${v.family === 'minor' ? 'minor' : 'major'}`;
 
   // ---- harmony: a varied click-kept exemplar of the vibe's family ----------
+  const judged = DERIVED_VERDICTS?.[name];
+  const priorKeep = judged?.verdict === 'keep';
   let famPool = EX.entries.filter(([n, e]) => clicked(n) && e.family === v.family);
+  // D65 (his second calm-water kill): a killed song's base is EXCLUDED from
+  // its next retrieval — "chord progression isn't good" twice is a verdict on
+  // the ingredient, and re-serving it is re-asking a settled question.
+  // D67 (his THIRD water kill): the exclusion reads the NOTE, not just the
+  // verdict — this kill faults the mix ("more reverb… pad too loud"), not
+  // the harmony, so opts.keepBase holds the base and the mix takes the hit.
+  if (judged?.verdict === 'kill' && judged.base && !opts.keepBase) {
+    const rest = famPool.filter(([n]) => n !== judged.base);
+    if (rest.length) famPool = rest;
+  }
+  // D64 (his calm-water kill: "chord progression isn't good" on a dim chain):
+  // a low-chromaticism vibe prefers PLAIN-TRIAD exemplars (the D51 taste
+  // signal). Applied only where no keep is at stake — a song he kept must not
+  // re-roll its harmony under a rule change.
+  if (!priorKeep && (v.colorBias ?? 0) <= 0.2 && famPool.length > 3) {
+    const plainness = (deg) => {
+      const t = deg.split(' ');
+      return t.filter((x) => !x.includes(':') || /:m$/.test(x)).length / t.length;
+    };
+    const ranked = [...famPool].sort((a, b) => plainness(b[1].degrees) - plainness(a[1].degrees) || a[0].localeCompare(b[0]));
+    famPool = ranked.slice(0, Math.ceil(ranked.length / 2));
+  }
   if (opts.loop4) {
     const four = famPool.filter(([, e]) => parseDegrees(e.degrees).length === 4);
     if (four.length) famPool = four;
   }
   const pool = famPool.length ? famPool : EX.entries.filter(([n]) => clicked(n));
-  const [exName] = pool[fnv(`${name}|exemplar`) % pool.length];
+  // D65: a KEPT song pins its BASE too, not just its degrees — retrieval-rule
+  // changes must never re-roll what the judged card says it was built from
+  // (D67: keepBase pins a mix-faulted kill's base the same way)
+  const [exName] = (priorKeep || opts.keepBase) && judged?.base && EX.entries.some(([n]) => n === judged.base)
+    ? [judged.base]
+    : pool[fnv(`${name}|exemplar`) % pool.length];
   const vars = variationsOf(exName, {
     count: 1, intensity: 0.3 + v.colorBias * 0.4, budget: 2, seed: `${name}|harmony`,
   });
-  const e = vars[0] ?? EX.entries.find(([n]) => n === exName)[1];
+  let e = vars[0] ?? EX.entries.find(([n]) => n === exName)[1];
+  // D64: a KEPT song's harmony is PINNED to the degrees Ethan judged. The
+  // generator's output can drift as the libraries evolve under it (measured:
+  // one seed flipped operators between builds) — and a verdict is a judgment
+  // on the music that played, so the judged snapshot outranks regeneration.
+  if (judged?.verdict === 'keep' && judged.degrees && judged.degrees !== e.degrees) {
+    e = {
+      ...e, degrees: judged.degrees, numerals: null,
+      lineage: { ...(e.lineage ?? {}), ops: [...(e.lineage?.ops ?? []), { op: 'pinned-to-judged (D64)' }], changed: true },
+    };
+  }
   const symbols = renderProgression(e, key);
   const plan4 = barPlan(symbols.length);
   const barSyms = plan4 ? symbols.flatMap((sym, i) => Array(plan4[i]).fill(sym)) : symbols;
@@ -188,6 +237,12 @@ function buildSong(prompt, name, opts = {}) {
   let accPool = RATIFIED_FND.filter(([, f]) => v.figClasses.includes(f.class) && f.meter_class === v.meter);
   if (!accPool.length) accPool = RATIFIED_FND.filter(([, f]) => f.meter_class === v.meter);
   if (!accPool.length) accPool = RATIFIED_FND.filter(([, f]) => f.meter_class === '4/4');
+  // D65 (aftermath: "too uniform where it's just one chord repeated again and
+  // again slowly") — a song may ask for a MOVING class outright
+  if (opts.accClassPrefer) {
+    const pref = accPool.filter(([, f]) => f.class === opts.accClassPrefer);
+    if (pref.length) accPool = pref;
+  }
   const [accName, accFig0] = accPool[fnv(`${name}|acc`) % accPool.length];
   const accFig = { ...accFig0, name: accName };
   const accDensity = accFig.onsets.length / (accFig.bars ?? 1);
@@ -196,19 +251,39 @@ function buildSong(prompt, name, opts = {}) {
   // D63 articulation: style-level duration + damper on top of each pattern's
   // own authored legato (bindFigure honours entry.legato; .clip scales it)
   const ART = v.articulation ?? { style: 'detached', pedal: false };
-  const accFx = ART.pedal ? '.clip(1.25).room(0.4)'
+  const LEAD = { ...(ART.lead ?? { hold: false, merge: true, densityMul: 1, gainMul: 1 }) };
+  // D64 (his fight note): a fast song wants a LONG HELD lead over the busy
+  // floor — "even though it's meant to be energetic, there should be a long
+  // held melody". Fires on fight/boss/drop.
+  if (v.bpm >= 140) {
+    LEAD.hold = true;
+    LEAD.densityMul = Math.min(LEAD.densityMul, 0.55);
+  }
+  // D64/D65 (his boss note, twice): when foreground drums play, the melody
+  // rides louder — the boost stepped 0.12 → 0.18 ("could still be a bit louder")
+  const leadGain = Math.min(1, Math.round((0.85 * LEAD.gainMul + (v.percussion.presence === 'foreground' ? 0.18 : 0)) * 100) / 100);
+  const accFx = ART.pedal ? '.clip(1.25).room(0.5)'
     : ART.style === 'staccato' ? '.clip(0.55).room(0.15)'
     : ART.style === 'legato' ? '.clip(1.1).room(0.3)'
     : '.room(0.25)';
-  const leadFx = ART.pedal ? '.gain(0.85).room(0.4).clip(1.15)' : '.gain(0.85).room(0.25)';
-  const bindAcc = (fig, ctx) => bindFigure(fig, ctx, v.meter, { sound: 'piano', fx: accFx, octave: Math.max(1, Math.min(3, fig.octave ?? accOct)) }).expr;
+  // D65/D67 (cave/snow round 2, then cave + water round 3 — "more reverb"
+  // three times): the pedal vibes' whole piano sits in a wetter room
+  const leadFx = ART.pedal ? `.gain(${leadGain}).room(0.7)` : `.gain(${leadGain}).room(0.25)`;
+  const bindAcc = (fig, ctx) => bindFigure(fig, ctx, v.meter, {
+    sound: 'piano', fx: accFx,
+    // the vibe's accFloor lifts a pattern's home octave (water: "too low"),
+    // never lowers it — a wide oom-pah keeps its cellar
+    octave: Math.max(1, Math.min(4, Math.max(fig.octave ?? accOct, v.register.accFloor ?? 0))),
+  }).expr;
   const base = bindAcc(accFig, ctxBar);
 
   // ---- melody + arrangement (the undertale mix pipeline) -------------------
-  const leadCell = melodyRhythm(v.meter, v.bpm, name, { accDensity, accOnsets, beats });
+  const leadTarget = Math.max(2, Math.round(melodyDensityTarget(v.bpm, accDensity) * LEAD.densityMul));
+  const leadCell = melodyRhythm(v.meter, v.bpm, name, { target: leadTarget, accDensity, accOnsets, beats });
   const leadSeed = fnv(name);
   const leadBound = bindMelody(leadCell, ctxBar, v.meter, {
     style: 'toby-fox', seed: leadSeed, octave: v.register.leadOctave, sound: 'piano', fx: leadFx,
+    hold: LEAD.hold, mergeRepeats: LEAD.merge, articFloor: opts.articFloor ?? null,
   });
   const plan = planArrangement({
     name, song: name, family: v.family, role: v.role, moods: v.moods, instBias: v.instBias,
@@ -219,29 +294,104 @@ function buildSong(prompt, name, opts = {}) {
   // D62 ensemble dial: the vibe's voice count CAPS the cast before the form
   const fullCast = plan.layers.length;
   plan.layers = plan.layers.slice(0, v.ensemble.count);
+  // D65 (cave, both rounds: "the secondary melody instrument is way too
+  // high"): the song may demand its melodic layers sit BELOW the lead. Two
+  // octaves down, because the melody WALK climbs well above its root octave
+  // (the verify pass measured a leadOctave-1 cap still peaking above the
+  // lead). Song-scoped, not vibe-scoped: snow's high flute is the same
+  // machinery and he PRAISED it — "I like the section with the arpeggio and
+  // the flute".
+  if (opts.capMelody) {
+    for (const l of plan.layers) {
+      if (['lead', 'lead-rhythm', 'independent'].includes(l.derives)) {
+        l.octave = Math.min(l.octave, Math.max(3, v.register.leadOctave - 2));
+      }
+    }
+  }
+  // D65 (cave/snow: "strings in the background as support/harmony would fit
+  // in good - can't hear them"; aftermath: "more layers I think as soft
+  // support"): a song may DEMAND its strings pad — retint a cast pad to the
+  // string ensemble, or add one when the dial (or the palette's whim) left
+  // none. His explicit ask outranks the ensemble cap.
+  if (opts.stringsPad) {
+    const pads = plan.layers.filter((l) => l.derives === 'chords');
+    const stringy = pads.some((l) => /string|cello|violin|viola/.test(l.instrument));
+    if (pads.length && !stringy && opts.stringsPad !== 'add') {
+      for (const l of pads) l.instrument = 'gm_string_ensemble_1';
+    } else if (!pads.length || opts.stringsPad === 'add') {
+      plan.layers.push({
+        id: `${name}::strings_pad`, part: 'harmony_support', derives: 'chords',
+        contributes: 'sustained chord voicings underneath (his strings rule)',
+        instrument: 'gm_string_ensemble_1', octave: 4, gain: 0.42, mass: 0.7,
+        entry: 'bed', canLead: false, addsDensity: 0, seed: fnv(`${name}::strings_pad`),
+      });
+    }
+  }
+  // D65 bumped pad gains ×1.3 ("can't hear them"); D67 heard the overshoot —
+  // "way too loud and drown out the piano" (cave), "a bit too loud" (fight,
+  // construction, water) — the bump is gone and the pads now BREATHE instead
+  // (per-bar gain waves in the mix pass below).
   const renderCtx = (ctx) => renderArrangement(plan, {
     harmonyContext: ctx, meter: v.meter, style: 'toby-fox',
     leadRhythm: leadCell, leadSeed,
     counterRhythmFor: (target, seedName) => melodyRhythm(v.meter, v.bpm, seedName, { target, accOnsets, beats }),
     figureFor: () => accFig,
+    // D65: the lead's manner reaches EVERY melodic layer the arranger binds
+    // (round 2: "trumpet still should much more hold"), and support pads are
+    // real chord voicings over a low frame (his strings rule)
+    leadOpts: { hold: LEAD.hold, mergeRepeats: LEAD.merge },
+    padVoicing: true,
   });
   const rendered = renderCtx(ctxBar);
   const form = planForm(plan);
+  // D65 (the verify pass caught aftermath's added pad masked <0@72>): a
+  // demanded strings pad the mass ceiling refused a section is not "more
+  // layers as soft support", it is a voice on paper. His explicit ask
+  // outranks the ceiling — an unheard demanded pad joins every tune section.
+  if (opts.stringsPad) {
+    for (const l of plan.layers) {
+      if (l.derives !== 'chords') continue;
+      if (form.sections.some((sec) => sec.active.includes(l.id))) continue;
+      for (const sec of form.sections) if (sec.lead !== 'none') sec.active.push(l.id);
+    }
+  }
+  // D64: on slow songs the pre-melody sections ran twice as long as they felt
+  // ("reduce the beginning time before the melody comes in by half" — three
+  // songs, all <=65bpm). Halve leading no-tune sections while whole loops fit.
+  // D67: happy shop asked by name at 101bpm ("the beginning section (of just
+  // the piano) should be reduced to half its length") — opts.halveIntro.
+  if (v.bpm <= 80 || opts.halveIntro) {
+    let halved = false;
+    for (const sec of form.sections) {
+      if (sec.lead !== 'none') break;
+      const half = sec.bars / 2;
+      if (half >= loopBars && half % loopBars === 0) { sec.bars = half; halved = true; }
+    }
+    if (halved) {
+      let sb = 0;
+      for (const sec of form.sections) { sec.startBar = sb; sb += sec.bars; }
+      form.totalBars = sb;
+    }
+  }
   const shaped = renderForm(rendered.layers, leadBound.expr, form);
 
   // ---- letters (D59) -------------------------------------------------------
-  const mf = planMelodyForm(form, { name });
+  // D67 (aftermath "still a bit too uniform": its hash-picked AA scheme had
+  // ONE letter, so the accompaniment never travelled) — a song may force a
+  // letter scheme with real contrast in it
+  const mf = planMelodyForm(form, { name, scheme: opts.scheme ?? null });
   const letterCellMemo = new Map([['A', leadCell]]);
   const letterCell = (L) => {
     if (!letterCellMemo.has(L)) {
       const used = [...letterCellMemo.values()].map((c) => c.name);
-      letterCellMemo.set(L, melodyRhythm(v.meter, v.bpm, `${name}|${L}`, { accDensity, accOnsets, beats, exclude: used }));
+      letterCellMemo.set(L, melodyRhythm(v.meter, v.bpm, `${name}|${L}`, { target: leadTarget, accDensity, accOnsets, beats, exclude: used }));
     }
     return letterCellMemo.get(L);
   };
   const letterSeed = (L) => (L === 'A' ? leadSeed : fnv(`${name}|melody|${L}`));
   const bindLetter = (L, ctxL) => bindMelody(letterCell(L), ctxL, v.meter, {
     style: 'toby-fox', seed: letterSeed(L), octave: v.register.leadOctave, sound: 'piano', fx: leadFx,
+    hold: LEAD.hold, mergeRepeats: LEAD.merge, articFloor: opts.articFloor ?? null,
   });
 
   // ---- the treat (D59): harmony varies at the last reprise -----------------
@@ -325,24 +475,64 @@ function buildSong(prompt, name, opts = {}) {
     if (l.derives === 'lead' || l.derives === 'lead-rhythm') {
       const Ls = lettersOf(l);
       if (Ls.length === 1 && Ls[0] !== 'A') {
+        const sustainy = /trumpet|trombone|horn|oboe|clarinet|flute|recorder|ocarina|voice|choir|string|cello|violin|viola|bassoon|pan_flute/.test(l.instrument);
         const opts = {
           style: 'toby-fox', octave: l.octave, sound: l.instrument, fx: `.gain(${l.gain})`,
           seed: l.derives === 'lead' ? letterSeed(Ls[0]) : l.seed,
+          // D66: the merge is the MELODY's — only tune-carrying layers get it
+          hold: sustainy || LEAD.hold, mergeRepeats: l.derives === 'lead',
         };
         orig = bindMelody(letterCell(Ls[0]), ctxBar, v.meter, opts).expr;
         if (ctxBarV) variant = bindMelody(letterCell(Ls[0]), ctxBarV, v.meter, opts).expr;
       }
     }
-    const act = maskBarsFor(l.id, form);
-    const inVary = act.map((x, i) => (x && varyBars[i] ? 1 : 0));
-    if (variant && inVary.some(Boolean)) {
-      const outVary = act.map((x, i) => (x && !varyBars[i] ? 1 : 0));
-      const parts = [`${variant}.mask("<${maskString(inVary)}>")`];
-      if (outVary.some(Boolean)) parts.unshift(`${orig}.mask("<${maskString(outVary)}>")`);
-      return parts.length === 1 ? parts[0] : `stack(${parts.join(', ')})`;
+    let act = maskBarsFor(l.id, form);
+    // D65→D67, the pad dynamics story: round 2 asked for a swell in the
+    // development ("louder in the part with the flute and arpeggio"); round
+    // 3 sharpened it — "the dynamics should fluctuate not sound constant",
+    // "vary fluidly … to represent the flow of water", strings "way too
+    // loud" in their section, and for environment songs the pad "should
+    // begin as it starts playing" (the setting IS the environment). So a
+    // support pad now BREATHES: a per-bar gain wave around a soft base,
+    // rising to a higher band where another melodic voice plays (that
+    // section is the development), and on padFromStart songs it sounds from
+    // bar 1, very soft.
+    let devBars = null;
+    if (l.derives === 'chords') {
+      const melodicBars = shaped.layers
+        .filter((x) => x.id !== l.id && ['lead', 'lead-rhythm', 'independent'].includes(x.derives))
+        .map((x) => maskBarsFor(x.id, form));
+      let dev = act.map((_, i) => (melodicBars.some((mb) => mb[i]) ? 1 : 0));
+      if (!dev.some(Boolean)) {
+        const peakIdx = form.sections.reduce((a, b) => (b.energy > a.energy ? b : a)).index;
+        dev = form.sections.flatMap((sec) => Array(sec.bars).fill(sec.index === peakIdx ? 1 : 0));
+      }
+      if (opts.padFromStart) act = act.map(() => 1);
+      else act = act.map((x, i) => (x || dev[i] ? 1 : 0));
+      devBars = dev;
     }
-    const m = maskString(act);
-    return /^1(@\d+)?$/.test(m) ? orig : `${orig}.mask("<${m}>")`;
+    const wave = (center) => `"<${[0.85, 1, 1.12, 0.97].map((m) => Math.round(center * m * 100) / 100).join(' ')}>"`;
+    const inVary = act.map((x, i) => (x && varyBars[i] ? 1 : 0));
+    const variantOn = variant && inVary.some(Boolean);
+    // partition the active bars by (which harmony) × (development or base)
+    const groups = new Map();
+    act.forEach((x, i) => {
+      if (!x) return;
+      const k = `${variantOn && varyBars[i] ? 'v' : 'o'}${devBars && devBars[i] ? 's' : 'p'}`;
+      if (!groups.has(k)) groups.set(k, Array(act.length).fill(0));
+      groups.get(k)[i] = 1;
+    });
+    if (!groups.size) return `${orig}.mask("<${maskString(act)}>")`;
+    const exprOf = (k) => {
+      const base = k[0] === 'v' ? variant : orig;
+      if (!devBars) return base;
+      return `${base}.gain(${wave(k[1] === 's' ? l.gain * 1.15 : l.gain * 0.72)})`;
+    };
+    const parts = [...groups.entries()].map(([k, bars]) => {
+      const m = maskString(bars);
+      return /^1(@\d+)?$/.test(m) ? exprOf(k) : `${exprOf(k)}.mask("<${m}>")`;
+    });
+    return parts.length === 1 ? parts[0] : `stack(${parts.join(', ')})`;
   });
 
   // ---- drums: vouched dp_* where a vibe note matches, else engine perc -----
@@ -352,8 +542,10 @@ function buildSong(prompt, name, opts = {}) {
   if (dpPick) {
     const T = form.totalBars;
     const probe = dpStack(dpPick.pattern, {});
-    const d = [16, 12, 8, 6, 4, 2, 1].find((x) => x <= probe.bars && T % x === 0) ?? 1;
-    const { expr } = dpStack(dpPick.pattern, { from: 0, to: d, gainMul: PRESENCE_GAIN[v.percussion.presence] ?? 0.65 });
+    const mul = beats === 2 ? 2 : 1; // a 4/4 grid over 2/4 bars spans two of them
+    const d = [16, 12, 8, 6, 4, 2, 1].find((x) => x <= probe.bars && T % (x * mul) === 0) ?? 1;
+    let { expr } = dpStack(dpPick.pattern, { from: 0, to: d, gainMul: (DP_GAIN[v.percussion.presence] ?? 0.5) * (dpPick.gainMul ?? 1) });
+    if (mul === 2) expr = `(${expr}).slow(2)`;
     const drumBars = form.sections.flatMap((sec) =>
       Array(sec.bars).fill((ENERGY[sec.archetype] ?? 3) >= 3 ? 1 : 0));
     if (drumBars.some(Boolean)) {
@@ -375,11 +567,64 @@ function buildSong(prompt, name, opts = {}) {
     }
   }
 
-  const mixParts = [baseMix, ...(letterLead.lead ? [letterLead.lead] : []), ...layerMixExprs, ...(drums ? [drums] : [])];
+  // ---- D65 add-ons (his fight note) ----------------------------------------
+  // "try layering even more chord tone types (middle octave ish) such as the
+  // offbeat foundation one" → a second ratified figuration, mid-register, in
+  // the form's busy sections; "more harmony melodies (hold notes that act as
+  // a melody itself that supports the main melody)" → a guide-tone line: the
+  // sounding chord's own third, one held note per bar, voice-led by the
+  // binder's nearest-root walk, wherever the tune plays.
+  const extraParts = [];
+  const extraInfo = [];
+  const extraSolos = {};
+  const varySplit = (bindFn, bars) => {
+    const pieces = [];
+    const out = bars.map((x, i) => (x && !(ctxBarV && varyBars[i]) ? 1 : 0));
+    if (out.some(Boolean)) pieces.push(`${bindFn(ctxBar)}.mask("<${maskString(out)}>")`);
+    if (ctxBarV) {
+      const inn = bars.map((x, i) => (x && varyBars[i] ? 1 : 0));
+      if (inn.some(Boolean)) pieces.push(`${bindFn(ctxBarV)}.mask("<${maskString(inn)}>")`);
+    }
+    return pieces;
+  };
+  if (opts.texture) {
+    const tPool = RATIFIED_FND.filter(([n, f]) => f.class === opts.texture.class && f.meter_class === v.meter && n !== accName);
+    if (tPool.length) {
+      const [tName, tFig0] = tPool[fnv(`${name}|texture`) % tPool.length];
+      const tFig = { ...tFig0, name: tName };
+      const bindT = (ctx) => bindFigure(tFig, ctx, v.meter, { sound: 'piano', fx: `.gain(0.34)${accFx}`, octave: opts.texture.octave }).expr;
+      const tBars = form.sections.flatMap((sec) => Array(sec.bars).fill((ENERGY[sec.archetype] ?? 3) >= 4 ? 1 : 0));
+      if (tBars.some(Boolean)) {
+        extraParts.push(...varySplit(bindT, tBars));
+        extraSolos._texture = bindT(ctxBar);
+        extraInfo.push(`texture ${tName} (${opts.texture.class}, oct ${opts.texture.octave})`);
+      }
+    }
+  }
+  if (opts.counterline) {
+    const clFig = { name: 'counterline', bars: 1, onsets: ['0'], figure: ['3'], accents: [0.72], legato: true };
+    // D67 (fight: "strings a bit too loud"): 0.42 → 0.3
+    const bindCl = (ctx) => bindFigure(clFig, ctx, v.meter, { octave: 4, sound: 'gm_string_ensemble_1', fx: '.gain(0.3).room(0.35)', rhythmName: 'counterline' }).expr;
+    const clBars = form.sections.flatMap((sec) => Array(sec.bars).fill(sec.lead !== 'none' ? 1 : 0));
+    if (clBars.some(Boolean)) {
+      extraParts.push(...varySplit(bindCl, clBars));
+      extraSolos._counterline = bindCl(ctxBar);
+      extraInfo.push('counterline: held guide-tones (strings, oct 4)');
+    }
+  }
+
+  const mixParts = [baseMix, ...(letterLead.lead ? [letterLead.lead] : []), ...layerMixExprs, ...extraParts, ...(drums ? [drums] : [])];
   let mix = mixParts.length > 1 ? `stack(${mixParts.join(', ')})` : mixParts[0];
 
-  const solos = { _acc: base, _lead: leadBound.expr, ...(drums ? { _drums: drums } : {}) };
+  const solos = { _acc: base, _lead: leadBound.expr, ...extraSolos, ...(drums ? { _drums: drums } : {}) };
   for (const l of rendered.layers) solos[l.id] = l.expr;
+  // D67 (verify-pass finding): a pad's SOLO carries its mix-side base wave —
+  // without it the solo plays the flat inner gains the mix overrides, and
+  // soloing a layer should sound like what the mix does with it
+  for (const l of rendered.layers) {
+    if (l.derives !== 'chords') continue;
+    solos[l.id] = `${l.expr}.gain("<${[0.85, 1, 1.12, 0.97].map((m) => Math.round(l.gain * 0.72 * m * 100) / 100).join(' ')}>")`;
+  }
 
   // ---- the buildup/drop structure (D63 addendum — his b-52's note) ---------
   // "first 4 measures are buildup, so don't loop those. also do the buildup
@@ -461,10 +706,10 @@ function buildSong(prompt, name, opts = {}) {
     scheme: mf.scheme, letters: mf.letters, travel: travelInfo,
     treat: varyInfo ? { op: varyInfo.op, symbols: varyInfo.symbols } : null,
     ensemble: { count: v.ensemble.count, range: v.ensemble.range, fullCast },
-    cast: rendered.layers.map((l) => `${l.instrument} (${l.id})`),
+    cast: [...rendered.layers.map((l) => `${l.instrument} (${l.id})`), ...extraInfo],
     drums: drumInfo,
     salience: v.salience,
-    articulation: `${ART.style}${ART.pedal ? ' + damper pedal' : ''}`,
+    articulation: `${ART.style}${ART.pedal ? ' + damper pedal' : ''}${LEAD.hold ? ' \u00b7 held lead' : ''}`,
     drop: dropInfo,
     mix, solos,
   });
@@ -473,7 +718,32 @@ function buildSong(prompt, name, opts = {}) {
   if (drums) CHECKS.push([name, '_drums', drums, v.bpm, beats, totalBarsOut]);
 }
 
-for (const prompt of PROMPTS) buildSong(prompt, `vs_${prompt.emotion ?? 'x'}_${prompt.environment}`);
+// D65-D67 per-song asks from his round-2 and round-3 notes
+const SONG_OPTS = {
+  // r3: halve the piano-only opening; drums swapped lighter+groovier above
+  vs_happy_shop: { halveIntro: true },
+  // r3: "make the notes with the really short durations hold for longer -
+  // it sounds robotic" — a floor under the lead's articulation ratios
+  vs_x_construction: { articFloor: 0.9 },
+  // r2: mid-octave offbeat texture + held guide-tone counterline
+  vs_tense_fight: { texture: { class: 'offbeat', octave: 4 }, counterline: true },
+  // r2: "too uniform" + "more layers as soft support"; r3 still: forced AB
+  // scheme so the accompaniment actually TRAVELS, pad breathes from bar 1
+  vs_somber_aftermath: { accClassPrefer: 'arp', stringsPad: 'add', padFromStart: true, scheme: 'AB' },
+  // r2: strings "can't hear them" + secondary melody "way too high";
+  // r3: strings "should start from the beginning but very soft"
+  vs_mysterious_cave: { stringsPad: true, capMelody: true, padFromStart: true },
+  // r2: strings pad; r3: "from the beginning ... the setting should begin
+  // as it starts playing (as its in the snow)"
+  vs_nostalgic_snow: { stringsPad: true, padFromStart: true },
+  // r3 kill faults the MIX not the harmony ("more reverb ... pad too loud
+  // ... vary fluidly in dynamics") — base stays, pad breathes from bar 1
+  vs_calm_water: { keepBase: true, padFromStart: true },
+};
+for (const prompt of PROMPTS) {
+  const n = `vs_${prompt.emotion ?? 'x'}_${prompt.environment}`;
+  buildSong(prompt, n, SONG_OPTS[n] ?? {});
+}
 // the 11th song — his buildup ask, on the beat that taught it (dp_b_52_s)
 buildSong({ emotion: 'excited', environment: 'festival', meter: '4/4' }, 'vs_excited_festival_drop', {
   bpm: 160, loop4: true,

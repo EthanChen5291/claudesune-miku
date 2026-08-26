@@ -174,7 +174,7 @@ export const ENVIRONMENTS = {
     register: { accOctave: 3, leadOctave: 5 }, salience: 'background',
     envMoods: ['magical', 'innocent', 'bright', 'gentle', 'tender'],
     instBias: {
-      boost: ['gm_celesta', 'gm_glockenspiel', 'gm_vibraphone', 'gm_music_box', 'gm_flute', 'gm_pad_halo'],
+      boost: ['gm_celesta', 'gm_glockenspiel', 'gm_vibraphone', 'gm_music_box', 'gm_flute', 'gm_pad_halo', 'gm_string_ensemble_1'],
       avoid: ['gm_lead_2_sawtooth', 'gm_trombone', 'gm_synth_bass_1'],
     },
     figClasses: ['arp', 'oompah'],
@@ -183,8 +183,10 @@ export const ENVIRONMENTS = {
     ratified: false, character: null,
   },
   water: {
+    // D65: leadOctave 6 — his second calm-water kill repeated "a bit too low
+    // to represent water"; the shimmer register IS the environment
     role: 'overworld', bpm: [60, 90], meters: ['4/4'], family: 'major',
-    register: { accOctave: 3, leadOctave: 5 }, salience: 'background',
+    register: { accOctave: 3, leadOctave: 6, accFloor: 3 }, salience: 'background',
     envMoods: ['dreamy', 'spacious', 'calm', 'airy', 'ethereal'],
     instBias: {
       boost: ['gm_orchestral_harp', 'gm_epiano1', 'gm_pad_warm', 'gm_pad_halo', 'gm_voice_oohs', 'gm_vibraphone', 'gm_lead_3_calliope'],
@@ -213,12 +215,14 @@ export const ENVIRONMENTS = {
     register: { accOctave: 2, leadOctave: 5 }, salience: 'background',
     envMoods: ['eerie', 'spacious', 'lonely', 'grave', 'dark'],
     instBias: {
-      boost: ['gm_pad_warm', 'gm_kalimba', 'gm_orchestral_harp', 'gm_contrabass', 'gm_choir_aahs', 'gm_pan_flute'],
-      avoid: ['gm_trumpet', 'gm_xylophone', 'gm_glockenspiel'],
+      boost: ['gm_pad_warm', 'gm_kalimba', 'gm_orchestral_harp', 'gm_contrabass', 'gm_choir_aahs', 'gm_pan_flute', 'gm_string_ensemble_1'],
+      avoid: ['gm_trumpet', 'gm_xylophone', 'gm_glockenspiel', 'gm_lead_3_calliope'],
     },
     figClasses: ['sustain', 'arp'],
     percussion: { presence: 'none', patterns: [] },
-    ensemble: { layers: [0, 2], anchor: 'duet' }, loopHint: [60, 120],
+    // D65: floor raised to 1 — his cave note asked for background strings he
+    // could actually hear, and a 0-voice roll left nothing to cast
+    ensemble: { layers: [1, 2], anchor: 'duet' }, loopHint: [60, 120],
     ratified: false, character: null,
   },
   lab: {
@@ -317,12 +321,14 @@ export const ENVIRONMENTS = {
     register: { accOctave: 3, leadOctave: 5 }, salience: 'foreground',
     envMoods: ['sad', 'plaintive', 'grave', 'intimate', 'tender'],
     instBias: {
-      boost: ['gm_cello', 'gm_violin', 'gm_viola', 'gm_music_box', 'gm_oboe', 'gm_voice_oohs'],
+      boost: ['gm_cello', 'gm_violin', 'gm_viola', 'gm_string_ensemble_1', 'gm_music_box', 'gm_oboe', 'gm_voice_oohs'],
       avoid: ['gm_lead_1_square', 'gm_lead_2_sawtooth', 'gm_xylophone', 'gm_glockenspiel', 'gm_trumpet', 'gm_synth_bass_1'],
     },
     figClasses: ['block', 'arp'],
     percussion: { presence: 'none', patterns: [] },
-    ensemble: { layers: [0, 1], anchor: 'solo' }, loopHint: [30, 60],
+    // D65: [2,3] — round 2: "still a bit too uniform ... more layers I think
+    // as soft support" (round 1 had already lifted it once)
+    ensemble: { layers: [2, 3], anchor: 'duet' }, loopHint: [30, 60],
     ratified: false, character: null,
   },
 };
@@ -417,9 +423,21 @@ export function compileVibe(spec = {}) {
     figClasses,
     percussion: { presence, patterns: presence === 'none' ? [] : patterns },
     ensemble: { count, range: [lo, hi], anchor: env?.ensemble.anchor ?? null },
-    articulation: emo
-      ? { style: emo.artic, pedal: emo.pedal }
-      : { style: (ENV_ARTIC[environment] ?? ['detached', false])[0], pedal: (ENV_ARTIC[environment] ?? ['detached', false])[1] },
+    articulation: (() => {
+      const style = emo ? emo.artic : (ENV_ARTIC[environment] ?? ['detached', false])[0];
+      const pedal = emo ? emo.pedal : (ENV_ARTIC[environment] ?? ['detached', false])[1];
+      // D64/D65 (songs rounds 1-2): the lead's own manner. Round 2 replaced
+      // the repeat CAP (re-pitching) with the MERGE — his spec: "if there are
+      // consecutive notes, just combine them and make them hold" — on every
+      // style; pedal vibes also play softer/sparser ("less velocity", ×3
+      // songs), staccato vibes thinner still ("STILL way too hyper").
+      const lead = pedal
+        ? { hold: true, merge: true, densityMul: 0.6, gainMul: 0.55 }
+        : style === 'staccato'
+          ? { hold: false, merge: true, densityMul: 0.6, gainMul: 1 }
+          : { hold: false, merge: true, densityMul: 0.9, gainMul: 1 };
+      return { style, pedal, lead };
+    })(),
     loopHint: env?.loopHint ?? [30, 60],
     notes,
   };
