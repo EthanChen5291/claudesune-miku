@@ -3377,3 +3377,234 @@ in video-corpus.md; entry vid_aquatic_ladder + figuration
 vid_ladder_quintal (the 8 tokens re-voice as m9/^9#11/m7 exactly as the
 source's five chords do). This is the water vibe played by its best
 witness. 306/306.
+D68 addendum 2 — Ethan asked whether the bronik PATTERN itself was added
+(it was prose + harmony only). Now it is: vid_climb_bronik_add9, the
+1-9-b3-5 two-octave 8th-note climb. Encoding note: the source's reharm
+trick (the upper cell absolutely fixed, only the bass walking 1-b7-b6-5)
+is deliberately NOT in the chord-relative tokens — the faithful rendering
+is the figure on a STATIC chord plus a separate walking bass, which is
+also literally how the video is built. Verified: over a static Cmadd9 the
+figure reproduces the video's bar note-for-note (C D Eb G C' D' Eb' G').
+306/306.
+
+## D69 — the video technique lab (2026-08-26)
+
+Ethan: "take everything you learned from the videos, and summarize it
+concisely ... then generate some music using what you learned and ill give
+feedback via boxes nd keep/kill, experimenting with combinations or such."
+
+Built audition/videolab.html — ten cards, three experiment kinds: FAITHFUL
+(the technique as its video plays it), TRANSPLANT (a video device on OUR
+material), COMBINATION (devices composed). Cards: vl_tyler_melt (sus-melt
+generalized to the whole loop), vl_gsharp_climb (block-restrike terraces),
+vl_bronik_build (fixed cell + walking bass + octave-height echo, square/
+synthbass/celesta), vl_aquatic_ladder (the water-vibe candidate),
+vl_elevator (the modulating mini-song — built as ONE concatenated 22-chord
+harmony, no masks, after the first draft re-made the D63 phase-drift
+mistake and was caught), vl_undershadow_water (the arp trick on his kept
+water harmony), vl_planing_fixed (one Bbm triad renamed eight times by the
+bass — hand-voiced, since a fixed upper structure is by definition not
+chord-relative), vl_citypop_pair (enter-early pickup bound to the ROTATED
+harmony so it announces the next chord + decorate-late 9th bell),
+vl_kpop_tags (pads + the two-note sigh), vl_gospel_rollin (chords as
+questions). Export = derived format, page 'videolab' — import-verdicts.mjs
+lands verdicts unchanged. 29/29 exprs green, 306/306.
+
+
+## D70 — support layers carry their own slow melodies (2026-08-26)
+
+Ethan, on somber aftermath: "the strings shouldn't just be copying the
+piano, maybe the strings should have their own slow hold melody (like
+different notes at different durations that compliment the piano, subtly,
+like instead of same duration chord every time, add different ones and make
+them half length, or faster, etc.)" — and the generalization, in his words:
+"this advice can be extracted to other instruments and parts as well btw.
+harmonies dont just have to reflect the chord progression but also can have
+subtle melodies of their own."
+
+Implementation: the D66 pad reduction grows an opt-in ctx.padMelody mode in
+renderArrangement. The inner voices keep sustaining the bar; the TOP voice
+becomes its own slow held line — per bar, a seeded shape: hold the whole
+voicing (3/8 of bars), move the top at the dotted-half (2/8), at the half
+(2/8), or a short half+quarter+quarter walk (1/8). Every moving note is a
+chord tone strictly above the inner voices, chosen to lean toward the NEXT
+bar's top (the videos' announce-the-change lesson), so the line resolves
+instead of wandering. All variation lives INSIDE the bar — the pattern
+period is untouched, so no D63 phase drift is possible. Two rules learned
+during the build: the seed is per LAYER, not per song (aftermath has cello
+AND strings pads — same-seed pads moved in lockstep, one gesture doubled);
+and the walk's tail must never restate its own middle (with one candidate
+tone it RETURNS to the bar's top — a neighbour figure — his repeated-note
+rule reaches pad lines too). Wired: vs_somber_aftermath only (his ask);
+available to every padVoicing song. All other songs' cards byte-identical
+(measured: the only exprs that changed on the page are aftermath's two pad
+lines, at their three section variants). 306/306.
+
+## D71 — videolab round 1: 3 keeps, 1 kill, 6 note-only cards (2026-08-26)
+
+The first verdicts on D69's technique lab. KEEPS: vl_gsharp_climb ("I liked
+the first two, the third and fourth chords didn't sound good"),
+vl_aquatic_ladder ("I like this. ensure that in songs it's lots of reverb
+and damper though" — a standing rule for the water texture), and
+vl_planing_fixed ("A-bass could also be replaced with another chord as a
+variant here"). KILL: vl_tyler_melt ("this doesn't sound good and doesn't
+make sense") — vid_tyler_loop is banned as a base; the sus-melt dyad stays
+in the library unvindicated. Six cards came back note-only, no verdict —
+the importer dropped those notes as stale (a note with no verdict has no
+derived record), so it now also resolves note names against the export's
+own `cards` array: the strayNotes lesson again, a note is evidence with or
+without a click.
+
+Round 2 rebuilt the page (11 cards; kept cards byte-identical — their card
+code is untouched and the build is deterministic):
+- vl_gsharp_vamp (new, REVISION): the i9-iv9 pair he liked, vamped — the
+  faulted chords 3-4 never arrive.
+- vl_bronik_build: "can barely hear the low notes while the high notes are
+  extremely loud" — square 0.42->0.28, synth bass 0.55->0.9, celesta bell
+  dropped an octave (it was voiced at C7) and 0.4->0.26.
+- vl_elevator: "the last section sounded kinda strange" — the arrival was
+  the video's third section, NEW music in a new key. Now the elevator lands
+  on the SAME six bars a semitone up; 22 bars -> 16.
+- vl_undershadow_water: "the left hand needs some work" — the static R.5
+  block becomes a root->fifth rock in halves under the pedal; deeper room
+  on both hands (his aquatic reverb+damper rule applied to water).
+- vl_planing_var (new, VARIANT): his substitution — bar 6's A bass becomes
+  Eb, renaming the fixed Bbm triad Ebm9.
+- vl_citypop_pair: "shouldn't just always be chromatic leadup ... sounds
+  like a piano exercise ... there shouldn't be a fall after every chord,
+  the rhythm of the chords should be altered a bit" — ONE pickup per
+  phrase, into the landing only, a DIFFERENT figure per phrase (two-note
+  sigh minor-side, four-8th climb major-side), bells only after the two
+  landings, and the V bar re-strikes a higher rotation mid-bar.
+- vl_kpop_tags: fifth chord dropped (loop squares 5->4 bars), falls only at
+  phrase ends and bound to the ROTATED harmony so the two notes spell the
+  chord they land ON (the reported misalignment was harmonic), resolution
+  bar gets a soft higher re-strike.
+- vl_gospel_rollin: chords 3-5 "don't fit in" — the eye-read 8:m9 5:m 3:m7
+  run replaced by the diatonic vi9-iii7 bridge (passing dim now sits
+  iii -> biii°7), phrase squared 9 -> 8 bars; relabeled REVISION since it no
+  longer claims to be a faithful eye-read.
+
+The taste rule underneath his citypop/kpop notes joins the record: tags and
+falls are PLACED events (phrase ends), never after every chord, and chord
+rhythm must vary — uniformity reads as an exercise. 34/34 exprs green.
+
+D71 addendum — the round-2 adversarial verify pass (4 agents, all by
+measurement): citypop and the aftermath pad melodies held on every
+sub-claim (one pickup per phrase, announce-pitches chord-true, bells only
+after landings, 12-bar exactness; pad tops strictly above inners, no
+consecutive repeats, 4 duration shapes per line, cello/strings moving-bar
+sets disjoint where it matters). One benign over-claim: the kpop tag into
+Bb^7 plays the NATURAL 3rd + 9 (chord-quality-aware tokens), not b3+9 — a
+literal b3 would clash; the card is right, my claim was wrong. One REAL
+defect: the elevator arrival lurched — bars 11-12 at +13, 13-16 at +1 —
+because the binder's register choice is voice-led through the whole
+16-chord list. Fix: the arrival slots carry the departure theme verbatim
+(identical register by construction) and a period-16 .add(note()) lift of
+-11 nets exactly +1 against the binder's measured +12 repeat-register; a
+build-time guard in audition-videolab.mjs now measures the +1 relation on
+every rebuild and throws on drift. 34/34, 306/306.
+
+## D72 — the pad phrase: support melodies are planned, and they are policy (2026-08-26)
+
+Ethan, after hearing D70's aftermath: "i think allow the strings in somber
+aftermath to have a bit more expression - it still feels a bit confined to
+the chord progression instead of expressing its melody - it doesnt sonud
+like there's a full coherant melody yet. this is much better though." And
+the scope ruling, verbatim: "im telling u this not just to specifically
+change it for the song but change the generation of songs of this type (or
+other types as well) to reflect these changes."
+
+Diagnosis of D70's ceiling: the per-bar mover drew every note from the
+CURRENT chord's core tones (literally confined to the progression) and
+each bar moved independently — motion without a phrase. D72 adds a second
+pad mode, 'full', where the top voice is PLANNED as a phrase across the
+whole cycle: one contour arc (rise to a single seeded peak, fall home);
+goal tones on downbeats = chord tones nearest the arc, never restating the
+previous goal; connectors between goals = SCALE steps from chordScale()'s
+safe set (passing tones — the melody finally leaves the chord); a 4-bar
+rhythm-shape motif (hold/dotted/halves/walk) that tiles the cycle so the
+ear hears a repeating rhythmic identity carrying evolving pitches; and the
+final bar forced to a dotted cadence whose connector walks toward the
+first goal (direction-agnostic retry when the mixture bar's scale offers
+no step toward home — the phrase must keep singing). No note restates its
+neighbour, bar boundaries included. Measured on aftermath: single peak at
+B5 in bar 8, leap-then-step-back grammar, motif [hold dotted walk walk]
+tiling 3x over the 12 bars.
+
+The POLICY (his scope ruling): assignment moved out of SONG_OPTS into the
+build itself — on every song, every chords-pad moves: the HIGHEST pad gets
+'full' when bpm <= 140 (the D64 threshold family), 'subtle' above it (fast
+songs have heard "too hyper" three times; a moving pad phrase is more
+onsets, not more expression), and all lower pads get 'subtle' (one voice
+sings, the rest support — two full melodies would crowd the piano).
+Changed on the page: construction's bowed pad, fight's tremolo strings,
+sad shop's and kitchen's bassoons, boss's trombone, water's warm pad,
+drop's vibraphone, cave/snow/aftermath strings — verified by
+instrument-scoped diff that ONLY pad-reduction exprs moved. The kept-song
+pin protects against unforced re-rolls, not against his explicit
+generalization order. 306/306.
+
+## D73 — round 4 feedback: free pads, water's C7, kitchen's piano, the sub-bass, and the export bug (2026-08-26)
+
+Ethan, on the D72 build: "everything sounds better … all of the strings
+(especially for the chiller songs like mysterious cave, calm water,
+nolstalgic snow, somber aftermath) are much better" — plus five directives,
+each landed as a CONCEPT per his standing ruling ("for all the changes i
+asked for, same as before dont just apply it to that song but learn it as
+a concept"):
+
+1. SAME-ROOT SUPPORT IS LEGITIMATE: "some instruments can support other
+   ones through the same root though - every part doesn't have to be
+   different." A standing allowance, recorded — future ensemble planning
+   may double/reinforce a line instead of forcing every voice independent.
+   No code this round; it licenses, it doesn't demand.
+2. FREE PAD PHRASES ON ENERGETIC SONGS: "for the more energetic songs,
+   like tense fight, the melody should be a bit more free, with variations
+   and such." The >140bpm throttle-to-subtle is replaced by pad mode
+   'free': the planned phrase keeps its contour, goals, and cadence, but
+   shapes are drawn bar-by-bar from a motion-weighted deck (never the same
+   shape twice running) instead of tiling the 4-bar motif, the arc reaches
+   wider (8-11 semitones), steps may stretch to 5. Fight, boss, drop,
+   kitchen tops now sing free.
+3. WATER'S HARMONY: "C D F^7 -> good … I especially like the F^7 from D.
+   however C7 following F^7 doesnt fit too well. I don't like the C7."
+   Two facet seeds (the sanctioned conversation-verdict path): pairs
+   major|2>5 GOOD (the named II->IV^7 motion), chords major|0:7 BAD (the
+   b7-on-tonic quality — the root motion is innocent). The isolation test
+   was updated: it assumed all votes were minor-family; now it asserts the
+   voted major row moves toward 5 and no other row moves. Mechanically, a
+   new opts.fixChord excises one faulted token per song (water: 0:7 ->
+   9:m — vi, smooth from the IV^7 he loves, and no dominant, the aquatic
+   no-V lesson). Plus "the later high melody pad is a bit too loud" ->
+   opts.padGainMul (water 0.85), trimming every pad's wave centre.
+4. KITCHEN'S PIANO: "still way too hyper in the piano key. like way too
+   hyper and fast" — the THIRD hyper note, now naming the piano. Policy
+   for very fast staccato 2/4 songs: the accompaniment binds HALF-TIME
+   (the same figure spans two bars — oom-pah at half rate, tempo and his
+   approved drums untouched) and the lead target pins to the sparse end
+   (densityMul 0.2 — 0.35 measured only -13% because the retrieval band
+   re-absorbed it). Measured: acc 48 -> 24 onsets/16 bars, lead 76 -> 47;
+   piano total -43%. Two planner traps caught on the way: the halved
+   accDensity re-rolled kitchen's cast (a pizzicato appeared), then the
+   thinned leadDensity re-rolled it again (a xylophone) — the planner now
+   sees PRE-thinning numbers, so the judged cast cannot re-roll under a
+   density fix.
+5. THE SUB-BASS: "for appropriate songs i want to try a deep bass like in
+   beats. does strudel have a sound for that?" Yes — the pure sine at
+   octave 1 is the beats sub (an 808's body is a sine with an envelope).
+   Policy: driving/foreground drum songs >=140bpm get a sine root at
+   octave 1, masked to the same bars the beat plays (varySplit-aware so
+   treat bars follow the variant harmony). Fires on fight and boss; drop
+   is excluded by its bespoke dropIntro drum path for now.
+
+Also fixed: "when I try to copy json it says js error" — the videolab
+export dereferenced a stale localStorage verdict for the REMOVED
+vl_tyler_melt card. Concept: audition pages must survive stale storage
+from earlier rounds — verdicts/notes naming no current card are pruned on
+load and guarded at export, applied to videolab AND the songs page (same
+latent bug); the drums page was checked and is safe (its export never
+dereferences cards). The importer also now resolves notes-only names
+against a songs-page export's `songs` array (the D71 cards-array fix,
+extended), and today's conversation notes were banked verbatim as
+CARD_NOTES on six songs with the degrees that actually played. 306/306.

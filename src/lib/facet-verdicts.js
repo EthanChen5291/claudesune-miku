@@ -21,6 +21,13 @@ export const FACET_VERDICTS = {
       "at": "2026-08-24",
       "from": "notes",
       "note": "Cm->Bm and Cm->B both good as PAIRS; the cycles containing them were killed for other reasons"
+    },
+    "major|2>5": {
+      "verdict": "good",
+      "n": 1,
+      "at": "2026-08-26",
+      "from": "notes",
+      "note": "\"I especially like the F^7 from D\" — II walking up into IVmaj7"
     }
   },
   wraps: {
@@ -60,6 +67,13 @@ export const FACET_VERDICTS = {
       "at": "2026-08-26",
       "from": "notes",
       "note": "\"Cm to Bbm is very off\" — the bvii minor triad in a modal cycle"
+    },
+    "major|0:7": {
+      "verdict": "bad",
+      "n": 1,
+      "at": "2026-08-26",
+      "from": "notes",
+      "note": "\"I don't like the C7\" — tonic with a b7 closing a calm major loop"
     }
   },
   textures: {

@@ -408,8 +408,13 @@ if (!CHECK) {
     const t = String(text).trim();
     if (!t) continue;
     // a note may name a PAGE-LOCAL card (D63: the songs page) — its degrees
-    // come from the export's own derived record rather than the library
-    const src = ALL_PROGRESSIONS[name] ?? raw.derived?.[name] ?? null;
+    // come from the export's own derived record rather than the library.
+    // D71: a card judged by NOTE ALONE (no keep/kill click) has no derived
+    // record either — the videolab export describes every card in `cards`,
+    // and the strayNotes lesson says the note is evidence regardless.
+    const src = ALL_PROGRESSIONS[name] ?? raw.derived?.[name]
+      ?? (Array.isArray(raw.cards) ? raw.cards.find((c) => c.name === name) : null)
+      ?? (Array.isArray(raw.songs) ? raw.songs.find((c) => c.name === name) : null);
     if (!src) { unknown.push(`${name} (note)`); continue; }
     if (mergedNotes[name]?.note !== t) newNotes.push([name, t]);
     mergedNotes[name] = { note: t, at, degrees: src.degrees };

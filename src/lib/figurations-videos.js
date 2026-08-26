@@ -204,6 +204,38 @@ export const FIGURATIONS_VIDEOS = {
   },
 
   /**
+   * The bronik add9 climb (sr 13-25-13, @bronikbeats "Impossible" — his
+   * named ask; Ethan on the opening figure: "that sounds good").
+   *
+   * A two-octave broken-chord climb in straight 8ths: root, 9, b3, 5, then
+   * the same four tones an octave up — 1-9-b3-5-8-9'-b3'-5', topping out on
+   * the 5th two octaves up on the and-of-4. One chord per bar.
+   *
+   * THE SOURCE'S REHARM TRICK IS NOT IN THESE TOKENS, on purpose: in the
+   * video the upper cell (9-b3-5 = D-Eb-G) is ABSOLUTELY FIXED and only the
+   * bottom note walks down 1 -> b7 -> b6 -> 5, re-naming the same climb as
+   * i(add9), bIII^7-color, bVI^7#11, v(b13). Chord-relative tokens would
+   * move the cell with each root. So the faithful engine rendering is this
+   * figure held on ONE static chord while a SEPARATE bass layer walks
+   * 1-b7-b6-5 underneath — which is also literally how the video is built
+   * (the arp layer never changes; the sub bass does the moving). The
+   * resulting harmony is recorded as vid_bronik_descent.
+   */
+  vid_climb_bronik_add9: {
+    role: 'flourish', pack: 'igvideo', style: 'melodic-trap', class: 'climb',
+    provenance: 'video-transcribed', ratified: false,
+    bars: 1, grid: 8, meter_class: '4/4',
+    onsets: ['0/1', '1/8', '1/4', '3/8', '1/2', '5/8', '3/4', '7/8'],
+    figure: ['R', '9', '3', '5', 'R+', '9+', '3+', '5+'],
+    accents: [0.8, 0.7, 0.72, 0.75, 0.78, 0.72, 0.75, 0.82],
+    legato: false, octave: 3,
+    seen: 16, songs: ['bronikbeats Impossible (sr 13-25-13)'],
+    placement: 'the loop’s foundation layer, every bar; pair with a whole-note bass walking 1-b7-b6-5 on a STATIC chord to reproduce the source’s fixed-cell reharm',
+    function: 'notes leading upwards as the identity of the beat — the 9 next to the b3 gives the climb its blur; four more layers in the source echo the same 1-2-b3-4 vocabulary at other octaves (video-corpus.md)',
+    needsEar: true, character: null,
+  },
+
+  /**
    * The quintal ladder (igexport-DZKQMVQsj79 — Aquatic Ambience cover; the
    * interval-progression brief, note for note).
    *
@@ -229,7 +261,7 @@ export const FIGURATIONS_VIDEOS = {
     legato: true, octave: 2,
     seen: 10, songs: ['Aquatic Ambience cover (igexport-DZKQMVQsj79)'],
     placement: 'one chord owns two bars: the ladder climbs bar 1 (straight 8ths, LH then RH), bar 2 is the pedal wash holding',
-    function: 'the water texture as a single line: stacked 5ths + the 9-under-b3 blur; the chord is never blocked, it accumulates. The source ends its cycle with a falling b6-5-b3 cascade from the top — an ending tag to pair with it',
+    function: 'the water texture as a single line: stacked 5ths + the 9-under-b3 blur; the chord is never blocked, it accumulates. The source ends its cycle with a falling b6-5-b3 cascade from the top — an ending tag to pair with it. D71, his keep note on vl_aquatic_ladder: "ensure that in songs it\'s lots of reverb and damper though" — bind with generous .room() and legato pedal whenever this enters a song',
     needsEar: true, character: null,
   },
 };

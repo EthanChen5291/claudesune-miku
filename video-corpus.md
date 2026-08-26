@@ -240,7 +240,9 @@ phrase lifts the pickup to 1→4; (4) inner counter: root held a full bar,
 answered by quarters 4-1-2-b3; (5) bell two octaves up: root on the
 downbeat, 1→2 walk-up tag ending odd bars, 1→b3 + a lone suspended 4 ending
 even bars. Five registers, one 1-2-b3-4 vocabulary echoed at every height.
-→ `vid_bronik_descent`; layering pattern recorded here.
+→ `vid_bronik_descent` (harmony) + `vid_climb_bronik_add9` (the playable
+climb — held on a static chord with a 1-b7-b6-5 bass walk underneath, it
+reproduces the source note-for-note); layering pattern recorded here.
 
 ## The layering videos
 

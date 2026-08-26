@@ -25,6 +25,13 @@ export const FACET_SEEDS = {
       verdict: 'good', n: 2, at: '2026-08-24', from: 'notes',
       note: 'Cm->Bm and Cm->B both good as PAIRS; the cycles containing them were killed for other reasons',
     },
+    // D73, on calm water's `C D F^7 C7`: "C D F^7 -> good in calm water. I
+    // especially like the F^7 from D." The II -> IV^7 motion named on its
+    // own, mid-loop — a pair vote, not an ending.
+    'major|2>5': {
+      verdict: 'good', n: 1, at: '2026-08-26', from: 'notes',
+      note: '"I especially like the F^7 from D" — II walking up into IVmaj7',
+    },
   },
 
   // Motion AS A CADENCE — a separate bag from `pairs` on purpose. The minor wrap
@@ -68,6 +75,14 @@ export const FACET_SEEDS = {
     'modal|10:m': {
       verdict: 'bad', n: 1, at: '2026-08-26', from: 'notes',
       note: '"Cm to Bbm is very off" — the bvii minor triad in a modal cycle',
+    },
+    // D73, calm water: "however C7 following F^7 doesnt fit too well. I
+    // don't like the C7." The root motion 5>0 (IV -> I) is unremarkable;
+    // what he rejects is the DOMINANT QUALITY on the tonic — the b7 smear
+    // on home in a calm major loop. A chord vote, not a pair vote.
+    'major|0:7': {
+      verdict: 'bad', n: 1, at: '2026-08-26', from: 'notes',
+      note: '"I don\'t like the C7" — tonic with a b7 closing a calm major loop',
     },
   },
 

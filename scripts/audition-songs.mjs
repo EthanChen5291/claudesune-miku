@@ -227,6 +227,18 @@ function buildSong(prompt, name, opts = {}) {
       lineage: { ...(e.lineage ?? {}), ops: [...(e.lineage?.ops ?? []), { op: 'pinned-to-judged (D64)' }], changed: true },
     };
   }
+  // D73 (water: "C D F^7 -> good … however C7 following F^7 doesnt fit too
+  // well. I don't like the C7"): a song may excise ONE faulted chord by
+  // token substitution — everything he praised in the loop stays exactly as
+  // it played. Water: 0:7 -> 9:m (vi — smooth from the IV^7 he loves, and
+  // no dominant, the aquatic no-V lesson).
+  if (opts.fixChord) {
+    const [from, to] = opts.fixChord;
+    e = {
+      ...e, degrees: e.degrees.split(' ').map((t) => (t === from ? to : t)).join(' '), numerals: null,
+      lineage: { ...(e.lineage ?? {}), ops: [...(e.lineage?.ops ?? []), { op: `fixChord ${from}->${to} (D73)` }], changed: true },
+    };
+  }
   const symbols = renderProgression(e, key);
   const plan4 = barPlan(symbols.length);
   const barSyms = plan4 ? symbols.flatMap((sym, i) => Array(plan4[i]).fill(sym)) : symbols;
@@ -244,8 +256,19 @@ function buildSong(prompt, name, opts = {}) {
     if (pref.length) accPool = pref;
   }
   const [accName, accFig0] = accPool[fnv(`${name}|acc`) % accPool.length];
-  const accFig = { ...accFig0, name: accName };
-  const accDensity = accFig.onsets.length / (accFig.bars ?? 1);
+  // D73 (kitchen, the THIRD "way too hyper", now aimed at the piano: "still
+  // way too hyper in the piano key. like way too hyper and fast"): a very
+  // fast staccato 2/4 song halves the piano's pulse — the same figure spans
+  // two bars, so the oom-pah breathes at half rate while the tempo (and the
+  // drums he already approved) stays. The lead thins below, same trigger.
+  const accHalfTime = v.meter === '2/4' && v.bpm >= 150 && (v.articulation?.style === 'staccato');
+  const accFig = { ...accFig0, name: accName, ...(accHalfTime ? { bars: (accFig0.bars ?? 1) * 2 } : {}) };
+  // accDensity feeds the PLANNER and the lead target — computed from the
+  // figure as authored, not the half-time stretch, so slowing the piano's
+  // pulse cannot re-roll the cast (measured: the halved value handed
+  // kitchen an extra pizzicato layer — more voices on the song he wants
+  // calmer)
+  const accDensity = accFig0.onsets.length / (accFig0.bars ?? 1);
   const accOnsets = accFig.onsets;
   const accOct = Math.max(1, Math.min(3, v.register.accOctave));
   // D63 articulation: style-level duration + damper on top of each pattern's
@@ -259,6 +282,11 @@ function buildSong(prompt, name, opts = {}) {
     LEAD.hold = true;
     LEAD.densityMul = Math.min(LEAD.densityMul, 0.55);
   }
+  // D73: on the half-time-acc songs the lead thins hard too — the piano as
+  // a whole is what he heard as hyper, not one hand of it (0.35 measured
+  // only -13% because the retrieval band re-absorbed it; 0.2 pins the
+  // target to the sparse end of the cell pool)
+  if (accHalfTime) LEAD.densityMul = Math.min(LEAD.densityMul, 0.2);
   // D64/D65 (his boss note, twice): when foreground drums play, the melody
   // rides louder — the boost stepped 0.12 → 0.18 ("could still be a bit louder")
   const leadGain = Math.min(1, Math.round((0.85 * LEAD.gainMul + (v.percussion.presence === 'foreground' ? 0.18 : 0)) * 100) / 100);
@@ -285,11 +313,25 @@ function buildSong(prompt, name, opts = {}) {
     style: 'toby-fox', seed: leadSeed, octave: v.register.leadOctave, sound: 'piano', fx: leadFx,
     hold: LEAD.hold, mergeRepeats: LEAD.merge, articFloor: opts.articFloor ?? null,
   });
+  // D73: half-time thinning changes only the SOUNDING piano — the planner
+  // still sees the pre-thinning lead (the 0.55 fast-song cap), or the cast
+  // re-rolls under the new numbers (measured twice on kitchen: first a
+  // pizzicato appeared, then a xylophone — extra voices on the song he
+  // wants calmer)
+  let planCell = leadCell, planPeriod = leadBound.boundMeta.period;
+  if (accHalfTime) {
+    const t0 = Math.max(2, Math.round(melodyDensityTarget(v.bpm, accDensity) * 0.55));
+    planCell = melodyRhythm(v.meter, v.bpm, name, { target: t0, accDensity, accOnsets, beats });
+    planPeriod = bindMelody(planCell, ctxBar, v.meter, {
+      style: 'toby-fox', seed: leadSeed, octave: v.register.leadOctave, sound: 'piano', fx: leadFx,
+      hold: LEAD.hold, mergeRepeats: LEAD.merge, articFloor: opts.articFloor ?? null,
+    }).boundMeta.period;
+  }
   const plan = planArrangement({
     name, song: name, family: v.family, role: v.role, moods: v.moods, instBias: v.instBias,
     bpm: v.bpm, meter: v.meter, loopBars,
-    leadPeriod: leadBound.boundMeta.period,
-    accDensity, accOctave: accOct, leadDensity: leadCell.density, palette: INSTRUMENTS,
+    leadPeriod: planPeriod,
+    accDensity, accOctave: accOct, leadDensity: planCell.density, palette: INSTRUMENTS,
   });
   // D62 ensemble dial: the vibe's voice count CAPS the cast before the form
   const fullCast = plan.layers.length;
@@ -327,6 +369,31 @@ function buildSong(prompt, name, opts = {}) {
       });
     }
   }
+  // D72 ("allow the strings … more expression … a full coherent melody" +
+  // "im telling u this not just to specifically change it for the song but
+  // change the generation of songs of this type (or other types as well)"):
+  // GENERATION POLICY, not a song patch. Every pad moves: the HIGHEST pad
+  // carries the planned phrase (contour arc + scale passing tones + tiled
+  // rhythm motif) and any lower pads keep the D70 subtle per-bar mover —
+  // two full melodies at once would crowd the piano; one voice sings, the
+  // rest support. D73 revised the fast side: "for the more energetic songs,
+  // like tense fight, the melody should be a bit more free, with variations
+  // and such" — above the 140bpm line the top pad sings the FREE variant of
+  // the phrase (per-bar shape variety instead of the tiled motif, wider
+  // arc) rather than being throttled to subtle.
+  {
+    const pads = plan.layers.filter((l) => l.derives === 'chords');
+    if (pads.length) {
+      const top = pads.reduce((a, b) => (b.octave > a.octave ? b : a));
+      for (const l of pads) l.padMelody = l === top ? (v.bpm <= 140 ? 'full' : 'free') : 'subtle';
+    }
+    // D73 (water: "the later high melody pad is a bit too loud"): a song
+    // may trim ALL its pads' gain centres — the breathing wave keeps its
+    // shape around the lower centre.
+    if (opts.padGainMul) {
+      for (const l of pads) l.gain = Math.round(l.gain * opts.padGainMul * 100) / 100;
+    }
+  }
   // D65 bumped pad gains ×1.3 ("can't hear them"); D67 heard the overshoot —
   // "way too loud and drown out the piano" (cave), "a bit too loud" (fight,
   // construction, water) — the bump is gone and the pads now BREATHE instead
@@ -341,6 +408,8 @@ function buildSong(prompt, name, opts = {}) {
     // real chord voicings over a low frame (his strings rule)
     leadOpts: { hold: LEAD.hold, mergeRepeats: LEAD.merge },
     padVoicing: true,
+    // D70/D72: pad melody modes are assigned per LAYER above (top pad
+    // 'full' under 140bpm, the rest 'subtle') — no ctx-wide flag needed.
   });
   const rendered = renderCtx(ctxBar);
   const form = planForm(plan);
@@ -537,6 +606,7 @@ function buildSong(prompt, name, opts = {}) {
 
   // ---- drums: vouched dp_* where a vibe note matches, else engine perc -----
   let drums = null;
+  let drumBarsShared = null;
   const drumInfo = [];
   const dpPick = !opts.dropIntro && v.percussion.presence !== 'none' ? (DP_DRUMS[name] ?? null) : null;
   if (dpPick) {
@@ -550,6 +620,7 @@ function buildSong(prompt, name, opts = {}) {
       Array(sec.bars).fill((ENERGY[sec.archetype] ?? 3) >= 3 ? 1 : 0));
     if (drumBars.some(Boolean)) {
       const dm = maskString(drumBars);
+      drumBarsShared = drumBars;
       drums = /^1(@\d+)?$/.test(dm) ? expr : `${expr}.mask("<${dm}>")`;
       drumInfo.push(`${dpPick.pattern} (harvested — his note: \u201c${dpPick.note}\u201d)${d < probe.bars ? `, first ${d}/${probe.bars} bars` : ''}`);
     }
@@ -561,6 +632,7 @@ function buildSong(prompt, name, opts = {}) {
     if (drumBars.some(Boolean)) {
       const parts = picks.map((p) => drumExpr(p, v.percussion.presence));
       const dm = maskString(drumBars);
+      drumBarsShared = drumBars;
       const stackd = parts.length === 1 ? parts[0] : `stack(${parts.join(', ')})`;
       drums = /^1(@\d+)?$/.test(dm) ? stackd : `${stackd}.mask("<${dm}>")`;
       drumInfo.push(...picks.map((p) => `${p} (${RHYTHMS[p].band}) at ${v.percussion.presence}`));
@@ -600,6 +672,19 @@ function buildSong(prompt, name, opts = {}) {
         extraInfo.push(`texture ${tName} (${opts.texture.class}, oct ${opts.texture.octave})`);
       }
     }
+  }
+  // D73 ("also for appropriate songs i want to try a deep bass like in
+  // beats. does strudel have a sound for that?" — yes: the pure sine at
+  // octave 1 IS the beats sub, the same physics as an 808's body): on fast
+  // beat-forward songs a sub-bass holds the chord root at octave 1, masked
+  // to the same bars the beat plays, so bass and beat arrive as one floor.
+  // Policy, not a song patch: any driving/foreground drum song >= 140bpm.
+  if (drumBarsShared && v.bpm >= 140 && ['driving', 'foreground'].includes(v.percussion.presence)) {
+    const subFig = { name: 'sub-bass', bars: 1, onsets: ['0'], figure: ['R'], accents: [0.8], legato: true };
+    const bindSub = (ctx) => bindFigure(subFig, ctx, v.meter, { octave: 1, sound: 'sine', fx: '.gain(0.6).clip(1.02)' }).expr;
+    extraParts.push(...varySplit(bindSub, drumBarsShared));
+    extraSolos._sub_bass = bindSub(ctxBar);
+    extraInfo.push('sub-bass: sine roots (oct 1) under the beat');
   }
   if (opts.counterline) {
     const clFig = { name: 'counterline', bars: 1, onsets: ['0'], figure: ['3'], accents: [0.72], legato: true };
@@ -738,7 +823,7 @@ const SONG_OPTS = {
   vs_nostalgic_snow: { stringsPad: true, padFromStart: true },
   // r3 kill faults the MIX not the harmony ("more reverb ... pad too loud
   // ... vary fluidly in dynamics") — base stays, pad breathes from bar 1
-  vs_calm_water: { keepBase: true, padFromStart: true },
+  vs_calm_water: { keepBase: true, padFromStart: true, fixChord: ['0:7', '9:m'], padGainMul: 0.85 },
 };
 for (const prompt of PROMPTS) {
   const n = `vs_${prompt.emotion ?? 'x'}_${prompt.environment}`;
@@ -841,6 +926,13 @@ let verdicts = {};
 try { verdicts = JSON.parse(localStorage.getItem(LS) || '{}'); } catch {}
 let notes = {};
 try { notes = JSON.parse(localStorage.getItem(LSN) || '{}'); } catch {}
+// D73 (the videolab export broke on a removed card's stale verdict): keys
+// that name no current card are pruned on load — they were imported the
+// round they were made, and dereferencing them breaks export.
+const known = {};
+DATA.songs.forEach(function (s) { known[s.name] = true; });
+Object.keys(verdicts).forEach(function (n) { if (!known[n]) delete verdicts[n]; });
+Object.keys(notes).forEach(function (n) { if (!known[n]) delete notes[n]; });
 let playing = null;
 const $ = (id) => document.getElementById(id);
 const save = () => { localStorage.setItem(LS, JSON.stringify(verdicts)); localStorage.setItem(LSN, JSON.stringify(notes)); };
@@ -920,6 +1012,7 @@ $('export').onclick = function () {
   const derived = {};
   Object.keys(verdicts).forEach(function (n) {
     const s = DATA.songs.find(function (x) { return x.name === n; });
+    if (!s) return; // stale key from an earlier round — already imported then
     derived[n] = { verdict: verdicts[n], family: s.family, degrees: s.degrees, base: s.exemplar };
   });
   const out = {

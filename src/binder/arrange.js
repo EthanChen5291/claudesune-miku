@@ -35,7 +35,7 @@
 
 import { noteToMidi } from '@strudel/core';
 import { bindMelody, bindFigure } from './bind.js';
-import { midiToNoteName, keyUsesFlats, chordCoreTones } from './theory.js';
+import { midiToNoteName, keyUsesFlats, chordCoreTones, chordScale } from './theory.js';
 import { chordRootPc } from '../harness/chords.js';
 
 // ---------------------------------------------------------------------------
@@ -1073,7 +1073,7 @@ export function renderArrangement(plan, ctx) {
           const flats = keyUsesFlats(ctx.harmonyContext.key ?? 'C:major');
           const baseC = noteToMidi('C' + String(layer.octave));
           let ref = baseC + 7;
-          const padBars = [];
+          const barMidis = [];
           for (let c = 0; c < period; c++) {
             const sym = harmony[Math.floor(c / bpc) % harmony.length];
             const rootPc = chordRootPc(sym) ?? 0;
@@ -1086,7 +1086,165 @@ export function renderArrangement(plan, ctx) {
               return m;
             }).sort((a, b) => a - b);
             ref = Math.round(midis.reduce((a, b) => a + b, 0) / midis.length);
-            padBars.push(`[${midis.map((m) => midiToNoteName(m, { flats })).join(',')}]`);
+            barMidis.push(midis);
+          }
+          const nm = (m) => midiToNoteName(m, { flats });
+          const padBars = [];
+          // D72: a pad carries either a PLANNED melody ('full'), the D70
+          // per-bar mover ('subtle'/true), or nothing. The layer's own flag
+          // outranks the ctx flag so one song can hand its top pad the tune
+          // and keep its other pads subtle.
+          const padMode = layer.padMelody ?? ctx.padMelody;
+          if (padMode === 'full' || padMode === 'free') {
+            // D72 ("allow the strings … a bit more expression - it still
+            // feels a bit confined to the chord progression … it doesn't
+            // sound like there's a full coherent melody yet"): the top
+            // voice is planned as a PHRASE, not moved bar-by-bar. One
+            // contour arc per cycle — rise to a single seeded peak, fall
+            // home; goal tones on downbeats are chord tones nearest the
+            // arc; the notes BETWEEN goals are scale steps from the
+            // chord's own scale (passing tones — not just chord tones);
+            // and a 4-bar rhythm-shape motif tiles the cycle, so the ear
+            // hears a repeating rhythmic identity carrying evolving
+            // pitches. The final bar's connector walks toward the first
+            // goal (the cadence home), and no note ever restates its
+            // neighbour — his re-strike rule, bar boundaries included.
+            const seedN = (s) => fnv(`${plan.name ?? 'song'}|${layer.id}|padmel2|${s}`);
+            const symAt = (c) => harmony[Math.floor(c / bpc) % harmony.length];
+            const lidAt = (c) => {
+              const m = barMidis[c];
+              return m.length > 1 ? m[m.length - 2] : m[m.length - 1] - 12;
+            };
+            // D73 ("for the more energetic songs, like tense fight, the
+            // melody should be a bit more free, with variations and such"):
+            // 'free' keeps the planned phrase — contour, goals, cadence —
+            // but frees the rhythm: shapes are chosen bar by bar (weighted
+            // toward motion, never the same shape twice in a row) instead
+            // of tiling a motif, the arc reaches wider, and steps may
+            // stretch a semitone further.
+            const freeMode = padMode === 'free';
+            const hi = baseC + 26;
+            const base = barMidis[0][barMidis[0].length - 1];
+            const peakIx = Math.max(2, Math.floor(period / 2) + seedN('peak') % Math.max(1, Math.floor(period / 3)));
+            const arc = freeMode ? 8 + seedN('arc') % 4 : 7 + seedN('arc') % 3;
+            const contour = (c) => (c <= peakIx
+              ? base + Math.round(arc * c / peakIx)
+              : base + Math.round(arc * (period - c) / (period - peakIx)));
+            const goals = [];
+            for (let c = 0; c < period; c++) {
+              const target = Math.min(hi, Math.max(lidAt(c) + 1, contour(c)));
+              const cand = [];
+              for (const pc of chordCoreTones(symAt(c))) {
+                for (let o = -2; o <= 2; o++) {
+                  const m = pc + 12 * Math.round((target - pc) / 12) + 12 * o;
+                  if (m > lidAt(c) && m <= hi) cand.push(m);
+                }
+              }
+              cand.sort((a, b) => Math.abs(a - target) - Math.abs(b - target) || a - b);
+              const prev = goals[c - 1];
+              goals.push(cand.find((m) => m !== prev) ?? cand[0] ?? target);
+            }
+            const SHAPES = ['hold', 'dotted', 'halves', 'walk'];
+            const motif = [0, 1 + seedN('m1') % 3, seedN('m2') % 4, 1 + seedN('m3') % 3]
+              .map((i) => SHAPES[i]);
+            // free: motion-weighted per-bar draw, no immediate repeats
+            const FREE_DECK = ['dotted', 'dotted', 'dotted', 'halves', 'halves', 'walk', 'walk', 'hold'];
+            let prevShape = null;
+            const freeShape = (c) => {
+              for (let t = 0; t < FREE_DECK.length; t++) {
+                const s = FREE_DECK[(seedN(`shape|${c}`) + t) % FREE_DECK.length];
+                if (s !== prevShape) return s;
+              }
+              return 'dotted';
+            };
+            const stepFrom = (c, from, to) => {
+              let safe;
+              try { safe = [...chordScale(symAt(c), ctx.harmonyContext.key ?? 'C:major').safe]; }
+              catch { safe = [...chordCoreTones(symAt(c))]; }
+              const dir = Math.sign(to - from) || 1;
+              // prefer a step toward the target; when the chord's scale
+              // offers nothing that way (mixture bars), step the other way
+              // rather than falling silent — the phrase must keep singing
+              for (const strict of [true, false]) {
+                const cand = [];
+                for (const pc of safe) {
+                  for (let o = -1; o <= 1; o++) {
+                    const m = pc + 12 * Math.round((from - pc) / 12) + 12 * o;
+                    if (m !== from && m !== to && m > lidAt(c) && m <= hi
+                      && (!strict || Math.sign(m - from) === dir) && Math.abs(m - from) <= (freeMode ? 5 : 4)) cand.push(m);
+                  }
+                }
+                cand.sort((a, b) => Math.abs(a - from) - Math.abs(b - from) || a - b);
+                if (cand.length) return cand[0];
+              }
+              return null;
+            };
+            for (let c = 0; c < period; c++) {
+              const inner = barMidis[c].slice(0, -1);
+              const g = goals[c];
+              const next = goals[(c + 1) % period];
+              const shape = c === period - 1 ? 'dotted' : freeMode ? freeShape(c) : motif[c % 4];
+              prevShape = shape;
+              let topSeq = null;
+              if (shape !== 'hold') {
+                const s1 = stepFrom(c, g, next);
+                if (s1 != null && shape === 'dotted') topSeq = `${nm(g)}@3 ${nm(s1)}`;
+                else if (s1 != null && shape === 'halves') topSeq = `${nm(g)}@2 ${nm(s1)}@2`;
+                else if (s1 != null && shape === 'walk') {
+                  const s2 = stepFrom(c, s1, next);
+                  topSeq = s2 != null ? `${nm(g)}@2 ${nm(s1)} ${nm(s2)}` : `${nm(g)}@3 ${nm(s1)}`;
+                }
+              }
+              if (!topSeq) padBars.push(`[${[...inner, g].map(nm).join(',')}]`);
+              else if (inner.length) padBars.push(`[[${inner.map(nm).join(',')}],[${topSeq}]]`);
+              else padBars.push(`[${topSeq}]`);
+            }
+          } else
+          for (let c = 0; c < period; c++) {
+            const midis = barMidis[c];
+            if (!padMode) { padBars.push(`[${midis.map(nm).join(',')}]`); continue; }
+            // D70 ("the strings shouldn't just be copying the piano … their
+            // own slow hold melody … different notes at different durations
+            // that compliment the piano, subtly … instead of same duration
+            // chord every time"): the pad's TOP voice becomes its own slow
+            // line while the inner tones keep sustaining. Some bars hold the
+            // whole voicing; others move the top to a nearby chord tone at
+            // the dotted-half, the half, or in a short two-step walk. The
+            // moving note leans toward the NEXT bar's top voice, so the line
+            // resolves into each change instead of wandering. All variation
+            // stays INSIDE the bar, so the pattern period is untouched (D63).
+            const inner = midis.slice(0, -1);
+            const top = midis[midis.length - 1];
+            const nextTop = barMidis[(c + 1) % period][barMidis[(c + 1) % period].length - 1];
+            const sym = harmony[Math.floor(c / bpc) % harmony.length];
+            const lidFloor = inner.length ? inner[inner.length - 1] : top - 12;
+            const cand = [];
+            for (const pc of chordCoreTones(sym)) {
+              for (let oct = -1; oct <= 1; oct++) {
+                const m = pc + 12 * Math.round((top - pc) / 12) + 12 * oct;
+                if (m !== top && m > lidFloor && Math.abs(m - top) <= 7) cand.push(m);
+              }
+            }
+            cand.sort((a, b) => Math.abs(a - nextTop) - Math.abs(b - nextTop) || a - b);
+            // seeded per LAYER, not per song: two pads in one song (cello +
+            // strings) must move at different moments, not in lockstep
+            const seedAt = (k) => fnv(`${plan.name ?? 'song'}|${layer.id}|padmel|${c}|${k}`);
+            const pick = (k, from) => from[seedAt(k) % Math.min(2, from.length)];
+            const shape = cand.length ? seedAt(0) % 8 : 0;
+            let topSeq = null;
+            if (shape === 3 || shape === 4) topSeq = `${nm(top)}@3 ${nm(pick(1, cand))}`;
+            else if (shape === 5 || shape === 6) topSeq = `${nm(top)} ${nm(pick(1, cand))}`;
+            else if (shape === 7) {
+              // the walk's tail must never restate its own middle (his
+              // repeated-note rule) — with one candidate it RETURNS to the
+              // bar's top instead: a neighbour figure
+              const t2 = pick(1, cand);
+              const rest = cand.filter((m) => m !== t2);
+              topSeq = `${nm(top)}@2 ${nm(t2)} ${nm(rest.length ? pick(2, rest) : top)}`;
+            }
+            if (!topSeq) padBars.push(`[${midis.map(nm).join(',')}]`);
+            else if (inner.length) padBars.push(`[[${inner.map(nm).join(',')}],[${topSeq}]]`);
+            else padBars.push(`[${topSeq}]`);
           }
           const upper = `note("<${padBars.join(' ')}>").s("${layer.instrument}").gain(${layer.gain})`;
           const frame = bindFigure({

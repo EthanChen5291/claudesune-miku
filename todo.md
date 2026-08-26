@@ -639,3 +639,51 @@ note below every arp note" — direct fix for our robotic-arp complaints),
 vid_ladder_quintal (the Aquatic Ambience water ladder — candidate DEFAULT
 texture for the water vibe when you next audition it). None ear-ratified:
 they will surface via progressions.html / future song builds.
+
+NEW — LISTEN: audition/videolab.html (D69). Ten technique-lab cards from
+the video corpus: keep/kill judges the TECHNIQUE AS RENDERED; notes say
+what to combine next. Faithfuls (tyler melt, G#m9 climb, bronik build,
+aquatic ladder, planing, gospel roll-in), a transplant (arp under-shadow on
+your kept water harmony), combinations (dominant elevator modulation song,
+city-pop enter-early/decorate-late, kpop pads + two-note sigh). Export →
+import-verdicts.mjs as usual.
+
+VIDEOLAB ROUND 1 IMPORTED (D71): 3 keeps (gsharp climb, aquatic ladder,
+planing), 1 kill (tyler melt — vid_tyler_loop banned), 6 note-only cards.
+Aquatic rule recorded: in songs the water ladder gets lots of reverb +
+damper.
+
+NEW — LISTEN: audition/videolab.html ROUND 2 (11 cards). Kept cards are
+unchanged; every note-only card is rebuilt to your notes (bronik
+rebalanced, elevator lands on the same theme a semitone up, undershadow
+left hand rocks root-fifth, citypop/kpop falls only at phrase ends +
+chord-rhythm variation, gospel middle now diatonic vi9-iii7). Two new
+cards from your keep notes: vl_gsharp_vamp (just the two chords you
+liked) and vl_planing_var (your Eb-for-A bass substitution). CLEAR STALE
+NOTE BOXES before exporting — old notes persist between rounds.
+
+NEW — RELISTEN: audition/songs.html — somber aftermath only (D70). The
+cello + strings pads now carry their own slow held top-voice melodies
+(varied durations, leaning into each chord change); every other song is
+byte-identical. The padMelody switch is ready for any other song you name.
+
+D72 UPDATE — the aftermath-only RELISTEN above is superseded: your
+"change the generation, not the song" ruling made pad melodies POLICY.
+RELISTEN the WHOLE songs page: every song's pad support now moves — slow
+songs' top pad sings a planned phrase (contour arc, scale passing tones,
+repeating rhythm motif, cadence home), fast songs (>140bpm: fight, boss,
+kitchen, drop) and all lower pads move subtly per bar. Only pad exprs
+changed; leads, accompaniment, drums untouched.
+
+D73 — RELISTEN both pages:
+- songs.html: water's loop is now C D F^7 Am (your C7 note; F^7-from-D
+  banked as a taste seed), water pads trimmed 0.85; kitchen piano at HALF
+  TIME with a sparse lead (-43% onsets, drums untouched); fight/boss/drop/
+  kitchen top pads now sing the FREE phrase (your "more free, with
+  variations"); fight + boss carry the new sine SUB-BASS under the beat.
+  Chill songs (cave/snow/aftermath/sad shop/construction/happy shop) are
+  byte-identical to what you just praised.
+- videolab.html: the copy-JSON error is fixed (a stale round-1 verdict for
+  the removed tyler card broke export — stale keys now prune on load).
+  Re-export when ready; your pasted round-2 listen still needs its
+  keep/kills.

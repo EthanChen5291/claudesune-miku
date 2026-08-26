@@ -149,16 +149,25 @@ test('D53: a good vote is worth exactly EAR_COUNT observations', () => {
 });
 
 test('D53: a verdict in one family never moves another', () => {
-  // The votes on record are all `minor`. Nothing about major or modal may change.
+  // Pair votes on record: minor|0>11, and (D73) major|2>5 — "I especially
+  // like the F^7 from D". Modal carries only a chord vote, which cannot
+  // move root motion. So: modal never moves, and major moves ONLY out of
+  // degree 2, the row its own vote sits on (folding renormalizes that row,
+  // so every 2->d cell may shift — but no other row may).
   for (const family of ['major', 'modal']) {
     for (const from of DEGREES) {
+      if (family === 'major' && from === 2) continue;
       const on = rootProbs('inner', from, { family });
       const off = rootProbs('inner', from, { family, ear: false });
       for (const d of DEGREES) {
-        assert.equal(on.get(d), off.get(d), `${family}: degree ${from}->${d} moved on a minor-only verdict`);
+        assert.equal(on.get(d), off.get(d), `${family}: degree ${from}->${d} moved with no vote on that row`);
       }
     }
   }
+  // and the voted row moves TOWARD the named target, not just somewhere
+  const on2 = rootProbs('inner', 2, { family: 'major' });
+  const off2 = rootProbs('inner', 2, { family: 'major', ear: false });
+  assert.ok(on2.get(5) > off2.get(5), 'the D73 major|2>5 vote should lift 2->5');
 });
 
 test('D53: pairVotes and chordVotes read only the bag they are asked for', () => {
