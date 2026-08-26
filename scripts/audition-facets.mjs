@@ -226,6 +226,41 @@ for (const [name, e] of exemplarPool().entries) {
       note: s.note, degrees: toDegrees(out), ...b,
     });
   }
+  // D59: the two devices the video corpus (D57) leans on, offered as probes.
+  //
+  // sus_then_alter — the two-stage dominant from Prema (A13sus4 -> A7(b9,b13)):
+  // the last two slots become V13sus then V7alt of the loop's opening chord, so
+  // the dominant arrives suspended and only cracks into its altered form at the
+  // moment of resolution. Needs 4+ chords (it spends two slots) and a chord
+  // before it that is not already on the dominant's root.
+  const dom = (cycle[0].semis + 7) % 12;
+  const third0 = cycle[0].quality;
+  if (cycle.length >= 4 && cycle[cycle.length - 3].semis !== dom) {
+    const out = cycle.map((c, i) => (i === cycle.length - 2 ? { ...c, semis: dom, quality: '13sus', spell: null }
+      : i === cycle.length - 1 ? { ...c, semis: dom, quality: '7alt', spell: null } : c));
+    const b = build(out, e.family, TEXTURES.filter((t) => t.id === 'block'));
+    if (b.exprs.block) {
+      cadences.push({
+        id: 'sus_then_alter', label: 'sus, then altered V',
+        note: `the last two slots become V13sus -> V7alt of the opening chord — the two-stage dominant (D57, Prema)`,
+        degrees: toDegrees(out), ...b,
+      });
+    }
+  }
+  // end_9sus — video 9 ends the whole piece on a 9sus4 and departs every
+  // modulation from one. As a loop it resolves at the seam (the opening chord
+  // restates the triad), which is also exactly that video's departure shape.
+  if (third0 !== 'sus' && third0 !== '9sus') {
+    const out = cycle.map((c, i) => (i === cycle.length - 1 ? { ...c, semis: cycle[0].semis, quality: '9sus', spell: null } : c));
+    const b = build(out, e.family, TEXTURES.filter((t) => t.id === 'block'));
+    if (b.exprs.block) {
+      cadences.push({
+        id: 'end_9sus', label: 'end on 9sus4',
+        note: `the wrap becomes the opening chord's 9sus4 — the unresolved ending video 9 commits to (D57)`,
+        degrees: toDegrees(out), ...b,
+      });
+    }
+  }
 
   harmonies.push({
     name, family: e.family, numerals: e.numerals, degrees: e.degrees,
@@ -594,9 +629,12 @@ function renderCadences() {
   host.innerHTML = '';
   const h = document.createElement('p');
   h.className = 'hint';
-  h.innerHTML = 'The same loop ending three ways. <b>suspend the wrap</b> turns the last chord into a sus '
+  h.innerHTML = 'The same loop ending several ways. <b>suspend the wrap</b> turns the last chord into a sus '
     + 'on the first chord\\'s root, so the seam is <code>Xsus → X</code>; <b>suspend the penultimate</b> is '
     + 'the literal last-two-measures reading. Both cost the chord they replace. '
+    + 'Two devices come from the video corpus (D57): <b>sus, then altered V</b> is the two-stage dominant '
+    + '(the V arrives as 13sus and cracks into 7alt at the last moment — Prema), and <b>end on 9sus4</b> '
+    + 'ends the loop on the opening chord\\'s unresolved 9sus4 (video 9 commits its whole piece to this). '
     + 'The <b>wrap chip</b> underneath votes on the loop\\'s own last→first motion as a <i>cadence</i>, '
     + 'which is a separate question from whether that move works mid-loop — the corpus rates the two '
     + 'very differently and this page keeps them apart.';

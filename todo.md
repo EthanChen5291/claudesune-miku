@@ -396,9 +396,15 @@ NEXT:
    DEVELOPMENT_UNDERTALE has 23 observed FROM->TO accompaniment transitions with
    counts, and 53 of 112 development moves (47%) change the texture. What is
    missing is WHERE in the form they land.
-0c. RESEARCH — harmony variation as a PLACED event, not a sprinkle. D50 builds
-   the variations; nothing decides where they go. First real requirement of the
-   chronological-editing phase.
+0c. [RESOLVED — D59] Harmony variation is placed at THE LAST REPRISE of the
+   letter form: a variation is only audible as one against material already
+   known, so it lands on the final return of an already-heard letter, and a
+   no-reprise scheme (ABCD) gets none. One gentle root-preserving operator
+   through the D50 gate; everything chord-reading rebinds in that section.
+   Hear it: undertale.html, "mix" texture — 98/163 cards carry a treat (the
+   form strip marks it A′/B′). Still open from 0c: variation OUTSIDE the loop
+   wrap (mid-phrase substitutions in longer forms) belongs to chronological
+   editing.
 0d. [done, D57] TWELVE VIDEOS TRANSCRIBED BY EYE -> pack 'igvideo': 18 section
    entries (Fujii Kaze x3, jazz ballad in E, neo-soul in F, dim chain in C#,
    city-pop in C x3, modulation etude x3), 2 flourishes as placed events with
@@ -406,13 +412,26 @@ NEXT:
    techniques + the layering doctrine + melody habits). All needsEar; Ethan
    endorsed the SOURCES (sourceEndorsed:true), not my transcriptions of them.
    Hear them: audition/progressions.html, source filter "from the videos".
-   NEXT from the doc: sus-then-alter + end-on-9sus4 as cadence probes (D53
-   wraps bag); altered-dominant-once-per-phrase as a placed operator; lead-lane
-   turn-taking (call & response) in the layer scheduler.
+   [done, D59] all three queued changes built: sus-then-alter + end-on-9sus4
+   ride the facets cadence tab (with new 7sus/9sus/13sus/7b9/7alt dictionary
+   shapes so they can play); OPS.alter_dominant is a placed operator (one per
+   phrase, at the turn, must resolve; own gateSlack so the D50 gate cannot veto
+   the device for being rare); the `dialogue` archetype does call & response as
+   lead-lane turn-taking (2-bar call, 2-bar answer, never simultaneous).
+0e. [done, D59] THE LETTER FORM — harmony+melody composed over time. Letters
+   name melodies (ABAB/ABCA/AABA/... hash-picked per song); same letter = same
+   seed, new letter = new line; lead-derived layers rebind to their section's
+   letter. undertale.html "mix" is now the full letter-formed song. NEXT:
+   letter schemes + dialogue + treats should reach SONG GENERATION (cli), not
+   just the audition page; and the answer voice could eventually VARY its echo
+   (video 10's answers are near-echoes, not exact).
 1. *** RE-RUN audition/facets.html AND audition/judge.html, plus
    audition/progressions.html filtered to "from the videos" (18 sections to
    keep/kill — they are eye-reads of videos you like, so a kill likely means I
-   misread; notes welcome). *** facets first — it
+   misread; notes welcome; each video card now has its own tone buttons —
+   block / arpeggio / wide pad / wide oom-pah — and the export records which
+   tone you judged). The facets cadence tab now also offers the two D57
+   devices per harmony: "sus, then altered V" and "end on 9sus4" (D59). *** facets first — it
    is where the two things Ethan already noticed by ear get generalised, and it
    is the only page whose votes reach the generator directly. Both export JSON;
    `node scripts/import-verdicts.mjs <file.json>` handles either format and
@@ -429,9 +448,10 @@ NEXT:
    seeded there on purpose.
 1c. `wraps` is empty and only the cadence tab fills it. Until it has votes, the
    ear has said nothing about endings at all.
-2. The melody profile is measured but NOT WIRED IN. melody-profiles-vgmusic.js
-   exists; nothing reads it yet. Wire it as a selectable style once the ear
-   pass says the game-midi habits are wanted.
+2. [done, D59] melody-profiles-vgmusic.js is wired: 'game-midi' is a selectable
+   bindMelody style (articulation defaults eased from measured shares; the
+   saturated cellRepetitionFloor deliberately not carried). NOT yet used by any
+   audition card — switch a page to it when the ear wants the comparison.
 3. Re-transcribe or drop the remaining low-coverage Undertale entries (the
    percussion fix already repaired 2; the rest are genuinely thin).
 4. Consider re-auditioning the two Amalgam entries now that their key is right.

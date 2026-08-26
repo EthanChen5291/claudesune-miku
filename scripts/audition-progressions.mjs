@@ -19,7 +19,8 @@ import { PROGRESSIONS, ALL_PROGRESSIONS, parseDegrees, progressionQualities } fr
 import { generateProgression, explainProgression } from '../src/lib/harmony-gen.js';
 import { exemplarPool, variationsOf, explainVariation } from '../src/lib/harmony-vary.js';
 import { renderProgression } from '../src/binder/harmony.js';
-import { bindComp, bind } from '../src/binder/bind.js';
+import { bindComp, bind, bindFigure } from '../src/binder/bind.js';
+import { FIGURATIONS_UNDERTALE } from '../src/lib/figurations-undertale.js';
 import { RHYTHMS } from '../src/lib/rhythms.js';
 import { CONTOURS } from '../src/lib/contours.js';
 import { VOICINGS, voicingRegistration } from '../src/lib/voicings.js';
@@ -44,6 +45,21 @@ const TEXTURES = [
   { id: 'pad',   label: 'wide pad',   rhythm: 'even_8ths',        dict: 'spread_tenth', sound: 'piano', fx: '.room(0.45)' },
 ];
 const BASS = { rhythm: 'offbeat_8ths', contour: 'bass_root_five', octave: 2, sound: 'piano', fx: '.gain(0.7)' };
+
+// D59 (Ethan, 2026-08-25): the VIDEO cards get a per-card tone picker — "rather
+// than always playing block tone for that chord, you press the tone you want to
+// play within the box". Four tones, judge.html's language: block and wide pad
+// are this page's own comp textures; arpeggio and wide oom-pah are figuration
+// renderings (chord members, so they voice ANY quality the parser understands —
+// which matters here, because the transcribed jazz colours outrun the comp
+// dictionaries). Same WIDE_OOMPAH hybrid judge.html plays, for continuity.
+const WIDE_OOMPAH = {
+  ...FIGURATIONS_UNDERTALE.ut_oompah_dogsong,
+  figure: ['R', '5.3+', 'R', '5.3+'],
+  octave: 2,
+  provenance: 'page-local hybrid (D56): ut_oompah_dogsong rhythm × me_spread_tenth intervals',
+  songs: [], seen: 0,
+};
 
 const SAMPLE_NAMES = new Set(JSON.parse(readFileSync(join(ROOT, 'src/ingest/sample-names.json'), 'utf8')).names);
 for (const t of TEXTURES) {
@@ -120,11 +136,18 @@ for (const [name, e, arm] of [
   const bass = bind(RHYTHMS[BASS.rhythm], CONTOURS[BASS.contour], ctx, '4/4', {
     octave: BASS.octave, sound: BASS.sound, fx: BASS.fx,
   }).expr;
+  // the per-card tones, video cards only (see the D59 note above)
+  const tones = arm === 'video' ? {
+    block: exprs.comp,
+    arp: bindFigure(FIGURATIONS_UNDERTALE.ut_arp_tem_shop, ctx, '4/4', { sound: 'piano', fx: '.room(0.3)' }).expr,
+    pad: exprs.pad,
+    oompah: bindFigure(WIDE_OOMPAH, ctx, '4/4', { sound: 'piano', fx: '.room(0.35)' }).expr,
+  } : null;
   entries.push({
     name, family: e.family, numerals: e.numerals, moods: e.moods,
     symbols, length: parseDegrees(e.degrees).length,
     qualities: [...progressionQualities(e)].sort(),
-    exprs, missing, bass,
+    exprs, missing, bass, tones,
     song: e.song ?? null,
     source: arm ?? (e.provenance === 'generated' ? 'generated' : 'imported'),
     // D50: what this came from and what each substitution guaranteed
@@ -165,13 +188,17 @@ for (const fam of ['major', 'minor', 'modal']) {
   }
 }
 const FULL = process.argv.includes('--full');
+const videoToneChecks = (pool) => pool.filter((e) => e.tones)
+  .flatMap((e) => Object.keys(e.tones).filter((k) => e.tones[k]).map((k) => [e, `tone:${k}`]));
 const toCheck = FULL
-  ? entries.flatMap((e) => TEXTURES.filter((t) => e.exprs[t.id]).map((t) => [e, t.id]))
-  : sample;
+  ? [...entries.flatMap((e) => TEXTURES.filter((t) => e.exprs[t.id]).map((t) => [e, t.id])),
+    ...videoToneChecks(entries)]
+  : [...sample, ...videoToneChecks(entries.filter((e) => e.tones).slice(0, 1))];
 let checked = 0;
 for (const [e, tid] of toCheck) {
-  if (!e?.exprs[tid]) continue;
-  const code = `setcpm(120/4)\n${preamble}\np: stack(${e.exprs[tid]}, ${e.bass}).transpose(0)`;
+  const expr = tid.startsWith('tone:') ? e.tones[tid.slice(5)] : e?.exprs[tid];
+  if (!expr) continue;
+  const code = `setcpm(120/4)\n${preamble}\np: stack(${expr}, ${e.bass}).transpose(0)`;
   const ev = await evaluateSong(code);
   const haps = hapsByLabel(ev, 0, 4).get('p');
   if (!haps || haps.error || !haps.haps.length) {
@@ -198,6 +225,9 @@ acorn.parse(inline, { ecmaVersion: 'latest' });
 mkdirSync(OUT, { recursive: true });
 writeFileSync(join(OUT, 'progressions.html'), html);
 console.log(`wrote audition/progressions.html — ${entries.length} entries × ${TEXTURES.length} textures`);
+const vt = entries.filter((e) => e.tones);
+console.log(`  ${vt.length} video cards carry the per-card tone picker (block/arpeggio/wide pad/wide oom-pah); ` +
+  `${vt.filter((e) => Object.values(e.tones).every(Boolean)).length} play all four tones`);
 console.log(`  ${checked}${FULL ? '' : ' sampled'} patterns evaluated green through the engine's own transpiler${FULL ? ' (ALL of them)' : ' (--full checks all)'}`);
 console.log(`  inline page script parses clean (${(inline.length / 1024).toFixed(0)} KB)`);
 for (const t of TEXTURES) {
@@ -246,6 +276,10 @@ function page(DATA) {
   .acts button { padding:2px 8px; font-size:11.5px; }
   .acts button.k.on { background:var(--keep); border-color:var(--keep); color:#fff; }
   .acts button.x.on { background:var(--kill); border-color:var(--kill); color:#fff; }
+  .tonerow { display:flex; gap:4px; margin-top:6px; flex-wrap:wrap; }
+  .tonerow .tone { padding:2px 7px; font-size:11px; opacity:.85; }
+  .tonerow .tone.on { background:var(--sel, #4a7); border-color:var(--sel, #4a7); color:#fff; opacity:1; }
+  .tonerow .tone.dead { opacity:.3; cursor:not-allowed; }
   footer { position:fixed; bottom:0; left:0; right:0; background:var(--panel); border-top:1px solid var(--line); padding:7px 18px; display:flex; gap:16px; align-items:center; font-size:12.5px; }
   kbd { background:#252531; border:1px solid #3a3a4a; border-radius:4px; padding:0 5px; font:11.5px ui-monospace,monospace; }
 </style>
@@ -287,15 +321,27 @@ function page(DATA) {
 ${RUNTIME_JS}
 const DATA = ${JSON.stringify(DATA)};
 const LS = 'motif-engine:progression-verdicts';
+const LST = 'motif-engine:progression-tones';
 let verdicts = {};
 try { verdicts = JSON.parse(localStorage.getItem(LS) || '{}'); } catch {}
+// per-card tone choice for the video cards (D59) — which rendering the ear is
+// actually judging, kept with the verdicts so the export can say so
+let cardTone = {};
+try { cardTone = JSON.parse(localStorage.getItem(LST) || '{}'); } catch {}
+const TONE_LABELS = { block: 'block', arp: 'arpeggio', pad: 'wide pad', oompah: 'wide oom-pah' };
+const toneOf = (e) => {
+  if (!e.tones) return null;
+  const t = cardTone[e.name];
+  if (t && e.tones[t]) return t;
+  return ['block', 'arp', 'pad', 'oompah'].find((k) => e.tones[k]) || null;
+};
 let texture = DATA.textures[0].id, playing = null, sel = 0, visible = [];
 
 const $ = (id) => document.getElementById(id);
-const save = () => localStorage.setItem(LS, JSON.stringify(verdicts));
+const save = () => { localStorage.setItem(LS, JSON.stringify(verdicts)); localStorage.setItem(LST, JSON.stringify(cardTone)); };
 
 function codeFor(e) {
-  const expr = e.exprs[texture];
+  const expr = e.tones ? e.tones[toneOf(e)] : e.exprs[texture];
   if (!expr) return null;
   const layers = ($('bass') && $('bass').checked) ? expr + ', ' + e.bass : expr;
   const tr = Number($('tr') && $('tr').value) || 0;
@@ -327,7 +373,7 @@ function matches(e) {
   if ($('fFam').value && e.family !== $('fFam').value) return false;
   if ($('fMood').value && !e.moods.includes($('fMood').value)) return false;
   if ($('fLen').value && String(e.length) !== $('fLen').value) return false;
-  if ($('fVoice').checked && !e.exprs[texture]) return false;
+  if ($('fVoice').checked && !(e.tones ? toneOf(e) : e.exprs[texture])) return false;
   const v = $('fVerd').value;
   if (v === 'none' && verdicts[e.name]) return false;
   if ((v === 'keep' || v === 'kill') && verdicts[e.name] !== v) return false;
@@ -342,7 +388,7 @@ function render() {
   const grid = $('grid');
   grid.innerHTML = '';
   visible.forEach((e, i) => {
-    const voiceable = !!e.exprs[texture];
+    const voiceable = e.tones ? !!toneOf(e) : !!e.exprs[texture];
     const card = document.createElement('div');
     card.className = 'card' + (i === sel ? ' sel' : '') + (playing === e.name ? ' playing' : '') +
       (verdicts[e.name] ? ' ' + verdicts[e.name] : '') + (voiceable ? '' : ' unvoiceable');
@@ -383,6 +429,25 @@ function render() {
     cp.onclick = (ev) => { ev.stopPropagation(); copy(e, cp); };
     acts.appendChild(cp);
     card.appendChild(acts);
+    // D59: video cards choose their tone IN the box — press the one to hear
+    if (e.tones) {
+      const row = document.createElement('div');
+      row.className = 'tonerow';
+      const cur = toneOf(e);
+      for (const k of ['block', 'arp', 'pad', 'oompah']) {
+        const b = document.createElement('button');
+        b.textContent = TONE_LABELS[k];
+        b.className = 'tone' + (k === cur ? ' on' : '') + (e.tones[k] ? '' : ' dead');
+        if (!e.tones[k]) b.title = 'no voicing shape for one of the qualities here — the member-based tones (arpeggio, oom-pah) always play';
+        b.onclick = (ev) => {
+          ev.stopPropagation();
+          if (!e.tones[k]) return;
+          cardTone[e.name] = k; save(); sel = i; play(e);
+        };
+        row.appendChild(b);
+      }
+      card.appendChild(row);
+    }
     if (voiceable) card.onclick = () => { sel = i; play(e); };
     grid.appendChild(card);
   });
@@ -423,7 +488,7 @@ $('tr').oninput = () => { $('trv').textContent = $('tr').value; if (playing) pla
 $('bass').onchange = () => { if (playing) play(DATA.entries.find((e) => e.name === playing)); };
 $('stop').onclick = stop;
 $('export').onclick = async () => {
-  const out = { generated: new Date().toISOString(), texture, verdicts };
+  const out = { generated: new Date().toISOString(), texture, verdicts, videoTones: cardTone };
   const ok = await toClipboard(JSON.stringify(out, null, 2));
   $('export').textContent = ok ? 'copied ✓' : 'copy failed';
   setTimeout(() => { $('export').textContent = 'copy verdicts JSON'; }, 1200);

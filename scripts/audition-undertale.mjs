@@ -35,7 +35,11 @@ import { ATLAS, ATLAS_SECTIONS } from '../src/lib/atlas.js';
 import { MELODIES_TIER2 } from '../src/lib/melodies-tier2.js';
 import { MELODY_RHYTHMS_UNDERTALE } from '../src/lib/rhythms-undertale.js';
 import { INSTRUMENTS } from '../src/lib/instruments.js';
-import { planArrangement, renderArrangement, planForm, renderForm } from '../src/binder/arrange.js';
+import {
+  planArrangement, renderArrangement, planForm, renderForm,
+  planMelodyForm, renderLetterLead, maskBarsFor, maskString,
+} from '../src/binder/arrange.js';
+import { varyProgression } from '../src/lib/harmony-vary.js';
 import { RHYTHMS } from '../src/lib/rhythms.js';
 import { CONTOURS } from '../src/lib/contours.js';
 import { evaluateSong, hapsByLabel } from '../src/harness/evaluate.js';
@@ -172,10 +176,17 @@ function interlockScore(accSet, cell, beats) {
   return (fill * 1.0 + lockStrong * 0.8 - lockWeak * 0.6) / Math.sqrt(cell.onsets.length);
 }
 const DENSITY_BAND = 3;
-function melodyRhythm(meter, bpm, seedName, { target: forced = null, accDensity = 0, accOnsets = null, beats = 4 } = {}) {
+function melodyRhythm(meter, bpm, seedName, { target: forced = null, accDensity = 0, accOnsets = null, beats = 4, exclude = [] } = {}) {
   const target = forced ?? melodyDensityTarget(bpm, accDensity);
   let pool = MEL_CELLS.filter((c) => c.meter_class === meter);
   if (!pool.length) pool = MEL_CELLS.filter((c) => c.meter_class === '4/4');
+  // D59 letter form: a new letter is a different melody, and that includes its
+  // rhythm — exclude the cells earlier letters already claimed (unless that
+  // would leave nothing, which the mined corpus makes effectively impossible)
+  if (exclude.length) {
+    const rest = pool.filter((c) => !exclude.includes(c.name));
+    if (rest.length) pool = rest;
+  }
   let band = pool.filter((c) => Math.abs(c.density - target) <= DENSITY_BAND);
   if (!band.length) {
     const sorted = pool.map((c) => ({ c, d: Math.abs(c.density - target) })).sort((a, b) => a.d - b.d);
@@ -240,9 +251,121 @@ const progressions = Object.entries(PROGRESSIONS_UNDERTALE).map(([name, e]) => {
   // ---- the form (D47): who plays WHEN, across the loop's repetitions --------
   const form = planForm(plan);
   const shaped = renderForm(rendered.layers, leadBound.expr, form);
-  // full mix: the accompaniment runs throughout (it is the song's identity);
-  // the lead and every layer are masked to the sections that own them
-  const mixParts = [base, ...(shaped.lead ? [shaped.lead] : []), ...shaped.layers.map((l) => l.formExpr)];
+
+  // ---- the letter form (D59): which MELODY is playing when ------------------
+  // Ethan's brief: melodic changes follow structures like ABAB / ABCD / ABCA.
+  // A letter names a melody. Letter A is the card's own lead (same seed as
+  // ever, so nothing already auditioned changes identity); a new letter is a
+  // genuinely different line — its own rhythm cell (same interlock-ranked
+  // search, different seed) and its own pitch seed.
+  const mf = planMelodyForm(form, { name });
+  const letterCellMemo = new Map([['A', leadCell]]);
+  const letterCell = (L) => {
+    if (!letterCellMemo.has(L)) {
+      // a new letter takes the best interlocking cell NOT already claimed by
+      // an earlier letter — a different melody includes a different rhythm
+      const used = [...letterCellMemo.values()].map((c) => c.name);
+      letterCellMemo.set(L, melodyRhythm(e.meter, e.bpm, `${name}|${L}`, { accDensity, accOnsets, beats, exclude: used }));
+    }
+    return letterCellMemo.get(L);
+  };
+  const letterSeed = (L) => (L === 'A' ? leadSeed : fnv(`${name}|melody|${L}`));
+  const bindLetter = (L, ctxL, opts = {}) => bindMelody(letterCell(L), ctxL, e.meter, {
+    style: 'toby-fox', seed: letterSeed(L), octave: 5, sound: 'piano',
+    fx: '.gain(0.85).room(0.25)', ...opts,
+  });
+
+  // ---- the placed variation (D59): the harmony's sweet treat ----------------
+  // At the LAST REPRISE the harmony varies: one gentle root-preserving operator
+  // from the D50 set (alter_dominant included — the video corpus's marked
+  // event), verified by the same gate every variation passes. Placed, never
+  // random: Ethan's ruling is that variation "has its place in the song", and
+  // the place a variation is audible AS a variation is the return of material
+  // the listener already knows. The varied section re-binds EVERYTHING that
+  // reads chords — accompaniment, layers, and the section's own melody (same
+  // seed, so it is the familiar tune re-legalized over the new chords).
+  let vary = null;
+  if (mf.varySection != null) {
+    const v = varyProgression(e, {
+      budget: 1, intensity: 0.4, seed: `${name}|treat`,
+      allow: ['recolour', 'suspend', 'mixture', 'alter_dominant'],
+    });
+    if (v.lineage.changed) vary = v;
+  }
+  let mfx = mf;
+  let ctxBarV = null;
+  let renderedV = null;
+  let baseV = null;
+  let varyInfo = null;
+  const varyBars = form.sections.flatMap((sec) => Array(sec.bars).fill(sec.index === mf.varySection ? 1 : 0));
+  if (vary) {
+    const symbolsV = renderProgression(vary, key);
+    ctxBarV = { harmony: barChords(symbolsV, e.barsPerChord, e.loopBars), barsPerChord: 1, key };
+    varyInfo = { op: vary.lineage.ops[0], numerals: vary.numerals, symbols: symbolsV };
+    baseV = e.ownFigure
+      ? bindFigure(e.ownFigure, ctxBarV, e.meter, { sound: 'piano', fx: '.room(0.25)' }).expr
+      : bindFigure(FIGURATIONS_UNDERTALE[TEXTURES[0].fig], { harmony: symbolsV, barsPerChord: 1, key }, '4/4', { sound: 'piano', fx: '.room(0.25)' }).expr;
+    renderedV = renderArrangement(plan, {
+      harmonyContext: ctxBarV, meter: e.meter, style: 'toby-fox',
+      leadRhythm: leadCell, leadSeed,
+      counterRhythmFor: (target, seedName) => melodyRhythm(e.meter, e.bpm, seedName, { target, accOnsets, beats }),
+      figureFor: () => FIGURATIONS_UNDERTALE[TEXTURES[0].fig],
+    });
+    // the varied section keeps its letter's melody (same seed) over the varied
+    // chords — rendered as its own pseudo-letter so the masks stay one system
+    const vs = mf.sections.find((s) => s.varyHarmony);
+    mfx = {
+      ...mf,
+      sections: mf.sections.map((s) => (s.varyHarmony ? { ...s, letter: `${s.letter}*` } : s)),
+      letters: [...mf.letters, `${vs.letter}*`],
+    };
+  }
+  const letterLead = renderLetterLead(form, mfx, (L) => {
+    const base0 = L.endsWith('*') ? L.slice(0, -1) : L;
+    return bindLetter(base0, L.endsWith('*') ? ctxBarV : ctxBar).expr;
+  });
+
+  // layers: rebind lead-derived voices to the letter of the sections they sing
+  // in (a takeover answering a B section must play the B melody, not A's), and
+  // swap every chord-reading voice to the varied harmony in the vary section
+  const lettersOf = (l) => [...new Set(form.sections
+    .filter((s) => s.active.includes(l.id) && s.lead !== 'none')
+    .map((s) => mf.sections.find((x) => x.index === s.index)?.letter)
+    .filter(Boolean))];
+  const layerMixExprs = shaped.layers.map((l) => {
+    let orig = l.expr;
+    let variant = renderedV?.layers.find((x) => x.id === l.id)?.expr ?? null;
+    if (l.derives === 'lead' || l.derives === 'lead-rhythm') {
+      const Ls = lettersOf(l);
+      if (Ls.length === 1 && Ls[0] !== 'A') {
+        const opts = {
+          style: 'toby-fox', octave: l.octave, sound: l.instrument, fx: `.gain(${l.gain})`,
+          seed: l.derives === 'lead' ? letterSeed(Ls[0]) : l.seed,
+        };
+        orig = bindMelody(letterCell(Ls[0]), ctxBar, e.meter, opts).expr;
+        if (ctxBarV) variant = bindMelody(letterCell(Ls[0]), ctxBarV, e.meter, opts).expr;
+      }
+    }
+    const act = maskBarsFor(l.id, form);
+    const inVary = act.map((v, i) => (v && varyBars[i] ? 1 : 0));
+    if (variant && inVary.some(Boolean)) {
+      const outVary = act.map((v, i) => (v && !varyBars[i] ? 1 : 0));
+      const parts = [`${variant}.mask("<${maskString(inVary)}>")`];
+      if (outVary.some(Boolean)) parts.unshift(`${orig}.mask("<${maskString(outVary)}>")`);
+      return parts.length === 1 ? parts[0] : `stack(${parts.join(', ')})`;
+    }
+    const m = maskString(act);
+    return /^1(@\d+)?$/.test(m) ? orig : `${orig}.mask("<${m}>")`;
+  });
+  // the accompaniment runs throughout (it is the song's identity) — in the vary
+  // section it plays the varied chords
+  let baseMix = base;
+  if (vary && varyBars.some(Boolean)) {
+    baseMix = `stack(${base}.mask("<${maskString(varyBars.map((v) => (v ? 0 : 1)))}>"), ${baseV}.mask("<${maskString(varyBars)}>"))`;
+  }
+  // full mix: accompaniment throughout; the letter-formed lead and every layer
+  // masked to the bars (not just sections — dialogue splits bars) that own them
+  const mixParts = [baseMix, ...(letterLead.lead ? [letterLead.lead] : []), ...layerMixExprs];
   exprs.mix = mixParts.length > 1 ? `stack(${mixParts.join(', ')})` : mixParts[0];
   // solo: each layer alone, UNMASKED, for ear-checking one contribution at a
   // time — plus a "_form" that plays the mix so the shape itself is audible
@@ -278,14 +401,25 @@ const progressions = Object.entries(PROGRESSIONS_UNDERTALE).map(([name, e]) => {
     accDensity: Math.round(accDensity * 10) / 10,
     form: {
       sectionBars: form.sectionBars, totalBars: form.totalBars, notes: form.notes,
-      sections: form.sections.map((s) => ({
-        i: s.index, archetype: s.archetype, startBar: s.startBar, bars: s.bars,
-        energy: s.energy, lead: s.lead, mass: s.massSounding, why: s.why,
-        active: s.active.map((id) => {
-          const l = rendered.layers.find((x) => x.id === id);
-          return l ? l.instrument.replace('gm_', '') : id;
-        }),
-      })),
+      scheme: mf.scheme, melodyNotes: mf.notes,
+      vary: varyInfo ? {
+        section: mf.varySection, op: varyInfo.op.op, note: varyInfo.op.note,
+        numerals: varyInfo.numerals, symbols: varyInfo.symbols,
+      } : null,
+      sections: form.sections.map((s) => {
+        const ms = mf.sections.find((x) => x.index === s.index);
+        return {
+          i: s.index, archetype: s.archetype, startBar: s.startBar, bars: s.bars,
+          energy: s.energy, lead: s.lead, mass: s.massSounding, why: s.why,
+          letter: ms?.letter ?? null, reprise: ms?.reprise ?? false,
+          varied: Boolean(ms?.varyHarmony && varyInfo),
+          dialogue: s.dialogue ? s.dialogue.phraseBars : null,
+          active: s.active.map((id) => {
+            const l = rendered.layers.find((x) => x.id === id);
+            return l ? l.instrument.replace('gm_', '') : id;
+          }),
+        };
+      }),
     },
     plan: {
       budget: plan.budget, spent: plan.spent, headroom: plan.headroomStart, notes: plan.notes,
@@ -766,18 +900,28 @@ function soloRow() {
     const cell = document.createElement('div');
     cell.className = 'formsec e' + s.energy + (soloId ? ' muted' : '');
     const who = s.lead === 'none' ? 'no melody'
-      : s.lead === 'piano' ? 'piano leads' : (s.lead.replace('gm_', '') + ' takes over');
-    cell.innerHTML = '<b>' + s.archetype + '</b>'
+      : s.dialogue ? ('piano ⇄ ' + s.lead.split('⇄').pop().replace('gm_', '').trim() + ' trade ' + s.dialogue + '-bar phrases')
+        : s.lead === 'piano' ? 'piano leads' : (s.lead.replace('gm_', '') + ' takes over');
+    const letterTag = s.letter
+      ? '<b class="letter">' + s.letter + (s.varied ? '′' : '') + '</b> '
+      : '';
+    cell.innerHTML = letterTag + '<b>' + s.archetype + '</b>'
       + '<span>' + who + '</span>'
       + '<span class="dim">' + (s.active.length ? s.active.join(', ') : 'piano only') + '</span>';
     cell.title = 'bars ' + s.startBar + '-' + (s.startBar + s.bars - 1)
-      + ' · energy ' + s.energy + '/5 · mass ' + s.mass + '\\n' + s.why;
+      + ' · energy ' + s.energy + '/5 · mass ' + s.mass
+      + (s.letter ? '\\nmelody ' + s.letter + (s.reprise ? ' (reprise)' : ' (first statement)') : '')
+      + (s.varied && e.form.vary ? '\\nharmony varies here: ' + e.form.vary.op + ' — ' + e.form.vary.note
+        + '\\n' + e.form.vary.symbols.join(' ') : '')
+      + '\\n' + s.why;
     strip.appendChild(cell);
   }
   const cap = document.createElement('div');
   cap.className = 'dim formcap';
   cap.textContent = 'form: ' + secs.length + ' sections × ' + e.form.sectionBars + ' bars = '
-    + e.form.totalBars + ' bars, then it loops';
+    + e.form.totalBars + ' bars, then it loops'
+    + (e.form.scheme ? ' · melody ' + e.form.scheme : '')
+    + (e.form.vary ? ' · harmony treat: ' + e.form.vary.op + ' at the last reprise' : '');
   row.appendChild(strip);
   row.appendChild(cap);
 }
@@ -822,11 +966,13 @@ function render() {
         + (e.form ? '\\n\\nFORM — ' + e.form.sections.length + ' sections × ' + e.form.sectionBars + ' bars ('
           + e.form.totalBars + ' bars, then it loops)'
           + e.form.sections.map(function (s) {
-            return '\\n' + s.i + '. ' + s.archetype + ' @bar ' + s.startBar + ' — energy ' + s.energy + '/5, '
-              + (s.lead === 'none' ? 'NO melody' : s.lead === 'piano' ? 'piano leads' : s.lead + ' takes the tune')
+            return '\\n' + s.i + '. ' + (s.letter ? '[' + s.letter + (s.varied ? '′' : '') + '] ' : '') + s.archetype + ' @bar ' + s.startBar + ' — energy ' + s.energy + '/5, '
+              + (s.lead === 'none' ? 'NO melody' : s.dialogue ? s.lead + ' trading ' + s.dialogue + '-bar phrases' : s.lead === 'piano' ? 'piano leads' : s.lead + ' takes the tune')
               + (s.active.length ? ', with ' + s.active.join(' + ') : ', piano alone')
               + '\\n     ' + s.why;
           }).join('')
+          + (e.form.scheme ? '\\nmelody letters: ' + e.form.scheme + ' — ' + e.form.melodyNotes.join('; ') : '')
+          + (e.form.vary ? '\\nharmony treat: ' + e.form.vary.op + ' (' + e.form.vary.note + ') -> ' + e.form.vary.symbols.join(' ') : '')
           + '\\nform notes: ' + e.form.notes.join('\\n  ') : '')
         + '\\n\\nplan notes: ' + e.plan.notes.join('\\n  ')
         + atlasTip;

@@ -287,6 +287,70 @@ export const OPS = {
   },
 
   /**
+   * Sharpen ONE dominant into an altered dominant (7b9 / 7alt), at the turn.
+   *
+   * FROM THE VIDEO CORPUS (D57), where the sources annotate it themselves:
+   * videos 1/4/9/11 render plain chords in white and altered dominants in
+   * gold/rainbow, and the pattern is uniform — a diatonic frame, ONE altered
+   * dominant per phrase, at the turn, never two in a row. That makes this an
+   * operator WITH A PLACEMENT RULE rather than a colour knob: `recolour` would
+   * offer 7b9 on any dominant anywhere, which is exactly the "thrown in
+   * randomly" failure Ethan's variation ruling names.
+   *
+   * So the placement is enforced structurally:
+   *   - no sites at all if the cycle already contains an altered dominant
+   *     (once per phrase, and "never two in a row" follows for free);
+   *   - only a dominant that actually RESOLVES — down a fifth or down a
+   *     semitone into the next chord (the wrap counts; D49 puts the cadence
+   *     there), because the alteration is tension and tension unresolved is
+   *     just wrong notes;
+   *   - only the LAST such dominant in the cycle — "at the turn". A mid-phrase
+   *     alteration is not the device the videos show.
+   *
+   * The colour picked is whichever of 7alt / 7b9 the family plays more on that
+   * degree (both are counted, thinly, from the ldrolez import). Preserves: the
+   * root, the third, the resolution — only the tension on top changes.
+   */
+  alter_dominant: {
+    blurb: 'the phrase\'s last resolving dominant -> 7b9/7alt (one per phrase, at the turn)',
+    preserves: 'the root, the third and the resolution — only the tension changes',
+    cost: 0.4,
+    // The verification gate scores chord quality against the counted corpus,
+    // and an altered dominant is RARE there by definition — that rarity is the
+    // whole device (the sources render it in gold because it is the marked
+    // event). Measured: V7 -> V7alt in minor drops worstQual by ~1.7 nats,
+    // which the default QUALITY_SLACK (1.0) rejects every time, making the
+    // operator dead on arrival. So it declares its own extra allowance; the
+    // gate's other terms (root motion, cadence) still apply in full, and the
+    // placement rule above — one per phrase, at the turn, must resolve — is
+    // the guard that a corpus-frequency check cannot be for a device whose
+    // point is to be infrequent.
+    gateSlack: { quality: 2.5 },
+    sites(cycle, ctx) {
+      // a dominant already carrying an alteration ('^7#11' and 'm7b5' are not
+      // dominants, so the leading 7/9/13 is part of the test)
+      const altered = (q) => /^(7|9|13)(b9|b13|b5|#5|#9|#11|alt)/.test(q);
+      if (cycle.some((c) => altered(c.quality))) return [];
+      const n = cycle.length;
+      let turn = -1;
+      for (let i = 0; i < n; i++) {
+        if (!['7', '9', '13'].includes(cycle[i].quality)) continue;
+        const next = cycle[(i + 1) % n];
+        const drop = mod12(cycle[i].semis - next.semis);
+        if (drop !== 7 && drop !== 1) continue; // down a fifth, or the semitone slide
+        turn = i;
+      }
+      if (turn < 0) return [];
+      const out = [];
+      const probs = new Map(qualityProbs(cycle[turn].semis, ctx));
+      const q = (probs.get('7alt') ?? 0) >= (probs.get('7b9') ?? 0) ? '7alt' : '7b9';
+      push(out, cycle, ctx, turn, { semis: cycle[turn].semis, quality: q },
+        `${cycle[turn].semis} altered at the turn (${q}), resolving into ${cycle[(turn + 1) % n].semis}`);
+      return out;
+    },
+  },
+
+  /**
    * Change only the colour — add or drop a seventh, sixth, ninth — staying on
    * the same root with the same third. The options come from what the corpus
    * actually plays on that degree, so this cannot invent a quality the family

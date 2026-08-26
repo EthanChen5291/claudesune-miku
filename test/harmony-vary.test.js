@@ -418,3 +418,55 @@ test('D51: the taste profile is derived from the verdicts, not asserted', async 
     'the profile must flag that its strongest separator is not taste');
   assert.ok(explainTaste().length > 4);
 });
+
+// ---------------------------------------------------------------------------
+// D59: alter_dominant — the video corpus's marked event as an operator WITH A
+// PLACEMENT RULE (one per phrase, at the turn, must resolve), not a colour knob.
+// ---------------------------------------------------------------------------
+
+test('D59: alter_dominant offers exactly the turn, and only when nothing is altered yet', () => {
+  const ctx = { family: 'minor', home: 0 };
+  // one resolving dominant at the wrap -> exactly one site, at it
+  const one = OPS.alter_dominant.sites(parseDegrees('0:m 8 5:m 7:7'), ctx);
+  assert.equal(one.length, 1);
+  assert.equal(one[0].slot, 3);
+  assert.match(one[0].to.quality, /^7(b9|alt)$/);
+  // two resolving dominants -> still one site, the LATER one (the turn)
+  const two = OPS.alter_dominant.sites(parseDegrees('0:m 5:7 10 7:7'), ctx);
+  assert.equal(two.length, 1);
+  assert.equal(two[0].slot, 3, 'a mid-phrase dominant is not the turn');
+  // an altered dominant already present -> no sites at all (once per phrase)
+  assert.equal(OPS.alter_dominant.sites(parseDegrees('0:m 8 7:7b9'), ctx).length, 0);
+  // a dominant that resolves nowhere -> no sites (tension unresolved is just wrong notes)
+  assert.equal(OPS.alter_dominant.sites(parseDegrees('0:m 7:7 2:m'), ctx).length, 0);
+  // the semitone slide resolution counts (bV7 -> IV, D57 video 2/8/11)
+  const slide = OPS.alter_dominant.sites(parseDegrees('0:m 8 6:7 5:m'), ctx);
+  assert.equal(slide.length, 1);
+  assert.equal(slide[0].slot, 2);
+});
+
+test('D59: alter_dominant survives the verification gate via its declared slack', () => {
+  // The quality gate scores against corpus frequency and an altered dominant is
+  // rare BY DESIGN — without gateSlack the operator was dead on arrival
+  // (measured: V7 -> V7alt in minor drops worstQual ~1.7 nats vs slack 1.0).
+  const entry = { family: 'minor', degrees: '0:m 8 5:m 7:7', numerals: 'i-bVI-iv-V7', style: 'universal', moods: [], song: 'probe' };
+  const v = varyProgression(entry, { budget: 1, intensity: 0.4, allow: ['alter_dominant'], seed: 't' });
+  assert.equal(v.lineage.changed, true, `gate rejected the device itself: ${v.lineage.rejected.join('; ')}`);
+  assert.match(parseDegrees(v.degrees)[3].quality, /^7(b9|alt)$/);
+  // the roots are untouched — only the tension changed
+  assert.deepEqual(roots(v.degrees), roots(entry.degrees));
+  // and applying variation AGAIN cannot add a second one: the altered chord
+  // closes the operator's own sites
+  assert.equal(OPS.alter_dominant.sites(parseDegrees(v.degrees), { family: 'minor', home: 0 }).length, 0);
+});
+
+test('D59: the probe qualities have shapes in every voicing dictionary', async () => {
+  // 7sus/9sus/13sus/7b9/7alt exist so the D59 cadence probes can PLAY (the
+  // model already counted them; only the dictionaries could not shape them).
+  const { VOICINGS } = await import('../src/lib/voicings.js');
+  for (const [name, dict] of Object.entries(VOICINGS)) {
+    for (const q of ['7sus', '9sus', '13sus', '7b9', '7alt']) {
+      assert.ok(dict.shapes[q], `${name} has no shape for ${q}`);
+    }
+  }
+});

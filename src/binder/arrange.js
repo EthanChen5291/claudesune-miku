@@ -476,6 +476,18 @@ const ARCHETYPES = {
     lead: 'takeover', take: ['bed', 'motion'], energy: 4,
     why: 'the tune changes voice at a phrase boundary: the piano hands it over rather than dropping it',
   },
+  // D59, from the video corpus (D57): call & response is TURN-TAKING BETWEEN
+  // INSTRUMENTS, never two leads at once — video 10's accordion asks two bars
+  // and the whistle answers two, and the two never sound together. So this is
+  // a form-level scheduling rule: within the section, the piano owns the lead
+  // lane for `phraseBars` bars, then the answering voice owns it, alternating.
+  // The masks (maskFor / pianoLeadMask) implement the alternation; nothing
+  // about the melody itself changes — the answer voice plays the section's own
+  // line, which is what an echoed answer is.
+  dialogue: {
+    lead: 'dialogue', take: ['bed'], energy: 3.5,
+    why: 'call & response: the piano asks a two-bar phrase and another voice answers it — the two take turns owning the lead lane, never sounding together',
+  },
   // The peak is allowed past the standing mass ceiling. That ceiling is what a
   // song can carry INDEFINITELY without turning to mud; a peak is by definition
   // the one moment that is denser than the rest, and it only lasts a section.
@@ -522,11 +534,13 @@ const ROLE_FORM = {
     ['ostinato', 'statement', 'answer', 'full', 'tag'],
     ['statement', 'answer', 'handoff', 'full'],
     ['bed', 'statement', 'full', 'breakdown', 'full'],
+    ['bed', 'statement', 'dialogue', 'full'],
   ],
   character: [
     ['statement', 'answer', 'handoff', 'full'],
     ['ostinato', 'statement', 'answer', 'full'],
     ['statement', 'breakdown', 'answer', 'full'],
+    ['statement', 'dialogue', 'answer', 'full'],
   ],
   credits: [
     ['ostinato', 'bed', 'statement', 'answer', 'full'],
@@ -540,16 +554,19 @@ const ROLE_FORM = {
     ['statement', 'answer', 'full', 'breakdown'],
     ['bed', 'statement', 'answer', 'full'],
     ['statement', 'handoff', 'answer', 'full'],
+    ['statement', 'dialogue', 'full', 'breakdown'],
   ],
   overworld: [
     ['ostinato', 'bed', 'statement', 'answer'],
     ['bed', 'statement', 'answer', 'full'],
     ['ostinato', 'statement', 'full', 'breakdown', 'full'],
     ['statement', 'answer', 'handoff', 'full'],
+    ['ostinato', 'statement', 'dialogue', 'full'],
   ],
   shop: [
     ['statement', 'answer', 'full', 'answer'],
     ['bed', 'statement', 'answer', 'full'],
+    ['statement', 'dialogue', 'answer', 'full'],
   ],
   diegetic: [
     ['ostinato', 'statement', 'answer', 'full'],
@@ -606,17 +623,27 @@ export function planForm(plan, opts = {}) {
       }
       // who has the tune. A takeover only ever REPLACES the piano; it never
       // leaves the lead empty, and it is only reachable at a section boundary.
-      let leadVoice = 'piano', leadId = null;
+      let leadVoice = 'piano', leadId = null, dialogue = null;
       if (arch.lead === null) leadVoice = 'none';
       else if (arch.lead === 'takeover' && leaders.length) {
         const t = leaders[fnv(`${plan.name}|handoff|${i}`) % leaders.length];
         leadVoice = t.instrument; leadId = t.id;
         if (!active.includes(t.id)) { active.push(t.id); mass += t.mass; }
+      } else if (arch.lead === 'dialogue' && leaders.length) {
+        // D59 call & response: the piano and the answering voice TAKE TURNS
+        // owning the lead lane within the section — two-bar call, two-bar
+        // answer (video 10's own phrase length). The masks implement the
+        // alternation; the answer voice derives the lead line, so the answer
+        // is the call echoed in another instrument's voice.
+        const t = leaders[fnv(`${plan.name}|dialogue|${i}`) % leaders.length];
+        leadVoice = `piano ⇄ ${t.instrument}`; leadId = t.id;
+        dialogue = { answerId: t.id, phraseBars: 2 };
+        if (!active.includes(t.id)) { active.push(t.id); mass += t.mass; }
       }
       secs.push({
         index: i, archetype: shape[i], startBar: bar, bars: sectionBars,
-        energy: arch.energy, lead: leadVoice, leadLayerId: leadId,
-        pianoLead: leadVoice === 'piano', active,
+        energy: arch.energy, lead: leadVoice, leadLayerId: leadId, dialogue,
+        pianoLead: leadVoice === 'piano' || Boolean(dialogue), active,
         massSounding: Math.round(mass * 100) / 100,
         why: arch.why + (dropped.length ? ` (${dropped.join(', ')} held back: this section is already at its mass ceiling)` : ''),
       });
@@ -635,7 +662,11 @@ export function planForm(plan, opts = {}) {
     let s = shape.slice();
     // A handoff with nobody to hand off to is a dropout — the exact failure the
     // lead rule exists to stop. Degrade to the equivalent ordinary archetype.
-    if (!leaders.length) s = s.map((a) => (a === 'handoff' ? 'answer' : a === 'fullHandoff' ? 'full' : a));
+    // A dialogue degrades the same way (no answering voice), and also when the
+    // section is too short to hold one call AND one answer — an alternation
+    // that never alternates is a dropout wearing a dialogue's name.
+    if (!leaders.length) s = s.map((a) => (a === 'handoff' ? 'answer' : a === 'fullHandoff' ? 'full' : a === 'dialogue' ? 'answer' : a));
+    if (sectionBars < 4) s = s.map((a) => (a === 'dialogue' ? 'answer' : a));
     // Nor is an arrangement with no tune in it a form.
     if (!s.some((a) => ARCHETYPES[a].lead)) s = ['statement', ...s.slice(1)];
     const secs = build(s);
@@ -742,22 +773,180 @@ export function planForm(plan, opts = {}) {
   return { sectionBars, totalBars: bar, sections, notes };
 }
 
-/** the per-bar mask a layer needs to sound only in the sections it belongs to */
-export function maskFor(id, form) {
-  const on = form.sections.map((sec) => (sec.active.includes(id) ? 1 : 0));
-  return runLengths(on, form.sectionBars);
+// Masks are built PER BAR, not per section, because a dialogue section (D59)
+// splits its bars between two voices: the piano owns the lead lane for
+// `phraseBars` bars, the answering voice owns the next `phraseBars`, and the
+// two alternate to the section's end. For every other section a bar inherits
+// its section's value, so non-dialogue songs compress to exactly the strings
+// the per-section version produced.
+
+/** per-bar 0/1 activity for a layer, dialogue turn-taking included */
+export function maskBarsFor(id, form) {
+  const bars = [];
+  for (const sec of form.sections) {
+    const on = sec.active.includes(id);
+    if (on && sec.dialogue && sec.dialogue.answerId === id) {
+      const pb = sec.dialogue.phraseBars;
+      // the answer voice takes the SECOND half of each call/answer pair
+      for (let b = 0; b < sec.bars; b++) bars.push(Math.floor(b / pb) % 2 === 1 ? 1 : 0);
+    } else {
+      for (let b = 0; b < sec.bars; b++) bars.push(on ? 1 : 0);
+    }
+  }
+  return bars;
 }
-/** the piano lead's mask: the sections where the piano itself holds the tune */
-export function pianoLeadMask(form) {
-  return runLengths(form.sections.map((sec) => (sec.pianoLead ? 1 : 0)), form.sectionBars);
+/** per-bar 0/1 for the piano lead — the sections, and in a dialogue the CALLS,
+ *  where the piano itself holds the tune */
+export function pianoLeadBars(form) {
+  const bars = [];
+  for (const sec of form.sections) {
+    if (sec.dialogue) {
+      const pb = sec.dialogue.phraseBars;
+      for (let b = 0; b < sec.bars; b++) bars.push(Math.floor(b / pb) % 2 === 0 ? 1 : 0);
+    } else {
+      for (let b = 0; b < sec.bars; b++) bars.push(sec.pianoLead ? 1 : 0);
+    }
+  }
+  return bars;
 }
-function runLengths(on, bars) {
+/** a per-bar 0/1 array as the run-length string `.mask()` takes */
+export function maskString(bars) {
   const out = [];
-  for (const v of on) {
+  for (const v of bars) {
     const last = out[out.length - 1];
-    if (last && last.v === v) last.n += bars; else out.push({ v, n: bars });
+    if (last && last.v === v) last.n += 1; else out.push({ v, n: 1 });
   }
   return out.map(({ v, n }) => (n === 1 ? `${v}` : `${v}@${n}`)).join(' ');
+}
+
+/** the per-bar mask a layer needs to sound only in the sections (and, in a
+ *  dialogue, the turns) it owns */
+export function maskFor(id, form) { return maskString(maskBarsFor(id, form)); }
+/** the piano lead's mask, as a string */
+export function pianoLeadMask(form) { return maskString(pianoLeadBars(form)); }
+
+// ---------------------------------------------------------------------------
+// LETTER FORM (D59) — which MELODY is playing when.
+//
+// D47 answers "who is playing"; this answers "what tune are they playing".
+// Ethan's brief: "combine harmony and melody generation, then test how it
+// changes throughout the song with both harmony changing and melody changing
+// (where melodic changes follow musical structures like ABAB or ABCD or ABCA
+// etc)". A letter names a melody: every section with the same letter states
+// the SAME melody (same seed — the Theme Transformer lesson, the theme recurs
+// recognizably), and a new letter is a genuinely different line (different
+// seed, different rhythm cell).
+//
+// The letter form also decides WHERE the harmony varies. Ethan's variation
+// ruling: "songs naturally have variation in the harmony... a sweet treat
+// without changing the song itself. these have their place in the song and
+// shouldn't be randomly thrown in." The place chosen here is the LAST REPRISE
+// — the final return of an already-heard letter — because a variation is only
+// audible as a variation against something already known: vary the first A
+// and there is no norm to vary from; vary the last and the listener hears the
+// familiar tune go somewhere slightly new, which is the sweet treat. A scheme
+// with no reprise (ABCD) gets no variation, because with nothing restated
+// there is nothing to vary.
+// ---------------------------------------------------------------------------
+
+// Candidate letter schemes by how many tune-carrying sections the form has.
+// Ethan named ABAB / ABCD / ABCA; the rest are the standard song-form set.
+export const LETTER_SCHEMES = {
+  1: ['A'],
+  2: ['AB', 'AA'],
+  3: ['ABA', 'ABC', 'AAB'],
+  4: ['ABAB', 'ABCA', 'AABA', 'ABAC', 'ABCD'],
+  5: ['ABABC', 'AABAB', 'ABCAB', 'ABACA'],
+  6: ['ABABCB', 'AABABC', 'ABCABC'],
+};
+
+/**
+ * planMelodyForm(form, { name, scheme? }) -> {
+ *   scheme, sections: [{ index, letter|null, reprise, varyHarmony }],
+ *   letters (distinct, in order of first appearance), varySection, notes }
+ *
+ * Only sections that carry a tune get letters; an ostinato/bed/tag section has
+ * no melody to name. `scheme` forces one (tests, or a caller with a brief);
+ * otherwise the song's own hash picks from the candidates for its length,
+ * so the choice is deterministic and per-song, like every other form choice.
+ */
+export function planMelodyForm(form, { name = 'song', scheme = null } = {}) {
+  const notes = [];
+  const tuneIdx = form.sections.filter((s) => s.lead !== 'none').map((s) => s.index);
+  const k = tuneIdx.length;
+  if (!k) return { scheme: '', sections: form.sections.map((s) => ({ index: s.index, letter: null, reprise: false, varyHarmony: false })), letters: [], varySection: null, notes: ['no section carries a tune — no letters to assign'] };
+  const pool = LETTER_SCHEMES[Math.min(k, 6)] ?? LETTER_SCHEMES[6];
+  let chosen = scheme ?? pool[fnv(`${name}|letters`) % pool.length];
+  // longer forms than the table knows: repeat the scheme (a loop of the form)
+  while (chosen.length < k) chosen += chosen;
+  chosen = chosen.slice(0, k);
+  const byIndex = new Map();
+  const seen = new Set();
+  let varySection = null;
+  tuneIdx.forEach((ix, j) => {
+    const letter = chosen[j];
+    const reprise = seen.has(letter);
+    seen.add(letter);
+    if (reprise) varySection = ix; // keeps the LAST reprise
+    byIndex.set(ix, { letter, reprise });
+  });
+  const sections = form.sections.map((s) => {
+    const rec = byIndex.get(s.index);
+    return {
+      index: s.index,
+      letter: rec?.letter ?? null,
+      reprise: rec?.reprise ?? false,
+      varyHarmony: false,
+    };
+  });
+  if (varySection != null) {
+    sections[form.sections.findIndex((s) => s.index === varySection)].varyHarmony = true;
+    notes.push(`harmony varies at section ${varySection} — the last reprise, where a familiar tune makes the variation audible as one`);
+  } else {
+    notes.push('no reprise in this scheme — nothing is restated, so nothing is varied');
+  }
+  notes.push(`letter form ${chosen} over ${k} tune sections (scheme ${scheme ? 'forced' : 'hash-picked'})`);
+  return { scheme: chosen, sections, letters: [...seen], varySection, notes };
+}
+
+/**
+ * renderLetterLead(form, mf, exprFor) -> { lead, perLetter }
+ *
+ * The piano lead as a stack of per-letter melodies, each masked to the bars
+ * where (a) its letter's section is playing and (b) the piano actually owns
+ * the lead lane — dialogue answer bars belong to the answering layer, whose
+ * own expression is rebound by the caller to the section's letter.
+ *
+ * `exprFor(letter)` binds and returns that letter's melody expression.
+ */
+export function renderLetterLead(form, mf, exprFor) {
+  const letterOf = new Map(mf.sections.map((s) => [s.index, s.letter]));
+  const perLetter = {};
+  const parts = [];
+  for (const letter of mf.letters) {
+    const bars = [];
+    for (const sec of form.sections) {
+      const mine = letterOf.get(sec.index) === letter;
+      if (!mine) { for (let b = 0; b < sec.bars; b++) bars.push(0); continue; }
+      if (sec.dialogue) {
+        const pb = sec.dialogue.phraseBars;
+        for (let b = 0; b < sec.bars; b++) bars.push(Math.floor(b / pb) % 2 === 0 ? 1 : 0);
+      } else {
+        for (let b = 0; b < sec.bars; b++) bars.push(sec.pianoLead ? 1 : 0);
+      }
+    }
+    if (!bars.some(Boolean)) continue;
+    const expr = exprFor(letter);
+    if (!expr) continue;
+    const m = maskString(bars);
+    const masked = /^1(@\d+)?$/.test(m) ? expr : `${expr}.mask("<${m}>")`;
+    perLetter[letter] = masked;
+    parts.push(masked);
+  }
+  return {
+    perLetter,
+    lead: parts.length === 0 ? null : parts.length === 1 ? parts[0] : `stack(${parts.join(', ')})`,
+  };
 }
 
 function gainFor(part, inst) {

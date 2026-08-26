@@ -229,3 +229,34 @@ test('D40: a mined cell drives bindMelody and carries the source articulation th
   const motif = boundMeta.notes.filter((n) => n.cycle === 0);
   assert.deepEqual(motif.map((n) => n.artic), busy.artic.map((a) => Math.max(0.05, Math.min(1, a))));
 });
+
+test('D59: the measured game-midi profile is a selectable melody style', () => {
+  const p = MELODY_PROFILES['game-midi'];
+  assert.ok(p, 'game-midi missing from MELODY_PROFILES');
+  // the measured numbers arrive verbatim from the vgmusic import (D52)
+  assert.equal(p.moves.step, 0.323);
+  assert.equal(p.upBias, 0.533);
+  assert.equal(p.leapRecovery, 0.71);
+  // the fields bindMelody needs beyond what interval statistics can measure
+  // are present as audition-tunable defaults
+  for (const f of ['articulation', 'approachProb', 'chromaticApproach', 'tensions', 'cellRepetitionFloor', 'rangeSteps']) {
+    assert.ok(p[f] != null, `game-midi profile is missing ${f}`);
+  }
+  // and the vgmusic file's saturated cellRepetitionFloor did NOT leak in (its
+  // 0.9 counts a different thing — see melody-profiles-vgmusic.js)
+  assert.equal(p.cellRepetitionFloor, 0.5);
+});
+
+test('D59: bindMelody binds under the game-midi style and stays key-legal', () => {
+  const cell = { name: 'c', onsets: ['0', '1/4', '1/2', '3/4'], accents: [1, 0.6, 0.85, 0.6], artic: [1, 0.7, 0.9, 0.7] };
+  const ctx = { harmony: ['Cm', 'Ab', 'Fm', 'G7'], barsPerChord: 1, key: 'C:minor' };
+  const a = bindMelody(cell, ctx, '4/4', { style: 'game-midi', seed: 7 });
+  const b = bindMelody(cell, ctx, '4/4', { style: 'toby-fox', seed: 7 });
+  assert.equal(a.warnings.length, 0, a.warnings.join('; '));
+  assert.ok(a.expr.length > 100);
+  // a different profile is a different line, same seed
+  assert.notEqual(a.expr, b.expr, 'the style knob changed nothing');
+  const rep = melodyReport(a.boundMeta);
+  assert.equal(rep.offKeyUnforced, 0, 'game-midi produced unforced out-of-key notes');
+  assert.equal(rep.anchorViolations, 0, 'game-midi broke an anchor');
+});

@@ -2476,3 +2476,118 @@ the videos"), and joins the judge page's which-corpus contrast. Atlas rebuilt.
 differently"), every entry carries a style tag (jazz-ballad, neo-soul,
 city-pop, jpop-rnb, gospel, jpop-ballad) so retrieval can keep idioms apart
 until blending rules exist. 266/266.
+
+## D58 — the wide oom-pah is ratified by ear (2026-08-25)
+
+Ethan re-exported audition/judge.html after sweeping the new tone. Imported via
+import-verdicts.mjs; the A/B answers were unchanged from the prior import, so
+the new evidence is:
+
+- **wide oom-pah: 39 good, 0 bad** across essentially every harmony offered —
+  the strongest per-format showing in the tally (arp/arpwide/oompah/ostinato
+  hold at 37/0, pad 28/1). The hybrid built to his t22 spec ("oom-pah but
+  keeping the wide pad's notes") is no longer speculative; it is the
+  best-attested rendering the project has. It stays page-local per D56 —
+  ratification says "keep offering it", not "it is corpus".
+- t16 grew a second sentence: "the last F could also be replaced with another
+  chord for variation" — one more sighting of variation-as-a-placed-event
+  (item 0c), this time on a MAJOR-key card, so the appetite is not
+  family-specific.
+- t21 grew: "for B, the first four chords is a valid progression" — B's head
+  is endorsed even though the trial itself went unanswered.
+
+Tone votes still shape nothing about which chords get chosen (D55's exposure
+caveat stands), but the format ranking they feed now covers wide oom-pah with
+real n. 272/272.
+
+## D59 — the letter form: harmony + melody composed over time (2026-08-25)
+
+The phase Ethan queued ("combine harmony and melody generation, then test how
+it changes throughout the song ... where melodic changes follow musical
+structures like ABAB or ABCD or ABCA") plus the three engine changes queued
+from the video corpus (D57). Built as one piece because they are one piece:
+the letter form decides where melodies change, the video doctrine decides how
+two voices share the tune, and the variation ruling decides where the harmony
+is allowed its sweet treat.
+
+**1. Letters name melodies (arrange.js: `planMelodyForm`, `renderLetterLead`).**
+On top of D47's texture form (who is playing), a letter form says WHAT they
+play: every tune-carrying section gets a letter from a per-length scheme table
+(ABAB, ABCA, AABA, ABAC, ABCD, ...), hash-picked per song like every other
+form choice. Same letter = same melody, literally the same seed — the Theme
+Transformer lesson, the theme recurs recognizably; a new letter is a genuinely
+different line (its own interlock-ranked rhythm cell AND its own pitch seed).
+Letter A is each card's existing lead, so nothing already auditioned changed
+identity. Lead-derived layers rebind to the letter of the sections they sing
+in — a takeover answering a B section plays the B melody, not A's.
+
+**2. The variation has a place: THE LAST REPRISE.** Ethan's ruling ("a sweet
+treat without changing the song itself ... shouldn't be randomly thrown in")
+needed an address, and the letter form supplies it: a variation is only
+audible AS a variation against something already known, so it lands on the
+final return of an already-heard letter — and a no-reprise scheme (ABCD) gets
+none, because nothing restated means nothing to vary. The treat itself is one
+gentle ROOT-PRESERVING operator (recolour / suspend / mixture /
+alter_dominant) through the D50 gate, and the varied section re-binds
+everything that reads chords — accompaniment, bed, figuration, counter lines,
+and the section's own melody (same seed, re-legalized: the familiar tune goes
+somewhere slightly new). Across the undertale page: 98 of 163 cards carry a
+treat (45 recolour, 30 mixture, 23 suspend); the rest have no reprise or no
+gate-legal edit.
+
+**3. Dialogue: call & response as LEAD-LANE TURN-TAKING (video 10's rule).**
+A new archetype: within the section, the piano owns the lead lane for two
+bars, an answering voice owns the next two, alternating — never simultaneous,
+and the answer voice plays the section's own melody (an echo in another
+instrument's voice). Masks went bar-granular to carry it (`maskBarsFor`,
+`pianoLeadBars`, `maskString`); non-dialogue songs compress to byte-identical
+mask strings. Degrades to `answer` when no voice can lead or the section
+cannot hold one call + one answer. 22 dialogue sections across the corpus
+page; the D59 tests prove the two voices never hold the lead together and the
+piano always asks first.
+
+**4. `alter_dominant` — an operator WITH A PLACEMENT RULE.** The videos'
+gold-flagged device (diatonic frame, ONE altered dominant per phrase, at the
+turn, never two in a row) is now OPS.alter_dominant: no sites if anything is
+already altered; only a dominant that resolves down a fifth or a semitone;
+only the LAST such dominant (the turn). Colour picked from what the family
+plays more of (7alt vs 7b9, both counted from ldrolez). And a ruling that
+mattered: the D50 verification gate scores quality by corpus frequency, and an
+altered dominant is rare BY DESIGN — measured, V7→V7alt drops worstQual ~1.7
+nats against a slack of 1.0, so the gate killed the device every time. An
+operator may now declare `gateSlack` on the term its own legality rule guards
+better than frequency can. Honest census: only 3 of 163 Undertale cycles even
+contain an eligible plain dominant — Toby rarely writes one — so the operator
+will earn its keep on the igvideo/jazz side, and it was NOT rigged into the
+undertale page.
+
+**5. The probe vocabulary + two cadence probes (facets.html).** Voicing shapes
+for `7sus 9sus 13sus 7b9 7alt` in all five dictionaries — the model already
+counted these qualities; only the dictionaries couldn't shape them. They exist
+so the probes can PLAY, ratified by nothing (A6.1); the r1 drop-2 rule (never
+the 7th a step under the root) caught my first draft and holds. The cadence
+tab now offers per harmony: `sus_then_alter` (last two slots become
+V13sus→V7alt of the opening chord — Prema's two-stage dominant) and
+`end_9sus` (the wrap becomes the opening chord's unresolved 9sus4 — video 9's
+ending). 119 cadence treatments; votes flow into the cadences/wraps bags with
+zero importer changes. Side effect: 397/434 progressions.html cards are now
+voiceable (the new shapes un-greyed the jazz colours).
+
+**6. Per-card tones for the video pack (Ethan, mid-build).** "rather than
+always playing block tone for that chord, you press the tone you want to play
+within the box" — the 18 igvideo cards on progressions.html now carry four
+tone buttons IN the card: block, arpeggio, wide pad, wide oom-pah (the same
+D56/D58 hybrid judge.html plays). The member-based tones voice every quality,
+so even the 3 cards with out-of-dictionary colours play. The chosen tone is
+persisted and rides the verdict export (`videoTones`), so a keep/kill says
+which rendering was judged.
+
+**7. `game-midi` wired.** The measured VGMusic profile (D52, 107k intervals)
+is now a selectable bindMelody style; articulation defaults eased from the
+corpus's measured legato/staccato shares, and the vgmusic file's saturated
+cellRepetitionFloor deliberately NOT carried (it counts a different thing).
+
+All three audition pages rebuilt and full-checked (facets 1258/1258,
+progressions 1257/1257, undertale 2527/2527 through the engine's own
+transpiler; tone picker and letter strips verified in headless Chrome).
+277/277.

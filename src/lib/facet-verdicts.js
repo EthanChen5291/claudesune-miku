@@ -57,7 +57,7 @@ export const FACET_VERDICTS = {
   },
   textures: {
     "pad": {
-      "good": 27,
+      "good": 28,
       "bad": 1
     },
     "arp": {
@@ -78,6 +78,10 @@ export const FACET_VERDICTS = {
     },
     "block": {
       "good": 1,
+      "bad": 0
+    },
+    "wideoompah": {
+      "good": 39,
       "bad": 0
     }
   },
@@ -794,6 +798,166 @@ export const FACET_VERDICTS = {
       "from": "facets"
     },
     "0 7 9:m 4:m 5 0 5 7|ostinato": {
+      "verdict": "good",
+      "from": "facets"
+    },
+    "0 9:sus 4:m 5:^7 0 9:m 4:m 5|wideoompah": {
+      "verdict": "good",
+      "from": "facets"
+    },
+    "8 10 8 3|wideoompah": {
+      "verdict": "good",
+      "from": "facets"
+    },
+    "0:m 7:7 0:m 7|wideoompah": {
+      "verdict": "good",
+      "from": "facets"
+    },
+    "5:^7 7|wideoompah": {
+      "verdict": "good",
+      "from": "facets"
+    },
+    "0 5:^7|wideoompah": {
+      "verdict": "good",
+      "from": "facets"
+    },
+    "0:m 3 5:m 0:m 10 0:m 3 5:m7 0:m 8|wideoompah": {
+      "verdict": "good",
+      "from": "facets"
+    },
+    "0:m 10 9:m 8 7:m 8 10 9:m 8 10|wideoompah": {
+      "verdict": "good",
+      "from": "facets"
+    },
+    "0 5 0:sus 10|wideoompah": {
+      "verdict": "good",
+      "from": "facets"
+    },
+    "5:^7 7 4 9:m|wideoompah": {
+      "verdict": "good",
+      "from": "facets"
+    },
+    "8:^7 10 3 5:m|wideoompah": {
+      "verdict": "good",
+      "from": "facets"
+    },
+    "0:7 7:m 0:7 10 0:7 10 0:7 10|wideoompah": {
+      "verdict": "good",
+      "from": "facets"
+    },
+    "0:m 8 5:m 7:m 0:m 8:^7 10 0:m|wideoompah": {
+      "verdict": "good",
+      "from": "facets"
+    },
+    "0:m 8 5:m 7:m 0:m 8 7:m 0:m|wideoompah": {
+      "verdict": "good",
+      "from": "facets"
+    },
+    "8 10 8:^7 10|wideoompah": {
+      "verdict": "good",
+      "from": "facets"
+    },
+    "8 7:m 8 10|wideoompah": {
+      "verdict": "good",
+      "from": "facets"
+    },
+    "7:m 8 7:m 8|wideoompah": {
+      "verdict": "good",
+      "from": "facets"
+    },
+    "8 7:m 0:m 7:m|wideoompah": {
+      "verdict": "good",
+      "from": "facets"
+    },
+    "0:m 10 9:m 8 10 0:m 10 9:m 8 10|wideoompah": {
+      "verdict": "good",
+      "from": "facets"
+    },
+    "0:m 2:m 9:m 8 7:m 0:m 10 9:m 8 10|wideoompah": {
+      "verdict": "good",
+      "from": "facets"
+    },
+    "0:m 2:m 9:m 8 7:m 0:m 10 9:m 8 10|pad": {
+      "verdict": "good",
+      "from": "facets"
+    },
+    "8 10 0:sus 8 10 0:m 11 10:^7 9:m|wideoompah": {
+      "verdict": "good",
+      "from": "facets"
+    },
+    "0 2 5 0|wideoompah": {
+      "verdict": "good",
+      "from": "facets"
+    },
+    "2 5 0:7 0|wideoompah": {
+      "verdict": "good",
+      "from": "facets"
+    },
+    "7 5|wideoompah": {
+      "verdict": "good",
+      "from": "facets"
+    },
+    "2:m7 7|wideoompah": {
+      "verdict": "good",
+      "from": "facets"
+    },
+    "0 7 2:sus 7:7|wideoompah": {
+      "verdict": "good",
+      "from": "facets"
+    },
+    "9:m 2:m 7 0|wideoompah": {
+      "verdict": "good",
+      "from": "facets"
+    },
+    "0:m 5:m 10:6 3|wideoompah": {
+      "verdict": "good",
+      "from": "facets"
+    },
+    "0:m 10 8 10|wideoompah": {
+      "verdict": "good",
+      "from": "facets"
+    },
+    "9:m 5 4:m 7|wideoompah": {
+      "verdict": "good",
+      "from": "facets"
+    },
+    "0 9:m 5 5|wideoompah": {
+      "verdict": "good",
+      "from": "facets"
+    },
+    "7:m 0:m 5:m 10|wideoompah": {
+      "verdict": "good",
+      "from": "facets"
+    },
+    "0:m 3 5:m 0:m|wideoompah": {
+      "verdict": "good",
+      "from": "facets"
+    },
+    "0:m 10 0:m 7:m|wideoompah": {
+      "verdict": "good",
+      "from": "facets"
+    },
+    "5 4:m 9:m 7 5 4:m 9:m 7|wideoompah": {
+      "verdict": "good",
+      "from": "facets"
+    },
+    "8:^7 0:m 1 0:m|wideoompah": {
+      "verdict": "good",
+      "from": "facets"
+    },
+    "0:m 8 7:m 7|wideoompah": {
+      "verdict": "good",
+      "from": "facets"
+    },
+    "2:m 7 9 2:m 7 9|wideoompah": {
+      "verdict": "good",
+      "from": "facets"
+    },
+    "10 0:7 10 0:7 10 0:7 10 0:7|wideoompah": {
+      "verdict": "good",
+      "from": "facets"
+    },
+    "0 7 9:m 4:m 5 0 5 7|wideoompah": {
       "verdict": "good",
       "from": "facets"
     }

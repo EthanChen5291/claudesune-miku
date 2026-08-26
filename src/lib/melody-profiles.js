@@ -32,7 +32,23 @@
 //                   full chord-scales put 13% of notes out of key — "not
 //                   legal"). 'full' (future jazz-bossa): the whole chord-scale.
 
+import { MELODY_PROFILE_VGMUSIC } from './melody-profiles-vgmusic.js';
+
 export const MELODY_PROFILES = {
+  // 'game-midi' (D52, wired D59): measured from 107,116 intervals of the
+  // VGMusic import — see melody-profiles-vgmusic.js for what is measured and
+  // what is carried. `articulation` is not measurable from interval statistics;
+  // the values below are audition-tunable defaults set FROM the corpus's
+  // measured legato/staccato shares (67% legato / 18% staccato — close to the
+  // toby-fox stream's 51/24, so the toby numbers are eased slightly toward
+  // legato rather than invented fresh). `cellRepetitionFloor` is NOT taken from
+  // the vgmusic measurement (its 0.9 counts a different thing — see the note in
+  // that file); the toby-fox audition default stands in until an ear pass.
+  'game-midi': {
+    ...MELODY_PROFILE_VGMUSIC['game-midi'],
+    cellRepetitionFloor: 0.5,
+    articulation: { held: 1, quarter: 0.98, eighth: 0.7, short: 0.5, lightMul: 0.92 },
+  },
   // undertale-melody.md: 34% stepwise, 40% leaps ≥ P4 (P4 11.3% > P5 7.0% >
   // M3 6.5%, 6ths/7ths ~2.4%), octaves 6.6%, direct repeats 8.6%; 79% of
   // leaps immediately reverse; up 48% / down 43%; range ≤ P8+m3 typical;

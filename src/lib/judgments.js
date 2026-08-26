@@ -123,10 +123,10 @@ export const JUDGMENTS = {
 // than the verdict it came with, so skipping past one does not discard it.
 export const STRAY_NOTES = {
   "t15": "I like B - wide pad, arpeggio, wide arp, oom pan, roots only are classics",
-  "t16": "B sounds hopeful (widpad)",
+  "t16": "B sounds hopeful (widepad). in B, the last F could also be replaced with another chord for variation",
   "t19": "I like B but Cm to Cm7 3 times thrown in with one G7 rhythm-wise and pattern-wise progresses weird. why not just Cm Cm7 Cm G7 or something like that?",
   "t20": "I like A wide pad - sounds regretful or \"aftermath of a disaster\". could vary the last chord -> change Cm to another chord. \n\nlove the Gm to G as an ending pair",
-  "t21": "in A, the fourth G could be changed to something else as a variation (it's fine as it is but could be replaced eventually in the song so it's not uniform)",
+  "t21": "in A, the fourth G could be changed to something else as a variation (it's fine as it is but could be replaced eventually in the song so it's not uniform)\n\nfor B, the first four chords is a valid progression",
   "t22": "wide pad is fine but I feel like this pattern isn't meant to be jamming the full chord each time. maybe like oom-pah but keeping the wide pad's notes of the actual chord progression",
   "t23": "I think the last Cm should be replaced with something else (like maybe G major chord or something of that nature) because the double Cm back to back doesn't sound too good",
   "t26": "five chords - sounds awkward in timing but the chords work. im thinking Cm Db7 Cm Ab7 as one chord progression then Fm7 as the beginning of another chord progression like Cm Db7 Cm Ab7 Fm7 [x] Fm7 [x]",

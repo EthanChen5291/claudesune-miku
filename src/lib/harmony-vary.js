@@ -198,7 +198,12 @@ export function varyProgression(exemplar, {
         rejected.push(`${where}: cadence ${s.cadence.toFixed(2)} vs exemplar ${floor.cadence.toFixed(2)}`);
         continue;
       }
-      if (s.worstQual < floor.worstQual - QUALITY_SLACK) {
+      // An operator may declare extra slack on ONE gate term when its own
+      // legality rule is the real guard — alter_dominant's point is a quality
+      // the corpus plays rarely, so the frequency check would veto the device
+      // as such rather than any particular application of it (D59).
+      const qSlack = QUALITY_SLACK + (OPS[c.op]?.gateSlack?.quality ?? 0);
+      if (s.worstQual < floor.worstQual - qSlack) {
         rejected.push(`${where}: chord quality ${s.worstQual.toFixed(2)} vs exemplar ${floor.worstQual.toFixed(2)}`);
         continue;
       }

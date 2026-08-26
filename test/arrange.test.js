@@ -357,3 +357,119 @@ test('D47: the arrangement rises — a form is a contour, not a plateau', () => 
   }
   assert.ok(rose > flat * 6, `${flat} of ${rose + flat} forms never grow past their opening section`);
 });
+
+// ---------------------------------------------------------------------------
+// D59: dialogue (call & response as lead-lane turn-taking) and the letter form
+// (which MELODY is playing when), plus the placed harmony-variation flag.
+// ---------------------------------------------------------------------------
+
+import { planMelodyForm, renderLetterLead, maskBarsFor, pianoLeadBars, LETTER_SCHEMES } from '../src/binder/arrange.js';
+
+/** the probe grid, widened until it produces at least one dialogue section */
+function dialogueCases() {
+  const out = [];
+  for (const role of ['town', 'cutscene', 'character', 'shop', 'diegetic', 'overworld']) {
+    for (let i = 0; i < 12; i++) {
+      const plan = planArrangement({ ...SITUATION, role, name: `d_${role}_${i}` });
+      const form = planForm(plan);
+      const sec = form.sections.find((s) => s.dialogue);
+      if (sec) out.push({ plan, form, sec });
+    }
+  }
+  return out;
+}
+
+test('D59: a dialogue is turn-taking — the two voices NEVER sound the lead together', () => {
+  // The video-corpus doctrine (D57, video 10): call & response is between
+  // instruments, accordion asks two bars, whistle answers two — they take
+  // turns owning the lead lane. Simultaneity would be a doubling, not a
+  // dialogue.
+  const cases = dialogueCases();
+  assert.ok(cases.length > 0, 'no probe situation ever produced a dialogue section');
+  for (const { form, sec } of cases) {
+    const piano = pianoLeadBars(form);
+    const answer = maskBarsFor(sec.dialogue.answerId, form);
+    for (let b = sec.startBar; b < sec.startBar + sec.bars; b++) {
+      assert.ok(!(piano[b] && answer[b]), `bar ${b}: both voices hold the lead at once`);
+      assert.ok(piano[b] || answer[b], `bar ${b}: nobody holds the lead in a dialogue section`);
+    }
+    // the alternation actually alternates: both voices get bars
+    const secPiano = piano.slice(sec.startBar, sec.startBar + sec.bars);
+    const secAnswer = answer.slice(sec.startBar, sec.startBar + sec.bars);
+    assert.ok(secPiano.some(Boolean) && secAnswer.some(Boolean), 'a dialogue where one voice never speaks');
+    // and the piano CALLS first — the answer is an answer
+    assert.equal(secPiano[0], 1, 'the piano asks first');
+  }
+});
+
+test('D59: dialogue degrades to answer when nobody can answer or the section is too short', () => {
+  // planForm degrades shapes with no canLead layer; simulate by checking that
+  // every dialogue section that exists has a real answering layer
+  for (const { plan, form } of everyForm()) {
+    for (const s of form.sections) {
+      if (!s.dialogue) continue;
+      const layer = plan.layers.find((l) => l.id === s.dialogue.answerId);
+      assert.ok(layer && layer.canLead, 'a dialogue with an answerer that cannot lead');
+      assert.ok(s.bars >= 2 * s.dialogue.phraseBars, 'a dialogue too short to hold one call and one answer');
+    }
+  }
+});
+
+test('D59: letters name melodies — tune sections lettered, reprises flagged, deterministic', () => {
+  for (const { form } of everyForm()) {
+    const a = planMelodyForm(form, { name: 'x' });
+    const b = planMelodyForm(form, { name: 'x' });
+    assert.deepEqual(a, b, 'the letter form must be deterministic');
+    const seen = new Set();
+    for (const s of a.sections) {
+      const sec = form.sections.find((x) => x.index === s.index);
+      assert.equal(s.letter != null, sec.lead !== 'none', 'letters exactly on the tune sections');
+      if (s.letter == null) continue;
+      assert.equal(s.reprise, seen.has(s.letter), 'reprise = this letter has been heard before');
+      seen.add(s.letter);
+    }
+  }
+});
+
+test('D59: the harmony varies at the LAST REPRISE, and never in a no-reprise scheme', () => {
+  const form = everyForm().find(({ form: f }) => f.sections.filter((s) => s.lead !== 'none').length >= 4).form;
+  const abab = planMelodyForm(form, { name: 'x', scheme: 'ABAB' });
+  const lastTune = abab.sections.filter((s) => s.letter != null).at(-1);
+  assert.equal(abab.varySection, lastTune.index, 'ABAB: the final B restates — it takes the treat');
+  assert.ok(abab.sections.find((s) => s.index === abab.varySection).varyHarmony);
+  const abcd = planMelodyForm(form, { name: 'x', scheme: 'ABCD' });
+  assert.equal(abcd.varySection, null, 'ABCD restates nothing, so nothing is varied');
+  assert.ok(abcd.sections.every((s) => !s.varyHarmony));
+});
+
+test('D59: renderLetterLead partitions the piano-lead bars between the letters', async () => {
+  const { form } = everyForm().find(({ form: f }) => f.sections.filter((s) => s.lead !== 'none').length >= 4);
+  const mf = planMelodyForm(form, { name: 'x', scheme: 'ABAB' });
+  const calls = [];
+  const r = renderLetterLead(form, mf, (L) => {
+    calls.push(L);
+    return `note("${L === 'A' ? 'c5' : 'e5'}").s("piano")`;
+  });
+  assert.deepEqual([...new Set(calls)].sort(), ['A', 'B'], 'one bind per letter, not per section — the same letter recurs as the SAME melody');
+  assert.ok(r.lead && r.lead.includes('stack('), 'two letters stack');
+  // every piano-owned bar belongs to exactly one letter
+  const piano = pianoLeadBars(form);
+  const ev = await evaluateSong(`setcpm(110/4)\np: ${r.lead}`);
+  const h = hapsByLabel(ev, 0, form.totalBars).get('p');
+  assert.ok(!h.error, h.error);
+  for (let b = 0; b < piano.length; b++) {
+    const sounding = h.haps.filter((x) => x.whole.begin >= b && x.whole.begin < b + 1);
+    assert.equal(sounding.length > 0, Boolean(piano[b]), `bar ${b}: letter lead vs piano-lead bars disagree`);
+    assert.ok(new Set(sounding.map((x) => x.value.note ?? x.value.n)).size <= 1, `bar ${b}: two letters sound at once`);
+  }
+});
+
+test('D59: every letter scheme table entry is well-formed', () => {
+  for (const [k, pool] of Object.entries(LETTER_SCHEMES)) {
+    for (const scheme of pool) {
+      assert.ok(scheme.length === Number(k), `${scheme} is not length ${k}`);
+      assert.ok(/^[A-Z]+$/.test(scheme));
+      assert.ok(scheme[0] === 'A', `${scheme}: the first melody stated is A by convention`);
+    }
+  }
+});
