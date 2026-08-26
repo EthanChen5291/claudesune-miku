@@ -62,6 +62,11 @@ const mergedDerived = { ...((existsSync(OUT) ? (await import(OUT)).DERIVED_VERDI
 // played; figurations-foundation.js refuses a stale one, same as degrees).
 const mergedFig = { ...((existsSync(OUT) ? (await import(OUT)).FIGURE_VERDICTS : null) ?? {}) };
 const mergedFigNotes = { ...((existsSync(OUT) ? (await import(OUT)).FIGURE_NOTES : null) ?? {}) };
+// Vibe notes on harvested drum patterns (D63, audition/drums.html) — the
+// confidence gate: a dp_* pattern enters song generation only once a note or
+// keep has vouched for its vibe.
+const mergedDrum = { ...((existsSync(OUT) ? (await import(OUT)).DRUM_VERDICTS : null) ?? {}) };
+const mergedDrumNotes = { ...((existsSync(OUT) ? (await import(OUT)).DRUM_NOTES : null) ?? {}) };
 let added = 0, changed = 0, unknown = [], newNotes = [], derivedN = 0, impliedN = 0, figN = 0;
 
 // The judge page (D52) emits TRIAL results, not per-entry verdicts, so it takes
@@ -343,6 +348,22 @@ if (!CHECK) {
       if (mergedFigNotes[name]?.note !== t) newNotes.push([name, t]);
       mergedFigNotes[name] = { note: t, at, judged: raw.judged?.[name] ?? FIGURATIONS_FOUNDATION[name].figure.join(' ') };
     }
+  } else if (raw.drums === true || raw.page === 'drums') {
+    const { DRUM_PATTERN_FORMS } = await import('../src/lib/rhythms-drum-patterns.js');
+    const at = (raw.generated ?? new Date().toISOString()).slice(0, 10);
+    for (const [name, verdict] of Object.entries(raw.verdicts ?? {})) {
+      if (!verdict) continue;
+      if (!['keep', 'kill'].includes(verdict)) throw new Error(`${name}: bad verdict "${verdict}"`);
+      if (!DRUM_PATTERN_FORMS[name]) { unknown.push(name); continue; }
+      mergedDrum[name] = { verdict, at, url: DRUM_PATTERN_FORMS[name].url ?? null };
+    }
+    for (const [name, text] of Object.entries(raw.notes ?? {})) {
+      const t = String(text).trim();
+      if (!t) continue;
+      if (!DRUM_PATTERN_FORMS[name]) { unknown.push(`${name} (note)`); continue; }
+      if (mergedDrumNotes[name]?.note !== t) newNotes.push([name, t]);
+      mergedDrumNotes[name] = { note: t, at, url: DRUM_PATTERN_FORMS[name].url ?? null };
+    }
   } else {
   // An implied-verdicts file carries POSITIONAL inferences (Ethan's rule:
   // unmarked top half = good, unmarked second half = not good) — tagged so
@@ -383,9 +404,12 @@ if (!CHECK) {
   for (const [name, text] of Object.entries(raw.notes ?? {})) {
     const t = String(text).trim();
     if (!t) continue;
-    if (!ALL_PROGRESSIONS[name]) { unknown.push(`${name} (note)`); continue; }
+    // a note may name a PAGE-LOCAL card (D63: the songs page) — its degrees
+    // come from the export's own derived record rather than the library
+    const src = ALL_PROGRESSIONS[name] ?? raw.derived?.[name] ?? null;
+    if (!src) { unknown.push(`${name} (note)`); continue; }
     if (mergedNotes[name]?.note !== t) newNotes.push([name, t]);
-    mergedNotes[name] = { note: t, at, degrees: ALL_PROGRESSIONS[name].degrees };
+    mergedNotes[name] = { note: t, at, degrees: src.degrees };
   }
   }
 }
@@ -472,6 +496,24 @@ if (Object.keys(mergedFigNotes).length) {
   L.push('};');
   L.push('');
 }
+if (Object.keys(mergedDrum).length || Object.keys(mergedDrumNotes).length) {
+  L.push('// The drum confidence gate (D63): verdicts + vibe notes on harvested');
+  L.push('// dp_* patterns from audition/drums.html. A dp pattern may enter song');
+  L.push('// generation only once something here vouches for its vibe.');
+  L.push('export const DRUM_VERDICTS = {');
+  for (const n of Object.keys(mergedDrum).sort()) {
+    const v = mergedDrum[n];
+    L.push(`  ${n}: { verdict: '${v.verdict}', at: '${v.at}', url: ${JSON.stringify(v.url)} },`);
+  }
+  L.push('};');
+  L.push('export const DRUM_NOTES = {');
+  for (const n of Object.keys(mergedDrumNotes).sort()) {
+    const v = mergedDrumNotes[n];
+    L.push(`  ${n}: { note: ${JSON.stringify(v.note)}, at: '${v.at}', url: ${JSON.stringify(v.url)} },`);
+  }
+  L.push('};');
+  L.push('');
+}
 
 const out = L.join('\n');
 if (CHECK) {
@@ -489,6 +531,7 @@ if (CHECK) {
   if (impliedN) console.log(`  ${impliedN} implied verdicts (positional rule) — tagged, and none overwrote a click`);
   if (derivedN) console.log(`  ${derivedN} page-local verdicts into DERIVED_VERDICTS (${Object.keys(mergedDerived).length} total)`);
   if (Object.keys(mergedFig).length) console.log(`  figuration verdicts: ${Object.keys(mergedFig).length} total (${figN} new) — foundations overlay live`);
+  if (Object.keys(mergedDrum).length || Object.keys(mergedDrumNotes).length) console.log(`  drum gate: ${Object.keys(mergedDrum).length} verdicts, ${Object.keys(mergedDrumNotes).length} vibe notes`);
   if (Object.keys(mergedNotes).length) {
     console.log(`  ${Object.keys(mergedNotes).length} card notes carried (${newNotes.length} new this import)`);
     for (const [n, t] of newNotes) console.log(`     [${n}] ${t}`);

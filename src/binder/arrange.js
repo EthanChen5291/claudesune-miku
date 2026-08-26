@@ -311,7 +311,12 @@ export function planArrangement(s) {
         const moodHit = inst.moods.filter((m) => moods.includes(m)).length;
         const cutFit = inst.cuts >= needCut ? 1 : 1 - (needCut - inst.cuts) * 2;
         const weightFit = inst.weight <= massBudget ? 1 : 0.5;
-        const score = moodHit * 1.2 + cutFit * 2 + weightFit + attackFit(inst) * 1.5;
+        // D63: an ENVIRONMENT's timbre affinity (vibes.js instBias) — one
+        // additive term, optional; a situation without it behaves as before
+        const envFit = s.instBias
+          ? (s.instBias.boost?.includes(name) ? 1.0 : 0) - (s.instBias.avoid?.includes(name) ? 1.5 : 0)
+          : 0;
+        const score = moodHit * 1.2 + cutFit * 2 + weightFit + attackFit(inst) * 1.5 + envFit;
         return { name, inst, score, moodHit, attackFit: attackFit(inst) };
       })
       .sort((a, b) => b.score - a.score || (a.name < b.name ? -1 : 1));

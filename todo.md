@@ -558,12 +558,22 @@ MY PERSONAL TODO:
 
 What you can do: reload undertale.html and play some mix cards — you'll hear melodies change by letter, dialogues trade phrases, and the harmony treat at the last reprise (hover the strip for exactly what varied). Then the standing re-run: facets.html (cadence tab has the two new devices; the wraps bag is still empty until you vote there) and the video cards with their new tone buttons.
 
-NEW (D61 + addendum): (1) audition/foundations.html is live — 29 foundation
-patterns, a chip per pattern on 5 kept progressions; judge PATTERNS (verdict
-grid below the cards), export, `node scripts/import-verdicts.mjs <file>`.
-This ear pass gates the variation machinery. (2) say go (or adjust) on the
-remaining designs — vibes/keys/instruments + the ensemble DIAL
-(research/README.md); approval unlocks the build order ending in the 20+20
-batch. (3) drum patterns are flowing: `node scripts/fetch-drum-patterns.mjs
-liked <pages>` then `node scripts/import-drum-patterns.mjs --report`.
+NEW (D63 + addendum) — LISTEN: audition/songs.html, now ELEVEN songs.
+- 10 vibe songs: letter-form melody, varied kept harmony + last-reprise
+  treat, foundation accompaniment that TRAVELS between letters,
+  environment-cast instruments on the ensemble dial, articulation per vibe
+  (staccato/legato/damper), and YOUR vouched drum patterns riding where
+  your vibe note matches (each card quotes the note that let it in).
+- #11 vs_excited_festival_drop: the b-52's buildup ask — 4 never-looped
+  intro bars (drums → drone → accompaniment → riser), then the drop.
+- Keep/kill + notes per song; export → import-verdicts.mjs.
+DRUM GATE state after your first pass: 25 verdicts + 27 vibe notes in
+verdicts.js (DRUM_VERDICTS/DRUM_NOTES); 4 patterns assigned into songs; 20
+vouched-and-waiting; drums.html still has unjudged cards if you want more.
+Parked from your notes: parapraxis first-4-bars as a standalone minimal
+beat; cool_rock_1 minus "the synth thing" (voice-subset variant);
+funky-bassline pairing for dp_to_go_with_funky_basslines.
+Also standing: foundations.html per-pattern clicks outrank the D62 blanket;
+remaining design approvals (keys policy module, instrument additions) in
+research/README.md.
 

@@ -2931,3 +2931,99 @@ loops; the form keeps the full order, fill detection reads past the cut).
 Kit census: TR-808 ×115, TR-909 ×26, 8-bit ×18, TB-303 ×14, acoustic ×14,
 LinnLM-1 ×12, taiko ×7 — the 8-bit and taiko rows walk straight into the
 game/boss palette. 296/296.
+
+## D63 — ten songs from vibe prompts, and the drum confidence gate (2026-08-25)
+
+Ethan: "generate full harmonies and melodies given various environmental +
+emotional prompts. different instruments, and with progressions (so full
+length songs), variations throughout the song (in both instrument setup and
+chords/chord tones) and tones. 10 songs. add drums if needed. but before
+then, if you're not confident, give me a list of drum MIDIs you're not
+confident with so I can play them and then leave a note about what vibe it
+gives."
+
+- VIBES.JS IS BUILT (the D61 design, now demanded by use): 12 emotions ×
+  17 environments, compileVibe() → a situation patch. Every leaf word
+  references an existing vocabulary (closure-tested); 'mysterious' carries
+  the highest chromaticism pull (discharging D60's calibration note); the
+  ensemble dial (D62) rides in as a per-song voice count hash-picked inside
+  the environment's range; tonic comes from corpus-practice pools per family
+  (keys-census numbers — the full selectKey module still queued). One
+  arrange.js change: an optional additive instBias casting term (absent =
+  identical behavior, regression-covered by the existing suite).
+- AUDITION/SONGS.HTML: 10 full songs, each the undertale mix pipeline
+  pointed at GENERATED material — harmony = a varied CLICK-KEPT exemplar of
+  the vibe's family (D50); accompaniment = a ratified fnd_ foundation chosen
+  by the vibe's figuration classes; melody = the D59 letter form; the
+  instrument setup varies section-by-section (D47) under the environment's
+  timbre bias and the ensemble cap; the harmony treat lands at the last
+  reprise (D59); and the TONES TRAVEL (D62): each new letter's accompaniment
+  walks the cheapest FND_TRAVEL edge from the home pattern, so the texture
+  develops with the form — the graph's first consumer, three days old.
+  Prompts include his three named vibes (happy shop, construction, fight),
+  the genocide contradiction cell (sad shop: 65bpm, minor, drums stripped,
+  same browse-shaped role), the mysterious-cave calibration case, and a
+  solo-anchored somber aftermath. All 25 exprs green through the engine's
+  transpiler; the page is deterministic (rebuild = byte-identical, tested);
+  verdicts export in the D60 DERIVED format so import-verdicts lands them
+  unchanged, and notes on page-local songs now import too.
+- THE DRUM CONFIDENCE GATE, exactly as he framed it. Honest position: none
+  of the 240 harvested dp_* patterns has been heard through the engine —
+  style tags are community folksonomy, not evidence. So the songs use ONLY
+  the engine's own characterized percussion (rhythms.js, where the
+  environment wants drums, masked to sections energy ≥3 so drums enter with
+  the tune and drop at breakdowns), and audition/drums.html is the list he
+  asked for: 37 shortlisted patterns the vibe songs WANT (all 7 taiko, five
+  8-bit, two per style across 13 styles; selection prefers recovered accents
+  and detected fills), each playable through mapped sample voices with a
+  "what vibe does it give" note box and a link to the original. Voices with
+  no source velocity play flat and say so. Export → DRUM_VERDICTS/DRUM_NOTES
+  bags in verdicts.js; the standing rule: a dp pattern enters song
+  generation only once a note or keep has vouched for its vibe. 305/305.
+
+D63 addendum — the gate opened, the buildup song, and articulation (2026-08-26)
+
+The drum export came back rich: 25 verdicts (24 keep, 1 kill) and 27 vibe
+notes — including two STRUCTURAL findings the grid data alone could never
+carry: dp_b_52_s "first 4 measures are buildup, so don't loop those. also do
+the buildup with the melody and harmony (try a song with this buildup)" and
+dp_parapraxis "separate the first 4 measures into its own minimal relaxed
+beat". His vibe words are now the retrieval index for the harvest
+(DRUM_NOTES: "rising tension (video game)", "waiting room", "here's the
+plan", "overtime", "swag with sunglasses on"...).
+
+- FOUR SONGS NOW RIDE HIS VOUCHED DRUMS, note-matched: happy shop →
+  dp_boom_tap ("waiting room" = browsing), construction → dp_working (his
+  note names the environment), tense fight → dp_residual_stress_study
+  ("rising tension (video game)"), triumphant boss → dp_8obit_electrowerk66
+  ("hot", 8-bit kit). Cards quote the note that let each in. Patterns whose
+  bar count fights the form are sliced to the largest dividing window and
+  say so. Everything else keeps engine percussion or none; the gate rule
+  stands for the other 20 vouched patterns (available, awaiting matches).
+- THE BUILDUP/DROP SONG (#11): vs_excited_festival_drop, built exactly to
+  his b-52's note. Four intro bars that NEVER return — drums-only (b-52's
+  own buildup banks) → +drone fifth → +accompaniment → +rising arpeggio
+  riser over the opening chord — then the song proper opens with a DROP:
+  every cast voice at once from bar 5, the b-52's loop body (banks 3,4) on
+  drums, letters and the treat still varying inside. Alignment ruling: the
+  drop song constrains its harmony to a 4-bar loop so every expression's
+  period divides the intro and nothing phase-drifts across the global 4+T
+  cycle; masks are all re-based to the global timeline (no .late — a
+  shifted pattern under an unshifted gate drifts a phase per cycle, worked
+  out and avoided). Meter pinned 4/4 (compileVibe gained a spec.meter
+  override) — a 2/4 pick had halved the buildup and doubled the grid feel.
+- ARTICULATION PER VIBE, his third ask: emotions carry artic/pedal (sad,
+  calm, scary, mysterious, nostalgic, romantic, somber = legato + damper;
+  excited, goofy = staccato; the rest detached), environments supply the
+  fallback when no emotion (water/cave/rest/menu/aftermath/snow wet,
+  fight/training/kitchen dry). Compiled to duration + room on the
+  accompaniment and lead (.clip composing OVER each foundation pattern's
+  own authored legato, which bindFigure already honours; the D39 melody
+  articulation layer stays pitch-aware underneath). The card states each
+  song's articulation so a verdict can name it.
+- Parked from his notes, on the ledger: dp_parapraxis's first-4-bars as a
+  standalone minimal relaxed beat (a dpStack slice away, wants a rest/lofi
+  song to live in); dp_cool_rock_1 "add a version with the synth thing
+  removed too" (a voice-subset variant — dpStack can drop voices when a
+  song wants it); "go with funky basslines" as a pairing constraint for
+  dp_to_go_with_funky_basslines. 305/305.
