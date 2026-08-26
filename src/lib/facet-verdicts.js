@@ -13,7 +13,7 @@
 // P(0->11) as a minor cadence from 0.07% to 19.8% on two votes.
 
 export const FACET_VERDICTS = {
-  source: "ethan notes 2026-08-24",
+  source: "ethan notes 2026-08-24 + progressions notes 2026-08-26",
   pairs: {
     "minor|0>11": {
       "verdict": "good",
@@ -53,6 +53,13 @@ export const FACET_VERDICTS = {
       "at": "2026-08-25",
       "from": "notes",
       "note": "the G of \"Gm to G as an ending pair\" — raised V in minor, v->V mixture"
+    },
+    "modal|10:m": {
+      "verdict": "bad",
+      "n": 1,
+      "at": "2026-08-26",
+      "from": "notes",
+      "note": "\"Cm to Bbm is very off\" — the bvii minor triad in a modal cycle"
     }
   },
   textures: {

@@ -44,7 +44,25 @@ async function existing() {
 }
 
 const merged = { ...(await existing()) };
-let added = 0, changed = 0, unknown = [];
+// per-card free-text notes (D59 addendum): a separate bag keyed by entry name,
+// merged like the verdicts so a session that leaves the box empty cannot erase
+// what an earlier session said. Notes are evidence with or without a verdict —
+// the judge page's strayNotes taught that lesson (t16/t20/t23 arrived as notes).
+const mergedNotes = { ...((existsSync(OUT) ? (await import(OUT)).CARD_NOTES : null) ?? {}) };
+// Verdicts on PAGE-LOCAL cards (D60): the progressions page auditions varied
+// and generated entries that exist only on the page, so their verdicts cannot
+// key into ALL_PROGRESSIONS — they land here instead, with the degrees the
+// page actually rendered (derived from its symbols: pitch-exact, spelling-
+// lossy) and the exemplar they came from. Built by a session's derived-import
+// file, not by the raw export.
+const mergedDerived = { ...((existsSync(OUT) ? (await import(OUT)).DERIVED_VERDICTS : null) ?? {}) };
+// Verdicts on FOUNDATION FIGURATIONS (D61): audition/foundations.html judges
+// accompaniment patterns, not progressions — separate bag, keyed by fnd_ name,
+// snapshotting the figure tokens that played (a verdict judges the music that
+// played; figurations-foundation.js refuses a stale one, same as degrees).
+const mergedFig = { ...((existsSync(OUT) ? (await import(OUT)).FIGURE_VERDICTS : null) ?? {}) };
+const mergedFigNotes = { ...((existsSync(OUT) ? (await import(OUT)).FIGURE_NOTES : null) ?? {}) };
+let added = 0, changed = 0, unknown = [], newNotes = [], derivedN = 0, impliedN = 0, figN = 0;
 
 // The judge page (D52) emits TRIAL results, not per-entry verdicts, so it takes
 // a different path: the answers are written to src/lib/judgments.js and, more
@@ -301,12 +319,40 @@ if (!CHECK) {
     process.exit(1);
   }
   const raw = JSON.parse(readFileSync(file, 'utf8'));
-  const verdicts = raw.verdicts ?? raw;
+  // A foundations export (D61) judges FIGURATIONS, not progressions — its
+  // verdicts go to the FIGURE bags and never touch the progression merge.
+  if (raw.figurations === true || raw.page === 'foundations') {
+    const { FIGURATIONS_FOUNDATION } = await import('../src/lib/figurations-foundation.js');
+    const at = (raw.generated ?? new Date().toISOString()).slice(0, 10);
+    for (const [name, verdict] of Object.entries(raw.verdicts ?? {})) {
+      if (!verdict) continue;
+      if (!['keep', 'kill'].includes(verdict)) throw new Error(`${name}: bad verdict "${verdict}"`);
+      if (!FIGURATIONS_FOUNDATION[name]) { unknown.push(name); continue; }
+      const judged = raw.judged?.[name] ?? FIGURATIONS_FOUNDATION[name].figure.join(' ');
+      if (!mergedFig[name]) figN++;
+      mergedFig[name] = { verdict, at, judged };
+    }
+    for (const [name, text] of Object.entries(raw.notes ?? {})) {
+      const t = String(text).trim();
+      if (!t) continue;
+      if (!FIGURATIONS_FOUNDATION[name]) { unknown.push(`${name} (note)`); continue; }
+      if (mergedFigNotes[name]?.note !== t) newNotes.push([name, t]);
+      mergedFigNotes[name] = { note: t, at, judged: raw.judged?.[name] ?? FIGURATIONS_FOUNDATION[name].figure.join(' ') };
+    }
+  } else {
+  // An implied-verdicts file carries POSITIONAL inferences (Ethan's rule:
+  // unmarked top half = good, unmarked second half = not good) — tagged so
+  // later analysis can tell an inference from a click, and NEVER allowed to
+  // overwrite a click from any session.
+  const implied = raw.impliedVerdicts != null;
+  const verdicts = raw.verdicts ?? raw.impliedVerdicts ?? raw;
+  const pageTag = implied ? `${page ?? raw.page ?? 'unknown'}-implied` : page;
   const at = (raw.generated ?? new Date().toISOString()).slice(0, 10);
 
   for (const [name, verdict] of Object.entries(verdicts)) {
     if (!verdict) continue;
     if (!['keep', 'kill'].includes(verdict)) throw new Error(`${name}: bad verdict "${verdict}"`);
+    if (implied && merged[name]) continue; // a click outranks an inference, always
     // A verdict on an entry that no longer exists is a STALE verdict from an
     // older build of the page. Reported, not silently dropped — it means the
     // listener judged something the library has since renamed or regenerated.
@@ -319,7 +365,24 @@ if (!CHECK) {
     // percussion fix (D52) moved both Amalgam entries from B:minor to D:major,
     // so the two kills recorded against them were kills of a different piece.
     // The overlay refuses to honour a verdict whose degrees no longer match.
-    merged[name] = { verdict, page: page ?? prior?.page ?? 'unknown', at, degrees: ALL_PROGRESSIONS[name].degrees };
+    merged[name] = { verdict, page: pageTag ?? prior?.page ?? 'unknown', at, degrees: ALL_PROGRESSIONS[name].degrees };
+    if (implied) impliedN++;
+  }
+  for (const [name, rec] of Object.entries(raw.derived ?? {})) {
+    if (!['keep', 'kill'].includes(rec.verdict)) throw new Error(`derived ${name}: bad verdict "${rec.verdict}"`);
+    mergedDerived[name] = {
+      verdict: rec.verdict, family: rec.family ?? null, degrees: rec.degrees ?? null,
+      base: rec.base ?? null, page: pageTag ?? 'unknown', at,
+    };
+    derivedN++;
+  }
+  for (const [name, text] of Object.entries(raw.notes ?? {})) {
+    const t = String(text).trim();
+    if (!t) continue;
+    if (!ALL_PROGRESSIONS[name]) { unknown.push(`${name} (note)`); continue; }
+    if (mergedNotes[name]?.note !== t) newNotes.push([name, t]);
+    mergedNotes[name] = { note: t, at, degrees: ALL_PROGRESSIONS[name].degrees };
+  }
   }
 }
 
@@ -355,6 +418,56 @@ L.push('');
 L.push('export const KEPT = Object.keys(VERDICTS).filter((n) => VERDICTS[n].verdict === \'keep\');');
 L.push('export const KILLED = Object.keys(VERDICTS).filter((n) => VERDICTS[n].verdict === \'kill\');');
 L.push('');
+if (Object.keys(mergedDerived).length) {
+  L.push('// Verdicts on PAGE-LOCAL cards (D60) — varied/generated entries that exist');
+  L.push('// only on an audition page. `degrees` is what the page rendered (derived');
+  L.push('// from its symbols: pitch-exact, spelling-lossy); `base` is the exemplar a');
+  L.push('// variation came from; a page tag ending in -implied marks a POSITIONAL');
+  L.push('// inference (Ethan\'s unmarked-half rule), never a click.');
+  L.push('export const DERIVED_VERDICTS = {');
+  for (const n of Object.keys(mergedDerived).sort()) {
+    const v = mergedDerived[n];
+    L.push(`  ${JSON.stringify(n)}: { verdict: '${v.verdict}', page: '${v.page}', at: '${v.at}', base: ${JSON.stringify(v.base)},`);
+    L.push(`    family: ${JSON.stringify(v.family)}, degrees: ${JSON.stringify(v.degrees)} },`);
+  }
+  L.push('};');
+  L.push('');
+}
+if (Object.keys(mergedNotes).length) {
+  L.push('// Free-text notes per card (D59 addendum) — evidence with or without a');
+  L.push('// verdict; `judged` snapshots the degrees the note was about (same rule');
+  L.push('// as the verdicts: a note judges the music that played).');
+  L.push('export const CARD_NOTES = {');
+  for (const n of Object.keys(mergedNotes).sort()) {
+    const v = mergedNotes[n];
+    L.push(`  ${n}: { note: ${JSON.stringify(v.note)}, at: '${v.at}',`);
+    L.push(`    judged: ${JSON.stringify(v.degrees ?? null)} },`);
+  }
+  L.push('};');
+  L.push('');
+}
+if (Object.keys(mergedFig).length) {
+  L.push('// Verdicts on FOUNDATION FIGURATIONS (D61) from audition/foundations.html —');
+  L.push('// keyed by fnd_ name; `judged` snapshots the figure tokens that played.');
+  L.push('// figurations-foundation.js overlays these at load and refuses stale ones.');
+  L.push('export const FIGURE_VERDICTS = {');
+  for (const n of Object.keys(mergedFig).sort()) {
+    const v = mergedFig[n];
+    L.push(`  ${n}: { verdict: '${v.verdict}', at: '${v.at}', judged: ${JSON.stringify(v.judged ?? null)} },`);
+  }
+  L.push('};');
+  L.push('');
+}
+if (Object.keys(mergedFigNotes).length) {
+  L.push('// Free-text notes per foundation figuration (D61).');
+  L.push('export const FIGURE_NOTES = {');
+  for (const n of Object.keys(mergedFigNotes).sort()) {
+    const v = mergedFigNotes[n];
+    L.push(`  ${n}: { note: ${JSON.stringify(v.note)}, at: '${v.at}', judged: ${JSON.stringify(v.judged ?? null)} },`);
+  }
+  L.push('};');
+  L.push('');
+}
 
 const out = L.join('\n');
 if (CHECK) {
@@ -369,5 +482,12 @@ if (CHECK) {
   const keeps = names.filter((n) => merged[n].verdict === 'keep').length;
   console.log(`wrote ${OUT}: ${names.length} verdicts (${keeps} keep, ${names.length - keeps} kill)`);
   console.log(`  ${added} new, ${changed} changed`);
+  if (impliedN) console.log(`  ${impliedN} implied verdicts (positional rule) — tagged, and none overwrote a click`);
+  if (derivedN) console.log(`  ${derivedN} page-local verdicts into DERIVED_VERDICTS (${Object.keys(mergedDerived).length} total)`);
+  if (Object.keys(mergedFig).length) console.log(`  figuration verdicts: ${Object.keys(mergedFig).length} total (${figN} new) — foundations overlay live`);
+  if (Object.keys(mergedNotes).length) {
+    console.log(`  ${Object.keys(mergedNotes).length} card notes carried (${newNotes.length} new this import)`);
+    for (const [n, t] of newNotes) console.log(`     [${n}] ${t}`);
+  }
   for (const n of unknown) console.log(`  STALE: "${n}" is not in the library — verdict dropped`);
 }

@@ -683,7 +683,26 @@ export function planForm(plan, opts = {}) {
     const usesLeader = leaders.length && secs.some((x) => x.leadLayerId);
     return { shape: s, secs, score: distinct * 2 - repeats + (usesLeader ? 3 : 0) };
   }).sort((a, b) => b.score - a.score);
-  const top = options.filter((o) => o.score >= options[0].score);
+  // D59 addendum (Ethan): call & response must not be "always the case" —
+  // "sometimes it's just normal layering or other things". Measured before this
+  // guard: every leader-capable town and overworld song picked the dialogue
+  // shape, because a dialogue's alternating lead is one extra distinct state
+  // and so it strictly outscored its rivals — the hash tie-break never got a
+  // say. Whether a song converses AT ALL is a character trait, not a scoring
+  // inevitability, so it is decided like every other variety choice (D46): when
+  // dialogue and non-dialogue shapes are both within one state's worth of the
+  // best score, the song's own hash decides which kind it is — about a third
+  // converse — and the best shape of that kind wins.
+  let pool = options;
+  const NEAR = 2; // one distinct-state's worth of score
+  const near = options.filter((o) => o.score >= options[0].score - NEAR);
+  const talks = (o) => o.secs.some((x) => x.dialogue);
+  if (near.some(talks) && near.some((o) => !talks(o))) {
+    const converse = fnv(`${plan.name}|converses`) % 3 === 0;
+    pool = near.filter((o) => talks(o) === converse);
+    if (!converse) notes.push('this song does not converse — dialogue shapes stood aside (a third of eligible songs take them)');
+  }
+  const top = pool.filter((o) => o.score >= pool[0].score);
   const pick = top[fnv(`${plan.name}|form`) % top.length];
   const sections = pick.secs;
   notes.push(`form: ${pick.shape.join(' → ')} — ${new Set(pick.secs.map((x) => [...x.active].sort().join(',') + x.lead)).size} distinct states from a roster of ${plan.layers.length}, best of ${options.length} shapes for role "${plan.role ?? 'none'}"`);

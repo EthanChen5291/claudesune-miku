@@ -425,12 +425,72 @@ NEXT:
    letter schemes + dialogue + treats should reach SONG GENERATION (cli), not
    just the audition page; and the answer voice could eventually VARY its echo
    (video 10's answers are near-echoes, not exact).
+0f. [done, D60] FIRST BIG VERDICT HARVEST imported: 237 library verdicts (104
+   clicked + 133 implied by Ethan's unmarked-half rule), 85 page-local verdicts
+   recovered into DERIVED_VERDICTS, 12 notes, mood corrections, the modal|10:m
+   facet seed, vid_mod_etude_close_cell (his E7·2 F^7 E7 cell), and 4/4 plans
+   for 6-chord loops. exemplarPool now runs on the ear alone (201 ratified);
+   pages vary only the 74 click-kept. GEN-NAME COLLISION fixed (was: one name
+   covered up to 6 cards; his 21 gen verdicts were unattributable and dropped —
+   re-judge the generated arm when convenient). QUEUED RULINGS: octave as a
+   section parameter (post-peak quiet section 1-2 octaves up, with variations —
+   form phase); 'Mysterious' mood tags read too consonant (prompt→params note).
+0g. [researched, D61] THE SCENARIO ROUND — four designs in research/ (README.md
+   is the index + build order), all CANDIDATE, awaiting Ethan's go before the
+   20-environmental + 20-emotion song batch:
+   (a) KEYS: mode first, register second, tonic = corpus practice + hash
+       variety (per-key "character" is 12-TET myth; Schubart = metadata only).
+       Corpus practice found: G:minor generic battle, F:minor heavy boss,
+       B:major emotional peak, A:major warmth, towns 3/3 major.
+   (b) FOUNDATIONS THEN VARIATION: 29-pattern universal fnd_ canon (alberti/
+       stride/habanera/bossa/travis/gospel...) lands and is auditioned FIRST;
+       then varyFiguration (12 typed ops — swap positions = rotate/swap,
+       change intervals = colour_sub/octave_token/neighbor_insert) in the D50
+       idiom with fit-drift gates.
+   (c) VIBE = EMOTION x ENVIRONMENT: 17 environments (shop, fight, boss,
+       construction, stealth, snow, water, desert, cave, lab, casino,
+       festival, kitchen, training, rest, menu, aftermath) x 12 emotions;
+       compileVibe() -> situation patch; contradiction cells (gloomy shop,
+       happy construction, calm fight) are the ratification test.
+   (d) INSTRUMENTS: per-part orchestration rules ready to become lints; 15
+       verified new GM voices drafted (timpani, taiko, brass section, steel
+       drums, guitars, slap bass, koto...; levels UNMEASURED until his ear);
+       82 of 125 gm_* names still unused; .n(i) render variants = cheapest
+       expansion.
+   (e) ENSEMBLE SHAPES (his add-on, D61 ruling): solo / duet / groove / bed /
+       no_drums / no_bass / full — sparsity is a scenario decision, shapes cap
+       the arranger's slate, the batch includes deliberately sparse cards.
+0h. [built, D61 + addendum] drum-patterns.com pipeline:
+   `node scripts/fetch-drum-patterns.mjs liked <pages>` (owner granted Ethan
+   permission via email, 2026-08-25 — D61 addendum; polite: page budget,
+   1.2s/request, honest UA, skips saved) then
+   `node scripts/import-drum-patterns.mjs --report` -> rhythm entries per
+   voice + DRUM_PATTERN_FORMS (bank play order = where the fill lands, the
+   todo-0b placement data). Grids are velocity-less, so entries need accent
+   profiles unless the pattern used AC/ghost rows (those recover a real
+   profile). Hand-saved pages still work and import identically.
+   STATUS 2026-08-25: pipeline proven end-to-end on one page (Get Lucky:
+   intro/fill detected from bank order), but the SITE went unresponsive
+   mid-session from two independent networks (curl direct + Anthropic
+   fetcher both time out; example.com fine) — run the fetch again when
+   drum-patterns.com is back up.
+0i. [built, D61 addendum] FOUNDATIONS EAR PASS: audition/foundations.html —
+   29 fnd_ canon patterns (figurations-foundation.js) × 5 click-kept
+   progressions, a chip per pattern per card, verdicts PER PATTERN with
+   notes; export -> import-verdicts.mjs -> FIGURE_VERDICTS overlay (stale
+   snapshots refused, D51 discipline). This is build-order step 1: the
+   fnd_ ear pass gates figuration-vary.
 1. *** RE-RUN audition/facets.html AND audition/judge.html, plus
    audition/progressions.html filtered to "from the videos" (18 sections to
    keep/kill — they are eye-reads of videos you like, so a kill likely means I
-   misread; notes welcome; each video card now has its own tone buttons —
-   block / arpeggio / wide pad / wide oom-pah — and the export records which
-   tone you judged). The facets cadence tab now also offers the two D57
+   misread; notes welcome). EVERY card now has its own tone buttons — block /
+   bossa / arpeggio / wide pad / wide oom-pah — the global row is the default,
+   a card's buttons override it, and the export records which tone you judged
+   (cardTones), and every card has a notes box — typed comments persist, ride
+   the export, and land in verdicts.js as CARD_NOTES on import. Odd-length
+   progressions are now fit to 4/4 by lengthening
+   (3→4 bars, 5→8 as 2+2+2+1+1, ...; video cards honour their sectionBars) —
+   the card shows the plan. The facets cadence tab now also offers the two D57
    devices per harmony: "sus, then altered V" and "end on 9sus4" (D59). *** facets first — it
    is where the two things Ethan already noticed by ear get generalised, and it
    is the only page whose votes reach the generator directly. Both export JSON;
@@ -466,3 +526,22 @@ STILL OPEN after round 15:
 - (carried) only cycles, no through-composed phrases; 9 of 22 famous
   foundations unvoiceable by me_*; the unison importer ships agree:0 entries as
   needsEar:false; hard-cut transitions; piano never drops out; uniform sections.
+
+
+-----
+
+MY PERSONAL TODO:
+
+- listen to progressions.html
+
+What you can do: reload undertale.html and play some mix cards — you'll hear melodies change by letter, dialogues trade phrases, and the harmony treat at the last reprise (hover the strip for exactly what varied). Then the standing re-run: facets.html (cadence tab has the two new devices; the wraps bag is still empty until you vote there) and the video cards with their new tone buttons.
+
+NEW (D61 + addendum): (1) audition/foundations.html is live — 29 foundation
+patterns, a chip per pattern on 5 kept progressions; judge PATTERNS (verdict
+grid below the cards), export, `node scripts/import-verdicts.mjs <file>`.
+This ear pass gates the variation machinery. (2) say go (or adjust) on the
+remaining designs — vibes/keys/instruments + the ensemble DIAL
+(research/README.md); approval unlocks the build order ending in the 20+20
+batch. (3) drum patterns are flowing: `node scripts/fetch-drum-patterns.mjs
+liked <pages>` then `node scripts/import-drum-patterns.mjs --report`.
+

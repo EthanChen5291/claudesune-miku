@@ -18,6 +18,7 @@ import { fileURLToPath } from 'node:url';
 import { PROGRESSIONS, ALL_PROGRESSIONS, parseDegrees, progressionQualities } from '../src/lib/progressions.js';
 import { generateProgression, explainProgression } from '../src/lib/harmony-gen.js';
 import { exemplarPool, variationsOf, explainVariation } from '../src/lib/harmony-vary.js';
+import { VERDICTS } from '../src/lib/verdicts.js';
 import { renderProgression } from '../src/binder/harmony.js';
 import { bindComp, bind, bindFigure } from '../src/binder/bind.js';
 import { FIGURATIONS_UNDERTALE } from '../src/lib/figurations-undertale.js';
@@ -46,13 +47,15 @@ const TEXTURES = [
 ];
 const BASS = { rhythm: 'offbeat_8ths', contour: 'bass_root_five', octave: 2, sound: 'piano', fx: '.gain(0.7)' };
 
-// D59 (Ethan, 2026-08-25): the VIDEO cards get a per-card tone picker — "rather
+// D59 (Ethan, 2026-08-25): EVERY card gets a per-card tone picker — "rather
 // than always playing block tone for that chord, you press the tone you want to
-// play within the box". Four tones, judge.html's language: block and wide pad
-// are this page's own comp textures; arpeggio and wide oom-pah are figuration
-// renderings (chord members, so they voice ANY quality the parser understands —
-// which matters here, because the transcribed jazz colours outrun the comp
-// dictionaries). Same WIDE_OOMPAH hybrid judge.html plays, for continuity.
+// play within the box", then "apply the four tone buttons to every card".
+// Five tones: block / bossa / wide pad are the comp textures (dictionary
+// voicings — a card greys the ones whose qualities the dictionary cannot
+// shape); arpeggio and wide oom-pah are figuration renderings (chord members,
+// so they voice ANY quality the parser understands). The global row picks the
+// DEFAULT tone; a card's own buttons override it for that card. Same
+// WIDE_OOMPAH hybrid judge.html plays, for continuity.
 const WIDE_OOMPAH = {
   ...FIGURATIONS_UNDERTALE.ut_oompah_dogsong,
   figure: ['R', '5.3+', 'R', '5.3+'],
@@ -85,7 +88,12 @@ for (const family of ['major', 'minor', 'modal']) {
       for (const colour of [0.2, 0.6]) {
         for (const seed of ['a', 'b']) {
           const e = generateProgression({ family, length, style, colour, shape: GEN_SHAPE, seed });
-          const tag = `${family[0]}${length}${style ? style[0] : '-'}${colour === 0.2 ? 'p' : 'c'}${seed}`;
+          // D60: the old tag used family[0] and style[0], and major/minor/modal
+          // all start with 'm' while undertale/unison share 'u' — 24 names
+          // covered 96 cards and a verdict click painted up to six of them.
+          // Two-letter family + two-letter style makes every name unique.
+          const styleTag = { undertale: 'ut', unison: 'un', ldrolez: 'ld' }[style] ?? 'xx';
+          const tag = `${family.slice(0, 2)}${length}${styleTag}${colour === 0.2 ? 'p' : 'c'}${seed}`;
           generated.push([`gen_${tag}`, e]);
         }
       }
@@ -98,8 +106,18 @@ for (const family of ['major', 'minor', 'modal']) {
 // it became" rather than as two unrelated piles. The `source` filter separates
 // `foundation` from `varied`, but the default ordering is the comparison.
 const EXEMPLARS = exemplarPool();
+// D60: the verdict import ratified ~200 entries at once (133 of them by the
+// positional rule), and varying every one of them quadrupled the page. The
+// exemplar POOL keeps them all — but the page's varied arm sticks to exemplars
+// Ethan kept BY CLICK: a variation is offered as "here is the thing that
+// works, here is what it became", and that framing wants a card he actually
+// attended to, not one inferred from where it sat on the page.
+const clicked = (name) => {
+  const v = VERDICTS[name];
+  return !v || !String(v.page ?? '').endsWith('-implied');
+};
 const varied = [];
-for (const [name, e] of EXEMPLARS.entries) {
+for (const [name, e] of EXEMPLARS.entries.filter(([n]) => clicked(n))) {
   varied.push([name, e, 'foundation']);
   for (const [i, intensity] of [0.2, 0.5, 0.85].entries()) {
     for (const v of variationsOf(name, { count: 1, intensity, budget: intensity > 0.6 ? 3 : 2, seed: `p${i}` })) {
@@ -109,6 +127,38 @@ for (const [name, e] of EXEMPLARS.entries) {
 }
 
 const entries = [];
+
+// D59 addendum (Ethan, 2026-08-25): "ensure that the chord progressions you
+// show me respect a 4/4 time. so make a chord last longer, or make two chords
+// quicker ... some chord progressions don't really fit too well simply because
+// i cant make sense of where its developing with respect to time." A 5-chord
+// loop played one-chord-a-bar is a 5-bar phrase fighting the 4/4 grid — the
+// same complaint as his t26/t30 judge notes, now ruled on for this page.
+//
+// The binder places chords at WHOLE-BAR granularity (sub-bar splits need the
+// chord() timeline, which the comp/figure textures do not use), so the fit is
+// by lengthening: an odd-length cycle is planned onto the next 4/4 phrase
+// (3->4 bars, 5->8, 7->8, 9->12) with the extra bars given to the FRONT
+// chords — for five chords that lands exactly on the classic 2+2+2+1+1
+// cadential acceleration (harmonic rhythm speeds toward the turn). Even-length
+// cycles already sit in 4/4 and are untouched. Video entries carry their
+// section's own bar count (sectionBars) and that is honoured first: a 4-chord
+// section written over 8 bars plays 2 bars a chord, its actual pacing.
+function barPlan(n, targetBars = null) {
+  // D60 (Ethan's notes on the 6-chord cards: "if last two included, either
+  // replacements or adjust chord lengths to match 4/4"): every loop whose bar
+  // count is not a multiple of 4 gets planned, even the even ones — 6 chords
+  // one-per-bar is a 6-bar phrase and he flagged it three separate times. A
+  // 2-chord loop is exempt (it nests cleanly inside any 4-bar phrase), and a
+  // video's own sectionBars is honoured only when it IS a 4/4 phrase.
+  let B = targetBars;
+  if (B == null || B < n || B % 4) B = (n % 4 === 0 || n === 2) ? n : Math.ceil(n / 4) * 4;
+  if (B === n) return null;
+  const base = Math.floor(B / n);
+  const rem = B % n;
+  return Array.from({ length: n }, (_, i) => (i < rem ? base + 1 : base));
+}
+
 // D57: the video pack rides on this page too — Ethan asked to hear transcribed
 // progressions "in different tones", and this is the page with the textures.
 const VIDEO_ENTRIES = Object.entries(ALL_PROGRESSIONS).filter(([, e]) => e.pack === 'igvideo');
@@ -120,7 +170,9 @@ for (const [name, e, arm] of [
 ]) {
   const key = keyFor(e.family);
   const symbols = renderProgression(e, key);
-  const ctx = { harmony: symbols, barsPerChord: 1, key };
+  const plan = barPlan(symbols.length, arm === 'video' ? (e.sectionBars ?? null) : null);
+  const barSyms = plan ? symbols.flatMap((sym, i) => Array(plan[i]).fill(sym)) : symbols;
+  const ctx = { harmony: barSyms, barsPerChord: 1, key };
   const exprs = {};
   const missing = {};
   for (const t of TEXTURES) {
@@ -136,18 +188,20 @@ for (const [name, e, arm] of [
   const bass = bind(RHYTHMS[BASS.rhythm], CONTOURS[BASS.contour], ctx, '4/4', {
     octave: BASS.octave, sound: BASS.sound, fx: BASS.fx,
   }).expr;
-  // the per-card tones, video cards only (see the D59 note above)
-  const tones = arm === 'video' ? {
-    block: exprs.comp,
+  // the per-card tones — EVERY card (Ethan, 2026-08-25: "apply the four tone
+  // buttons to every card"). Only the two member-based renderings are stored
+  // here; block/bossa/pad reuse the comp expressions the card already carries
+  // (the client resolves the alias), so the page does not double its size.
+  const tones = {
     arp: bindFigure(FIGURATIONS_UNDERTALE.ut_arp_tem_shop, ctx, '4/4', { sound: 'piano', fx: '.room(0.3)' }).expr,
-    pad: exprs.pad,
     oompah: bindFigure(WIDE_OOMPAH, ctx, '4/4', { sound: 'piano', fx: '.room(0.35)' }).expr,
-  } : null;
+  };
   entries.push({
     name, family: e.family, numerals: e.numerals, moods: e.moods,
     symbols, length: parseDegrees(e.degrees).length,
     qualities: [...progressionQualities(e)].sort(),
     exprs, missing, bass, tones,
+    plan: plan ? { bars: barSyms.length, perChord: plan } : null,
     song: e.song ?? null,
     source: arm ?? (e.provenance === 'generated' ? 'generated' : 'imported'),
     // D50: what this came from and what each substitution guaranteed
@@ -188,12 +242,12 @@ for (const fam of ['major', 'minor', 'modal']) {
   }
 }
 const FULL = process.argv.includes('--full');
-const videoToneChecks = (pool) => pool.filter((e) => e.tones)
+const toneChecks = (pool) => pool
   .flatMap((e) => Object.keys(e.tones).filter((k) => e.tones[k]).map((k) => [e, `tone:${k}`]));
 const toCheck = FULL
   ? [...entries.flatMap((e) => TEXTURES.filter((t) => e.exprs[t.id]).map((t) => [e, t.id])),
-    ...videoToneChecks(entries)]
-  : [...sample, ...videoToneChecks(entries.filter((e) => e.tones).slice(0, 1))];
+    ...toneChecks(entries)]
+  : [...sample, ...toneChecks(entries.slice(0, 1)), ...toneChecks(entries.filter((e) => e.source === 'video').slice(0, 1))];
 let checked = 0;
 for (const [e, tid] of toCheck) {
   const expr = tid.startsWith('tone:') ? e.tones[tid.slice(5)] : e?.exprs[tid];
@@ -210,6 +264,16 @@ for (const [e, tid] of toCheck) {
 const DATA = {
   entries,
   textures: TEXTURES.map(({ id, label, rhythm, dict }) => ({ id, label, rhythm, dict })),
+  // the five per-card tones, in display order; 'expr' says where the client
+  // finds the pattern (an exprs alias for the dictionary comps, tones for the
+  // member-based renderings)
+  tones: [
+    { id: 'block', label: 'block', from: 'comp', detail: 'pushed_comp_2bar × me_shell_37' },
+    { id: 'bossa', label: 'bossa', from: 'bossa', detail: 'bossa_comp_2bar × me_drop2' },
+    { id: 'arp', label: 'arpeggio', from: 'arp', detail: 'ut_arp_tem_shop (chord members — plays any quality)' },
+    { id: 'pad', label: 'wide pad', from: 'pad', detail: 'even_8ths × me_spread_tenth' },
+    { id: 'oompah', label: 'wide oom-pah', from: 'oompah', detail: 'R 5.3+ — oom-pah motion, wide-pad spacing (plays any quality)' },
+  ],
   preamble,
   moods: [...new Set(entries.flatMap((e) => e.moods))].sort(),
   lengths: [...new Set(entries.map((e) => e.length))].sort((a, b) => a - b),
@@ -225,9 +289,10 @@ acorn.parse(inline, { ecmaVersion: 'latest' });
 mkdirSync(OUT, { recursive: true });
 writeFileSync(join(OUT, 'progressions.html'), html);
 console.log(`wrote audition/progressions.html — ${entries.length} entries × ${TEXTURES.length} textures`);
-const vt = entries.filter((e) => e.tones);
-console.log(`  ${vt.length} video cards carry the per-card tone picker (block/arpeggio/wide pad/wide oom-pah); ` +
-  `${vt.filter((e) => Object.values(e.tones).every(Boolean)).length} play all four tones`);
+const planned = entries.filter((e) => e.plan);
+console.log(`  ${planned.length} cards re-planned to fit 4/4 (odd chord counts + video sectionBars) — chords lengthened, never cut`);
+console.log(`  every card carries the tone picker (block/bossa/arpeggio/wide pad/wide oom-pah); ` +
+  `member-based tones play all ${entries.length}, dictionary tones grey out where a quality has no shape`);
 console.log(`  ${checked}${FULL ? '' : ' sampled'} patterns evaluated green through the engine's own transpiler${FULL ? ' (ALL of them)' : ' (--full checks all)'}`);
 console.log(`  inline page script parses clean (${(inline.length / 1024).toFixed(0)} KB)`);
 for (const t of TEXTURES) {
@@ -280,6 +345,10 @@ function page(DATA) {
   .tonerow .tone { padding:2px 7px; font-size:11px; opacity:.85; }
   .tonerow .tone.on { background:var(--sel, #4a7); border-color:var(--sel, #4a7); color:#fff; opacity:1; }
   .tonerow .tone.dead { opacity:.3; cursor:not-allowed; }
+  .notebox { width:100%; margin-top:6px; padding:3px 6px; font-size:11.5px;
+    background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.12);
+    border-radius:4px; color:inherit; }
+  .notebox::placeholder { opacity:.4; }
   footer { position:fixed; bottom:0; left:0; right:0; background:var(--panel); border-top:1px solid var(--line); padding:7px 18px; display:flex; gap:16px; align-items:center; font-size:12.5px; }
   kbd { background:#252531; border:1px solid #3a3a4a; border-radius:4px; padding:0 5px; font:11.5px ui-monospace,monospace; }
 </style>
@@ -294,7 +363,7 @@ function page(DATA) {
     <span class="dim" id="rtstatus">click any card to start audio</span>
   </div>
   <div class="row" style="margin-top:7px">
-    <label class="ctl">texture <span id="tex"></span></label>
+    <label class="ctl">default tone <span id="tex"></span></label>
     <label class="ctl"><input type="checkbox" id="bass" checked> bass <span class="dim" id="bassLabel"></span></label>
     <label class="ctl">bpm <input type="range" id="bpm" min="60" max="170" value="112"><span id="bpmv">112</span></label>
     <label class="ctl">transpose <input type="range" id="tr" min="-6" max="6" value="0"><span id="trv">0</span></label>
@@ -305,7 +374,7 @@ function page(DATA) {
     <label class="ctl">mood <select id="fMood"><option value="">all</option></select></label>
     <label class="ctl">chords <select id="fLen"><option value="">all</option></select></label>
     <label class="ctl">verdict <select id="fVerd"><option value="">all</option><option value="none">unjudged</option><option value="keep">kept</option><option value="kill">killed</option></select></label>
-    <label class="ctl"><input type="checkbox" id="fVoice" checked> only voiceable by this texture</label>
+    <label class="ctl"><input type="checkbox" id="fVoice" checked> only voiceable by the default tone</label>
     <input type="search" id="fText" placeholder="search numerals / chords">
   </div>
 </header>
@@ -324,24 +393,37 @@ const LS = 'motif-engine:progression-verdicts';
 const LST = 'motif-engine:progression-tones';
 let verdicts = {};
 try { verdicts = JSON.parse(localStorage.getItem(LS) || '{}'); } catch {}
-// per-card tone choice for the video cards (D59) — which rendering the ear is
-// actually judging, kept with the verdicts so the export can say so
+// per-card tone choice (D59) — which rendering the ear is actually judging,
+// kept with the verdicts so the export can say so. The global row sets the
+// DEFAULT tone; a card's own buttons override it for that card only.
 let cardTone = {};
 try { cardTone = JSON.parse(localStorage.getItem(LST) || '{}'); } catch {}
-const TONE_LABELS = { block: 'block', arp: 'arpeggio', pad: 'wide pad', oompah: 'wide oom-pah' };
-const toneOf = (e) => {
-  if (!e.tones) return null;
-  const t = cardTone[e.name];
-  if (t && e.tones[t]) return t;
-  return ['block', 'arp', 'pad', 'oompah'].find((k) => e.tones[k]) || null;
+// per-card free-text notes (D59 addendum) — the judge page taught that the
+// notes channel is where the real findings arrive (t16/t20/t23 all came in as
+// notes); this page gets the same channel per card
+const LSN = 'motif-engine:progression-notes';
+let cardNotes = {};
+try { cardNotes = JSON.parse(localStorage.getItem(LSN) || '{}'); } catch {}
+let tone = DATA.tones[0].id;
+const toneExpr = (e, k) => {
+  const t = DATA.tones.find((x) => x.id === k);
+  if (!t) return null;
+  return (t.from === 'arp' || t.from === 'oompah') ? e.tones[t.from] : e.exprs[t.from];
 };
-let texture = DATA.textures[0].id, playing = null, sel = 0, visible = [];
+const toneOf = (e) => {
+  const own = cardTone[e.name];
+  if (own && toneExpr(e, own)) return own;
+  if (toneExpr(e, tone)) return tone;
+  return DATA.tones.map((t) => t.id).find((k) => toneExpr(e, k)) || null;
+};
+let playing = null, sel = 0, visible = [];
 
 const $ = (id) => document.getElementById(id);
-const save = () => { localStorage.setItem(LS, JSON.stringify(verdicts)); localStorage.setItem(LST, JSON.stringify(cardTone)); };
+const save = () => { localStorage.setItem(LS, JSON.stringify(verdicts)); localStorage.setItem(LST, JSON.stringify(cardTone)); localStorage.setItem(LSN, JSON.stringify(cardNotes)); };
 
 function codeFor(e) {
-  const expr = e.tones ? e.tones[toneOf(e)] : e.exprs[texture];
+  const t = toneOf(e);
+  const expr = t ? toneExpr(e, t) : null;
   if (!expr) return null;
   const layers = ($('bass') && $('bass').checked) ? expr + ', ' + e.bass : expr;
   const tr = Number($('tr') && $('tr').value) || 0;
@@ -373,7 +455,7 @@ function matches(e) {
   if ($('fFam').value && e.family !== $('fFam').value) return false;
   if ($('fMood').value && !e.moods.includes($('fMood').value)) return false;
   if ($('fLen').value && String(e.length) !== $('fLen').value) return false;
-  if ($('fVoice').checked && !(e.tones ? toneOf(e) : e.exprs[texture])) return false;
+  if ($('fVoice').checked && !toneExpr(e, tone)) return false;
   const v = $('fVerd').value;
   if (v === 'none' && verdicts[e.name]) return false;
   if ((v === 'keep' || v === 'kill') && verdicts[e.name] !== v) return false;
@@ -388,13 +470,15 @@ function render() {
   const grid = $('grid');
   grid.innerHTML = '';
   visible.forEach((e, i) => {
-    const voiceable = e.tones ? !!toneOf(e) : !!e.exprs[texture];
+    const voiceable = !!toneOf(e); // the member-based tones voice everything
     const card = document.createElement('div');
     card.className = 'card' + (i === sel ? ' sel' : '') + (playing === e.name ? ' playing' : '') +
       (verdicts[e.name] ? ' ' + verdicts[e.name] : '') + (voiceable ? '' : ' unvoiceable');
-    let tip = voiceable ? e.name
-      : e.name + ' — this texture has no voicing shape for: ' + e.missing[texture].join(', ') +
-        '. Try another texture, or add the quality to src/lib/voicings.js (ear-gated, D28).';
+    let tip = e.name;
+    if (e.plan) {
+      tip += '\\nfit to 4/4: ' + e.plan.bars + ' bars (' + e.plan.perChord.join('+') +
+        ' per chord) — an odd chord count one-per-bar fights the meter';
+    }
     if (e.vary) {
       tip += '\\n\\nVARIED FROM A FOUNDATION (D50)\\n' + e.vary.why.join('\\n');
     }
@@ -411,7 +495,9 @@ function render() {
           : e.source === 'foundation' ? ' · FOUNDATION'
             : e.source === 'varied' ? ' · varied' : '') + '</div>' +
       '<div class="num">' + e.numerals + '</div>' +
-      '<div class="sym">' + e.symbols.join(' ') + '</div>' +
+      '<div class="sym">' + e.symbols.map(function (sym, ix) {
+        return e.plan && e.plan.perChord[ix] > 1 ? sym + '·' + e.plan.perChord[ix] : sym;
+      }).join(' ') + (e.plan ? ' <span class="dim">(' + e.plan.bars + ' bars)</span>' : '') + '</div>' +
       '<div class="tags">' + (e.vary ? '↳ ' + e.vary.ops.join(' + ')
         : e.gen ? e.gen.brief
           : (e.song ? e.song + ' · ' : '') + e.moods.join(' · ')) + '</div>';
@@ -429,25 +515,43 @@ function render() {
     cp.onclick = (ev) => { ev.stopPropagation(); copy(e, cp); };
     acts.appendChild(cp);
     card.appendChild(acts);
-    // D59: video cards choose their tone IN the box — press the one to hear
-    if (e.tones) {
+    // D59: every card chooses its tone IN the box — press the one to hear.
+    // Pressing the already-chosen tone clears the override (back to default).
+    {
       const row = document.createElement('div');
       row.className = 'tonerow';
       const cur = toneOf(e);
-      for (const k of ['block', 'arp', 'pad', 'oompah']) {
+      for (const t of DATA.tones) {
+        const k = t.id;
+        const ex = toneExpr(e, k);
         const b = document.createElement('button');
-        b.textContent = TONE_LABELS[k];
-        b.className = 'tone' + (k === cur ? ' on' : '') + (e.tones[k] ? '' : ' dead');
-        if (!e.tones[k]) b.title = 'no voicing shape for one of the qualities here — the member-based tones (arpeggio, oom-pah) always play';
+        b.textContent = t.label;
+        b.className = 'tone' + (k === cur ? ' on' : '') + (ex ? '' : ' dead');
+        b.title = ex ? t.detail
+          : 'no voicing shape for: ' + (e.missing[t.from] || []).join(', ') +
+            ' — the member-based tones (arpeggio, wide oom-pah) always play';
         b.onclick = (ev) => {
           ev.stopPropagation();
-          if (!e.tones[k]) return;
-          cardTone[e.name] = k; save(); sel = i; play(e);
+          if (!ex) return;
+          if (cardTone[e.name] === k) delete cardTone[e.name]; else cardTone[e.name] = k;
+          save(); sel = i; play(e);
         };
         row.appendChild(b);
       }
       card.appendChild(row);
     }
+    // the comment box: typing saves as you go; clicks and keys stay in the box
+    const nb = document.createElement('input');
+    nb.className = 'notebox';
+    nb.placeholder = 'notes\u2026';
+    nb.value = cardNotes[e.name] || '';
+    nb.onclick = (ev) => ev.stopPropagation();
+    nb.oninput = () => {
+      const t = nb.value.trim();
+      if (t) cardNotes[e.name] = nb.value; else delete cardNotes[e.name];
+      save();
+    };
+    card.appendChild(nb);
     if (voiceable) card.onclick = () => { sel = i; play(e); };
     grid.appendChild(card);
   });
@@ -471,12 +575,12 @@ async function copy(e, btn) {
 }
 
 const texWrap = $('tex');
-DATA.textures.forEach((t) => {
+DATA.tones.forEach((t) => {
   const b = document.createElement('button');
   b.textContent = t.label;
-  b.title = t.rhythm + ' × me_' + t.dict;
-  b.className = t.id === texture ? 'on' : '';
-  b.onclick = () => { texture = t.id; [...texWrap.children].forEach((c, i) => c.className = DATA.textures[i].id === texture ? 'on' : ''); render(); if (playing) { const e = DATA.entries.find((x) => x.name === playing); if (e) play(e); } };
+  b.title = t.detail;
+  b.className = t.id === tone ? 'on' : '';
+  b.onclick = () => { tone = t.id; [...texWrap.children].forEach((c, i) => c.className = DATA.tones[i].id === tone ? 'on' : ''); render(); if (playing) { const e = DATA.entries.find((x) => x.name === playing); if (e) play(e); } };
   texWrap.appendChild(b);
 });
 DATA.moods.forEach((m) => $('fMood').add(new Option(m, m)));
@@ -488,7 +592,9 @@ $('tr').oninput = () => { $('trv').textContent = $('tr').value; if (playing) pla
 $('bass').onchange = () => { if (playing) play(DATA.entries.find((e) => e.name === playing)); };
 $('stop').onclick = stop;
 $('export').onclick = async () => {
-  const out = { generated: new Date().toISOString(), texture, verdicts, videoTones: cardTone };
+  const notes = {};
+  for (const k in cardNotes) { const t = String(cardNotes[k]).trim(); if (t) notes[k] = t; }
+  const out = { generated: new Date().toISOString(), texture: tone, defaultTone: tone, verdicts, cardTones: cardTone, notes };
   const ok = await toClipboard(JSON.stringify(out, null, 2));
   $('export').textContent = ok ? 'copied ✓' : 'copy failed';
   setTimeout(() => { $('export').textContent = 'copy verdicts JSON'; }, 1200);

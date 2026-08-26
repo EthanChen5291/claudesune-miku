@@ -17,11 +17,21 @@ test('D57: every video entry is honest about what it is', () => {
   for (const [name, e] of entries) {
     // no MIDI behind these -> the coverage claim must be null, never a number
     assert.equal(e.coverage, null, `${name} claims a coverage no labeller computed`);
-    assert.equal(e.provenance, 'video-transcribed', name);
-    // Ethan endorsed the SOURCES; that must not leak into ratification (A6.1)
-    assert.equal(e.sourceEndorsed, true, name);
-    assert.equal(e.ratified, false, `${name}: endorsement of the source pre-ratified the transcription`);
-    assert.equal(e.needsEar, true, name);
+    // two provenances live in the pack: eye-reads of the videos, and cells
+    // Ethan carved out of them by ear (D60) — the latter must say so and must
+    // not carry the sourceEndorsed flag (he proposed them; the videos did not)
+    if (e.provenance === 'ear-derived') {
+      assert.equal(e.earProposed, true, `${name}: ear-derived without earProposed`);
+      assert.notEqual(e.sourceEndorsed, true, `${name}: an ear-derived cell is not what the video endorsed`);
+    } else {
+      assert.equal(e.provenance, 'video-transcribed', name);
+      // Ethan endorsed the SOURCES; that must not leak into ratification (A6.1)
+      assert.equal(e.sourceEndorsed, true, name);
+    }
+    // sourceEndorsed must not pre-ratify — but the D51 overlay DOES ratify
+    // where Ethan's ear kept the card (the 2026-08-26 pass kept 12 of these)
+    assert.equal(e.ratified, e.verdict === 'keep', `${name}: ratified without a keep verdict`);
+    assert.equal(e.needsEar, e.verdict == null, name);
     // sections must say where they came from and how long they ran
     assert.ok(e.song && e.section && e.sectionBars > 0, `${name} has no section identity`);
     assert.ok(e.source?.startsWith('igexport-'), `${name} does not name its video`);

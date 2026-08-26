@@ -270,6 +270,29 @@ export const PROGRESSIONS_VIDEOS = {
       + 'II7 as V-of-V. The source also flips DMaj7 -> DminMaj7 in place (parallel darkening) — '
       + 'grammar can\'t hold mM7, noted here. This planing cell appears TWICE in the etude.',
   },
+  /**
+   * The cell Ethan carved out of vid_mod_etude_close by ear (D60): "E7·2 F^7
+   * E7 also works by itself as a separate thing." The first four bars of the
+   * etude's close — the III7 toggling against IV^7 — as its own loop. He
+   * proposed it from the page's rendering but has not heard it stated ALONE,
+   * so it needs the ear like everything else (A6.1).
+   */
+  vid_mod_etude_close_cell: {
+    family: 'major', pack: 'igvideo', role: 'harmony', style: 'jpop-ballad',
+    provenance: 'ear-derived', earProposed: true, ratified: false, needsEar: true,
+    song: 'Modulation etude (orange section, C-ish close)',
+    section: 'D (ending) — first 4 bars, as a standalone cell (Ethan, D60)',
+    sectionBars: 4,
+    source: 'igexport-Dbn9IrqTPAI.mp4',
+    numerals: 'III7-IV^7-III7',
+    degrees: '4:7 5:^7 4:7',
+    voicedAs: ['E7(9,13)', 'FMaj9', 'E7(#9,b13)'],
+    sourceKey: 'C:major', coverage: null,
+    moods: ['unresolved', 'suspended'],
+    character: null,
+    notes: 'Derived from vid_mod_etude_close, not read from the video as its own section.',
+  },
+
   vid_mod_etude_close: {
     family: 'major', pack: 'igvideo', role: 'harmony', style: 'jpop-ballad',
     provenance: 'video-transcribed', ratified: false, needsEar: true, sourceEndorsed: true,

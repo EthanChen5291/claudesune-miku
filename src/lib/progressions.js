@@ -1456,7 +1456,8 @@ export const PROGRESSIONS = {
     provenance: 'transcribed', source: 'ldrolez/free-midi-chords@MIT', ratified: false,
     numerals: 'vi bVIM bVIIM I',
     degrees: '9:m 8b 10b 0',
-    moods: ['Hopeful', 'Triumphant'],
+    // ear-corrected mood (D60): was Triumphant — "a bit darker than triumphant" (2026-08-26)
+    moods: ['Hopeful', 'Dramatic'],
     character: null,
   },
   mod_vi_IV_I_IIM: {
@@ -1464,7 +1465,8 @@ export const PROGRESSIONS = {
     provenance: 'transcribed', source: 'ldrolez/free-midi-chords@MIT', ratified: false,
     numerals: 'vi IV I IIM',
     degrees: '9:m 5 0 2',
-    moods: ['Hopeful', 'Peaceful'],
+    // ear-corrected mood (D60): was Peaceful — "more triumphant than peaceful" (2026-08-26)
+    moods: ['Hopeful', 'Triumphant'],
     character: null,
   },
   mod_vi_viim_V_vi_sIVdim_V: {

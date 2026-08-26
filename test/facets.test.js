@@ -20,7 +20,7 @@ import { FACET_SEEDS } from '../src/lib/facet-seeds.js';
 import { rootProbs, qualityProbs, degreeAttested, DEGREES } from '../src/lib/harmony-prior.js';
 import { HARMONY_MODEL } from '../src/lib/harmony-model.js';
 import { OPS } from '../src/lib/harmony-ops.js';
-import { parseDegrees } from '../src/lib/progressions.js';
+import { parseDegrees, ALL_PROGRESSIONS } from '../src/lib/progressions.js';
 
 const ROOT = fileURLToPath(new URL('..', import.meta.url));
 const sums = (m) => [...m.values()].reduce((a, b) => a + b, 0);
@@ -253,5 +253,37 @@ test('D53: no operator leaves a suspension unresolved, however they compose', ()
           `${name} left ${a.semis}sus -> ${b.semis}sus unresolved`);
       }
     }
+  }
+});
+
+test('D59: card notes ride the progressions import and survive a note-less re-import', () => {
+  // Ethan asked for a comment box on every progressions.html card. The notes
+  // land in verdicts.js as CARD_NOTES — and, like every other bag, they MERGE:
+  // a session where he types nothing must not erase what an earlier one said.
+  const name = Object.keys(ALL_PROGRESSIONS)[0];
+  const fixture = join(tmpdir(), `prog-fixture-${process.pid}.json`);
+  const out = join(ROOT, 'src/lib/verdicts.js');
+  const had = existsSync(out) ? readFileSync(out, 'utf8') : null;
+  try {
+    writeFileSync(fixture, JSON.stringify({
+      generated: '2026-08-25T18:00:00.000Z',
+      verdicts: { [name]: 'keep' },
+      notes: { [name]: 'the third chord drags a little', ghost_entry_xyz: 'stale note' },
+    }));
+    let log = execFileSync('node', ['scripts/import-verdicts.mjs', fixture, '--page', 'progressions'], { cwd: ROOT, encoding: 'utf8' });
+    assert.match(log, /\d+ card notes carried \(1 new this import\)/);
+    assert.match(log, /STALE: "ghost_entry_xyz \(note\)"/, 'a note on a renamed entry must be reported, not silently dropped');
+    let written = readFileSync(out, 'utf8');
+    assert.match(written, /CARD_NOTES/);
+    assert.match(written, /the third chord drags a little/);
+    assert.match(written, new RegExp(`${name}: \\{ note:`), 'the note is keyed by entry name');
+    // second import: same verdict, NO notes — the earlier note must survive
+    writeFileSync(fixture, JSON.stringify({ verdicts: { [name]: 'keep' }, notes: {} }));
+    execFileSync('node', ['scripts/import-verdicts.mjs', fixture, '--page', 'progressions'], { cwd: ROOT });
+    written = readFileSync(out, 'utf8');
+    assert.match(written, /the third chord drags a little/, 'a note-less session erased an earlier note');
+  } finally {
+    rmSync(fixture, { force: true });
+    if (had == null) rmSync(out, { force: true }); else writeFileSync(out, had);
   }
 });

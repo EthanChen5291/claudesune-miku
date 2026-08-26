@@ -8,7 +8,7 @@
 // it was.
 
 export const FACET_SEEDS = {
-  source: 'ethan notes 2026-08-24',
+  source: 'ethan notes 2026-08-24 + progressions notes 2026-08-26',
 
   pairs: {
     // "Cm Bm is a pretty good transition / Cm B is also pretty good ... i
@@ -57,6 +57,17 @@ export const FACET_SEEDS = {
     'minor|7:': {
       verdict: 'good', n: 1, at: '2026-08-25', from: 'notes',
       note: 'the G of "Gm to G as an ending pair" — raised V in minor, v->V mixture',
+    },
+    // progressions.html note on gen_m4lpa (D60): "Cm to Bbm is very off". The
+    // colliding gen names were disambiguated by symbols — the card with that
+    // transition is the MODAL one (Cm Bbm Cm Db). The root motion 0->10 is
+    // corpus-common (bVII); what he flagged is the MINOR QUALITY on it, so this
+    // is a chord vote, not a pair vote. (His same-session "Cm to Ebm sounds
+    // kinda off but it's stylistic" — modal 3:m — is ambivalent and stays a
+    // CARD_NOTE, not a seed.)
+    'modal|10:m': {
+      verdict: 'bad', n: 1, at: '2026-08-26', from: 'notes',
+      note: '"Cm to Bbm is very off" — the bvii minor triad in a modal cycle',
     },
   },
 

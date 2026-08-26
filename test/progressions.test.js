@@ -29,9 +29,10 @@ test('D28: every entry carries family/provenance and is UNRATIFIED with no inven
     assert.equal(e.role, 'harmony', `${name}: role`);
     assert.equal(e.provenance, 'transcribed', `${name}: provenance`);
     assert.match(e.source, /ldrolez/, `${name}: source pointer`);
-    // A6.1: an imported corpus is a candidate pool. Nothing is ratified at import,
-    // and `character` is written when an ear ratifies it — never generated.
-    assert.equal(e.ratified, false, `${name}: ratified`);
+    // A6.1: an imported corpus is a candidate pool. Nothing is ratified at
+    // import; the D51 overlay ratifies at load exactly where a keep verdict
+    // exists, and `character` is written by the ear — never generated.
+    assert.equal(e.ratified, e.verdict === 'keep', `${name}: ratified without a keep verdict`);
     assert.equal(e.character, null, `${name}: character must not be invented at import`);
     assert.ok(e.moods.length, `${name}: source mood tags`);
     assert.ok(parseDegrees(e.degrees).length >= 3, `${name}: degrees`);

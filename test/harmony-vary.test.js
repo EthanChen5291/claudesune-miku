@@ -66,7 +66,11 @@ test('D50: a variation is never less idiomatic than the exemplar it came from', 
       `${v.degrees} worst transition ${after.worst.toFixed(2)} vs exemplar ${before.worst.toFixed(2)}`);
     assert.ok(after.cadence >= before.cadence - 0.7 - 1e-9,
       `${v.degrees} cadence ${after.cadence.toFixed(2)} vs exemplar ${before.cadence.toFixed(2)}`);
-    assert.ok(after.worstQual >= before.worstQual - 1.0 - 1e-9,
+    // an operator may declare extra quality slack when its own placement rule
+    // is the real guard (alter_dominant, D59) — the test honours what the gate
+    // honours
+    const opSlack = Math.max(0, ...v.lineage.ops.map((o) => OPS[o.op]?.gateSlack?.quality ?? 0));
+    assert.ok(after.worstQual >= before.worstQual - 1.0 - opSlack - 1e-9,
       `${v.degrees} chord quality ${after.worstQual.toFixed(2)} vs exemplar ${before.worstQual.toFixed(2)}`);
     n++;
   }
@@ -158,15 +162,20 @@ test('D50: no operator INTRODUCES a third-flip (D49) that the exemplar lacked', 
   // Lil Tecca's Ransom is `0:m 8 7:m 7` — degree 7 as both v and V, which is the
   // raised-leading-tone device, one of the 43 named flips D49 measured. The
   // contract is that a SUBSTITUTION may not add one.
+  // ROTATION-INVARIANT: a flip is a degree carrying more than one third, not a
+  // token disagreeing with whichever token happened to come first. The old
+  // sequential count double-charged `I ... I i` when a rotation moved the
+  // minor statement to the front (both majors then read as flips) — and
+  // rotation preserves every chord, so its flip count must not move.
   const flips = (degrees) => {
-    const pinned = new Map();
-    let n = 0;
+    const byDeg = new Map();
     for (const t of parseDegrees(degrees)) {
       const k = thirdClass(t.quality);
       if (k === 'none') continue;
-      if (pinned.has(t.semis)) { if (k !== pinned.get(t.semis)) n++; } else pinned.set(t.semis, k);
+      if (!byDeg.has(t.semis)) byDeg.set(t.semis, new Set());
+      byDeg.get(t.semis).add(k);
     }
-    return n;
+    return [...byDeg.values()].reduce((a, v) => a + v.size - 1, 0);
   };
   for (const [, e, v] of everyVariation()) {
     assert.ok(flips(v.degrees) <= flips(e.degrees),

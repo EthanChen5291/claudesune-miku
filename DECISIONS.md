@@ -2591,3 +2591,279 @@ All three audition pages rebuilt and full-checked (facets 1258/1258,
 progressions 1257/1257, undertale 2527/2527 through the engine's own
 transpiler; tone picker and letter strips verified in headless Chrome).
 277/277.
+
+### D59 addendum — three rulings from Ethan's same-day pass (2026-08-25)
+
+**1. Tones on EVERY card ("apply the four tone buttons to every card").**
+progressions.html now gives all 434 cards the per-card tone row — block,
+bossa, arpeggio, wide pad, wide oom-pah (bossa kept as a fifth chip so the
+page's existing rendering stayed reachable). The global row picks the DEFAULT
+tone; a card's own buttons override it, pressing the chosen tone again clears
+the override, and the export records `cardTones` so a verdict names the
+rendering it judged. Only the two member-based expressions are stored per card
+(block/bossa/pad alias the comp expressions the card already carries), so the
+page grew by renderings, not by duplication. 2059/2059 patterns green.
+
+**2. Dialogue must not be "always the case."** Measured after the build:
+every leader-capable town and overworld song picked the dialogue shape —
+the alternating lead is one extra distinct state, so dialogue strictly
+outscored its rivals and the hash tie-break never fired. Whether a song
+converses at all is now a per-song character trait, decided like every D46
+variety choice: when dialogue and non-dialogue shapes both sit within one
+state's worth of the best score, the song's hash picks which kind it is
+(about a third converse), and the best shape of that kind wins. Corpus after:
+19 of 163 cards converse, 19 hand off, 125 are plain layering — and roles
+whose dialogue shape always LOST before (character) now sometimes take it,
+which is the same ruling pointing the other way.
+
+**3. Progressions must respect 4/4 ("make a chord last longer, or make two
+chords quicker ... i cant make sense of where its developing with respect to
+time").** An odd-length cycle played one-chord-a-bar is a 5-bar phrase
+fighting the meter — the same complaint as t26/t30, now ruled on for the
+page. The binder places chords at whole-bar granularity, so the fit is by
+LENGTHENING: odd cycles are planned onto the next 4/4 phrase (3→4 bars,
+5→8, 7→8, 9→12) with extra bars given to the front chords — which for five
+chords lands exactly on the classic 2+2+2+1+1 cadential acceleration. Even
+cycles are untouched; video entries honour their own transcribed sectionBars
+first (a 4-chord section written over 8 bars now plays 2 bars a chord, its
+real pacing). 69 cards re-planned, chords lengthened never cut; the card
+shows the plan (Cm·2 ... (8 bars)). Sub-bar splits ("two chords quicker")
+need the chord()-timeline path the comp textures do not use — noted for the
+chronological-editing phase rather than half-built here.
+
+**4. A comment box on every progressions card (same-day).** The judge page
+taught that the notes channel is where the real findings arrive (t16/t20/t23
+all came in as notes); progressions.html now has it per card — a small input,
+saved as you type, persisted with the verdicts, exported as `notes`. The
+importer merges them into verdicts.js as `CARD_NOTES` keyed by entry name,
+with the degrees snapshot (a note judges the music that played) — and merging
+means a session that types nothing cannot erase what an earlier session said.
+A note on a renamed entry is reported STALE, never silently dropped.
+Regression-tested end to end. 278/278.
+
+## D60 — the first big harvest: 237 verdicts, and what they broke open (2026-08-26)
+
+Ethan's progressions.html pass, imported in full. What landed, and the four
+rulings that came with it:
+
+**The verdicts.** 104 clicked verdicts on library entries, plus his batch
+rule — "for all the ones i didnt leave a mark on at the top, they're good i
+just was too lazy. the ones in the second half i didnt mark, they're not
+good" — applied as 133 IMPLIED verdicts (unmarked top half of the visible
+list → keep, unmarked second half → kill; boundary at visible card #198).
+Guards on the inference: a click from ANY session outranks it, a card he
+noted is excluded (a note proves attention; its missing verdict is
+undecided, not negative — vid_eballad_slashes carries "all the way to D7 is
+good" and would otherwise have been implied-killed), hidden cards get
+nothing, and every implied verdict is page-tagged `-implied` so later
+analysis can tell an inference from a click.
+
+**Page-local verdicts recovered (DERIVED_VERDICTS).** The varied and
+generated cards exist only on the page, so their verdicts used to fall on
+the floor as STALE. The page he judged was snapshotted, each card's degrees
+derived from its own rendered symbols (pitch-exact, spelling-lossy — D28
+markers can't be recovered from sound), round-tripped 239/239 against the
+library, and 85 page-local verdicts (50 clicked + 35 implied) now live in
+verdicts.js keyed by page name with the degrees that actually played and
+the exemplar they varied.
+
+**A bug that cost data: the gen-name collision.** The generated cards'
+tags used family[0] and style[0] — major/minor/modal all start with 'm',
+undertale/unison share 'u' — so 24 names covered 96 cards and one click
+painted up to six. His 21 explicit gen verdicts are unattributable and were
+dropped (reported, not silently); the two gen NOTES were rescued by
+matching the quoted transition against each colliding card's symbols (both
+resolve to the MODAL card). Names are now two-letter family + two-letter
+style; the next session's gen verdicts will attribute cleanly.
+
+**The pool crossed its threshold — and had to be capped at the surface.**
+201 entries are now ratified, so exemplarPool() runs on the ear alone for
+the first time (basis was 31 stand-ins). Left alone that quadrupled the
+audition surfaces (1104 cards, 915 cadence treatments); the pages now vary
+and probe only the CLICK-kept exemplars (74) — the pool keeps everything
+for generation, but "here is the thing that works, here is what it became"
+wants a card he actually attended to. 600 cards, 330 cadence treatments.
+
+**Facet-grain evidence from the notes.** "Cm to Bbm is very off"
+(disambiguated to the modal card `Cm Bbm Cm Db`) is a QUALITY complaint,
+not a motion complaint — 0→10 is corpus-common as bVII major — so it
+seeds `modal|10:m` bad in facet-seeds.js. "Cm to Ebm sounds kinda off but
+it's stylistic" is ambivalent and stays a CARD_NOTE. Mood corrections
+("a bit darker than triumphant", "more triumphant than peaceful") went
+into import-ldrolez.mjs as an ear-corrections map so regeneration
+reproduces them — hand-editing the generated file tripped its own guard,
+which is the guard working.
+
+**A progression Ethan composed by subtraction.** "E7·2 F^7 E7 also works
+by itself as a separate thing" → `vid_mod_etude_close_cell` (III7-IV^7-III7,
+provenance `ear-derived`, earProposed) — proposed from the page's rendering,
+not yet heard alone, so needsEar like everything else.
+
+**4/4 extended to the 6-chord loops.** Three notes converged on the same
+complaint ("if last two included, either replacements or adjust chord
+lengths to match 4/4"), so barPlan now fits EVERY loop whose bar count is
+not a multiple of 4 (6→8 as 2+2+1+1+1+1; 2-chord loops exempt; a video's
+sectionBars honoured only when it is itself a 4/4 phrase).
+
+**Rulings recorded, not yet built:**
+- OCTAVE AS A SECTION PARAMETER: "learn to vary octaves based off the vibe
+  OR change them for certain sections (like the quiet part following the
+  big drop aftermath being 1-2 octaves higher while also having some
+  variations)". Belongs to the form/arrangement phase: a section-level
+  octave shift, chosen by the section's role in the energy contour — the
+  post-peak quiet section lifted 1-2 octaves, with variations. Queued with
+  the D47/D59 form work.
+- MOOD CALIBRATION: the 'Mysterious' tags read as too consonant to earn the
+  word ("still works but just a note") — when the prompt→params layer maps
+  vibe words, 'mysterious' should pull more chromaticism than the tag's
+  current contents deliver.
+- WHY DO THEY ALL SOUND SIMILAR? His question, answered: mostly the page,
+  partly the pool. The page flattens vibe BY DESIGN for comparability —
+  everything plays the same piano at the same default bpm in the same key
+  (C), through the same five renderings; the undertale page plays solved
+  key, source tempo and the song's own figuration, which is exactly why
+  those cards "vary in vibe a bit more". The pool half: ldrolez is generic
+  pop vocabulary, and the counted model's whole job is typicality. Vibe
+  variance lives in the rendering context (tempo, key, register, figuration,
+  tone) — which is the D59 form work, not the chord choices. No page action
+  taken, per his note.
+
+Tests updated where the ground truth moved: ratified now asserts "backed by
+a keep verdict" instead of "always false" (the overlay finally has data),
+the D50 flip-detector became rotation-invariant (the old sequential count
+double-charged `I…I i` exemplars when rotation moved the minor statement
+first), and the variation-gate test honours declared gateSlack. 278/278;
+every page rebuilt and full-checked.
+
+## D61 — the scenario research round: keys, foundations, environments, instruments, ensembles, drums (2026-08-25)
+
+Four questions from Ethan, researched before anything is built, because all
+four converge on one deliverable he gated explicitly: "once we approve
+everything listed above, generate 20 environmental + 20 emotion-based songs
+with layering and instruments." Twelve documents landed in research/
+(census/research → design per chain, all CANDIDATE per A6.1); README.md there
+is the index and carries the build order. The rulings worth this file:
+
+- KEYS ARE MODE + REGISTER, NOT LETTERS. His question "what is each key known
+  for being good at" has an honest answer: in an equal-tempered synth engine,
+  nothing — the Schubart-style per-key characters (C=innocence, D=triumph,
+  Ab=grave) were real when unequal temperaments made keys measurably
+  different, and died with 12-TET (Powell & Dibben 2005: listeners cannot
+  hear key identity; transposition doesn't move perceived mood). What
+  actually decides: MODE first, REGISTER second (the only acoustically real
+  consequence of tonic choice), tonic letter last — corpus practice + hash
+  variety as a tie-break. The corpus has real practice to follow: Toby's
+  G:minor = generic battle, F:minor = heavy boss (never early-arc), B:major =
+  the His-Theme emotional lane, A:major = warmth, towns 3/3 major. Design:
+  research/design-keys.md (selectKey, KEY_PRACTICE, margin-weighted census,
+  headroom contract with the D60 octave-as-section-parameter ruling). No
+  per-key affect rule may enter the code path; Schubart survives as naming
+  metadata only.
+- FOUNDATIONS BEFORE VARIATION (his sequencing, made structural). The pattern
+  pool is a Toby monoculture (95 figurations, one composer) plus two video
+  cells; his ask "get more foundational patterns first" lands as a 29-entry
+  universal canon (fnd_ pack: alberti, stride, waltz, habanera, tresillo,
+  bossa, travis, gospel 12/8, power pulse …) already encoded in the figure
+  grammar (research/accomp-research.md), auditioned BEFORE the variation
+  machinery ships. Variation itself: varyFiguration in the D50 idiom — 12
+  typed operators on a cost ladder, his "swap positions" = rotate_figure/
+  swap_tokens, his "change intervals" = colour_sub/octave_token/
+  neighbor_insert; gates bound fit-metric drift by the importer's own class
+  thresholds so a variant can't silently change class (research/
+  design-figvary.md). The 23 observed DEVELOPMENT moves stay the attested
+  vocabulary the operators must cover.
+- VIBE = EMOTION × ENVIRONMENT. His words: vibes describe atmospheres —
+  "happy shop", "construction", "fight activity". The census (research/
+  vibes-census.md) shows every existing vocabulary is an emotion; the only
+  environment-shaped vocab is the closed 13-role list. The model (research/
+  design-vibes.md): ENVIRONMENT is the material (role, timbre bias,
+  figuration class, percussion, meter, tempo range, salience), EMOTION is the
+  transform (mode, tempoMul, register delta, percussion multiplier,
+  chromaticism pull) — Undertale's genocide shops are literally the sad
+  transform applied to shop material. 17 environments, 12 emotions, all leaf
+  words referencing existing vocabularies (nothing renamed). 'mysterious'
+  carries the highest chromaticism pull, discharging D60's calibration note.
+  Ratification = the 20+20 batch, with the contradiction cells (gloomy shop,
+  happy construction, calm fight) as the real test: if they don't sound
+  different from the role default, the axis is decoration.
+- ENSEMBLE SHAPE IS A SCENARIO DECISION (his add-on, now a ruling). "There's
+  also good in simplicity … piano solo, piano+violin duet, percussion + a
+  bassline, percussion and just a harmony no melody, no drums, no bass —
+  totally works and depends on the scenario." Full layering is ONE shape, not
+  the goal. Shape vocabulary (solo/duet/groove/bed/no_drums/no_bass/full)
+  compiles from the vibe and CAPS the arranger's slate before casting;
+  environments carry shape priors (aftermath→solo, rest→solo/duet,
+  construction→groove/bed, boss→full). The batch must include deliberately
+  sparse cards so shapes get verdicts alongside vibes. (Memory: the praised
+  His Theme cards were always just two hands.)
+- INSTRUMENT KNOWLEDGE DEEPENS PER PART, WIDENS BY 15. Orchestration research
+  keyed to the arranger's actual part names (research/orch-research.md):
+  cello melody lives at 4–5 not its bass octave, flute melody clamps ≥5
+  (matches "didn't hear the flute"), horn is harmonic glue before it is a
+  lead, glock/xylo never carry a full tune — thin to accents +1 octave;
+  per-part checklist + 16 anti-patterns ready to become lints. Palette truth
+  (research/strudel-research.md): 125 gm_* names registered, engine uses 43;
+  15 verified additions drafted in schema (timpani, taiko as new family
+  'drum', brass section, steel drums, 3 guitars, slap bass, banjo, koto,
+  dulcimer, whistle, shakuhachi, orchestra hit, string_ensemble_2) with
+  every level UNMEASURED (D46: the ear sets levels); pitched percussion joins
+  INSTRUMENTS, kit percussion stays samples. Also found: .n(i) selects
+  soundfont render variants (cheapest palette expansion of all), and
+  tidal-drum-machines/VCSL banks are loadable if wanted.
+- DRUM-PATTERNS.COM: HAND-SAVED PAGES ONLY. His link (the /liked/ list) is a
+  drum-machine grid library — no MIDI needed: the saved page's markup carries
+  everything (per-voice 16-step banks, meter, swing flag, kit, style, BPM,
+  and the bank PLAY ORDER, i.e. which bar is the groove and which is the
+  fill — the placement data todo 0b wanted). The site's robots.txt
+  explicitly disallows automated/AI collection, so the ruling: NO scraper,
+  ever. scripts/import-drum-patterns.mjs parses pages a human saved into
+  audios/drum-patterns/ ("Save Page As" → HTML Only); embedded related
+  patterns are skipped unless --all; grids have no velocity, so entries land
+  needsAccents unless the author used the machine's AC/GH rows, which
+  recover a real profile (AC hits 1.0 over 0.85 base; ghosts merge into the
+  snare at 0.4). Verified end-to-end on one hand-saved page: Get Lucky, 4
+  banks, order 1,2,2,3,2,2,2,4 → intro #1 + fill #4 detected, 5 voice
+  entries, round-trips normalizeRhythm. 6 tests; 284/284 suite-wide.
+
+Approval gate (unchanged, his words): the 20+20 batch waits for his go on the
+four designs + shapes. Build order in research/README.md — foundations pack
+first, then vibes.js, keys, instruments, figuration-vary, then the batch.
+
+## D61 addendum — permission, the ensemble dial, and the foundations ear pass (2026-08-25)
+
+Same-day follow-ups from Ethan on the D61 round:
+
+- DRUM-PATTERNS.COM PERMISSION. Ethan: "the owner gave me permission via
+  email - i already asked if i could use it for this project." That amends
+  the no-scraper ruling: scripts/fetch-drum-patterns.mjs now exists,
+  authorized by that grant and polite regardless (explicit page budget,
+  ~1.2s between requests, honest User-Agent naming the permission, skips
+  anything already saved). audios/drum-patterns/ is gitignored like
+  audios/vgmusic/. The importer itself still never fetches.
+- ENSEMBLE SIZE IS A DIAL, NOT AN ENUM. His refinement: "there's also more
+  that's less than full but more than the other options. there's no hardcode
+  for it - like if there were 8 instruments some sections may have any number
+  from 1-7." The ruling: the per-section parameter is a VOICE COUNT 0..N,
+  free to differ per section; the named shapes (solo/duet/groove/bed/
+  no_drums/no_bass/full) survive as ANCHORS a vibe can request by name —
+  size shapes are counts with a casting rule, constraint shapes are lane
+  constraints that compose with any count. research/README.md addendum
+  updated; the 20+20 batch sweeps the dial, not just the anchors.
+- THE FOUNDATIONS EAR PASS EXISTS. His ask: "for all the foundation
+  patterns, show me 5 example chord progressions where i can hear all the
+  tones (buttons to click for each tone)." Built, not just designed:
+  src/lib/figurations-foundation.js carries the 29-entry fnd_ canon
+  (hand-written from research/accomp-research.md, provenance 'canon', all
+  ratified:false/needsEar per A6.1, research triage guesses kept as
+  `proposal`, never `character`), and audition/foundations.html plays 5
+  CLICK-KEPT progressions (major/minor/modal×2/undertale — kept context, so
+  the PATTERN is what is on trial) × a chip per pattern, grouped by
+  tradition, each playing at its own meter with the pulse held constant
+  (compound meters count dotted beats). Verdicts are per PATTERN, collected
+  after hearing it across contexts; export → import-verdicts.mjs →
+  FIGURE_VERDICTS/FIGURE_NOTES bags in verdicts.js (snapshotting the figure
+  tokens that played) → overlay in figurations-foundation.js that ratifies,
+  kills, or refuses a stale snapshot — the D51 discipline, extended to
+  patterns. 145/145 page exprs green through the engine's transpiler;
+  headless Chrome shows 145 chips/29 verdict rows; 5 new tests, importer
+  --check byte-stable.

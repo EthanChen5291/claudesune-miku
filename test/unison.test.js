@@ -87,7 +87,9 @@ test('D29: every extracted progression resolves to playable symbols in every key
   const bad = [];
   for (const [name, e] of Object.entries(PROGRESSIONS_UNISON)) {
     assert.equal(e.provenance, 'transcribed', `${name}: provenance`);
-    assert.equal(e.ratified, false, `${name}: nothing is ratified at import (A6.1)`);
+    // A6.1: nothing is ratified AT IMPORT — but the D51 verdict overlay ratifies
+    // kept entries at load, so ratified must equal exactly "the ear kept it"
+    assert.equal(e.ratified, e.verdict === 'keep', `${name}: ratified without a keep verdict`);
     assert.equal(e.character, null, `${name}: character is earned by ear, never generated`);
     assert.ok(e.pack.startsWith('unison-'), `${name}: pack`);
     assert.ok(parseDegrees(e.degrees).length >= 2, `${name}: degrees`);
@@ -105,8 +107,10 @@ test('D29: entries whose label disagrees with the notes are FLAGGED, not silentl
     // every flag is justified by a number, not a vibe
     assert.ok(e.match.conflict > 0 || e.match.rootMiss > 0 || e.match.repeats === null, e.numerals);
   }
-  // and an unflagged entry really did check out
-  for (const e of Object.values(PROGRESSIONS_UNISON).filter((x) => !x.needsEar)) {
+  // and an unflagged entry really did check out — except where the EAR heard
+  // it (the overlay clears needsEar on judged entries, and a keep on a
+  // label-conflicted card is the ear overruling the proxy, which outranks it)
+  for (const e of Object.values(PROGRESSIONS_UNISON).filter((x) => !x.needsEar && x.verdict == null)) {
     assert.equal(e.match.conflict, 0);
     assert.equal(e.match.rootMiss, 0);
   }
@@ -178,9 +182,12 @@ test('D29: both corpora share one retrieval entry point, distinguishable by pack
   assert.equal(findProgressions({ pack: 'ldrolez' }).length, 188);
   assert.equal(findProgressions({ pack: ['unison-famous', 'unison-dark', 'unison-emotional'] }).length, 72);
   assert.equal(findProgressions({ pack: 'unison-dark' }).every((r) => r.entry.moods.includes('Dark')), true);
-  // D51: every ratified entry came from a keep verdict, and none is a unison one
+  // D51: every ratified entry came from a keep verdict —
   // KEPT minus any whose verdict a re-transcription voided (D52)
   assert.ok(findProgressions({ ratifiedOnly: true }).length <= KEPT.length);
   assert.ok(findProgressions({ ratifiedOnly: true }).length > 0);
-  assert.equal(findProgressions({ ratifiedOnly: true, pack: 'unison-famous' }).length, 0);
+  const kept = new Set(KEPT);
+  for (const r of findProgressions({ ratifiedOnly: true })) {
+    assert.ok(kept.has(r.name), `${r.name} is ratified with no keep verdict behind it`);
+  }
 });

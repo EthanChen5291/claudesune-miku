@@ -92,6 +92,14 @@ const src = readFileSync(SRC, 'utf8');
 const families = { major: pyList(src, 'prog_maj'), minor: pyList(src, 'prog_min'), modal: pyList(src, 'prog_modal') };
 
 const entries = [];
+// Ear-corrected mood tags (D60). The source's tags are real data, but where
+// Ethan's ear DISAGREED in so many words, his correction outranks the tag —
+// recorded here so regeneration reproduces it and the quote survives.
+const MOOD_CORRECTIONS = {
+  mod_vi_bVIM_bVIIM_I: { drop: 'Triumphant', add: 'Dramatic', why: '"a bit darker than triumphant" (2026-08-26)' },
+  mod_vi_IV_I_IIM: { drop: 'Peaceful', add: 'Triumphant', why: '"more triumphant than peaceful" (2026-08-26)' },
+};
+
 const dropped = [];
 const merged = [];
 const seen = new Set();
@@ -139,12 +147,18 @@ L.push(`// CANDIDATE POOL, not a library. All entries are \`ratified: false\`.`)
 L.push('');
 L.push(`export const PROGRESSIONS = {`);
 for (const e of entries) {
+  const fix = MOOD_CORRECTIONS[e.name];
+  let moods = e.moods;
+  if (fix) {
+    moods = [...moods.filter((m) => m !== fix.drop), ...(moods.includes(fix.add) ? [] : [fix.add])];
+  }
   L.push(`  ${e.name}: {`);
   L.push(`    family: '${e.family}', pack: 'ldrolez', role: 'harmony', style: 'universal',`);
   L.push(`    provenance: 'transcribed', source: 'ldrolez/free-midi-chords@MIT', ratified: false,`);
   L.push(`    numerals: '${e.numerals}',`);
   L.push(`    degrees: '${e.degrees}',`);
-  L.push(`    moods: [${e.moods.map((m) => `'${m}'`).join(', ')}],`);
+  if (fix) L.push(`    // ear-corrected mood (D60): was ${fix.drop} — ${fix.why}`);
+  L.push(`    moods: [${moods.map((m) => `'${m}'`).join(', ')}],`);
   L.push(`    character: null,`);
   L.push(`  },`);
 }

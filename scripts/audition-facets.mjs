@@ -203,7 +203,16 @@ function topQualities(degree, ctx, k) {
 // about the format or the ending and not smuggling in a harmony judgment.
 // ---------------------------------------------------------------------------
 const harmonies = [];
-for (const [name, e] of exemplarPool().entries) {
+// D60: the exemplar pool grew ~10x on the first big verdict import (133 of the
+// keeps are positional inferences, not clicks). The tabs stay at attention
+// scale by running over the CLICK-kept exemplars only.
+import('../src/lib/verdicts.js');
+const { VERDICTS } = await import('../src/lib/verdicts.js');
+const clickKept = ([name]) => {
+  const v = VERDICTS[name];
+  return !v || !String(v.page ?? '').endsWith('-implied');
+};
+for (const [name, e] of exemplarPool().entries.filter(clickKept)) {
   const cycle = parseDegrees(e.degrees);
   if (cycle.length < 3) continue;
   const built = build(cycle, e.family, TEXTURES);
