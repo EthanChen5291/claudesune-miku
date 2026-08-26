@@ -698,3 +698,38 @@ export const CARD_NOTES = {
   vid_neosoul_loop: { note: "Dm9·2 E7·2 Am7·2 Gm7 C7 good for this duration", at: '2026-08-26',
     judged: null },
 };
+
+// Verdicts on FOUNDATION FIGURATIONS (D61) from audition/foundations.html —
+// keyed by fnd_ name; `judged` snapshots the figure tokens that played.
+// figurations-foundation.js overlays these at load and refuses stale ones.
+export const FIGURE_VERDICTS = {
+  fnd_alberti_16ths: { verdict: 'keep', at: '2026-08-25', from: 'notes-blanket', judged: "R 5 3 5 R 5 3 5 R 5 3 5 R 5 3 5" },
+  fnd_alberti_8ths: { verdict: 'keep', at: '2026-08-25', from: 'notes-blanket', judged: "R 5 3 5 R 5 3 5" },
+  fnd_arp_16ths_drive: { verdict: 'keep', at: '2026-08-25', from: 'notes-blanket', judged: "R 5 R+ 3+ R 5 R+ 3+ R 5 R+ 3+ R 5 R+ 3+" },
+  fnd_ballad_8ths_arch: { verdict: 'keep', at: '2026-08-25', from: 'notes-blanket', judged: "R 5 R+ 3+ 5+ 3+ R+ 5" },
+  fnd_block_quarters: { verdict: 'keep', at: '2026-08-25', from: 'notes-blanket', judged: "R.3.5 R.3.5 R.3.5 R.3.5" },
+  fnd_boogie_shuffle: { verdict: 'keep', at: '2026-08-25', from: 'notes-blanket', judged: "R 3 5 6 ~10 6 5 3" },
+  fnd_bossa_bass: { verdict: 'keep', at: '2026-08-25', from: 'notes-blanket', judged: "R R 5 5" },
+  fnd_broken_tenths: { verdict: 'keep', at: '2026-08-25', from: 'notes-blanket', judged: "R 5 3+ 5 R 5 3+ 5" },
+  fnd_charleston_comp: { verdict: 'keep', at: '2026-08-25', from: 'notes-blanket', judged: "R.3.5 R.3.5" },
+  fnd_doowop_128_chords: { verdict: 'keep', at: '2026-08-25', from: 'notes-blanket', judged: "R.5 3+.5+ 3+.5+ R.5 3+.5+ 3+.5+ R.5 3+.5+ 3+.5+ R.5 3+.5+ 3+.5+" },
+  fnd_drive_8th_root: { verdict: 'keep', at: '2026-08-25', from: 'notes-blanket', judged: "R R R R R R R R" },
+  fnd_drone_fifth: { verdict: 'keep', at: '2026-08-25', from: 'notes-blanket', judged: "R.5" },
+  fnd_gospel_128_roll: { verdict: 'keep', at: '2026-08-25', from: 'notes-blanket', judged: "R 5 R+ R 5 R+ R 5 R+ R 5 R+" },
+  fnd_habanera: { verdict: 'keep', at: '2026-08-25', from: 'notes-blanket', judged: "R 5 3 5" },
+  fnd_lilt_68: { verdict: 'keep', at: '2026-08-25', from: 'notes-blanket', judged: "R 3.5 5 3.5" },
+  fnd_march_oompah: { verdict: 'keep', at: '2026-08-25', from: 'notes-blanket', judged: "R 3+.5+" },
+  fnd_montuno_skel: { verdict: 'keep', at: '2026-08-25', from: 'notes-blanket', judged: "R.R+ 3 5 R.R+ 3 5 R.R+ 3" },
+  fnd_murky_octaves: { verdict: 'keep', at: '2026-08-25', from: 'notes-blanket', judged: "R R+ R R+ R R+ R R+" },
+  fnd_octave_bounce_16ths: { verdict: 'keep', at: '2026-08-25', from: 'notes-blanket', judged: "R R+ R R+ R R+ R R+ R R+ R R+ R R+ R R+" },
+  fnd_offbeat_chords: { verdict: 'keep', at: '2026-08-25', from: 'notes-blanket', judged: "3.5.R+ 3.5.R+ 3.5.R+ 3.5.R+" },
+  fnd_pedal_root_ostinato: { verdict: 'keep', at: '2026-08-25', from: 'notes-blanket', judged: "R R R R+ R R R+ R" },
+  fnd_power_fifth_8ths: { verdict: 'keep', at: '2026-08-25', from: 'notes-blanket', judged: "R.5 R.5 R.5 R.5 R.5 R.5 R.5 R.5" },
+  fnd_stride_4: { verdict: 'keep', at: '2026-08-25', from: 'notes-blanket', judged: "R 3+.5+.R+ 5 3+.5+.R+" },
+  fnd_travis_skel: { verdict: 'keep', at: '2026-08-25', from: 'notes-blanket', judged: "R.3+ 5 R+ R 3+ 5 R+" },
+  fnd_tresillo_bass: { verdict: 'keep', at: '2026-08-25', from: 'notes-blanket', judged: "R R R" },
+  fnd_tumbao_bass: { verdict: 'keep', at: '2026-08-25', from: 'notes-blanket', judged: "R 5 R" },
+  fnd_walking_skel: { verdict: 'keep', at: '2026-08-25', from: 'notes-blanket', judged: "R 3 5 3" },
+  fnd_waltz_bass: { verdict: 'keep', at: '2026-08-25', from: 'notes-blanket', judged: "R 3+.5+ 3+.5+" },
+  fnd_wide_oompah: { verdict: 'keep', at: '2026-08-25', from: 'notes-blanket', judged: "R 3+.5+.R+ 5 3+.5+.R+" },
+};

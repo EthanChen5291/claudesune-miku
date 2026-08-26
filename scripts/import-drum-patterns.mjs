@@ -93,17 +93,27 @@ export function parsePage(html, canonicalHint = null) {
   return patterns;
 }
 
-/** One parsed pattern -> per-voice rhythm entries + a form record. */
-export function buildEntries(p, sourceFile) {
+/** One parsed pattern -> per-voice rhythm entries + a form record.
+ *  `base` is the unique entry-name stem (the caller de-collides titles —
+ *  different patterns can share one; the D60 gen-name lesson). */
+export function buildEntries(p, sourceFile, base = `dp_${slug(p.title)}`) {
   const grid = Math.max(...p.banks.flatMap((b) => Object.values(b).map((v) => v.steps.length)));
-  const bars = p.order.length;
-  const played = p.order.map((k) => p.banks[k - 1]).filter(Boolean);
+  // Entries are LOOP material: cap the played expansion at 16 bars (the
+  // binder's period lcm tops out at 96, and a 100-bar drum arrangement is a
+  // song, not a pattern). The form record below keeps the FULL order.
+  const MAXB = 16;
+  const fullOrder = p.order;
+  const order = fullOrder.slice(0, MAXB);
+  const truncated = fullOrder.length > order.length;
+  const bars = order.length;
+  const played = order.map((k) => p.banks[k - 1]).filter(Boolean);
 
-  // fill = a bank used exactly once, in final position; intro likewise at the top
-  const uses = (k) => p.order.filter((x) => x === k).length;
-  const last = p.order[p.order.length - 1];
-  const fill = bars > 1 && uses(last) === 1 ? last : null;
-  const intro = bars > 1 && p.order[0] !== last && uses(p.order[0]) === 1 ? p.order[0] : null;
+  // fill = a bank used exactly once, in final position; intro likewise at the
+  // top — judged on the FULL order (the fill usually lives at the far end)
+  const uses = (k) => fullOrder.filter((x) => x === k).length;
+  const last = fullOrder[fullOrder.length - 1];
+  const fill = fullOrder.length > 1 && uses(last) === 1 ? last : null;
+  const intro = fullOrder.length > 1 && fullOrder[0] !== last && uses(fullOrder[0]) === 1 ? fullOrder[0] : null;
 
   const voiceCodes = [...new Set(played.flatMap((b) => Object.keys(b)))]
     .filter((v) => v !== 'ac' && v !== 'gh');
@@ -135,7 +145,7 @@ export function buildEntries(p, sourceFile) {
     const uniform = new Set(sortedAcc).size < 2;
     const part = played.find((b) => b[v])[v].title;
     entries.push({
-      name: `dp_${slug(p.title)}_${v}`,
+      name: `${base}_${v}`,
       role: 'percussion', band: VOICE_BAND[v] ?? 'mid',
       style: p.style ?? 'unknown', provenance: 'transcribed', ratified: false,
       pack: 'drum-patterns', pattern: p.title, part, kit: p.kit, bpm: p.bpm,
@@ -151,9 +161,9 @@ export function buildEntries(p, sourceFile) {
     });
   }
   const form = {
-    name: `dp_${slug(p.title)}`, title: p.title, url: p.url, kit: p.kit,
+    name: base, title: p.title, url: p.url, kit: p.kit,
     style: p.style, bpm: p.bpm, meter_class: p.meter, banks: p.banks.length,
-    order: p.order, fill, intro,
+    order: fullOrder, fill, intro, ...(truncated ? { entriesTruncatedTo: bars } : {}),
   };
   return { entries, form };
 }
@@ -216,7 +226,7 @@ function main() {
     return;
   }
   const files = readdirSync(SRC_DIR).filter((f) => /\.html?$/i.test(f)).sort();
-  const seen = new Set(); const allEntries = []; const forms = []; let skipped = 0;
+  const seen = new Set(); const usedBase = new Map(); const allEntries = []; const forms = []; let skipped = 0;
   for (const f of files) {
     const html = readFileSync(join(SRC_DIR, f), 'utf8');
     for (const p of parsePage(html)) {
@@ -224,7 +234,12 @@ function main() {
       const key = p.url ?? p.title;
       if (seen.has(key)) continue;
       seen.add(key);
-      const { entries, form } = buildEntries(p, `audios/drum-patterns/${f}`);
+      // different patterns can share a title — unique the name stem (D60 lesson)
+      let base = `dp_${slug(p.title)}`;
+      const k = (usedBase.get(base) ?? 0) + 1;
+      usedBase.set(base, k);
+      if (k > 1) base = `${base}_${k}`;
+      const { entries, form } = buildEntries(p, `audios/drum-patterns/${f}`, base);
       allEntries.push(...entries); forms.push(form);
     }
   }

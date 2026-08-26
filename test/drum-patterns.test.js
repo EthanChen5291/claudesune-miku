@@ -102,6 +102,17 @@ test('accentless pattern stays needsAccents with null accents', () => {
   assert.equal(bd.triage, 'grid-flat');
 });
 
+test('long arrangements truncate to 16 bars; the form keeps the full order', () => {
+  const p = parsePage(FIXTURE)[0];
+  const longOrder = [...Array(20).fill(1), 2];
+  const { entries, form } = buildEntries({ ...p, order: longOrder }, 'test.html');
+  const bd = entries.find((e) => e.name.endsWith('_bd'));
+  assert.equal(bd.bars, 16);
+  assert.deepEqual(form.order, longOrder);
+  assert.equal(form.entriesTruncatedTo, 16);
+  assert.equal(form.fill, 2, 'fill detection reads the FULL order, past the cut');
+});
+
 test('entries with recovered accents pass the real binder gate', () => {
   const { entries } = buildEntries(parsePage(FIXTURE)[0], 'test.html');
   for (const e of entries.filter((x) => !x.needsAccents)) {

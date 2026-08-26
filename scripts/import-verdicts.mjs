@@ -328,9 +328,13 @@ if (!CHECK) {
       if (!verdict) continue;
       if (!['keep', 'kill'].includes(verdict)) throw new Error(`${name}: bad verdict "${verdict}"`);
       if (!FIGURATIONS_FOUNDATION[name]) { unknown.push(name); continue; }
+      // `from` marks a PROSE verdict (a blanket sentence like "they're good",
+      // imported on Ethan's behalf) as opposed to a page click. A prose
+      // verdict never overwrites a click — same rank rule as implied verdicts.
+      if (raw.from && mergedFig[name] && !mergedFig[name].from) continue;
       const judged = raw.judged?.[name] ?? FIGURATIONS_FOUNDATION[name].figure.join(' ');
       if (!mergedFig[name]) figN++;
-      mergedFig[name] = { verdict, at, judged };
+      mergedFig[name] = { verdict, at, judged, ...(raw.from ? { from: raw.from } : {}) };
     }
     for (const [name, text] of Object.entries(raw.notes ?? {})) {
       const t = String(text).trim();
@@ -453,7 +457,7 @@ if (Object.keys(mergedFig).length) {
   L.push('export const FIGURE_VERDICTS = {');
   for (const n of Object.keys(mergedFig).sort()) {
     const v = mergedFig[n];
-    L.push(`  ${n}: { verdict: '${v.verdict}', at: '${v.at}', judged: ${JSON.stringify(v.judged ?? null)} },`);
+    L.push(`  ${n}: { verdict: '${v.verdict}', at: '${v.at}',${v.from ? ` from: '${v.from}',` : ''} judged: ${JSON.stringify(v.judged ?? null)} },`);
   }
   L.push('};');
   L.push('');

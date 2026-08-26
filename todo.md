@@ -469,17 +469,39 @@ NEXT:
    todo-0b placement data). Grids are velocity-less, so entries need accent
    profiles unless the pattern used AC/ghost rows (those recover a real
    profile). Hand-saved pages still work and import identically.
-   STATUS 2026-08-25: pipeline proven end-to-end on one page (Get Lucky:
-   intro/fill detected from bank order), but the SITE went unresponsive
-   mid-session from two independent networks (curl direct + Anthropic
-   fetcher both time out; example.com fine) — run the fetch again when
-   drum-patterns.com is back up.
+   HARVEST DONE 2026-08-25 (D62): 240 liked patterns fetched (0 failures)
+   -> 1315 voice entries + 240 DRUM_PATTERN_FORMS in
+   src/lib/rhythms-drum-patterns.js. 146 entries carry recovered accent
+   profiles (AC/ghost rows) and can bind TODAY; 1169 need accent profiles
+   authored (A6.2 discipline, same as unison's flat loops). 100 fills + 94
+   intros detected from bank play orders; 37 long arrangements truncated to
+   16-bar loops with the full order kept on the form. Kits: 808×115,
+   909×26, 8-bit×18, 303×14, acoustic×14, linn×12, TAIKO×7 (8-bit + taiko
+   = straight into the game/boss palette). bpm 70-202, median 110. NEXT:
+   (a) audition surface for the 146 bindable ones, (b) style-default accent
+   profiles for the flat 1169, (c) wire DRUM_PATTERN_FORMS fill/intro
+   placement into the form phase (todo 0b).
 0i. [built, D61 addendum] FOUNDATIONS EAR PASS: audition/foundations.html —
    29 fnd_ canon patterns (figurations-foundation.js) × 5 click-kept
    progressions, a chip per pattern per card, verdicts PER PATTERN with
    notes; export -> import-verdicts.mjs -> FIGURE_VERDICTS overlay (stale
    snapshots refused, D51 discipline). This is build-order step 1: the
    fnd_ ear pass gates figuration-vary.
+   [D62] Ethan's prose verdict landed: "they work well ... for now they're
+   good" -> all 29 provisionally ratified as from:'notes-blanket' (a later
+   CLICK on the page outranks the blanket, per pattern). His caveat ("which
+   chords don't work on certain tones") is measured in FND_QUALITY_COMPAT.
+0j. [built, D62] FIGURATION RELATIONSHIP GRAPH (his ask): generated
+   src/lib/figuration-graph.js via scripts/build-figuration-graph.mjs —
+   FND_TRAVEL (190 cost-ranked section-transition edges, devices from the
+   corpus's observed development moves; each declares what it preserves;
+   meter hard-guarded), FND_LAYERS (71 floor+comment vertical pairs, D41
+   principles as rules — his "combine multiple patterns when layering"),
+   FND_QUALITY_COMPAT (binder fallback warnings per chord quality). ALL
+   CANDIDATE — edges are smoothness hypotheses until heard. NEXT: wire
+   travel edges into the D59 letter form (a section boundary picks a
+   cheap edge; the audition surface for the graph IS the form), and layer
+   pairs into the arranger's accompaniment stacking.
 1. *** RE-RUN audition/facets.html AND audition/judge.html, plus
    audition/progressions.html filtered to "from the videos" (18 sections to
    keep/kill — they are eye-reads of videos you like, so a kill likely means I

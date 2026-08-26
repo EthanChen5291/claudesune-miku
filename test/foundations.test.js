@@ -64,32 +64,35 @@ test('foundations export round-trips: FIGURE_VERDICTS land and overlay ratifies'
     'console.log(JSON.stringify({ a: F.fnd_alberti_8ths, b: F.fnd_boogie_shuffle, w: F.fnd_waltz_bass }))',
   ], { cwd: ROOT, encoding: 'utf8' }));
   try {
+    // clicks on two patterns; the D62 blanket may already hold prose keeps —
+    // a CLICK must overwrite the blanket (kill lands over a blanket keep)
     writeFileSync(fixture, JSON.stringify({
       figurations: true, page: 'foundations', generated: '2026-08-25T00:00:00Z',
-      verdicts: { fnd_alberti_8ths: 'keep', fnd_boogie_shuffle: 'kill' },
+      verdicts: { fnd_alberti_8ths: 'kill', fnd_boogie_shuffle: 'kill' },
       notes: { fnd_waltz_bass: 'sways nicely' },
       judged: {
         fnd_alberti_8ths: sig('fnd_alberti_8ths'),
         fnd_boogie_shuffle: sig('fnd_boogie_shuffle'),
-        fnd_waltz_bass: 'R WRONG TOKENS', // deliberately stale for the note only
       },
     }));
     const log = execFileSync('node', ['scripts/import-verdicts.mjs', fixture], { cwd: ROOT, encoding: 'utf8' });
-    assert.match(log, /figuration verdicts: 2 total \(2 new\)/);
+    assert.match(log, /figuration verdicts: \d+ total/);
     const emitted = readFileSync(out, 'utf8');
     assert.match(emitted, /FIGURE_VERDICTS/);
-    assert.match(emitted, /fnd_alberti_8ths: \{ verdict: 'keep'/);
+    // the click carries no `from` marker — that is what outranks a blanket
+    assert.match(emitted, /fnd_alberti_8ths: \{ verdict: 'kill', at: '2026-08-25', judged/);
     assert.match(emitted, /FIGURE_NOTES/);
     // a fresh process sees the overlay applied
     const seen = probe();
-    assert.equal(seen.a.ratified, true);
+    assert.equal(seen.a.ratified, false);
+    assert.equal(seen.a.verdict, 'kill');
     assert.equal(seen.a.needsEar, false);
     assert.equal(seen.b.ratified, false);
     assert.equal(seen.b.verdict, 'kill');
     assert.equal(seen.b.needsEar, false);
-    // no verdict on the waltz — the stale-judged note must not ratify anything
-    assert.equal(seen.w.ratified, false);
-    assert.equal(seen.w.needsEar, true);
+    // the waltz got only a note — the D62 blanket keep on it survives untouched
+    assert.equal(seen.w.ratified, true);
+    assert.equal(seen.w.verdict, 'keep');
   } finally {
     rmSync(fixture, { force: true });
     if (had == null) rmSync(out, { force: true }); else writeFileSync(out, had);

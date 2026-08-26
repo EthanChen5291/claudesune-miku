@@ -2867,3 +2867,67 @@ Same-day follow-ups from Ethan on the D61 round:
   patterns. 145/145 page exprs green through the engine's transpiler;
   headless Chrome shows 145 chips/29 verdict rows; 5 new tests, importer
   --check byte-stable.
+
+## D62 — the canon ratified in prose, and its relationship graph (2026-08-25)
+
+Ethan on the foundations page: "they work well. we might have to figure out
+which chords don't work on certain tones but for now they're good." Plus two
+directives: relationships ("which foundations can travel to other foundations
+while maintaining the vibe and sounding smooth across sections"), and a
+layering reminder ("in any given song when layering, we can combine multiple
+patterns").
+
+- BLANKET KEEP, MARKED AS PROSE. All 29 fnd_ entries are provisionally
+  ratified via a `from: 'notes-blanket'` import (his sentence, not clicks).
+  The importer rule: a prose verdict NEVER overwrites a click, so a later
+  session on foundations.html where he clicks per-pattern verdicts wins
+  pattern-by-pattern. Same rank discipline as the D60 implied verdicts.
+- THE CAVEAT, MEASURED. "Which chords don't work on certain tones" has a
+  mechanical half the binder can answer: FND_QUALITY_COMPAT in the new
+  generated src/lib/figuration-graph.js binds every pattern against 19 chord
+  qualities and records the binder's own FALLBACK warnings — alberti's `3`
+  has nothing to hold on a sus chord (re-pointed to the 4), boogie's `6`
+  falls to the 9 on plain triads, all-root patterns never fall back
+  (24/29 patterns have at least one fallback cell). The TASTE half — whether
+  a fallback is fine or awful — stays with his ear; the matrix says where to
+  listen.
+- FND_TRAVEL: 190 section-to-section edges over the canon, derived from
+  RULES whose devices come from the corpus's own observed development moves
+  (repitch 59×, blockify 23×, pattern_swap 7×, sparsify/densify, octave
+  moves) crossed with the research §2 device ranking. Each edge declares
+  what it preserves (D50 idiom) and a cost that prices audibility
+  (same_family .15 → register/density shift .2 → figure_swap .25 →
+  blockify .35 → energy_shift .4 → style_kin .45 → meter_nest .5). Meter is
+  a hard guard: the only legal meter crossings are 2/4→4/4 and 6/8→12/8
+  nestings, priced like the section events they are. Honesty check: the
+  rules RECOVER the research's four named variation pairs
+  (murky↔octave_bounce, alberti 8↔16, stride↔wide_oompah, tresillo↔tumbao)
+  without hand-seeding — regression-tested.
+- FND_LAYERS: his layering note as data — 71 floor+comment pairs that can
+  sound AT ONCE, rule-derived from the D41 two-hand principles (register
+  lanes ≥1 octave apart, nested grids, onset interlock ≤60% overlap,
+  activity cap). The research's own interlock candidate (tresillo floor
+  under offbeat-chord skanks) emerges from the rules too.
+- Every edge and pair is a CANDIDATE: a smoothness hypothesis until a
+  transition is heard. The natural audition surface is the letter form —
+  travel edges are exactly what changes at a section boundary — so the graph
+  wires into the D59 form work when the batch builds.
+- DRUM HARVEST RESUMED: the site came back; fetch-drum-patterns.mjs
+  (curl-based now — node's own fetch cannot reach the network in this
+  environment and hangs) is pulling the liked pages under Ethan's owner
+  permission.
+
+D62 addendum — the harvest landed: 240 liked patterns, 0 failed fetches →
+1,315 voice entries + 240 form records (rhythms-drum-patterns.js). 146
+entries recovered real accent profiles from AC/ghost rows and can bind
+today; 1,169 await authored accents (A6.2, same as unison's flat loops).
+100 fills and 94 intros read straight out of the bank play orders — the
+todo-0b "where do fills land" data at scale. Two importer defects found by
+the harvest itself and fixed with tests: title collisions merged distinct
+patterns under one name (the D60 gen-name lesson, recurring — names now
+unique with suffixes), and 100+-bar drum ARRANGEMENTS emitted as single
+entries past the binder's 96-bar period cap (entries now cap at 16-bar
+loops; the form keeps the full order, fill detection reads past the cut).
+Kit census: TR-808 ×115, TR-909 ×26, 8-bit ×18, TB-303 ×14, acoustic ×14,
+LinnLM-1 ×12, taiko ×7 — the 8-bit and taiko rows walk straight into the
+game/boss palette. 296/296.
