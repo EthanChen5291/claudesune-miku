@@ -13,7 +13,7 @@
 // format (page 'videolab') so import-verdicts.mjs lands verdicts unchanged.
 // Deterministic: no randomness anywhere.
 
-import { writeFileSync, mkdirSync } from 'node:fs';
+import { writeFileSync, mkdirSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { renderProgression } from '../src/binder/harmony.js';
@@ -752,7 +752,17 @@ function card(c) { cards.push(c); }
   const m32 = (entryF, ctxX, bars, opts) =>
     `${fig(entryF, ctxX, { loopRoots: true, ...opts })}.mask("<${maskOf(bars)}>").mul(gain(${CURVE32}))`;
   const padF = { name: 'pad', bars: 1, onsets: ['0'], figure: ['R.3+.5+.7+'], accents: [0.7], legato: true };
-  const pads = m32(padF, ctx, [1, 2, 3, 4, 5, 6, 7, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31], { octave: 2, gainRange: [0.32, 0.58], fx: '.room(0.45).clip(1.4)' });
+  // Round 7.5 (his note): "during the part with the melody it still
+  // shouldn't be just straight chords" — bars 9-24 now cycle four
+  // treatments, ALL below the melody's register (the high-decoration rule
+  // stands): phrase-start block / block + low fifth re-touch at 5/8 /
+  // HALF-DURATION bar (the chord re-voiced thinner on the back half — his
+  // split-duration device, inside the harmony) / block + low two-note walk
+  // into the next chord.
+  const pads = m32(padF, ctx, [1, 2, 3, 4, 5, 6, 7, 9, 10, 12, 13, 14, 16, 17, 18, 20, 21, 22, 24, 25, 26, 27, 28, 29, 30, 31], { octave: 2, gainRange: [0.32, 0.58], fx: '.room(0.45).clip(1.4)' });
+  const padSplit = m32({ name: 'pad-split-dur', bars: 1, onsets: ['0', '1/2'], figure: ['R.3+.5+.7+', 'R.3+.5+'], accents: [0.68, 0.52], legato: true }, ctx, [11, 15, 19, 23], { octave: 2, gainRange: [0.3, 0.56], fx: '.room(0.45).clip(1.1)' });
+  const padTouch = m32({ name: 'pad-touch', bars: 1, onsets: ['5/8'], figure: ['R.5'], accents: [0.5], legato: false }, ctx, [10, 14, 18, 22], { octave: 2, gainRange: [0.2, 0.4], fx: '.room(0.45).clip(1.2)' });
+  const padWalk = m32({ name: 'pad-walk', bars: 1, onsets: ['3/4', '7/8'], figure: ['R', '5'], accents: [0.45, 0.5], legato: false }, rctx, [12, 16, 20, 24], { octave: 2, gainRange: [0.18, 0.38], fx: '.room(0.4).clip(1.1)' });
   const padHalf = m32(padF, ctx, [8, 32], { octave: 2, gainRange: [0.32, 0.58], fx: '.room(0.45).clip(0.5)' });
   // his round-7 note: the higher half-chord was "very low duration with no
   // damper pedal" — it now RINGS across the barline (clip 1.8 + more room)
@@ -777,7 +787,7 @@ function card(c) { cards.push(c); }
   // cut-off. Bars 9-24 are ONE melody (bridge + C lament), so the
   // vibraphone sings all sixteen bars, with the two phrase curves joined.
   const melody = `note("<~@8 [A5@2 G5 F5] [D5@3 F5] [E5@2 C#5@2] [D5@3 A4] [A5@2 G5 F5] [G5@3 D5] [E5@2 A4 C#5] [D5] [Bb4@2 D5@2] [A4@3 C5] [D5@2 F5@2] [E5@3 C#5] [Bb4@2 D5@2] [C5@2 E5@2] [F5@2 A5 G5] [E5@2 A4@2] ~@8>").s("gm_vibraphone").gain("<0.7@8 0.7 0.72 0.7 0.68 0.74 0.76 0.72 0.66 0.64 0.66 0.68 0.64 0.68 0.7 0.74 0.64 0.7@8>").room(0.55).clip(1.25)`;
-  const mix = `stack(${pads}, ${padHalf}, ${splitHi}, ${restrike}, ${tags}, ${strings}, ${ep}, ${spark}, ${melody})`;
+  const mix = `stack(${pads}, ${padSplit}, ${padTouch}, ${padWalk}, ${padHalf}, ${splitHi}, ${restrike}, ${tags}, ${strings}, ${ep}, ${spark}, ${melody})`;
   card({
     name: 'vl_kpop_full', kind: 'SONG',
     title: 'K-pop split — at tempo',
@@ -786,8 +796,8 @@ function card(c) { cards.push(c); }
     key: 'D:minor', bpm: 116, degrees: '8:^7 7:7 0:m7 10:m7', base: 'vid_kpop_rnb', family: 'minor',
     symbols: [...syms4, '|', ...b4, '|', ...c4], totalBars: 32,
     mix,
-    solos: { _melody: melody, _pads: `stack(${pads}, ${padHalf})`, _split: splitHi, _strings: strings, _epiano: ep, _tags: tags },
-    note: 'Your round-7 notes: the vibraphone now sings the ENTIRE 16-bar melody (the piano/vibes split at bar 17 was the cut-off you heard); the split bar\'s higher half-chord rings across the barline with damper instead of choking; strings cut again. Still one low voice (the piano LH — say if you miss the bass floor).',
+    solos: { _melody: melody, _pads: `stack(${pads}, ${padHalf})`, _padVariety: `stack(${padSplit}, ${padTouch}, ${padWalk})`, _split: splitHi, _strings: strings, _epiano: ep, _tags: tags },
+    note: 'Your notes, both rounds: the vibraphone sings the ENTIRE 16-bar melody; the split bar\'s higher half-chord rings with damper; strings cut again — and the melody section is no longer straight chords: the accompaniment cycles four treatments underneath (block / low fifth re-touch / half-duration bar with the chord re-voiced on the back half / low walk into the next chord), all kept BELOW the melody so nothing fights it.',
   });
 }
 
@@ -830,6 +840,13 @@ for (const [name, tid, expr, bpm, totalBars] of CHECKS) {
   }
 }
 
+// D80: cards whose HQ render exists (audition/hq/<name>.wav, produced by
+// scripts/render-hq.mjs) get an hq flag — the page offers an HQ playback mode.
+// D81: per-solo renders too (<name>.<solo>.wav) — solos play HQ when present.
+for (const c of cards) {
+  c.hq = existsSync(join(OUT, 'hq', `${c.name}.wav`));
+  c.hqSolos = Object.keys(c.solos).filter((k) => existsSync(join(OUT, 'hq', `${c.name}.${k}.wav`)));
+}
 const DATA = { cards };
 const html = page(DATA);
 const inline = html.slice(html.lastIndexOf('<script>') + 8, html.lastIndexOf('</script>'));
@@ -890,6 +907,7 @@ function page(DATA) {
   <div class="row">
     <h1>video technique lab — what the 23 videos taught, played</h1>
     <span class="now" id="now">— click ▶ on a card —</span>
+    <button id="hqmode" title="play pre-rendered HQ wavs (audition/hq/) where available">HQ: off</button>
     <button id="stop">■ stop</button>
     <span class="dim" id="rtstatus">first play loads the instruments</span>
   </div>
@@ -926,6 +944,15 @@ let playing = null;
 const $ = (id) => document.getElementById(id);
 const save = () => { localStorage.setItem(LS, JSON.stringify(verdicts)); localStorage.setItem(LSN, JSON.stringify(notes)); };
 const solo = {};
+// D80: HQ mode — play the pre-rendered wav (audition/hq/) instead of the
+// browser synth, for cards that have one. Solos always use the browser
+// synth (the wav is the whole mix). Persisted like verdicts.
+const LSHQ = 'motif-engine:videolab-hq';
+let hqMode = false;
+try { hqMode = localStorage.getItem(LSHQ) === '1'; } catch {}
+const HQ_AUDIO = new Audio();
+HQ_AUDIO.loop = true;
+function hqButton() { $('hqmode').textContent = 'HQ: ' + (hqMode ? 'ON' : 'off'); $('hqmode').style.fontWeight = hqMode ? 'bold' : ''; }
 
 function codeFor(c) {
   const which = solo[c.name] || 'mix';
@@ -934,16 +961,30 @@ function codeFor(c) {
   return 'setcpm(' + c.bpm + '/4)\\np: stack(' + expr + ')';
 }
 async function play(c) {
+  const which = solo[c.name] || 'mix';
+  const hqFile = which === 'mix' ? (c.hq ? c.name + '.wav' : null)
+    : ((c.hqSolos || []).indexOf(which) >= 0 ? c.name + '.' + which + '.wav' : null);
+  if (hqMode && hqFile) {
+    rtStop();
+    HQ_AUDIO.src = 'hq/' + hqFile;
+    HQ_AUDIO.currentTime = 0;
+    try { await HQ_AUDIO.play(); } catch (e) { $('now').textContent = 'HQ playback failed: ' + e.message; return; }
+    playing = c.name;
+    $('now').textContent = '\\u25b6 ' + c.name + ' (' + which + ' \\u00b7 HQ wav)';
+    render();
+    return;
+  }
+  HQ_AUDIO.pause();
   const code = codeFor(c);
   if (!code) return;
   $('now').textContent = RT.ready ? '…' : 'starting audio…';
   const ok = await rtPlay(code);
   if (!ok) { playing = null; render(); return; }
   playing = c.name;
-  $('now').textContent = '\\u25b6 ' + c.name + ' (' + (solo[c.name] || 'mix') + ')';
+  $('now').textContent = '\\u25b6 ' + c.name + ' (' + which + (hqMode && !c.hq ? ' \\u00b7 no HQ render' : '') + ')';
   render();
 }
-function stop() { rtStop(); playing = null; $('now').textContent = '\\u2014 stopped \\u2014'; render(); }
+function stop() { rtStop(); HQ_AUDIO.pause(); HQ_AUDIO.currentTime = 0; playing = null; $('now').textContent = '\\u2014 stopped \\u2014'; render(); }
 function esc(t) { const d = document.createElement('div'); d.textContent = t == null ? '' : String(t); return d.innerHTML; }
 
 function render() {
@@ -955,6 +996,7 @@ function render() {
     return '<div class="card' + (playing === c.name ? ' playing' : '') + (v ? ' ' + v : '') + '">' +
       '<div class="row"><span class="vibe">' + esc(c.title) + '</span>' +
       '<span class="kind">' + c.kind + '</span>' +
+      (c.hq ? '<span class="kind" style="background:#1d3a2a;color:#9fdcb0" title="has an HQ render">HQ</span>' : '') +
       '<span class="dim">' + esc(c.name) + '</span>' +
       '<button data-play="' + c.name + '">\\u25b6 play</button>' +
       '<select data-solo="' + c.name + '">' + opts + '</select></div>' +
@@ -993,6 +1035,13 @@ function render() {
   });
 }
 $('stop').onclick = stop;
+$('hqmode').onclick = function () {
+  hqMode = !hqMode;
+  try { localStorage.setItem(LSHQ, hqMode ? '1' : '0'); } catch {}
+  hqButton();
+  stop();
+};
+hqButton();
 $('export').onclick = function () {
   const derived = {};
   Object.keys(verdicts).forEach(function (n) {

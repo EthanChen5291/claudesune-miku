@@ -24,7 +24,7 @@
 // Articulation rides the vibe: staccato/legato/damper per emotion (or the
 // environment's default), composed over each pattern's own authored legato.
 
-import { writeFileSync, mkdirSync } from 'node:fs';
+import { writeFileSync, mkdirSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { compileVibe } from '../src/lib/vibes.js';
@@ -307,9 +307,13 @@ function buildSong(prompt, name, opts = {}) {
   // D65/D67 (cave/snow round 2, then cave + water round 3 — "more reverb"
   // three times): the pedal vibes' whole piano sits in a wetter room
   const leadFx = ART.pedal ? `.gain(${leadGain}).room(0.7)` : `.gain(${leadGain}).room(0.25)`;
+  // D81: loopRoots everywhere (the D76 spiral guard); the accToBass branch
+  // binds gainRange so its accents sound (D78) instead of one flat velocity
   const bindAcc = (fig, ctx) => bindFigure(fig, ctx, v.meter, {
     sound: accToBass ? 'gm_synth_bass_1' : 'piano',
-    fx: accToBass ? '.gain(0.9).room(0.15).clip(0.95)' : accFx,
+    loopRoots: true,
+    ...(accToBass ? { gainRange: [0.6, 0.95] } : {}),
+    fx: accToBass ? '.room(0.15).clip(0.95)' : accFx,
     // the vibe's accFloor lifts a pattern's home octave (water: "too low"),
     // never lowers it — a wide oom-pah keeps its cellar
     octave: Math.max(1, Math.min(4, Math.max(fig.octave ?? accOct, v.register.accFloor ?? 0))),
@@ -453,6 +457,20 @@ function buildSong(prompt, name, opts = {}) {
       form.totalBars = sb;
     }
   }
+  // D82 (teaching the planner, his go-ahead): the SECTION DYNAMIC CURVE is a
+  // generator default — every section's energy sets a level (0.85..1.05), a
+  // low-energy final section fades further, and the lead rides a gentler
+  // half-depth version of the same arc. Period = totalBars, so nothing
+  // phase-drifts (D63).
+  const secMul = form.sections.map((sec) => Math.round((0.8 + 0.05 * (ENERGY[sec.archetype] ?? 3)) * 100) / 100);
+  if (form.sections.length > 1 && (ENERGY[form.sections[form.sections.length - 1].archetype] ?? 3) <= 2) {
+    secMul[secMul.length - 1] = Math.min(secMul[secMul.length - 1], 0.72);
+  }
+  const curveOf = (muls) => `"<${form.sections.flatMap((sec, i) => Array(sec.bars).fill(muls[i])).join(' ')}>"`;
+  const SEC_CURVE = curveOf(secMul);
+  const LEAD_CURVE = curveOf(secMul.map((m) => Math.round(((1 + m) / 2) * 100) / 100));
+  const withCurve = (expr, lead = false) => `${expr}.mul(gain(${lead ? LEAD_CURVE : SEC_CURVE}))`;
+
   const shaped = renderForm(rendered.layers, leadBound.expr, form);
 
   // ---- letters (D59) -------------------------------------------------------
@@ -469,10 +487,30 @@ function buildSong(prompt, name, opts = {}) {
     return letterCellMemo.get(L);
   };
   const letterSeed = (L) => (L === 'A' ? leadSeed : fnv(`${name}|melody|${L}`));
-  const bindLetter = (L, ctxL) => bindMelody(letterCell(L), ctxL, v.meter, {
-    style: 'toby-fox', seed: letterSeed(L), octave: v.register.leadOctave, sound: 'piano', fx: leadFx,
-    hold: LEAD.hold, mergeRepeats: LEAD.merge, articFloor: opts.articFloor ?? null,
-  });
+  // D82 (teaching the planner): MELODY HANDOFFS are a generator default. A
+  // letter is a complete melodic statement — exactly the D80 boundary rule
+  // ("if it plays for half and then another instrument plays the other
+  // half, it sounds like it cut off"), so the handoff unit is the LETTER:
+  // the A theme keeps the piano; each other letter hands its whole
+  // statement to one instrument from the pool (deterministic per song).
+  // Songs whose cast already carries a melody voice (takeover/alternate/
+  // backup — the planner's own handoffs) are left alone.
+  const castHasMelodyVoice = rendered.layers.some((l) => /alternate_melody|melody_takeover|melody_backup/.test(l.id));
+  const HANDOFF_POOL = ['gm_flute', 'gm_vibraphone', 'gm_epiano1'];
+  const letterSound = (L) => {
+    if (L === 'A' || castHasMelodyVoice || opts.noHandoff) return 'piano';
+    const others = [...new Set((mf.sections ?? []).map((x) => (x.letter ?? '').replace('*', '')).filter((x) => x && x !== 'A'))].sort();
+    const ix = others.indexOf(L);
+    if (ix < 0) return 'piano';
+    return HANDOFF_POOL[(fnv(`${name}|handoff`) + ix) % HANDOFF_POOL.length];
+  };
+  const bindLetter = (L, ctxL) => {
+    const snd = letterSound(L);
+    return bindMelody(letterCell(L), ctxL, v.meter, {
+      style: 'toby-fox', seed: letterSeed(L), octave: v.register.leadOctave, sound: snd, fx: leadFx,
+      hold: snd === 'gm_flute' ? true : LEAD.hold, mergeRepeats: LEAD.merge, articFloor: opts.articFloor ?? null,
+    });
+  };
 
   // ---- the treat (D59): harmony varies at the last reprise -----------------
   let vary = null;
@@ -660,10 +698,25 @@ function buildSong(prompt, name, opts = {}) {
   const extraParts = [];
   const extraInfo = [];
   const extraSolos = {};
+  // D82 (teaching the planner): TRANSITIONS — a support layer's entrances
+  // ramp and exits taper (first bar of a run x0.75, last x0.85, runs >= 3
+  // bars), the generator's version of the lab's crossfade grammar.
+  const rampMul = (bars) => {
+    const m = bars.map(() => 1);
+    let i = 0;
+    while (i < bars.length) {
+      if (!bars[i]) { i++; continue; }
+      let j = i;
+      while (j < bars.length && bars[j]) j++;
+      if (j - i >= 3) { m[i] = 0.75; m[j - 1] = 0.85; }
+      i = j;
+    }
+    return m.some((x) => x !== 1) ? `.mul(gain("<${m.join(' ')}>"))` : '';
+  };
   const varySplit = (bindFn, bars) => {
     const pieces = [];
     const out = bars.map((x, i) => (x && !(ctxBarV && varyBars[i]) ? 1 : 0));
-    if (out.some(Boolean)) pieces.push(`${bindFn(ctxBar)}.mask("<${maskString(out)}>")`);
+    if (out.some(Boolean)) pieces.push(`${bindFn(ctxBar)}.mask("<${maskString(out)}>")${rampMul(out)}`);
     if (ctxBarV) {
       const inn = bars.map((x, i) => (x && varyBars[i] ? 1 : 0));
       if (inn.some(Boolean)) pieces.push(`${bindFn(ctxBarV)}.mask("<${maskString(inn)}>")`);
@@ -675,7 +728,7 @@ function buildSong(prompt, name, opts = {}) {
     if (tPool.length) {
       const [tName, tFig0] = tPool[fnv(`${name}|texture`) % tPool.length];
       const tFig = { ...tFig0, name: tName };
-      const bindT = (ctx) => bindFigure(tFig, ctx, v.meter, { sound: 'piano', fx: `.gain(0.34)${accFx}`, octave: opts.texture.octave }).expr;
+      const bindT = (ctx) => bindFigure(tFig, ctx, v.meter, { sound: 'piano', loopRoots: true, gainRange: [0.22, 0.42], fx: accFx, octave: opts.texture.octave }).expr;
       const tBars = form.sections.flatMap((sec) => Array(sec.bars).fill((ENERGY[sec.archetype] ?? 3) >= 4 ? 1 : 0));
       if (tBars.some(Boolean)) {
         extraParts.push(...varySplit(bindT, tBars));
@@ -698,7 +751,7 @@ function buildSong(prompt, name, opts = {}) {
     // HOLDS the bar root under the beat — on gm_synth_bass_1, not bare
     // sine, and at octave 2: "i can't hear it" killed the pure sine.
     const subFig = { name: 'sub-bass', bars: 1, onsets: ['0'], figure: ['R'], accents: [0.8], legato: true };
-    const bindSub = (ctx) => bindFigure(subFig, ctx, v.meter, { octave: 2, sound: 'gm_synth_bass_1', fx: '.gain(0.85).clip(1.02)' }).expr;
+    const bindSub = (ctx) => bindFigure(subFig, ctx, v.meter, { octave: 2, sound: 'gm_synth_bass_1', loopRoots: true, gainRange: [0.6, 0.9], fx: '.clip(1.02)' }).expr;
     extraParts.push(...varySplit(bindSub, drumBarsShared));
     extraSolos._sub_bass = bindSub(ctxBar);
     extraInfo.push('sub-bass: gm_synth_bass_1 held roots (oct 2) under the beat');
@@ -706,7 +759,8 @@ function buildSong(prompt, name, opts = {}) {
   if (opts.counterline) {
     const clFig = { name: 'counterline', bars: 1, onsets: ['0'], figure: ['3'], accents: [0.72], legato: true };
     // D67 (fight: "strings a bit too loud"): 0.42 → 0.3
-    const bindCl = (ctx) => bindFigure(clFig, ctx, v.meter, { octave: 4, sound: 'gm_string_ensemble_1', fx: '.gain(0.3).room(0.35)', rhythmName: 'counterline' }).expr;
+    // D81 (strings "too loud" four rounds running on the lab): whisper band
+    const bindCl = (ctx) => bindFigure(clFig, ctx, v.meter, { octave: 4, sound: 'gm_string_ensemble_1', loopRoots: true, gainRange: [0.12, 0.24], fx: '.room(0.45)', rhythmName: 'counterline' }).expr;
     const clBars = form.sections.flatMap((sec) => Array(sec.bars).fill(sec.lead !== 'none' ? 1 : 0));
     if (clBars.some(Boolean)) {
       extraParts.push(...varySplit(bindCl, clBars));
@@ -715,7 +769,13 @@ function buildSong(prompt, name, opts = {}) {
     }
   }
 
-  const mixParts = [baseMix, ...(letterLead.lead ? [letterLead.lead] : []), ...layerMixExprs, ...extraParts, ...(drums ? [drums] : [])];
+  const mixParts = [
+    withCurve(baseMix),
+    ...(letterLead.lead ? [withCurve(letterLead.lead, true)] : []),
+    ...layerMixExprs.map((x, i) => withCurve(x, shaped.layers[i]?.derives === 'lead' || shaped.layers[i]?.derives === 'lead-rhythm')),
+    ...extraParts.map((x) => withCurve(x)),
+    ...(drums ? [withCurve(drums)] : []),
+  ];
   let mix = mixParts.length > 1 ? `stack(${mixParts.join(', ')})` : mixParts[0];
 
   const solos = { _acc: base, _lead: leadBound.expr, ...extraSolos, ...(drums ? { _drums: drums } : {}) };
@@ -864,6 +924,9 @@ for (const [name, tid, expr, bpm, beats, totalBars] of CHECKS) {
   checked++;
 }
 
+// D81: songs with an HQ render (audition/hq/<name>.wav, scripts/render-hq.mjs)
+// get an hq flag — the page offers the same HQ playback mode as videolab
+for (const s of songs) s.hq = existsSync(join(OUT, 'hq', `${s.name}.wav`));
 const DATA = { songs: songs.map(({ solos, ...rest }) => ({ ...rest, solos })) };
 const html = page(DATA);
 const inline = html.slice(html.lastIndexOf('<script>') + 8, html.lastIndexOf('</script>'));
@@ -920,6 +983,7 @@ function page(DATA) {
   <div class="row">
     <h1>vibe songs — 10 environmental + emotional prompts</h1>
     <span class="now" id="now">— click ▶ on a card —</span>
+    <button id="hqmode" title="play pre-rendered HQ wavs (audition/hq/) where available">HQ: off</button>
     <button id="stop">■ stop</button>
     <span class="dim" id="rtstatus">first play loads the instruments</span>
   </div>
@@ -955,6 +1019,15 @@ const $ = (id) => document.getElementById(id);
 const save = () => { localStorage.setItem(LS, JSON.stringify(verdicts)); localStorage.setItem(LSN, JSON.stringify(notes)); };
 const solo = {};
 
+// D81: HQ mode — play the pre-rendered wav where one exists (mix only;
+// solos use the browser synth unless a per-solo wav exists)
+const LSHQ = 'motif-engine:songs-hq';
+let hqMode = false;
+try { hqMode = localStorage.getItem(LSHQ) === '1'; } catch {}
+const HQ_AUDIO = new Audio();
+HQ_AUDIO.loop = true;
+function hqButton() { $('hqmode').textContent = 'HQ: ' + (hqMode ? 'ON' : 'off'); $('hqmode').style.fontWeight = hqMode ? 'bold' : ''; }
+
 function codeFor(s) {
   const which = solo[s.name] || 'mix';
   const expr = which === 'mix' ? s.mix : s.solos[which];
@@ -962,16 +1035,28 @@ function codeFor(s) {
   return 'setcpm(' + s.bpm + '/' + s.beats + ')\\np: stack(' + expr + ')';
 }
 async function play(s) {
+  const which = solo[s.name] || 'mix';
+  if (hqMode && s.hq && which === 'mix') {
+    rtStop();
+    HQ_AUDIO.src = 'hq/' + s.name + '.wav';
+    HQ_AUDIO.currentTime = 0;
+    try { await HQ_AUDIO.play(); } catch (e) { $('now').textContent = 'HQ playback failed: ' + e.message; return; }
+    playing = s.name;
+    $('now').textContent = '\\u25b6 ' + s.name + ' (HQ wav)';
+    render();
+    return;
+  }
+  HQ_AUDIO.pause();
   const code = codeFor(s);
   if (!code) return;
   $('now').textContent = RT.ready ? '…' : 'starting audio…';
   const ok = await rtPlay(code);
   if (!ok) { playing = null; render(); return; }
   playing = s.name;
-  $('now').textContent = '\\u25b6 ' + s.name + ' (' + (solo[s.name] || 'mix') + ')';
+  $('now').textContent = '\\u25b6 ' + s.name + ' (' + which + (hqMode && !s.hq ? ' \\u00b7 no HQ render' : '') + ')';
   render();
 }
-function stop() { rtStop(); playing = null; $('now').textContent = '\\u2014 stopped \\u2014'; render(); }
+function stop() { rtStop(); HQ_AUDIO.pause(); HQ_AUDIO.currentTime = 0; playing = null; $('now').textContent = '\\u2014 stopped \\u2014'; render(); }
 function esc(t) { const d = document.createElement('div'); d.textContent = t == null ? '' : String(t); return d.innerHTML; }
 
 function render() {
@@ -983,6 +1068,7 @@ function render() {
     return '<div class="card' + (playing === s.name ? ' playing' : '') + (v ? ' ' + v : '') + '">' +
       '<div class="row"><span class="vibe">' + esc((s.prompt.emotion ? s.prompt.emotion + ' ' : '') + s.prompt.environment) + '</span>' +
       '<span class="dim">' + esc(s.name) + '</span>' +
+      (s.hq ? '<span class="dim" style="background:#1d3a2a;color:#9fdcb0;padding:0 6px;border-radius:3px" title="has an HQ render">HQ</span>' : '') +
       '<button data-play="' + s.name + '">\\u25b6 play</button>' +
       '<select data-solo="' + s.name + '">' + opts + '</select></div>' +
       '<div class="meta">' + s.key + ' \\u00b7 ' + s.bpm + 'bpm ' + s.meter + ' \\u00b7 ' + s.totalBars + ' bars \\u00b7 form ' + esc(s.scheme || '(no letters)') + ' \\u00b7 role ' + s.role + ' \\u00b7 ' + s.salience + '</div>' +
@@ -1023,6 +1109,13 @@ function render() {
   });
 }
 $('stop').onclick = stop;
+$('hqmode').onclick = function () {
+  hqMode = !hqMode;
+  try { localStorage.setItem(LSHQ, hqMode ? '1' : '0'); } catch {}
+  hqButton();
+  stop();
+};
+hqButton();
 $('export').onclick = function () {
   // DERIVED format (D60): page-local songs export degrees + exemplar base, so
   // import-verdicts.mjs lands them in DERIVED_VERDICTS unchanged

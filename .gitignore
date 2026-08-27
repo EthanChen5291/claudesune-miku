@@ -26,3 +26,4 @@ vendor/plugins/
 vendor/pyenv/
 vendor/build/
 audition/hq/*.wav
+audition/hq/*-stems/

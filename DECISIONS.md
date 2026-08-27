@@ -4036,3 +4036,189 @@ his round-7 feedback and a REVERSAL of D79.
     libraries gitignored (multi-GB, re-fetchable); generated sfz +
     patches committed-able.
   73/73 exprs, 306/306 tests after all page edits.
+
+D80 addendum — HQ mode on the page + his first render-listening notes.
+- audition/videolab.html now has an HQ toggle (persisted): cards with a
+  render in audition/hq/ show an HQ badge; with the mode ON, play uses
+  the wav (looped) instead of the browser synth; solos always use the
+  browser synth. Build stamps card.hq from file existence.
+- His render notes exposed two design errors, both fixed:
+  (1) STEM-RELATIVE velocity normalization was wrong — it stretched
+  narrow gain bands to the top of each instrument's range ("hammered at
+  max dynamics" vamp piano, "much too loud" flute). Velocity is now
+  ABSOLUTE: hap gain x per-instrument velScale, so his ear-tuned page
+  mix maps directly onto the samplers' velocity curves. Plus highSoft:
+  pitch-dependent taper (flute above E5 sheds 0.02/semitone — "on really
+  high flute notes it should automatically be a bit softer").
+  (2) Cross-stem balance by HOPE was wrong — a Surge patch renders ~20dB
+  hotter than a sample library at equal velocity ("absolutely drowned
+  out by some synth"). Each stem is now MEASURED (ffmpeg astats RMS) and
+  normalized to a target derived from the engine's own mean gain
+  (-20dBFS at gain 1, + trimDb); master gets loudnorm to -16 LUFS.
+  Citypop's synth measured -21dB and was pulled DOWN x0.61.
+- The render now honors the page's .room(): a deterministic generated
+  impulse response (seeded exponential-decay noise, energy-normalized)
+  convolves each stem via ffmpeg afir, wet amount = the stem's mean room
+  ("supposed to be water yet the piano is still very dry" — aquatic's
+  ladder carries room 0.6 and now sounds like it).
+- kpop page change (his note: "during the part with the melody it still
+  shouldn't be just straight chords"): bars 9-24 cycle four treatments
+  UNDER the melody — block / low fifth re-touch at 5/8 / half-duration
+  bar with the chord re-voiced thinner on the back half / low two-note
+  walk into the next chord (rotated). Measured per-bar: every variety
+  top strictly below the melody's lowest note in that bar. RULE: melody-
+  section accompaniment varies rhythm/duration in the LOW register; the
+  high-decoration silence rule stands.
+- 74/74 exprs, 306/306.
+
+D81 (2026-08-26) — HQ everywhere: solos, the songs suite, more instruments.
+- His question ("wdym solos always use browser synth?") had the right
+  instinct: there was no reason solos could not be HQ — only the mixes
+  had been rendered. Now: scripts/render-hq-pages.mjs batch-renders BOTH
+  pages — every videolab card's mix AND every solo layer
+  (audition/hq/<card>.<solo>.wav), and every songs-page song's mix. The
+  videolab page plays per-solo wavs in HQ mode when present; the songs
+  page gets the same HQ toggle + badges (localStorage-persisted).
+- songs.html REGENERATED with the standing engine defaults wired into
+  its pipeline (his ask: "regenerate the songs.html suite with our
+  current system and all the changes (and vsts)"): bindAcc/texture/
+  sub-bass/counterline now bind loopRoots (D76 spiral guard) and
+  gainRange where a flat fx .gain used to erase accents (D78) — the
+  accToBass fight bass, the high-energy texture layer, the sub-bass, and
+  the strings counterline (whisper-trimmed to [0.12,0.24] per the
+  four-round "strings too loud" pattern). Blast radius measured: exactly
+  the four energetic songs changed (happy_shop, tense_fight,
+  triumphant_boss, excited_festival_drop); the seven chill songs are
+  byte-identical — their layers never had flat gains.
+- Instrument coverage grew for the songs suite's casts: bassoon,
+  clarinet (susLong), oboe generated from VSCO-2-CE; gm_cello voices
+  through the string-sections patch. Still fluid: recorder, music box,
+  e-piano, celesta, drums.
+- NOT yet in the songs GENERATOR (honest ledger): melody handoffs,
+  strings-own-melody beyond the existing padMelody policy, section
+  dynamic curves, transition tapers — those are authored per-card in the
+  lab today; teaching the planner is the next engine milestone.
+- 27/27 songs exprs, 74/74 lab exprs, 306/306 tests.
+
+D82 (2026-08-27) — TEACHING THE PLANNER: the round-7 arrangement style
+becomes generator DEFAULT (his go-ahead: "yes, are you able to teach?").
+Three mechanisms wired into scripts/audition-songs.mjs:
+1. SECTION DYNAMIC CURVE: every section's ENERGY sets a level (0.8 +
+   0.05*energy -> 0.85..1.05); a low-energy final section fades to
+   <=0.72; the lead rides a half-depth version of the same arc; applied
+   at mix assembly via .mul(gain("<per-bar>")) with period = totalBars
+   (D63-safe). The drop song's path is exempt by design (its arc IS the
+   buildup/drop).
+2. MELODY HANDOFFS BY LETTER: a letter is a complete melodic statement —
+   exactly the D80 boundary rule — so the handoff unit is the letter.
+   The A theme keeps the piano; every other letter hands its WHOLE
+   statement to one instrument from {flute, vibraphone, e-piano},
+   rotation seeded per song (fnv name|handoff). Flute statements bind
+   hold:true (sustaining rule). Songs whose cast already carries a
+   melody voice (takeover/alternate/backup — the planner's own handoff
+   machinery) are left untouched; opts.noHandoff opts a song out.
+3. TRANSITION TAPERS: varySplit-masked support layers (texture, sub,
+   counterline) ramp in (first bar of a run x0.75) and taper out (last
+   bar x0.85) for runs >= 3 bars — the generator's version of the lab's
+   crossfade grammar.
+27/27 exprs, 306/306 tests. Verification workflow + full HQ re-render
+follow; still hand-authored-only (next milestones): strings countermelody
+LINES beyond the padMelody policy, exit notes landing on the next
+section's chord, per-phrase melody gain arcs.
+
+D82 addendum — the verify workflow (3 agents), honest ledger.
+- CURVES + TAPERS: CONFIRMED EXACT. Four songs measured: section plateaus
+  land at precisely 0.85/0.95/1.05 per the energy formula (snow's five
+  plateaus on its 4-8-8-8-8 sections; boss's four on 16s); tapers measure
+  0.750/0.850 to the third decimal (x section level where a run crosses a
+  boundary — multiplicative, as designed). Zero note-content regressions:
+  the four chill songs' pitch multisets are bar-identical to pre-D82;
+  the drop song untouched; all solos evaluate.
+- HANDOFFS: the planner ALREADY KNEW this move — discovery, not defect.
+  Census: all 11 songs carry a cast melody voice (alternate_melody /
+  melody_backup / melody_takeover, the D41-lineage layering), and the
+  takeover machinery already hands COMPLETE LETTERS to other instruments
+  (kitchen's recorder owns letter B; festival's trumpet owns B and C;
+  sad_shop's muted trumpet; calm_water's calliope) with zero mid-
+  statement switches measured anywhere — his D80 boundary rule was
+  already satisfied by the existing planner. The new letter-handoff path
+  is therefore DORMANT (its castless-song domain is empty today); it
+  stays as the fallback for future casts without a melody voice.
+- FADE: no song ends quieter than its peak because the FORMS end on
+  max-energy sections — game loops peak into the wrap rather than fading
+  out. Accepted as the loop aesthetic; the fade rule stays armed for
+  forms that do end low.
+- KNOWN PRE-EXISTING BUG, surfaced by the sweep and DELIBERATELY parked
+  for his ear to rule on: 6 of 11 songs (happy_shop, sad_shop,
+  calm_water, mysterious_cave, nostalgic_snow, festival_drop) violate
+  the D63 loop invariant — their melody-layer alternations (8/16-slot)
+  do not divide totalBars (36 mod 8 = 4), so the SECOND loop pass plays
+  the melody phase-shifted (measured: 12-20 drifted bars per song; the
+  5 clean songs pass by arithmetic luck). This predates D82 (old-vs-new
+  note content identical) — he has judged these songs, drift included,
+  since they were built. Fixing = re-phasing the melodies of 6 judged
+  songs (audible change). PARKED pending his ruling; options: (a) pad
+  totalBars to the melody period's multiple, (b) rebase melody patterns
+  per letter piece, (c) accept the drift as variation.
+
+D83 (2026-08-27) — the HQ mixes were piano solos: three bugs stacked in
+the render tier. His report: "when I turn hq on in songs.html, why is it
+only solo notes instead of the full mix". The page was innocent — HQ mode
+just swaps Strudel for audition/hq/<name>.wav (D81) and those wavs really
+did contain little but the piano. Measured on the D82 render: a 1-second
+envelope trace of vs_mysterious_cave's mix correlated 0.999 with the piano
+stem ALONE; strings sat 28 dB under it and the flute was digital silence.
+Three independent causes, each verified against sfizz before fixing:
+1. VELOCITY WAS DOING TWO JOBS. render-hq maps a hap's absolute gain to
+   MIDI velocity (D80's "the engine's mix balance maps onto the sampler's
+   velocity curve"), and every generated patch then carried
+   amp_veltrack=100, so sfizz applied the FULL squared velocity curve on
+   top of a number that was already the balance. Measured, trumpet.sfz,
+   key 65: vel 26 -> -64 dB, vel 82 -> -37 dB. Support voices at gain
+   0.21-0.36 became vel 26-45 and landed 20-27 dB under the piano's vel
+   82, where the engine meant 8-12. Salamander piano ships
+   amp_veltrack=73 and never had the problem — which is exactly why the
+   piano was the part that survived. FIX: AMP_VELTRACK = 50 in
+   scripts/build-sfz.mjs. The ~9 dB step between the v1 and v3 SAMPLE
+   layers is the real timbral dynamic and survives; velocity now picks
+   the layer and the mix stage owns the level. Regeneration is
+   byte-identical apart from the <global> line, as designed.
+2. THE BALANCE STAGE COMPUTED THE RIGHT ANSWER AND DECLINED TO APPLY IT.
+   The x6 (+15.6 dB) ceiling on the per-stem correction was hit by 9 of
+   11 songs — strings wanted +18, cello +29, vibes +36, festival_drop's
+   trumpet +66. Raised to x12, and a clamp now PRINTS how far short it
+   fell instead of failing silently.
+   Also: the stage measured whole-file RMS, which counts rests. A flute
+   that plays a quarter of the song read 8 dB quieter than it sounds
+   (-50.4 dB RMS vs -42.1 LUFS), so every sparse voice was pushed under
+   the always-playing piano. Now levelled by EBU R128 integrated
+   loudness, whose own gate ignores silence — and returns exactly -70
+   LUFS for a silent stem, which IS the "unmeasurable, leave it" case.
+3. OUT-OF-RANGE NOTES RENDERED AS SILENCE, WITHOUT AN ERROR. A generated
+   SFZ only covers its sampled keys and sfizz has no fallback region.
+   vs_excited_festival_drop's trumpet played keys 79-98 against a patch
+   that stops at 78: all 172 notes gone, stem RMS -90.3 (an empty file).
+   Also 9% of somber_aftermath's strings, 10% of triumphant_boss's
+   trumpet. FIX: render-hq reads each patch's lokey/hikey and folds
+   stray pitches back by octaves, logging the count; a range narrower
+   than an octave logs a WARNING rather than pretending.
+- RESULT, same measurement: festival_drop's trumpet went from digital
+  silence to -28.0 LUFS; mysterious_cave's mix-vs-piano correlation fell
+  0.999 -> 0.858 with the flute rising 0.000 -> 0.390. Nothing clamps in
+  any of the 11 songs; every stem now lands ON its computed target
+  (mysterious_cave: piano -22.7, flute -25.9, strings -31.7 — a 9 dB
+  spread instead of a piano and two ghosts).
+- All 85 wavs re-rendered (songs + videolab mixes + solos), since every
+  one predates the fix. 306/306 tests. scripts/render-hq-pages.mjs now
+  echoes any CLAMPED/WARNING/SILENT line out of the child renders it
+  pipes — the batch used to swallow them, which is precisely how the
+  piano-only mixes shipped unnoticed.
+- RESIDUAL, stated rather than tuned away: 8 of the 85 renders still
+  clamp, all by 0.3-3.3 dB and all on SOLO layers (plus bronik's fluid
+  stem at 0.4 dB). On a one-input solo the final loudnorm=I=-16 erases
+  the shortfall entirely, so these are cosmetic; the x12 ceiling stays
+  as a guard against amplifying a near-silent stem's noise floor.
+- LESSON: three stages each applied the engine's gain in good faith —
+  velocity, veltrack, and the mix target — and the product was silence.
+  A gain belongs to exactly one stage. The clamp hid it: a correction
+  that big should never have been quietly truncated.
