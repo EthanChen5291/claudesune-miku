@@ -13,13 +13,15 @@ import { bindFigure } from '../src/binder/bind.js';
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const MET = new Set(['4/4', '3/4', '2/4', '2/2', '6/8', '12/8']);
 
-test('canon shape: 29 entries, A6.1 discipline, aligned arrays', () => {
+test('canon shape: 30 entries, A6.1 discipline, aligned arrays', () => {
   const entries = Object.entries(FIGURATIONS_FOUNDATION);
-  assert.equal(entries.length, 29);
+  // 29 D61 canon + fnd_funk_bounce (D87, ratified by his vl_funkbounce keep)
+  assert.equal(entries.length, 30);
   for (const [name, e] of entries) {
     assert.ok(name.startsWith('fnd_'), `${name} lacks the fnd_ prefix`);
     assert.equal(e.pack, 'foundation');
-    assert.equal(e.provenance, 'canon');
+    // 'card-keep' (D87): ratified by a videolab card keep, not the D61 canon
+    assert.ok(['canon', 'card-keep'].includes(e.provenance), `${name}: provenance ${e.provenance}`);
     assert.equal(e.character, null, `${name}: character is earned by ear, never at authoring`);
     assert.equal(e.figure.length, e.onsets.length, `${name}: figure/onsets mismatch`);
     assert.equal(e.accents.length, e.onsets.length, `${name}: accents mismatch`);
@@ -27,7 +29,7 @@ test('canon shape: 29 entries, A6.1 discipline, aligned arrays', () => {
     assert.ok(e.octave >= 1 && e.octave <= 4, `${name}: octave ${e.octave} out of accompaniment range`);
     if (e.microtiming) assert.equal(e.microtiming.length, e.onsets.length, `${name}: microtiming mismatch`);
     // an unratified canon entry either awaits the ear or has been judged
-    if (e.verdict == null) assert.equal(e.needsEar, true, `${name}: unjudged but not needsEar`);
+    if (e.verdict == null && e.provenance !== 'card-keep') assert.equal(e.needsEar, true, `${name}: unjudged but not needsEar`);
   }
 });
 
@@ -43,15 +45,15 @@ test('every canon entry binds over major and minor probe contexts', () => {
   }
 });
 
-test('audition page builds with all 145 pattern×progression exprs green', () => {
+test('audition page builds with all 150 pattern×progression exprs green', () => {
   const log = execFileSync('node', ['scripts/audition-foundations.mjs'], { cwd: ROOT, encoding: 'utf8' });
-  assert.match(log, /5 progressions × 29 foundation patterns/);
-  assert.match(log, /145\/145 patterns evaluated green/);
+  assert.match(log, /5 progressions × 30 foundation patterns/);
+  assert.match(log, /150\/150 patterns evaluated green/);
   assert.match(log, /parses clean/);
   // chips render client-side; the static page carries the DATA JSON — every
   // pattern appears once in `patterns` and once per progression in `exprs`
   const html = readFileSync(join(ROOT, 'audition/foundations.html'), 'utf8');
-  assert.ok((html.match(/fnd_/g) ?? []).length >= 29 + 5 * 29, 'page DATA is missing patterns or exprs');
+  assert.ok((html.match(/fnd_/g) ?? []).length >= 30 + 5 * 30, 'page DATA is missing patterns or exprs');
 });
 
 test('foundations export round-trips: FIGURE_VERDICTS land and overlay ratifies', () => {

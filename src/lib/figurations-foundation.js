@@ -166,6 +166,25 @@ export const FIGURATIONS_FOUNDATION = {
     proposal: 'hit on 1, anticipation on the and-of-2, then air — the oldest syncopated comp cell',
   },
 
+  fnd_funk_bounce: {
+    // D87: promoted from the vl_funkbounce card HIS EAR KEPT ("I like this
+    // a lot. it's the most official song we've had so far") — the exact
+    // grid that card plays; ratified by that keep, not by the D62 blanket.
+    role: 'accompaniment', pack: 'foundation', style: 'funk', class: 'dance_bass',
+    provenance: 'card-keep', ratified: true,
+    bars: 1, grid: 8, meter_class: '4/4',
+    onsets: ['0/1', '3/8', '1/2', '7/8'],
+    figure: ['R', 'R+', '5', 'R+'],
+    accents: [0.95, 0.7, 0.8, 0.75],
+    legato: false, octave: 2,
+    tags: ['funk', 'bouncy', 'octave-bounce', 'syncopated', 'bass'],
+    fit: { nonChord: 0, chordness: 0.5, meanMidi: 45 },
+    needsEar: false,
+    // character line waits for the promote pass like every other entry;
+    // the ear evidence lives in the card keep
+    character: null,
+  },
+
   // ---- latin --------------------------------------------------------------
   fnd_habanera: {
     role: 'accompaniment', pack: 'foundation', style: 'latin', class: 'dance_bass',

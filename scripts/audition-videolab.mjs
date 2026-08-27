@@ -865,6 +865,83 @@ function card(c) { cards.push(c); }
   });
 }
 
+// ---------------------------------------------------------------------------
+// D87 — both new cards KEPT with the same note ("it's the most official song
+// we've had so far (covering its genre) — turn this into a full song with
+// progressions and melody and instrument setup changes etc."). The kept
+// 8-bar cards stay byte-identical; each grows into a 32-bar SONG beside it:
+// A (the kept groove) → B (new progression + a composed MELODY) → C
+// (breakdown, instruments strip) → A′ (full return, melody + peak layers).
+// ---------------------------------------------------------------------------
+{
+  const ctxA = { harmony: ['Cm', 'Eb', 'Ab', 'G'], barsPerChord: 1, key: 'C:minor' };
+  const ctxB = { harmony: ['Cm', 'Bb', 'Ab', 'G'], barsPerChord: 1, key: 'C:minor' };
+  const ctxStatic = { harmony: ['Cm'], barsPerChord: 1, key: 'C:minor' };
+  const CURVE = '"<0.95@8 1@8 0.78@8 1.05@8>"';
+  const wc = (e) => `${e}.mul(gain(${CURVE}))`;
+  // bass: A's turnaround grammar in every section; C thins to the 2-chord breath
+  const bass = wc(`note("<c2 eb2 ab1 [g2@2 g1 ~] c2 eb2 ab1 [g2@2 g1 ~] c2 bb1 ab1 [g2@2 g1 ~] c2 bb1 ab1 [g2@2 g1 ~] ab1 [g1@2 g2 ~] ab1 [g1@2 g2 ~] ab1 [g1@2 g2 ~] ab1 [g1@2 g2 ~] c2 eb2 ab1 [g2@2 g1 ~] c2 eb2 ab1 [g2@2 g1 ~]>").s("sawtooth").lpf(700).gain(0.85).clip(1.02)`);
+  const pedal = fig({ name: 'pedal-8ths', bars: 1, onsets: ['1/8', '2/8', '3/8', '4/8', '5/8', '6/8', '7/8'], figure: ['R', '~2', 'R', '~2', 'R', '~2', 'R'], accents: [0.5, 0.45, 0.5, 0.45, 0.5, 0.45, 0.5], legato: false }, ctxStatic, { sound: 'gm_kalimba', octave: 5, gainRange: [0.3, 0.5], fx: '.room(0.3).clip(0.7)' });
+  const pedalM = wc(`${pedal}.mask("<1@16 0@8 1@8>")`);
+  const accFigEntry = { name: 'accent-line', bars: 1, onsets: ['0'], figure: ['R'], accents: [0.9], legato: false };
+  const accA = fig(accFigEntry, ctxA, { sound: 'gm_kalimba', octave: 5, loopRoots: true, gainRange: [0.4, 0.62], fx: '.room(0.3).clip(0.7)' });
+  const accB = fig(accFigEntry, ctxB, { sound: 'gm_kalimba', octave: 5, loopRoots: true, gainRange: [0.4, 0.62], fx: '.room(0.3).clip(0.7)' });
+  const accentM = wc(`stack(${accA}.mask("<1@8 0@16 1@8>"), ${accB}.mask("<0@8 1@8 0@16>"))`);
+  const pad = wc(`stack(note("<[c4,g4] [eb4,bb4] [ab3,eb4] [g3,d4]>").mask("<1@8 0@16 1@8>"), note("<[c4,g4] [bb3,f4] [ab3,eb4] [g3,d4]>").mask("<0@8 1@8 0@16>"), note("<[ab3,eb4] [g3,d4]>").gain(1.3).mask("<0@16 1@8 0@8>")).s("supersaw").lpf(2200).gain(0.12).room(0.5).clip(1.1)`);
+  // the counter owns A and the breakdown, then YIELDS the octave-6 lane to
+  // the melody for B and the return (no two voices in one lane, his rule)
+  const counter = wc(`note("<[~ c6 d6 eb6] [g6@2 [f6 eb6] d6]>").s("gm_epiano1").gain(0.3).room(0.4).clip(1.1).mask("<1@8 0@8 1@8 0@8>")`);
+  const sparkle = wc(`note("<[c7 ~ ~ ~ ~ ~ d7 eb7] [d7 ~ ~ ~ ~ ~ eb7 f7] [eb7 ~ c8 ~ ~ ~ c8 d8] [eb8 ~ ~ ~ g8 ~ ~ ~]>").s("gm_music_box").gain(0.16).room(0.6).mask("<1@8 0@16 1@8>")`);
+  // the composed melody: 1-2-b3-4-5 vocabulary with the b6/5 colors the
+  // harmony hands it; one 8-bar statement, square owns it whole (D80)
+  const melody = `note("<[c6@2 d6 eb6] [f6@2 eb6 d6] [eb6@3 c6] [d6@4] [c6@2 d6 eb6] [g6@2 f6 eb6] [eb6@2 c6 bb5] [b5@4]>").s("gm_lead_1_square").gain(0.5).room(0.35).clip(1.1).mask("<0@8 1@8 0@8 1@8>").mul(gain("<0.97@8 1@8 0.9@8 1.02@8>"))`;
+  const mix = `stack(${bass}, ${pad}, ${pedalM}, ${accentM}, ${counter}, ${sparkle}, ${melody})`;
+  card({
+    name: 'vl_layerstack_song', kind: 'SONG',
+    title: 'The layer stack — the song',
+    techniques: ['A B C A′ over 32 bars: the kept groove → new progression (Cm Bb Ab G) with a composed square MELODY → breakdown (bass + pad + counter only) → full return with melody and the sparkle peak', 'the counter yields its octave-6 lane to the melody and returns in the breakdown — no two voices in one lane', 'accent-line harmony in every full section; bar-4 turnaround grammar throughout', 'melody stays in the 1-2-b3-4-5 vocabulary, cadencing on the V’s major third', 'section curve breathes: 0.95 / 1 / 0.78 / 1.05'],
+    sources: ['his vl_layerstack keep: “the most official song we’ve had so far ... turn this into a full song”'],
+    key: 'C:minor', bpm: 91, degrees: V.vid_layerstack_cm.degrees, base: 'vid_layerstack_cm', family: 'minor',
+    symbols: [...ctxA.harmony, '|', ...ctxB.harmony, '|', 'Ab', 'G'], totalBars: 32,
+    mix,
+    solos: { _melody: melody, _pedal: `stack(${pedal}, ${accA})`, _bass: bass, _counter: counter, _sparkle: sparkle, _pad: pad },
+    note: 'Your keep, grown to a full song. The 8 bars you kept are section A, byte-for-byte the same lanes. B walks a new bass (Cm Bb Ab G) under a composed melody in the same five-note vocabulary; C strips to bass + pad + counter (the breakdown); A′ brings everything home with the melody and the sparkle peak together. The kept card is untouched.',
+  });
+}
+
+{
+  const ctxA = { harmony: ['Ab^7', 'Gm7', 'Eb^7', 'Gm7'], barsPerChord: 1, key: 'Eb:major' };
+  const ctxB = { harmony: ['Cm9', 'F9', 'Ab^7', 'Bb13'], barsPerChord: 1, key: 'Eb:major' };
+  const ctxC = { harmony: ['Ab^7', 'Bb13'], barsPerChord: 1, key: 'Eb:major' };
+  const CURVE = '"<0.95@8 1@8 0.82@8 1.05@8>"';
+  const wc = (e) => `${e}.mul(gain(${CURVE}))`;
+  const bounceFig = { name: 'funk-bounce', bars: 1, onsets: ['0', '3/8', '1/2', '7/8'], figure: ['R', 'R+', '5', 'R+'], accents: [0.95, 0.7, 0.8, 0.75], legato: false };
+  const bOpts = { sound: 'gm_slap_bass_2', octave: 2, loopRoots: true, gainRange: [0.55, 0.9], fx: '.clip(0.6)' };
+  const bounce = wc(`stack(${fig(bounceFig, ctxA, bOpts)}.mask("<1@8 0@16 1@8>"), ${fig(bounceFig, ctxB, bOpts)}.mask("<0@8 1@8 0@16>"), ${fig(bounceFig, ctxC, bOpts)}.mask("<0@16 1@8 0@8>"))`);
+  const skFig = { name: 'sawkeys-stabs', bars: 1, onsets: ['0', '1/8', '1/2'], figure: ['3.5.7', '3.5.7', '9.3.5.7'], accents: [0.7, 0.5, 0.78], legato: false };
+  const skOpts = { sound: 'supersaw', octave: 4, loopRoots: true, gainRange: [0.2, 0.4], fx: '.lpf(2800).room(0.3).clip(0.55)' };
+  const sawkeys = wc(`stack(${fig(skFig, ctxA, skOpts)}.mask("<1@8 0@16 1@8>"), ${fig(skFig, ctxB, skOpts)}.mask("<0@8 1@8 0@16>"))`);
+  const spark = wc(`note("<[~ g6 ~ f6] [~ eb6 ~ d6]>").s("gm_music_box").gain(0.18).room(0.5).clip(0.3).mask("<1@8 0@8 1@16>")`);
+  const drumsFull = `stack(s("bd ~ [~ bd] ~").gain(0.4), s("~ sd ~ sd").gain(0.3), s("hh*8").gain(0.16)).mask("<1@16 0@8 1@8>")`;
+  const drumsThin = `stack(s("~ sd ~ sd").gain(0.24), s("hh*8").gain(0.13)).mask("<0@16 1@8 0@8>")`;
+  // the Rhodes melody: pentatonic enough to sing over BOTH progressions —
+  // the ii-V colors of B and the kept IV-iii orbit of A′ (9ths and maj7s
+  // land by construction); one statement, the e-piano owns it whole
+  const melody = `note("<[g5@2 bb5 c6] [a5@2 g5 f5] [eb5@3 f5] [g5@4] [c6@2 bb5 g5] [a5@2 c6 a5] [g5@2 eb5 f5] [g5@4]>").s("gm_epiano1").gain(0.52).room(0.4).clip(1.15).mask("<0@8 1@8 0@8 1@8>").mul(gain("<0.97@8 1@8 0.92@8 1.02@8>"))`;
+  const mix = `stack(${bounce}, ${sawkeys}, ${spark}, ${drumsFull}, ${drumsThin}, ${melody})`;
+  card({
+    name: 'vl_funkbounce_song', kind: 'SONG',
+    title: 'Funk bounce — the song',
+    techniques: ['A B C A′ over 32 bars: the kept groove → a ii-V color section (Cm9 F9 Ab^7 Bb13) with a composed Rhodes MELODY → stripped bridge (bounce + backbeat walk + thin drums) → full return with the melody over the original changes', 'one pentatonic-plus-color melody sings over BOTH progressions (9ths/maj7s land by construction)', 'the backbeat music-box walk yields to the melody in B and features in the bridge', 'first V of the piece arrives as Bb13 at B’s turn — color, not function', 'instrument setup changes per section: full / melody-led / stripped / everything'],
+    sources: ['his vl_funkbounce keep: “I like this a lot ... turn this into a full song”'],
+    key: 'Eb:major', bpm: 112, degrees: V.vid_venexxi_ebsaw.degrees, base: 'vid_venexxi_ebsaw', family: 'major',
+    symbols: [...ctxA.harmony, '|', ...ctxB.harmony, '|', ...ctxC.harmony], totalBars: 32,
+    mix,
+    solos: { _melody: melody, _bounce: bounce, _sawkeys: sawkeys, _sparkle: spark, _drums: `stack(${drumsFull}, ${drumsThin})` },
+    note: 'Your keep, grown. A is the groove you kept, untouched in its own card. B moves to Cm9-F9-Ab^7-Bb13 — the piece’s first V, arriving as a 13 color at the turn — under a composed Rhodes melody; C strips to the bounce, the backbeat walk and thin drums; A′ puts the same melody over the original changes (the 9ths and maj7s land on both progressions by construction).',
+  });
+}
+
 // ---- every mix through the engine's own transpiler -------------------------
 let checked = 0;
 const CHECKS = [];

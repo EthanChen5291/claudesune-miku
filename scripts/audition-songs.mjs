@@ -138,6 +138,27 @@ const PROMPTS = [
   { emotion: 'nostalgic', environment: 'snow' },
   { emotion: 'somber', environment: 'aftermath' },
   { emotion: 'goofy', environment: 'kitchen' },
+  // D86 (his round-9 ask): fully-synth songs — "1-2 fully synth calm songs
+  // with appropriate environmental prompts" (lab + menu are the synth-native
+  // environments) "and then generate another fully synth progression songs"
+  // (stealth + casino carry the energetic side). All four run the full
+  // machinery: letters, travel, treats, curves — full songs, all synth.
+  { emotion: 'calm', environment: 'lab' },
+  { emotion: 'calm', environment: 'menu' },
+  { emotion: 'tense', environment: 'stealth' },
+  { emotion: 'excited', environment: 'casino' },
+  // D88 (his ask: "generate 8 different songs ... using what you learned"):
+  // eight fresh vibe cells carrying the anti-generic pattern — colored
+  // exemplar retrieval, a B-letter bridge progression, breakdown sections,
+  // bar-4 sub turnarounds, and every D85-D87 layer policy.
+  { emotion: 'mysterious', environment: 'desert' },
+  { emotion: 'excited', environment: 'training' },
+  { emotion: 'calm', environment: 'rest' },
+  { emotion: 'tense', environment: 'lab' },
+  { emotion: 'goofy', environment: 'casino' },
+  { emotion: 'somber', environment: 'snow' },
+  { emotion: 'happy', environment: 'festival' },
+  { emotion: 'nostalgic', environment: 'shop' },
 ];
 
 const clicked = (name) => {
@@ -194,12 +215,26 @@ function buildSong(prompt, name, opts = {}) {
   // a low-chromaticism vibe prefers PLAIN-TRIAD exemplars (the D51 taste
   // signal). Applied only where no keep is at stake — a song he kept must not
   // re-roll its harmony under a rule change.
-  if (!priorKeep && (v.colorBias ?? 0) <= 0.2 && famPool.length > 3) {
-    const plainness = (deg) => {
+  // D64 refined by D88 (his "less generic" verdict, measured: the praised
+  // lab songs run ~100% colored chords, the suite ran 43%): "low color"
+  // means low CHROMATICISM (the water kill was a dim chain), NOT plain
+  // triads — diatonic color (m7/^7/9/sus/6) is his home (D74). Every
+  // unkept song now prefers the colored half of its pool; a low-colorBias
+  // vibe additionally pushes chromatic entries (alt/dim/aug) to the back.
+  if (!priorKeep && famPool.length > 3) {
+    const colorness = (deg) => {
       const t = deg.split(' ');
-      return t.filter((x) => !x.includes(':') || /:m$/.test(x)).length / t.length;
+      return t.filter((x) => x.includes(':') && !/:m$/.test(x)).length / t.length;
     };
-    const ranked = [...famPool].sort((a, b) => plainness(b[1].degrees) - plainness(a[1].degrees) || a[0].localeCompare(b[0]));
+    const chromness = (deg) => {
+      const t = deg.split(' ');
+      return t.filter((x) => /[#b]|o|\+|alt/.test(x.split(':')[1] ?? '')).length / t.length;
+    };
+    const lowChrom = (v.colorBias ?? 0) <= 0.2;
+    const ranked = [...famPool].sort((a, b) =>
+      (lowChrom ? chromness(a[1].degrees) - chromness(b[1].degrees) : 0)
+      || colorness(b[1].degrees) - colorness(a[1].degrees)
+      || a[0].localeCompare(b[0]));
     famPool = ranked.slice(0, Math.ceil(ranked.length / 2));
   }
   if (opts.loop4) {
@@ -279,6 +314,34 @@ function buildSong(prompt, name, opts = {}) {
   const rootDriven = accFig.figure.every((t) => /^R\+?$/.test(t))
     && accFig.onsets.length / (accFig.bars ?? 1) <= 8;
   const accToBass = rootDriven && v.bpm >= 140 && ['driving', 'foreground'].includes(v.percussion.presence);
+  // D86 (his round-9 rule, engine-wide): ENERGETIC songs spread OFF the
+  // piano — the accompaniment hand binds a synth voice — unless the vibe is
+  // explicitly piano territory ("piano heavy like goofy or playful or
+  // solo/duet/trio"). fullSynth songs force it regardless of vibe.
+  const PIANO_MOODS = ['goofy', 'comic', 'playful', 'quirky', 'silly', 'whimsical'];
+  const pianoVibe = (v.moods ?? []).some((m) => PIANO_MOODS.includes(m))
+    || ['solo', 'duet', 'trio'].includes(v.ensemble.anchor);
+  const energetic = ['driving', 'foreground'].includes(v.percussion.presence) || v.bpm >= 140;
+  const synthAcc = Boolean(opts.fullSynth) || (energetic && !pianoVibe);
+  // fully-synth voice map: every acoustic cast/handoff instrument retints to
+  // the D85 palette; names already synth pass through
+  const SYNTH_OF = (inst) => {
+    if (/synth|supersaw|sawtooth|square|epiano|music_box|kalimba|pad_|^gm_pad/.test(inst)) return inst;
+    if (/string|cello|violin|viola|tremolo|fiddle/.test(inst)) return 'gm_synth_strings_1';
+    if (/bass/.test(inst)) return 'gm_synth_bass_1';
+    if (/vibraphone|celesta|glocken|xylophone|marimba|bell|chime/.test(inst)) return 'gm_music_box';
+    if (/piano|harpsichord|clavinet/.test(inst)) return 'gm_epiano1';
+    if (/flute|recorder|whistle|ocarina|calliope|clarinet|oboe|pan_/.test(inst)) return 'gm_lead_1_square';
+    if (/trumpet|trombone|horn|brass|sax|tuba/.test(inst)) return 'gm_lead_2_sawtooth';
+    if (/pizzicato|guitar|koto|harp|banjo/.test(inst)) return 'gm_kalimba';
+    return 'gm_pad_warm';
+  };
+  // D87 (his construction keep-note, "synths sound better than piano for
+  // this vibe I think - learn this"): synth-acc songs carry SYNTH LEADS
+  // too — saw above 120bpm, square below (fullSynth calm songs keep the
+  // Rhodes lead under 120).
+  const LEAD_SOUND = opts.fullSynth ? (v.bpm >= 120 ? 'gm_lead_2_sawtooth' : 'gm_epiano1')
+    : synthAcc ? (v.bpm >= 120 ? 'gm_lead_2_sawtooth' : 'gm_lead_1_square') : 'piano';
   const accOnsets = accFig.onsets;
   const accOct = Math.max(1, Math.min(3, v.register.accOctave));
   // D63 articulation: style-level duration + damper on top of each pattern's
@@ -297,9 +360,13 @@ function buildSong(prompt, name, opts = {}) {
   // only -13% because the retrieval band re-absorbed it; 0.2 pins the
   // target to the sparse end of the cell pool)
   if (accHalfTime) LEAD.densityMul = Math.min(LEAD.densityMul, 0.2);
+  // D87 (stealth note: the melody "does too much \"talking\" - too active
+  // for stealth"): a song may thin its lead directly
+  if (opts.leadDensityMul) LEAD.densityMul = Math.min(LEAD.densityMul, opts.leadDensityMul);
   // D64/D65 (his boss note, twice): when foreground drums play, the melody
   // rides louder — the boost stepped 0.12 → 0.18 ("could still be a bit louder")
-  const leadGain = Math.min(1, Math.round((0.85 * LEAD.gainMul + (v.percussion.presence === 'foreground' ? 0.18 : 0)) * 100) / 100);
+  // D86: opts.leadGainMul — a song-scoped trim dial (fight: "piano (very loud)")
+  const leadGain = Math.min(1, Math.round((0.85 * LEAD.gainMul + (v.percussion.presence === 'foreground' ? 0.18 : 0)) * (opts.leadGainMul ?? 1) * 100) / 100);
   const accFx = ART.pedal ? '.clip(1.25).room(0.5)'
     : ART.style === 'staccato' ? '.clip(0.55).room(0.15)'
     : ART.style === 'legato' ? '.clip(1.1).room(0.3)'
@@ -310,9 +377,12 @@ function buildSong(prompt, name, opts = {}) {
   // D81: loopRoots everywhere (the D76 spiral guard); the accToBass branch
   // binds gainRange so its accents sound (D78) instead of one flat velocity
   const bindAcc = (fig, ctx) => bindFigure(fig, ctx, v.meter, {
-    sound: accToBass ? 'gm_synth_bass_1' : 'piano',
+    // D86: synthAcc songs put the accompaniment hand on the Soft Suitcase
+    // e-piano (unless accToBass already gave it to the synth bass) — "like
+    // in construction left hand piano part, replace it with synths"
+    sound: accToBass ? 'gm_synth_bass_1' : synthAcc ? 'gm_epiano1' : 'piano',
     loopRoots: true,
-    ...(accToBass ? { gainRange: [0.6, 0.95] } : {}),
+    ...(accToBass ? { gainRange: [0.6, 0.95] } : synthAcc ? { gainRange: [0.5, 0.85] } : {}),
     fx: accToBass ? '.room(0.15).clip(0.95)' : accFx,
     // the vibe's accFloor lifts a pattern's home octave (water: "too low"),
     // never lowers it — a wide oom-pah keeps its cellar
@@ -325,7 +395,7 @@ function buildSong(prompt, name, opts = {}) {
   const leadCell = melodyRhythm(v.meter, v.bpm, name, { target: leadTarget, accDensity, accOnsets, beats });
   const leadSeed = fnv(name);
   const leadBound = bindMelody(leadCell, ctxBar, v.meter, {
-    style: 'toby-fox', seed: leadSeed, octave: v.register.leadOctave, sound: 'piano', fx: leadFx,
+    style: 'toby-fox', seed: leadSeed, octave: v.register.leadOctave, sound: LEAD_SOUND, fx: leadFx,
     hold: LEAD.hold, mergeRepeats: LEAD.merge, articFloor: opts.articFloor ?? null,
   });
   // D73: half-time thinning changes only the SOUNDING piano — the planner
@@ -338,7 +408,7 @@ function buildSong(prompt, name, opts = {}) {
     const t0 = Math.max(2, Math.round(melodyDensityTarget(v.bpm, accDensity) * 0.55));
     planCell = melodyRhythm(v.meter, v.bpm, name, { target: t0, accDensity, accOnsets, beats });
     planPeriod = bindMelody(planCell, ctxBar, v.meter, {
-      style: 'toby-fox', seed: leadSeed, octave: v.register.leadOctave, sound: 'piano', fx: leadFx,
+      style: 'toby-fox', seed: leadSeed, octave: v.register.leadOctave, sound: LEAD_SOUND, fx: leadFx,
       hold: LEAD.hold, mergeRepeats: LEAD.merge, articFloor: opts.articFloor ?? null,
     }).boundMeta.period;
   }
@@ -351,6 +421,8 @@ function buildSong(prompt, name, opts = {}) {
   // D62 ensemble dial: the vibe's voice count CAPS the cast before the form
   const fullCast = plan.layers.length;
   plan.layers = plan.layers.slice(0, v.ensemble.count);
+  // D86: fully-synth songs retint every planned voice to the D85 palette
+  if (opts.fullSynth) for (const l of plan.layers) l.instrument = SYNTH_OF(l.instrument);
   // D65 (cave, both rounds: "the secondary melody instrument is way too
   // high"): the song may demand its melodic layers sit BELOW the lead. Two
   // octaves down, because the melody WALK climbs well above its root octave
@@ -379,7 +451,7 @@ function buildSong(prompt, name, opts = {}) {
       plan.layers.push({
         id: `${name}::strings_pad`, part: 'harmony_support', derives: 'chords',
         contributes: 'sustained chord voicings underneath (his strings rule)',
-        instrument: 'gm_string_ensemble_1', octave: 4, gain: 0.42, mass: 0.7,
+        instrument: opts.fullSynth ? 'gm_synth_strings_1' : 'gm_string_ensemble_1', octave: 4, gain: 0.42, mass: 0.7,
         entry: 'bed', canLead: false, addsDensity: 0, seed: fnv(`${name}::strings_pad`),
       });
     }
@@ -498,11 +570,12 @@ function buildSong(prompt, name, opts = {}) {
   const castHasMelodyVoice = rendered.layers.some((l) => /alternate_melody|melody_takeover|melody_backup/.test(l.id));
   const HANDOFF_POOL = ['gm_flute', 'gm_vibraphone', 'gm_epiano1'];
   const letterSound = (L) => {
-    if (L === 'A' || castHasMelodyVoice || opts.noHandoff) return 'piano';
+    if (L === 'A' || castHasMelodyVoice || opts.noHandoff) return LEAD_SOUND;
     const others = [...new Set((mf.sections ?? []).map((x) => (x.letter ?? '').replace('*', '')).filter((x) => x && x !== 'A'))].sort();
     const ix = others.indexOf(L);
-    if (ix < 0) return 'piano';
-    return HANDOFF_POOL[(fnv(`${name}|handoff`) + ix) % HANDOFF_POOL.length];
+    if (ix < 0) return LEAD_SOUND;
+    const snd = HANDOFF_POOL[(fnv(`${name}|handoff`) + ix) % HANDOFF_POOL.length];
+    return opts.fullSynth ? SYNTH_OF(snd) : snd;
   };
   const bindLetter = (L, ctxL) => {
     const snd = letterSound(L);
@@ -512,31 +585,59 @@ function buildSong(prompt, name, opts = {}) {
     });
   };
 
-  // ---- the treat (D59): harmony varies at the last reprise -----------------
+  // ---- the harmonic departure ----------------------------------------------
+  // D59 treat: harmony varies at the LAST REPRISE (kept songs keep this).
+  // D88 ("less generic", measured: the praised lab songs carry ~3 distinct
+  // progression sections; the suite ran one loop + a one-op treat): unkept
+  // and future songs give the B LETTER its own progression — a deeper
+  // variation (budget 2) owns every B section, so the bridge is a real
+  // harmonic departure, not a decoration. The star machinery is reused
+  // wholesale: melody, accompaniment, cast voices and extras all rebind to
+  // the bridge harmony in those sections.
   let vary = null;
-  if (mf.varySection != null) {
+  const bridgeMode = (opts.bridgeHarmony ?? !priorKeep)
+    && mf.sections.some((s) => (s.letter ?? '').replace('*', '') === 'B');
+  if (bridgeMode) {
+    const t = varyProgression(e, {
+      budget: 2, intensity: 0.55, seed: `${name}|bridge`,
+      allow: ['recolour', 'suspend', 'mixture', 'alter_dominant'],
+    });
+    if (t.lineage.changed) vary = t;
+  }
+  if (!vary && mf.varySection != null) {
     const t = varyProgression(e, {
       budget: 1, intensity: 0.4, seed: `${name}|treat`,
       allow: ['recolour', 'suspend', 'mixture', 'alter_dominant'],
     });
     if (t.lineage.changed) vary = t;
   }
+  const bridgeOn = Boolean(vary) && bridgeMode;
   let mfx = mf;
   let ctxBarV = null;
   let renderedV = null;
   let varyInfo = null;
-  const varyBars = form.sections.flatMap((sec) => Array(sec.bars).fill(sec.index === mf.varySection ? 1 : 0));
+  const varySecIdx = new Set();
+  if (vary && bridgeOn) {
+    for (const s of mf.sections) if ((s.letter ?? '').replace('*', '') === 'B') varySecIdx.add(s.index);
+  } else if (vary) {
+    varySecIdx.add(mf.varySection);
+  }
+  const varyBars = form.sections.flatMap((sec) => Array(sec.bars).fill(varySecIdx.has(sec.index) ? 1 : 0));
   if (vary) {
     const symbolsV = renderProgression(vary, key);
     const barSymsV = plan4 ? symbolsV.flatMap((sym, i) => Array(plan4[i]).fill(sym)) : symbolsV;
     ctxBarV = { harmony: barSymsV, barsPerChord: 1, key };
-    varyInfo = { op: vary.lineage.ops[0]?.op ?? vary.lineage.ops[0], symbols: symbolsV };
+    varyInfo = {
+      op: vary.lineage.ops.map((o) => o.op ?? o).join(' + '),
+      symbols: symbolsV,
+      kind: bridgeOn ? 'bridge (B owns it)' : 'treat @ last reprise',
+    };
     renderedV = renderCtx(ctxBarV);
-    const vs = mf.sections.find((s) => s.varyHarmony);
+    const starred = [...new Set([...varySecIdx].map((i) => mf.sections.find((s) => s.index === i)?.letter).filter(Boolean))];
     mfx = {
       ...mf,
-      sections: mf.sections.map((s) => (s.varyHarmony ? { ...s, letter: `${s.letter}*` } : s)),
-      letters: [...mf.letters, `${vs.letter}*`],
+      sections: mf.sections.map((s) => (varySecIdx.has(s.index) ? { ...s, letter: `${s.letter}*` } : s)),
+      letters: [...mf.letters, ...starred.map((L) => `${L}*`)],
     };
   }
 
@@ -729,23 +830,51 @@ function buildSong(prompt, name, opts = {}) {
     }
     return pieces;
   };
-  if (opts.texture) {
-    const tPool = RATIFIED_FND.filter(([n, f]) => f.class === opts.texture.class && f.meter_class === v.meter && n !== accName);
-    if (tPool.length) {
-      const [tName, tFig0] = tPool[fnv(`${name}|texture`) % tPool.length];
+  // D86 (his round-9 fight/boss notes: "the texture isn't fully sounding ...
+  // add more textures since it's meant to be textured and energetic"):
+  // energetic non-piano-vibe songs carry a DEFAULT texture beside any opted
+  // one (fight ends with two, distinct classes), the band is AUDIBLE now
+  // (0.3-0.52 — the old 0.22-0.42 kalimba vanished under the mix), coverage
+  // widens to energy>=3 bars (was >=4), and the voices are synths: kalimba
+  // pluck first, low-passed supersaw stabs second.
+  {
+    const texSpecs = [];
+    if (opts.texture) texSpecs.push(opts.texture);
+    if ((energetic && !pianoVibe) || opts.fullSynth) {
+      // second/default texture stays a COMPACT class (offbeat chords) — the
+      // first cut used 'arp' and fnd_ballad_8ths_arch arched to Eb6, ten
+      // semis over fight's lead peak (the verify blocker)
+      texSpecs.push({ class: 'offbeat', octave: 3 });
+    }
+    const texSounds = ['gm_kalimba', 'supersaw'];
+    const usedT = new Set();
+    texSpecs.forEach((spec, ti) => {
+      // compact-class chain: if the wanted class is exhausted (offbeat has
+      // ONE ratified 4/4 entry and fight's opt already took it), fall
+      // through to the next chordal-stab class rather than dropping the
+      // texture — his "add more textures" note
+      let tPool = [];
+      for (const cls of [spec.class, 'comp', 'block', 'riff']) {
+        tPool = RATIFIED_FND.filter(([n, f]) => f.class === cls && f.meter_class === v.meter && n !== accName && !usedT.has(n));
+        if (tPool.length) { spec = { ...spec, class: cls }; break; }
+      }
+      if (!tPool.length) return;
+      const [tName, tFig0] = tPool[fnv(`${name}|texture${ti ? ti + 1 : ''}`) % tPool.length];
+      usedT.add(tName);
       const tFig = { ...tFig0, name: tName };
-      // D85 ("less piano heavy ... replace some of the parts of the piano
-      // with synth types"): on energetic songs the mid texture is a synth
-      // pluck (gm_kalimba -> Surge "Trancy" in HQ), not a third piano hand
-      const tSound = v.bpm >= 120 ? 'gm_kalimba' : 'piano';
-      const bindT = (ctx) => bindFigure(tFig, ctx, v.meter, { sound: tSound, loopRoots: true, gainRange: [0.22, 0.42], fx: accFx, octave: opts.texture.octave }).expr;
-      const tBars = form.sections.flatMap((sec) => Array(sec.bars).fill((ENERGY[sec.archetype] ?? 3) >= 4 ? 1 : 0));
+      const tSound = (synthAcc || v.bpm >= 120) ? texSounds[ti % texSounds.length] : 'piano';
+      const tFx = tSound === 'supersaw' ? '.lpf(2600).room(0.25).clip(0.5)' : accFx;
+      // octave capped at 3: at 4 the chord tokens' tops poked ABOVE the
+      // leads (verify pass: kalimba Ab5-D6 vs lead peaks F5-C6 on three
+      // songs) — support tops sit UNDER the melody (D77)
+      const bindT = (ctx) => bindFigure(tFig, ctx, v.meter, { sound: tSound, loopRoots: true, gainRange: [0.3, 0.52], fx: tFx, octave: Math.min(spec.octave, 3) }).expr;
+      const tBars = form.sections.flatMap((sec) => Array(sec.bars).fill((ENERGY[sec.archetype] ?? 3) >= 3 ? 1 : 0));
       if (tBars.some(Boolean)) {
         extraParts.push(...varySplit(bindT, tBars));
-        extraSolos._texture = bindT(ctxBar);
-        extraInfo.push(`texture ${tName} (${opts.texture.class}, oct ${opts.texture.octave}, ${tSound})`);
+        extraSolos[ti ? `_texture${ti + 1}` : '_texture'] = bindT(ctxBar);
+        extraInfo.push(`texture ${tName} (${spec.class}, oct ${Math.min(spec.octave, 3)}, ${tSound})`);
       }
-    }
+    });
   }
   // D73 ("also for appropriate songs i want to try a deep bass like in
   // beats. does strudel have a sound for that?" — yes: the pure sine at
@@ -753,6 +882,7 @@ function buildSong(prompt, name, opts = {}) {
   // beat-forward songs a sub-bass holds the chord root at octave 1, masked
   // to the same bars the beat plays, so bass and beat arrive as one floor.
   // Policy, not a song patch: any driving/foreground drum song >= 140bpm.
+  if (synthAcc && !accToBass) extraInfo.push('acc hand on gm_epiano1 (synth spread \u2014 his round-9 rule)');
   if (accToBass) {
     extraInfo.push('bass pulse: acc roots on gm_synth_bass_1 (the piano low part IS the bass — his fight note)');
   } else if (drumBarsShared && v.bpm >= 140 && ['driving', 'foreground'].includes(v.percussion.presence)) {
@@ -760,8 +890,21 @@ function buildSong(prompt, name, opts = {}) {
     // take over (boss's 16th octave-bounce stays piano), the sub instead
     // HOLDS the bar root under the beat — on gm_synth_bass_1, not bare
     // sine, and at octave 2: "i can't hear it" killed the pure sine.
-    const subFig = { name: 'sub-bass', bars: 1, onsets: ['0'], figure: ['R'], accents: [0.8], legato: true };
-    const bindSub = (ctx) => bindFigure(subFig, ctx, v.meter, { octave: 2, sound: 'gm_synth_bass_1', loopRoots: true, gainRange: [0.6, 0.9], fx: '.clip(1.02)' }).expr;
+    // D88 (the praised songs' bar-4 grammar): unkept/future songs' sub
+    // holds three bars then drops an octave on bar 4's back half — the
+    // turnaround event every lab bass has. Kept songs keep the flat hold.
+    const subHold = priorKeep
+      ? { name: 'sub-bass', bars: 1, onsets: ['0'], figure: ['R'], accents: [0.8], legato: true }
+      : { name: 'sub-bass', bars: 4, onsets: ['0/1', '1/1', '2/1', '3/1'], figure: ['R', 'R', 'R', 'R'], accents: [0.8, 0.75, 0.75, 0.7], legato: true };
+    const subDrop = { name: 'sub-drop', bars: 4, onsets: ['7/2'], figure: ['R'], accents: [0.82], legato: true };
+    const bindSub = (ctx) => {
+      const hold = bindFigure(subHold, ctx, v.meter, { octave: 2, sound: 'gm_synth_bass_1', loopRoots: true, gainRange: [0.6, 0.9], fx: '.clip(1.02)' }).expr;
+      if (priorKeep) return hold;
+      // the bar-4 turnaround: the root restated an octave DOWN on the back
+      // half of every 4th bar (the lab basses' grammar)
+      const drop = bindFigure(subDrop, ctx, v.meter, { octave: 1, sound: 'gm_synth_bass_1', loopRoots: true, gainRange: [0.62, 0.85], fx: '.clip(1.02)' }).expr;
+      return `stack(${hold}, ${drop})`;
+    };
     extraParts.push(...varySplit(bindSub, drumBarsShared));
     extraSolos._sub_bass = bindSub(ctxBar);
     extraInfo.push('sub-bass: gm_synth_bass_1 held roots (oct 2) under the beat');
@@ -785,7 +928,7 @@ function buildSong(prompt, name, opts = {}) {
       name: 'counterclimb', bars: 1, onsets: ['1/4', '2/4', '3/4'],
       figure: ['R', '3', '5'], accents: [0.6, 0.66, 0.72], legato: true,
     };
-    const clSound = (accToBass || (drumBarsShared && v.bpm >= 140)) ? 'gm_synth_strings_1' : 'gm_string_ensemble_1';
+    const clSound = (opts.fullSynth || synthAcc || (drumBarsShared && v.bpm >= 140)) ? 'gm_synth_strings_1' : 'gm_string_ensemble_1';
     const clOpts = { octave: 4, sound: clSound, loopRoots: true, gainRange: [0.12, 0.24], fx: '.room(0.45)', rhythmName: 'counterline' };
     const bindCl = (ctx) => bindFigure(clHold, ctx, v.meter, clOpts).expr;
     const bindClimb = (ctx) => bindFigure(clClimb, ctx, v.meter, clOpts).expr;
@@ -797,6 +940,54 @@ function buildSong(prompt, name, opts = {}) {
       if (even.some(Boolean)) extraParts.push(...varySplit(bindClimb, even));
       extraSolos._counterline = `stack(${bindCl(ctxBar)}.mask("<1 0>"), ${bindClimb(ctxBar)}.mask("<0 1>"))`;
       extraInfo.push(`counterline: held 3rd / beat-2 climb R-3-5 alternating (${clSound}, oct 4)`);
+    }
+  }
+  // D87 ("i want you to see what you did and teach the engine" — the kept
+  // vl_layerstack card): the ACCENT-LINE device — a STATIC tonic pedal in
+  // 8ths whose bar-downbeat accent alone tracks the harmony (the chord
+  // change carried by one note per bar). Default where a fullSynth song's
+  // own accompaniment is sustained/pulsing, so the pedal complements
+  // rather than doubles. opts.accentLine: false opts out.
+  if (opts.accentLine !== false && opts.fullSynth && v.bpm >= 90 && ['sustain', 'pulse'].includes(accFig.class)) {
+    const tonicCtx = { harmony: [barSyms[0]], barsPerChord: 1, key };
+    const pedFig = { name: 'accent-pedal', bars: 1, onsets: ['1/8', '2/8', '3/8', '4/8', '5/8', '6/8', '7/8'], figure: ['R', '~2', 'R', '~2', 'R', '~2', 'R'], accents: [0.5, 0.45, 0.5, 0.45, 0.5, 0.45, 0.5], legato: false };
+    const alFig = { name: 'accent-line', bars: 1, onsets: ['0'], figure: ['R'], accents: [0.9], legato: false };
+    const pedalExpr = bindFigure(pedFig, tonicCtx, v.meter, { sound: 'gm_kalimba', octave: 4, gainRange: [0.24, 0.4], fx: '.room(0.3).clip(0.7)' }).expr;
+    const bindAL = (ctx) => `stack(${pedalExpr}, ${bindFigure(alFig, ctx, v.meter, { sound: 'gm_kalimba', octave: 4, loopRoots: true, gainRange: [0.32, 0.5], fx: '.room(0.3).clip(0.7)' }).expr})`;
+    const alBars = form.sections.flatMap((sec) => Array(sec.bars).fill((ENERGY[sec.archetype] ?? 3) >= 3 ? 1 : 0));
+    if (alBars.some(Boolean)) {
+      extraParts.push(...varySplit(bindAL, alBars));
+      extraSolos._accent_line = bindAL(ctxBar);
+      extraInfo.push('accent line: static tonic pedal 8ths + chord-tracking downbeat accents (gm_kalimba, oct 4)');
+    }
+  }
+  // D87 (his round-10 MAIN directive): HARMONY MELODIES — "in the harmony
+  // there should be more textures, importantly layers with their own
+  // melody that compliment rather than purely just regular chords/
+  // foundation tone stuff. there can be multiple at a time and each one
+  // could also instead of just being a note, be multiple notes possibly".
+  // The DESCANT: a 2-bar phrase where a held third+fifth DYAD breathes for
+  // a bar, then its top voice walks 5-6-5 in quarters (the lift he keeps
+  // choosing). It rides BESIDE the counterline and the pad phrases —
+  // several harmony melodies at once — in a whisper-plus band, registered
+  // under the lead (D77). opts.descant: false opts out; opts.descant
+  // {octave, tension} reshapes it (tension = a 9-over-5 sus cluster held
+  // high — stealth's "more tension by having a high texture").
+  if (opts.descant !== false && v.ensemble.count >= 2) {
+    const dsc = (opts.descant && typeof opts.descant === 'object') ? opts.descant : {};
+    // at least an octave under the lead's home octave (aftermath's low-
+    // sitting lead was topped +11 by the oct-4 walk — verify blocker)
+    const dOct = dsc.octave ?? Math.max(3, Math.min(energetic ? 3 : 4, (v.register.leadOctave ?? 5) - 1));
+    const dFig = dsc.tension
+      ? { name: 'descant-tension', bars: 2, onsets: ['0', '5/4', '6/4', '7/4'], figure: ['9.5', '5', '6', '5'], accents: [0.6, 0.55, 0.62, 0.55], legato: true }
+      : { name: 'descant', bars: 2, onsets: ['0', '5/4', '6/4', '7/4'], figure: ['3.5', '5', '6', '5'], accents: [0.6, 0.55, 0.62, 0.55], legato: true };
+    const dSound = (opts.fullSynth || synthAcc) ? 'gm_synth_strings_1' : 'gm_string_ensemble_1';
+    const bindD = (ctx) => bindFigure(dFig, ctx, v.meter, { octave: dOct, sound: dSound, loopRoots: true, gainRange: [0.15, 0.28], fx: '.room(0.5)', rhythmName: 'descant' }).expr;
+    const dBars = form.sections.flatMap((sec) => Array(sec.bars).fill(sec.lead !== 'none' ? 1 : 0));
+    if (dBars.some(Boolean)) {
+      extraParts.push(...varySplit(bindD, dBars));
+      extraSolos._descant = bindD(ctxBar);
+      extraInfo.push(`descant: held 3+5 dyad / 5-6-5 walk, 2-bar phrase (${dSound}, oct ${dOct}${dsc.tension ? ', tension 9-over-5' : ''})`);
     }
   }
   // D85 (his "high end patterns ... to compliment the tracks", the batch-3
@@ -848,12 +1039,37 @@ function buildSong(prompt, name, opts = {}) {
     extraInfo.push('funk bounce: gm_slap_bass_2 R/R+/5/R+ syncopated under the beat');
   }
 
+  // D88 (the praised songs' C sections; the suite's base acc NEVER dropped
+  // out — a still-open item since the old round 10): unkept/future songs
+  // with a low-energy interior section get a real BREAKDOWN there — the
+  // base accompaniment strips and a held-root floor carries it with the
+  // extras (counterline/descant/pads keep playing by their own gates).
+  let bdMaskStr = null;
+  if (opts.breakdown !== false && !priorKeep && !opts.dropIntro && form.sections.length >= 3) {
+    const interiorAll = form.sections.filter((sec, i) => i > 0 && i < form.sections.length - 1);
+    const interior = interiorAll.filter((sec) => (ENERGY[sec.archetype] ?? 3) <= 2);
+    // prefer the form's own breathing point; else strip the section before
+    // the finale (every praised lab song breaks down SOMEWHERE)
+    const bd = interior.length ? interior[interior.length - 1] : interiorAll[interiorAll.length - 1];
+    if (bd) {
+      const bdBars = form.sections.flatMap((sec) => Array(sec.bars).fill(sec.index === bd.index ? 0 : 1));
+      bdMaskStr = maskString(bdBars);
+      const floorFig = { name: 'breakdown-floor', bars: 1, onsets: ['0'], figure: ['R'], accents: [0.7], legato: true };
+      const floorSound = (accToBass || synthAcc) ? 'gm_synth_bass_1' : 'piano';
+      const bindFloor = (ctx) => bindFigure(floorFig, ctx, v.meter, { octave: 2, sound: floorSound, loopRoots: true, gainRange: [0.4, 0.6], fx: '.room(0.4).clip(1.05)' }).expr;
+      const floorBars = bdBars.map((x) => (x ? 0 : 1));
+      extraParts.push(...varySplit(bindFloor, floorBars));
+      extraSolos._breakdown_floor = bindFloor(ctxBar);
+      extraInfo.push(`breakdown: base acc strips in section ${bd.index} (${bd.archetype}); held-root floor on ${floorSound}`);
+    }
+  }
+
   const mixParts = [
-    withCurve(baseMix),
+    withCurve(bdMaskStr ? `(${baseMix}).mask("<${bdMaskStr}>")` : baseMix),
     ...(letterLead.lead ? [withCurve(letterLead.lead, true)] : []),
     ...layerMixExprs.map((x, i) => withCurve(x, shaped.layers[i]?.derives === 'lead' || shaped.layers[i]?.derives === 'lead-rhythm')),
     ...extraParts.map((x) => withCurve(x)),
-    ...(drums ? [withCurve(drums)] : []),
+    ...(drums ? [withCurve(bdMaskStr ? `(${drums}).mask("<${bdMaskStr}>")` : drums)] : []),
   ];
   let mix = mixParts.length > 1 ? `stack(${mixParts.join(', ')})` : mixParts[0];
 
@@ -957,8 +1173,8 @@ function buildSong(prompt, name, opts = {}) {
     exemplar: exName, ops: (e.lineage?.ops ?? []).map((o) => o.op ?? o),
     degrees: e.degrees, symbols, numerals: e.numerals ?? null,
     accompaniment: accName, accClass: accFig.class,
-    scheme: mf.scheme, letters: mf.letters, travel: travelInfo,
-    treat: varyInfo ? { op: varyInfo.op, symbols: varyInfo.symbols } : null,
+    scheme: mf.scheme, letters: mfx.letters, travel: travelInfo,
+    treat: varyInfo ? { op: varyInfo.op, symbols: varyInfo.symbols, kind: varyInfo.kind } : null,
     ensemble: { count: v.ensemble.count, range: v.ensemble.range, fullCast },
     cast: [...rendered.layers.map((l) => `${l.instrument} (${l.id})`), ...extraInfo],
     drums: drumInfo,
@@ -980,7 +1196,7 @@ const SONG_OPTS = {
   // it sounds robotic" — a floor under the lead's articulation ratios
   vs_x_construction: { articFloor: 0.9 },
   // r2: mid-octave offbeat texture + held guide-tone counterline
-  vs_tense_fight: { texture: { class: 'offbeat', octave: 4 }, counterline: true },
+  vs_tense_fight: { texture: { class: 'offbeat', octave: 4 }, counterline: true, leadGainMul: 0.85 },
   // r2: "too uniform" + "more layers as soft support"; r3 still: forced AB
   // scheme so the accompaniment actually TRAVELS, pad breathes from bar 1
   vs_somber_aftermath: { accClassPrefer: 'arp', stringsPad: 'add', padFromStart: true, scheme: 'AB' },
@@ -993,6 +1209,18 @@ const SONG_OPTS = {
   // r3 kill faults the MIX not the harmony ("more reverb ... pad too loud
   // ... vary fluidly in dynamics") — base stays, pad breathes from bar 1
   vs_calm_water: { keepBase: true, padFromStart: true, fixChord: ['0:7', '9:m'], padGainMul: 0.85 },
+  // D86: the four fully-synth songs (his round-9 ask)
+  vs_calm_lab: { fullSynth: true },
+  // r10 menu note: "not enough actual melody or texture ... some soft
+  // string support would be good" — an added synth-strings pad whose top
+  // voice sings the D72 planned phrase
+  vs_calm_menu: { fullSynth: true, stringsPad: 'add' },
+  // r10 stealth note: melody too talky (density halved) + "more tension
+  // by having a high texture" (the descant's 9-over-5 cluster, octave 5)
+  vs_tense_stealth: { fullSynth: true, leadDensityMul: 0.25, accClassPrefer: 'sustain', descant: { octave: 5, tension: true } },
+  vs_excited_casino: { fullSynth: true },
+  // D88: the tense lab runs all-synth
+  vs_tense_lab: { fullSynth: true },
 };
 for (const prompt of PROMPTS) {
   const n = `vs_${prompt.emotion ?? 'x'}_${prompt.environment}`;

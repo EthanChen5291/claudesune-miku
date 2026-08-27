@@ -11,7 +11,13 @@ const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 
 test('songs page: 10 prompts build, every expr green, structure varied', () => {
   const log = execFileSync('node', ['scripts/audition-songs.mjs'], { cwd: ROOT, encoding: 'utf8' });
-  assert.match(log, /11 vibe-prompted songs/);
+  assert.match(log, /23 vibe-prompted songs/);
+  // D86: the four fully-synth songs exist and their acc hand left the piano
+  for (const n of ['vs_calm_lab', 'vs_calm_menu', 'vs_tense_stealth', 'vs_excited_casino']) {
+    const line = log.split('\n').find((l) => l.includes(n));
+    assert.ok(line, `${n} is missing`);
+    assert.ok(line.includes('acc hand on gm_epiano1') || line.includes('gm_synth_bass_1'), `${n} must not be piano-centered`);
+  }
   assert.match(log, /(\d+)\/\1 exprs evaluated green/);
   assert.match(log, /parses clean/);
   // the genocide transform: sad shop must be slow and drum-free

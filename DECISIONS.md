@@ -4383,3 +4383,280 @@ ledger, and the fixes it forced.
   catch).
 - After fixes: 85/85 + 27/27 exprs, 306/306 tests, 15/15 lab cards and
   11/11 songs' acc+lead byte-identical, quiet songs untouched.
+
+D86 (2026-08-27) — ROUND 9: the synth spread, audible textures, and the
+fully-synth songs (his verdicts on the round-8 suite, all landed as
+ENGINE POLICY per the D72 meta-rule).
+- His notes, verbatim anchors: "give some of the songs, like in
+  construction left hand piano part, replace it with synths. the goal is
+  so for the energetic songs (unless it's explicitly the vibe that's
+  piano heavy like goofy or playful or solo/duet/trio etc) to make it
+  more spread out not piano-centered"; fight "the texture isn't fully
+  sounding ... add more textures since it's meant to be textured and
+  energetic" + "piano (very loud)"; boss "less piano, more synths, and
+  more texture"; "generate 1-2 fully synth calm songs" + "another fully
+  synth progression songs ... just like the others - with developments,
+  variations, progressions -> full songs"; "this feedback should be
+  abstracted to the engine for future songs too."
+- POLICY 1, the synth spread: energetic songs (driving/foreground drums
+  or >= 140bpm) bind the accompaniment hand on gm_epiano1 (Soft
+  Suitcase in HQ) with gainRange [0.5, 0.85] — UNLESS the vibe is piano
+  territory: any of moods {goofy, comic, playful, quirky, silly,
+  whimsical} or an ensemble anchor of solo/duet/trio. Measured:
+  construction + boss switched VOICE-ONLY (note() content identical to
+  the snapshot); kitchen excluded by comic/playful/quirky; festival
+  excluded by its own playful mood (his exception wording, applied
+  literally); the seven non-energetic songs byte-identical.
+- POLICY 2, textures that sound: energetic non-piano-vibe songs carry a
+  DEFAULT texture beside any opted one — fight now has TWO (its opted
+  offbeat kalimba + a default arp on low-passed supersaw), boss and
+  construction one each. The band is audible now (gainRange [0.3, 0.52];
+  the old [0.22, 0.42] kalimba was his "texture isn't fully sounding")
+  and coverage widened to energy>=3 bars (was >=4). Texture voices are
+  synths: kalimba pluck first, supersaw stabs second.
+- POLICY 3, the lead trim dial: opts.leadGainMul (fight at 0.85 — his
+  "piano (very loud)"; gain-only change, notes identical).
+- POLICY 4, fullSynth: a song may be born all-synth. SYNTH_OF retints
+  every planned cast voice to the D85 palette (strings->Juno,
+  brass->saw lead, winds->square, mallets->music box, piano->Rhodes,
+  plucked->kalimba, else warm pad); the lead binds gm_lead_2_sawtooth
+  (>= 120bpm) or gm_epiano1; letter handoffs draw from the retinted
+  pool; the counterline voices Juno strings. FOUR new songs (suite now
+  15): vs_calm_lab + vs_calm_menu (his calm ask — lab and menu are the
+  synth-native environments) and vs_tense_stealth + vs_excited_casino
+  (the energetic side). All run the complete machinery: letters,
+  travel, treats, curves, drops of the D85 extras where gates allow.
+  calm_menu compiles CASTLESS (ensemble 0) — the first live exercise of
+  the D82 letter-handoff fallback path.
+- HQ: gm_pad_new_age -> Surge "Bell Pad" (fetched from the 1.3.4 tag,
+  probe: loaded, peak 0.205, centroid 978) and gm_pad_bowed -> the warm
+  pad, so the synth songs are synth in HQ too.
+- 306/306 tests (songs.test.js updated: 15 songs, fullSynth assertions).
+
+D86 addendum — the verify workflow (5 agents), honest ledger, fixes.
+- CONFIRMED CLEAN: construction/boss acc swaps are VOICE-ONLY ((midi,
+  onset) multisets identical — 256 and 1024 haps compared); fight's lead
+  is a pure x0.85 gain trim (0.85 -> 0.72, notes byte-identical); the
+  eight untouched songs byte-identical including aftermath and festival;
+  the mood gates verified with compileVibe evidence (festival's
+  'playful', kitchen's 'comic/quirky/playful'). The four fully-synth
+  songs sweep clean: every pitched sound in the synth palette, zero
+  fluid fallbacks; casino's sub-bass masks exactly to its drum bars and
+  its lead is the saw (>=120bpm); stealth's 12 masks all expand to
+  exactly 96 entries with ABAB genuinely alternating (B-reprise differs
+  only by 2 placed-variation bars); curves exact on both; sparkle gated
+  to the curve>=1.0 plateaus with gains <= 0.236.
+- CORRECTION to the D86 entry above: vs_calm_menu is NOT castless — the
+  name-hashed ensemble dial gave it count 2 (square takeover + new-age
+  pad), so the D82 letter-handoff fallback stays dormant; the planner's
+  own takeover machinery hands the A-reprise to the square at exactly
+  the bar-40 letter boundary (D80 rule holds: one sound per statement).
+- ONE BLOCKER, fixed and re-measured: the default second texture drew
+  fnd_ballad_8ths_arch ('arp' class) and arched to Eb6 — TEN semis over
+  fight's lead peak, and the kalimba textures at octave 4 poked +2..+6
+  over three songs' leads. Fix: all textures cap at octave 3 and the
+  default class is compact ('offbeat', falling through comp/block/riff
+  when a class pool is exhausted — offbeat has ONE ratified 4/4 entry
+  and fight's opt already held it). After: fight textures 51-68 and
+  48-63 under its 63-77 lead; boss 56-74 under 68-80; construction
+  51-68 under 51-72. Fight's second texture is now fnd_charleston_comp
+  on low-passed supersaw — a chord-stab comp, not an arch.
+- Noted, accepted: casino's A-melody E7 spike tops the sparkle in 3
+  bars (the melody outranks its decorations — correct order); calm_lab's
+  sparkle sits above the melody by design (its own lane, gain <= 0.236).
+- After fixes: 38/38 exprs, 306/306 tests, textures re-measured under
+  every lead.
+
+D87 (2026-08-27) — ROUND 10: twelve keeps, the HARMONY-MELODY directive,
+synth leads, and the two lab cards that graduated ("the most official
+song we've had so far").
+- VERDICTS imported (his songs-page export): 12 keeps — every judged
+  pre-existing song incl. the round-9 synth-spread versions of
+  construction/fight/boss, plus vs_calm_lab ("I like this - maybe more
+  textures but overall foundation is good"). Three note-only songs
+  (casino/stealth/menu). The importer dropped those three notes as
+  unattributable (note-only songs carry no derived row); their content
+  is quoted below and drove this round.
+- MID-ROUND, the videolab verdicts (via screenshot; formal export
+  pending): vl_layerstack KEEP + vl_funkbounce KEEP, both with "it's
+  the most official song we've had so far (covering its genre) — turn
+  this into a full song with progressions and melody and instrument
+  setup changes etc." and "very good layering, chord patterns, not too
+  generic, and the relationships are good. i want you to see what you
+  did and teach the engine."
+- HIS MAIN DIRECTIVE (verbatim): "in the harmony there should be more
+  textures, importantly layers with their own melody that compliment
+  rather than purely just regular chords/foundation tone stuff. there
+  can be multiple at a time and each one could also instead of just
+  being a note, be mulitple notes possiblty that make sense."
+- THE DESCANT (the directive as policy): a new default harmony-melody
+  layer — a 2-bar phrase where a held third+fifth DYAD breathes for a
+  bar ("multiple notes that make sense"), then its top voice walks
+  5-6-5 in quarters. Rides BESIDE the counterline and the pad phrases
+  (several harmony melodies at once), whisper-plus band [0.15, 0.28],
+  octave 3 on energetic songs / 4 on calm, Juno strings on synth songs.
+  Gated to ensemble count >= 2 (12 of 15 songs carry it; happy_shop and
+  cave sit out). opts.descant reshapes it; the tension variant holds a
+  9-over-5 cluster instead.
+- SYNTH LEADS (his construction keep-note: "make the melody vibe also a
+  different instrument - synths sound better than piano for this vibe I
+  think - learn this"): synth-acc songs now carry synth leads — saw
+  above 120bpm, square below. Construction (square) / fight (saw) /
+  boss (saw), all VOICE-ONLY (note() extracts identical). fullSynth
+  calm songs keep the Rhodes lead under 120.
+- THE THREE NOTED SONGS: stealth ("too much talking... more tension by
+  having a high texture") — lead density halved (opts.leadDensityMul
+  0.5, cast re-rolls accepted on an unkept song), the tension descant
+  at octave 5, and the ACCENT-LINE device (below); menu ("not enough
+  actual melody or texture... some soft string support") — an added
+  synth-strings pad whose top voice sings the D72 planned phrase;
+  casino ("more texture/layering... harmony was mainly just triads") —
+  fullSynth songs now ALWAYS carry their default texture (the playful
+  mood no longer blocks a synth song's texture).
+- TEACHING THE ENGINE what the kept cards did:
+  * fnd_funk_bounce joins the foundation canon (class dance_bass,
+    provenance 'card-keep' — a NEW provenance: ratified by the
+    vl_funkbounce keep, not the D62 blanket; canon is 30 entries now,
+    tests updated).
+  * the ACCENT-LINE device (vl_layerstack's core trick): a STATIC
+    tonic pedal in 8ths whose bar-downbeat accent alone tracks the
+    harmony — generator default for fullSynth songs (>= 90bpm) whose
+    own accompaniment is sustained/pulsing (stealth qualifies).
+  * the rest of what made them work is already policy from D85-D86
+    (sparkle pickups, beat-2 counterline, bounce grid, register-lane
+    verification) — stated so the ledger is honest.
+- THE TWO SONG CARDS (the D75 lifecycle: keep + "make it a full song"):
+  vl_layerstack_song and vl_funkbounce_song, 32 bars each, A B C A'
+  with instrument setup changes per section — a composed MELODY enters
+  at B (square / Rhodes, one statement, one owner per D80), the
+  breakdown strips the ensemble, A' returns everything with the peak
+  layers; layerstack's counter YIELDS its octave-6 lane to the melody;
+  funkbounce's B section is the piece's first V (Bb13, color at the
+  turn — D57's rare-and-colored side) and its one melody sings over
+  BOTH progressions. Kept cards byte-identical (diffed).
+- 19 lab cards, 98/98 + 38/38 exprs, 306/306 tests (foundation canon
+  tests updated 29 -> 30, page 145 -> 150).
+
+D87 addendum — the verify workflow (5 agents), honest ledger, fixes.
+- CONFIRMED CLEAN: both SONG cards measured exactly as authored —
+  section maps, melody ownership (one sound per statement, B === A'
+  restatement), the funkbounce melody's zero foreign pitches over the
+  ii-V colors, bounce grid in all three harmonic contexts, C-section
+  drum thinning, every curve/mask at exactly 32 entries; the kept cards
+  byte-identical across builds. Songs: all 8 pre-round-9 songs' acc+lead
+  byte-identical with mixes differing ONLY by descant haps; all 245
+  masks across 15 songs expand to exactly totalBars; synth leads exact
+  (voice-only, notes byte-identical to r9); menu's added pad sings a
+  moving top line; casino's texture rides 288 offbeat 8ths; the
+  all-synth sweeps stay clean.
+- TWO BLOCKERS, fixed and re-measured:
+  (1) the descant's calm octave (4) topped LOW-SITTING leads — aftermath
+      +11 over its per-bar lead peak in 30/72 bars, sad_shop +5 in 7.
+      The octave now derives from the lead's home octave (at least one
+      octave under). After: aftermath worst margin -1, sad_shop -7,
+      zero bars over the graze anywhere (stealth's high-tension variant
+      excepted by design, +7 minimum above the thinned lead).
+  (2) A CANON RIPPLE: ratifying fnd_funk_bounce grew the dance_bass
+      retrieval pool and RE-ROLLED stealth's accompaniment onto the
+      funk bounce — wrong vibe for stealth, and it disarmed the
+      accent-line gate (sustain/pulse) so the device shipped NOWHERE.
+      Fix: stealth pins accClassPrefer 'sustain' (the drone is stealth
+      territory); its accent-line now ships and sits in the cast.
+      LESSON: growing the foundation canon mutates every unpinned
+      song's retrieval hash — kept songs were unaffected (verified),
+      but class-preference pins are the guard for the rest.
+- Stealth's lead thinned again after the acc change re-rolled its cell
+  (4.21 -> 4.50 -> 3.54 notes/bar at leadDensityMul 0.25); his ear
+  rules on whether that is "less talking" enough.
+- Also caught: foundations.html was one verdict-import stale — rebuilt
+  (150/150; context 0 now a newly ratified exemplar).
+- After fixes: 38/38 + 98/98 + 150/150 exprs, 306/306 tests.
+
+D88 (2026-08-27) — WHY THE LAB SONGS BEAT THE GENERATOR ("of all the
+songs, the full songs in videolab are the best... they just sound less
+generic. analyze why and take account of the pattern"), and the eight
+new songs built from the answer.
+- THE ANALYSIS, measured against the four he named (layerstack_song,
+  funkbounce_song, kpop_full, citypop_song):
+  (1) SECTIONS OWN THEIR HARMONY. Every praised song carries ~3 distinct
+      progression sections (verse/bridge/outro as real harmonic places);
+      every generated song ran ONE loop plus a one-op treat at the last
+      reprise. A treat decorates; a bridge DEPARTS.
+  (2) COLOR IS THE NORM. Praised songs: 10/10, 12/12, 16/16 colored
+      chords (layerstack's 0/10 is deliberate no-3rd minimalism — its
+      distinction is structural). The suite measured 43% colored. Root
+      cause found in retrieval: the D64 "plain for low-color vibes"
+      rule fired on nearly every song (most vibes compile colorBias 0)
+      and its metric conflated CHROMATICISM (the actual water-kill
+      complaint: a dim chain) with diatonic color (m7/^7/9/sus — his
+      home per D74). The plainness rule was quietly making everything
+      generic.
+  (3) SECTIONS DIFFER IN KIND, NOT DENSITY. The lab songs strip the
+      accompaniment itself for a breakdown (bass+pad+counter carrying
+      alone); the generator's base acc played every bar of every song —
+      a still-open item since the original round 10.
+  (4) PHRASE-END GRAMMAR. Every lab bass marks bar 4 (octave drop + a
+      breath); the generator's low end held flat.
+  (5) RELATIONSHIPS: lab layers ANSWER each other (counter enters the
+      lead's gap, stabs answer the bounce off-beat, lanes yield when
+      the melody arrives). The generator binds layers independently —
+      partially addressed by D85-87 (beat-2 counterline, sparkle
+      pickups, lane verification), still the weakest of the five.
+  (6) Stated honestly: the lab songs are also 5-7 EAR-ROUNDS deep each
+      and hand-composed at the melody level — iteration the generator
+      cannot fake. The structural gaps (1-5) are what it CAN absorb.
+- TAKEN ACCOUNT (all gated !priorKeep — the 12 keeps byte-stable,
+  verified against the r9 snapshot):
+  * BRIDGE HARMONY: the B letter owns its own progression (budget-2
+    variation, deeper intensity, the treat's star machinery reused so
+    melody/acc/cast/extras all rebind there). Fires 11/11 on
+    unkept+new songs.
+  * RETRIEVAL: one unified rule — every unkept song prefers the
+    COLORED half of its family pool; low-colorBias vibes additionally
+    push chromatic entries (alt/dim/aug tokens) to the back. Measured:
+    unkept+new colored rate 43% -> 70% (desert's 0/4 is the modal
+    pool's quality-sparseness, not a miss).
+  * BREAKDOWN: every unkept/future song with an interior section
+    strips its base accompaniment (and drums) for one section — the
+    form's own low-energy point when it has one, else the section
+    before the finale — over a held-root floor, with the whisper
+    extras carrying. Fires 11/11.
+  * TURNAROUND: unkept/future subs hold three bars and restate the
+    root an OCTAVE DOWN on bar 4's back half (kept songs keep flat
+    holds).
+- THE EIGHT NEW SONGS (his ask, suite now 23): mysterious_desert,
+  excited_training, calm_rest, tense_lab (all-synth), goofy_casino,
+  somber_snow, happy_festival, nostalgic_shop — every D85-D88 policy
+  live (bridges, breakdowns, turnarounds, colored retrieval, descant/
+  counterline/sparkle/textures/synth-spread per gates).
+- PARKED, named: inter-layer call-answer scheduling (the real gap 5);
+  composed-statement melodies in the generator (tier-2 spec authoring
+  at generation time — the lab melodies' phrase architecture);
+  per-section progressions for KEPT songs (would re-roll judged
+  material — his word first).
+- 60/60 exprs, 306/306 tests (suite pin 15 -> 23).
+
+D88 addendum — the verify workflow (4 agents), honest ledger.
+- CONFIRMED CLEAN: all four sampled bridges sound their progression
+  exactly in the mix (root maps 100%, melodies rebind with ZERO
+  strangers, somber_snow's BOTH B sections take it); kept songs take
+  nothing (kitchen no bridge; boss's variant only at its last reprise,
+  bars 38/46); breakdown mechanics 4/4 (acc-layer and drums exactly
+  silent, floor exactly present, all floors <= C3); the turnaround
+  verifies EXACTLY where a sub exists (casino: -12 drops at position
+  0.500, bars 3/7 of each cycle — the "training" blocker was the verify
+  PROMPT naming the wrong song; training's acc is itself the synth-bass
+  pulse and correctly has no sub); all 369 masks across 23 songs expand
+  to totalBars; 8/8 pre-r9 keeps byte-stable, 12/12 degree pins,
+  deterministic builds (md5-identical).
+- NOTED, accepted or fixed: (a) the page now exports the STARRED letter
+  list so a bridge shows as B* on the card (was internal-only);
+  (b) bridge depth varies with the budget roll — somber_snow got one
+  quality-only change and nostalgic_shop's G7->G6 half never voices the
+  discriminating 7th (the F->Fm half is audible) — departure DEPTH is a
+  knob his ear should rule on before it grows; (c) happy_festival's
+  letter B trades 2-bar phrases piano<->recorder — that is the D57/D59
+  DIALOGUE archetype doing designed turn-taking, not a D80 violation;
+  (d) goofy_casino's piano lead peaks at C8 (bars 10/14/26/30) —
+  comedic register, flagged for his ear; (e) calm_rest built at 56 bars
+  (piano + Rhodes handoff at bar 40, no drums) — sparsity as shape.

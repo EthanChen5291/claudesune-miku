@@ -847,3 +847,48 @@ Serum, render-vst.py hosts it the same way). LISTEN:
   out — adding it changes a judged song's floor); (c) the sparkle plays
   OVER melody bars (whisper, own lane 2 octaves up) — a deliberate
   extension of the high-silence rule per your ask; kill it if it clashes.
+
+D86 — ROUND 9 (your synth-spread verdicts, all landed as ENGINE POLICY):
+- ENERGETIC SONGS LEAVE THE PIANO: construction + boss accompaniment
+  hands now play the Rhodes (same notes, new voice — measured); kitchen
+  and festival stay piano by your own exception (playful/goofy vibes).
+- TEXTURES SOUND NOW: fight has TWO (kalimba offbeat + supersaw arp) in
+  an audible band (0.3-0.52, was 0.22-0.42) across energy>=3 bars; boss
+  + construction each gained one. Fight's lead trimmed x0.85 ("piano
+  (very loud)").
+- FOUR FULLY-SYNTH SONGS (suite is 15 now): vs_calm_lab, vs_calm_menu
+  (your calm ask), vs_tense_stealth, vs_excited_casino — full machinery
+  (letters, travel, treats, curves), every voice on the synth palette,
+  HQ all-Surge. calm_menu is the first castless song through the D82
+  letter-handoff fallback.
+- LISTEN: audition/songs.html (15 cards, both modes after re-render).
+
+D87 — ROUND 10: your 12 keeps imported; BOTH new lab cards kept ("most
+official song we've had so far") and grown into FULL SONGS
+(vl_layerstack_song + vl_funkbounce_song: A B C A' — composed melodies
+enter at B, breakdowns strip, returns peak; kept cards untouched). Your
+harmony-melody directive is policy: the DESCANT (held 3+5 dyad / 5-6-5
+walk, a 2-bar phrase riding beside the counterline + pad phrases) on
+every 2+-voice song. Synth-acc songs carry SYNTH LEADS now (your
+construction "learn this": square/saw). Stealth thinned + tension
+descant + the accent-line device; menu got the singing synth-strings
+pad; casino got its texture. fnd_funk_bounce entered the foundation
+canon (ratified by your card keep). NOTE: export the videolab verdicts
+JSON when you get a chance so the two card keeps land formally.
+LISTEN: videolab.html (2 new SONG cards) + songs.html (15, all
+re-rendered in HQ).
+
+D88 — ROUND 11: your "less generic" question ANSWERED with measurements
+(one loop+treat vs ~3 progression sections; 43% vs ~100% colored — the
+old plainness rule was firing on almost every song and conflating
+chromaticism with color; no breakdowns; no bar-4 grammar; weaker
+inter-layer relationships) and TAKEN ACCOUNT as defaults: B-letter
+BRIDGE progressions, real breakdowns (base acc + drums strip over a
+held-root floor), bar-4 sub octave-drops, colored-half retrieval.
+Kept songs byte-stable. EIGHT NEW SONGS (suite = 23): mysterious_desert,
+excited_training, calm_rest, tense_lab (all-synth), goofy_casino,
+somber_snow, happy_festival, nostalgic_shop. Bridges fire 11/11 on
+unkept songs, breakdowns 11/11, colored rate 70%.
+PARKED (your word first): bridges/breakdowns for KEPT songs (re-rolls
+judged material); inter-layer call-answer scheduling; composed-statement
+generator melodies. LISTEN: songs.html — 23 cards, both modes.

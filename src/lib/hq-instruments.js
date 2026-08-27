@@ -159,4 +159,14 @@ export const HQ_INSTRUMENTS = {
     backend: 'vst', plugin: 'vendor/plugins/Surge XT.vst3',
     preset: 'vendor/patches/epiano.fxp', velScale: 0.9, trimDb: -2,
   },
+  // D86: the fully-synth songs cast GM synth pads the fluid fallback would
+  // have rendered — both now play real Surge pads (probe-verified)
+  gm_pad_new_age: {
+    backend: 'vst', plugin: 'vendor/plugins/Surge XT.vst3',
+    preset: 'vendor/patches/pad-bell.fxp', velScale: 0.9, trimDb: -3,
+  },
+  gm_pad_bowed: {
+    backend: 'vst', plugin: 'vendor/plugins/Surge XT.vst3',
+    preset: 'vendor/patches/pad-warm.fxp', velScale: 0.9, trimDb: -3,
+  },
 };
