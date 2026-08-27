@@ -17,3 +17,12 @@ songs/**/*.wav
 audios/vgmusic/
 
 audios/drum-patterns/
+# HQ render tier (D80): sample libraries, plugins, build trees — multi-GB,
+# re-fetchable; the generated sfz mappings + patches are small and committed
+vendor/sfz/SalamanderGrandPiano-SFZ+FLAC-V3+20200602/
+vendor/sfz/VSCO-2-CE/
+vendor/sfz/VCSL/
+vendor/plugins/
+vendor/pyenv/
+vendor/build/
+audition/hq/*.wav

@@ -761,3 +761,15 @@ section under a fading-in harp; second celesta cascade on instrumental
 cycles. NEXT (parked): VST/sample instrument tier — sfizz+SFZ libraries
 (Salamander piano, VSCO-2 orchestra) swapping into render-wav.mjs, then
 DawDreamer for true VSTs; wire gains->velocity/CC11 in the MIDI export.
+
+D80 — HQ RENDER TIER LIVE + round-7 feedback landed. Listen two ways now:
+(1) audition/videolab.html (browser, fast loop) — kpop melody is ONE
+vibraphone voice for all 16 bars, the split chord rings with damper,
+strings cut again everywhere. (2) audition/hq/*.wav — the four songs
+through REAL instruments: Salamander piano (soft hammers = the "slammed"
+fix), VSCO-2 strings/flute/harp, VCSL vibraphone, Surge XT synth bass.
+`node scripts/render-hq.mjs <file.strudel|songdir> --to N` renders any
+song. PARKED: curate Surge patches by ear (only bass exercised so far);
+e-piano + celesta still fluidsynth (no free lib found — could go Surge);
+drums still GM (Dirt samples later); CC11 expression lanes for sustained
+swells; render-hq for the songs page.

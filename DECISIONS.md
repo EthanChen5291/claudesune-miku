@@ -3967,3 +3967,72 @@ rejected: kpop's Eb is Cm7's own third (kept harmony), citypop strings
 line's hand-baked chorus-2 lift is intentional (not curve-driven).
 LESSON: hand-authored note()/gain() patterns need the same period
 discipline as masks (D63) — count the slots. 73/73, 306/306.
+
+D79 (2026-08-26) — expression level is a DIAL, not a default (his ruling
+on D78's generalization): "this doesn't have to always happen. depends on
+the atmospheric level the people want and shouldn't be too extra by
+default unless the user asks for it." Scope: the ARRANGEMENT-DENSITY
+moves — melody handoffs between instruments, strings countermelodies,
+extra ornament voices, instruments-per-section variety — are a
+production-level toolkit deployed to match the wanted atmosphere, NOT
+applied maximally to every song. Default = restrained (this rhymes with
+the standing sparsity principle: sparse ensembles are a legitimate
+shape). What STAYS default from D78: the mechanics of musicianship —
+accent profiles sounding (never flat velocity), section dynamic arcs,
+melody phrase dynamics, tapered exits/ramped entrances, one-low-voice,
+support under the melody. Those are how any level should sound; the
+dial chooses how MUCH is arranged, not whether it breathes. The four
+round-7 songs keep their lush treatment (he asked for it there
+explicitly); future songs default modest unless the ask says otherwise.
+
+D80 (2026-08-26) — the HQ render tier (tier 1 sampled + tier 2 synth), plus
+his round-7 feedback and a REVERSAL of D79.
+- D79 REVERSED, his words: "never mind. revert the thing i said - make the
+  new change melody hand setup the default for future - i really like the
+  new songs' styles." The round-7 arrangement style — melody handoffs,
+  strings countermelodies, per-section instruments, full dynamics — IS the
+  default going forward.
+- HANDOFF RULE refined (his kpop note): an introduced melody instrument
+  owns the melody's ENTIRE CONTINUOUS VOICE — handoffs happen at complete-
+  statement boundaries, never mid-melody ("if it plays for half and then
+  another instrument plays the other half, it sounds like it cut off").
+  kpop_full's 16-bar melody is now all vibraphone. Complete statements
+  separated by instrumental sections (aquatic's flute cycle then vibes
+  cycle) are fine.
+- Page fixes: strings cut AGAIN everywhere (4th "too loud" note — centers
+  roughly halved; measured max 0.08 on kpop); the kpop split bar's higher
+  half-chord now RINGS across the barline (clip 1.8 + room 0.6 — it was
+  "very low duration with no damper pedal").
+- THE RENDER TIER, built and working end-to-end:
+  * tier 1 (sampled): sfizz_render compiled from source (vendor/build/
+    sfizz_render; brew has no formula; new-clang template-kw diagnostic
+    downgraded), playing Salamander Grand V3 (piano) + VSCO-2-CE (strings
+    sections/flute/harp/trumpet/glock/xylo) + VCSL (vibraphone). The VSCO/
+    VCSL repos ship NO sfz mappings — scripts/build-sfz.mjs GENERATES them
+    from the sample tree filenames (pitch/velocity-layer/round-robin
+    parsed from names; key ranges from midpoints; auto-split zones for the
+    cello/viola/violin ensemble). Deterministic, regenerable.
+  * tier 2 (synth): DawDreamer (vendor/pyenv, py3.14 wheel works) hosting
+    Surge XT VST3 extracted repo-locally from the pluginsonly zip (no
+    admin install; surge-xt-cli is realtime-only, useless offline).
+    scripts/render-vst.py renders MIDI->WAV; Surge factory .fxp patches
+    fetched to vendor/patches (bass=Deep End, lead-square=Square,
+    lead-saw=Moogy Saw, pad-warm=MKS-70) and load_preset() accepts them.
+  * scripts/render-hq.mjs orchestrates: songHaps -> per-HAP split by
+    sound name (a single-label stack separates cleanly) -> per-stem
+    velocity remap into each instrument's musical band (velRange), the
+    engine's mix balance re-applied as stem volume (mean gain x trimDb)
+    -> per-stem MIDI -> sfizz/Surge/fluidsynth-fallback -> ffmpeg amix +
+    limiter. src/lib/hq-instruments.js is the mapping; missing patches
+    degrade to fluidsynth automatically (gm_epiano1 + gm_celesta + drums
+    are fluid for now — no EP/celesta in the free libraries).
+  * velocity already carried the engine's gains (songToMidi maps gain ->
+    velocity), so the D78 dynamics select REAL velocity layers — the
+    Salamander's soft hammers are the fix for citypop's "sounds like the
+    piano is being slammed... maybe this could be fixed with sfizz" (his
+    own diagnosis, correct).
+  * All four songs rendered: audition/hq/vl_{gsharp_vamp,aquatic_song,
+    citypop_song,kpop_full}.wav (~5s render per 2-min song). Sample
+    libraries gitignored (multi-GB, re-fetchable); generated sfz +
+    patches committed-able.
+  73/73 exprs, 306/306 tests after all page edits.
