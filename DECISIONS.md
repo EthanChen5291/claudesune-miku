@@ -4222,3 +4222,164 @@ Three independent causes, each verified against sfizz before fixing:
   velocity, veltrack, and the mix target — and the product was silence.
   A gain belongs to exactly one stage. The clamp hid it: a correction
   that big should never have been quietly truncated.
+
+D84 (2026-08-27) — the loop phase-shift is KEPT, and the next round is
+synths + layering (his direction).
+- His ruling on the 6-song second-loop melody phase-drift (happy_shop,
+  sad_shop, calm_water, mysterious_cave, nostalgic_snow, festival_drop —
+  parked in D82): "i think it's fine." The drift STAYS — it reads as
+  variation, not error. The D63 slot-divisibility rule still applies to
+  NEW songs; existing judged songs are pinned as-is.
+- His new direction for the round (same message):
+  (1) more creative layering — more supporting melodies in the harmony,
+      like the video corpus teaches;
+  (2) LESS PIANO-HEAVY — replace some piano parts with synth types, or
+      add synth parts alongside;
+  (3) he likes Serum-style VST synths — saw synth, bass synth, the
+      common modern synth palette, "in some parts";
+  (4) high-end patterns (high-register pattern layers) mined from the
+      NEW videos + existing video notes, to complement the tracks;
+  (5) analyze the new videos' per-instrument layering + synth types +
+      interval patterns ("this guy making it" builds) and learn them —
+      he wants the synths the creator uses AND the bouncy bass used in
+      funky songs.
+- 8 unique new videos found in the repo root (12 files, 3 dups):
+  DY77j6wIEcA, DYfkq3BouJ_, DZS8aawIFrb, Da3c_kEI25C, Dak2qNuMi0i,
+  DalZ717INc7, Db8S5RaNXOJ, DcZL7XFSQj_. Batch-3 frame-read pass
+  follows (video-corpus.md).
+
+D85 (2026-08-27) — THE PATCHES NEVER LOADED, the batch-3 corpus, the synth
+palette, and the round-8 layering policies.
+- THE BUG: DawDreamer's load_preset(.fxp) is a VST2-only code path. On the
+  Surge XT VST3 it returns False and applies NOTHING — and render-vst.py
+  never read the return value. Every synth stem in every HQ wav shipped so
+  far (all 85, including the D83 re-renders) sounded Surge's INIT SAW, not
+  the chosen patch. Proven three ways: 0/400 plugin parameters change on
+  load; 22 different patches rendered byte-similar spectra (identical
+  centroid per note); a correlation A/B that seemed to show difference was
+  random unison phase, not timbre. The D80 line "load_preset() accepts
+  them" was accepts-without-effect — nobody measured a timbre change.
+- THE FIX (scripts/render-vst.py): a .fxp preset is wrapped on the fly
+  into a constructed .vstpreset — the fxp's chunk payload (Surge's native
+  'sub3' patch stream) becomes the Comp chunk under the JUCE-derived
+  component class ID (0xABCDEF01, 0x9182FAEB, 'VmbA', 'SgXT' — verified
+  against the FUID table in the plugin binary) — and loaded via
+  load_vst3_preset, which the VST3 host honors. Two traps found and
+  handled: (1) the patch swap is enqueued on the audio thread and KILLS
+  notes in the first processed block — notes at t=0 rendered silence — so
+  a 0.3s throwaway render consumes the queue before the MIDI loads
+  (measured: peak 0.0 without, full amplitude with); (2) patches fetched
+  from the Surge repo's `main` are streamed by a NEWER Surge and load as
+  nothing on our 1.3.4 build — fetch from the release_xt_1.3.4 tag.
+  Any load failure is now a fatal error, never silence.
+  Verified end-to-end: init saw centroid 3405 vs Rubber Bass 777.
+- THE PALETTE (his ask: "i like the serum vst synths ... saw synth, bass
+  synth, and the other common vst synths"): 22 Surge factory candidates
+  probe-rendered and measured (attack time, hold decay, release tail,
+  spectral centroid) before choosing six, each verified to match its
+  category: Rubber Bass (punchy hold, fast release — the bouncy funk
+  bass), Tarnce (bright unison supersaw), Trancy (pluck, -20dB by 1s),
+  Magic Music Box (high sparkle), Juno-60 Strings (slow attack, long
+  tail), Soft Suitcase (mellow Rhodes — gm_epiano1 leaves the fluidsynth
+  fallback). Wired in src/lib/hq-instruments.js as gm_slap_bass_2 /
+  supersaw / gm_kalimba / gm_music_box / gm_synth_strings_1 / gm_epiano1;
+  every browser name verified present in @strudel (supersaw is the native
+  unison-saw synth; the rest are GM soundfonts).
+- BATCH-3 CORPUS (8 new videos, 8-agent frame-read; video-corpus.md):
+  five reels are ONE creator's layer-stack builds — the formula (sustained
+  root bass with a bar-4 octave-drop turnaround; pulse ostinato whose
+  bar-downbeat accent note alone carries the chord change; counter
+  entering on beat 2; staccato high melody; sparkle lane whose beat-4
+  8th-pairs sequence upward), the high-end doctrine (chimes on 1/3 of odd
+  bars, motion cells in even-bar back-halves, "e"-echo, backbeat stabs,
+  the string-figuration formula with its beat-3 peak climbing per bar).
+  Patch names appear in NO video (UIs never opened): the synths are
+  Serum 2 (×4 videos), Surge XT (×1 — the one we vendor), Massive X,
+  DirectWave. Two new pack entries carry the card-bearing progressions
+  (vid_layerstack_cm, vid_venexxi_ebsaw).
+- VIDEOLAB: two new cards on the new palette — vl_layerstack (the
+  five-lane formula) and vl_funkbounce (the bouncy rubber bass, supersaw
+  stabs, backbeat music-box walk on IVmaj7-iii7-Imaj7-iii7). 17 cards,
+  85/85 exprs, all 15 prior cards byte-identical (diffed).
+- SONGS GENERATOR, four new DEFAULTS (his "more supporting melodies in
+  the harmony ... less piano heavy ... synth types ... high end
+  patterns", D72 meta-rule: land as policy):
+  (1) counterline is default on 3+-voice songs — odd bars hold the
+      chord's 3rd, even bars enter at beat 2 and climb 3-5-R' (whisper
+      band 0.12-0.24 stands; Juno synth strings on the >=140bpm beat
+      songs, the real ensemble elsewhere);
+  (2) music-box sparkle in energy>=4 sections of >=90bpm 4/4 songs —
+      chimes odd bars, beat-4 5-6 pickups even bars, octave 6 lane
+      (deliberately extends the D76 high-silence rule per his explicit
+      ask; his verdicts rule);
+  (3) funk bounce: gm_slap_bass_2 R/R+/5/R+ on the 0-3/8-1/2-7/8 grid,
+      masked to the beat's bars, in the 96-140bpm driving/foreground 4/4
+      pocket (construction qualified);
+  (4) energetic textures bind gm_kalimba (synth pluck), not a third
+      piano hand.
+  All ADDITIVE: every song's accompaniment and lead solo byte-identical
+  to the snapshot; calm_water/cave/snow untouched entirely.
+- 306/306 tests (harmony model rebuilt for the 2 new pack entries).
+
+D85 addendum — the verify workflow (6 agents, all haps-measured), honest
+ledger, and the fixes it forced.
+- CONFIRMED CLEAN: vl_layerstack (lanes 31-43 / 55-70 / 72-80 / 84-91 /
+  96-115, zero overlap; sparkle sequence exact to the 8th; accent line
+  tracks folded roots c5-eb5-ab5-g5 twice with zero drift; bass bar-4
+  octave-drop + rest exact). All 10 vendor patches render non-silent and
+  timbrally distinct (closest centroid pair 6.4% apart — no init-saw
+  regression); render-vst.py fails loudly on all three bad-preset modes.
+  Songs: sparkle grid perfect across 224 bars, energy gate EXACT on all
+  4 non-drop sparkle songs (music-box bars == energy>=4 bars, max
+  effective gain 0.236 <= 0.30); funk bounce bars == drum bars 24/24 on
+  construction; counterline whisper band held (0.192-0.206) in all six
+  songs; kitchen's 2/4 climb compresses with zero barline spill; quiet
+  songs byte-identical; every D63 mask expands to exactly totalBars;
+  D82 curves intact to the exact formula values.
+- THREE REAL DEFECTS, fixed and re-measured:
+  (1) the counterline climb's R+ peak (midi 84-86) poked ABOVE the lead
+      on the four songs whose lead dips into octave 4 (fight 28/28 bars,
+      sad_shop 28/28, boss 56/64, aftermath 66/72) — support tops sit
+      UNDER the melody (D77). Climb re-cut 3-5-R' -> R-3-5 (top = the
+      fifth): now fight 63-75 vs lead peak 77, sad_shop 61-73 vs 74,
+      aftermath 65-79 vs 80, boss 64-81 vs 80 (a 1-semi graze at
+      whisper gain — inside the envelope of the counterline he already
+      kept, which poked +3).
+  (2) festival_drop's cast DECLARED sparkle+counterline its mix never
+      played: the dropIntro rebuild assembles its own parts list and
+      silently dropped the extras. varySplit now records every
+      (bindFn, bars) pair and the drop path re-assembles them with
+      masks pre()-rebased to the 4+T timeline (D63-safe; parity
+      preserved since the intro is 4 bars). Measured after: 16
+      music-box haps in bars 20-27 (the energy gate, shifted), 64
+      strings-counterline haps, ZERO in the intro. The drop path stays
+      section-curve-exempt (D82).
+  (3) vl_funkbounce's sawkeys tops (D6-G6) sat in the sparkle band —
+      the + octave tokens overshot the source's G4-C6 voicings.
+      Re-voiced 3.5+.7+ -> 3.5.7 / 9.3.5.7 (the 9 tucked low — the
+      batch-2 9-under-b3 crunch): tops now 79, sparkle floor 84.
+- JUDGED FALSE ALARMS, stated: the bounce "breaking <=C3" is the spec's
+  error — an octave bounce jumps an octave by definition (lane is
+  C2..B3); the layerstack counter's even-bar beat-1 note is the
+  authored held answer, not a stray.
+- KNOWN LATENTS, documented not fixed: (a) drumBarsShared stays null
+  under dropIntro, so the D73 sub-bass floor never fires for
+  festival_drop (160bpm foreground) and its counterline voices real
+  strings instead of Juno — pre-dates this round; wiring a sub under a
+  judged song's floor waits for his ear; (b) construction's sparkle
+  ties the square melody_backup at exact unisons in 5 shared bars
+  (same-root doubling, allowed per D73) and sits under its peak by 5
+  semis in one bar; (c) 7 pitched GM sounds still fall back to fluid
+  (calliope, marimba, muted trumpet, pad_bowed, recorder,
+  tremolo_strings, trombone) — marimba/trombone are VSCO-2 candidates
+  for a future sfz pass; (d) trimDb/velScale on the four ORIGINAL vst
+  voices were ear-tuned against init saw (peer's point) — the R128
+  stage absorbs level but not timbre-darkness; his next HQ listen
+  rules.
+- Peer corroboration (motif-engine-ab, measured independently): warmup
+  render discarded (first-audio onset 0.001s vs 0.003s, no offset);
+  preset path -65.1 vs -36.2 dB high band = a filtered bass against a
+  raw saw. Render tail +3s -> +5s for the long-release patches (its
+  catch).
+- After fixes: 85/85 + 27/27 exprs, 306/306 tests, 15/15 lab cards and
+  11/11 songs' acc+lead byte-identical, quiet songs untouched.

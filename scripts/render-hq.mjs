@@ -228,7 +228,9 @@ for (const [key, stem] of stems) {
     execFileSync(SFIZZ, ['--sfz', join(ROOT, stem.inst.sfz), '--midi', midPath, '--wav', wavPath, '--samplerate', '44100'], { stdio: 'pipe' });
     console.log(`  ${name.padEnd(22)} sfizz       ${String(notes).padStart(4)} notes  gain ${meanGain.toFixed(2)}  room ${meanRoom.toFixed(2)}  (${basename(stem.inst.sfz)})`);
   } else {
-    const args = [RENDER_VST, '--plugin', join(ROOT, stem.inst.plugin), '--midi', midPath, '--out', wavPath, '--duration', String(seconds + 3)];
+    // D85: +5s tail — the new palette carries releases (juno-strings,
+    // sparkle, epiano) that a +3 allowance audibly clipped
+    const args = [RENDER_VST, '--plugin', join(ROOT, stem.inst.plugin), '--midi', midPath, '--out', wavPath, '--duration', String(seconds + 5)];
     if (stem.inst.preset && existsSync(join(ROOT, stem.inst.preset))) args.push('--preset', join(ROOT, stem.inst.preset));
     execFileSync(PYTHON, args, { stdio: 'pipe' });
     console.log(`  ${name.padEnd(22)} surge/vst   ${String(notes).padStart(4)} notes  gain ${meanGain.toFixed(2)}  room ${meanRoom.toFixed(2)}${stem.inst.preset && existsSync(join(ROOT, stem.inst.preset)) ? `  (${basename(stem.inst.preset)})` : '  (init patch)'}`);

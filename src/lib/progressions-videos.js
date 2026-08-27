@@ -850,4 +850,37 @@ export const PROGRESSIONS_VIDEOS = {
       + 'A cascade tag ends the cycle: b6-5-b3 of the v falling from the top of the piano. '
       + 'The engine relevance is direct: this IS our water vibe, done as one voice + pedal.',
   },
+
+  // ---- batch 3 (D85, 2026-08-27) — the two card-bearing progressions ------
+  vid_layerstack_cm: {
+    family: 'minor', pack: 'igvideo', role: 'harmony', style: 'melodic-loop',
+    provenance: 'video-transcribed', ratified: false, needsEar: true, sourceEndorsed: false,
+    song: 'FL accent-line build (C minor, Massive X + Serum 2)', section: 'A', sectionBars: 4,
+    source: 'igexport-DalZ717INc7.mp4',
+    numerals: 'im-bIII-bVI-v',
+    degrees: '0:m 3 8 7',
+    voicedAs: ['Cm', 'Eb', 'Ab', 'G'],
+    sourceKey: 'C:minor', coverage: null, moods: ['dark', 'building', 'melodic'],
+    character: null,
+    notes: 'Roots 1-b3-b6-5 as whole-note sustains; every layer above shares the '
+      + '1-2-b3-4-5 pentachord so chord QUALITIES are implied, never stated (no 3rd '
+      + 'sounds anywhere). The harmony is carried by the ostinato\'s bar-downbeat '
+      + 'accent note alone. Bass bar 4: G4 half, then G3 quarter (octave drop) plus '
+      + 'a beat of rest — the turnaround. Read off FL note labels, high confidence.',
+  },
+  vid_venexxi_ebsaw: {
+    family: 'major', pack: 'igvideo', role: 'harmony', style: 'pluggnb',
+    provenance: 'video-transcribed', ratified: false, needsEar: true, sourceEndorsed: false,
+    song: 'pluggnb 5-layer breakdown (Eb major, "layered sawkeys")', section: 'A', sectionBars: 4,
+    source: 'igexport-DcZL7XFSQj_.mp4',
+    numerals: 'IV^7-iii7-I^7-iii7',
+    degrees: '5:^7 4:m7 0:^7 4:m7',
+    voicedAs: ['Abmaj7', 'Gm7', 'Ebmaj7', 'Gm7(add C6)'],
+    sourceKey: 'Eb:major', coverage: null, moods: ['warm', 'bouncy', 'playful'],
+    character: null,
+    notes: 'Never states V: orbits I via IVmaj7 and iii7 (his never-state-the-tonic '
+      + 'cousin — states the tonic but never the dominant). Voicings G4-C6 with a '
+      + 'moving TOP voice (C6 held over the second Gm7, then Bb5-G5 tag); closing '
+      + 'stabs get a velocity fade ramp. Read off FL note labels, high confidence.',
+  },
 };

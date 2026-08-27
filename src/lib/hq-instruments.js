@@ -121,4 +121,42 @@ export const HQ_INSTRUMENTS = {
     backend: 'vst', plugin: 'vendor/plugins/Surge XT.vst3',
     preset: 'vendor/patches/lead-square.fxp', velScale: 0.9, trimDb: -4,
   },
+
+  // --- D85 synth palette (his "serum vst synths" ask; Surge factory patches
+  // fetched from the release_xt_1.3.4 tag — patches from main are streamed by
+  // a NEWER Surge and load as silence-vs-init on our 1.3.4 build). Browser
+  // side plays the GM soundfont / native synth of the same name; each patch
+  // below was probe-rendered and its envelope/centroid verified to match the
+  // category before wiring (scratchpad probe3, 2026-08-27).
+  gm_slap_bass_2: {
+    // the bouncy funk bass: Surge "Rubber Bass" — punchy hold, fast release
+    backend: 'vst', plugin: 'vendor/plugins/Surge XT.vst3',
+    preset: 'vendor/patches/rubber-bass.fxp', velScale: 0.95, trimDb: -1,
+  },
+  supersaw: {
+    // Surge "Tarnce" — bright unison saws (browser: native supersaw synth)
+    backend: 'vst', plugin: 'vendor/plugins/Surge XT.vst3',
+    preset: 'vendor/patches/supersaw.fxp', velScale: 0.9, trimDb: -4,
+  },
+  gm_kalimba: {
+    // synth pluck motor/hook voice: Surge "Trancy" (decays ~-20dB by 1s)
+    backend: 'vst', plugin: 'vendor/plugins/Surge XT.vst3',
+    preset: 'vendor/patches/pluck.fxp', velScale: 0.9, trimDb: -3,
+  },
+  gm_music_box: {
+    // high sparkle/chime layer: Surge "Magic Music Box"
+    backend: 'vst', plugin: 'vendor/plugins/Surge XT.vst3',
+    preset: 'vendor/patches/sparkle.fxp', velScale: 0.9, trimDb: -4,
+  },
+  gm_synth_strings_1: {
+    // synth-strings cushion: Surge "Juno-60 Strings" (slow attack, long tail);
+    // strings support stays whisper-quiet in the mix (the four "too loud" notes)
+    backend: 'vst', plugin: 'vendor/plugins/Surge XT.vst3',
+    preset: 'vendor/patches/juno-strings.fxp', velScale: 0.9, trimDb: -4,
+  },
+  gm_epiano1: {
+    // upgraded from the fluid GM fallback: Surge "Soft Suitcase" Rhodes
+    backend: 'vst', plugin: 'vendor/plugins/Surge XT.vst3',
+    preset: 'vendor/patches/epiano.fxp', velScale: 0.9, trimDb: -2,
+  },
 };

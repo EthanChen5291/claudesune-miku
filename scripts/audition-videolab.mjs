@@ -801,6 +801,70 @@ function card(c) { cards.push(c); }
   });
 }
 
+// ---------------------------------------------------------------------------
+// D85 batch-3 cards — the layer-stack formula and the funk bounce, on the new
+// synth palette (his round-8 ask: "serum vst synths ... saw synth, bass
+// synth", "the bouncy bass used in funky songs", "high end patterns").
+// Browser plays soundfonts/native synths; HQ maps each sound to a probe-
+// verified Surge patch (src/lib/hq-instruments.js).
+// ---------------------------------------------------------------------------
+// The five-layer build the batch-3 creator repeats across five reels
+// (igexport-DalZ717INc7 is the spine): sustained root bass with a bar-4
+// octave-drop turnaround, a constant 1-2 pedal ostinato whose bar-downbeat
+// accent note alone carries the chord change, a counter entering on beat 2,
+// and a sparkle lane whose beat-4 two-8th pickups sequence upward each bar.
+{
+  const ctx = ctxOf(V.vid_layerstack_cm, 'C:minor');
+  const ctxStatic = { harmony: ['Cm'], barsPerChord: 1, key: 'C:minor' };
+  // the pedal NEVER moves (tonic 1-2 oscillation); only the accent note reads
+  // the chord — bind the pedal static, the accent against the moving harmony
+  const pedal = fig({ name: 'pedal-8ths', bars: 1, onsets: ['1/8', '2/8', '3/8', '4/8', '5/8', '6/8', '7/8'], figure: ['R', '~2', 'R', '~2', 'R', '~2', 'R'], accents: [0.5, 0.45, 0.5, 0.45, 0.5, 0.45, 0.5], legato: false }, ctxStatic, { sound: 'gm_kalimba', octave: 5, gainRange: [0.3, 0.5], fx: '.room(0.3).clip(0.7)' });
+  const accent = fig({ name: 'accent-line', bars: 1, onsets: ['0'], figure: ['R'], accents: [0.9], legato: false }, ctx, { sound: 'gm_kalimba', octave: 5, loopRoots: true, gainRange: [0.4, 0.62], fx: '.room(0.3).clip(0.7)' });
+  const bass = `note("<c2 eb2 ab1 [g2@2 g1 ~]>").s("sawtooth").lpf(700).gain(0.85).clip(1.02)`;
+  const counter = `note("<[~ c6 d6 eb6] [g6@2 [f6 eb6] d6]>").s("gm_epiano1").gain(0.3).room(0.4).clip(1.1)`;
+  const sparkle = `note("<[c7 ~ ~ ~ ~ ~ d7 eb7] [d7 ~ ~ ~ ~ ~ eb7 f7] [eb7 ~ c8 ~ ~ ~ c8 d8] [eb8 ~ ~ ~ g8 ~ ~ ~]>").s("gm_music_box").gain(0.16).room(0.6)`;
+  const pad = `note("<[c4,g4] [eb4,bb4] [ab3,eb4] [g3,d4]>").s("supersaw").lpf(2200).gain(0.12).room(0.5).clip(1.1)`;
+  const mix = `stack(${bass}, ${pad}, ${pedal}, ${accent}, ${counter}, ${sparkle})`;
+  card({
+    name: 'vl_layerstack', kind: 'COMBINATION',
+    title: 'The layer stack — five lanes, one vocabulary',
+    techniques: ['accent-line chord changes: the ostinato pedal never moves, only the bar-downbeat accent reads the harmony', 'bar-4 bass turnaround: octave drop + a beat of rest', 'counter enters on beat 2 (1-2-b3 climb → held 5 → 4-b3 turn → 2)', 'sparkle pickups: beat-4 8th-pairs stepping into the next downbeat, sequenced upward to a G8 peak', 'no drums — the pulse layers carry time', 'all-synth palette: pluck ostinato, saw bass, supersaw no-3rd pad, e-piano counter, music-box sparkle'],
+    sources: ['igexport-DalZ717INc7 (accent-line build)', 'igexport-DZS8aawIFrb (Surge XT build)', 'igexport-Da3c_kEI25C (backbeat-stab build)'],
+    key: 'C:minor', bpm: 91, degrees: V.vid_layerstack_cm.degrees, base: 'vid_layerstack_cm', family: 'minor',
+    symbols: ctx.harmony, totalBars: 8,
+    mix,
+    solos: { _pedal: `stack(${pedal}, ${accent})`, _bass: bass, _counter: counter, _sparkle: sparkle, _pad: pad },
+    note: 'The batch-3 creator’s formula, played straight: five registers, one 1-2-b3-4-5 vocabulary. The kalimba pedal is your pluck; the sparkle and counter are the “high end patterns” you asked about — chimes anchor odd bars, beat-4 pickups climb into every barline, and the whole sparkle lane sequences upward until it peaks two octaves above everything. In HQ every voice is a real Surge patch.',
+  });
+}
+
+// The bouncy funk bass, on the pluggnb changes: rubber bass bouncing
+// root / octave / fifth / octave on a syncopated grid, supersaw key stabs
+// with a 9th on the long hit, backbeat music-box 16ths walking 3-2-1-7.
+{
+  const ctx = ctxOf(V.vid_venexxi_ebsaw, 'Eb:major');
+  const bounce = fig({ name: 'funk-bounce', bars: 1, onsets: ['0', '3/8', '1/2', '7/8'], figure: ['R', 'R+', '5', 'R+'], accents: [0.95, 0.7, 0.8, 0.75], legato: false }, ctx, { sound: 'gm_slap_bass_2', octave: 2, loopRoots: true, gainRange: [0.55, 0.9], fx: '.clip(0.6)' });
+  // verify pass (D85 addendum): the first cut voiced 3.5+.7+ and its tops
+  // (D6-G6) sat in the sparkle band — the + octave tokens overshot the
+  // source's G4-C6 voicings. Compact root-octave stack instead, with the 9
+  // tucked low on the third hit (the batch-2 9-under-b3 crunch).
+  const sawkeys = fig({ name: 'sawkeys-stabs', bars: 1, onsets: ['0', '1/8', '1/2'], figure: ['3.5.7', '3.5.7', '9.3.5.7'], accents: [0.7, 0.5, 0.78], legato: false }, ctx, { sound: 'supersaw', octave: 4, loopRoots: true, gainRange: [0.2, 0.4], fx: '.lpf(2800).room(0.3).clip(0.55)' });
+  const spark = `note("<[~ g6 ~ f6] [~ eb6 ~ d6]>").s("gm_music_box").gain(0.18).room(0.5).clip(0.3)`;
+  const drums = `stack(s("bd ~ [~ bd] ~").gain(0.4), s("~ sd ~ sd").gain(0.3), s("hh*8").gain(0.16))`;
+  const mix = `stack(${bounce}, ${sawkeys}, ${spark}, ${drums})`;
+  card({
+    name: 'vl_funkbounce', kind: 'COMBINATION',
+    title: 'Funk bounce — the rubber bass',
+    techniques: ['bouncy bass: R / octave-up / 5th / octave-up on a 0-3/8-1/2-7/8 syncopated grid', 'supersaw key stabs: two pushes + a longer 9th-colored hit, rootless upper voicings', 'backbeat music-box 16ths walking 3-2-1-7 across two bars (the drumless-loop hat substitute, over a real beat here)', 'IVmaj7-iii7-Imaj7-iii7: orbits the tonic, never states V'],
+    sources: ['igexport-DcZL7XFSQj_ (pluggnb breakdown)', 'igexport-Da3c_kEI25C (backbeat stabs)', 'his round-8 ask: the bouncy bass used in funky songs'],
+    key: 'Eb:major', bpm: 112, degrees: V.vid_venexxi_ebsaw.degrees, base: 'vid_venexxi_ebsaw', family: 'major',
+    symbols: ctx.harmony, totalBars: 8,
+    mix,
+    solos: { _bounce: bounce, _sawkeys: sawkeys, _sparkle: spark, _drums: drums },
+    note: 'The bouncy bass you asked for: gm_slap_bass_2 in the browser, and in HQ it’s Surge’s “Rubber Bass” — probe-verified punchy hold and a fast release. The bounce is the GRID (root, octave push on the and-of-2, fifth, octave push into the next bar), not just the timbre. Supersaw stabs answer it off the beat; the music-box backbeat walk is the high-end pattern riding on top.',
+  });
+}
+
 // ---- every mix through the engine's own transpiler -------------------------
 let checked = 0;
 const CHECKS = [];

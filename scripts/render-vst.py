@@ -5,10 +5,23 @@
 #     --plugin "vendor/plugins/Surge XT.vst3" --midi stem.mid --out stem.wav \
 #     --duration 65 [--preset patch.fxp] [--sample-rate 44100]
 #
-# The plugin loads from a repo-local path (no system install). Presets: .fxp
-# via load_preset (Surge XT reads its own .fxp patch format through this),
-# .vstpreset via load_vst3_preset. Without a preset the plugin's init patch
-# sounds — functional, not curated.
+# The plugin loads from a repo-local path (no system install).
+#
+# D85: DawDreamer's load_preset(.fxp) is a VST2-only code path — on a VST3
+# plugin it returns False and applies NOTHING (every "patched" render before
+# this fix actually sounded Surge's init saw; the return value was never
+# checked). The working path for VST3 is load_vst3_preset(.vstpreset), so a
+# .fxp preset is wrapped on the fly: the fxp's chunk payload (Surge's native
+# 'sub3' patch stream) becomes the Comp chunk of a constructed .vstpreset
+# whose class ID is the JUCE-derived component FUID (0xABCDEF01, 0x9182FAEB,
+# manufacturer, plugin) — verified against the FUID table in the Surge XT
+# binary. Any load failure is now fatal, never silent.
+#
+# The patch swap is enqueued on the audio thread and kills voices in the
+# first processed block, which silenced notes starting at t=0 — so after
+# loading the graph we run a short throwaway render to consume the patch
+# queue BEFORE the MIDI is added (measured: note@0 peak 0.0 without the
+# warmup, full amplitude with it).
 
 import argparse
 import struct
@@ -16,6 +29,10 @@ import wave
 
 import dawdreamer as daw
 import numpy as np
+
+# JUCE VST3 component FUID words for Surge XT (manufacturer VmbA, plugin SgXT)
+SURGE_CID = 'ABCDEF019182FAEB{:08X}{:08X}'.format(
+    int.from_bytes(b'VmbA', 'big'), int.from_bytes(b'SgXT', 'big'))
 
 p = argparse.ArgumentParser()
 p.add_argument('--plugin', required=True)
@@ -26,18 +43,32 @@ p.add_argument('--preset', default=None)
 p.add_argument('--sample-rate', type=int, default=44100)
 args = p.parse_args()
 
+
+def fxp_to_vstpreset(fxp_path, out_path, cid=SURGE_CID):
+    b = open(fxp_path, 'rb').read()
+    if b[:4] != b'CcnK' or b[8:12] != b'FPCh':
+        raise SystemExit(f'{fxp_path}: not an FPCh-chunk .fxp')
+    size = struct.unpack('>i', b[56:60])[0]
+    chunk = b[60:60 + size]
+    buf = b'VST3' + struct.pack('<i', 1) + cid.encode('ascii')
+    buf += struct.pack('<q', 48 + len(chunk)) + chunk
+    buf += b'List' + struct.pack('<i', 1) + b'Comp' + struct.pack('<qq', 48, len(chunk))
+    open(out_path, 'wb').write(buf)
+
+
 engine = daw.RenderEngine(args.sample_rate, 512)
 synth = engine.make_plugin_processor('synth', args.plugin)
 if args.preset:
-    try:
-        if args.preset.endswith('.vstpreset'):
-            synth.load_vst3_preset(args.preset)
-        else:
-            synth.load_preset(args.preset)
-    except Exception as e:  # noqa: BLE001 — a bad preset falls back to init, loudly
-        print(f'warning: preset load failed ({e}); rendering init patch')
-synth.load_midi(args.midi, clear_previous=True, beats=False, all_events=True)
+    preset = args.preset
+    if preset.endswith('.fxp'):
+        preset = args.out + '.vstpreset'
+        fxp_to_vstpreset(args.preset, preset)
+    if not synth.load_vst3_preset(preset):
+        raise SystemExit(f'preset REFUSED by plugin: {args.preset}')
 engine.load_graph([(synth, [])])
+if args.preset:
+    engine.render(0.3)  # consume the enqueued patch load before real MIDI
+synth.load_midi(args.midi, clear_previous=True, beats=False, all_events=True)
 engine.render(args.duration)
 audio = engine.get_audio()  # float32, shape (2, N)
 

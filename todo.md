@@ -810,3 +810,40 @@ didn't move. ONE QUESTION FOR YOU (pre-existing bug the sweep found):
 (the 8-bar melody cycle doesn't divide 36 bars). It's always been true —
 you judged them with it. Fix it (melodies re-align, audible change) or
 keep it (reads as variation)? Say the word either way.
+
+D84/D85 — ROUND 8: your "it's fine" logged (the 6-song loop phase-shift
+STAYS — reads as variation); then the synth round. THE BIG FIND: the VST
+synth patches had NEVER loaded — DawDreamer's load_preset is a VST2-only
+path that silently no-ops on the Surge XT VST3, so every synth stem in
+every HQ wav so far (all 85, including the D83 re-renders) played Surge's
+INIT SAW. Fixed (fxp wrapped into a constructed .vstpreset + warmup
+render; load failures now fatal) and verified by spectra. NEW PALETTE
+(probe-measured before wiring): Rubber Bass (the bouncy funk bass),
+Tarnce supersaw, Trancy pluck, Magic Music Box sparkle, Juno-60 strings,
+Soft Suitcase e-piano (gm_epiano1 finally off fluidsynth). 8 NEW VIDEOS
+frame-read (batch 3 in video-corpus.md): five are the same creator's
+layer-stack builds — patch names appear in NONE (UIs never opened), but
+one build is entirely Surge XT, the synth we already vendor; Serum 2 and
+Massive X are the others (commercial, can't auto-fetch — if you ever buy
+Serum, render-vst.py hosts it the same way). LISTEN:
+- videolab.html: TWO NEW CARDS — vl_layerstack (the five-lane formula:
+  accent-line ostinato, bar-4 bass turnaround, beat-2 counter, sparkle
+  pickups sequencing up to G8) and vl_funkbounce (the bouncy rubber
+  bass + supersaw stabs + backbeat music-box walk). Kept cards
+  byte-identical.
+- songs.html: FOUR NEW GENERATOR DEFAULTS, purely additive (every acc +
+  lead byte-identical, chill songs untouched): counterline on all
+  3+-voice songs (held 3rd / beat-2 climb alternating, whisper band),
+  music-box sparkle in busy sections (>=90bpm 4/4), funk bounce where
+  the pocket fits (construction got it), synth pluck textures on
+  energetic songs.
+- HQ RE-RENDER DONE: 96/96 wavs (17 lab mixes + all solos + 11 songs),
+  0 failures, clamp ledger identical to D83's 8 cosmetic lines; shipped
+  spectra verified (bounce stem centroid 779 Hz = the Rubber Bass probe
+  fingerprint). FOR YOUR EAR NEXT LISTEN: (a) trimDb on the four ORIGINAL
+  synth voices (bass/leads/pad) was tuned against the wrong sound — say
+  if any synth now sits too far back/forward in HQ; (b) should
+  festival_drop get the D73 sub-bass floor (a latent gate gap keeps it
+  out — adding it changes a judged song's floor); (c) the sparkle plays
+  OVER melody bars (whisper, own lane 2 octaves up) — a deliberate
+  extension of the high-silence rule per your ask; kill it if it clashes.

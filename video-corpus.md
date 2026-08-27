@@ -353,3 +353,116 @@ Register counterpoint at phrase scale: roots walk DOWN (F#3→D3→B2→B2→C#3
 while peaks walk UP (E6→…→A6). This is our `water` vibe rendered as one
 voice and a pedal — sparsity as the texture, the D62 theme from the source
 that does it best.
+
+---
+
+# BATCH 3 (D85, 2026-08-27) — eight reels: the layer-stack builds
+
+Transcribed by an 8-agent frame-read pass (montage sheets + full-res frames,
+FL note-name labels read per note; one video pitch-checked against the
+Ableton status bar). His ask for this batch: layering techniques per
+instrument + synth types + interval patterns, high-end patterns, the synths
+the creator uses, and the bouncy funk bass. Five of the eight are the SAME
+creator (couch, headphones, seascape painting) building 3-5 synth layers
+note-by-note in FL — the batch is effectively a masterclass in one person's
+layer grammar.
+
+## Inventory
+
+| file | what it is | key | bpm | synths |
+|------|-----------|-----|-----|--------|
+| DYfkq3BouJ_ | FL loop build, high chime layer | Cm | 75 | Serum 2 ×3+ |
+| DZS8aawIFrb | FL ostinato build | Em | 80 | **Surge XT ×3** |
+| DY77j6wIEcA | FL pulse-arp build | Dm | 63 | Serum 2 ×4 |
+| DalZ717INc7 | FL accent-line build | Cm | 91 | Massive X ×2 + Serum 2 ×2 |
+| Da3c_kEI25C | FL backbeat-stab build (saved ×3) | Cm | 69 | Serum 2 ×5 |
+| DcZL7XFSQj_ | pluggnb 5-layer breakdown | Eb | ? | Serum 2 ×2 + DirectWave ×2 |
+| Db8S5RaNXOJ | Ableton "what instrument do you play" meme | Em | ~166 | tremolo strings rack |
+| Dak2qNuMi0i | (report pending at write time; addendum below) | | | |
+
+**The synth-acquisition verdict:** patch names are on screen in NONE of the
+eight — no preset browser is ever opened. What IS recoverable: the plugins
+(Serum 2 dominates; one build is entirely Surge XT — the synth we already
+vendor; Massive X once; DirectWave sampling). Serum 2 and Massive X are
+commercial and cannot be auto-fetched; the palette therefore lands as
+category-matched Surge XT factory patches, each verified by probe render
+(envelope + spectral centroid) before wiring — see D85.
+
+## The layer-stack formula (five same-creator builds agree)
+
+3-5 synth instances, ONE function each, all sharing a tiny interval
+vocabulary (1-2-b3-4-5 + b6/b7 color) restated at every octave:
+
+1. **Sustained root bass** — whole/half-note roots only (1-b3-b6-5,
+   1-bVII-IV-bVI-V etc.); the ONLY rhythmic event is a bar-4 turnaround
+   (octave drop + a beat of rest; or the V root leaping UP an 11th).
+   Never bouncy in these builds.
+2. **Ostinato / pulse motor** — straight 8ths/16ths on a root pedal with a
+   fixed neighbor pair; e.g. [1,8,9,b10] 16th cells where the top F#-G pair
+   NEVER moves while the bottom root changes (fixed-top again), or a 1-2
+   pedal where only the bar-downbeat accent note changes (8ve→b3→b6→5) —
+   **the accent line IS the chord change**.
+3. **Mid counter, entering on beat 2** — fills the exact gaps the
+   motor/lead leaves: 1-2-b3 quarter climb → 5 held over the barline →
+   4-b3 16th turn → 2 resolve. Or a whole/half-note scale line climbing
+   E→F#→G→A→B across the whole loop.
+4. **Staccato high melody** — 16th-length stabs, mostly on beats, small
+   arches (b3-2-4-b3-1), sparse answers, ONE peak bar per 4 (5-1-2 or a
+   held b3-at-the-octave landed by a straight-8th 1-2-b3 run).
+5. **Ultra-high sparkle (C7+)** — see the high-end doctrine.
+
+No drums in five of the builds — the pulse layers carry time. The
+pluggnb video is the exception that adds 808/claps under the same stack.
+
+## The high-end doctrine (his "high end patterns" ask — six sources)
+
+- **Root/5th chimes** on beats 1 and 3 of ODD bars; **motion cells** only in
+  the back half of EVEN bars (chromatic 16th slide b3→2; a 1-2-b3-2-1-2
+  eighth rock filling the turnaround). Sparse anchor, placed motion.
+- **The beat-4 pickup**: two 8ths stepping into the NEXT bar's downbeat
+  harmony tone, transposed UP each bar (1 / 2 / b3 / 8ve downbeats,
+  peaking at 5 two octaves above the lead at loop end).
+- **The "e"-echo**: over a straight-8th root pedal, one 16th a grid step
+  AFTER each beat, a m3 above in bars 1/3 and a M2 above in bars 2/4 —
+  shimmer from exactly two intervals.
+- **Backbeat stabs**: one 16th on beats 2 and 4 walking a two-bar descent
+  (b3-b7-b6-5) — a hat substitute in drumless loops.
+- **Rocking pentatonic cell ×4 with rotating answers** (1-5-6-5 then:
+  octave plunge / two-beat breath / walkdown / final 6→1 resolve).
+- **String-figuration formula** (Ableton video, bars 9-12): per chord, one
+  repeating 8th shape [5, 3-below, root-above, 5, PEAK 3rd-an-octave-up on
+  beat 3, root, 5, root]; the peak climbs a step per bar (C5→D#5→E5).
+
+## Other batch-3 techniques
+
+- **Velocity fade ramps** on closing stabs (sawkeys layer) — endings decay
+  by velocity, not by removal.
+- **Paired 16th double-stabs** (harpsichord) as high-mid sparkle against
+  sustained chords.
+- **4-3 grace resolve** (Ab6→G6) as a high-topper signature.
+- **Placed variation inside the loop**: bar 4 restates bar 2 with ONE note
+  changed (C6 for D#6); second-cycle sparkle repeats with one-note
+  variations. Same law as his own "variation as a placed event".
+- **Contrary-motion walking bass** under a sequentially-climbing melody
+  (tremolo-strings video, bars 5-8), then quarter-pulse root+5th hits under
+  the figuration — the only batch-3 bass with internal motion.
+
+## Batch-3 addendum: the eighth video (Dak2qNuMi0i)
+
+Not a DAW build — a Synthesia-style solo-piano anime ballad ("You hear the
+piano and know the episode is about to end"), E minor, ~100-105 rubato,
+decoded programmatically (self-calibrating key grid + on-bar handwritten
+note letters; 336 events, full timeline in the read agent's events.txt).
+No synths anywhere — nothing to acquire; what it teaches is ARRANGEMENT:
+- **Texture changes instead of layers** (solo piano): music-box intro two
+  octaves up → lament verse → ostinato section → climax chords over
+  chromatic 16th runs → white-key glissando → octave-doubled outro.
+- **The 7→1 grace tag**: a semitone D#→E flick into the high tonic,
+  recurring at phrase heads — the track's identity ornament.
+- **Chromatic lament bass** D#-D-C#-C-B-E harmonized B/D# → Bø7/D → C#dim
+  → C → B7 → Em (a real descending-bass progression for sad vibes).
+- **The same 1-b3-b6-5 ostinato** as the synth builds (E-G-C-B quarter
+  loop) — sixth independent source for that contour.
+- **Octave-doubled outro melody** (X4+X5 bell dyads) as the final-section
+  lift, and V(7)→i at every cadence including the end — his v→V taste,
+  corroborated from the piano side.

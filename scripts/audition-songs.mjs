@@ -713,7 +713,13 @@ function buildSong(prompt, name, opts = {}) {
     }
     return m.some((x) => x !== 1) ? `.mul(gain("<${m.join(' ')}>"))` : '';
   };
+  // D85 addendum: every (bindFn, bars) fed to varySplit is also recorded —
+  // the dropIntro block rebuilds the mix from scratch on the 4+T timeline
+  // and was silently DROPPING the extras (verify pass: festival's cast
+  // declared sparkle+counterline its mix never played).
+  const extraRecs = [];
   const varySplit = (bindFn, bars) => {
+    extraRecs.push([bindFn, bars]);
     const pieces = [];
     const out = bars.map((x, i) => (x && !(ctxBarV && varyBars[i]) ? 1 : 0));
     if (out.some(Boolean)) pieces.push(`${bindFn(ctxBar)}.mask("<${maskString(out)}>")${rampMul(out)}`);
@@ -728,12 +734,16 @@ function buildSong(prompt, name, opts = {}) {
     if (tPool.length) {
       const [tName, tFig0] = tPool[fnv(`${name}|texture`) % tPool.length];
       const tFig = { ...tFig0, name: tName };
-      const bindT = (ctx) => bindFigure(tFig, ctx, v.meter, { sound: 'piano', loopRoots: true, gainRange: [0.22, 0.42], fx: accFx, octave: opts.texture.octave }).expr;
+      // D85 ("less piano heavy ... replace some of the parts of the piano
+      // with synth types"): on energetic songs the mid texture is a synth
+      // pluck (gm_kalimba -> Surge "Trancy" in HQ), not a third piano hand
+      const tSound = v.bpm >= 120 ? 'gm_kalimba' : 'piano';
+      const bindT = (ctx) => bindFigure(tFig, ctx, v.meter, { sound: tSound, loopRoots: true, gainRange: [0.22, 0.42], fx: accFx, octave: opts.texture.octave }).expr;
       const tBars = form.sections.flatMap((sec) => Array(sec.bars).fill((ENERGY[sec.archetype] ?? 3) >= 4 ? 1 : 0));
       if (tBars.some(Boolean)) {
         extraParts.push(...varySplit(bindT, tBars));
         extraSolos._texture = bindT(ctxBar);
-        extraInfo.push(`texture ${tName} (${opts.texture.class}, oct ${opts.texture.octave})`);
+        extraInfo.push(`texture ${tName} (${opts.texture.class}, oct ${opts.texture.octave}, ${tSound})`);
       }
     }
   }
@@ -756,17 +766,86 @@ function buildSong(prompt, name, opts = {}) {
     extraSolos._sub_bass = bindSub(ctxBar);
     extraInfo.push('sub-bass: gm_synth_bass_1 held roots (oct 2) under the beat');
   }
-  if (opts.counterline) {
-    const clFig = { name: 'counterline', bars: 1, onsets: ['0'], figure: ['3'], accents: [0.72], legato: true };
-    // D67 (fight: "strings a bit too loud"): 0.42 → 0.3
-    // D81 (strings "too loud" four rounds running on the lab): whisper band
-    const bindCl = (ctx) => bindFigure(clFig, ctx, v.meter, { octave: 4, sound: 'gm_string_ensemble_1', loopRoots: true, gainRange: [0.12, 0.24], fx: '.room(0.45)', rhythmName: 'counterline' }).expr;
+  // D85 (his round-8 ask: "more creative layering ... more supporting
+  // melodies in the harmony (like the videos)"): the counterline is now a
+  // GENERATOR DEFAULT, and it moves the way the batch-3 builds move — odd
+  // bars hold the chord's third (the D65 guide-tone), even bars enter on
+  // beat 2 and climb 3→5→root-up in quarters (the videos' counter always
+  // enters in the gap after the downbeat and arches up). Whisper band
+  // stands (strings were "too loud" four rounds running). Voice: the Juno
+  // synth strings on songs that already carry synth low voices, the real
+  // ensemble elsewhere. opts.counterline: false opts out.
+  if (opts.counterline !== false && v.ensemble.count >= 3) {
+    const clHold = { name: 'counterline', bars: 1, onsets: ['0'], figure: ['3'], accents: [0.72], legato: true };
+    // verify pass (D85 addendum): the first cut climbed 3-5-R+ and its R+
+    // peak (midi 84-86) poked ABOVE the lead on the four songs whose lead
+    // dips into octave 4 — support tops sit UNDER the melody (D77). R-3-5
+    // still arches up but tops at the fifth, inside the held-3rd band.
+    const clClimb = {
+      name: 'counterclimb', bars: 1, onsets: ['1/4', '2/4', '3/4'],
+      figure: ['R', '3', '5'], accents: [0.6, 0.66, 0.72], legato: true,
+    };
+    const clSound = (accToBass || (drumBarsShared && v.bpm >= 140)) ? 'gm_synth_strings_1' : 'gm_string_ensemble_1';
+    const clOpts = { octave: 4, sound: clSound, loopRoots: true, gainRange: [0.12, 0.24], fx: '.room(0.45)', rhythmName: 'counterline' };
+    const bindCl = (ctx) => bindFigure(clHold, ctx, v.meter, clOpts).expr;
+    const bindClimb = (ctx) => bindFigure(clClimb, ctx, v.meter, clOpts).expr;
     const clBars = form.sections.flatMap((sec) => Array(sec.bars).fill(sec.lead !== 'none' ? 1 : 0));
     if (clBars.some(Boolean)) {
-      extraParts.push(...varySplit(bindCl, clBars));
-      extraSolos._counterline = bindCl(ctxBar);
-      extraInfo.push('counterline: held guide-tones (strings, oct 4)');
+      const odd = clBars.map((x, i) => (x && i % 2 === 0 ? 1 : 0));
+      const even = clBars.map((x, i) => (x && i % 2 === 1 ? 1 : 0));
+      if (odd.some(Boolean)) extraParts.push(...varySplit(bindCl, odd));
+      if (even.some(Boolean)) extraParts.push(...varySplit(bindClimb, even));
+      extraSolos._counterline = `stack(${bindCl(ctxBar)}.mask("<1 0>"), ${bindClimb(ctxBar)}.mask("<0 1>"))`;
+      extraInfo.push(`counterline: held 3rd / beat-2 climb R-3-5 alternating (${clSound}, oct 4)`);
     }
+  }
+  // D85 (his "high end patterns ... to compliment the tracks", the batch-3
+  // doctrine): a music-box sparkle lane far above the lead — odd bars get
+  // root+5th chimes on beats 1 and 3 (the sparse anchor), even bars get a
+  // beat-4 pair of 8ths climbing 5→6 toward the next bar (the pickup).
+  // Whisper gains, octave 6 (a lane of its own; the melody's walk tops out
+  // well below). Conservative gate: only sections at energy >= 4 and only
+  // songs with a pulse (>= 90bpm) — the lab cards carry the full-loop
+  // version for his ear. This consciously extends the D76 high-silence
+  // rule per his explicit round-8 ask; his verdicts rule on it.
+  if (opts.sparkle !== false && v.bpm >= 90 && v.meter === '4/4') {
+    const spChime = {
+      name: 'sparkle-chime', bars: 1, onsets: ['0', '1/2'],
+      figure: ['R', '5'], accents: [0.5, 0.4], legato: false,
+    };
+    const spPickup = {
+      name: 'sparkle-pickup', bars: 1, onsets: ['3/4', '7/8'],
+      figure: ['5', '6'], accents: [0.42, 0.5], legato: false,
+    };
+    const spOpts = { octave: 6, sound: 'gm_music_box', loopRoots: true, gainRange: [0.15, 0.3], fx: '.room(0.5).clip(0.9)', rhythmName: 'sparkle' };
+    const bindChime = (ctx) => bindFigure(spChime, ctx, v.meter, spOpts).expr;
+    const bindPick = (ctx) => bindFigure(spPickup, ctx, v.meter, spOpts).expr;
+    const spBars = form.sections.flatMap((sec) => Array(sec.bars).fill((ENERGY[sec.archetype] ?? 3) >= 4 ? 1 : 0));
+    if (spBars.some(Boolean)) {
+      const odd = spBars.map((x, i) => (x && i % 2 === 0 ? 1 : 0));
+      const even = spBars.map((x, i) => (x && i % 2 === 1 ? 1 : 0));
+      if (odd.some(Boolean)) extraParts.push(...varySplit(bindChime, odd));
+      if (even.some(Boolean)) extraParts.push(...varySplit(bindPick, even));
+      extraSolos._sparkle = `stack(${bindChime(ctxBar)}.mask("<1 0>"), ${bindPick(ctxBar)}.mask("<0 1>"))`;
+      extraInfo.push('sparkle: music-box chimes/pickups (oct 6, busy sections)');
+    }
+  }
+  // D85 ("the bouncy bass used in funky songs"): in the funk pocket —
+  // beat-forward 4/4 between 96 and 140bpm, where neither the accToBass
+  // swap nor the >=140 sub-bass fires — a slap-bass line bounces root /
+  // octave / fifth / octave on a syncopated grid, masked to the beat's
+  // bars. gm_slap_bass_2 -> Surge "Rubber Bass" in HQ.
+  if (opts.funkBass !== false && !accToBass && drumBarsShared
+    && v.meter === '4/4' && v.bpm >= 96 && v.bpm < 140
+    && ['driving', 'foreground'].includes(v.percussion.presence)) {
+    const fbFig = {
+      name: 'funk-bounce', bars: 1, onsets: ['0', '3/8', '1/2', '7/8'],
+      figure: ['R', 'R+', '5', 'R+'], accents: [0.95, 0.7, 0.8, 0.75], legato: false,
+    };
+    const bindFb = (ctx) => bindFigure(fbFig, ctx, v.meter, { octave: 2, sound: 'gm_slap_bass_2', loopRoots: true, gainRange: [0.55, 0.9], fx: '.clip(0.6)' }).expr;
+    extraParts.push(...varySplit(bindFb, drumBarsShared));
+    extraSolos._funk_bass = bindFb(ctxBar);
+    extraInfo.push('funk bounce: gm_slap_bass_2 R/R+/5/R+ syncopated under the beat');
   }
 
   const mixParts = [
@@ -849,7 +928,20 @@ function buildSong(prompt, name, opts = {}) {
       }
       return `${l.expr}.mask(${gateMain})`;
     });
-    const mainParts = [...basePieces2, ...leadPieces, ...layerPieces, `${dBody}.mask(${gateMain})`];
+    // D85 addendum: re-assemble the recorded extras on the 4+T timeline
+    // (masks pre()-rebased so nothing phase-drifts, D63). The drop path
+    // stays section-curve-exempt (D82: its arc IS the buildup/drop).
+    const extraPieces = extraRecs.flatMap(([bindFn, bars]) => {
+      const pieces = [];
+      const out = bars.map((x, i) => (x && !(ctxBarV && varyBars[i]) ? 1 : 0));
+      if (out.some(Boolean)) pieces.push(`${bindFn(ctxBar)}.mask("<${pre(out)}>")${rampMul([0, 0, 0, 0, ...out])}`);
+      if (ctxBarV) {
+        const inn = bars.map((x, i) => (x && varyBars[i] ? 1 : 0));
+        if (inn.some(Boolean)) pieces.push(`${bindFn(ctxBarV)}.mask("<${pre(inn)}>")`);
+      }
+      return pieces;
+    });
+    const mainParts = [...basePieces2, ...leadPieces, ...layerPieces, ...extraPieces, `${dBody}.mask(${gateMain})`];
     mix = `stack(${introParts.join(', ')}, ${mainParts.join(', ')})`;
     solos._intro = `stack(${introParts.join(', ')})`;
     solos._dropdrums = dBody;
