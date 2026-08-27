@@ -735,3 +735,16 @@ same cell four new ways. STILL OWED: (1) the elevator's 17th-bar
 turnaround is from LAST round — does the last section still sound
 strange after a fresh listen? (2) the planing sentence still ends at
 "...as a variant here. also " — what was the rest?
+
+D77 — videolab ROUND 6 up (15 cards, 6 SONGS). Your four growth asks,
+built: AQUATIC is a 40-bar song now (kept ladder untouched) — flute
+melody over the wash, a bIII^7-recolored third cycle, harp echo joining
+and staying, strings from bar 1, the source's falling cascade tag.
+CITYPOP is the long one — 48 bars, each section its own instrument
+(piano choruses, e-piano verses+bridge, vibraphone bridge melody), a new
+colored-turnaround bridge, outro wrapping major->minor. KPOP is at 116
+now (kept card still there at 98 to A/B) — 32 bars, the melody runs 16
+bars through a new lament C section, e-piano, strings, celesta. The VAMP
+melody actually leads now — moving entries, an F#6 climax, a breath
+section over a third progression. LISTEN ORDER suggestion: vamp first
+(tell me if "engaging" moved the right direction), then the three songs.

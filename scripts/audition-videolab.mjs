@@ -91,17 +91,30 @@ function card(c) { cards.push(c); }
   // 9th token cannot land E# (the round-4 lesson). The melody survives the
   // reharm unchanged: every held pitch re-checks as a chord tone or
   // diatonic color on the new chords.
+  // Round 5: "add a melody to it and actual full progressions with more
+  // variance. this is good bg music but I'd like to try more engaging
+  // soundtrack." The held-note melody read as another pad — atmosphere,
+  // not a lead. Rebuilt as a 24-bar form A A' B A C A': a NEW melody that
+  // moves (8th-note entries, rising answers, a real climax, a breath
+  // section), sits louder, and a third progression — C: v7 bVI^9 iv9
+  // bIII^7 (falling colors, climb masked off so v7's foreign 9th can
+  // never sound). All three progressions arch home (D76); the melody's
+  // grammar is still his: merges, no cross-bar re-strikes, every pitch
+  // diatonic to G# minor.
   const vamp4 = { degrees: '0:m9 5:m9 8:^9 3:^7', numerals: null };
   const bSec = { degrees: '5:m9 8:^9 7:m7 3:^7', numerals: null };
+  const cSec = { degrees: '7:m7 8:^9 5:m9 3:^7', numerals: null };
   const vSyms = renderProgression(vamp4, 'G#:minor');
   const bSyms = renderProgression(bSec, 'G#:minor');
-  const ctx = { harmony: [...vSyms, ...vSyms, ...bSyms, ...vSyms], barsPerChord: 1, key: 'G#:minor' };
-  const climb = `${fig(F.vid_climb_block_restrike, ctx, { octave: 3, loopRoots: true, fx: '.gain(0.42).room(0.45).clip(0.85)' })}.mask("<1@8 0@4 1@4>")`;
-  // hand-written 16-bar melody (the bars:4-figure trap from the round-3
-  // verify pass): A phrase, its varied answer, a higher B phrase ending on
-  // the section climax, the theme's return; all notes held to the next,
-  // no neighbour re-strikes, every pitch diatonic to G# minor
-  const melody = `note("<[F#5@3 A#5] [G#5@2 E5 D#5] [B5@2 G#5@2] [F#5@3 D#5] [F#5@3 A#5] [G#5@2 E5 D#5] [B5@3 C#6] [A#5@2 G#5 D#5] [D#6@2 A#5@2] [B5@2 E5@2] [F#5@2 G#5@2] [F#6@3 D#6] [F#5@3 A#5] [G#5@2 E5 D#5] [B5@2 G#5@2] [F#5@3 D#5]>").s("piano").gain(0.7).room(0.5).clip(1.1)`;
+  const cSyms = renderProgression(cSec, 'G#:minor');
+  const ctx = { harmony: [...vSyms, ...vSyms, ...bSyms, ...vSyms, ...cSyms, ...vSyms], barsPerChord: 1, key: 'G#:minor' };
+  const climb = `${fig(F.vid_climb_block_restrike, ctx, { octave: 3, loopRoots: true, fx: '.gain(0.42).room(0.45).clip(0.85)' })}.mask("<1@8 0@4 1@4 0@4 1@4>")`;
+  // hand-written 24-bar LEAD (not a pad): 8th-note rising entries, a
+  // varied answer that reaches higher, the B climax on F#6, an airy C
+  // breath, the answer as the final word; no cross-bar re-strikes
+  // (D#6->D#5 at 12->13 is an octave leap, not a repeat), every pitch
+  // diatonic to G# minor
+  const melody = `note("<[D#5 E5 F#5@2] [G#5@2 E5 D#5] [B5 G#5 F#5@2] [D#5@3 F#5] [D#5 E5 F#5@2] [G#5@2 B5 C#6] [D#6@2 B5@2] [A#5@3 F#5] [E5 F#5 G#5@2] [B5@2 C#6 D#6] [F#5@2 A#5@2] [F#6@2 D#6@2] [D#5 E5 F#5@2] [G#5@2 E5 D#5] [B5 G#5 F#5@2] [D#5@3 F#5] [~@2 C#6@2] [B5@3 G#5] [E5@2 D#5@2] [C#5] [D#5 E5 F#5@2] [G#5@2 B5 C#6] [D#6@2 B5@2] [A#5@3 F#5]>").s("piano").gain(0.8).room(0.45).clip(1.05)`;
   const pad = fig({ name: 'vamp-pad', bars: 1, onsets: ['0'], figure: ['R.5.7+'], accents: [0.6], legato: true },
     ctx, { sound: 'gm_string_ensemble_1', octave: 3, loopRoots: true, fx: '.gain(0.28).room(0.55).clip(1.3)' });
   const bass = fig({ name: 'root', bars: 1, onsets: ['0'], figure: ['R'], accents: [0.7], legato: true },
@@ -110,13 +123,13 @@ function card(c) { cards.push(c); }
   card({
     name: 'vl_gsharp_vamp', kind: 'SONG',
     title: 'G#m9 vamp — the song',
-    techniques: ['A A′ B A form over 16 bars', 'i9-iv9-bVI^9-bIII^7 verse — an ARCH: the last two chords come down home', 'bridge: iv9 bVI^9 v7 bIII^7 (peak then fall, no dominant)', 'loop-locked walking roots (D76 — the octave-per-pass spiral is gone)', 'held-note melody with varied answer + B climax'],
-    sources: ['igexport-DceNMCmuYZV (G#m9 reel)', 'igexport-DZKQMVQsj79 (the kept colors)', 'his round-4 note'],
+    techniques: ['A A′ B A C A′ over 24 bars — three progressions, all arched', 'a LEAD melody now: 8th-note entries, rising answers, F#6 climax, an airy C breath', 'C section: v7 bVI^9 iv9 bIII^7, climb tacet (v7 stays safe from the foreign 9th)', 'loop-locked walking roots (D76)'],
+    sources: ['igexport-DceNMCmuYZV (G#m9 reel)', 'igexport-DZKQMVQsj79 (the kept colors)', 'his round-5 note'],
     key: 'G#:minor', bpm: 80, degrees: vamp4.degrees, base: 'vid_gsharp_climb', family: 'minor',
-    symbols: [...vSyms, '|', ...bSyms], totalBars: 16,
+    symbols: [...vSyms, '|', ...bSyms, '|', ...cSyms], totalBars: 24,
     mix,
     solos: { _melody: melody, _climb: climb, _pad: pad, _bass: bass },
-    note: 'You heard a real engine bug: the walking bass rule climbs an OCTAVE per pass on this chord cycle (G#-C#-E-F# ascends +12 total), so the whole song spiralled upward — "building up when that\'s the whole loop", exactly. Fixed twice over: the progressions now ARCH (verse ends E^9 -> B^7 falling home; bridge peaks then falls through v7 to B^7), and the binder folds any drifted root back into register. Same melody — every note still lands a chord tone.',
+    note: 'Your note read back: the old melody WAS pad-like — long holds at pad volume. This one leads: it enters moving, answers itself higher, climaxes on F#6 in the bridge, takes a breath over a THIRD progression (v7 falling home through the kept colors), and gets the last word. Louder than everything but the climb\'s peaks. If this is engaging in the right direction, say which section works best and I\'ll push that further.',
   });
 }
 
@@ -213,6 +226,44 @@ function card(c) { cards.push(c); }
     mix: ladder,
     solos: { _ladder: ladder },
     note: 'One voice + pedal: the ladder climbs bar 1, bar 2 is the wash. i-bVI-iv-iv-v with the iv recolored on repeat. THE candidate texture for our water vibe.',
+  });
+}
+
+// ---------------------------------------------------------------------------
+// 4b. SONG — the aquatic ladder grown (his round-5 keep note: "make this a
+// full song with layering and progressions and a melody"). The kept card is
+// untouched. Form on the ladder's own 2-bar-per-chord grid: four 10-bar
+// cycles — A (the kept cycle), A' (flute melody enters), B (a bIII^7 head:
+// A^7 replaces home, harp echo joins), A'' (melody + harp together, varied
+// cadence ending on the 11 over v). Water rule everywhere: generous room,
+// legato pedal (his D71 keep note, baked into the figure's function field).
+// Celesta cascade tag (the source's own b6-5-b3 fall) on each cycle's iv
+// wash, where all three notes are chord colors. All patterns period 40.
+// ---------------------------------------------------------------------------
+{
+  const a5 = renderProgression(V.vid_aquatic_ladder, 'F#:minor');
+  const b5 = renderProgression({ degrees: '3:^7 8:^9 5:m7 5:m7 7:m7', numerals: null }, 'F#:minor');
+  const ctx = { harmony: [...a5, ...a5, ...b5, ...a5], barsPerChord: 2, key: 'F#:minor' };
+  const ladder = fig(F.vid_ladder_quintal, ctx, { octave: 2, loopRoots: true, fx: '.gain(0.6).room(0.6).clip(1.3)' });
+  const harp = `${fig(F.vid_ladder_quintal, ctx, { sound: 'gm_orchestral_harp', octave: 3, loopRoots: true, fx: '.gain(0.28).room(0.7).clip(1.2)' })}.mask("<0@20 1@20>")`;
+  const pad = fig({ name: 'water-pad', bars: 2, onsets: ['0'], figure: ['R.5.7+'], accents: [0.55], legato: true },
+    ctx, { sound: 'gm_string_ensemble_1', octave: 2, loopRoots: true, fx: '.gain(0.22).room(0.75).clip(1.4)' });
+  // flute melody, cycles 2 and 4: held tones over the wash, every pitch
+  // diatonic to F# minor, cross-bar repeats re-pitched, cadence lands the
+  // 11 over v and hangs into the loop's home
+  const melody = `note("<~@10 [C#5@3 E5] [F#5] [E5@2 F#5@2] [A5@3 F#5] [D5@2 F#5@2] [E5@3 D5] [F#5@2 A5@2] [B4] [C#5@2 E5 G#5] [B5@3 G#5] ~@10 [C#5@3 E5] [F#5] [E5@2 F#5@2] [A5@3 F#5] [D5@2 F#5@2] [E5@3 D5] [F#5@2 A5@2] [B4] [E5@2 C#5@2] [F#5]>").s("gm_flute").gain(0.55).room(0.6).clip(1.2)`;
+  const cascade = `note("<~@7 [~@5 d6 c#6 a5] ~@9 [~@5 d6 c#6 a5] ~@9 [~@5 d6 c#6 a5] ~@9 [~@5 d6 c#6 a5] ~@2>").s("gm_celesta").gain(0.2).room(0.7)`;
+  const mix = `stack(${ladder}, ${harp}, ${pad}, ${melody}, ${cascade})`;
+  card({
+    name: 'vl_aquatic_song', kind: 'SONG',
+    title: 'Aquatic ladder — the song',
+    techniques: ['four 10-bar cycles on the ladder\'s own 2-bar grid: A A′ B A″', 'B recolors home: bIII^7 (A^7) heads the cycle', 'flute melody over the wash (cycles 2 and 4, varied cadence on the 11-over-v)', 'harp echo of the ladder joining from B on', 'the source\'s b6-5-b3 cascade tag on each iv wash', 'strings from bar 1, very soft — the water IS the setting'],
+    sources: ['igexport-DZKQMVQsj79 (Aquatic Ambience cover)', 'his round-5 keep note'],
+    key: 'F#:minor', bpm: 141, degrees: V.vid_aquatic_ladder.degrees, base: 'vid_aquatic_ladder', family: 'minor',
+    symbols: [...a5, '|', ...b5], totalBars: 40,
+    mix,
+    solos: { _ladder: ladder, _harp: harp, _pad: pad, _melody: melody, _cascade: cascade },
+    note: 'Your keep, grown — the kept card is untouched above. The ladder never stops; the song happens around it: strings breathe underneath from the first bar, a flute sings the second and fourth cycles, the third cycle recolors home to A^7 while a harp starts echoing the ladder an octave up and stays. Lots of room on everything, everything legato — the water rule. The cascade tag falls where its three notes are all chord colors.',
   });
 }
 
@@ -438,6 +489,91 @@ function card(c) { cards.push(c); }
 }
 
 // ---------------------------------------------------------------------------
+// 8c. SONG (long) — the city-pop song at full length (his round-5 KEEP note:
+// "make this a full song with different instruments and melodies and
+// layering and progressions (long)"). The kept 24-bar card is untouched.
+// 48 bars, every section a 4-multiple: Intro 4 (the minor->major flip as
+// pads) / Chorus 8 / Verse 8 / Chorus 8 / Bridge 8 (NEW progression:
+// vi9-ii9-V7-I^9, the colored turnaround) / Verse 8 / Outro 4 (the major
+// phrase, thinning out; the wrap lands major->minor — the flip in reverse).
+// Different instruments per section: piano owns the choruses, E-PIANO takes
+// the verse and bridge chords, a VIBRAPHONE sings the bridge (a second
+// melody, his verse melody stays piano), synth bass from the first chorus,
+// strings from bar 1 (the environment rule). Masks generated, all period 48.
+// ---------------------------------------------------------------------------
+{
+  const symsA = renderProgression(V.vid_citypop_ab_minor, 'Ab:minor');
+  const symsB = renderProgression(V.vid_citypop_ab_major, 'Ab:major');
+  const royal = renderProgression({ degrees: '5:^7 7:7 4:m7 9:m9', numerals: null }, 'Ab:major');
+  const turn = renderProgression({ degrees: '9:m9 2:m9 7:7 0:^9', numerals: null }, 'Ab:major');
+  const ch8 = [symsA[0], symsA[1], symsA[2], symsA[2], symsB[0], symsB[1], symsB[2], symsB[2]];
+  const intro4 = [symsA[2], symsA[2], symsB[2], symsB[2]];
+  const outro4 = [symsB[0], symsB[1], symsB[2], symsB[2]];
+  const h48 = [...intro4, ...ch8, ...royal, ...royal, ...ch8, ...turn, ...turn, ...royal, ...royal, ...outro4];
+  const rot48 = [...h48.slice(1), h48[0]];
+  const ctx48 = { harmony: h48, barsPerChord: 1, key: 'Ab:major' };
+  const rctx48 = { harmony: rot48, barsPerChord: 1, key: 'Ab:major' };
+  const maskOf = (bars) => Array.from({ length: 48 }, (_, i) => (bars.includes(i + 1) ? 1 : 0)).join(' ');
+  const range = (a, b) => Array.from({ length: b - a + 1 }, (_, i) => a + i);
+  const CHORUS = [...range(5, 12), ...range(21, 28)];
+  const VERSE = [...range(13, 20), ...range(37, 44)];
+  const BRIDGE = range(29, 36);
+  const HOLDS = [2, 4, 8, 12, 24, 28, 48];
+  const ROLLS = [9, 25];
+  const shell = { name: 'shell', bars: 1, onsets: ['0'], figure: ['R.R+'], accents: [0.7], legato: true };
+  const shellHi = { name: 'shell-hi', bars: 1, onsets: ['0'], figure: ['3+.5+.7+.9+'], accents: [0.68], legato: true };
+  const epChords = { name: 'ep-chords', bars: 1, onsets: ['0'], figure: ['3+.5+.7+'], accents: [0.62], legato: true };
+  const pedal = { name: 'hold-pedal', bars: 1, onsets: ['0'], figure: ['R'], accents: [0.45], legato: true };
+  const lid = { name: 'lid', bars: 1, onsets: ['1/2'], figure: ['9+'], accents: [0.5], legato: false };
+  const roll = { name: 'roll-entry', bars: 1, onsets: ['0', '1/16', '1/8'], figure: ['R+', '3+', '5+.7+.9+'], accents: [0.6, 0.55, 0.66], legato: true };
+  const leapIn = { name: 'leap-in', bars: 1, onsets: ['3/4', '7/8'], figure: ['5', 'R+'], accents: [0.5, 0.6], legato: false };
+  const bellTag = { name: 'nine-bell', bars: 1, onsets: ['1/8'], figure: ['9++'], accents: [0.6], legato: false };
+  const padF = { name: 'strings', bars: 1, onsets: ['0'], figure: ['R.5'], accents: [0.5], legato: true };
+  const subF = { name: 'sub', bars: 1, onsets: ['0'], figure: ['R'], accents: [0.7], legato: true };
+  const m48 = (entryF, ctxX, bars, opts) =>
+    `${fig(entryF, ctxX, { loopRoots: true, ...opts })}.mask("<${maskOf(bars)}>")`;
+  const allBars = range(1, 48);
+  const struck = allBars.filter((b) => !HOLDS.includes(b));
+  const vMel = '[F5@3 Eb5] [G5@2 Bb5@2] [Eb5@3 C5] [F5@2 Ab5 G5] [F5@3 Eb5] [G5@3 Db6] [C6@2 G5@2] [Ab5@3 F5]';
+  const verseMelody = `note("<~@12 ${vMel} ~@16 ${vMel} ~@4>").s("piano").gain(0.62).room(0.5).clip(1.15)`;
+  // vibraphone bridge melody over the turnaround, all chord tones/colors,
+  // cross-bar repeats re-pitched, hands the last word to verse 2
+  // (bar 31 sings G5 high — the verify pass measured the original Bb4-G4
+  // shape buried under the e-piano's Db5 top on that bar; the melody must
+  // top its support)
+  const bridgeMelody = `note("<~@28 [C5@2 Eb5@2] [Db5@3 C5] [G5@2 Bb4@2] [Ab4] [C5@2 Eb5@2] [F5@3 Db5] [G5@2 Db5@2] [Eb5@3 C5] ~@12>").s("gm_vibraphone").gain(0.6).room(0.55).clip(1.2)`;
+  const parts = [
+    m48(padF, ctx48, allBars, { sound: 'gm_string_ensemble_1', octave: 3, fx: '.gain(0.2).room(0.7).clip(1.4)' }),
+    m48(shell, ctx48, struck, { octave: 2, fx: '.gain(0.52).room(0.35).clip(1.3)' }),
+    m48(shellHi, ctx48, CHORUS.filter((b) => !HOLDS.includes(b) && !ROLLS.includes(b)), { octave: 3, fx: '.gain(0.5).room(0.4).clip(1.3)' }),
+    // bars 1 and 3 added: without a third somewhere, the intro's advertised
+    // minor->major flip was label-only (the strings play R.5) — the e-piano
+    // now whispers Cb vs C across bars 1/3, so the flip actually SOUNDS
+    m48(epChords, ctx48, [1, 3, ...VERSE, ...BRIDGE], { sound: 'gm_epiano1', octave: 2, fx: '.gain(0.34).room(0.5).clip(1.3)' }),
+    m48(pedal, ctx48, HOLDS, { octave: 2, fx: '.gain(0.4).room(0.5).clip(1.5)' }),
+    m48(lid, ctx48, [...HOLDS, 14, 18, 38, 42], { octave: 4, fx: '.gain(0.42).room(0.45)' }),
+    m48(roll, ctx48, ROLLS, { octave: 3, fx: '.gain(0.5).room(0.4).clip(1.3)' }),
+    m48(leapIn, rctx48, [12, 28, 48], { octave: 4, fx: '.gain(0.42).room(0.35).clip(0.9)' }),
+    m48(bellTag, ctx48, [11, 27], { octave: 4, fx: '.gain(0.4).room(0.55)' }),
+    m48(subF, ctx48, range(5, 44), { sound: 'gm_synth_bass_1', octave: 2, fx: '.gain(0.7).clip(1.02)' }),
+    verseMelody,
+    bridgeMelody,
+  ];
+  const mix = `stack(${parts.join(', ')})`;
+  card({
+    name: 'vl_citypop_song', kind: 'SONG',
+    title: 'City-pop — full length',
+    techniques: ['48 bars, all 4-multiples: intro / chorus / verse / chorus / bridge / verse / outro', 'bridge: NEW progression — vi9 ii9 V7 I^9, the colored turnaround', 'different instruments per section: piano choruses, e-piano verses+bridge, vibraphone bridge melody', 'two melodies: the verse melody (piano) + a bridge melody (vibes)', 'strings from bar 1; synth bass from the first chorus; outro thins to the flip', 'loop-locked walking roots; masks generated, period 48'],
+    sources: ['igexport-DYcEDDITmvV (City Pop Type Piano Chords)', 'his round-5 keep note'],
+    key: 'Ab:minor / Ab:major', bpm: 103, degrees: V.vid_citypop_ab_minor.degrees, base: 'vid_citypop_ab_minor', family: 'minor',
+    symbols: [...ch8, '|', ...royal, '|', ...turn], totalBars: 48,
+    mix,
+    solos: { _verseMelody: verseMelody, _bridgeMelody: bridgeMelody, _epiano: parts[3], _strings: parts[0], _sub: parts[9] },
+    note: 'The long build, on top of your keep (the kept card is untouched above): 48 bars. The intro is just the minor->major flip breathing in pads; your praised verse comes twice, its chords handed to E-PIANO; the new bridge walks the colored turnaround (Fm9 Bbm9 Eb7 Ab^9) under a VIBRAPHONE melody — a second voice, so each section has its own instrument; the outro thins back to the major phrase and the wrap lands major->minor, the flip in reverse.',
+  });
+}
+
+// ---------------------------------------------------------------------------
 // 9. COMBINATION — K-pop/R&B pads + the two-note pickup tags on top.
 // ---------------------------------------------------------------------------
 {
@@ -529,6 +665,61 @@ function card(c) { cards.push(c); }
     mix,
     solos: { _pads: `stack(${pads}, ${padHalf})`, _split: splitHi, _melody: melody, _sub: sub, _tags: tags, _restrike: restrike },
     note: 'From your keep note: ALL the high decorations now go SILENT for the whole bridge — the two-note sighs you named, and also a high chord re-strike the measurement pass caught ringing above the melody on two bridge bars. Where the melody rests, both keep their kept placement. Everything else is untouched.',
+  });
+}
+
+// ---------------------------------------------------------------------------
+// 10b. SONG — the kpop song at tempo (his round-5 KEEP note: "make it
+// quicker (too slow at the moment) with more layers and instruments and
+// progressions - make it a full song with melody and layering!"). The kept
+// 24-bar card is untouched. 32 bars @116 (was 98): A A' B B' C C' A A' —
+// the kept loop, his split bar into the bridge, the bridge, then a NEW
+// C section (iv9 bIII^7 bVI^7 V7 — the lament colors walking down to a
+// real V) carrying the melody's second half, and home. More instruments:
+// strings from bar 1, E-PIANO joining on the C section, celesta sparkle at
+// the two A-section phrase ends. All high decorations still yield to the
+// melody (bars 9-24). Masks generated, all period 32.
+// ---------------------------------------------------------------------------
+{
+  const syms4 = renderProgression(V.vid_kpop_rnb, 'D:minor').slice(0, 4);
+  const b4 = renderProgression({ degrees: '3:^7 8:^7 7:7 0:m7', numerals: null }, 'D:minor');
+  const c4 = renderProgression({ degrees: '5:m9 3:^7 8:^7 7:7', numerals: null }, 'D:minor');
+  const h32 = [...syms4, ...syms4, ...b4, ...b4, ...c4, ...c4, ...syms4, ...syms4];
+  const rot32 = [...h32.slice(1), h32[0]];
+  const ctx = { harmony: h32, barsPerChord: 1, key: 'D:minor' };
+  const rctx = { harmony: rot32, barsPerChord: 1, key: 'D:minor' };
+  const maskOf = (bars) => Array.from({ length: 32 }, (_, i) => (bars.includes(i + 1) ? 1 : 0)).join(' ');
+  const m32 = (entryF, ctxX, bars, opts) =>
+    `${fig(entryF, ctxX, { loopRoots: true, ...opts })}.mask("<${maskOf(bars)}>")`;
+  const padF = { name: 'pad', bars: 1, onsets: ['0'], figure: ['R.3+.5+.7+'], accents: [0.7], legato: true };
+  const pads = m32(padF, ctx, [1, 2, 3, 4, 5, 6, 7, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31], { octave: 2, fx: '.gain(0.55).room(0.45).clip(1.4)' });
+  const padHalf = m32(padF, ctx, [8, 32], { octave: 2, fx: '.gain(0.55).room(0.45).clip(0.5)' });
+  const splitHi = m32({ name: 'split-hi', bars: 1, onsets: ['1/2'], figure: ['5+.7+.9+.3++'], accents: [0.62], legato: true }, rctx, [8, 32], { octave: 2, fx: '.gain(0.5).room(0.45).clip(0.95)' });
+  const restrike = m32({ name: 'pad-restrike', bars: 1, onsets: ['5/8'], figure: ['3+.5+.7+.9+'], accents: [0.5], legato: false }, ctx, [3, 7, 27, 31], { octave: 3, fx: '.gain(0.4).room(0.45).clip(1.1)' });
+  const tags = m32(F.vid_tag_two_note_pickup, rctx, [2, 4, 6, 8, 26, 28, 30, 32], { octave: 4, fx: '.gain(0.45).room(0.4)' });
+  const strings = m32({ name: 'strings', bars: 1, onsets: ['0'], figure: ['R.5'], accents: [0.5], legato: true }, ctx, Array.from({ length: 32 }, (_, i) => i + 1), { sound: 'gm_string_ensemble_1', octave: 3, fx: '.gain(0.2).room(0.65).clip(1.4)' });
+  // hand-voiced: the bound version's walking root arrived HIGH off the
+  // bridge, so bars 17-18 voiced above the melody while 21-22 sat low (the
+  // verify pass measured the slip). Absolute notation pins every C bar's
+  // support strictly under the melody's lowest note.
+  const ep = `note("<~@16 [bb3,d4,f4] [a3,c4,e4] [d4,f4,a4] [cs4,e4,g4] [bb3,d4,f4] [a3,c4,e4] [d4,f4,a4] [cs4,e4,g4] ~@8>").s("gm_epiano1").gain(0.34).room(0.5).clip(1.3)`;
+  const spark = `note("<~@7 [~@6 a5 d6] ~@23 [~@6 a5 d6]>").s("gm_celesta").gain(0.2).room(0.6)`;
+  const sub = fig({ name: 'sub', bars: 1, onsets: ['0'], figure: ['R'], accents: [0.75], legato: true }, ctx, { sound: 'gm_synth_bass_1', octave: 2, loopRoots: true, fx: '.gain(0.8).clip(1.02)' });
+  // the kept bridge melody (bars 9-16), then its SECOND half over the new
+  // C lament (bars 17-24): chord tones throughout, cross-bar repeats
+  // re-pitched, ends low into the A return
+  const melody = `note("<~@8 [A5@2 G5 F5] [D5@3 F5] [E5@2 C#5@2] [D5@3 A4] [A5@2 G5 F5] [G5@3 D5] [E5@2 A4 C#5] [D5] [Bb4@2 D5@2] [A4@3 C5] [D5@2 F5@2] [E5@3 C#5] [Bb4@2 D5@2] [C5@2 E5@2] [F5@2 A5 G5] [E5@2 A4@2] ~@8>").s("piano").gain(0.62).room(0.5).clip(1.15)`;
+  const mix = `stack(${pads}, ${padHalf}, ${splitHi}, ${restrike}, ${tags}, ${strings}, ${ep}, ${spark}, ${sub}, ${melody})`;
+  card({
+    name: 'vl_kpop_full', kind: 'SONG',
+    title: 'K-pop split — at tempo',
+    techniques: ['A A′ B B′ C C′ A A′ over 32 bars @116 (kept card was 98)', 'NEW C section: iv9 bIII^7 bVI^7 V7 — the lament colors down to a real V', 'melody spans 16 bars now: the kept bridge half + a new C half', 'more instruments: strings from bar 1, e-piano on C, celesta sparkle at A phrase ends', 'his split bar at both A-section exits; all high decorations yield to the melody'],
+    sources: ['igexport-DbuFbACtERO (K-Pop/R&B)', 'his round-5 keep note'],
+    key: 'D:minor', bpm: 116, degrees: '8:^7 7:7 0:m7 10:m7', base: 'vid_kpop_rnb', family: 'minor',
+    symbols: [...syms4, '|', ...b4, '|', ...c4], totalBars: 32,
+    mix,
+    solos: { _melody: melody, _pads: `stack(${pads}, ${padHalf})`, _split: splitHi, _strings: strings, _epiano: ep, _sub: sub, _tags: tags },
+    note: 'Your keep, at tempo — the kept card is untouched above. 116 bpm, and the song doubles its middle: after your split bar announces the bridge, the melody now keeps going through a NEW section (Gm9 F^7 Bb^7 A7 — the lament walk with a real V at the bottom) while an e-piano takes the chords, strings breathe under everything from bar 1, and a celesta sparks the two A-section phrase ends. Sighs and re-strikes still go silent wherever the melody sings.',
   });
 }
 

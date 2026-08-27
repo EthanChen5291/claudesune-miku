@@ -3837,3 +3837,71 @@ a solo so every layer is auditionable. Observation for future authoring:
 fx-chain .gain(x) REPLACES the accent-profile gain pattern (measured flat
 0.2 on every bronik climb note, kept and variant alike) — accents do not
 sound through a trailing fx gain. 50/50 exprs, 306/306 tests.
+
+D77 (2026-08-26) — round-5 verdicts: the promotion round. Zero kills, EIGHT
+keeps — vl_citypop_pair joins (his first note-then-keep full song), and
+every stale note box was cleared (undershadow/elevator/planing/bronik
+notes gone — the D76 fixes read as accepted pending fresh listens). All
+four new notes are GROWTH requests, so round 6 is four song-scale builds:
+- vl_aquatic_song (NEW; kept ladder untouched): 40 bars on the ladder's
+  own 2-bar-per-chord grid, A A' B A'' — the kept cycle, flute melody
+  over the wash (cycles 2 and 4, cadence on the 11-over-v), B recolors
+  home to bIII^7 (A^7) while a harp starts echoing the ladder an octave
+  up and stays, strings from bar 1 (environment rule), the source's own
+  b6-5-b3 cascade tag placed on the iv wash where all three notes are
+  chord colors (on the v bar it would be a b9 clash). Water rule: room
+  >= 0.6 on every layer, everything legato.
+- vl_citypop_song (NEW; kept 24-bar card untouched): "(long)" = 48 bars,
+  every section a 4-multiple: intro (the minor->major flip in pads) /
+  chorus / verse / chorus / bridge / verse / outro. "Different
+  instruments" = per-SECTION instrumentation: piano owns choruses,
+  E-PIANO takes verse+bridge chords, VIBRAPHONE sings a new bridge
+  melody (verse melody stays piano) — two melodies, never overlapping.
+  New progression: the bridge's colored turnaround vi9-ii9-V7-I^9.
+  Outro thins to the major phrase; the wrap lands major->minor (the
+  flip in reverse). Masks GENERATED from bar lists, not hand-typed
+  48-slot strings.
+- vl_kpop_full (NEW; kept split card untouched): "quicker" = 116 (was
+  98), 32 bars, A A' B B' C C' A A' — the melody now spans 16 bars (the
+  kept bridge half + a new C half over iv9-bIII^7-bVI^7-V7, the lament
+  walk down to a real V), strings from bar 1, e-piano on the C
+  sections, celesta sparkle only at the two A-section phrase ends, his
+  split bar at both A exits (announcing F^7 into the bridge, Bb^7 at
+  the wrap). All high decorations still silent through bars 9-24.
+- vl_gsharp_vamp (modified in place — not kept): "add a melody... more
+  engaging" read as: the held-note melody WAS a pad. Rebuilt 24 bars,
+  A A' B A C A' — a LEAD melody (8th-note entries, rising answers, F#6
+  climax, an airy C breath), louder (0.8), and a THIRD progression
+  (C: v7 bVI^9 iv9 bIII^7) with the climb tacet so v7's foreign 9th
+  can never sound. All three progressions arch (D76 discipline).
+Register interlock rule applied while authoring: support strings sized
+so their tops sit under each concurrent melody (R.5 not R.5+ where the
+walk would push the 5th into the melody's octave). Build: 15 cards,
+70/70 exprs, 306/306, zero NEW binder warnings (no new spirals, no new
+fallbacks), all 8 kept + 3 judged-unchanged cards byte-identical.
+
+D77 addendum — the round-6 verify workflow (4 agents, haps-measured).
+Vamp: 7/7 clean — arch bass 44-49-52-47 all passes, zero pc-5 anywhere
+(both D#m7 bars provably silent under the climb mask), lead melody 2-4
+onsets/bar with the F#6 climax at bar 12, zero cross-bar re-strikes,
+zero same-root seams. Aquatic: 6/7 — the one "finding" (D# on every
+C#m7 bar) is the KEPT ladder's own 9th token, hap-identical to the
+kept card: dorian color his ear kept twice, so the spec was wrong, not
+the music. Citypop: three REAL catches, all fixed and re-measured:
+(1) bridge bar 31's vibes melody sat entirely under the e-piano's top
+(buried) -> melody bar 31 now sings G5, tops support 79>73; (2) the
+intro's advertised minor->major flip was LABEL-ONLY — no intro layer
+carried a third (strings play R.5) -> e-piano now whispers bars 1/3,
+measured Cb-third vs C-third; (3) noted, not fixed: verse lids at F6
+over the melody match the kept 24-bar card exactly (accepted sound).
+Kpop_full: one HIGH catch fixed: the C-section e-piano's walking root
+arrived high off the bridge — bars 17-18 voiced ABOVE the melody
+(unison-doubling it) while 21-22 sat low; replaced with hand-voiced
+absolute notation, re-measured ep top < melody min in all 8 C bars.
+LESSON (extends D76): a masked binding's walking root still walks
+through the masked-out bars, so a layer that enters mid-song can arrive
+at any register the preceding harmony pushed it to — for section-scoped
+support, hand-voice or anchor deliberately. Split-chord "spelling"
+finding rejected: the rootless A-form is the kept card's own device.
+Kept-card pinning re-proven: only the vamp changed; kpop_split
+byte-identical to git HEAD. 70/70 exprs, 306/306 tests.
