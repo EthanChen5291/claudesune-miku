@@ -840,16 +840,25 @@ function clamp01(x) { return Math.max(0.05, Math.min(1, Math.round(x * 1000) / 1
  *  never its whole source mode (full chord-scales sprayed out-of-key color
  *  that Ethan's ear rightly refused). 'full' keeps the whole chord-scale.
  *  Anchors sit on what the chord forces: core tones, avoid-notes excluded. */
-function makeScaleOf(keyStr, keyParsed, tensions) {
+function makeScaleOf(keyStr, keyParsed, tensions, chromCore = false) {
   const keyPcs = new Set(keyParsed.intervals.map((x) => (keyParsed.rootPc + x) % 12));
   const scales = new Map();
   return (sym) => {
     if (!scales.has(sym)) {
       const scale = chordScale(sym, keyStr);
       const core = chordCoreTones(sym);
-      const supply = tensions === 'full'
-        ? new Set(scale.pcs)
-        : new Set([...[...scale.pcs].filter((pc) => keyPcs.has(pc)), ...core]);
+      // D90 (festival: "on Bb7 and Bbm chords the right hand melody sounds
+      // really funky. not good"): over a FOREIGN-ROOT chord even the triadic
+      // supply mixes key tones with the chord's forced tones (Bb7 in E major
+      // walks Bb-D-F-Ab plus D#: chromatic adjacencies). Opt-in: when the
+      // chord's root is outside the key, the walk supply collapses to the
+      // chord's own core — the melody SPELLS a borrowed chord.
+      const rootPc = chordRootPc(sym);
+      const supply = chromCore && rootPc != null && !keyPcs.has(rootPc)
+        ? new Set(core)
+        : tensions === 'full'
+          ? new Set(scale.pcs)
+          : new Set([...[...scale.pcs].filter((pc) => keyPcs.has(pc)), ...core]);
       const anchor = new Set([...core].filter((pc) => !scale.avoid.has(pc)));
       scales.set(sym, { ...scale, core, supply, anchor: anchor.size ? anchor : core });
     }
@@ -960,7 +969,7 @@ export function bindMelody(rhythmEntry, harmonyContext, meter = '4/4', opts = {}
   const ARCH = { 2: [0, -1], 3: [0, 3, -1], 4: [0, 2, 4, -1] }[phraseBars]
     ?? Array.from({ length: phraseBars }, (_, i) => (i === phraseBars - 1 ? -1 : Math.round(4 * Math.sin(Math.PI * i / (phraseBars - 1)))));
 
-  const scaleOf = makeScaleOf(harmonyContext.key ?? 'C:major', key, profile.tensions ?? 'triadic');
+  const scaleOf = makeScaleOf(harmonyContext.key ?? 'C:major', key, profile.tensions ?? 'triadic', Boolean(opts.chromCore));
 
   // THE cell (one bar of scale-step offsets); bars with a different onset
   // count get a shape-preserving resample of the same cell (D26 machinery)
@@ -1264,7 +1273,7 @@ export function bindMelodySpec(spec, harmonyContext, meter = '4/4', opts = {}) {
   const flats = keyUsesFlats(harmonyContext.key ?? 'C:major');
   const harmony = harmonyContext.harmony;
   const barsPerChord = harmonyContext.barsPerChord ?? 1;
-  const scaleOf = makeScaleOf(harmonyContext.key ?? 'C:major', key, profile.tensions ?? 'triadic');
+  const scaleOf = makeScaleOf(harmonyContext.key ?? 'C:major', key, profile.tensions ?? 'triadic', Boolean(opts.chromCore));
 
   // validate + normalize the spec's bars
   const bars = spec.bars.map((b, bi) => {

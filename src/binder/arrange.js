@@ -1022,9 +1022,10 @@ export function renderArrangement(plan, ctx) {
       hold: sustainy || !!ctx.leadOpts.hold,
       mergeRepeats: carriesTune && (sustainy || !!ctx.leadOpts.mergeRepeats),
       ...(ctx.leadOpts.maxRepeat != null && !sustainy ? { maxRepeat: ctx.leadOpts.maxRepeat } : {}),
-      // D89: the phrase-final grammar correction rides the same channel —
+      // D89/D90: the melody-grammar corrections ride the same channel —
       // opt-in, so every existing page stays byte-identical
       ...(ctx.leadOpts.cadenceNo7 ? { cadenceNo7: true } : {}),
+      ...(ctx.leadOpts.chromCore ? { chromCore: true } : {}),
     };
   };
   for (const layer of plan.layers) {

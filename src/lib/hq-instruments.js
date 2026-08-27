@@ -93,6 +93,14 @@ export const HQ_INSTRUMENTS = {
     sfz: 'vendor/sfz/gen/strings-sections.sfz',
     velScale: 0.9, trimDb: -1,
   },
+  // D90 (his string-melody directive): the violin voice rides the same VSCO
+  // section patch — the browser tier has its own GM violin; in HQ, walks above
+  // the patch's G#5 ceiling fold down an octave (D83) rather than vanish.
+  gm_violin: {
+    backend: 'sfz',
+    sfz: 'vendor/sfz/gen/strings-sections.sfz',
+    velScale: 0.9, trimDb: -1,
+  },
 
   // --- synths (tier 2: DawDreamer + Surge XT) ---
   // preset paths are Surge .fxp patches (fetched into vendor/patches/); an

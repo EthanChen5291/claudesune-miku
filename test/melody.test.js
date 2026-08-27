@@ -260,3 +260,31 @@ test('D59: bindMelody binds under the game-midi style and stays key-legal', () =
   assert.equal(rep.offKeyUnforced, 0, 'game-midi produced unforced out-of-key notes');
   assert.equal(rep.anchorViolations, 0, 'game-midi broke an anchor');
 });
+
+test('D90: chromCore spells a borrowed chord and is inert on in-key roots', () => {
+  const cell = { name: 'c', onsets: ['0', '1/4', '1/2', '3/4'], accents: [1, 0.6, 0.85, 0.6], artic: [1, 0.7, 0.9, 0.7] };
+  // Bb7 in E major — the festival case: a FOREIGN-ROOT chord
+  const foreign = { harmony: ['E', 'A', 'Bb7', 'E'], barsPerChord: 1, key: 'E:major' };
+  const BB7 = new Set([10, 2, 5, 8]); // Bb D F Ab
+  const on = bindMelody(cell, foreign, '4/4', { style: 'toby-fox', seed: 3, chromCore: true });
+  // every melody note sounding in a Bb7 bar (bar index 2 mod 4) is a chord tone
+  for (const n of on.boundMeta.notes ?? []) {
+    if (n.chord !== 'Bb7') continue;
+    assert.ok(BB7.has(((n.midi % 12) + 12) % 12),
+      `chromCore let a non-chord tone through on Bb7: midi ${n.midi} (${n.category})`);
+  }
+  // the flag actually bites: some seed differs from the uncollapsed bind
+  const seeds = [1, 2, 3, 5, 7];
+  const differs = seeds.some((s) =>
+    bindMelody(cell, foreign, '4/4', { style: 'toby-fox', seed: s, chromCore: true }).expr
+    !== bindMelody(cell, foreign, '4/4', { style: 'toby-fox', seed: s, chromCore: false }).expr);
+  assert.ok(differs, 'chromCore never changed a foreign-root bind across 5 seeds');
+  // and it is INERT when every chord root is in the key (the training control)
+  const inKey = { harmony: ['F', 'E7', 'Am7', 'G'], barsPerChord: 1, key: 'C:major' };
+  for (const s of seeds) {
+    assert.equal(
+      bindMelody(cell, inKey, '4/4', { style: 'toby-fox', seed: s, chromCore: true }).expr,
+      bindMelody(cell, inKey, '4/4', { style: 'toby-fox', seed: s, chromCore: false }).expr,
+      `chromCore altered an in-key-root bind (seed ${s})`);
+  }
+});

@@ -29,7 +29,7 @@ import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { compileVibe } from '../src/lib/vibes.js';
 import { exemplarPool, variationsOf, varyProgression } from '../src/lib/harmony-vary.js';
-import { VERDICTS, DERIVED_VERDICTS } from '../src/lib/verdicts.js';
+import { VERDICTS, DERIVED_VERDICTS, CARD_NOTES } from '../src/lib/verdicts.js';
 import { renderProgression } from '../src/binder/harmony.js';
 import { parseDegrees } from '../src/lib/progressions.js';
 import { dpStack } from './drum-render.js';
@@ -365,10 +365,29 @@ function buildSong(prompt, name, opts = {}) {
   // Rhodes lead under 120).
   // D89 (rest: "maybe some strings could actually take the melody. like solo
   // violin or cello") — a song may hand its melody to a named voice outright,
-  // and may seat it in that voice's own singing register
-  const LEAD_SOUND = opts.leadSound ?? (opts.fullSynth ? (v.bpm >= 120 ? 'gm_lead_2_sawtooth' : 'gm_epiano1')
+  // and may seat it in that voice's own singing register.
+  // D90 (his correction: "there should be handoffs ... im just saying some
+  // songs should have string melodies / solo string melodies"): string
+  // melodies are a PALETTE capability, decoupled from handoffs. A
+  // string-friendly vibe (slow, legato/pedal, chamber anchor or somber-side
+  // moods, not fullSynth) opens the melody to strings two ways: the letter
+  // handoff pool goes strings-first (below), and a HISTORY-LESS song (no
+  // verdict, no note — nothing of his mid-conversation) may roll a solo
+  // string lead outright. Songs he has spoken about keep their lead voice
+  // unless his note names it.
+  const STRINGY_MOODS = ['somber', 'sad', 'grave', 'tender', 'intimate', 'nostalgic', 'plaintive', 'sacred'];
+  const stringFriendly = !opts.fullSynth && v.bpm <= 90
+    && ((v.articulation?.pedal) || v.articulation?.style === 'legato')
+    && (['solo', 'duet', 'trio'].includes(v.ensemble.anchor) || (v.moods ?? []).some((m) => STRINGY_MOODS.includes(m)));
+  const stringLeadRoll = !opts.leadSound && stringFriendly && !priorKeep
+    && !DERIVED_VERDICTS?.[name] && !CARD_NOTES?.[name]
+    && fnv(`${name}|stringlead`) % 3 === 0
+    ? (fnv(`${name}|stringvoice`) % 2 === 0 ? 'gm_cello' : 'gm_violin')
+    : null;
+  const LEAD_SOUND = opts.leadSound ?? stringLeadRoll ?? (opts.fullSynth ? (v.bpm >= 120 ? 'gm_lead_2_sawtooth' : 'gm_epiano1')
     : synthAcc ? (v.bpm >= 120 ? 'gm_lead_2_sawtooth' : 'gm_lead_1_square') : 'piano');
-  const leadOctave = opts.leadOctave ?? v.register.leadOctave;
+  const leadOctave = opts.leadOctave
+    ?? (stringLeadRoll === 'gm_cello' ? Math.min(v.register.leadOctave, 4) : v.register.leadOctave);
   const accOnsets = accFig.onsets;
   const accOct = Math.max(1, Math.min(3, v.register.accOctave));
   // D63 articulation: style-level duration + damper on top of each pattern's
@@ -390,9 +409,10 @@ function buildSong(prompt, name, opts = {}) {
   // D87 (stealth note: the melody "does too much \"talking\" - too active
   // for stealth"): a song may thin its lead directly
   if (opts.leadDensityMul) LEAD.densityMul = Math.min(LEAD.densityMul, opts.leadDensityMul);
-  // D89: a bowed/blown NAMED lead sustains — the arranger's own SUSTAINY rule
-  // (winds and strings fill to the next note), reaching the main lead
-  if (opts.leadSound && /cello|violin|viola|string|flute|recorder|horn|trumpet|oboe|clarinet/.test(opts.leadSound)) LEAD.hold = true;
+  // D89/D90: a bowed/blown lead sustains — the arranger's own SUSTAINY rule
+  // (winds and strings fill to the next note), reaching the main lead whether
+  // named by opts or rolled by the string-lead capability
+  if (/cello|violin|viola|string|flute|recorder|horn|trumpet|oboe|clarinet/.test(LEAD_SOUND)) LEAD.hold = true;
   // D64/D65 (his boss note, twice): when foreground drums play, the melody
   // rides louder — the boost stepped 0.12 → 0.18 ("could still be a bit louder")
   // D86: opts.leadGainMul — a song-scoped trim dial (fight: "piano (very loud)")
@@ -433,16 +453,25 @@ function buildSong(prompt, name, opts = {}) {
   const leadTargetRaw = Math.max(2, Math.round(melodyDensityTarget(v.bpm, accDensity) * LEAD.densityMul));
   const leadTarget = Math.max(2, Math.round(leadTargetRaw * meterMul));
   // D89 (training bar 4, "sounded kinda weird" — measured: the antecedent
-  // phrase-final tone held the b7): the cadence grammar correction, gated so
-  // every judged melody stays byte-identical (opts may pin a prose-praised
-  // song that has no formal keep click yet)
-  const cadenceNo7 = opts.cadenceNo7 ?? !priorKeep;
-  const meterCap = meterMul < 1 ? { maxDensity: leadTarget + 1 } : {};
+  // phrase-final tone held the b7) + D90 (festival's Bb7/Bbm melody "really
+  // funky"): the melody-grammar corrections, gated so every judged melody
+  // stays byte-identical. opts.grammarPin pins a prose-praised song that has
+  // no formal keep click yet.
+  const melodyGrammar = !priorKeep && !opts.grammarPin;
+  const cadenceNo7 = melodyGrammar;
+  const chromCore = melodyGrammar;
+  // D90 ("better but still too jittery like adhd"): the 2/4 thinning goes
+  // further — the density ceiling tightens to the target itself, and the
+  // thinned melody HOLDS (notes fill their gaps; the D64 held-lead device)
+  // with a floor under the articulation ratios (the D67 anti-robotic floor).
+  if (meterMul < 1) LEAD.hold = true;
+  const artFloor = opts.articFloor ?? (meterMul < 1 ? 0.85 : null);
+  const meterCap = meterMul < 1 ? { maxDensity: leadTarget } : {};
   const leadCell = melodyRhythm(v.meter, v.bpm, name, { target: leadTarget, accDensity, accOnsets, beats, ...meterCap });
   const leadSeed = fnv(name);
   const leadBound = bindMelody(leadCell, ctxBar, v.meter, {
     style: 'toby-fox', seed: leadSeed, octave: leadOctave, sound: LEAD_SOUND, fx: leadFx,
-    hold: LEAD.hold, mergeRepeats: LEAD.merge, articFloor: opts.articFloor ?? null, cadenceNo7,
+    hold: LEAD.hold, mergeRepeats: LEAD.merge, articFloor: artFloor, cadenceNo7, chromCore,
   });
   // D73: half-time thinning changes only the SOUNDING piano — the planner
   // still sees the pre-thinning lead (the 0.55 fast-song cap), or the cast
@@ -457,7 +486,7 @@ function buildSong(prompt, name, opts = {}) {
     planCell = melodyRhythm(v.meter, v.bpm, name, { target: t0, accDensity, accOnsets, beats });
     planPeriod = bindMelody(planCell, ctxBar, v.meter, {
       style: 'toby-fox', seed: leadSeed, octave: leadOctave, sound: LEAD_SOUND, fx: leadFx,
-      hold: LEAD.hold, mergeRepeats: LEAD.merge, articFloor: opts.articFloor ?? null, cadenceNo7,
+      hold: LEAD.hold, mergeRepeats: LEAD.merge, articFloor: artFloor, cadenceNo7, chromCore,
     }).boundMeta.period;
   }
   const plan = planArrangement({
@@ -541,7 +570,7 @@ function buildSong(prompt, name, opts = {}) {
     // D65: the lead's manner reaches EVERY melodic layer the arranger binds
     // (round 2: "trumpet still should much more hold"), and support pads are
     // real chord voicings over a low frame (his strings rule)
-    leadOpts: { hold: LEAD.hold, mergeRepeats: LEAD.merge, cadenceNo7 },
+    leadOpts: { hold: LEAD.hold, mergeRepeats: LEAD.merge, cadenceNo7, chromCore },
     padVoicing: true,
     // D70/D72: pad melody modes are assigned per LAYER above (top pad
     // 'full' under 140bpm, the rest 'subtle') — no ctx-wide flag needed.
@@ -634,7 +663,13 @@ function buildSong(prompt, name, opts = {}) {
   // Songs whose cast already carries a melody voice (takeover/alternate/
   // backup — the planner's own handoffs) are left alone.
   const castHasMelodyVoice = rendered.layers.some((l) => /alternate_melody|melody_takeover|melody_backup/.test(l.id));
-  const HANDOFF_POOL = ['gm_flute', 'gm_vibraphone', 'gm_epiano1'];
+  // D90 ("some songs should have string melodies"): a string-friendly vibe's
+  // handoff pool goes strings-first — a letter handed to a violin or cello IS
+  // the string melody, with handoffs intact (his correction: handoffs stay).
+  // Kept songs keep the original pool (their handoff voices are judged).
+  const HANDOFF_POOL = !priorKeep && stringFriendly
+    ? ['gm_violin', 'gm_cello', 'gm_flute']
+    : ['gm_flute', 'gm_vibraphone', 'gm_epiano1'];
   const letterSound = (L) => {
     if (L === 'A' || castHasMelodyVoice || opts.noHandoff) return LEAD_SOUND;
     const others = [...new Set((mf.sections ?? []).map((x) => (x.letter ?? '').replace('*', '')).filter((x) => x && x !== 'A'))].sort();
@@ -647,7 +682,7 @@ function buildSong(prompt, name, opts = {}) {
     const snd = letterSound(L);
     return bindMelody(letterCell(L), ctxL, v.meter, {
       style: 'toby-fox', seed: letterSeed(L), octave: leadOctave, sound: snd, fx: leadFx,
-      hold: snd === 'gm_flute' ? true : LEAD.hold, mergeRepeats: LEAD.merge, articFloor: opts.articFloor ?? null, cadenceNo7,
+      hold: /flute|cello|violin/.test(snd) ? true : LEAD.hold, mergeRepeats: LEAD.merge, articFloor: artFloor, cadenceNo7, chromCore,
     });
   };
 
@@ -768,7 +803,7 @@ function buildSong(prompt, name, opts = {}) {
           // D89 addendum: the verify pass caught this rebind as the ONE bind
           // path the cadence correction missed (desert's bridge calliope held
           // a maj7 at an antecedent phrase-final)
-          hold: sustainy || LEAD.hold, mergeRepeats: l.derives === 'lead', cadenceNo7,
+          hold: sustainy || LEAD.hold, mergeRepeats: l.derives === 'lead', cadenceNo7, chromCore,
         };
         orig = bindMelody(letterCell(Ls[0]), ctxBar, v.meter, opts).expr;
         if (ctxBarV) variant = bindMelody(letterCell(Ls[0]), ctxBarV, v.meter, opts).expr;
@@ -1288,23 +1323,25 @@ const SONG_OPTS = {
   // by having a high texture" (the descant's 9-over-5 cluster, octave 5)
   vs_tense_stealth: { fullSynth: true, leadDensityMul: 0.25, accClassPrefer: 'sustain', descant: { octave: 5, tension: true } },
   vs_excited_casino: { fullSynth: true },
-  // D88: the tense lab runs all-synth. D89: "love this ... amazing" — a
-  // prose keep with no click yet; pinned byte-stable against the round-12
-  // cadence correction until his formal keep lands (then D64 pins take over).
-  vs_tense_lab: { fullSynth: true, cadenceNo7: false },
-  // D89: "I like this a lot - layers are good, the drop is good. bass is
+  // D88: the tense lab runs all-synth. D89/D90: "love this ... amazing" — a
+  // prose keep with no click yet; grammarPin holds it byte-stable against
+  // every melody-grammar correction until his formal keep lands (then D64
+  // pins take over).
+  vs_tense_lab: { fullSynth: true, grammarPin: true },
+  // D89/D90: "I like this a lot - layers are good, the drop is good. bass is
   // good." — same prose-keep pin as tense_lab.
-  vs_goofy_casino: { cadenceNo7: false },
+  vs_goofy_casino: { grammarPin: true },
   // D89 (round 12). snow: "beginning session too long ... melody too soft.
   // also some bg harmony could be added" — the intro drop is the <=60bpm rule
   // above; here the lead rides up and a synth-strings pad (with the D72
   // singing top voice) joins as the background harmony.
   vs_somber_snow: { leadGainMul: 1.35, stringsPad: 'add', padFromStart: true },
   // rest: "maybe some strings could actually take the melody. like solo
-  // violin or cello ... melody synth is too soft" — the cello takes the WHOLE
-  // melody (noHandoff: a handoff would give letters back to the pool), seated
-  // in its tenor register, riding above the old ceiling.
-  vs_calm_rest: { leadSound: 'gm_cello', leadOctave: 4, noHandoff: true, leadGainMul: 1.35 },
+  // violin or cello ... melody synth is too soft" — the cello takes the A
+  // melody in its tenor register, riding above the old ceiling. D90 (his
+  // correction): handoffs STAY — the letters still hand off, now from the
+  // strings-first pool.
+  vs_calm_rest: { leadSound: 'gm_cello', leadOctave: 4, leadGainMul: 1.35 },
 };
 for (const prompt of PROMPTS) {
   const n = `vs_${prompt.emotion ?? 'x'}_${prompt.environment}`;

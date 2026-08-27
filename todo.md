@@ -913,3 +913,20 @@ singing synth-strings pad from bar 0. Verify workflow caught one miss
 kept 12/12 + praised 2/2 byte-identical throughout, 306/306 tests,
 six wavs re-rendered (0 clamps). LISTEN: songs.html — desert,
 training, rest, snow, festival (+ casino's two-note cadence fix).
+
+D90 — ROUND 13 (your two corrections): HANDOFFS RESTORED — rest's
+letters hand off again (A = solo cello for 32 bars, B = flute answer);
+string melodies are now a PALETTE capability decoupled from handoffs:
+string-friendly vibes (slow, legato/pedal, chamber/somber) hand their
+letters from a strings-first pool (violin/cello/flute), and a
+history-less song (no verdict, no note of yours) can roll a solo
+string lead outright — songs you've spoken about never swap voices
+unless your note names it. gm_violin joined the HQ tier. / festival:
+the funky Bb7/Bbm melody was the walk mixing key tones with the
+borrowed chord's tones — over a foreign-root chord the melody now
+SPELLS the chord (Bb7 bars play D/Bb/F only; menu's Bb^7 absorbed the
+same fix; desert's Db^7 bars now arpeggiate the Hijaz chord). Jitter:
+density ceiling tightened (avg 3.32/bar), melody HOLDS, articulation
+floor 0.85 — duration was the lever, not just count. 14/14 protected
+byte-identical, 306/306, five wavs re-rendered. LISTEN: festival
+first, then rest (cello->flute handoff), menu, desert, snow.

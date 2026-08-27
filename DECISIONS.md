@@ -4770,3 +4770,84 @@ D89 addendum — the verify workflow (5 agents), honest ledger, one fix.
   and is corrected above; two HQ tails (festival 2.59s, rest 2.81s)
   sit under the 3s tail window because trailing silence is trimmed
   after full decay — cosmetic, not truncation.
+
+D90 (2026-08-27) — ROUND 13, two corrections mid-round: handoffs STAY
+(string melodies are a palette, not a handoff-removal), and festival's
+melody grammar over borrowed chords + residual jitter.
+- HIS CORRECTION ("handsoff should still stay the same... im not
+  saying to not handoff (although some songs liked duets or trios or
+  explicitly requested no handoff sure) im just saying some songs
+  should have string melodies / solo string melodies"): the D89 rest
+  fix wrongly bundled noHandoff with the cello lead. UNDONE: rest's
+  letters hand off again (A = solo cello 32 bars, B = flute answer,
+  16). ENGINE CAPABILITY, decoupled from handoffs, three parts:
+  (1) STRING-FRIENDLY vibes (<=90bpm, legato/pedal, chamber anchor
+  [solo/duet/trio] or somber-side moods, not fullSynth) swap the
+  letter HANDOFF pool strings-first: [gm_violin, gm_cello, gm_flute]
+  (kept songs keep the judged pool). A letter handed to a violin IS
+  the string melody, with handoffs intact. (2) A HISTORY-LESS
+  string-friendly song (no verdict AND no note — nothing of his is
+  mid-conversation on it) may roll a solo string lead outright
+  (1-in-3 hash; cello seats at octave <=4, violin keeps the lead
+  octave). Songs he has spoken about never swap their lead voice
+  unless his note names it. (3) gm_violin joined hq-instruments on
+  the VSCO strings-sections patch (walks above its G#5 ceiling fold
+  per D83). The SUSTAINY hold rule now tests the RESOLVED lead voice.
+  opts.noHandoff remains for duet/trio vibes or an explicit ask (his
+  parenthetical). Measured: rest cello 0-31 + flute 32-47; snow's B
+  handoff moved epiano->flute (pool swap); nostalgic_shop (the one
+  history-less song) rolled no string lead this hash — the capability
+  is a future-songs default; nothing else moved.
+- vs_happy_festival ("on Bb7 and Bbm chords the right hand melody
+  sounds really funky. not good"): MEASURED cause — over a
+  FOREIGN-ROOT chord (Bb7 in E major; the treat's mixture Bbm) even
+  the D26 triadic supply mixes key tones with the chord's forced
+  tones (the walk had Bb-D-F-Ab PLUS D#: chromatic adjacency). FIX
+  (bind.js chromCore, opt-in): when the chord root is outside the
+  key, the walk supply collapses to the chord's core — the melody
+  SPELLS a borrowed chord. Festival's Bb7 bars now play D/Bb/F only.
+  Blast radius measured: menu moved 16 notes (its 3:^7 = Bb^7 in G,
+  now spelled), desert's Db^7 bars arpeggiate the Hijaz chord
+  (fitting), training/casino bit-identical to D89 (roots in key;
+  their 13:56 wavs stay valid), stealth/nostalgic_shop untouched.
+- vs_happy_festival ("better but still too jittery like adhd"): the
+  2/4 package goes further — density ceiling tightens to the target
+  itself (RH avg 3.66 -> 3.32/bar), the thinned melody HOLDS (notes
+  fill their gaps, the D64 held-lead device), and an articulation
+  floor 0.85 lengthens the short notes (the D67 anti-robotic floor).
+  Jitter is duration as much as count — the holds are the big lever.
+- The prose-keep pin generalized: cadenceNo7:false -> grammarPin
+  (true on tense_lab + goofy_casino), covering EVERY melody-grammar
+  correction present and future, until his keep clicks land.
+- STABILITY: 14/14 protected byte-identical (re-measured); 306/306
+  tests; five wavs re-rendered (desert/rest/snow/festival/menu).
+
+D90 addendum — the verify workflow (5 agents), all-pass, honest ledger.
+- CONFIRMED CLEAN: 14/14 protected byte-identical; the changed set vs
+  the judged baseline is exactly 7 songs; training/casino carry ONLY
+  the D89 cadence deltas (their 13:56 wavs stay valid); the kept slow
+  songs' handoff pools verified gated (4 of 5 WOULD flip without
+  !priorKeep — the gate binds non-vacuously); double rebuild
+  byte-identical mod the BUILD stamp. chromCore measured 0 violations:
+  festival's Bb7 bars and bridge Bbm bars, menu's Bb^7 + treat-Bb7
+  bars, desert's 8 Db^7 bars — every melody note a chord tone; E7
+  bars (in-key root) byte-identical, plus unit probes both ways.
+  Rest's handoff boundary is clean (cello's last note ends at 31.75,
+  flute owns 32-47); snow's B statements moved epiano->flute; the
+  festival hold landed via clip (baseline meanClip 0.849 with 156
+  clipped notes -> all notes clip 1.0, audible duration/gap 0.81 ->
+  0.96) — the whole-based ratio was flat because pattern events
+  already abutted; the thinning is real (melody-layer max 10 -> 5 per
+  bar). HQ: five newest wavs healthy; rest's flute window measured
+  spectrally flute-like (HF/fundamental 0.065 vs cello 0.274).
+- NOTED: (a) the D90 string capability is DORMANT in the current
+  suite — both string-friendly songs' handoff hashes landed on flute
+  (index 2) and the one history-less song missed its 1-in-3 roll, so
+  the only sounding string melody today is rest's opts-named cello;
+  future songs surface violins/cellos ~2/3 of handoff draws. If his
+  ear wants one NOW, seat it by opts. (b) festival's accordion
+  (a 'chords' layer, outside the melody walk) still voices Eb — the
+  11th — on the bridge Bbm bars; that is where residual funk lives if
+  his ear still catches any. (c) chromCore now has a unit test
+  (melody.test.js D90: containment on Bb7 verified non-vacuous — 8
+  notes — plus bites-on-foreign / inert-on-in-key both ways).
