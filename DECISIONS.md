@@ -4660,3 +4660,113 @@ D88 addendum — the verify workflow (4 agents), honest ledger.
   (d) goofy_casino's piano lead peaks at C8 (bars 10/14/26/30) —
   comedic register, flagged for his ear; (e) calm_rest built at 56 bars
   (piano + Rhodes handoff at bar 40, no drums) — sparsity as shape.
+
+D89 (2026-08-27) — ROUND 12: first ear on the eight D88 songs — two
+prose keeps, five targeted fixes, each abstracted where his note names
+a general cause.
+- THE VERDICT EXPORT: 12 keeps re-confirmed byte-for-byte (no flips);
+  all 10 notes carried into the library (the importer now keeps
+  note-only songs' notes — 43 card notes total). No new keep CLICKS:
+  tense_lab ("love this. the layering, the progressions, the variation
+  and changes. amazing") and goofy_casino ("I like this a lot - layers
+  are good, the drop is good. bass is good. I like it") are PROSE
+  keeps — pinned byte-stable in SONG_OPTS (cadenceNo7: false) until
+  his formal click lands, then D64 pins take over. REMIND: export the
+  clicks (and the still-owed videolab card export).
+- vs_mysterious_desert ("I don't think the chord progression sounds
+  like a desert. look into other game desert chord progressions"):
+  researched — the game-desert canon is PHRYGIAN. Gerudo Valley is
+  i-bVI-bVII-V in harmonic minor; the trope-wide marker is the bII
+  (Andalusian cadence / Hijaz maqam). ENGINE RULE: a desert environment
+  retrieves from the bII-bearing entries of its family pool (three
+  clicked Phrygian exemplars already lived in the ldrolez modal pack),
+  and the researched trope is served RAW — the variation pass measured
+  as diluting exactly the desert darkness (iv brightened to IV, v
+  dimmed to v-dim — a dim chord his water kill already refused).
+  Desert now plays mod_im_vm_ivm_bIIM7: Cm Gm Fm Db^7. Treat/bridge
+  still vary it in their own sections. His "the drop is alright"
+  left the breakdown as-is.
+- vs_excited_training ("the last (fourth) measure of the melody
+  sounded kinda weird"): MEASURED — the antecedent phrase-final tone
+  held G5, the b7 of Am7, hanging unresolved at the loop seam (the
+  consequent pass lands A5, the root, and sounds fine). The binder's
+  own comment says antecedents land "on the 3rd/5th" but the code
+  targeted core-minus-root, which includes a seventh chord's 7th —
+  intent/implementation mismatch. FIX (bind.js cadenceNo7, opt-in):
+  antecedent cadence targets exclude the 7th. Wired through
+  audition-songs (lead, letters, arranger leadOpts) gated !priorKeep —
+  every judged melody byte-identical. Blast radius measured: training
+  bar 4 now ends held on the 3rd; excited_casino moved exactly 2
+  phrase-final square-lead notes (C#7 -> A#6); menu/stealth unchanged.
+- vs_happy_festival ("piano right hand way too hyper once again. I
+  think 2/4 screws up piano melody"): his diagnosis is the mechanism.
+  The melody density target is per BAR; a 2/4 bar is half as long, so
+  the same target reads at double rate. ENGINE RULE (unkept songs):
+  in 2/4 the lead target halves, and the cell pool takes a HARD
+  density ceiling (target+1) — the ±3 retrieval band ranks by
+  interlock and measured only -32% from halving alone. The planner
+  sees the pre-thin target (the D73 lesson) so the cast is stable.
+  Measured: piano RH 6.59 -> 3.66 onsets/bar (-44%). Kitchen (kept,
+  2/4) untouched by the priorKeep gate.
+- vs_somber_snow ("beginning session too long (before melody comes
+  in). melody too soft. also some bg harmony could be added") and
+  vs_calm_rest ("beginning arpeggios are too long. melody synth is too
+  soft"): ENGINE RULE at <=60bpm (unkept): a no-tune intro is DROPPED
+  whole-loop — one loop of intro at a crawl is 18-32 seconds, and the
+  D64 halving can't shrink it loop-aligned (half a loop would open the
+  tune mid-progression). Both songs now open with the melody (snow
+  36->32 bars, rest 56->48). "Too soft" twice: leadGainMul 1.35 on
+  both — measured landing .gain(0.47) -> .gain(0.63) (+2.6dB; the
+  pedal-style lead base is 0.47, so the 1.35 multiplies from there).
+  The gain CEILING also rose 1.0 -> 1.15 but only for songs whose opts
+  raise the lead — it stays 1.0 for every formula-driven gain (boss
+  computes 1.03 and still clamps to 1.0) so no judged mix moves; for
+  snow/rest the ceiling never binds (0.63 << 1.15).
+- vs_calm_rest ("maybe some strings could actually take the melody.
+  like solo violin or cello"): opts.leadSound hands the whole melody
+  to gm_cello (noHandoff — a handoff would give letters back to the
+  pool), seated at octave 4 (opts.leadOctave, its tenor register),
+  and a bowed/blown named lead HOLDS (the arranger's SUSTAINY rule now
+  reaches the main lead). Cello opens the song: D4 E4 F#4 G4...
+- vs_somber_snow bg harmony: stringsPad 'add' + padFromStart — the
+  synth-strings pad with the D72 singing top voice joins from bar 0.
+- STABILITY LEDGER: 12/12 kept + 2/2 praised byte-identical vs the
+  judged page (measured per-song JSON); only the six fixed songs
+  changed; 60/60 exprs green; 306/306 tests (one songs.test rerun —
+  the determinism check straddled a minute boundary in the page's
+  BUILD stamp, a pre-existing flake, passed clean on rerun).
+
+D89 addendum — the verify workflow (5 agents), honest ledger, one fix.
+- CONFIRMED CLEAN: 14/14 protected songs byte-identical (12 keeps + 2
+  prose keeps) across the FULL song JSON; exactly and only the six
+  fixed songs differ; 12/12 degree pins; videolab.html untouched;
+  double rebuild md5-identical (92d0158e...). Desert: card + music
+  agree bar-for-bar (root map C-G-F-Db over all 32 bars; breakdown
+  bars 16-23 strip to held-root floor; B* bridge varies qualities over
+  the same roots); the exemplar's keep click is real (page
+  'progressions', 2026-08-26); Db^7 voices C natural (maj7), no
+  Cb anywhere. Cadence: every changed note across the suite is a
+  phrase-final landing on 3rd/5th (casino b7->5th twice; training
+  b7->3rd, merged longer per D65); menu/stealth/nostalgic_shop/drop
+  zero-diff; the bind.js edit itself has no falsy-path or empty-set
+  defect. Fix conformance: rest is cello-only melody (piano = alberti
+  acc + breakdown floor), range B3-D5, 86% full-gap holds, in from
+  bar 0; snow's pad sounds every melody bar with a MOVING top voice,
+  breakdown intact; festival max 6 melody onsets/bar (was 10), cast +
+  counterline/descant/accordion note-for-note identical. HQ: six wavs
+  today, non-silent, no runaway, durations exact; rest's wav proves
+  the cello by physics (3s held D4 at near-constant level — impossible
+  on a struck piano — plus the bowed harmonic profile).
+- THE CATCH (the workflow caught a real defect, round 5 in a row): the
+  cadence flag missed ONE bind path — the letter-scoped rebind of a
+  single-letter cast melody layer (the D66 block) built a fresh opts
+  literal without cadenceNo7, so desert's bridge calliope held C (the
+  maj7 of Db^7) at the bar-27 antecedent. FIXED: the rebind passes
+  cadenceNo7; bar 27 now ends F (3rd), bar 31 root; only desert's mix
+  moved (14/14 still byte-identical, six-song set unchanged); desert
+  re-rendered (0 warnings); 306/306.
+- NOTED: the "melody too soft" boost lands as x1.35 (0.47 -> 0.63,
+  +2.6dB) — the D89 body's original "ride at 1.15" wording was wrong
+  and is corrected above; two HQ tails (festival 2.59s, rest 2.81s)
+  sit under the 3s tail window because trailing silence is trimmed
+  after full decay — cosmetic, not truncation.

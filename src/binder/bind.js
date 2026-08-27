@@ -1032,9 +1032,18 @@ export function bindMelody(rhythmEntry, harmonyContext, meter = '4/4', opts = {}
         // the ending operator's landing: consequents on the chord root,
         // antecedents on the 3rd/5th — the question stays open
         const root = chordRootPc(sym);
-        const target = stablePhrase(c)
+        let target = stablePhrase(c)
           ? new Set([root ?? key.rootPc])
           : new Set([...scale.core].filter((pc) => pc !== root));
+        // D89 (training: the held phrase-final tone in bar 4 "sounded kinda
+        // weird" — measured: the b7 of Am7 hanging at the loop seam): the
+        // comment above always MEANT 3rd/5th, but core-minus-root includes a
+        // seventh chord's 7th. Opt-in (cadenceNo7) so judged material stays
+        // byte-identical: the antecedent landing may be open, not unstable.
+        if (opts.cadenceNo7 && !stablePhrase(c) && root != null) {
+          const no7 = [...target].filter((pc) => pc !== (root + 10) % 12 && pc !== (root + 11) % 12);
+          if (no7.length) target = new Set(no7);
+        }
         midi = snapToPcs(midi, target.size ? target : scale.core);
         category = 'cadence';
       } else if (accented) {

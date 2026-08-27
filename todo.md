@@ -892,3 +892,24 @@ unkept songs, breakdowns 11/11, colored rate 70%.
 PARKED (your word first): bridges/breakdowns for KEPT songs (re-rolls
 judged material); inter-layer call-answer scheduling; composed-statement
 generator melodies. LISTEN: songs.html — 23 cards, both modes.
+
+D89 — ROUND 12: your first ear on the eight. TWO PROSE KEEPS pinned
+byte-stable (tense_lab "love this... amazing"; goofy_casino "I like
+this a lot") — CLICK KEEP + export when you get a chance so the D64
+pins take over (the videolab card export is still owed too). FIVE
+FIXES, each abstracted: desert is PHRYGIAN now (researched: Gerudo
+i-bVI-bVII-V harmonic minor, the bII trope) — plays Cm Gm Fm Db^7 raw,
+desert environments retrieve bII-bearing exemplars; training's weird
+bar-4 was the b7 hanging at the phrase seam — antecedent cadences now
+exclude the 7th (engine-wide on unkept songs; casino moved 2 notes,
+menu/stealth zero); festival's hyper RH was your 2/4 diagnosis
+verbatim — per-bar density targets halve in 2/4 + a hard cell ceiling
+(6.59 -> 3.66 notes/bar, cast unchanged); snow + rest DROP their
+crawl-tempo intros whole-loop (melody opens the song) with the lead
+up +2.6dB (x1.35, .gain 0.47 -> 0.63); rest's melody is a SOLO CELLO
+now (whole song, tenor register, held bowing); snow gained the
+singing synth-strings pad from bar 0. Verify workflow caught one miss
+(desert's bridge calliope held a maj7 at a phrase-final — fixed) —
+kept 12/12 + praised 2/2 byte-identical throughout, 306/306 tests,
+six wavs re-rendered (0 clamps). LISTEN: songs.html — desert,
+training, rest, snow, festival (+ casino's two-note cadence fix).

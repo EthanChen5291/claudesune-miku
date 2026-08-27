@@ -71,13 +71,20 @@ function interlockScore(accSet, cell, beats) {
   return (fill * 1.0 + lockStrong * 0.8 - lockWeak * 0.6) / Math.sqrt(cell.onsets.length);
 }
 const DENSITY_BAND = 3;
-function melodyRhythm(meter, bpm, seedName, { target: forced = null, accDensity = 0, accOnsets = null, beats = 4, exclude = [] } = {}) {
+function melodyRhythm(meter, bpm, seedName, { target: forced = null, accDensity = 0, accOnsets = null, beats = 4, exclude = [], maxDensity = null } = {}) {
   const target = forced ?? melodyDensityTarget(bpm, accDensity);
   let pool = MEL_CELLS.filter((c) => c.meter_class === meter);
   if (!pool.length) pool = MEL_CELLS.filter((c) => c.meter_class === '4/4');
   if (exclude.length) {
     const rest = pool.filter((c) => !exclude.includes(c.name));
     if (rest.length) pool = rest;
+  }
+  // D89 (festival, "way too hyper once again"): a hard density ceiling — the
+  // ±band ranks by interlock and can hand a halved target a dense cell right
+  // back (measured: the 2/4 halving only cut onsets 32%). Opt-in per call.
+  if (maxDensity != null) {
+    const capped = pool.filter((c) => c.density <= maxDensity);
+    if (capped.length) pool = capped;
   }
   let band = pool.filter((c) => Math.abs(c.density - target) <= DENSITY_BAND);
   if (!band.length) {
@@ -211,6 +218,22 @@ function buildSong(prompt, name, opts = {}) {
     const rest = famPool.filter(([n]) => n !== judged.base);
     if (rest.length) famPool = rest;
   }
+  // D89 (his desert note: "I don't think the chord progression sounds like a
+  // desert. look into other game desert chord progressions"): researched — the
+  // game-desert canon is PHRYGIAN. Gerudo Valley runs i-bVI-bVII-V in harmonic
+  // minor (Phrygian dominant), and the trope-wide marker across desert levels
+  // is the bII (the Andalusian cadence / Hijaz maqam). A desert environment
+  // retrieves from the bII-bearing entries of its family pool when any exist.
+  let phrygianLock = false;
+  if (!priorKeep && prompt.environment === 'desert') {
+    const phrygian = famPool.filter(([, x]) => x.degrees.split(' ').some((t) => t === '1b' || t.startsWith('1b:')));
+    // the researched trope must also SURVIVE retrieval: the loop serves the
+    // exemplar raw (measured: the variation pass brightened iv to IV and
+    // dimmed v to v° — diluting exactly the darkness that reads as desert,
+    // with a dim chord his water kill already refused). Treat/bridge
+    // departures still vary it in their own sections.
+    if (phrygian.length) { famPool = phrygian; phrygianLock = true; }
+  }
   // D64 (his calm-water kill: "chord progression isn't good" on a dim chain):
   // a low-chromaticism vibe prefers PLAIN-TRIAD exemplars (the D51 taste
   // signal). Applied only where no keep is at stake — a song he kept must not
@@ -248,7 +271,7 @@ function buildSong(prompt, name, opts = {}) {
   const [exName] = (priorKeep || opts.keepBase) && judged?.base && EX.entries.some(([n]) => n === judged.base)
     ? [judged.base]
     : pool[fnv(`${name}|exemplar`) % pool.length];
-  const vars = variationsOf(exName, {
+  const vars = phrygianLock ? [] : variationsOf(exName, {
     count: 1, intensity: 0.3 + v.colorBias * 0.4, budget: 2, seed: `${name}|harmony`,
   });
   let e = vars[0] ?? EX.entries.find(([n]) => n === exName)[1];
@@ -340,8 +363,12 @@ function buildSong(prompt, name, opts = {}) {
   // this vibe I think - learn this"): synth-acc songs carry SYNTH LEADS
   // too — saw above 120bpm, square below (fullSynth calm songs keep the
   // Rhodes lead under 120).
-  const LEAD_SOUND = opts.fullSynth ? (v.bpm >= 120 ? 'gm_lead_2_sawtooth' : 'gm_epiano1')
-    : synthAcc ? (v.bpm >= 120 ? 'gm_lead_2_sawtooth' : 'gm_lead_1_square') : 'piano';
+  // D89 (rest: "maybe some strings could actually take the melody. like solo
+  // violin or cello") — a song may hand its melody to a named voice outright,
+  // and may seat it in that voice's own singing register
+  const LEAD_SOUND = opts.leadSound ?? (opts.fullSynth ? (v.bpm >= 120 ? 'gm_lead_2_sawtooth' : 'gm_epiano1')
+    : synthAcc ? (v.bpm >= 120 ? 'gm_lead_2_sawtooth' : 'gm_lead_1_square') : 'piano');
+  const leadOctave = opts.leadOctave ?? v.register.leadOctave;
   const accOnsets = accFig.onsets;
   const accOct = Math.max(1, Math.min(3, v.register.accOctave));
   // D63 articulation: style-level duration + damper on top of each pattern's
@@ -363,10 +390,16 @@ function buildSong(prompt, name, opts = {}) {
   // D87 (stealth note: the melody "does too much \"talking\" - too active
   // for stealth"): a song may thin its lead directly
   if (opts.leadDensityMul) LEAD.densityMul = Math.min(LEAD.densityMul, opts.leadDensityMul);
+  // D89: a bowed/blown NAMED lead sustains — the arranger's own SUSTAINY rule
+  // (winds and strings fill to the next note), reaching the main lead
+  if (opts.leadSound && /cello|violin|viola|string|flute|recorder|horn|trumpet|oboe|clarinet/.test(opts.leadSound)) LEAD.hold = true;
   // D64/D65 (his boss note, twice): when foreground drums play, the melody
   // rides louder — the boost stepped 0.12 → 0.18 ("could still be a bit louder")
   // D86: opts.leadGainMul — a song-scoped trim dial (fight: "piano (very loud)")
-  const leadGain = Math.min(1, Math.round((0.85 * LEAD.gainMul + (v.percussion.presence === 'foreground' ? 0.18 : 0)) * (opts.leadGainMul ?? 1) * 100) / 100);
+  // D89 (snow + rest, the same words twice: "melody too soft"): a song whose
+  // opts RAISE the lead may pass the 1.0 ceiling (to 1.15) — the ceiling
+  // stays for every formula-driven gain so no judged mix moves.
+  const leadGain = Math.min(opts.leadGainMul > 1 ? 1.15 : 1, Math.round((0.85 * LEAD.gainMul + (v.percussion.presence === 'foreground' ? 0.18 : 0)) * (opts.leadGainMul ?? 1) * 100) / 100);
   const accFx = ART.pedal ? '.clip(1.25).room(0.5)'
     : ART.style === 'staccato' ? '.clip(0.55).room(0.15)'
     : ART.style === 'legato' ? '.clip(1.1).room(0.3)'
@@ -391,25 +424,40 @@ function buildSong(prompt, name, opts = {}) {
   const base = bindAcc(accFig, ctxBar);
 
   // ---- melody + arrangement (the undertale mix pipeline) -------------------
-  const leadTarget = Math.max(2, Math.round(melodyDensityTarget(v.bpm, accDensity) * LEAD.densityMul));
-  const leadCell = melodyRhythm(v.meter, v.bpm, name, { target: leadTarget, accDensity, accOnsets, beats });
+  // D89 (festival, the piano RH "way too hyper once again — I think 2/4
+  // screws up piano melody"): he diagnosed it exactly. The density target is
+  // per BAR, and a 2/4 bar is half as long — the same number reads at twice
+  // the rate. In 2/4 the lead target halves (unkept songs only; kitchen's
+  // kept 2/4 already carries its own D73 half-time treatment).
+  const meterMul = beats === 2 && !priorKeep ? 0.5 : 1;
+  const leadTargetRaw = Math.max(2, Math.round(melodyDensityTarget(v.bpm, accDensity) * LEAD.densityMul));
+  const leadTarget = Math.max(2, Math.round(leadTargetRaw * meterMul));
+  // D89 (training bar 4, "sounded kinda weird" — measured: the antecedent
+  // phrase-final tone held the b7): the cadence grammar correction, gated so
+  // every judged melody stays byte-identical (opts may pin a prose-praised
+  // song that has no formal keep click yet)
+  const cadenceNo7 = opts.cadenceNo7 ?? !priorKeep;
+  const meterCap = meterMul < 1 ? { maxDensity: leadTarget + 1 } : {};
+  const leadCell = melodyRhythm(v.meter, v.bpm, name, { target: leadTarget, accDensity, accOnsets, beats, ...meterCap });
   const leadSeed = fnv(name);
   const leadBound = bindMelody(leadCell, ctxBar, v.meter, {
-    style: 'toby-fox', seed: leadSeed, octave: v.register.leadOctave, sound: LEAD_SOUND, fx: leadFx,
-    hold: LEAD.hold, mergeRepeats: LEAD.merge, articFloor: opts.articFloor ?? null,
+    style: 'toby-fox', seed: leadSeed, octave: leadOctave, sound: LEAD_SOUND, fx: leadFx,
+    hold: LEAD.hold, mergeRepeats: LEAD.merge, articFloor: opts.articFloor ?? null, cadenceNo7,
   });
   // D73: half-time thinning changes only the SOUNDING piano — the planner
   // still sees the pre-thinning lead (the 0.55 fast-song cap), or the cast
   // re-rolls under the new numbers (measured twice on kitchen: first a
   // pizzicato appeared, then a xylophone — extra voices on the song he
-  // wants calmer)
+  // wants calmer). D89: the 2/4 halving hides from the planner the same way.
   let planCell = leadCell, planPeriod = leadBound.boundMeta.period;
-  if (accHalfTime) {
-    const t0 = Math.max(2, Math.round(melodyDensityTarget(v.bpm, accDensity) * 0.55));
+  if (accHalfTime || meterMul < 1) {
+    const t0 = accHalfTime
+      ? Math.max(2, Math.round(melodyDensityTarget(v.bpm, accDensity) * 0.55))
+      : leadTargetRaw;
     planCell = melodyRhythm(v.meter, v.bpm, name, { target: t0, accDensity, accOnsets, beats });
     planPeriod = bindMelody(planCell, ctxBar, v.meter, {
-      style: 'toby-fox', seed: leadSeed, octave: v.register.leadOctave, sound: LEAD_SOUND, fx: leadFx,
-      hold: LEAD.hold, mergeRepeats: LEAD.merge, articFloor: opts.articFloor ?? null,
+      style: 'toby-fox', seed: leadSeed, octave: leadOctave, sound: LEAD_SOUND, fx: leadFx,
+      hold: LEAD.hold, mergeRepeats: LEAD.merge, articFloor: opts.articFloor ?? null, cadenceNo7,
     }).boundMeta.period;
   }
   const plan = planArrangement({
@@ -433,7 +481,7 @@ function buildSong(prompt, name, opts = {}) {
   if (opts.capMelody) {
     for (const l of plan.layers) {
       if (['lead', 'lead-rhythm', 'independent'].includes(l.derives)) {
-        l.octave = Math.min(l.octave, Math.max(3, v.register.leadOctave - 2));
+        l.octave = Math.min(l.octave, Math.max(3, leadOctave - 2));
       }
     }
   }
@@ -493,7 +541,7 @@ function buildSong(prompt, name, opts = {}) {
     // D65: the lead's manner reaches EVERY melodic layer the arranger binds
     // (round 2: "trumpet still should much more hold"), and support pads are
     // real chord voicings over a low frame (his strings rule)
-    leadOpts: { hold: LEAD.hold, mergeRepeats: LEAD.merge },
+    leadOpts: { hold: LEAD.hold, mergeRepeats: LEAD.merge, cadenceNo7 },
     padVoicing: true,
     // D70/D72: pad melody modes are assigned per LAYER above (top pad
     // 'full' under 140bpm, the rest 'subtle') — no ctx-wide flag needed.
@@ -529,6 +577,24 @@ function buildSong(prompt, name, opts = {}) {
       form.totalBars = sb;
     }
   }
+  // D89 (somber snow: "beginning session too long (before melody comes in)";
+  // calm rest: "beginning arpeggios are too long" — both at a crawl): at
+  // <=60bpm even ONE loop of intro runs ~18-32 seconds, and the halving above
+  // can't shrink it without breaking loop alignment (half a loop would start
+  // the tune mid-progression). So the no-tune intro is DROPPED in whole loops
+  // — phase-safe — and the melody opens the song. Unkept songs only.
+  if (!priorKeep && v.bpm <= 60) {
+    let dropped = false;
+    while (form.sections.length > 1 && form.sections[0].lead === 'none' && form.sections[0].bars % loopBars === 0) {
+      form.sections.shift();
+      dropped = true;
+    }
+    if (dropped) {
+      let sb = 0;
+      for (const sec of form.sections) { sec.startBar = sb; sb += sec.bars; }
+      form.totalBars = sb;
+    }
+  }
   // D82 (teaching the planner, his go-ahead): the SECTION DYNAMIC CURVE is a
   // generator default — every section's energy sets a level (0.85..1.05), a
   // low-energy final section fades further, and the lead rides a gentler
@@ -554,7 +620,7 @@ function buildSong(prompt, name, opts = {}) {
   const letterCell = (L) => {
     if (!letterCellMemo.has(L)) {
       const used = [...letterCellMemo.values()].map((c) => c.name);
-      letterCellMemo.set(L, melodyRhythm(v.meter, v.bpm, `${name}|${L}`, { target: leadTarget, accDensity, accOnsets, beats, exclude: used }));
+      letterCellMemo.set(L, melodyRhythm(v.meter, v.bpm, `${name}|${L}`, { target: leadTarget, accDensity, accOnsets, beats, exclude: used, ...meterCap }));
     }
     return letterCellMemo.get(L);
   };
@@ -580,8 +646,8 @@ function buildSong(prompt, name, opts = {}) {
   const bindLetter = (L, ctxL) => {
     const snd = letterSound(L);
     return bindMelody(letterCell(L), ctxL, v.meter, {
-      style: 'toby-fox', seed: letterSeed(L), octave: v.register.leadOctave, sound: snd, fx: leadFx,
-      hold: snd === 'gm_flute' ? true : LEAD.hold, mergeRepeats: LEAD.merge, articFloor: opts.articFloor ?? null,
+      style: 'toby-fox', seed: letterSeed(L), octave: leadOctave, sound: snd, fx: leadFx,
+      hold: snd === 'gm_flute' ? true : LEAD.hold, mergeRepeats: LEAD.merge, articFloor: opts.articFloor ?? null, cadenceNo7,
     });
   };
 
@@ -699,7 +765,10 @@ function buildSong(prompt, name, opts = {}) {
           style: 'toby-fox', octave: l.octave, sound: l.instrument, fx: `.gain(${l.gain})`,
           seed: l.derives === 'lead' ? letterSeed(Ls[0]) : l.seed,
           // D66: the merge is the MELODY's — only tune-carrying layers get it
-          hold: sustainy || LEAD.hold, mergeRepeats: l.derives === 'lead',
+          // D89 addendum: the verify pass caught this rebind as the ONE bind
+          // path the cadence correction missed (desert's bridge calliope held
+          // a maj7 at an antecedent phrase-final)
+          hold: sustainy || LEAD.hold, mergeRepeats: l.derives === 'lead', cadenceNo7,
         };
         orig = bindMelody(letterCell(Ls[0]), ctxBar, v.meter, opts).expr;
         if (ctxBarV) variant = bindMelody(letterCell(Ls[0]), ctxBarV, v.meter, opts).expr;
@@ -977,7 +1046,7 @@ function buildSong(prompt, name, opts = {}) {
     const dsc = (opts.descant && typeof opts.descant === 'object') ? opts.descant : {};
     // at least an octave under the lead's home octave (aftermath's low-
     // sitting lead was topped +11 by the oct-4 walk — verify blocker)
-    const dOct = dsc.octave ?? Math.max(3, Math.min(energetic ? 3 : 4, (v.register.leadOctave ?? 5) - 1));
+    const dOct = dsc.octave ?? Math.max(3, Math.min(energetic ? 3 : 4, (leadOctave ?? 5) - 1));
     const dFig = dsc.tension
       ? { name: 'descant-tension', bars: 2, onsets: ['0', '5/4', '6/4', '7/4'], figure: ['9.5', '5', '6', '5'], accents: [0.6, 0.55, 0.62, 0.55], legato: true }
       : { name: 'descant', bars: 2, onsets: ['0', '5/4', '6/4', '7/4'], figure: ['3.5', '5', '6', '5'], accents: [0.6, 0.55, 0.62, 0.55], legato: true };
@@ -1219,8 +1288,23 @@ const SONG_OPTS = {
   // by having a high texture" (the descant's 9-over-5 cluster, octave 5)
   vs_tense_stealth: { fullSynth: true, leadDensityMul: 0.25, accClassPrefer: 'sustain', descant: { octave: 5, tension: true } },
   vs_excited_casino: { fullSynth: true },
-  // D88: the tense lab runs all-synth
-  vs_tense_lab: { fullSynth: true },
+  // D88: the tense lab runs all-synth. D89: "love this ... amazing" — a
+  // prose keep with no click yet; pinned byte-stable against the round-12
+  // cadence correction until his formal keep lands (then D64 pins take over).
+  vs_tense_lab: { fullSynth: true, cadenceNo7: false },
+  // D89: "I like this a lot - layers are good, the drop is good. bass is
+  // good." — same prose-keep pin as tense_lab.
+  vs_goofy_casino: { cadenceNo7: false },
+  // D89 (round 12). snow: "beginning session too long ... melody too soft.
+  // also some bg harmony could be added" — the intro drop is the <=60bpm rule
+  // above; here the lead rides up and a synth-strings pad (with the D72
+  // singing top voice) joins as the background harmony.
+  vs_somber_snow: { leadGainMul: 1.35, stringsPad: 'add', padFromStart: true },
+  // rest: "maybe some strings could actually take the melody. like solo
+  // violin or cello ... melody synth is too soft" — the cello takes the WHOLE
+  // melody (noHandoff: a handoff would give letters back to the pool), seated
+  // in its tenor register, riding above the old ceiling.
+  vs_calm_rest: { leadSound: 'gm_cello', leadOctave: 4, noHandoff: true, leadGainMul: 1.35 },
 };
 for (const prompt of PROMPTS) {
   const n = `vs_${prompt.emotion ?? 'x'}_${prompt.environment}`;
