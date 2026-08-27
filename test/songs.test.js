@@ -36,10 +36,13 @@ test('songs page: 10 prompts build, every expr green, structure varied', () => {
   // articulation is stated per song: damper on the wet vibes, staccato on the crisp
   assert.match(log, /vs_calm_water:.*legato \+ damper pedal/);
   assert.match(log, /vs_goofy_kitchen:.*staccato/);
-  // determinism: a rebuild produces the identical page
+  // determinism: a rebuild produces the identical page. The BUILD stamp has
+  // minute resolution and is exempt — two builds straddling a minute
+  // boundary flaked this test twice (D89, D92) with zero real drift.
+  const stripStamp = (s) => s.replace(/const BUILD = '[^']*';/, "const BUILD = '';");
   const first = readFileSync(join(ROOT, 'audition/songs.html'), 'utf8');
   execFileSync('node', ['scripts/audition-songs.mjs'], { cwd: ROOT });
-  assert.equal(readFileSync(join(ROOT, 'audition/songs.html'), 'utf8'), first);
+  assert.equal(stripStamp(readFileSync(join(ROOT, 'audition/songs.html'), 'utf8')), stripStamp(first));
 });
 
 test('a KEPT song never drifts from the harmony that was judged (D64 pin)', async () => {

@@ -200,7 +200,17 @@ const DP_GAIN = { light: 0.45, driving: 0.5, foreground: 0.45 };
 const songs = [];
 const CHECKS = [];
 function buildSong(prompt, name, opts = {}) {
-  const v = compileVibe({ ...prompt, name, ...(opts.bpm ? { bpm: opts.bpm } : {}) }); // prompt may carry a meter override (the drop song pins 4/4)
+  let v = compileVibe({ ...prompt, name, ...(opts.bpm ? { bpm: opts.bpm } : {}) }); // prompt may carry a meter override (the drop song pins 4/4)
+  // D92 (his ruling after festival's repeated 2/4-hyper complaints and the
+  // D89/D90 half-measures: "avoid 2/4 and just stick with 4/4 btw (and
+  // adjust accordingly)"): a vibe that compiles to 2/4 re-compiles with a
+  // 4/4 override — the 4/4 machinery (cells, foundations, density targets)
+  // then fits it natively. KEPT songs are exempt (goofy_kitchen was judged
+  // and clicked IN 2/4; re-metering discards judged material — his word
+  // would have to name it).
+  if (v.meter === '2/4' && !prompt.meter && DERIVED_VERDICTS?.[name]?.verdict !== 'keep') {
+    v = compileVibe({ ...prompt, name, meter: '4/4', ...(opts.bpm ? { bpm: opts.bpm } : {}) });
+  }
   const beats = Number(v.meter.split('/')[0]) || 4;
   const key = `${v.keyHint}:${v.family === 'minor' ? 'minor' : 'major'}`;
 
@@ -232,7 +242,30 @@ function buildSong(prompt, name, opts = {}) {
     // dimmed v to v° — diluting exactly the darkness that reads as desert,
     // with a dim chord his water kill already refused). Treat/bridge
     // departures still vary it in their own sections.
-    if (phrygian.length) { famPool = phrygian; phrygianLock = true; }
+    // D91 (his SECOND desert note: "I still don't think the chord
+    // progression sounds like a desert"): the all-minor i-v-iv-bII read
+    // dark, not desert. The trope's BITE is Phrygian DOMINANT — the bII
+    // hard against the tonic, and the RAISED THIRD (Hijaz / the harmonic-
+    // minor major chord). Rank the pool by that signature and serve the
+    // top: im<->bII adjacency (2), a major-III chord (2), minor tonic
+    // first (1). The faulted i-v-iv-bII base ranks below by construction.
+    if (phrygian.length) {
+      const score = ([, x]) => {
+        const t = x.degrees.split(' ');
+        let s = 0;
+        for (let i = 0; i < t.length; i++) {
+          const a = t[i], b = t[(i + 1) % t.length];
+          const isbII = (q) => q === '1b' || q.startsWith('1b:');
+          if ((a === '0:m' && isbII(b)) || (isbII(a) && b === '0:m')) { s += 2; break; }
+        }
+        if (t.includes('4')) s += 2;
+        if (t[0] === '0:m') s += 1;
+        return s;
+      };
+      const ranked = [...phrygian].sort((a, b) => score(b) - score(a) || a[0].localeCompare(b[0]));
+      famPool = [ranked[0]];
+      phrygianLock = true;
+    }
   }
   // D64 (his calm-water kill: "chord progression isn't good" on a dim chain):
   // a low-chromaticism vibe prefers PLAIN-TRIAD exemplars (the D51 taste
@@ -457,7 +490,9 @@ function buildSong(prompt, name, opts = {}) {
   // funky"): the melody-grammar corrections, gated so every judged melody
   // stays byte-identical. opts.grammarPin pins a prose-praised song that has
   // no formal keep click yet.
-  const melodyGrammar = !priorKeep && !opts.grammarPin;
+  // opts.melodyGrammar pins the flag for a song JUDGED with the grammar on —
+  // a new keep must not revert the melody he approved (menu's Bb^7 spelling)
+  const melodyGrammar = opts.melodyGrammar ?? (!priorKeep && !opts.grammarPin);
   const cadenceNo7 = melodyGrammar;
   const chromCore = melodyGrammar;
   // D90 ("better but still too jittery like adhd"): the 2/4 thinning goes
@@ -471,7 +506,7 @@ function buildSong(prompt, name, opts = {}) {
   const leadSeed = fnv(name);
   const leadBound = bindMelody(leadCell, ctxBar, v.meter, {
     style: 'toby-fox', seed: leadSeed, octave: leadOctave, sound: LEAD_SOUND, fx: leadFx,
-    hold: LEAD.hold, mergeRepeats: LEAD.merge, articFloor: artFloor, cadenceNo7, chromCore,
+    hold: LEAD.hold, mergeRepeats: LEAD.merge, articFloor: artFloor, cadenceNo7, chromCore, ...(opts.leadRangeSteps ? { rangeSteps: opts.leadRangeSteps } : {}),
   });
   // D73: half-time thinning changes only the SOUNDING piano — the planner
   // still sees the pre-thinning lead (the 0.55 fast-song cap), or the cast
@@ -486,7 +521,7 @@ function buildSong(prompt, name, opts = {}) {
     planCell = melodyRhythm(v.meter, v.bpm, name, { target: t0, accDensity, accOnsets, beats });
     planPeriod = bindMelody(planCell, ctxBar, v.meter, {
       style: 'toby-fox', seed: leadSeed, octave: leadOctave, sound: LEAD_SOUND, fx: leadFx,
-      hold: LEAD.hold, mergeRepeats: LEAD.merge, articFloor: artFloor, cadenceNo7, chromCore,
+      hold: LEAD.hold, mergeRepeats: LEAD.merge, articFloor: artFloor, cadenceNo7, chromCore, ...(opts.leadRangeSteps ? { rangeSteps: opts.leadRangeSteps } : {}),
     }).boundMeta.period;
   }
   const plan = planArrangement({
@@ -624,6 +659,27 @@ function buildSong(prompt, name, opts = {}) {
       form.totalBars = sb;
     }
   }
+  // D91 (casino: "the beginning chords are too long - it's just chords for
+  // like 20 seconds"; nostalgic_shop: "the beginning part is literally just
+  // chord progression on piano - it should be shorter"): at ANY tempo a
+  // no-tune intro caps at ~16 seconds — shrunk by whole loops (phase-safe)
+  // down to a one-loop floor. Unkept songs only.
+  if (!priorKeep) {
+    const secPerBar = (beats * 60) / v.bpm;
+    const first = form.sections[0];
+    if (first && first.lead === 'none' && form.sections.length > 1) {
+      let shrunk = false;
+      while (first.bars > loopBars && first.bars * secPerBar > 16 && (first.bars - loopBars) % loopBars === 0) {
+        first.bars -= loopBars;
+        shrunk = true;
+      }
+      if (shrunk) {
+        let sb = 0;
+        for (const sec of form.sections) { sec.startBar = sb; sb += sec.bars; }
+        form.totalBars = sb;
+      }
+    }
+  }
   // D82 (teaching the planner, his go-ahead): the SECTION DYNAMIC CURVE is a
   // generator default — every section's energy sets a level (0.85..1.05), a
   // low-energy final section fades further, and the lead rides a gentler
@@ -671,6 +727,17 @@ function buildSong(prompt, name, opts = {}) {
     ? ['gm_violin', 'gm_cello', 'gm_flute']
     : ['gm_flute', 'gm_vibraphone', 'gm_epiano1'];
   const letterSound = (L) => {
+    // D91 (his construction/fight praise, "instead of just the one synth
+    // being the melody, to vary it a bit"): a synth-lead song may vary the
+    // lead voice per letter even when the cast carries a melody voice —
+    // non-A letters bind the partner synth (saw<->square). Voice-only on
+    // the two kept songs: same cells, same seeds, the notes are identical.
+    // Default only on history-less synth songs (nothing judged re-rolls).
+    const varyLead = opts.varyLeadVoice ?? ((synthAcc || opts.fullSynth) && !priorKeep && !opts.grammarPin
+      && !DERIVED_VERDICTS?.[name] && !CARD_NOTES?.[name]);
+    if (varyLead && L !== 'A' && /gm_lead_[12]/.test(LEAD_SOUND)) {
+      return LEAD_SOUND === 'gm_lead_2_sawtooth' ? 'gm_lead_1_square' : 'gm_lead_2_sawtooth';
+    }
     if (L === 'A' || castHasMelodyVoice || opts.noHandoff) return LEAD_SOUND;
     const others = [...new Set((mf.sections ?? []).map((x) => (x.letter ?? '').replace('*', '')).filter((x) => x && x !== 'A'))].sort();
     const ix = others.indexOf(L);
@@ -682,7 +749,7 @@ function buildSong(prompt, name, opts = {}) {
     const snd = letterSound(L);
     return bindMelody(letterCell(L), ctxL, v.meter, {
       style: 'toby-fox', seed: letterSeed(L), octave: leadOctave, sound: snd, fx: leadFx,
-      hold: /flute|cello|violin/.test(snd) ? true : LEAD.hold, mergeRepeats: LEAD.merge, articFloor: artFloor, cadenceNo7, chromCore,
+      hold: /flute|cello|violin/.test(snd) ? true : LEAD.hold, mergeRepeats: LEAD.merge, articFloor: artFloor, cadenceNo7, chromCore, ...(opts.leadRangeSteps ? { rangeSteps: opts.leadRangeSteps } : {}),
     });
   };
 
@@ -834,7 +901,12 @@ function buildSong(prompt, name, opts = {}) {
       else act = act.map((x, i) => (x || dev[i] ? 1 : 0));
       devBars = dev;
     }
-    const wave = (center) => `"<${[0.85, 1, 1.12, 0.97].map((m) => Math.round(center * m * 100) / 100).join(' ')}>"`;
+    // D91 (snow: "some parts where the strings suddenly jump to be really
+    // loud ... very loud and jumps"): opts.padWaveCalm halves the wave's
+    // contrast and narrows the development/base band gap — the pad still
+    // breathes (menu's flow was PRAISED with the full wave), just gently.
+    const calmWave = Boolean(opts.padWaveCalm);
+    const wave = (center) => `"<${(calmWave ? [0.93, 1, 1.05, 0.98] : [0.85, 1, 1.12, 0.97]).map((m) => Math.round(center * m * 100) / 100).join(' ')}>"`;
     const inVary = act.map((x, i) => (x && varyBars[i] ? 1 : 0));
     const variantOn = variant && inVary.some(Boolean);
     // partition the active bars by (which harmony) × (development or base)
@@ -849,7 +921,9 @@ function buildSong(prompt, name, opts = {}) {
     const exprOf = (k) => {
       const base = k[0] === 'v' ? variant : orig;
       if (!devBars) return base;
-      return `${base}.gain(${wave(k[1] === 's' ? l.gain * 1.15 : l.gain * 0.72)})`;
+      // D91 addendum: the D82 section-curve step stacks on the band boundary
+      // (measured 1.53x with 1.02/0.82) — calm bands narrowed to 0.95/0.85.
+      return `${base}.gain(${wave(k[1] === 's' ? l.gain * (calmWave ? 0.95 : 1.15) : l.gain * (calmWave ? 0.85 : 0.72))})`;
     };
     const parts = [...groups.entries()].map(([k, bars]) => {
       const m = maskString(bars);
@@ -1022,7 +1096,9 @@ function buildSong(prompt, name, opts = {}) {
   // stands (strings were "too loud" four rounds running). Voice: the Juno
   // synth strings on songs that already carry synth low voices, the real
   // ensemble elsewhere. opts.counterline: false opts out.
-  if (opts.counterline !== false && v.ensemble.count >= 3) {
+  // D91 (casino: "there's also not any supportive counter melody for the
+  // first melody part") — opts.counterline: true FORCES it past the dial
+  if (opts.counterline === true || (opts.counterline !== false && v.ensemble.count >= 3)) {
     const clHold = { name: 'counterline', bars: 1, onsets: ['0'], figure: ['3'], accents: [0.72], legato: true };
     // verify pass (D85 addendum): the first cut climbed 3-5-R+ and its R+
     // peak (midi 84-86) poked ABOVE the lead on the four songs whose lead
@@ -1044,6 +1120,30 @@ function buildSong(prompt, name, opts = {}) {
       if (even.some(Boolean)) extraParts.push(...varySplit(bindClimb, even));
       extraSolos._counterline = `stack(${bindCl(ctxBar)}.mask("<1 0>"), ${bindClimb(ctxBar)}.mask("<0 1>"))`;
       extraInfo.push(`counterline: held 3rd / beat-2 climb R-3-5 alternating (${clSound}, oct 4)`);
+    }
+  }
+  // D91 (training: "it doesn't sound 'excited' enough ... some staccato
+  // strings/synths with their own sub harmony should be added here to make
+  // it more exciting ... with their own melody (and accents)"): the MARCATO
+  // layer — staccato strings with their own melodic line and accents,
+  // riding the busy sections BESIDE the sustained ambience (his "of course
+  // not all" — counterline/descant stay legato). opts.marcato forces;
+  // default only on history-less energetic songs (nothing he has judged or
+  // noted re-rolls under a new device).
+  const marcatoOn = opts.marcato ?? (energetic && !priorKeep && !DERIVED_VERDICTS?.[name] && !CARD_NOTES?.[name]);
+  if (marcatoOn) {
+    const mcCell = melodyRhythm(v.meter, v.bpm, `${name}|marcato`, { target: 6, accDensity, accOnsets, beats });
+    const mcSound = (opts.fullSynth || synthAcc) ? 'gm_synth_strings_1' : 'gm_string_ensemble_1';
+    const bindMc = (ctx) => bindMelody(mcCell, ctx, v.meter, {
+      style: 'toby-fox', seed: fnv(`${name}|marcato`), octave: 4, sound: mcSound,
+      fx: '.clip(0.42).room(0.25)', gainRange: [0.3, 0.55], rangeSteps: 4,
+      mergeRepeats: false, cadenceNo7, chromCore,
+    }).expr;
+    const mcBars = form.sections.flatMap((sec) => Array(sec.bars).fill((ENERGY[sec.archetype] ?? 3) >= 4 ? 1 : 0));
+    if (mcBars.some(Boolean)) {
+      extraParts.push(...varySplit(bindMc, mcBars));
+      extraSolos._marcato = bindMc(ctxBar);
+      extraInfo.push(`marcato: staccato ${mcSound} stabs with their own line (oct 4, busy sections)`);
     }
   }
   // D87 ("i want you to see what you did and teach the engine" — the kept
@@ -1077,7 +1177,9 @@ function buildSong(prompt, name, opts = {}) {
   // under the lead (D77). opts.descant: false opts out; opts.descant
   // {octave, tension} reshapes it (tension = a 9-over-5 sus cluster held
   // high — stealth's "more tension by having a high texture").
-  if (opts.descant !== false && v.ensemble.count >= 2) {
+  // D91 (rest/nostalgic_shop: "sub harmony melodies" / "more textures") —
+  // an explicit opts.descant OBJECT forces it past the dial
+  if ((opts.descant && typeof opts.descant === 'object') || (opts.descant !== false && v.ensemble.count >= 2)) {
     const dsc = (opts.descant && typeof opts.descant === 'object') ? opts.descant : {};
     // at least an octave under the lead's home octave (aftermath's low-
     // sitting lead was topped +11 by the oct-4 walk — verify blocker)
@@ -1149,7 +1251,9 @@ function buildSong(prompt, name, opts = {}) {
   // base accompaniment strips and a held-root floor carries it with the
   // extras (counterline/descant/pads keep playing by their own gates).
   let bdMaskStr = null;
-  if (opts.breakdown !== false && !priorKeep && !opts.dropIntro && form.sections.length >= 3) {
+  // opts.breakdown === true forces it for a song JUDGED with a breakdown —
+  // a new keep must not lose the section-strip he approved
+  if ((opts.breakdown === true || (opts.breakdown !== false && !priorKeep)) && !opts.dropIntro && form.sections.length >= 3) {
     const interiorAll = form.sections.filter((sec, i) => i > 0 && i < form.sections.length - 1);
     const interior = interiorAll.filter((sec) => (ENERGY[sec.archetype] ?? 3) <= 2);
     // prefer the form's own breathing point; else strip the section before
@@ -1298,9 +1402,19 @@ const SONG_OPTS = {
   vs_happy_shop: { halveIntro: true },
   // r3: "make the notes with the really short durations hold for longer -
   // it sounds robotic" — a floor under the lead's articulation ratios
-  vs_x_construction: { articFloor: 0.9 },
+  // D91 ("construction and tense fight are much better than the piano
+  // versions -> one note is instead of just the one synth being the
+  // melody, to vary it a bit"): non-A letters bind the partner synth.
+  // VOICE-ONLY on this kept song — cells and seeds unchanged.
+  vs_x_construction: { articFloor: 0.9, varyLeadVoice: true },
+  // D91 mid-turn: "the note i made about not all synth all the time
+  // applies to the triumphant boss song by the way but can be abstracted
+  // for most songs" — same voice-only letter variation.
+  vs_triumphant_boss: { varyLeadVoice: true },
   // r2: mid-octave offbeat texture + held guide-tone counterline
-  vs_tense_fight: { texture: { class: 'offbeat', octave: 4 }, counterline: true, leadGainMul: 0.85 },
+  // D91: the same voice-only letter variation as construction; the low
+  // holding bass + muffled soft chords he praised are untouched.
+  vs_tense_fight: { texture: { class: 'offbeat', octave: 4 }, counterline: true, leadGainMul: 0.85, varyLeadVoice: true },
   // r2: "too uniform" + "more layers as soft support"; r3 still: forced AB
   // scheme so the accompaniment actually TRAVELS, pad breathes from bar 1
   vs_somber_aftermath: { accClassPrefer: 'arp', stringsPad: 'add', padFromStart: true, scheme: 'AB' },
@@ -1317,12 +1431,21 @@ const SONG_OPTS = {
   vs_calm_lab: { fullSynth: true },
   // r10 menu note: "not enough actual melody or texture ... some soft
   // string support would be good" — an added synth-strings pad whose top
-  // voice sings the D72 planned phrase
-  vs_calm_menu: { fullSynth: true, stringsPad: 'add' },
+  // voice sings the D72 planned phrase.
+  // D91: KEPT ("much better ... it feels smooth and flowing") — same
+  // judged-with pin as stealth.
+  vs_calm_menu: { fullSynth: true, stringsPad: 'add', bridgeHarmony: true, breakdown: true, melodyGrammar: true },
   // r10 stealth note: melody too talky (density halved) + "more tension
-  // by having a high texture" (the descant's 9-over-5 cluster, octave 5)
-  vs_tense_stealth: { fullSynth: true, leadDensityMul: 0.25, accClassPrefer: 'sustain', descant: { octave: 5, tension: true } },
-  vs_excited_casino: { fullSynth: true },
+  // by having a high texture" (the descant's 9-over-5 cluster, octave 5).
+  // D91: KEPT ("I like this a lot actually... conveys stealth") — judged
+  // WITH the unkept-path devices, so they pin ON (a keep flipping priorKeep
+  // must not strip the bridge/breakdown/grammar he approved).
+  vs_tense_stealth: { fullSynth: true, leadDensityMul: 0.25, accClassPrefer: 'sustain', descant: { octave: 5, tension: true }, bridgeHarmony: true, breakdown: true, melodyGrammar: true },
+  // D91 (casino note): intro capped by the 16s rule; "melody is too
+  // active (jumping too much)" -> density halved + the walk's range
+  // wall tightened; "not any supportive counter melody" -> counterline
+  // forced. The letter handoff finale he praised is untouched.
+  vs_excited_casino: { fullSynth: true, counterline: true, leadDensityMul: 0.5, leadRangeSteps: 4 },
   // D88: the tense lab runs all-synth. D89/D90: "love this ... amazing" — a
   // prose keep with no click yet; grammarPin holds it byte-stable against
   // every melody-grammar correction until his formal keep lands (then D64
@@ -1330,18 +1453,42 @@ const SONG_OPTS = {
   vs_tense_lab: { fullSynth: true, grammarPin: true },
   // D89/D90: "I like this a lot - layers are good, the drop is good. bass is
   // good." — same prose-keep pin as tense_lab.
-  vs_goofy_casino: { grammarPin: true },
+  // D91 ("more layers actually, especially in the mid layer because it
+  // feels a bit sparse there"): a mid-register comp texture joins —
+  // additive only, the grammarPin still holds everything else.
+  vs_goofy_casino: { grammarPin: true, texture: { class: 'comp', octave: 4 } },
   // D89 (round 12). snow: "beginning session too long ... melody too soft.
   // also some bg harmony could be added" — the intro drop is the <=60bpm rule
   // above; here the lead rides up and a synth-strings pad (with the D72
   // singing top voice) joins as the background harmony.
-  vs_somber_snow: { leadGainMul: 1.35, stringsPad: 'add', padFromStart: true },
+  // D91 ("the strings suddenly jump to be really loud ... a measure
+  // every so often"): the pad wave calms — half contrast, narrow bands.
+  vs_somber_snow: { leadGainMul: 1.35, stringsPad: 'add', padFromStart: true, padWaveCalm: true },
   // rest: "maybe some strings could actually take the melody. like solo
   // violin or cello ... melody synth is too soft" — the cello takes the A
   // melody in its tenor register, riding above the old ceiling. D90 (his
   // correction): handoffs STAY — the letters still hand off, now from the
   // strings-first pool.
-  vs_calm_rest: { leadSound: 'gm_cello', leadOctave: 4, leadGainMul: 1.35 },
+  // D91 ("more texture with more instruments or sub harmony melodies.
+  // the strings are still a bit too louder"): cello trimmed 1.35->1.2
+  // (0.63->0.56), a whisper strings pad + a low descant join.
+  // D91 addendum: the verify pass measured the added oct-3 descant TOPPING
+  // the cello in every A-cadence bar (B4 over a held D4 — a D77 violation)
+  // — dropped; the pad's singing top + the flute B answer carry the "sub
+  // harmony melodies" ask. Pad trimmed x0.8 (its development band measured
+  // at lead level, and "the strings are still a bit too louder").
+  vs_calm_rest: { leadSound: 'gm_cello', leadOctave: 4, leadGainMul: 1.2, stringsPad: 'add', padGainMul: 0.8 },
+  // D91 (training: "doesn't sound 'excited' enough ... staccato strings
+  // with their own melody (and accents)"): the marcato layer.
+  vs_excited_training: { marcato: true },
+  // D91 (nostalgic_shop's first note: intro "literally just chord
+  // progression on piano", melody "barely heard", "give It the same
+  // treatment u gave tense stealth, calm menu, calm lab"): the 16s
+  // intro cap fires, and the stealth/menu/lab layer treatment lands —
+  // strings pad from bar 1 with the singing top voice, a mid texture,
+  // a descant, the counterline, and the lead riding up. The oompah-
+  // drops-out breakdown he likes is untouched.
+  vs_nostalgic_shop: { stringsPad: 'add', padFromStart: true, texture: { class: 'offbeat', octave: 3 }, descant: {}, counterline: true, leadGainMul: 1.2 },
 };
 for (const prompt of PROMPTS) {
   const n = `vs_${prompt.emotion ?? 'x'}_${prompt.environment}`;

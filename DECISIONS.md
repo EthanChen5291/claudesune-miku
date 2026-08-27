@@ -4851,3 +4851,165 @@ D90 addendum — the verify workflow (5 agents), all-pass, honest ledger.
   his ear still catches any. (c) chromCore now has a unit test
   (melody.test.js D90: containment on Bb7 verified non-vacuous — 8
   notes — plus bites-on-foreign / inert-on-in-key both ways).
+
+D91 (2026-08-27) — ROUND 14, THE MILESTONE ROUND: "everything is so
+much better. i feel like this is a big milestone and all of the newly
+generated songs sound awesome." TWO NEW KEEPS (suite = 14): tense_stealth
+("I like this a lot actually... conveys stealth... the layering is very
+good between all the instruments agreeing... dynamically it flows") and
+calm_menu ("much better... it feels smooth and flowing which is super
+good"). calm_lab re-praised ("better! i like this a lot"); calm_water
+"also much better"; construction + fight "much better than the piano
+versions... this is very good and gives off the vibe really well";
+fight's low holding bass over muffled soft piano chords praised by
+name — a VALIDATED tension device.
+- THE KEEP-TRANSITION LAW (new machinery lesson): a song judged on the
+  UNKEPT path keeps its judged devices when the keep flips priorKeep.
+  Measured: stealth/menu drifted on rebuild (bridge->treat, breakdown
+  gone, menu's chromCore melody reverting). FIX: opts force-hooks
+  (bridgeHarmony: true / breakdown: true / melodyGrammar: true) pinned
+  on both; all 23 songs then byte-identical to the judged page.
+- STALE-NOTE CALLS (the judge-page notebox persistence): construction,
+  tense_lab, and happy_festival notes arrived byte-identical to r12 —
+  treated as stale (festival's D90 overhaul stands; he should re-listen
+  and re-note if the RH still reads hyper). tense_lab + goofy_casino
+  STILL lack formal keep clicks — reminded again.
+- vs_mysterious_desert (his SECOND "still doesn't sound like a desert"):
+  the all-minor i-v-iv-bII read dark, not desert. The trope's bite is
+  PHRYGIAN DOMINANT — bII hard against the tonic + the RAISED THIRD
+  (Hijaz; the research round confirmed Maqam Hijaz = the 5th mode of
+  harmonic minor, and the Andalusian cadence as OSTINATO). Desert
+  retrieval now RANKS the Phrygian pool by signature (im<->bII
+  adjacency 2pts, major-III chord 2pts, minor tonic first 1pt) and
+  serves the top raw: mod_im_bIIM_ivm_IIIM_bIIM_ivm_IIIM_IIIM =
+  Cm Db Fm E Db Fm E E. The faulted base ranks below by construction.
+  NOTE: the bridge vary returned unchanged on this loop, so desert is
+  a pure ostinato this round — the desert idiom, deliberately.
+- vs_excited_casino: the 16-SECOND INTRO CAP (new engine rule, any
+  tempo, unkept): a no-tune intro shrinks by whole loops (phase-safe,
+  one-loop floor) — casino 24.8s -> 12.4s, nostalgic_shop 44.6s ->
+  22.3s (floor), desert 23.7s (== one loop, floor). Melody "too
+  active (jumping too much)": leadDensityMul 0.5 + the new
+  bindMelody rangeSteps override (walk range wall tightened to 4).
+  "not any supportive counter melody": counterline FORCED (the gate
+  now honors opts.counterline === true past the ensemble dial). The
+  planner re-rolled casino's cast under the thinned target and dealt
+  a gm_synth_bass_1 counter_melody voice (mid register, measured
+  35-70 with the sub) — accepted as serving the note; his praised
+  letter-handoff finale is structurally intact (AAB, B handoff).
+- vs_excited_training ("doesn't sound 'excited' enough ... some
+  staccato strings/synths with their own sub harmony ... with their
+  own melody (and accents)"): the MARCATO device — staccato string
+  stabs (clip 0.42) with their own bindMelody line, own accents
+  (gainRange [0.3, 0.55]), tight range (rangeSteps 4), octave 4,
+  masked to busy (energy >= 4) sections BESIDE the sustained
+  counterline/descant ambience (his "of course not all"). opts.marcato
+  forces; default on history-less energetic songs only.
+- vs_somber_snow ("the strings suddenly jump to be really loud ... a
+  measure every so often"): measured cause — the pad wave's x1.12 bar
+  at the x1.15 development band over the x0.72 base band (worst
+  bar-to-bar step 2.1x = +6.4dB). opts.padWaveCalm halves the wave
+  contrast ([0.93 1 1.05 0.98]) and narrows the bands (1.02/0.82) —
+  worst step now 1.4x. Menu KEEPS the full wave (its flow was praised
+  with it — the wave is right, snow's jump was the outlier).
+- vs_calm_rest ("more texture ... or sub harmony melodies. the strings
+  are still a bit too louder"): cello trimmed 1.35 -> 1.2 (0.63 ->
+  0.56 — the 1.35 overshot), a whisper strings pad + low descant
+  join (the descant gate now honors an explicit opts.descant object
+  past the dial). The added pad re-rolled the form (AAB/48 ->
+  AABA/64) — accepted, unkept song under an add-more note.
+- vs_goofy_casino ("more layers ... especially in the mid layer"):
+  a mid-register comp texture joins; grammarPin holds all else.
+- vs_nostalgic_shop (first note): the 16s intro cap + "the same
+  treatment u gave tense stealth, calm menu, calm lab" — strings pad
+  from bar 1 (singing top voice), offbeat texture (piano voice — not
+  a synth vibe), counterline, descant, lead +x1.2 ("barely heard").
+  His liked oompah-drops-out breakdown is untouched.
+- VARY-LEAD-VOICE (his construction/fight note + mid-turn: "applies
+  to the triumphant boss song by the way but can be abstracted for
+  most songs (not one synth playing the melody the entire time)"):
+  non-A letters bind the partner synth (saw<->square) — VOICE-ONLY on
+  the three kept songs (construction, fight, boss: (midi,onset)
+  multisets verified identical; only .s() changes). Default for
+  history-less synth-lead songs; noted/kept songs get it by his word,
+  per song. Casino excluded this round — its praised finale is the
+  pool handoff, not the partner swap.
+- STABILITY: changed set = exactly 10 songs (3 kept voice-only + 7
+  noted); the other 13 (incl. both new keeps) byte-identical;
+  307/307 tests.
+
+D91 addendum 1 — more mid-turn praise + the doctrine file.
+- calm_lab: "conveys everything great. very atmospheric." calm_water:
+  "also much better." Both already kept; recorded as validation.
+- HIS PORTABILITY ASK ("i hope to save them so that if someone uses
+  like lower effort or opus/sonnet, it also works for them and
+  provides good reasoning"): CLAUDE.md now exists at the repo root —
+  the distilled working doctrine (round loop, prime directives, probe
+  patterns, grammar traps, the taste canon with its WHY, render-tier
+  laws, file map). Claude Code auto-loads it for every future session
+  regardless of model; DECISIONS.md stays the full authority it
+  points into. The session memory remains as a second layer.
+
+D91 addendum 2 — the verify workflow (5 agents), honest ledger, two
+fixes.
+- CONFIRMED CLEAN: changed set exactly 10; the other 13 (incl. both
+  new keeps) byte-identical; 14/14 degree pins; voice-only PROVEN on
+  construction/fight/boss ((time,end,midi) multisets identical; the
+  swaps confined to non-A letters: construction B->saw 31 haps, fight
+  B+C->square 49, boss B+C->square 93, every A statement keeps its
+  voice); goofy_casino additive-only (all 670 baseline haps intact,
+  288 new kalimba texture haps E3-F#4); desert ranking reproduced
+  over the live pool (unique score max 5 vs a 3-tie below it; melody
+  spells every chord — E bars {E,G#,B} with the Hijaz G#, Db bars
+  {Db,F,Ab}, zero foreign pitches; HQ root-tracking 24/24 downbeats);
+  casino intro 24.8s->12.4s loop-aligned, counterline sounds, lead
+  mean |leap| 6.70->5.34; nshop treatment complete (pad from bar 0
+  with a moving top, offbeat texture, counterline+descant, lead x1.19,
+  breakdown intact at bars 24-39 with drums masked); training marcato
+  verified on every property (clip 0.42, 11 pitches, own accents,
+  busy bars only, purely additive, tops never above the lead).
+- THE CATCHES (rounds keep earning the verify pass): (a) rest's added
+  oct-3 descant TOPPED the cello in every A-cadence bar (B4 over a
+  held D4 — D77 violation) — descant DROPPED (the pad's singing top +
+  flute B answer carry the ask) and the pad trimmed x0.8 (it measured
+  at lead level; his note said strings still a bit loud);
+  (b) snow's jump only fell to 1.53x because the D82 section-curve
+  step stacks on the band boundary — calm bands narrowed 1.02/0.82 ->
+  0.95/0.85; re-measured worst step 1.379x (was 2.109x judged);
+  (c) fight/boss wavs carried ~22-31s of sub-audible trailing buffer —
+  trimmed to body+5s (playback dead-air on the audition page).
+- NOTED: casino's leadDensityMul 0.5 barely bit (-1.4% onsets; the
+  >=140bpm cap was already 0.55) — the audible calming is the
+  rangeSteps leap cut (-20%); goofy_casino's texture request
+  (comp/oct4) was served by the pool as fnd_block_quarters block/oct3
+  E3-F#4 — mid intent landed, label differs; nshop's intro floors at
+  one loop (22.3s > the 16s cap by design); desert bars 43/46/51/54
+  briefly show the piano lead's phrase-tail dipping under the acc
+  (E-chord tones, an inversion — not wrong harmony); rest's pad top
+  may sit above the cello in some bars — that is the D72 singing-top
+  machinery he praised on menu, at 0.46 gain vs the cello's 0.56.
+- Final state: 307/307 tests; 12 wavs re-rendered this round total
+  (10 + rest/snow re-touches); 2 wavs trimmed.
+
+D92 (2026-08-27) — THE METER RULING: "avoid 2/4 and just stick with
+4/4 btw (and adjust accordingly)".
+- ENGINE RULE: a vibe that compiles to 2/4 re-compiles with a 4/4
+  override (buildSong, before anything reads the meter) — the 4/4
+  machinery then fits it natively: 4/4 melody cells with real phrasing,
+  4/4 foundations, correct per-bar density targets. The D89/D90 2/4
+  half-measures (meterMul, cell ceiling, holds) stay in code but go
+  dormant — the root cause his ear diagnosed ("2/4 screws up piano
+  melody") is now avoided at the source.
+- KEPT EXEMPTION: goofy_kitchen was judged and clicked IN 2/4 — it
+  keeps its meter (re-metering discards judged material; his word
+  would have to name it). Every other song: 4/4. The drop song was
+  already pinned 4/4.
+- MEASURED: only vs_happy_festival changed (drift set = 1 vs the
+  post-D91 build). Festival in 4/4: ABCD/64 on a stride acc, gained
+  the 4/4-native devices (sparkle, funk bounce), melody 6.73
+  onsets/bar in 2.31s bars = 2.92 notes/sec — the SAME rate the D90
+  thinning was reaching for, achieved by construction (the original
+  hyper build ran 5.7/sec). Rendered clean; 307/307.
+- HOUSEKEEPING: the songs.test determinism check now strips the
+  minute-resolution BUILD stamp before comparing — it flaked twice
+  (D89, D92) with zero real drift.

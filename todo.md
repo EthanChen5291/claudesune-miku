@@ -930,3 +930,36 @@ density ceiling tightened (avg 3.32/bar), melody HOLDS, articulation
 floor 0.85 — duration was the lever, not just count. 14/14 protected
 byte-identical, 306/306, five wavs re-rendered. LISTEN: festival
 first, then rest (cello->flute handoff), menu, desert, snow.
+
+D91 — ROUND 14, THE MILESTONE: 14 KEEPS (+ tense_stealth, calm_menu —
+both pinned with their judged bridges/breakdowns/grammar: the new
+keep-transition law). Your fixes: desert re-served as TRUE Phrygian
+dominant (Cm Db Fm E vamp — bII against the tonic + the raised third;
+ranked retrieval, ostinato by idiom); casino intro 25s->12s (new 16s
+intro cap, any tempo) + calmer tighter melody + forced counterline (+
+the planner dealt a counter-melody voice); training got the MARCATO
+device (staccato string stabs with their own line + accents, busy
+sections only); snow's pad wave calmed (no more sudden-loud measures);
+rest: cello trimmed to +1.2, strings pad + low descant added; goofy
+casino: mid comp texture (grammarPin holds the rest); nostalgic_shop:
+the full stealth/menu/lab treatment (pad from bar 1, texture,
+counterline, descant, lead up, intro capped — your liked breakdown
+untouched). VARY-LEAD-VOICE: construction/fight/boss letters now swap
+saw<->square — VOICE-ONLY (notes verified identical). CLAUDE.md
+written: the whole doctrine, portable to any model/effort. STALE-NOTE
+CALLS: construction/tense_lab/festival notes arrived verbatim from
+last round — treated as persisted noteboxes; if festival's RH still
+reads hyper after the D90 holds, re-note it. STILL OWED: keep clicks
+for tense_lab + goofy_casino; the videolab export. LISTEN: desert,
+casino, training, nostalgic_shop first.
+
+patterns to master:
+- various percussion (shaker, natural percussion like for desert (bongo) or jungle or war drums like the ones in trailer)
+- various themes mastering in terms of chord progressions (jungle, desert, alien, SPACE)
+D92 — YOUR METER RULING: 2/4 is retired — every vibe now compiles to
+4/4 (the compiler re-maps at the source, so the 2/4 melody problem
+can't recur). goofy_kitchen is the one exemption: you kept it IN 2/4,
+so it stays as judged until you say otherwise. Festival rebuilt in
+4/4: same 104bpm energy, native 4/4 phrasing at 2.9 notes/sec (the
+rate the thinning was chasing), plus sparkle + funk bounce from the
+4/4 device suite. LISTEN: festival.

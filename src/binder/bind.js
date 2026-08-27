@@ -920,8 +920,12 @@ export function bindMelody(rhythmEntry, harmonyContext, meter = '4/4', opts = {}
     // ratios — short notes lengthen, the style's longer notes are untouched.
     articFloor = null,
   } = opts;
-  const profile = MELODY_PROFILES[style];
+  let profile = MELODY_PROFILES[style];
   if (!profile) throw new Error(`unknown melody style "${style}" (have: ${Object.keys(MELODY_PROFILES).join(', ')})`);
+  // D91 (casino: the melody "jumping too much"): a caller may tighten the
+  // walk's range wall — the contour reflects sooner, so lines stay close
+  // to their center. Opt-in; absent, the profile stands untouched.
+  if (opts.rangeSteps) profile = { ...profile, rangeSteps: opts.rangeSteps };
   const approachProb = opts.approachProb ?? profile.approachProb;
   const rnd = mulberry32(seed);
 
