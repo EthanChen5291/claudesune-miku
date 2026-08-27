@@ -687,3 +687,51 @@ D73 — RELISTEN both pages:
   the removed tyler card broke export — stale keys now prune on load).
   Re-export when ready; your pasted round-2 listen still needs its
   keep/kills.
+
+D73 addendum — fight's sub-bass now DOUBLES the piano's low 8th-note roots
+(your "low piano note can be support with the low synth bass" idea) —
+re-listen tense fight; boss's held sub is unchanged.
+
+D73 addendum 2 — fight's low pulse is now PLAYED BY gm_synth_bass_1
+(replacing the piano part, per your note — the bare sine was inaudible);
+boss's held sub also moved onto synth bass. Re-listen fight + boss.
+
+D74 — videolab ROUND 3 up (11 cards): gospel is gone (killed twice over);
+gsharp vamp grew into the 4-chord combo with melody + layers you asked
+for; bronik bass now octave-doubled at full gain with the square
+low-passed; undershadow left hand rises against the falling right;
+citypop has per-bar chord treatments + ONE leap pickup; vl_kpop_split
+plays your half-bar idea. TWO QUESTIONS when you listen: (1) does the
+elevator's last section still sound strange, or was that note stale from
+round 1? (2) your planing note ended mid-sentence ("...as a variant here.
+also ") — what was the rest? Clear stale boxes before exporting.
+
+D75 — videolab ROUND 4 up (11 cards, 3 of them SONGS): your three
+"make it a full song" cards are built (gsharp A A' B A / citypop
+chorus-verse-chorus with a royal-road verse / kpop with the split bar
+announcing its new bridge). The vamp's wrong note was the pad's E# over
+D#m7 — fixed to diatonic 7ths. Bronik's bass is now a filtered sawtooth
+(the soundfont goes silent that low — that's why louder never helped).
+Undershadow's left hand is down to held roots only. The elevator got a
+17th bar — a held Eb7 pulling the loop home (your note came three times,
+so the seam theory got built). Still owed: the rest of your planing
+sentence ("...as a variant here. also ").
+
+D76 — videolab ROUND 5 up (12 cards). You heard an ENGINE BUG: both "keeps
+going upwards" (vamp) and citypop's dissonant later sections were the
+walking bass spiralling one octave per loop pass — the binder now locks
+loop roots, and the vamp's progressions were reshaped to arch home
+(verse ends E^9 -> B^7 falling; bridge peaks then falls through v7).
+Citypop is 24 bars on the 4-bar grid — chorus 8 (with breathing hold
+bars), verse 8, chorus 8 — with the last chorus rendering IDENTICAL to
+the first one you liked. Undershadow bars 1-2: the "weird" was a foreign
+Bb (a fallback flat-7 on the plain C triad) and C-against-F# on the D bar
+— those bars now waterfall added SIXTHS (C6, D6). Kpop split: the high
+sighs AND the high chord re-strike go silent for the whole bridge — the
+verify pass measured zero non-melody notes above A5 there now.
+Bronik: your keep is untouched; vl_bronik_var grows it — octave echo
+breathing in and out, and a second bass walk (Ab F Eb G) renaming the
+same cell four new ways. STILL OWED: (1) the elevator's 17th-bar
+turnaround is from LAST round — does the last section still sound
+strange after a fresh listen? (2) the planing sentence still ends at
+"...as a variant here. also " — what was the rest?

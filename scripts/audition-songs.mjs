@@ -269,6 +269,16 @@ function buildSong(prompt, name, opts = {}) {
   // kitchen an extra pizzicato layer — more voices on the song he wants
   // calmer)
   const accDensity = accFig0.onsets.length / (accFig0.bars ?? 1);
+  // D73 addendum 2 (fight: "i can't hear it. maybe replace the piano low
+  // note part with the bass"): a doubled bare sine at octave 1 vanished
+  // under the mix — 32Hz with no harmonics doesn't survive real speakers.
+  // So on beat-forward fast songs whose accompaniment is a root-driven
+  // pulse, the BASS TAKES THE PART: the low line binds on gm_synth_bass_1
+  // (the bronik voice he could hear once its gain came up) instead of
+  // piano, and no doubling layer stacks under it.
+  const rootDriven = accFig.figure.every((t) => /^R\+?$/.test(t))
+    && accFig.onsets.length / (accFig.bars ?? 1) <= 8;
+  const accToBass = rootDriven && v.bpm >= 140 && ['driving', 'foreground'].includes(v.percussion.presence);
   const accOnsets = accFig.onsets;
   const accOct = Math.max(1, Math.min(3, v.register.accOctave));
   // D63 articulation: style-level duration + damper on top of each pattern's
@@ -298,7 +308,8 @@ function buildSong(prompt, name, opts = {}) {
   // three times): the pedal vibes' whole piano sits in a wetter room
   const leadFx = ART.pedal ? `.gain(${leadGain}).room(0.7)` : `.gain(${leadGain}).room(0.25)`;
   const bindAcc = (fig, ctx) => bindFigure(fig, ctx, v.meter, {
-    sound: 'piano', fx: accFx,
+    sound: accToBass ? 'gm_synth_bass_1' : 'piano',
+    fx: accToBass ? '.gain(0.9).room(0.15).clip(0.95)' : accFx,
     // the vibe's accFloor lifts a pattern's home octave (water: "too low"),
     // never lowers it — a wide oom-pah keeps its cellar
     octave: Math.max(1, Math.min(4, Math.max(fig.octave ?? accOct, v.register.accFloor ?? 0))),
@@ -679,12 +690,18 @@ function buildSong(prompt, name, opts = {}) {
   // beat-forward songs a sub-bass holds the chord root at octave 1, masked
   // to the same bars the beat plays, so bass and beat arrive as one floor.
   // Policy, not a song patch: any driving/foreground drum song >= 140bpm.
-  if (drumBarsShared && v.bpm >= 140 && ['driving', 'foreground'].includes(v.percussion.presence)) {
+  if (accToBass) {
+    extraInfo.push('bass pulse: acc roots on gm_synth_bass_1 (the piano low part IS the bass — his fight note)');
+  } else if (drumBarsShared && v.bpm >= 140 && ['driving', 'foreground'].includes(v.percussion.presence)) {
+    // D73 (+addendum 2): where the acc is NOT a root pulse the bass can
+    // take over (boss's 16th octave-bounce stays piano), the sub instead
+    // HOLDS the bar root under the beat — on gm_synth_bass_1, not bare
+    // sine, and at octave 2: "i can't hear it" killed the pure sine.
     const subFig = { name: 'sub-bass', bars: 1, onsets: ['0'], figure: ['R'], accents: [0.8], legato: true };
-    const bindSub = (ctx) => bindFigure(subFig, ctx, v.meter, { octave: 1, sound: 'sine', fx: '.gain(0.6).clip(1.02)' }).expr;
+    const bindSub = (ctx) => bindFigure(subFig, ctx, v.meter, { octave: 2, sound: 'gm_synth_bass_1', fx: '.gain(0.85).clip(1.02)' }).expr;
     extraParts.push(...varySplit(bindSub, drumBarsShared));
     extraSolos._sub_bass = bindSub(ctxBar);
-    extraInfo.push('sub-bass: sine roots (oct 1) under the beat');
+    extraInfo.push('sub-bass: gm_synth_bass_1 held roots (oct 2) under the beat');
   }
   if (opts.counterline) {
     const clFig = { name: 'counterline', bars: 1, onsets: ['0'], figure: ['3'], accents: [0.72], legato: true };

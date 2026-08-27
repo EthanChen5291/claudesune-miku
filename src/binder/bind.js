@@ -542,7 +542,9 @@ function extensionSlot(toks, rel, core, rootPc) {
 /**
  * bindFigure(figEntry, harmonyContext, meter, opts) -> { expr, period, boundMeta, warnings }
  * figEntry: { onsets, accents, figure, bars?, microtiming?, legato?, octave? }
- * opts: { octave=figEntry.octave??3, sound='piano', fx='', gainRange, rhythmName }
+ * opts: { octave=figEntry.octave??3, sound='piano', fx='', gainRange, rhythmName,
+ *         loopRoots=false (D76: fold the walking root back within an octave of
+ *         the first bar's root — opt-in, see the root-placement comment below) }
  */
 export function bindFigure(figEntry, harmonyContext, meter = '4/4', opts = {}) {
   const warnings = [];
@@ -563,7 +565,7 @@ export function bindFigure(figEntry, harmonyContext, meter = '4/4', opts = {}) {
   const {
     octave = figEntry.octave ?? 3, sound = 'piano', fx = '',
     gainRange = DEFAULT_GAIN_RANGE, rhythmName = figEntry.name ?? null,
-    stateExtensions = false,
+    stateExtensions = false, loopRoots = false,
   } = opts;
   let extended = 0;
 
@@ -615,7 +617,15 @@ export function bindFigure(figEntry, harmonyContext, meter = '4/4', opts = {}) {
   // so a descending progression walks down the way a left hand does
   // (D3 C3 B2 Bb2), instead of every root snapping into [C, B] above baseC
   // (D3 C3 B3 Bb3 — audition round 3 heard exactly that jump).
+  // D76: nearest-motion has a failure mode the ear caught — a harmony cycle
+  // whose roots each ascend (G# C# E F#: +5+3+2+2 = +12) makes the walk climb
+  // an OCTAVE per pass, forever ("keeps going upwards... when that's the whole
+  // loop"). loopRoots folds any root that drifts a full octave from the first
+  // bar's root back into register — a pianist's reset — so every harmony pass
+  // after the first is identical. Opt-in (D56 precedent): existing bindings
+  // stay byte-identical; the wrap-drift warning below fires either way.
   let prevRoot = baseC + 5;
+  let anchorRoot = null;
   for (let c = 0; c < period; c++) {
     const bar = bars[c % B];
     const sym = harmony[Math.floor(c / barsPerChord) % harmony.length];
@@ -628,6 +638,11 @@ export function bindFigure(figEntry, harmonyContext, meter = '4/4', opts = {}) {
     for (const cand of [above - 12, above + 12]) {
       const d = Math.abs(cand - prevRoot), dBest = Math.abs(rootRef - prevRoot);
       if (d < dBest || (d === dBest && cand > rootRef)) rootRef = cand;
+    }
+    if (anchorRoot === null) anchorRoot = rootRef;
+    else if (loopRoots) {
+      while (rootRef - anchorRoot >= 12) rootRef -= 12;
+      while (anchorRoot - rootRef >= 12) rootRef += 12;
     }
     prevRoot = rootRef;
     const values = [];
@@ -650,6 +665,24 @@ export function bindFigure(figEntry, harmonyContext, meter = '4/4', opts = {}) {
       values.push(names.length === 1 ? names[0] : `[${names.join(',')}]`);
     }
     noteCycles.push(tokens(bar.steps, values, bar.G, { legato }));
+  }
+
+  // D76: warn when the walk would restart the pattern somewhere other than
+  // where it began — that loop is either spiralling (net ±12 per pass) or
+  // seam-jumping, and the ear hears it ("keeps going upwards").
+  {
+    const pc0 = chordRootPc(harmony[0]);
+    if (pc0 != null && anchorRoot !== null) {
+      const above0 = baseC + ((pc0 - baseC % 12) + 12) % 12;
+      let wrapRoot = above0;
+      for (const cand of [above0 - 12, above0 + 12]) {
+        const d = Math.abs(cand - prevRoot), dBest = Math.abs(wrapRoot - prevRoot);
+        if (d < dBest || (d === dBest && cand > wrapRoot)) wrapRoot = cand;
+      }
+      if (!loopRoots && wrapRoot !== anchorRoot) {
+        warnings.push(`walking root drifts ${wrapRoot - anchorRoot > 0 ? '+' : ''}${wrapRoot - anchorRoot} semis per period — the loop spirals; consider loopRoots (D76)`);
+      }
+    }
   }
 
   const gainBars = bars.map((bar) => {

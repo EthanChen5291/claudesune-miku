@@ -33,7 +33,15 @@ const F = FIGURATIONS_VIDEOS;
 const ctxOf = (entry, key, barsPerChord = 1) => ({
   harmony: renderProgression(entry, key), barsPerChord, key,
 });
-const fig = (entry, ctx, opts) => bindFigure(entry, ctx, '4/4', { sound: 'piano', ...opts }).expr;
+// D76: binder warnings surface at build time — the undershadow "weird" bars
+// were a default-interval fallback (b7 over a plain triad) that had been
+// warning into the void for four rounds.
+const FIG_WARNINGS = new Set();
+const fig = (entry, ctx, opts) => {
+  const b = bindFigure(entry, ctx, '4/4', { sound: 'piano', ...opts });
+  for (const w of b.warnings ?? []) FIG_WARNINGS.add(`[${entry.name ?? '?'}] ${w}`);
+  return b.expr;
+};
 
 const cards = [];
 function card(c) { cards.push(c); }
@@ -46,19 +54,69 @@ function card(c) { cards.push(c); }
 // two, the third and fourth chords didn't sound good".)
 // ---------------------------------------------------------------------------
 {
-  const syms = renderProgression(V.vid_gsharp_climb, 'G#:minor').slice(0, 2);
-  const ctx = { harmony: syms, barsPerChord: 1, key: 'G#:minor' };
-  const climb = fig(F.vid_climb_block_restrike, ctx, { octave: 3, fx: '.gain(0.62).room(0.45).clip(0.85)' });
+  // Round 2: "this sounds good but also im looking for variations and
+  // add-ons (so that it becomes a 4-chord progression). also add a melody
+  // and more layering because this is a valid combo." The two added chords
+  // come from colors he has KEPT (the aquatic ladder's bVI^9 and its
+  // v-as-minor7) — never the D#7/A9 he faulted twice. The melody is an
+  // authored 4-bar phrase in his own grammar: held notes, no re-strikes
+  // (bar boundaries and the loop seam included), the b3->9 sigh he liked,
+  // a v-root landing that steps back up into the loop.
+  // Round 3: "last chord sounds slightly incorrect. also add a melody -
+  // not just a loop but a full song with progression!" Two fixes and a
+  // graduation: (1) the "slightly incorrect" was REAL and located — the
+  // pad's R.5.9 put E# (the 9th of D#m7) over the v chord, a note foreign
+  // to G# minor; the pad now stacks R.5.7, whose 7ths are diatonic on all
+  // four chords. (2) The card is a SONG now: A A' B A over 16 bars — the
+  // vamp twice (the melody's answer varied the second time), a B section
+  // on bIII^7 (B^7, new but fully diatonic), the theme's return. One
+  // concatenated 16-bar harmony, no masks on the harmony itself (D63).
+  // The round-4 verify pass found the E# was never only the pad's: the
+  // CLIMB's 9th token also sounds E# on every D#m7 bar — the chord itself
+  // makes standard color tokens non-diatonic. So the fourth chord becomes
+  // bVII7 (F#7): every 7th and 9th any layer renders on it is diatonic,
+  // and bVII7 -> i is the aeolian cadence — no dominant, his aquatic rule.
+  // Round 4: "the chord progression sound weird because it keeps going
+  // upwards which sounds like it's building up when that's the whole loop.
+  // so last two chords in both chord progressions sound weird." He heard a
+  // BINDER BUG, precisely: the walking-root rule (nearest candidate to the
+  // previous root) climbs +5+3+2+2 = +12 on the G#-C#-E-F# cycle — one full
+  // octave per pass, forever. The fix is twofold: (1) both progressions are
+  // reshaped to ARCH — the last two chords come DOWN (verse: E^9 -> B^7 ->
+  // home, roots 56 61 64 59 56; bridge: iv9 bVI^9 v7 bIII^7, peak then fall)
+  // so net drift is zero by construction; (2) every layer binds with
+  // loopRoots (D76), the engine guard that folds any octave-drifted root
+  // back into register. B^7 (bIII^7) and D#m7 (v7) are diatonic, no
+  // dominant; the climb never sees D#m7 (masked off in the bridge), so its
+  // 9th token cannot land E# (the round-4 lesson). The melody survives the
+  // reharm unchanged: every held pitch re-checks as a chord tone or
+  // diatonic color on the new chords.
+  const vamp4 = { degrees: '0:m9 5:m9 8:^9 3:^7', numerals: null };
+  const bSec = { degrees: '5:m9 8:^9 7:m7 3:^7', numerals: null };
+  const vSyms = renderProgression(vamp4, 'G#:minor');
+  const bSyms = renderProgression(bSec, 'G#:minor');
+  const ctx = { harmony: [...vSyms, ...vSyms, ...bSyms, ...vSyms], barsPerChord: 1, key: 'G#:minor' };
+  const climb = `${fig(F.vid_climb_block_restrike, ctx, { octave: 3, loopRoots: true, fx: '.gain(0.42).room(0.45).clip(0.85)' })}.mask("<1@8 0@4 1@4>")`;
+  // hand-written 16-bar melody (the bars:4-figure trap from the round-3
+  // verify pass): A phrase, its varied answer, a higher B phrase ending on
+  // the section climax, the theme's return; all notes held to the next,
+  // no neighbour re-strikes, every pitch diatonic to G# minor
+  const melody = `note("<[F#5@3 A#5] [G#5@2 E5 D#5] [B5@2 G#5@2] [F#5@3 D#5] [F#5@3 A#5] [G#5@2 E5 D#5] [B5@3 C#6] [A#5@2 G#5 D#5] [D#6@2 A#5@2] [B5@2 E5@2] [F#5@2 G#5@2] [F#6@3 D#6] [F#5@3 A#5] [G#5@2 E5 D#5] [B5@2 G#5@2] [F#5@3 D#5]>").s("piano").gain(0.7).room(0.5).clip(1.1)`;
+  const pad = fig({ name: 'vamp-pad', bars: 1, onsets: ['0'], figure: ['R.5.7+'], accents: [0.6], legato: true },
+    ctx, { sound: 'gm_string_ensemble_1', octave: 3, loopRoots: true, fx: '.gain(0.28).room(0.55).clip(1.3)' });
+  const bass = fig({ name: 'root', bars: 1, onsets: ['0'], figure: ['R'], accents: [0.7], legato: true },
+    ctx, { octave: 2, loopRoots: true, fx: '.gain(0.55).room(0.2)' });
+  const mix = `stack(${melody}, ${climb}, ${pad}, ${bass})`;
   card({
-    name: 'vl_gsharp_vamp', kind: 'REVISION',
-    title: 'G#m9 vamp — just the two chords he liked',
-    techniques: ['block-restrike octave climb', 'i9–iv9 two-chord vamp'],
-    sources: ['igexport-DceNMCmuYZV (G#m9 reel)', 'his round-1 note on vl_gsharp_climb'],
-    key: 'G#:minor', bpm: 80, degrees: '0:m9 5:m9', base: 'vid_gsharp_climb', family: 'minor',
-    symbols: syms, totalBars: 8,
-    mix: climb,
-    solos: { _climb: climb },
-    note: 'Round 1 on the kept climb: "I liked the first two, the third and fourth chords didn\'t sound good." Same terraced climb and tags, but the harmony never leaves the i9–iv9 pair.',
+    name: 'vl_gsharp_vamp', kind: 'SONG',
+    title: 'G#m9 vamp — the song',
+    techniques: ['A A′ B A form over 16 bars', 'i9-iv9-bVI^9-bIII^7 verse — an ARCH: the last two chords come down home', 'bridge: iv9 bVI^9 v7 bIII^7 (peak then fall, no dominant)', 'loop-locked walking roots (D76 — the octave-per-pass spiral is gone)', 'held-note melody with varied answer + B climax'],
+    sources: ['igexport-DceNMCmuYZV (G#m9 reel)', 'igexport-DZKQMVQsj79 (the kept colors)', 'his round-4 note'],
+    key: 'G#:minor', bpm: 80, degrees: vamp4.degrees, base: 'vid_gsharp_climb', family: 'minor',
+    symbols: [...vSyms, '|', ...bSyms], totalBars: 16,
+    mix,
+    solos: { _melody: melody, _climb: climb, _pad: pad, _bass: bass },
+    note: 'You heard a real engine bug: the walking bass rule climbs an OCTAVE per pass on this chord cycle (G#-C#-E-F# ascends +12 total), so the whole song spiralled upward — "building up when that\'s the whole loop", exactly. Fixed twice over: the progressions now ARCH (verse ends E^9 -> B^7 falling home; bridge peaks then falls through v7 to B^7), and the binder folds any drifted root back into register. Same melody — every note still lands a chord tone.',
   });
 }
 
@@ -88,13 +146,15 @@ function card(c) { cards.push(c); }
 // ---------------------------------------------------------------------------
 {
   const ctxStatic = { harmony: ['Cm'], barsPerChord: 1, key: 'C:minor' };
-  // Round 1: "I can barely hear the low notes while the high notes are
-  // extremely loud" — a square wave reads far louder than its gain, and the
-  // celesta tag was voiced at C7. Rebalanced: bass way up, square down, the
-  // bell an octave lower and softer.
-  const climb = fig(F.vid_climb_bronik_add9, ctxStatic, { sound: 'gm_lead_1_square', octave: 4, fx: '.gain(0.28).room(0.3).clip(0.7)' });
-  const bass = `note("<c2 bb1 ab1 g1>").s("gm_synth_bass_1").gain(0.9).clip(1.1)`;
-  const bell = fig({ name: 'bell-tag', bars: 2, onsets: ['3/4', '7/8'], figure: ['R++', '9++'], accents: [0.6, 0.55], legato: false }, ctxStatic, { sound: 'gm_celesta', octave: 4, fx: '.gain(0.26).room(0.5)' });
+  // Round 3: "I can't hear low notes at all now" — worse, not better,
+  // which convicts the INSTRUMENT: the gm_synth_bass_1 soundfont is
+  // unreliable below C2 in the browser player (the harness can't hear
+  // that). The fix is a basic waveform, which always sounds: a sawtooth
+  // low-passed into a synth bass. Saw has dense harmonics, so it reads on
+  // any speaker at any pitch.
+  const climb = fig(F.vid_climb_bronik_add9, ctxStatic, { sound: 'gm_lead_1_square', octave: 4, fx: '.gain(0.2).lpf(1500).room(0.3).clip(0.7)' });
+  const bass = `note("<c2 bb1 ab1 g1>").s("sawtooth").lpf(700).gain(0.85).clip(1.05)`;
+  const bell = fig({ name: 'bell-tag', bars: 2, onsets: ['3/4', '7/8'], figure: ['R++', '9++'], accents: [0.6, 0.55], legato: false }, ctxStatic, { sound: 'gm_celesta', octave: 4, fx: '.gain(0.18).room(0.5)' });
   const mix = `stack(${climb}, ${bass}, ${bell})`;
   card({
     name: 'vl_bronik_build', kind: 'FAITHFUL',
@@ -105,7 +165,35 @@ function card(c) { cards.push(c); }
     symbols: ['Cm(add9)', 'Cm/Bb', 'Abmaj7#11', 'G(b13)'], totalBars: 8,
     mix,
     solos: { _climb: climb, _bass: bass, _bell: bell },
-    note: 'The arp literally never changes — only the bass moves (C Bb Ab G), so the same eight notes re-name themselves four ways. Rebalanced after round 1: bass up, square and bell down, bell dropped an octave.',
+    note: 'The arp literally never changes — only the bass moves (C Bb Ab G), so the same eight notes re-name themselves four ways. Round-3 fix: the bass is now a low-passed SAWTOOTH — the soundfont bass goes quiet below C2 in the browser, a raw waveform cannot.',
+  });
+}
+
+// ---------------------------------------------------------------------------
+// 3b. VARIANT — bronik with "more complex variations" (his round-4 keep note).
+// The kept card is untouched; this one grows it to 16 bars in four passes:
+// the octave echo breathes in and out (passes 2 and 4), and pass 3 walks a
+// NEW bass line (Ab F Eb G) under the same never-changing cell, so the reharm
+// trick happens twice — the second time through chords the first pass never
+// named. All still one cell; the variation is entirely underneath it.
+// ---------------------------------------------------------------------------
+{
+  const ctxStatic = { harmony: ['Cm'], barsPerChord: 1, key: 'C:minor' };
+  const climb = fig(F.vid_climb_bronik_add9, ctxStatic, { sound: 'gm_lead_1_square', octave: 4, fx: '.gain(0.2).lpf(1500).room(0.3).clip(0.7)' });
+  const echo = `${fig(F.vid_climb_bronik_add9, ctxStatic, { sound: 'gm_lead_1_square', octave: 5, fx: '.gain(0.11).lpf(2200).room(0.5).clip(0.7)' })}.mask("<0@4 1@4 0@4 1@4>")`;
+  const bass = `note("<c2 bb1 ab1 g1 c2 bb1 ab1 g1 ab1 f1 eb1 g1 c2 bb1 ab1 g1>").s("sawtooth").lpf(700).gain(0.85).clip(1.05)`;
+  const bell = fig({ name: 'bell-tag', bars: 2, onsets: ['3/4', '7/8'], figure: ['R++', '9++'], accents: [0.6, 0.55], legato: false }, ctxStatic, { sound: 'gm_celesta', octave: 4, fx: '.gain(0.18).room(0.5)' });
+  const mix = `stack(${climb}, ${echo}, ${bass}, ${bell})`;
+  card({
+    name: 'vl_bronik_var', kind: 'VARIANT',
+    title: 'bronik build — deeper variations',
+    techniques: ['16 bars, four passes of the fixed cell', 'octave echo breathing in/out (passes 2 and 4)', 'pass 3: a SECOND bass walk (Ab F Eb G) renames the cell again — Ab^7#11, F13, Eb^7(13), G(b13)', 'bell walk-up tag throughout'],
+    sources: ['sr 13-25-13 (@bronikbeats Impossible)', 'his round-4 keep note'],
+    key: 'C:minor', bpm: 102, degrees: V.vid_bronik_descent.degrees, base: 'vid_bronik_descent', family: 'minor',
+    symbols: ['Cm(add9)', 'Cm/Bb', 'Abmaj7#11', 'G(b13)', '|', 'Abmaj7#11', 'F13', 'Eb^7(13)', 'G(b13)'], totalBars: 16,
+    mix,
+    solos: { _climb: climb, _echo: echo, _bass: bass, _bell: bell },
+    note: 'Your keep, grown: the kept 8 bars are passes 1-2 (the octave echo now enters on pass 2), then pass 3 drops a NEW bass walk — Ab F Eb G — under the unchanged cell, so the same eight notes get four MORE names (F13, an Eb^7 with the cell as its 13th), and pass 4 comes home with the echo still ringing. The kept card itself is untouched.',
   });
 }
 
@@ -146,7 +234,7 @@ function card(c) { cards.push(c); }
   // the SAME theme a semitone up: the modulation is the event, the material
   // stays familiar.
   const symsC = renderProgression(V.vid_pixel_abm, 'A:minor');
-  const T = 16;
+  const T = 17;
   // The verify pass measured the A-minor arrival landing +13 (octave +
   // semitone) on its first two bars and +1 on the rest — the binder's
   // register choice is voice-led through the whole 16-chord list, so
@@ -157,10 +245,22 @@ function card(c) { cards.push(c); }
   // -11: measured net +1, asserted below at build time. The add pattern's
   // period is 16 = the harmony period, so nothing drifts (D63). symsC
   // still names what SOUNDS (the lifted chords) for the card display.
-  const allSyms = [...symsA, ...symsA, ...symsB, ...symsA, ...symsA];
+  // Round 3: "the last section sounded kinda strange" arrived a THIRD time
+  // (twice could have been a stale note-box; three is a verdict). Best
+  // theory: the register was fixed, so what remains strange is the SEAM —
+  // the loop fell from A minor straight back down to Ab minor with no
+  // preparation. A 17th bar closes the cycle: one held Eb7, the V of Ab
+  // minor, pulling home before the loop restarts. Lift pattern widened to
+  // period 17 to match (D63).
+  const allSyms = [...symsA, ...symsA, ...symsB, ...symsA, ...symsA, 'Eb7'];
   const ctx = { harmony: allSyms, barsPerChord: 1, key: 'Ab:minor' };
-  const lift = `.add(note("<0@10 -11@6>"))`;
-  const gripX = `${fig(grip, ctx, { octave: 3, fx: '.gain(0.58).room(0.4).clip(1.2)' })}${lift}`;
+  const lift = `.add(note("<0@10 -11@6 0>"))`;
+  // the quartal grip's 3+4 cluster is the card's SOUND mid-loop, but on
+  // the turnaround bar it put G against Ab a semitone apart at the top of
+  // the register (the round-4 verify pass measured midis 79,80 adjacent) —
+  // bar 17 gets a plain R.3.7 shell instead: a clean dominant pulling home
+  const shell17 = { name: 'turn-shell', bars: 1, onsets: ['0'], figure: ['R.3+.7+'], accents: [0.66], legato: true };
+  const gripX = `stack(${fig(grip, ctx, { octave: 3, fx: '.gain(0.58).room(0.4).clip(1.2)' })}.mask("<1@16 0>"), ${fig(shell17, ctx, { octave: 3, fx: '.gain(0.55).room(0.45).clip(1.2)' })}.mask("<0@16 1>"))${lift}`;
   const bassX = `${fig(bassF, ctx, { octave: 2, fx: '.gain(0.52)' })}${lift}`;
   const mix = `stack(${gripX}, ${bassX})`;
   const gA = gripX, gB = bassX, gC = mix;
@@ -170,10 +270,10 @@ function card(c) { cards.push(c); }
     techniques: ['m7(11) quartal grip', 'chromatic altered-dominant elevator (modulation, not color)', 'planing at song scale'],
     sources: ['igexport-Db-2YGCvU68 (pixel-font modulation reel)'],
     key: 'Ab:minor → A:minor', bpm: 86, degrees: V.vid_pixel_abm.degrees, base: 'vid_pixel_abm', family: 'minor',
-    symbols: [...symsA, '|', ...symsB, '|', ...symsC], totalBars: T,
+    symbols: [...symsA, '|', ...symsB, '|', ...symsC, '|', 'Eb7'], totalBars: T,
     mix,
     solos: { _grip: gA, _bass: gB },
-    note: 'Six bars of the Abm grip, then C7b13-D7b13-Eb7alt-E7 climbing, then the SAME six bars a semitone up — departure and arrival are one theme, so only the key changes. The elevator is the only place the corpus allows frequent AND altered dominants.',
+    note: 'Six bars of the Abm grip, C7-D7-Eb7-E7 climbing, the SAME six bars a semitone up — and now a 17th bar: one held Eb7 pulling the loop home to Ab minor, so the wrap is prepared instead of falling a semitone cold. If the last section STILL sounds strange, say which bars.',
   });
 }
 
@@ -184,23 +284,36 @@ function card(c) { cards.push(c); }
 // ---------------------------------------------------------------------------
 {
   const ctx = { harmony: renderProgression({ degrees: '0 2 5:^7 0:7', numerals: null }, 'C:major'), barsPerChord: 1, key: 'C:major' };
-  // Round 1: "the left hand needs some work - it doesn't match that well.
-  // overall idea is good" — the static R.5 block sat still under a moving
-  // waterfall. Now the left hand rocks root → fifth in halves under the
-  // pedal, so both hands move at related rates; more room on both (his
-  // aquatic rule: water wants reverb and damper).
-  const shadow = fig(F.vid_arp_undershadow, ctx, { octave: 4, fx: '.gain(0.55).room(0.6).clip(1.4)' });
-  const bass = fig({ name: 'rock', bars: 1, onsets: ['0', '1/2'], figure: ['R', '5'], accents: [0.62, 0.5], legato: true }, ctx, { octave: 2, fx: '.gain(0.48).room(0.6).clip(1.5)' });
+  // Round 3: "still worse - it doesn't match that well, too funky" — the
+  // trajectory is unambiguous now: every round that ADDED left-hand motion
+  // made it worse (block -> rock -> rise). So the left hand does the least
+  // a left hand can do: one held root per bar, deep in the pedal, nothing
+  // else. The waterfall IS the harmony; the bass only names it.
+  // Round 4: "the first chord left hand and second left hand are weird,
+  // moreover the second right hand is also kinda weird" — bars 1-2 exactly,
+  // and MEASURED: the C and D chords are plain triads, so the figure's 7
+  // token hits the binder's default-interval fallback (b7 = 10 semis). Bar 1
+  // sounded Bb — foreign to C major — as an octave DYAD ('7+.7', the lowest
+  // waterfall voice, i.e. what reads as left hand); bar 2 sounded C natural
+  // grinding against D major's F#. Bars 3-4 have real 7ths, hence "the third
+  // chord works". The triad bars now run a 6-for-7 waterfall (A over C = C6,
+  // B over D = D6 — both diatonic, the warm added-sixth sound); the seventh
+  // chords keep the original figure. Masks are period 4 = the loop (D63).
+  const undershadow6 = { ...F.vid_arp_undershadow, name: 'arp-undershadow-6', figure: ['R++.R+', '6+.6', '5+.9', '3+.R+', '9.5+', 'R+.3+', '6.9', '5.R+'] };
+  const shadowTriads = `${fig(undershadow6, ctx, { octave: 4, fx: '.gain(0.55).room(0.6).clip(1.4)' })}.mask("<1 1 0 0>")`;
+  const shadowSevenths = `${fig(F.vid_arp_undershadow, ctx, { octave: 4, fx: '.gain(0.55).room(0.6).clip(1.4)' })}.mask("<0 0 1 1>")`;
+  const shadow = `stack(${shadowTriads}, ${shadowSevenths})`;
+  const bass = fig({ name: 'root-hold', bars: 1, onsets: ['0'], figure: ['R'], accents: [0.55], legato: true }, ctx, { octave: 2, fx: '.gain(0.42).room(0.65).clip(1.6)' });
   card({
     name: 'vl_undershadow_water', kind: 'TRANSPLANT',
     title: 'Under-shadowed arp on the water harmony',
-    techniques: ['arp under-shadow (dyad waterfall)', 'root+5th frame'],
+    techniques: ['arp under-shadow (dyad waterfall)', '6-for-7 waterfall on the triad bars (the fallback b7 was the "weird")', 'minimum left hand: one held root per bar'],
     sources: ['sr 13-26-56 (arp trick)', 'our ut_once_upon_a_time_p3 (your kept water harmony)'],
     key: 'C:major', bpm: 60, degrees: '0 2 5:^7 0:7', base: 'ut_once_upon_a_time_p3', family: 'major',
     symbols: ctx.harmony, totalBars: 8,
     mix: `stack(${shadow}, ${bass})`,
     solos: { _shadow: shadow, _bass: bass },
-    note: 'The robotic-arp fix applied to our own material: every note of the descending waterfall carries a chord-tone shadow, pairs inverting as it falls. Round-1 fix: the left hand now rocks root-to-fifth in halves instead of one static block, deeper pedal on both hands.',
+    note: 'Bars 1-2 located and measured: C and D are plain triads, so the waterfall\'s 7th token fell back to a FLAT 7 — bar 1 rang a foreign Bb (as a low octave dyad, which is why it read as left hand), bar 2 ground C natural against D\'s F#. Bars 3-4 have real 7ths, which is why the third chord worked. The triad bars now waterfall the added SIXTH instead (C6, D6 — warm, diatonic); the left hand stays the minimum held root.',
   });
 }
 
@@ -255,49 +368,72 @@ function card(c) { cards.push(c); }
 // forward, so its four 8ths announce the NEXT chord (the corpus device).
 // ---------------------------------------------------------------------------
 {
+  // Round 3: "I like it, sounds jazzy, and I like what u did with the Ab^7
+  // and the Dbm9 - turn this into a full song with progressions and
+  // layers!" So: the praised pair becomes the CHORUS, and between its two
+  // statements sits an 8-bar royal-road verse (IV^7 V7 iii7 vi9 — the
+  // city-pop staple, all Ab major) carrying a held-note melody. One
+  // concatenated 20-bar harmony; every mask is period 20 (D63). The
+  // verse's chords are plain blocks + lids (calmer than the chorus); the
+  // chorus keeps its verified round-3 treatments (block / lid / roll /
+  // holds, one leap pickup, one bell per statement).
+  // Round 4, two findings, both real: (1) "it's 6 chords and 4? where's the
+  // time signature bound alignment" — the 6-bar chorus against 4-bar verses
+  // broke phrase alignment. The chorus is now EIGHT bars: each 3-chord
+  // phrase stretches to 4 with a breathing HOLD bar (the landed chord rings;
+  // a low pedal touch + the 9th lid keep it alive — the aquatic card's kept
+  // "figure bar + pedal hold bar" device). 24 bars total, everything on the
+  // 4-bar grid: chorus 8, verse 8 (royal road twice), chorus 8. (2) "the
+  // next ones are too dissonance" — MEASURED as the same walking-root
+  // spiral the vamp had: the chorus root cycle ascends +12 per pass, so by
+  // the final chorus the "octave 2" shells were sounding three octaves up,
+  // crowded into the melody's register. Every layer now binds loopRoots
+  // (D76); the final chorus renders identical to the first — the one he
+  // called good. Ornaments: one roll, one leap pickup, one bell per chorus,
+  // at phrase ends only (D74).
   const symsA = renderProgression(V.vid_citypop_ab_minor, 'Ab:minor');
   const symsB = renderProgression(V.vid_citypop_ab_major, 'Ab:major');
-  const T = 6;
-  const rot = (a) => [...a.slice(1), a[0]];
-  // Round 1: "it shouldn't just always be chromatic leadup … sounds like a
-  // piano exercise since it's so uniform … there shouldn't be a fall after
-  // every chord, the rhythm of the chords should be altered a bit." So: ONE
-  // pickup per phrase, into the landing only, and a DIFFERENT pickup per
-  // phrase (two-note sigh in the minor half, the four-8th climb in the
-  // major half); the bell rings only after the two landings; and the V bar
-  // re-strikes a higher rotation at the and-of-2 so the chord rhythm itself
-  // varies. Every mask is period 6 = the cycle, so nothing drifts (D63).
+  const royal = renderProgression({ degrees: '5:^7 7:7 4:m7 9:m9', numerals: null }, 'Ab:major');
+  const ch8 = [symsA[0], symsA[1], symsA[2], symsA[2], symsB[0], symsB[1], symsB[2], symsB[2]];
+  const h24 = [...ch8, ...royal, ...royal, ...ch8];
+  const rot24 = [...h24.slice(1), h24[0]];
+  const T = 24;
+  const ctx24 = { harmony: h24, barsPerChord: 1, key: 'Ab:major' };
+  const rctx24 = { harmony: rot24, barsPerChord: 1, key: 'Ab:major' };
   const shell = { name: 'shell', bars: 1, onsets: ['0'], figure: ['R.R+'], accents: [0.7], legato: true };
   const shellHi = { name: 'shell-hi', bars: 1, onsets: ['0'], figure: ['3+.5+.7+.9+'], accents: [0.68], legato: true };
-  const reStrike = { name: 'restrike', bars: 1, onsets: ['5/8'], figure: ['5+.7+.9+.3++'], accents: [0.5], legato: false };
-  const sigh = { name: 'sigh-in', bars: 1, onsets: ['3/4', '7/8'], figure: ['7', 'R+'], accents: [0.5, 0.58], legato: false };
-  const climbIn = { name: 'climb-in', bars: 1, onsets: ['1/2', '5/8', '3/4', '7/8'], figure: ['5', '6', '7', 'R+'], accents: [0.55, 0.58, 0.62, 0.66], legato: false };
+  const pedal = { name: 'hold-pedal', bars: 1, onsets: ['0'], figure: ['R'], accents: [0.45], legato: true };
+  const lid = { name: 'lid', bars: 1, onsets: ['1/2'], figure: ['9+'], accents: [0.5], legato: false };
+  const roll = { name: 'roll-entry', bars: 1, onsets: ['0', '1/16', '1/8'], figure: ['R+', '3+', '5+.7+.9+'], accents: [0.6, 0.55, 0.66], legato: true };
+  const leapIn = { name: 'leap-in', bars: 1, onsets: ['3/4', '7/8'], figure: ['5', 'R+'], accents: [0.5, 0.6], legato: false };
   const bellTag = { name: 'nine-bell', bars: 1, onsets: ['1/8'], figure: ['9++'], accents: [0.6], legato: false };
-  const seg = (entryF, syms, key, m, opts) =>
-    `${fig(entryF, { harmony: syms, barsPerChord: 1, key }, opts)}.mask("<${m}>")`;
-  const parts = [];
-  for (const [syms, key, m, vBar, pk] of [
-    [symsA, 'Ab:minor', '1@3 0@3', '0 1 0 0 0 0', sigh],
-    [symsB, 'Ab:major', '0@3 1@3', '0 0 0 0 1 0', climbIn],
-  ]) {
-    parts.push(seg(shell, syms, key, m, { octave: 2, fx: '.gain(0.52).room(0.35).clip(1.3)' }));
-    parts.push(seg(shellHi, syms, key, m, { octave: 3, fx: '.gain(0.5).room(0.4).clip(1.3)' }));
-    parts.push(seg(reStrike, syms, key, vBar, { octave: 3, fx: '.gain(0.38).room(0.4).clip(1.1)' }));
-    parts.push(seg(pk, rot(syms), key, vBar, { octave: 4, fx: '.gain(0.42).room(0.35).clip(0.9)' }));
-  }
-  parts.push(seg(bellTag, symsA, 'Ab:minor', '0 0 1 0 0 0', { octave: 4, fx: '.gain(0.4).room(0.55)' }));
-  parts.push(seg(bellTag, symsB, 'Ab:major', '0 0 0 0 0 1', { octave: 4, fx: '.gain(0.4).room(0.55)' }));
+  const m24 = (entryF, ctxX, m, opts) =>
+    `${fig(entryF, ctxX, { loopRoots: true, ...opts })}.mask("<${m}>")`;
+  const loFx = { octave: 2, fx: '.gain(0.52).room(0.35).clip(1.3)' };
+  const hiFx = { octave: 3, fx: '.gain(0.5).room(0.4).clip(1.3)' };
+  const lidFx = { octave: 4, fx: '.gain(0.42).room(0.45)' };
+  const melody = `note("<~@8 [F5@3 Eb5] [G5@2 Bb5@2] [Eb5@3 C5] [F5@2 Ab5 G5] [F5@3 Eb5] [G5@3 Db6] [C6@2 G5@2] [Ab5@3 F5] ~@8>").s("piano").gain(0.62).room(0.5).clip(1.15)`;
+  const parts = [
+    m24(shell, ctx24, '1 1 1 0 1 1 1 0 1 1 1 1 1 1 1 1 1 1 1 0 1 1 1 0', loFx),
+    m24(shellHi, ctx24, '1 1 1 0 0 1 1 0 1 1 1 1 1 1 1 1 1 1 1 0 0 1 1 0', hiFx),
+    m24(pedal, ctx24, '0 0 0 1 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 1', { octave: 2, fx: '.gain(0.4).room(0.5).clip(1.5)' }),
+    m24(lid, ctx24, '0 0 0 1 0 0 0 1 0 1 0 0 0 1 0 0 0 0 0 1 0 0 0 1', lidFx),
+    m24(roll, ctx24, '0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0', hiFx),
+    m24(leapIn, rctx24, '0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1', { octave: 4, fx: '.gain(0.42).room(0.35).clip(0.9)' }),
+    m24(bellTag, ctx24, '0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0', { octave: 4, fx: '.gain(0.4).room(0.55)' }),
+    melody,
+  ];
   const mix = `stack(${parts.join(', ')})`;
   card({
-    name: 'vl_citypop_pair', kind: 'COMBINATION',
-    title: 'City-pop cadence pair — enter early, decorate late',
-    techniques: ['iv9-V-i / iv9-V-I mode-flip answer', 'climb-into pickup announcing the NEXT chord', '9th-in-octaves bell tag after the landing'],
-    sources: ['igexport-DYcEDDITmvV (City Pop Type Piano Chords)'],
+    name: 'vl_citypop_pair', kind: 'SONG',
+    title: 'City-pop — the song',
+    techniques: ['24 bars on the 4-bar grid: chorus 8 / verse 8 / chorus 8', 'chorus phrases stretched 3->4 with a breathing hold bar (pedal + 9th lid)', 'verse: royal road (IV^7 V7 iii7 vi9) with the held-note melody', 'loop-locked walking roots (D76 — the late-section register pile-up is gone)', 'ornaments one per phrase, at phrase ends (roll / leap pickup / bell)'],
+    sources: ['igexport-DYcEDDITmvV (City Pop Type Piano Chords)', 'his round-4 note'],
     key: 'Ab:minor / Ab:major', bpm: 103, degrees: V.vid_citypop_ab_minor.degrees, base: 'vid_citypop_ab_minor', family: 'minor',
-    symbols: [...symsA, '|', ...symsB], totalBars: T,
+    symbols: [...ch8, '|', ...royal], totalBars: T,
     mix,
-    solos: { _pickups: `stack(${parts[3]}, ${parts[7]})`, _restrikes: `stack(${parts[2]}, ${parts[6]})`, _bells: `stack(${parts[8]}, ${parts[9]})` },
-    note: 'Round-1 fixes applied: one pickup per phrase (a two-note sigh into the minor landing, the four-8th climb into the major one — both bound to the rotated harmony so they spell the coming chord), the bell only after the two landings, and the V bar re-strikes a higher rotation mid-bar so the chord rhythm varies.',
+    solos: { _melody: melody, _shells: `stack(${parts[0]}, ${parts[1]})`, _holds: `stack(${parts[2]}, ${parts[3]})`, _roll: parts[4], _pickup: parts[5], _bell: parts[6] },
+    note: 'Both your findings were real. The 6-and-4 misalignment: the chorus is now 8 bars — each 3-chord phrase gets a 4th breathing bar where the landed chord holds (low pedal + the 9th lid), so the whole form sits on the 4-bar grid: chorus 8, verse 8, chorus 8. The "too dissonance" later sections: measured, the walking roots were spiralling an octave per pass, so the final chorus was sounding three octaves above the first, crowded into the melody register — the binder now folds the walk back (D76), and the last chorus renders IDENTICAL to the first one you liked.',
   });
 }
 
@@ -335,34 +471,64 @@ function card(c) { cards.push(c); }
 }
 
 // ---------------------------------------------------------------------------
-// 10. FAITHFUL — the gospel turnaround with roll-in shells: every chord
-// arrives as root + naked high color note, inner voices rolling in after.
+// 10. VARIANT — his split-bar idea on the KEPT kpop card. (The gospel card
+// that lived in this slot was killed in round 2 — "everything after the
+// first four sounds weird, and the first four are unappealing" — the eye-
+// read failed AND the diatonic rescue failed, so vid_damn_gospel is banned
+// and the roll-in device stays unvindicated in the corpus book.)
 // ---------------------------------------------------------------------------
 {
-  // Round 1: "third chord and fourth chord and fifth chord don't fit in.
-  // sounds weird" — that was the eye-read 8:m9 5:m 3:m7 run. Replaced with
-  // the diatonic gospel bridge (vi9 then iii7), which also puts the passing
-  // dim where it belongs (iii → biii°7 → …) and squares the phrase from 9
-  // bars to 8. The unfaulted tail is untouched. REVISION, no longer a
-  // faithful eye-read of the video.
-  const gospelV2 = { degrees: '5:^7 7:7 9:m9 4:m7 3:o7 1:m9 7:7 0:^7', numerals: null };
-  const ctx = { harmony: renderProgression(gospelV2, 'Db:major'), barsPerChord: 1, key: 'Db:major' };
-  const rollin = fig({
-    name: 'roll-in', bars: 1,
-    onsets: ['0', '1/4', '3/8', '1/2'],
-    figure: ['R.7++', '3+', '5+', '9+'],
-    accents: [0.75, 0.55, 0.55, 0.6], legato: true,
-  }, ctx, { octave: 2, fx: '.gain(0.55).room(0.5).clip(1.4)' });
+  // Round 3: "make this a full song with progressions and layers!" Form:
+  // A A' B B A A' over 24 bars — A is the kept loop, A' ends in his
+  // split bar, B is a new bridge (bIII^7 bVI^7 V7 i9 — F^7 Bb^7 A7 Dm9,
+  // the r&b lament frame) carrying a held-note melody over a synth-bass
+  // floor. The split bar at the end of the first A A' now ANNOUNCES the
+  // bridge: its higher half-chord is F^7, the next section's opener. One
+  // concatenated 24-bar harmony; split masks period 24, the per-4-bar
+  // devices (sighs, restrike) keep period 4, which the 24-bar loop
+  // contains exactly (D63).
+  const syms4 = renderProgression(V.vid_kpop_rnb, 'D:minor').slice(0, 4);
+  // labeled m7, not m9 — the pad grip is R.3.5.7, so a 9 in the symbol
+  // would never sound (the round-4 verify pass measured exactly that)
+  const b4 = renderProgression({ degrees: '3:^7 8:^7 7:7 0:m7', numerals: null }, 'D:minor');
+  const h24 = [...syms4, ...syms4, ...b4, ...b4, ...syms4, ...syms4];
+  const rot24 = [...h24.slice(1), h24[0]];
+  const ctx = { harmony: h24, barsPerChord: 1, key: 'D:minor' };
+  const rctx = { harmony: rot24, barsPerChord: 1, key: 'D:minor' };
+  const padF = { name: 'pad', bars: 1, onsets: ['0'], figure: ['R.3+.5+.7+'], accents: [0.7], legato: true };
+  const pads = `${fig(padF, ctx, { octave: 2, fx: '.gain(0.55).room(0.45).clip(1.4)' })}.mask("<1@7 0 1@15 0>")`;
+  const padHalf = `${fig(padF, ctx, { octave: 2, fx: '.gain(0.55).room(0.45).clip(0.5)' })}.mask("<0@7 1 0@15 1>")`;
+  // rootless A-form (5-7-9-10): his spec says the split chord is "the
+  // other (HIGHER note) chord", and two rounds of measurement showed
+  // root-position and 3-5-7-9 voicings topping at or below the pad's Bb4
+  // on the Bb bar — the 10th on top clears the pad on both split bars
+  // (D5 > Bb4 on the Bb^7 split, A5 > Bb4 on the F^7 split)
+  const splitHi = `${fig({ name: 'split-hi', bars: 1, onsets: ['1/2'], figure: ['5+.7+.9+.3++'], accents: [0.62], legato: true }, rctx, { octave: 2, fx: '.gain(0.5).room(0.45).clip(0.95)' })}.mask("<0@7 1 0@15 1>")`;
+  // ...and the verify pass caught that the sighs were not the only high
+  // material over the melody: this re-strike stab (topping G6) also landed
+  // on bridge bars 11 and 15 while the melody sang. Same rule, applied
+  // consistently — it yields for the whole bridge, keeps bars 3/7/19/23.
+  const restrike = `${fig({ name: 'pad-restrike', bars: 1, onsets: ['5/8'], figure: ['3+.5+.7+.9+'], accents: [0.5], legato: false }, ctx, { octave: 3, fx: '.gain(0.4).room(0.45).clip(1.1)' })}.mask("<0 0 1 0 0 0 1 0 0@8 0 0 1 0 0 0 1 0>")`;
+  // Round 4 (his keep note): "when the melody comes, the high two-note fall
+  // clashes with it (too high and doesn't align sound wise)". The sighs live
+  // at octave 4-5 — the melody's own register — so during the bridge (bars
+  // 9-16, where the melody sings) they now yield entirely; everywhere else
+  // they keep their kept alternation. Ornaments yield to the melody: the
+  // melody outranks every decoration (the D73 mix rule, extended).
+  const tags = `${fig(F.vid_tag_two_note_pickup, rctx, { octave: 4, fx: '.gain(0.45).room(0.4)' })}.mask("<0 1 0 1 0 1 0 1 0@8 0 1 0 1 0 1 0 1>")`;
+  const sub = fig({ name: 'sub', bars: 1, onsets: ['0'], figure: ['R'], accents: [0.75], legato: true }, ctx, { sound: 'gm_synth_bass_1', octave: 2, fx: '.gain(0.8).clip(1.02)' });
+  const melody = `note("<~@8 [A5@2 G5 F5] [D5@3 F5] [E5@2 C#5@2] [D5@3 A4] [A5@2 G5 F5] [G5@3 D5] [E5@2 A4 C#5] [D5] ~@8>").s("piano").gain(0.62).room(0.5).clip(1.15)`;
+  const mix = `stack(${pads}, ${padHalf}, ${splitHi}, ${restrike}, ${tags}, ${sub}, ${melody})`;
   card({
-    name: 'vl_gospel_rollin', kind: 'REVISION',
-    title: 'Gospel turnaround, chords as questions',
-    techniques: ['roll-in shells (root + naked color note first)', 'IV-V-vi-iii turnaround with passing dim'],
-    sources: ['igexport-DbOexm8RS5a (Db gospel)', 'his round-1 note'],
-    key: 'Db:major', bpm: 66, degrees: gospelV2.degrees, base: 'vid_damn_gospel', family: 'major',
-    symbols: ctx.harmony, totalBars: 8,
-    mix: rollin,
-    solos: { _rollin: rollin },
-    note: 'Round 1: chords 3-5 "don\'t fit in" — replaced with the diatonic vi9 and iii7, phrase squared to 8 bars, everything he didn\'t fault untouched. Each chord still opens as bass root + naked 7th, then the 3rd, 5th, 9th roll in one at a time.',
+    name: 'vl_kpop_split', kind: 'SONG',
+    title: 'K-pop split — the song',
+    techniques: ['A A′ B B A A′ over 24 bars', 'his split bar, now announcing the bridge', 'bridge: bIII^7 bVI^7 V7 i7 with held-note melody', 'synth-bass floor + b3→9 sighs that yield to the melody'],
+    sources: ['igexport-DbuFbACtERO (K-Pop/R&B)', 'his round-3 note'],
+    key: 'D:minor', bpm: 98, degrees: '8:^7 7:7 0:m7 10:m7', base: 'vid_kpop_rnb', family: 'minor',
+    symbols: [...syms4, '|', ...b4], totalBars: 24,
+    mix,
+    solos: { _pads: `stack(${pads}, ${padHalf})`, _split: splitHi, _melody: melody, _sub: sub, _tags: tags, _restrike: restrike },
+    note: 'From your keep note: ALL the high decorations now go SILENT for the whole bridge — the two-note sighs you named, and also a high chord re-strike the measurement pass caught ringing above the melody on two bridge bars. Where the melody rests, both keep their kept placement. Everything else is untouched.',
   });
 }
 
@@ -390,8 +556,8 @@ for (const [name, tid, expr, bpm, totalBars] of CHECKS) {
 {
   const c = cards.find((x) => x.name === 'vl_elevator');
   const ev = await evaluateSong(`setcpm(${c.bpm}/4)\np: stack(${c.mix})`);
-  const haps = hapsByLabel(ev, 0, 16).get('p').haps;
-  const byBar = Array.from({ length: 16 }, () => []);
+  const haps = hapsByLabel(ev, 0, 17).get('p').haps;
+  const byBar = Array.from({ length: 17 }, () => []);
   for (const h of haps) byBar[Math.floor(h.whole.begin)].push(h.value.note);
   for (const b of byBar) {
     if (b.some((v) => typeof v !== 'number')) throw new Error('vl_elevator guard expects numeric notes after .add()');
@@ -415,6 +581,10 @@ console.log(`wrote audition/videolab.html — ${cards.length} technique-lab card
 for (const c of cards) console.log(`  ${c.name} [${c.kind}]: ${c.title} — ${c.key} @${c.bpm}`);
 console.log(`  ${checked}/${CHECKS.length} exprs evaluated green through the engine's own transpiler`);
 console.log(`  inline page script parses clean (${(inline.length / 1024).toFixed(0)} KB)`);
+if (FIG_WARNINGS.size) {
+  console.log(`  binder warnings (${FIG_WARNINGS.size}) — review each; a fallback interval can be a foreign pitch (D76):`);
+  for (const w of FIG_WARNINGS) console.log(`    ${w}`);
+}
 
 function page(DATA) {
   return `<!doctype html>

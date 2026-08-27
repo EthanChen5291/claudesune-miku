@@ -3608,3 +3608,232 @@ dereferences cards). The importer also now resolves notes-only names
 against a songs-page export's `songs` array (the D71 cards-array fix,
 extended), and today's conversation notes were banked verbatim as
 CARD_NOTES on six songs with the degrees that actually played. 306/306.
+
+D73 addendum — the sub doubles the drive (2026-08-26). Ethan: "I think for
+tense fight, the low piano note can be support with the low synth bass
+thing right" — his same-root allowance made concrete. Concept, not a song
+patch: when the accompaniment is a ROOT-DRIVEN pulse (every figure token an
+R, up to 8th-note rate), the sub-bass doubles its rhythm an octave below —
+same onsets, roots only, slightly detached (clip 0.9) — so the piano's low
+note and the sine arrive as one instrument. Past 8ths a doubled sine is
+mush: boss's 16th octave-bounce keeps the held bar root. Measured: fight
+sub 8 onsets/bar, all 8 landing exactly on the acc's onsets; boss unchanged
+at 1/bar. 306/306.
+
+D73 addendum 2 — the bass takes the part (2026-08-26). Ethan, on the sine
+doubling: "i can't hear it. maybe replace the piano low note part with the
+bass." The lesson under it: a bare sine at octave 1 has no harmonics and
+vanishes on real speakers — the "808 body" needs a voice with overtones at
+page volume. Concept: on beat-forward fast songs whose accompaniment is a
+root-driven pulse, the bass REPLACES the piano on that part — the acc
+binds on gm_synth_bass_1 (gain 0.9, the level the bronik rebalance proved
+audible) and no doubling layer stacks under it; where the acc is not a
+root pulse (boss's 16th octave-bounce stays piano), the held sub-bass
+also moves off sine onto gm_synth_bass_1 at octave 2. Measured: fight acc
+8 root pulses/bar on synth bass through all sections, no sine anywhere on
+the page; boss sub E2-C3 held roots. 306/306.
+
+## D74 — videolab round 2: five keeps, the gospel dies twice, and cards that grow (2026-08-26)
+
+Verdicts: KEEP vl_gsharp_climb, vl_aquatic_ladder, vl_planing_fixed (all
+re-kept), vl_planing_var — HIS substitution vindicated first listen — and
+vl_kpop_tags ("sounds much better": the rotated-harmony falls + squared
+loop fixed it). KILL vl_gospel_rollin: "everything after the first four
+sounds weird, and the first four are unappealing." The eye-read failed in
+round 1 and the textbook-diatonic rescue failed in round 2 — vid_damn_gospel
+is banned, the roll-in device stays unvindicated, and the taste lesson is
+loud: a PLAIN DIATONIC TURNAROUND (IV-V-vi-iii) is "unappealing" to him
+even when nothing is wrong with it — his ear lives in the colored voicings
+(m9 stacks, planing, quintal ladders), not in functional progressions.
+
+Round-3 rebuild (11 cards, 40/40 green):
+- vl_gsharp_vamp -> COMBINATION, his brief: "variations and add-ons (so
+  that it becomes a 4-chord progression). also add a melody and more
+  layering because this is a valid combo." Extended i9-iv9 with the
+  aquatic card's KEPT colors (bVI^9, v-as-m7) — never the D#7/A9 he
+  faulted twice — plus an authored 9-note held-legato melody in his
+  grammar (no neighbour re-strikes incl. the loop seam, the b3->9 sigh in
+  bar 2, v-root landing), over climb texture + strings pad + root bass.
+- vl_bronik_build: "I can STILL barely hear the low notes while the high
+  notes are extremely loud" — the D73 lesson applied: the bass doubles
+  itself an octave up at gain 1.0 (low notes need harmonics), the square
+  is low-passed (lpf 1500) and cut to 0.2, bell to 0.18.
+- vl_undershadow_water: "I think it's worse" (the root-fifth rock) — the
+  left hand now RISES through a slow broken chord (R, 5, R+) under the
+  pedal: contrary motion against the falling waterfall, as the source
+  actually plays.
+- vl_citypop_pair: "the third thing you did sounds strange" = the mid-bar
+  re-strike — removed; per-bar chord TREATMENTS replace uniformity (block /
+  block-with-moving-lid — the pad-phrase device he praised on songs / a
+  rolled bar-4 entry / plain landing holds), ONE leap pickup per cycle
+  (5 up to the octave root — he has now said "shouldn't just always be
+  chromatic leadup" twice, so no stepwise climbs at all), ONE bell.
+- vl_kpop_split (new VARIANT): his idea verbatim — "a chord after Cm7
+  (where Cm7 gets half duration and the other (higher note) chord gets
+  half)" — A A' over 8 bars, bar 8 splits Cm7 | higher-voiced Bb^7
+  (the next chord announced early; the bar-8 sigh already spells it).
+- vl_elevator untouched: its note came back VERBATIM from round 1 (the
+  note-box persistence quirk), so it cannot be told from a re-complaint —
+  flagged to him rather than guessed at. His planing note also arrived
+  with a dangling "also " — an unfinished thought, flagged.
+
+D74 addendum — the round-3 verify pass (4 agents, by measurement): kpop
+split held on every sub-claim (bars 1-7 byte-identical to the kept card,
+bar-8 Cm7 rings exactly half, the Bb^7 half enters voiced higher, the
+bar-8 sigh spells it, period 8 exact, and vl_kpop_tags itself untouched);
+citypop held (no re-strike anywhere, six distinct bar treatments, the one
+pickup is a 5-semitone leap, one bell per cycle); bronik and undershadow
+held (octave-paired bass at 1.0 vs square 0.2 lpf'd, left hand strictly
+rising under a falling right in all 8 bars). One REAL catch: the vamp
+melody, authored as a bars:4 figure, compressed into NINE 16ths in bar 1
+with three silent bars — bindFigure's multi-bar semantics put ALL onsets
+in bar 1 (that is the ladder's climb-then-wash design, not a spanning
+line). Lesson recorded: a melody that spans bars cannot be a bars:N
+figure; since the vamp's chords are fixed, it is now hand-written
+notation. Re-measured: onsets 2/3/2/2 across the cycle, the b3->9 sigh on
+the C#m9 bar, zero neighbour re-strikes seam included. 40/40, 306/306.
+
+## D75 — videolab round 3: the lab graduates to songs (2026-08-26)
+
+Verdicts: the same five keeps, stable across two rounds (gsharp climb,
+aquatic ladder, both planing cards, kpop tags). No kills. The notes carried
+the real news — three cards were promoted BY HIM to full songs:
+- citypop: "I like it, sounds jazzy, and I like what u did with the Ab^7
+  and the Dbm9 - turn this into a full song with progressions and layers!"
+- gsharp vamp: "add a melody - not just a loop but a full song with
+  progression!" (plus "last chord sounds slightly incorrect")
+- kpop split: "make this a full song with progressions and layers!"
+
+Built, all as kind SONG with one concatenated harmony each (D63):
+- vl_gsharp_vamp (16 bars, A A' B A): the vamp twice with the melody's
+  answer varied, a bIII^7 (B^7) bridge where the climb drops out and the
+  melody peaks at F#6, the theme's return. The "slightly incorrect" last
+  chord was LOCATED: the round-3 verifier had already flagged the pad's
+  R.5.9 sounding E# (the 9th of D#m7) — a pitch foreign to G# minor — and
+  his ear caught exactly that bar. The pad now stacks R.5.7 (all four 7ths
+  diatonic). His ear and the measurement agree; the verifier's "minor"
+  flag should have been acted on then.
+- vl_citypop_pair (20 bars, chorus/verse/verse/chorus): the praised pair
+  is the chorus with its verified treatments; between statements an 8-bar
+  ROYAL ROAD verse (IV^7 V7 iii7 vi9, the city-pop staple) with a
+  hand-written held-note melody, chords calmed to blocks and lids.
+- vl_kpop_split (24 bars, A A' B B A A'): the kept loop with his split
+  bar, whose higher half-chord now lands on F^7 — ANNOUNCING the new
+  bridge section (bIII^7 bVI^7 V7 i9, the r&b lament frame) — melody over
+  the bridge, gm_synth_bass_1 floor throughout.
+
+Other fixes this round:
+- bronik: "I can't hear low notes at all now" — worse after the octave-
+  doubled soundfont bass, which CONVICTS THE INSTRUMENT: gm_synth_bass_1
+  is unreliable below C2 in the browser player, and the harness cannot
+  hear that. The bass is now a low-passed SAWTOOTH (lpf 700) — a raw
+  waveform always sounds. Lesson: for low registers, prefer basic
+  waveforms over soundfonts; audibility bugs the harness cannot measure
+  need voice-level fixes, not gain-level ones.
+- undershadow: "still worse - too funky" — the motion trajectory is now
+  unambiguous (block -> rock -> rise, each worse): the left hand is
+  reduced to ONE held root per bar, deep in the pedal. Least possible
+  motion; the waterfall carries the harmony.
+- elevator: the same note a THIRD time — treated as a verdict, not a
+  stale box. Diagnosis: the seam (A minor falling cold to Ab minor on the
+  wrap). A 17th bar — one held Eb7, V of Ab minor — closes the loop; the
+  lift pattern widened to period 17 and the build guard re-proved the
+  arrival at exactly +1.
+- The planing "also " dangling note remains unanswered — asked again.
+
+D75 addendum — the round-4 verify pass (4 agents) and its fixes. Citypop
+held on every sub-claim (treatments, one leap pickup spelling its landing,
+one bell, exact 20-bar repeat). Four real findings, all fixed and
+re-measured:
+1. The E# was never only the pad's — the CLIMB's 9th token also landed E#
+  on every D#m7 bar. Root cause: the chord choice itself makes standard
+  color tokens non-diatonic. The vamp's fourth chord is now bVII7 (F#7),
+  on which every 7th/9th any layer renders is diatonic — and bVII7->i is
+  the aeolian close, no dominant. Measured after: pc F appears ZERO times
+  in 16 bars.
+2. The bridge's C#m9 bar sounded only {C#,G#,B} — no third anywhere. The
+  melody's bar 10 now sings E5 (measured: bar-10 pcs B,C#,G#,E).
+3. The kpop bar-24 split chord topped BELOW the pad (A4 vs Bb4) — "the
+  other (HIGHER note) chord" must top the pad. Voicing moved to the
+  rootless A-form (5-7-9-10): measured tops 81>70 and 74>70. The bridge's
+  i-chord relabeled m7 (the pad grip never sounds a 9 — say what sounds).
+4. The elevator's new turnaround bar carried the quartal grip's 3-4
+  cluster (G against Ab at midis 79/80) — bar 17 now plays a plain R.3.7
+  shell (measured pcs Eb,G,Db; zero adjacent-semitone pairs).
+43/43, 306/306.
+
+D76 (2026-08-26) — round-4 videolab verdicts: the walking-root spiral, heard.
+Two new keeps (vl_bronik_build — the sawtooth fix landed; vl_kpop_split —
+the first lab SONG he kept). Round-5 rebuild:
+- THE HEADLINE: his two biggest notes were ONE ENGINE BUG. bindFigure's
+  voice-led root placement (nearest candidate to the previous root, tie ->
+  higher) has a failure mode: a harmony cycle whose roots each ascend
+  (vamp: G#-C#-E-F# = +5+3+2+2 = +12) makes the walk climb an OCTAVE per
+  pass, forever. He described it exactly, from sound alone: "keeps going
+  upwards which sounds like it's building up when that's the whole loop"
+  (vamp), and citypop's "the next ones are too dissonance" was the same
+  spiral — by the final chorus the octave-2 shells were sounding ~3
+  octaves up, crowded into the melody register. Fix, engine level:
+  bindFigure opts.loopRoots (OPT-IN, D56 precedent — every existing
+  binding byte-identical) folds any root drifting a full octave from the
+  first bar's root back into register, a pianist's reset; plus an
+  ALWAYS-ON warning when a harmony cycle's wrap root differs from its
+  anchor ("the loop spirals"). New cards/songs should bind loopRoots;
+  judged material stays pinned. The kept vl_gsharp_climb also spirals —
+  intentionally; it stays.
+- vamp: progressions reshaped to ARCH so net drift is zero by
+  construction — verse i9 iv9 bVI^9 bIII^7 (last two chords come DOWN
+  home), bridge iv9 bVI^9 v7 bIII^7 (peak then fall; v-as-m7 is his kept
+  aquatic color; no dominant anywhere). The melody survives the reharm
+  unchanged — every held pitch re-checks as chord tone or diatonic color.
+- citypop: "6 chords and 4? where's the time signature bound alignment"
+  -> the whole form now sits on the 4-bar grid: chorus 8 (each 3-chord
+  phrase stretched with a breathing HOLD bar — pedal touch + 9th lid, the
+  aquatic card's kept device), verse 8 (royal road x2), chorus 8. 24 bars,
+  all masks period 24, ornaments one per phrase at phrase ends.
+- undershadow: "first chord LH / second LH / second RH weird" MEASURED:
+  the C and D bars are plain triads, so the figure's 7 token hit
+  memberSemis' default-interval fallback = b7 — bar 1 rang a foreign Bb
+  as an octave dyad (the lowest waterfall voice = his "left hand"), bar 2
+  ground C natural against D's F#. Bars 3-4 have real 7ths ("the third
+  chord works"). Triad bars now run a 6-for-7 waterfall (C6, D6). LESSON:
+  fallback-interval warnings are FOREIGN-PITCH warnings — the videolab
+  build now prints every binder warning (they had been warning into the
+  void for four rounds).
+- kpop_split (kept, one licensed change): the b3->9 sighs live in the
+  melody's register, so they now go SILENT for the whole bridge (bars
+  9-16) and keep their kept alternation elsewhere. Ornaments yield to the
+  melody — the D73 mix rule extended from drums to decorations.
+- bronik: keep + "could have more complex variations" -> NEW card
+  vl_bronik_var (kept card untouched): 16 bars / four passes — octave
+  echo breathes in on passes 2 and 4, and pass 3 walks a SECOND bass line
+  (Ab F Eb G) under the never-changing cell, renaming it Ab^7#11, F13,
+  Eb^7(13), G(b13). The reharm trick, deepened — variation entirely
+  underneath the fixed cell.
+- Stale notes recognized and skipped: gsharp_climb, aquatic, planing
+  ("also " still dangling — asked a third time), kpop_tags, elevator
+  (4th verbatim repeat right after the turnaround rebuild he hasn't
+  heard yet — awaiting a fresh listen).
+
+D76 addendum — the round-5 verify pass (4 agents, all haps-measured).
+Vamp 5/5: bass arches 44-49-52-47 every pass, bars 13-16 midi-identical
+to 1-4 (zero drift), all sounded pcs = G# natural minor exactly, no seam
+re-strike pairs. Caveat recorded: the climb's bar-11 pattern TEXT still
+contains E# — suppressed only because the bridge mask silences the climb
+there; the diatonic property is mask-dependent, not intrinsic. Citypop
+6/6: chorus 3 note-identical to chorus 1; hold bars measured at 2-4
+onsets vs 6-7 in struck bars; melody only bars 9-16, all chord tones/9ths;
+ornaments exactly one per phrase; 24-cycle loop exact. Undershadow 4/4:
+bars 1/5 = {C D E G A} (no Bb), bars 2/6 = {D E F# A B} (no C natural);
+pc 10 only on the C7 bars, pc 6 only on the D bars. Bronik variant 6/6:
+climb/bell exprs string-equal to the kept card, bass walk exact, echo =
+pure +12 shadow on passes 2/4, every bar inside C natural minor, second
+loop pass exact. ONE real catch, fixed and re-measured: kpop_split's
+pad-restrike stab (un-soloed, topping G6) still rang over the melody on
+bridge bars 11 and 15 — the sighs were not the only high material. It
+now yields for the whole bridge too (restrike measured at bars 3,7,19,23
+only; ZERO non-melody notes above A5 anywhere in bars 9-16), and it got
+a solo so every layer is auditionable. Observation for future authoring:
+fx-chain .gain(x) REPLACES the accent-profile gain pattern (measured flat
+0.2 on every bronik climb note, kept and variant alike) — accents do not
+sound through a trailing fx gain. 50/50 exprs, 306/306 tests.
