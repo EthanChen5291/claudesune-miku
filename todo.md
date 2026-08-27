@@ -748,3 +748,16 @@ bars through a new lament C section, e-piano, strings, celesta. The VAMP
 melody actually leads now — moving entries, an F#6 climax, a breath
 section over a third progression. LISTEN ORDER suggestion: vamp first
 (tell me if "engaging" moved the right direction), then the three songs.
+
+D78 — videolab ROUND 7 up (15 cards): the expressiveness pass on your four
+kept songs. Dynamics are REAL now — the flat gains were erasing every
+accent (that was the "slamming"); accents sound, sections swell and fade,
+melodies breathe to their climaxes. Melodies change hands (vamp piano->
+flute->piano; aquatic flute->vibes; citypop piano->vibes->flute; kpop
+piano->vibes). Strings: much softer everywhere, own sung lines in vamp +
+citypop, de-rooted in kpop. Kpop's second low voice (synth bass) is GONE
+— say if you miss the floor. Aquatic: flute now dies away INTO the next
+section under a fading-in harp; second celesta cascade on instrumental
+cycles. NEXT (parked): VST/sample instrument tier — sfizz+SFZ libraries
+(Salamander piano, VSCO-2 orchestra) swapping into render-wav.mjs, then
+DawDreamer for true VSTs; wire gains->velocity/CC11 in the MIDI export.

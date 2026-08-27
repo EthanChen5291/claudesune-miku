@@ -3905,3 +3905,65 @@ support, hand-voice or anchor deliberately. Split-chord "spelling"
 finding rejected: the rootless A-form is the kept card's own device.
 Kept-card pinning re-proven: only the vamp changed; kpop_split
 byte-identical to git HEAD. 70/70 exprs, 306/306 tests.
+
+D78 (2026-08-26) — round-6 verdicts: ALL FOUR songs kept (12 keeps, zero
+kills) + the EXPRESSIVENESS directive: "be more expressive — add more
+instruments in throughout the song whether that's for the melody lead or
+harmony to vary it more, also vary dynamics (at any given moment as well
+as throughout the song) in a way that makes sense to the song." Round-7
+rework of the four SONG cards (his notes license them; all other cards
+stay pinned):
+- THE MECHANISM: D77's observation becomes the fix. Every card's flat fx
+  .gain(n) was OVERWRITING the binder's accent profile — uniform velocity
+  is what his ear kept calling "slamming/forceful/too much velocity."
+  Layers now bind gainRange (accents finally SOUND) and a section-level
+  dynamic curve multiplies on top via .mul(gain("<...>")) — probed and
+  confirmed multiplicative in the runtime. Melodies carry hand-written
+  per-bar gain curves (swell to climax, hush for breaths). POLICY for all
+  future cards/songs: never append flat .gain to a bound figure — pass
+  gainRange; add a section curve; melodies get phrase dynamics.
+- MELODY HANDOFFS (his "more instruments take over the melody"): vamp
+  piano -> flute -> piano; aquatic flute (cycle 2) -> vibraphone (cycle
+  4); citypop piano verse 1 -> vibes bridge -> FLUTE verse 2; kpop piano
+  bridge -> vibraphone C section. One tune, changing hands.
+- STRINGS OWN MELODY ("make sure u learn this for future songs"): vamp
+  and citypop grow hand-written strings LINES (slow halves through chord
+  tones, waving dynamics, cross-bar repeats re-pitched) over much softer
+  rootless/quiet cushions. Strings gain centers cut ~2x everywhere
+  ("too loud" x3 cards).
+- TRANSITIONS (aquatic "flute stop too abrupt"): crossfade grammar — the
+  harp fades IN under the flute's last two bars (mask + gain ramp), and
+  the flute's goodbye lands ONE dying note on the NEW section's chord
+  (E5 over A^7). Exits get tapers, entrances get ramps.
+- LOW-VOICE SINGLETON (kpop "another instrument playing some low note
+  when the piano LH chord plays — I don't like it"): the synth-bass
+  floor REMOVED from kpop_full (piano LH owns the low register alone)
+  and strings de-rooted to 3+.5+ colors. Refines D73: sustained same-
+  root doubling at the same octave in ballad textures is mud, not
+  support — one low voice at a time.
+- Aquatic celesta praised ("I like the high marimba/glockenspiel") ->
+  a SECOND cascade voice (root-b7-5 fall on the v wash), instrumental
+  cycles only (ornaments yield to melody).
+- 73/73 exprs, 306/306, only the four licensed cards changed.
+
+D78 addendum — the round-7 verify workflow (4 agents, gains measured).
+The dynamics machinery is REAL in the haps: vamp climb bar 1 renders 5
+distinct gains (0.325-0.394 = the accent profile x the section curve);
+bar-21 gains = bar-5 x exactly 1.05; melody arc unique-max 0.98 at the
+F#6 climax bar, minimum 0.68 in the breath. Citypop's curve verified
+exact on seven layers (chorus2/chorus1 = 1/0.95 to six decimals; outro
+0.65/0.95). Kpop: zero synth-bass haps, strings never sound a root pc,
+handoffs seam-clean, ep cycle aligned. Handoffs, tapers, cascades,
+rootless cushions: all confirmed. THREE real catches, fixed and
+re-measured: (1) citypop's verse-melody pattern was 56 slots against a
+48-bar song — desyncing onto chorus 2 from the second loop pass (the
+lone hand-authored pattern that skipped the D63 period check; now 48,
+measured aligned on pass 2); (2) the aquatic harp's crossfade middle
+step sat on the wash/rest bar of the 2-bar grid — inaudible; steps
+moved to the harp's SOUNDING bars (measured 0.127 -> 0.173 -> 0.231);
+(3) the vamp strings line's final section restated the A phrase while
+every other layer restated A' — now matched. Wording-only findings
+rejected: kpop's Eb is Cm7's own third (kept harmony), citypop strings
+line's hand-baked chorus-2 lift is intentional (not curve-driven).
+LESSON: hand-authored note()/gain() patterns need the same period
+discipline as masks (D63) — count the slots. 73/73, 306/306.
