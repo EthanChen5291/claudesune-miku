@@ -121,6 +121,8 @@ const INSTRUMENTS = [
   // VCSL tree names folders like "Struck Idiophones/Vibraphone/..."
   { out: 'vibraphone.sfz', lib: 'VCSL', release: 2.0, probe: /vibraphone/i },
   { out: 'celesta.sfz', lib: 'VCSL', release: 1.0, probe: /celesta/i },
+  // genre-expansion round: jungle marimba (the NSMB-desert/DKC ostinato voice)
+  { out: 'marimba.sfz', lib: 'VSCO-2-CE', release: 1.0, zones: [{ dir: 'Percussion/Marimba' }] },
 ];
 
 function findDirs(root, re, depth = 4) {

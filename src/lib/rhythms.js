@@ -149,6 +149,132 @@ export const RHYTHMS = {
     character: 'ONE-two-three with the lift on 3, not 2 — the third beat leads back to the downbeat.',
   },
 
+  // ---- genre-expansion percussion (2026-08-27; research/percussion-catalog
+  // .md + env-desert-jungle.md iqa' grids + midi-desert-analysis.md). These
+  // carry per-onset `sounds` (local vc_* sample-pack names — real VCSL hits
+  // in both tiers) so a dum and a tak are different drums, not just accents.
+  // Referenced only by the new environments, so existing songs never re-roll.
+  maqsum: {
+    role: 'percussion', band: 'low', style: 'middle-eastern', provenance: 'hand-written', ratified: false,
+    onsets: ['0', '1/8', '3/8', '1/2', '3/4'],
+    sounds: ['vc_darbuka', 'vc_darbuka_tak', 'vc_darbuka_tak', 'vc_darbuka', 'vc_darbuka_tak'],
+    accents: [1.0, 0.7, 0.7, 0.95, 0.7],
+    meter_class: '4/4', tags: ['perc', 'desert', 'dance'],
+    character: 'Maqsum — D.T..T.D...T...: the most common Arabic iqa\'. Desert town / bazaar warmth; dum >> tak.',
+  },
+  ayyub: {
+    role: 'percussion', band: 'low', style: 'middle-eastern', provenance: 'hand-written', ratified: false,
+    onsets: ['0', '3/16', '1/4', '3/8', '1/2', '11/16', '3/4', '7/8'],
+    sounds: ['vc_darbuka', 'vc_darbuka_tak', 'vc_darbuka', 'vc_darbuka_tak', 'vc_darbuka', 'vc_darbuka_tak', 'vc_darbuka', 'vc_darbuka_tak'],
+    accents: [1.0, 0.4, 0.9, 0.65, 1.0, 0.4, 0.9, 0.65],
+    meter_class: '4/4', tags: ['perc', 'desert', 'travel'],
+    character: 'Ayyub — the camel-walk gallop, twice per bar. THE desert caravan/travel rhythm (100-130bpm).',
+  },
+  masmoudi_slow: {
+    role: 'percussion', band: 'low', style: 'middle-eastern', provenance: 'hand-written', ratified: false,
+    onsets: ['0', '1/4', '3/4'],
+    sounds: ['vc_darbuka', 'vc_darbuka', 'vc_darbuka_tak'],
+    accents: [1.0, 0.9, 0.55],
+    meter_class: '4/4', tags: ['perc', 'desert', 'processional'],
+    character: 'Masmoudi reduced to one bar: two dums then a lone tak — vast, processional. The somber-desert floor; silence is a note.',
+  },
+  // r16 (desert-perc, his answer: "add it as a 3rd pattern"). NSMB's deep drum
+  // never lands on beat 1 — measured, it sits on the &-of-1 and the e-of-2
+  // every bar, with no kick, no snare and no hat. The engine's iqa' patterns
+  // (ayyub/maqsum/masmoudi) all put a dum on the downbeat, so this is a floor
+  // the lane could not previously make. Added ALONGSIDE them, never replacing:
+  // his note on the same page was "don't make it replace everything".
+  nsmb_doum: {
+    role: 'percussion', band: 'low', style: 'desert', provenance: 'ethan-requested', ratified: false,
+    onsets: ['1/8', '5/16', '1/2', '3/4', '7/8'],
+    sounds: ['vc_darbuka', 'vc_darbuka', 'vc_darbuka_tak', 'vc_darbuka', 'vc_darbuka_tak'],
+    accents: [1.0, 0.85, 0.5, 0.95, 0.55],
+    meter_class: '4/4', tags: ['perc', 'desert', 'offbeat'],
+    character: 'The NSMB desert floor: the deep drum refuses beat 1 and speaks on the &-of-1 and the e-of-2, taks filling behind. Downbeat-less, so it floats where an iqa\' marches.',
+  },
+  tumbao_conga: {
+    role: 'percussion', band: 'low', style: 'latin', provenance: 'hand-written', ratified: false,
+    onsets: ['1/4', '3/4', '7/8'],
+    sounds: ['vc_conga_mute', 'vc_conga', 'vc_conga'],
+    accents: [0.9, 1.0, 0.95],
+    meter_class: '4/4', tags: ['perc', 'jungle', 'groove'],
+    character: 'Conga tumbao, audible strokes only: slap on 2, open tones on 4 and 4-and — empty 1, loaded 4.',
+  },
+  martillo_bongo: {
+    role: 'percussion', band: 'high', style: 'latin', provenance: 'hand-written', ratified: false,
+    onsets: ['0', '1/8', '1/4', '3/8', '1/2', '5/8', '3/4', '7/8'],
+    sounds: ['vc_bongo_hi', 'vc_bongo_hi', 'vc_bongo_hi', 'vc_bongo_hi', 'vc_bongo_hi', 'vc_bongo_hi', 'vc_bongo_lo', 'vc_bongo_hi'],
+    accents: [0.6, 0.45, 0.55, 0.45, 0.6, 0.45, 1.0, 0.5],
+    meter_class: '4/4', tags: ['perc', 'jungle', 'timekeeper'],
+    character: 'Bongo martillo: constant 8th tick on the high drum, the low hembra answering on beat 4. Insect-tick jungle time.',
+  },
+  // r16 (jungle-floor, his answer: "depends on the song's energy! use a for
+  // relaxing jungle themes but otherwise make a beat similar to b. important
+  // that you don't reuse b every time though. because that makes it uniform").
+  // Two carpets, not one, so the energetic floor is a CHOICE rather than a
+  // fixture. Modelled on the measured JP2 SNES carpet — every 16th filled,
+  // the two drums interleaved so they never double, building by percussion
+  // density rather than by adding layers (21 -> 27 -> 39 hits/bar across the
+  // piece). The engine's relaxing floor stays tumbao_conga + martillo_bongo.
+  jungle_carpet_16ths: {
+    role: 'percussion', band: 'high', style: 'latin', provenance: 'ethan-requested', ratified: false,
+    onsets: ['0', '1/16', '1/8', '3/16', '1/4', '5/16', '3/8', '7/16', '1/2', '9/16', '5/8', '11/16', '3/4', '13/16', '7/8', '15/16'],
+    sounds: ['vc_bongo_hi', 'vc_shaker', 'vc_bongo_hi', 'vc_shaker', 'vc_bongo_lo', 'vc_shaker', 'vc_bongo_hi', 'vc_shaker',
+      'vc_bongo_hi', 'vc_shaker', 'vc_bongo_hi', 'vc_shaker', 'vc_bongo_lo', 'vc_shaker', 'vc_bongo_hi', 'vc_shaker'],
+    accents: [1.0, 0.35, 0.5, 0.8, 0.4, 0.35, 0.85, 0.4, 0.95, 0.35, 0.5, 0.8, 0.4, 0.35, 0.9, 0.45],
+    meter_class: '4/4', tags: ['perc', 'jungle', 'carpet'],
+    character: 'The full 16th carpet: bongo and shaker interleaved so neither doubles the other, cross-accented 3+3+2 (slots 0,3,6,8,11,14) so it shimmers instead of ticking.',
+  },
+  jungle_carpet_guiro: {
+    role: 'percussion', band: 'high', style: 'latin', provenance: 'ethan-requested', ratified: false,
+    onsets: ['1/16', '1/8', '3/16', '5/16', '3/8', '7/16', '9/16', '5/8', '11/16', '13/16', '7/8', '15/16'],
+    sounds: ['vc_quinto', 'vc_shaker_soft', 'vc_guiro', 'vc_quinto', 'vc_shaker_soft', 'vc_guiro',
+      'vc_quinto', 'vc_shaker_soft', 'vc_guiro', 'vc_quinto', 'vc_shaker_soft', 'vc_guiro'],
+    accents: [0.45, 0.6, 0.35, 0.5, 0.7, 0.35, 0.45, 0.6, 0.35, 0.55, 0.75, 0.4],
+    meter_class: '4/4', tags: ['perc', 'jungle', 'carpet'],
+    character: 'The same density with the quarter-note downbeats LEFT EMPTY for the conga and kick — quinto/shaker/guiro rotating around them. The busy jungle floor that is not the 16th carpet.',
+  },
+  war_gallop: {
+    role: 'percussion', band: 'low', style: 'cinematic', provenance: 'hand-written', ratified: false,
+    onsets: ['0', '3/8', '1/2', '7/8'],
+    sounds: ['vc_wardrum', 'vc_tom_lo', 'vc_wardrum', 'vc_tom_lo'],
+    accents: [1.0, 0.8, 0.95, 0.8],
+    meter_class: '4/4', tags: ['perc', 'war', 'trailer'],
+    character: 'The action-trailer dotted-8th gallop (onsets 0,6,8,14 in 16ths): concert bass drum answered by low toms.',
+  },
+  war_march: {
+    role: 'percussion', band: 'low', style: 'cinematic', provenance: 'hand-written', ratified: false,
+    onsets: ['0', '3/16', '3/8', '1/2', '11/16', '7/8'],
+    sounds: ['vc_wardrum', 'vc_tom_hi', 'vc_tom_lo', 'vc_wardrum', 'vc_tom_hi', 'vc_tom_lo'],
+    accents: [1.0, 0.6, 0.8, 0.95, 0.6, 0.8],
+    meter_class: '4/4', tags: ['perc', 'war', 'march'],
+    character: '3+3+2 war march across the drum family — army-on-the-move; the wardrum owns the long beats.',
+  },
+  shaker_urgency: {
+    role: 'percussion', band: 'high', style: 'universal', provenance: 'hand-written', ratified: false,
+    onsets: ['0', '1/16', '1/8', '3/16', '1/4', '5/16', '3/8', '7/16', '1/2', '9/16', '5/8', '11/16', '3/4', '13/16', '7/8', '15/16'],
+    sounds: ['vc_shaker', 'vc_shaker', 'vc_shaker', 'vc_shaker', 'vc_shaker', 'vc_shaker', 'vc_shaker', 'vc_shaker', 'vc_shaker', 'vc_shaker', 'vc_shaker', 'vc_shaker', 'vc_shaker', 'vc_shaker', 'vc_shaker', 'vc_shaker'],
+    accents: [1.0, 0.35, 0.5, 0.35, 1.0, 0.35, 0.5, 0.35, 1.0, 0.35, 0.5, 0.35, 1.0, 0.35, 0.5, 0.35],
+    meter_class: '4/4', tags: ['perc', 'urgency', 'timekeeper'],
+    character: 'Straight-16th shaker, beats accented — the urgency timekeeper; a hi-hat substitute that reads environment, not kit.',
+  },
+  riq_offbeats: {
+    role: 'percussion', band: 'high', style: 'middle-eastern', provenance: 'hand-written', ratified: false,
+    onsets: ['1/8', '3/8', '5/8', '7/8'],
+    sounds: ['vc_riq', 'vc_riq', 'vc_riq', 'vc_riq'],
+    accents: [0.6, 0.5, 0.6, 0.5],
+    meter_class: '4/4', tags: ['perc', 'desert', 'jingle'],
+    character: 'Riq (tambourine) jingles on the offbeat 8ths — the bright band over a darbuka floor.',
+  },
+  heartbeat_toms: {
+    role: 'percussion', band: 'low', style: 'cinematic', provenance: 'hand-written', ratified: false,
+    onsets: ['0', '3/16'],
+    sounds: ['vc_tom_lo', 'vc_tom_lo'],
+    accents: [1.0, 0.55],
+    meter_class: '4/4', tags: ['perc', 'horror', 'sparse'],
+    character: 'Lub-dub on a low tom, then silence for the rest of the bar — the stalking-heartbeat floor for horror ambience.',
+  },
+
   // ---- note-oriented + multi-bar entries (audition r1 direction) ----
   even_8ths: {
     role: 'melodic', band: 'mid', style: 'universal', provenance: 'hand-written', ratified: false,

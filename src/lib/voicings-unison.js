@@ -7,7 +7,7 @@
 //
 // Semitone offsets from the chord root, exactly as played on the source records.
 // This is what MIDI is uniquely good for and a numeral corpus can never give
-// (D28): real register, spacing and inversion. Five of the six qualities D28
+// (D28): real register, spacing and inversion. Four of the five qualities D28
 // listed as missing shapes appear here — as OBSERVATIONS, not yet as library
 // shapes. Promotion into src/lib/voicings.js is an ear decision.
 
@@ -166,4 +166,4 @@ export const VOICING_OBSERVATIONS = {
 }
 
 /** qualities src/lib/voicings.js has no shape for, that these records DO voice */
-export const FILLS_GAPS = ['5', '69', 'add9', 'm6', 'madd9']
+export const FILLS_GAPS = ['5', '69', 'add9', 'madd9']

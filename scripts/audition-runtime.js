@@ -456,6 +456,22 @@ async function rtInit() {
       return { name, ok: false, detail: name + ' samples unreachable:\n' + errors.join('\n') };
     };
     const results = await Promise.all(Object.entries(SAMPLE_MAPS).map(([n, urls]) => loadMap(n, urls)));
+    // Local sample pack (audition/sample-pack.js, built by build-sample-pack
+    // .mjs): a sibling script tag — NOT a fetch, which file:// forbids —
+    // defines window.LOCAL_SAMPLES as a data:-URI strudel map. Lazy-loaded
+    // per name by the sampler, so registration is cheap. Pages without the
+    // tag (or a missing file) just skip this: the global is undefined.
+    // (Do not write a literal script-open-tag in this comment: the page
+    // builder slices the inline script by lastIndexOf of that tag.)
+    if (typeof window !== 'undefined' && window.LOCAL_SAMPLES) {
+      try {
+        await strudel.samples(window.LOCAL_SAMPLES);
+        RT.maps.local = 'sample-pack.js (' + Object.keys(window.LOCAL_SAMPLES).length + ' local names)';
+      } catch (e) {
+        RT.problems.push('local sample pack failed to register: ' + (e && e.message ? e.message : e)
+          + '\nhx_*/vc_* layers will be silent in web playback (HQ renders are unaffected).');
+      }
+    }
     const failed = results.filter((r) => !r.ok);
     RT.ready = true;
     if (failed.length === results.length && !RT.soundfonts) {

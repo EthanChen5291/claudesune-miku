@@ -344,3 +344,64 @@ test('D52: the melody profile is habits, never a tune', async () => {
   // a melody with 9 onsets a bar was the percussion bug; a real one is far sparser
   assert.ok(p.onsetsPerBar <= 8, `${p.onsetsPerBar} onsets/bar — is percussion leaking again?`);
 });
+
+// ── D96: the repaired loop extractor ──────────────────────────────────────
+// 377 of 1786 corpus files extracted NO loop despite hundreds of melody notes.
+// Cause was here, not in the labeller: one-bar loops were never searched, and
+// a single differing half-bar vetoed an entire repeat. These pin BOTH halves
+// of the fix — that it recovers real loops, and that the frozen packs cannot
+// silently inherit it (which would re-roll judged songs, the D95 lesson).
+
+test('D96: the legacy profile is what the committed packs pin', async () => {
+  const { LOOP_PROFILES } = await import('../src/ingest/corpus.js');
+  assert.deepEqual(LOOP_PROFILES.legacy, { tolerance: 1, lengths: [16, 12, 8, 6, 4], consensus: false });
+  // Both importers must pass it EXPLICITLY. Inheriting the default would make
+  // a corpus-side bug fix silently re-count the harmony model.
+  const { readFileSync } = await import('node:fs');
+  for (const s of ['scripts/import-vgmusic.mjs', 'scripts/import-undertale.mjs']) {
+    const src = readFileSync(join(ROOT, s), 'utf8');
+    assert.match(src, /chordLoops\([^)]*LOOP_PROFILES\.legacy/s, `${s} does not pin the legacy loop profile`);
+  }
+});
+
+test('D96: tolerant matching recovers loops that exact matching missed', async () => {
+  const { loadSong, chordLoops, LOOP_PROFILES } = await import('../src/ingest/corpus.js');
+  const { existsSync } = await import('node:fs');
+  // A file measured to hold a real repeating vamp that exact matching rejected
+  // (its repeat differs in one half-bar). If the corpus isn't downloaded the
+  // assertion below still guards the invariant on whatever IS present.
+  const probe = join(ROOT, 'audios/vgmusic-corpus/gameboy/PKMN_-_ChampionBattle.mid');
+  if (existsSync(probe)) {
+    const song = loadSong(probe);
+    assert.ok(!song.skipped, 'probe file did not load');
+    assert.equal(chordLoops(song, LOOP_PROFILES.legacy).length, 0, 'probe no longer demonstrates the failure');
+    assert.ok(chordLoops(song).length > 0, 'the repaired profile must recover it');
+  }
+  // and the repaired profile never LOSES a loop the legacy one found
+  const { readFileSync: rf } = await import('node:fs');
+  const m = JSON.parse(rf(join(ROOT, 'src/ingest/vgmusic-manifest.json'), 'utf8'));
+  let checked = 0, regressions = 0;
+  for (const f of m.files.slice(0, 40)) {
+    const p = join(ROOT, f.path);
+    if (!existsSync(p)) continue;
+    const song = loadSong(p);
+    if (song.skipped) continue;
+    const old = chordLoops(song, LOOP_PROFILES.legacy);
+    if (!old.length) continue;
+    if (!chordLoops(song).length) regressions++;
+    checked++;
+  }
+  if (checked >= 5) assert.equal(regressions, 0, `${regressions}/${checked} files lost their loop under the repair`);
+});
+
+test('D96: a degenerate time signature is ignored, not obeyed', async () => {
+  const { readMidi } = await import('../src/ingest/midi.js');
+  const { existsSync } = await import('node:fs');
+  // A 0/1 time signature makes barTicks 0, every bar index Infinity, and used
+  // to crash the whole ingest run rather than skip one file.
+  const p = join(ROOT, 'audios/vgmusic/genesis/Calling_From_Heaven3.mid');
+  if (!existsSync(p)) return;
+  const m = readMidi(p);
+  assert.ok(m.timeSig[0] > 0 && m.timeSig[1] > 0, `degenerate meter survived: ${m.timeSig.join('/')}`);
+  assert.ok(Number.isFinite(m.ppq * 4 * (m.timeSig[0] / m.timeSig[1])), 'bar length is not finite');
+});

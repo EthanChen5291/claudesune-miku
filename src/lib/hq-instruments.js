@@ -177,4 +177,110 @@ export const HQ_INSTRUMENTS = {
     backend: 'vst', plugin: 'vendor/plugins/Surge XT.vst3',
     preset: 'vendor/patches/pad-warm.fxp', velScale: 0.9, trimDb: -3,
   },
+
+  // --- genre-expansion round (2026-08-27): patches fetched from the
+  // release_xt_1.3.4 tag (the D85 law) and probe-verified — every one
+  // rendered a measured spectrum distinct from the init patch before wiring.
+  gm_pad_halo: {
+    // space pad: Surge "Computers In Space"
+    backend: 'vst', plugin: 'vendor/plugins/Surge XT.vst3',
+    preset: 'vendor/patches/pad-space.fxp', velScale: 0.9, trimDb: -3,
+  },
+  gm_pad_metallic: {
+    // horror dread bed: Surge "Ghost Pad"
+    backend: 'vst', plugin: 'vendor/plugins/Surge XT.vst3',
+    preset: 'vendor/patches/pad-ghost.fxp', velScale: 0.9, trimDb: -3,
+  },
+  gm_pad_sweep: {
+    // evolving low drone: Surge "Eighties Drone" (built-in slow movement)
+    backend: 'vst', plugin: 'vendor/plugins/Surge XT.vst3',
+    preset: 'vendor/patches/drone-eighties.fxp', velScale: 0.9, trimDb: -3,
+  },
+  gm_fx_echoes: {
+    // sensor blips w/ delay baked into the patch: Surge "Delay Pops 1"
+    backend: 'vst', plugin: 'vendor/plugins/Surge XT.vst3',
+    preset: 'vendor/patches/blip-delay.fxp', velScale: 0.9, trimDb: -4,
+  },
+  gm_fx_sci_fi: {
+    // alien FM metallic: Surge "Metallic"
+    backend: 'vst', plugin: 'vendor/plugins/Surge XT.vst3',
+    preset: 'vendor/patches/pluck-metallic.fxp', velScale: 0.9, trimDb: -4,
+  },
+  gm_church_organ: {
+    // epic-horror organ: Surge "Church"
+    backend: 'vst', plugin: 'vendor/plugins/Surge XT.vst3',
+    preset: 'vendor/patches/organ-church.fxp', velScale: 0.9, trimDb: -2,
+  },
+  gm_pad_choir: {
+    // synth-choir pad: Surge "Synth Choir MW O-Ah"
+    backend: 'vst', plugin: 'vendor/plugins/Surge XT.vst3',
+    preset: 'vendor/patches/pad-choir-synth.fxp', velScale: 0.9, trimDb: -3,
+  },
+  gm_lead_5_charang: {
+    // playful chip PWM: Surge "Crisp PWM"
+    backend: 'vst', plugin: 'vendor/plugins/Surge XT.vst3',
+    preset: 'vendor/patches/lead-pwm.fxp', velScale: 0.85, trimDb: -2,
+  },
+  gm_lead_6_voice: {
+    // talky meme lead: Surge "Talky 1 MW"
+    backend: 'vst', plugin: 'vendor/plugins/Surge XT.vst3',
+    preset: 'vendor/patches/lead-talky.fxp', velScale: 0.85, trimDb: -2,
+  },
+  gm_slap_bass_1: {
+    // playful FM slap: Surge "FM Slap"
+    backend: 'vst', plugin: 'vendor/plugins/Surge XT.vst3',
+    preset: 'vendor/patches/bass-fmslap.fxp', velScale: 0.9, trimDb: -1,
+  },
+  gm_shanai: {
+    // desert double reed: Surge "Shanai" (a factory patch by that name)
+    backend: 'vst', plugin: 'vendor/plugins/Surge XT.vst3',
+    preset: 'vendor/patches/lead-shanai.fxp', velScale: 0.85, trimDb: -2,
+  },
+  gm_pan_flute: {
+    // breathy ethno wind: Surge "Fake Ethno"
+    backend: 'vst', plugin: 'vendor/plugins/Surge XT.vst3',
+    preset: 'vendor/patches/wind-ethno.fxp', velScale: 0.85, trimDb: -3,
+  },
+  // gm_sitar stays on the fluid fallback intentionally: GeneralUser GS 104 is
+  // a real sitar sample; the Surge "East" pluck (vendored as pluck-east.fxp)
+  // is available if his ear rejects it.
+
+  // --- SSO chorus (CC Sampling Plus 1.0, vendored to vendor/sfz/SSO-Chorus;
+  // gen/*.sfz built by scripts/build-choir-sfz.mjs, probe-rendered non-silent)
+  gm_choir_aahs: {
+    backend: 'sfz', sfz: 'vendor/sfz/gen/choir-mixed.sfz',
+    velScale: 0.9, trimDb: -3,
+  },
+  choir_male: {
+    backend: 'sfz', sfz: 'vendor/sfz/gen/choir-male.sfz',
+    velScale: 0.9, trimDb: -2,
+  },
+  choir_female: {
+    backend: 'sfz', sfz: 'vendor/sfz/gen/choir-female.sfz',
+    velScale: 0.9, trimDb: -3,
+  },
+  gm_marimba: {
+    // the jungle/desert-floor voice — VSCO-2 CE marimba (gen sfz this round)
+    backend: 'sfz', sfz: 'vendor/sfz/gen/marimba.sfz',
+    velScale: 0.9, trimDb: -1,
+  },
 };
+
+// --- wav backend: the local sample pack (hx_* horror fx, vc_* percussion) ---
+// render-hq places the ORIGINAL wav at each hap time (full sample per
+// trigger, mirroring the browser sampler's play-through semantics), with
+// deterministic round-robin over variants. Derived from the same definition
+// the audition pack is built from, so both tiers play the same audio.
+import { SAMPLE_PACK } from './sample-pack-def.js';
+for (const [name, e] of Object.entries(SAMPLE_PACK)) {
+  // D93 verify-pass catch: pitched pack entries (the SSO choir) have no srcs
+  // — merging them here CLOBBERED the choir sfz routes above with a
+  // samples-less wav backend, and all five choir songs' HQ stems fell to
+  // fluid GM piano. Never overwrite an explicit route; skip srcs-less rows.
+  if (!e.srcs || HQ_INSTRUMENTS[name]) continue;
+  HQ_INSTRUMENTS[name] = {
+    backend: 'wav', samples: e.srcs, kind: e.kind,
+    ...(e.keyNote ? { keyNote: e.keyNote } : {}),
+    velScale: e.velScale ?? 1, trimDb: e.trimDb ?? 0,
+  };
+}

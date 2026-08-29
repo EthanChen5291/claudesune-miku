@@ -24,7 +24,7 @@
 import { writeFileSync, readFileSync, existsSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { loadSong, chordLoops, melodyProfile, looksLikeArpeggio, mean } from '../src/ingest/corpus.js';
+import { loadSong, chordLoops, melodyProfile, looksLikeArpeggio, mean, LOOP_PROFILES } from '../src/ingest/corpus.js';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const MANIFEST = join(ROOT, 'src/ingest/vgmusic-manifest.json');
@@ -66,10 +66,22 @@ const manifest = JSON.parse(readFileSync(MANIFEST, 'utf8'));
 
 // --- analyse ---------------------------------------------------------------
 
+// FROZEN-PACK EXCLUSIONS (D96). This pack is committed, its clicked entries
+// feed retrieval, and its counts feed build-harmony-model.mjs — which ranks the
+// variation ops. So a file that becomes readable FOR THE FIRST TIME is a
+// library-growth event, not a free bug fix. Calling_From_Heaven3.mid declares a
+// 0/1 time signature; until the D96 guard in src/ingest/midi.js that made
+// barTicks 0 and the file was skipped, so the committed pack never contained it.
+// Admitting it re-counts the model and moves four songs — vs_somber_aftermath,
+// which is KEPT, among them. It stays out until Ethan ratifies it by ear.
+// Delete the entry to admit it, then byte-check all 43 songs.
+const FROZEN_EXCLUSIONS = new Set(['audios/vgmusic/genesis/Calling_From_Heaven3.mid']);
+
 const songs = [];
 const skipped = [];
 for (const f of manifest.files) {
   const path = join(ROOT, f.path);
+  if (FROZEN_EXCLUSIONS.has(f.path)) { skipped.push(`${f.path} — frozen-pack exclusion (D96)`); continue; }
   if (!existsSync(path)) { skipped.push(`${f.path} — not downloaded`); continue; }
   let song;
   try { song = loadSong(path, { titleOf: () => `${f.game} — ${f.title}` }); } catch (e) {
@@ -89,7 +101,10 @@ for (const song of songs) {
   // Look at several loops and keep the best-covered one that passes. Taking
   // only the longest-repeating span and rejecting the song when that span was
   // poorly covered threw away 92% of the corpus.
-  const loops = chordLoops(song, { max: LOOKAT })
+  // LOOP_PROFILES.legacy, explicitly: this pack is COMMITTED and its entries
+  // feed retrieval, so the D96 extractor repair must not silently re-roll it.
+  // See LOOP_PROFILES in src/ingest/corpus.js for what flipping it costs.
+  const loops = chordLoops(song, { max: LOOKAT, ...LOOP_PROFILES.legacy })
     .filter((l) => l.coverage >= MIN_COVERAGE && l.reps >= MIN_REPS
       && l.chords.length >= MIN_CHORDS && l.chords.length <= MAX_CHORDS)
     .sort((a, b) => b.coverage - a.coverage)

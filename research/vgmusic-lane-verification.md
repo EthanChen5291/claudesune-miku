@@ -1,0 +1,502 @@
+# VGMusic lane membership — verification needed
+
+From the 31,652-file analysis corpus (audios/vgmusic-full, gitignored, analysis-only per D95).
+
+- **CONFIRMED** = the track TITLE names the lane AND its measured sound lands in a cluster where that lane is over-represented. Safe to build a lane profile from.
+- **TITLE-ONLY** = the title names the lane but the sound does not match the lane cluster. These are the contamination risk you flagged.
+
+
+## scene.desert — 236 titled, 155 confirmed, 81 need your ear
+
+### TITLE-ONLY (verify: does this actually sound like desert?)
+
+- Turrican 2 :: Level 1-1
+- Donkey Kong :: World-5 Map (2)
+- Legend of Zelda, The: Oracle of Seasons :: Samasa Desert
+- Legend of Zelda, The: Oracle of Seasons :: Samasa Desert (2)
+- Wario Land :: Stove Canyon: Course 2
+- Mario Golf: Toadstool Tour :: Shifting Sands
+- Super Mario Sunshine :: Sand Bird
+- Bomberman Tournament :: Desert Areas
+- Sonic Heroes :: Rail Canyon
+- Mario & Luigi: Superstar Saga :: Oho Oasis
+- Mario & Luigi: Superstar Saga :: Oho Oasis (3)
+- Golden Sun :: Desert
+- Mother 3 (Japan) :: Dry Guys (2)
+- Mega Man Zero :: Find Shuttle - "Scorching Desert"
+- Pokémon (Ruby, Sapphire) :: Desert
+- F-Zero X :: Red Canyon - "The Long Distance of Murder" (4)
+- Legend of Zelda, The: Majora's Mask :: Ikana Canyon (Daytime)
+- Legend of Zelda, The: Majora's Mask :: The Last Day (Remix)
+- Mario Kart 64 :: Kalimari Desert (2)
+- Quest 64 :: Dindom Dries
+- Boulderdash :: Sand World
+- Crystalis :: Pyramid
+- Crystalis :: Pyramid (2) (v1.2)
+- Crystalis :: Pyramid (Seth's Dance) (3)
+- Crystalis :: Pyramid (Seth's Dance) (4)
+- Crystalis :: Desert
+- Double Dragon 3 :: Mission 5 - Egypt: Pyramid: Part 1
+- Dragon Warrior 3 :: Pyramid
+- Mickey's Safari in Letterland :: Yukon / Pyramid
+- Pyramid :: Stage
+- Super Mario Bros. 3 :: World Map 2 - Koopahari Desert (3)
+- Super Mario Bros. 3 :: World Map 2 - Koopahari Desert (Remix)
+- Breath of Fire 2 :: Silence of the Sands
+- Front Mission (Japan) :: Canyon Crow
+- Illusion of Gaia :: Great Pyramid
+- Illusion of Gaia :: Pyramid (XG)
+- Gradius III :: Sand Storm
+- Kirby's Dream Land 3 :: Sand Canyon: Map
+- Kirby's Dream Land 3 :: Sand Canyon: Stage 3
+- Lost Vikings :: Desert
+- Secret of Evermore :: The Great Pyramid
+- Secret of Evermore :: The Great Pyramid (2)
+- Smart Ball :: Desert
+- Super Double Dragon :: Mission 6 - Canyon
+- Tales of Phantasia (Japan) :: Oasis
+- U.N. Squadron :: The Canyon (GM)
+- U.N. Squadron :: The Canyon (XG)
+- Mega Man 10 :: Commando Man's Stage - "Desert Commando"
+- Desert Strike :: Briefing Room (Mission 1)
+- Dune: The Battle for Arrakis :: Radnor's Scheme
+- Dune: The Battle for Arrakis :: Spice Trip
+- Dune: The Battle for Arrakis :: Spice Trip (2)
+- Dune: The Battle for Arrakis :: Turbulence
+- Lightening Force :: Stage 4A - Sand Hell
+- Aztec Adventure :: Desert
+- Aztec Adventure :: Desert (FM)
+- Asterix :: Inside the Pyramid
+- Fantasy Zone :: La Dune
+- Fantasy Zone: The Maze :: La Dune - "Don't Stop"
+- Fantasy Zone: The Maze :: La Dune - "Don't Stop" (FM)
+- _... +21 more_
+
+## scene.space — 254 titled, 117 confirmed, 137 need your ear
+
+### TITLE-ONLY (verify: does this actually sound like space?)
+
+- Lemmings 2: The Tribes :: Space
+- Guxt :: Stage 3: Counterattack In Space
+- MegaRace :: Fractalian Space
+- Quake II Mission Pack: Ground Zero :: Gravity Well (v1.1)
+- Salamander :: Planet Eionius - Starfield
+- Gradius 2 :: Burning Planet
+- Tyrian :: Space Journey 1
+- Advance Wars: Dual Strike :: Yellow Comet Theme
+- Salamander (Japan) :: Level 2 - Meteorite Space
+- Super Mario Land 2 :: Space Zone
+- Super Mario Land 2 :: Space Zone (2)
+- Super Mario Land 2 :: Space Zone (3)
+- Super Mario Land 2 :: Space Zone 1
+- Super Mario Land 2 :: Space Zone 1 (2)
+- Super Mario Land 2 :: Space Zone 2
+- Super Mario Land 2 :: Space Zone 2 (2)
+- Super Mario Land 2 :: Space Zone 2 (AWE)
+- Super Mario Land 2 :: Space Zone 2 (Remix)
+- Super Mario Land 2 :: Space Zone 2 (WinGroove)
+- F-Zero GX :: Green Plant - "Planet Colors"
+- Mega Man Battle Network 4 :: Asteroid Destruction Rocket Stage
+- Mega Man Battle Network 5 :: Nebula Theme
+- Sonic Advance :: Cosmic Angel Zone: Egg Rocket 2
+- Sonic Advance :: Cosmic Angel Zone: Egg Rocket 2 (2)
+- Sonic Advance :: Cosmic Angel Zone: Egg Rocket 2 (3)
+- Sonic Advance :: Cosmic Angel Zone: Egg Rocket 2 (5)
+- Diddy Kong Racing :: Spaceport Alpha
+- Extreme-G :: Space Station
+- Mario Party 2 :: Space Land (v2)
+- Perfect Dark :: Alien Conflict (2)
+- Super Smash Bros. :: Planet Zebes
+- Adventures in the Magic Kingdom :: Space Mountain
+- Bucky O'Hare :: Blue Planet (2)
+- Bucky O'Hare :: Blue Planet (GS)
+- Bucky O'Hare :: Green Planet
+- Bucky O'Hare :: Green Planet (2)
+- Bucky O'Hare :: Green Planet (3)
+- Bucky O'Hare :: Red Planet
+- Bucky O'Hare :: Red Planet (2)
+- Doki Doki Panic (Japan) :: Sub-space
+- Duck Tales :: The Moon (80's Space Opera Remix)
+- Lunar Ball (Japan) :: In-Game
+- Lunar Ball (Japan) :: Theme
+- Mickey's Adventure in Numberland :: Space Center
+- StarTropics :: Alien Ship (2)
+- Axelay :: Stage 6 Part 1 - "Cosmos"
+- Axelay :: Stage 6 Part 1 - "Cosmos" (GS)
+- Gradius III :: Departure for Space (Remix)
+- Gradius III :: Departure for Space (Remix) (2)
+- Gundam Wing: Endless Duel (Japan) :: Inside Space Colony (v1.1)
+- Lost Vikings :: Space Ship
+- Lost Vikings :: Spaceship
+- Lemmings 2 :: Space Tribe
+- Marvel Super Heroes: War of the Gems :: Asteroid Belt
+- Rockman & Forte (Japan) :: Astro Man's Stage
+- Sailor Moon: Another Story (Japan) :: Time-Space Door
+- Secret of the Stars :: Airship 2: UFO
+- Star Fox :: Space Armada
+- Star Fox :: Space Armada (2)
+- Star Fox :: Space Armada (3)
+- _... +77 more_
+
+## scene.jungle — 310 titled, 205 confirmed, 105 need your ear
+
+### TITLE-ONLY (verify: does this actually sound like jungle?)
+
+- Encyclopedia of Games! :: Wizard's Golf Course
+- Congo Bongo :: In-Game
+- Legend of Zelda, The: Phantom Hourglass :: Islands
+- Legend of Zelda, The: Link's Awakening :: First Time on Koholint (Arranged)
+- Legend of Zelda, The: Oracle of Ages :: Crescent Island
+- Legend of Zelda, The: Oracle of Ages :: Crescent Island (2)
+- Kirby's Dream Land :: Float Islands (Remix)
+- Pokémon (Red, Blue, Yellow) :: Cinnabar Island
+- Legend of Zelda, The: The Wind Waker :: Dragon Roost Island
+- Legend of Zelda, The: The Wind Waker :: Dragon Roost Island (4)
+- Legend of Zelda, The: The Wind Waker :: Dragon Roost Island (Arranged)
+- Legend of Zelda, The: The Wind Waker :: Dragon Roost Island (Arranged)
+- Legend of Zelda, The: The Wind Waker :: Dragon Roost Island (Arranged) (XG)
+- Legend of Zelda, The: The Wind Waker :: Dragon Roost Island (GS)
+- Legend of Zelda, The: The Wind Waker :: Dragon Roost Island (XG)
+- Legend of Zelda, The: The Wind Waker :: Dragon Roost Island (XG) (2)
+- Legend of Zelda, The: The Wind Waker :: Outset Island
+- Legend of Zelda, The: The Wind Waker :: Outset Island (2)
+- Legend of Zelda, The: The Wind Waker :: Outset Island (3)
+- Legend of Zelda, The: The Wind Waker :: Outset Island (4)
+- Legend of Zelda, The: The Wind Waker :: Outset Island (5)
+- Legend of Zelda, The: The Wind Waker :: Outset Island (6)
+- Legend of Zelda, The: The Wind Waker :: Outset Island (7)
+- Legend of Zelda, The: The Wind Waker :: Windfall Island
+- Super Smash Bros. Melee :: Yoshi's Island Past Stage
+- Golden Sun: The Lost Age :: Tropical Paradise
+- Mega Man Battle Network 5 :: Oran Island (XG)
+- Pokémon (Ruby, Sapphire) :: Safari Zone
+- Sonic Advance :: Angel Island Zone: Act 1 (2)
+- Sonic Advance :: Angel Island Zone: Act 1 (3)
+- Sonic Advance :: Angel Island Zone: Act 1 (v1.2)
+- Sonic Advance :: Angel Island Zone: Act 1 (v1.2) (XG)
+- Sonic Advance :: Angel Island Zone: Act 2
+- Yoshi's Island :: Map Screen (Final Jeopardy Remix)
+- Yoshi's Island :: Yoshi's Island Map
+- Spongebob Squarepants: Battle for Bikini Bottom :: Goo Lagoon
+- Donkey Kong 64 :: Banana Fairy Island
+- Donkey Kong 64 :: Banana Fairy Island (2)
+- Mario Party 3 :: Waluigi's Island
+- Paper Mario :: Yoshi Island (2)
+- Adventure Island :: Level 1
+- Adventure Island :: Level 2
+- Adventure Island :: Level 2 (Arranged)
+- Adventure Island :: Underworld
+- Adventure Island 2 :: Choose an Egg
+- Adventure Island 2 :: Map Screen
+- Adventure Island 2 :: Skip This Island?
+- Adventure Island 2 :: Underworld 1
+- Adventure Island 2 :: Underworld 2
+- Double Dragon 2 :: Mission 4 (2)
+- Duck Tales 2 :: Mu Island
+- Dragon Warrior 4 :: Taloon's Theme (Tropical Remix)
+- Duck Tales :: Amazon
+- Kid Dracula :: I'm Too Young To Drink Vine! Mwa Ha Ha!
+- StarTropics :: Island Chief
+- Rainbow Islands :: World 6
+- Super Mario Bros. 3 :: World Map 4 - Big Island
+- Super Mario Bros. 3 :: World Map 4 - Big Island (2)
+- Super Mario Bros. 3 :: World Map 4 - Big Island (3)
+- Super Mario Bros. 3 :: World Map 4 - Big Island (4)
+- _... +45 more_
+
+## scene.haunted — 222 titled, 128 confirmed, 94 need your ear
+
+### TITLE-ONLY (verify: does this actually sound like haunted?)
+
+- Cave Story :: Zombie
+- Lazy Jones :: Track 21 (Kernkraft 400 - Zombie Nation)
+- Zombie Zombie! :: Zombie Groove (XG)
+- Final Fantasy III :: Djinn's Curse
+- Mario Kart DS :: Luigi's Mansion
+- Mario Kart DS :: Luigi's Mansion (2)
+- Legend of Zelda, The: Oracle of Ages :: Level 1 - Spirit's Grave
+- Pokémon (Red, Blue, Yellow) :: Cinnabar Mansion
+- Pokémon (Red, Blue, Yellow) :: Cinnabar Mansion (2)
+- Sword of Hope :: Graveyard
+- F-Zero GX :: Phantom Road
+- Luigi's Mansion :: The Mansion (2)
+- Luigi's Mansion :: The Mansion (5)
+- Tales of Symphonia :: Fighting the Spirit
+- Tales of Symphonia :: Fighting the Spirit (2)
+- Tales of Symphonia :: Fighting the Spirit (Remix)
+- Final Fantasy Tactics Advance :: Undefeated Heart
+- Kirby & the Amazing Mirror :: Carrot Mansion (GS)
+- Golden Sun :: Running to the Match (2)
+- Mega Man Zero 3 :: Dr. Weil's Theme - "Curse of Weil" (2)
+- Mega Man Zero 3 :: Dr. Weil's Theme - "Curse of Weil" (v1.1)
+- Banjo-Kazooie :: Mad Monster Mansion (2)
+- Banjo-Kazooie :: Mad Monster Mansion (GS) (v4.0)
+- Banjo-Kazooie :: Mad Monster Mansion: Outside Church (2)
+- Adventures in the Magic Kingdom :: Haunted Mansion
+- Adventures in the Magic Kingdom :: Haunted Mansion (2)
+- WWF WarZone :: The Wrestling Graveyard
+- Dragon Spirit: The New Legend :: Spirit Rescued
+- Ghosts 'n Goblins :: Stages 3 and 4
+- Ghosts 'n Goblins :: Stages 5 and 6 (2)
+- Ghosts 'n Goblins :: Stages 5 and 6: Part 2
+- Maniac Mansion :: Main (Bustin' In Remix)
+- Mother (Japan) :: Tank (Poltergeist Remix)
+- Shadowgate :: Wraith
+- Tiny Toon Adventures :: Montana Max's Mansion (Arranged)
+- Sweet Home (Japan) :: Undead Garden
+- Castlevania Dracula X :: Cemetery
+- Castlevania Dracula X :: Picture of the Ghost Ship
+- Castlevania Dracula X :: Picture of the Ghost Ship (2)
+- Final Fantasy V (Japan) :: Cursed Earth
+- Joe & Mac :: Level 10 - Dinosaur Graveyard
+- Killer Instinct :: Sabrewulf'S Mansion (v1.1)
+- Killer Instinct :: Sabrewulf's Mansion (Arranged)
+- Kishin Douji Zenki 1 - Rettou Raiden (Japan) :: Stage 2-1 - "Graveyard"
+- Legend of the Mystical Ninja :: Zone 1: Edo Ghosts
+- Mega Man 7 :: Guts Man (Phantom Remix)
+- Mega Man X3 :: Neon Tiger's Stage ("Smells Like Neon Spirit" Remix)
+- Ogre Battle :: Viking Spirit
+- Pocky & Rocky :: Haunted House
+- Rudora No Hihou (Japan) :: The Spirit Chaser
+- Rudora No Hihou (Japan) :: The Spirit Chaser (2)
+- Rudora No Hihou (Japan) :: Dance with the Zombie
+- Rudora No Hihou (Japan) :: Dance with the Zombie (2)
+- Rudora No Hihou (Japan) :: Dance with the Zombie (3)
+- Rudora No Hihou (Japan) :: The Spirit Chaser (3)
+- Secret of Mana :: Banished - "Spirit of the Night" (XG)
+- Super Ghouls & Ghosts :: Stage 1: The Haunted Graveyard
+- Super Mario Kart :: Ghost Valley
+- Super Mario Kart :: Ghost Valley (2)
+- Super Castlevania IV :: Stage 4: Block 4-1 (2)
+- _... +34 more_
+
+## mood.creepy — 114 titled, 86 confirmed, 28 need your ear
+
+### TITLE-ONLY (verify: does this actually sound like creepy?)
+
+- Undertale :: Your Best Nightmare
+- Nightmare :: Game Start
+- Grabbed by the Ghoulies :: Macabre Music Box
+- Akumajo Dracula X :: Cross A Fear
+- Castlevania: Portrait of Ruin :: Awakening From The Nightmare
+- Castlevania: Portrait of Ruin :: Victorian Fear
+- Luigi's Mansion :: Gameboy Horror
+- Castlevania 3 :: Stage 5 - "Nightmare" (2)
+- Double Dragon 2 :: Missionl 6 and Double Illusion Theme (Creepy Arcade Remix)
+- Kirby's Adventure :: Horrible Nightmare
+- Mission: Impossible :: Sinister 7 Hideout
+- Breath of Fire 2 :: Nightmare
+- Breath of Fire 2 :: Nightmare (2)
+- Breath of Fire 2 :: Twisted Bridge
+- Mega Man X2 :: Morph Moth's Stage (Remix)
+- Seiken Densetsu 3 (Japan) :: Angel's Fear
+- Seiken Densetsu 3 (Japan) :: Where Angels Fear To Tread
+- Seiken Densetsu 3 (Japan) :: Where Angels Fear to Tread (3)
+- Seiken Densetsu 3 (Japan) :: Angel's Fear (2)
+- Captain Silver :: Eerie Piper
+- Captain Silver :: Eerie Piper (FM)
+- Final Fantasy 8 :: Fear
+- Final Fantasy Tactics :: Terror 2
+- Resident Evil 3: Nemesis :: The Beginning Of The Nightmare
+- Mega Man X6 :: Megaman X Vs. Zero Nightmare
+- Mega Man X6 :: Megaman X Vs. Zero Nightmare (2)
+- Virtua Fighter 4 :: Wolf Stage - "Nightmare"
+- Final Fantasy 7 :: The Nightmare Begins
+
+## mood.menacing — 463 titled, 273 confirmed, 190 need your ear
+
+### TITLE-ONLY (verify: does this actually sound like menacing?)
+
+- Cave Story :: Tyrant
+- Cave Story :: Tyrant (2)
+- Agatha Christie: Evil Under the Sun :: Theme
+- Jazz Jackrabbit 2 :: Hell Level - "Dark Groove (Part 1)"
+- Nemesis 2 :: Level 1
+- Castlevania :: Stage 3 - "Wicked Child"
+- Rusty :: Stage 1 - Queen In the Dark Night (v2)
+- Sonic the Hedgehog :: All Hail Shadow
+- Kaze no Densetsu Xanadu :: Winds of Darkness
+- Ys Book I & II :: Dark Fact (2)
+- Legend of Heroes 4 :: # 15 - The One Who Haunts in the Dark
+- Legend of Heroes 4 :: # 15 - The One Who Haunts in the Dark (XG)
+- Castlevania: Dawn of Sorrow :: Dark Chapel - "After Confession"
+- Castlevania: Dawn of Sorrow :: Dark Chapel - "After Confession" (XG)
+- Castlevania: Dawn of Sorrow :: Into the Dark Night
+- Castlevania: Dawn of Sorrow :: Into the Dark Night (2)
+- Castlevania: Portrait of Ruin :: Gaze Up at the Darkness
+- Pokémon Mystery Dungeon: Blue Rescue Team :: Friend Areas 6
+- Pokémon Mystery Dungeon: Explorers of Time/Darkness :: Dark Hill
+- Castlevania: The Adventure :: Stage 2 - "Darkness" (Remix)
+- Final Fantasy Legend II :: Wandering Shadow
+- Kirby's Dream Land 2 :: Dark Matter
+- Kirby's Dream Land 2 :: Dark Matter Appears!
+- Kirby's Dream Land 2 :: Real Dark Matter
+- Magi Nation :: Shadowhold
+- Ninja Gaiden Shadow :: Stage 1
+- Ninja Gaiden Shadow :: Stage 3
+- Pokémon (Red, Blue, Yellow) :: Route 16 (Dark Pop Remix)
+- Eternal Darkness :: Maximillian Roivas Chapter - "Black Rose"
+- Resident Evil :: Save Room (3)
+- Shadow the Hedgehog :: All Hail Shadow
+- Super Mario Sunshine :: Shadow Mario's Theme
+- Sonic Adventure 2 Battle :: Sonic and Shadow at the ARK
+- Fire Emblem: Fuuin No Tsurugi (Japan) :: Maiden of the Dark - Idoun's Theme
+- Fire Emblem: The Sacred Stones :: Truth, Despair, And Hope
+- Mega Man Battle Network 2 :: Shadow Man's Stage
+- Perfect Dark :: Carrington Institute (6)
+- Perfect Dark :: Carrington Villa - Hostage One X (XG)
+- Perfect Dark :: DataDyne Central - Extraction X (XG)
+- Action 52 :: Game 2: Star Evil
+- Adventure Island :: Evil Eggplant
+- Super Mario 64 :: Bowser's Domain - "Koopa's Road" (Dark Remix)
+- Battle of Olympus :: Peloponnes - Dark And Beautiful (Arranged)
+- Castlevania 2 :: Password - "Message of Darkness"
+- Castlevania 2 :: Password - "Message of Darkness" (2)
+- Castlevania 2 :: Password - "Message of Darkness" (3)
+- Castlevania 3 :: Stage 6 - "Demon Seed"
+- Castlevania 3 :: Stage 6 - "Demon Seed" (2)
+- Castlevania 3 :: Stage 6 - "Demon Seed" (3)
+- Castlevania :: Stage 3 - "Wicked Child"
+- Castlevania :: Stage 3 - "Wicked Child" (2)
+- Castlevania :: Stage 3 - "Wicked Child" (4)
+- Castlevania :: Stage 3 - "Wicked Child" (6)
+- Castlevania :: Stage 3 - "Wicked Child" (Arranged)
+- Castlevania :: Stage 3 - "Wicked Child" (Metal Remix)
+- Castlevania :: Stage 3 - "Wicked Child" (Remix) (2)
+- Friday the 13th :: Map (Dark Arrangement)
+- Friday the 13th :: Map (Evil XG Remix)
+- Final Fantasy III (Japan) :: Dark World
+- Final Fantasy III (Japan) :: Dark World
+- _... +130 more_
+
+## scene.cave — 556 titled, 212 confirmed, 344 need your ear
+
+### TITLE-ONLY (verify: does this actually sound like cave?)
+
+- Fantastic Adventures of Dizzy, The :: Mine Cart Ride
+- Globdule :: Cave Nice 1
+- Globdule :: Cave Nice 2
+- 3D Ultra Pinball :: Mine
+- Cave Story :: Gestation (XG) (2)
+- Cave Story :: Last Cave
+- Might and Magic V: Darkside of Xeen :: Underground Theme 1
+- Ragnarok Battle Offline :: Wriggling Underground - Ant Hell
+- Xargon Volume 1: Beyond Reality :: Level 3 - "Cave of the Ancients"
+- Ys Book I & II :: Subterranean Canals
+- Ys Book I & II :: Subterranean Canals (2)
+- Ys Book I & II :: Subterranean Canals (Remix)
+- Neutopia :: House / Good Cave
+- Bonk's Revenge :: Caverns
+- Bonk's Revenge :: Caverns (2)
+- Diddy Kong Racing DS :: Treasure Caves
+- Final Fantasy III :: The Cave Where the Crystal Lies
+- Mario & Luigi: Partners in Time :: Thwomp Caverns
+- New Super Mario Bros. :: Underworld (2)
+- Pokémon (Diamond, Pearl) :: Caverns (2)
+- Pokémon Platinum :: Underground Mines
+- Sonic Rush Adventure :: Coral Cave Zone - Act 1
+- Pokémon Mystery Dungeon: Explorers of Time/Darkness/Sky :: Brine Cave
+- Pokémon Mystery Dungeon: Explorers of Time/Darkness/Sky :: Lower Brine Cave
+- Final Fantasy Adventure :: Dwarf Cave
+- Kirby Tilt 'n' Tumble :: Underground
+- Legend of Zelda, The: Link's Awakening :: Faerie Cave
+- Legend of Zelda, The: Link's Awakening :: Level 1 - Tail Cave
+- Legend of Zelda, The: Link's Awakening :: Level 1 - Tail Cave
+- Legend of Zelda, The: Link's Awakening :: Level 1 - Tail Cave (3)
+- Legend of Zelda, The: Link's Awakening :: Level 2 - Bottle Grotto
+- Legend of Zelda, The: Link's Awakening :: Level 2 - Bottle Grotto (2)
+- Legend of Zelda, The: Link's Awakening :: Level 3 - Key Cavern
+- Legend of Zelda, The: Link's Awakening :: Level 3 - Key Cavern (2)
+- Legend of Zelda, The: Link's Awakening :: Level 3 - Key Cavern (3)
+- Legend of Zelda, The: Link's Awakening :: Level 3 - Key Cavern (4)
+- Legend of Zelda, The: Link's Awakening :: Level 3 - Key Cavern (Woodflute Remix)
+- Legend of Zelda, The: Link's Awakening :: Level 4 - Angler's Tunnel
+- Legend of Zelda, The: Link's Awakening :: Cavern
+- Legend of Zelda, The: Link's Awakening :: Cavern (2)
+- Legend of Zelda, The: Link's Awakening :: Cavern (4)
+- Donkey Kong Land :: Cave
+- Donkey Kong Land :: Cave (2)
+- Donkey Kong Land :: Cave (2)
+- Legend of Zelda, The: Oracle of Ages :: Level 3 - Moonlit Grotto
+- Legend of Zelda, The: Oracle of Ages :: Level 3 - Moonlit Grotto (2)
+- Legend of Zelda, The: Oracle of Ages :: Level 6 - Mermaid Cave
+- Legend of Zelda, The: Oracle of Ages :: Level 6 - Mermaid Cave (2)
+- Legend of Zelda, The: Oracle of Seasons :: Hero's Cave (2)
+- Legend of Zelda, The: Oracle of Seasons :: Level 5 - Unicorn's Cave
+- Legend of Zelda, The: Oracle of Seasons :: Level 5 - Unicorn's Cave (2)
+- Legend of Zelda, The: Oracle of Seasons :: Level 5: Unicorn's Cave (XG)
+- Pitfall - Beyond the Jungle :: Underground Caverns
+- Pokémon (Gold, Silver) :: Cave
+- Pokémon (Gold, Silver) :: Cave (2)
+- Pokémon (Gold, Silver) :: Cave (Remix)
+- Pokémon (Gold, Silver) :: Union Cave
+- Pokémon (Gold, Silver) :: Union Cave (2)
+- Metroid II :: Main Tunnel Theme
+- Metroid II :: Main Tunnel Theme (2)
+- _... +284 more_
+
+## scene.water — 573 titled, 310 confirmed, 263 need your ear
+
+### TITLE-ONLY (verify: does this actually sound like water?)
+
+- Enchanted Lands :: Water
+- Outrun :: Last Wave
+- Outrun :: Splash
+- MapleStory :: Lith Harbor
+- Runescape :: Sea Shanty 2
+- Guxt :: Stage 4: Invasion Over The Sea
+- River Patrol :: In-Game
+- Sonic the Hedgehog :: Wave Ocean - The Inlet
+- Bomberman '94 (Japan) :: Underwater
+- Final Fantasy III :: The Boundless Ocean
+- New Super Mario Bros. :: Underwater
+- Castlevania: Order of Ecclesia :: Somnus Reef
+- Castlevania: Order of Ecclesia :: Somnus Reef (2)
+- Pokémon (HeartGold, SoulSilver) :: Route 43/Lake of Rage
+- Pokémon Mystery Dungeon: Explorers of Time/Darkness/Sky :: Through the Sea of Time (2)
+- Final Fantasy Legend III :: Underwater
+- Final Fantasy Legend III :: Underwater (2)
+- Legend of Zelda, The: Oracle of Ages :: Under the Sea
+- Pokémon (Gold, Silver) :: S.S.Aqua
+- Super Mario Bros. Deluxe :: Underwater
+- Pokémon (Red, Blue, Yellow) :: Yellow: Pikachu Beach
+- Pokémon Trading Card Game :: Water Club (2)
+- Wario Land :: Rice Beach Map
+- Wario Land :: Rice Beach Map (2)
+- Wario Land :: Rice Beach: Course 3
+- Wario Land :: Rice Beach: Course 4
+- Wario Land :: Water Levels
+- Wario Land :: Water Levels (2)
+- Wario Land :: Water Levels (3)
+- Wario Land 3 :: Frigid Sea
+- Wario Land 3 :: Frigid Sea (2)
+- Wario Land 3 :: Sea Turtle Rocks
+- Wario Land 3 :: Sea Turtle Rocks (2)
+- Legend of Zelda, The: Four Swords Adventures :: Lake Hylia
+- Legend of Zelda, The: Four Swords Adventures :: Lake Hylia (2)
+- Legend of Zelda, The: Four Swords Adventures :: Lake Hylia (3)
+- Sonic Adventure 2 Battle :: Metal Harbor (Lychea Remix)
+- Super Monkey Ball 2 :: World 3: Under the Ocean
+- Banjo-Kazooie: Grunty's Revenge :: Spiller's Harbor
+- Banjo-Kazooie: Grunty's Revenge :: Underwater
+- Sonic Heroes :: Sea Gate
+- Donkey Kong Country 3 :: Underwater
+- Kirby & the Amazing Mirror :: Kirby Wave Ride
+- Kirby & the Amazing Mirror :: Olive Ocean
+- Mario Kart: Super Circuit :: Boo Lake/Broken Pier
+- Disney Sports Motocross :: Ducks Harbor/S.S. Cantankerous
+- Metroid Fusion :: Sector 4 (AQA) Underwater Area
+- Banjo-Kazooie :: Gobi's Valley: Aquatic
+- Banjo-Kazooie :: Gruntilda's Lair (Swan Lake Remix)
+- Banjo-Kazooie :: Gruntilda's Lair: Aquatic
+- Sonic Advance 3 :: Zone 3 - Ocean Base: Act 1
+- Sonic Advance 3 :: Zone 3 - Ocean Base: Act 1 (2)
+- Sonic Advance 3 :: Zone 3 - Ocean Base: Map
+- Sonic Advance 3 :: Zone 3 - Ocean Base: Map (2)
+- Sonic Advance 3 :: Zone 3 - Ocean Base: Map (3)
+- Sonic Advance 3 :: Zone 3 - Ocean Base: Map (GS)
+- Diddy Kong Racing :: Ancient Lake
+- Legend of Zelda, The: Majora's Mask :: New Wave Bossanova
+- Mario Party :: The Wide, Wide Ocean
+- Mario Party 2 :: Walking Underwater
+- _... +203 more_

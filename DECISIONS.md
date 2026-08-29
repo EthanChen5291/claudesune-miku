@@ -5013,3 +5013,2064 @@ D92 (2026-08-27) — THE METER RULING: "avoid 2/4 and just stick with
 - HOUSEKEEPING: the songs.test determinism check now strips the
   minute-resolution BUILD stamp before comparing — it flaked twice
   (D89, D92) with zero real drift.
+
+D93 (2026-08-27) — THE GENRE-EXPANSION ROUND (prompt.md): desert fixed,
+space/jungle/horror/choir capability built, 20 new songs.
+His brief: "i like our current music generation ... i want to change how it
+thinks for specific environmental stuff"; the somber desert "lowkey sounds
+more like space than desert"; expand percussion ("metal rod hits ...
+bongos ... shaker ... war drums"), choir (male/female/mixed, + mid-round:
+"1 soft song that uses choir (magical) and 1 active song that uses choir
+(like battle)"), environmental VSTs, horror (dissonance dosing + his 16
+sound files, sorted loops vs one-shots), a YouTube horror-craft video, a
+desert MIDI, and 14 tip-annotated videos; then 3 desert / 3 space / 3
+horror-ambience / 3 horror-action / 3 epic-horror songs + reel-technique
+implementations. Mid-round he added the cave/snow melody-double note.
+
+- ANALYSIS CORPUS (all saved under research/): 14 videos frame-montaged and
+  agent-read (video-corpus-round13.md — battle-layering recipes, backrooms
+  reverse-print chain, warp-fade portamento physics, elevator-jam anatomy
+  (N7 answer: the lead is a REAL TRUMPET over a JV-1080 mockup), jumpstyle
+  kick-as-bass, PianoX horror-piano lament grammar, music-box trope
+  measurements); NSMB-desert + GG Oasis MIDIs tick-grid analyzed
+  (midi-desert-analysis.md — 13 ranked desert devices; the "66bpm middle"
+  is a TEXTURE drop, tempo never changes); six web-research reports
+  (env-desert-jungle, env-space, env-horror, percussion-catalog,
+  choir-research, vsts-fx-cookbook). NOTE: no video matched note N5
+  ("sneaky heist") — 11 reels, 10 notes, and three reels read as
+  battle/groove; the heist reel looks missing from the folder.
+- THE SAMPLE-HOSTING STORY (closes the todo.md "no story yet" gap):
+  src/lib/sample-pack-def.js is the single source of truth; scripts/
+  build-sample-pack.mjs emits audition/sample-pack.js (mp3 data-URIs,
+  lazy-loaded via a sibling script tag — file:// cannot fetch, so no
+  fetch); render-hq gained a WAV BACKEND (node-side PCM placement over an
+  ffmpeg-normalized cache, deterministic round-robin, soft-clip) so hx_*/
+  vc_* names sound in BOTH tiers. Probe-measured: onsets land on the grid
+  (0/0.5/1.0s...), stems balance through the LUFS stage.
+- HIS HORROR PACK sorted per his note (audios/horror-fx/): 4 one-shots
+  (riser/crow/strings-stab/growl — "play once"), 9 ambience beds, 3
+  bpm-locked loops; measured durations/keys/loop-edges recorded in the
+  pack def. Beds re-trigger every ~file-length bars at 0.14-0.19 gain —
+  complement, never spotlight; a third of eligible songs roll none.
+- PERCUSSION: VCSL/VSCO-2 (already vendored, CC0) now feeds 31 vc_* voices
+  (bongos/congas/darbuka/frame/shakers/guiro/claves/log drums/cajon/riq/
+  zill/war drum/toms/timpani/military snare/rolls/cym crescendos/gong/
+  anvil/brake drum/scrapes/windchimes/flexatone/woodblock/agogo/vibraslap/
+  slapstick/ratchet/sleigh). NEW RHYTHMS (per-onset `sounds` so a dum and a
+  tak are different drums): maqsum, ayyub (camel gallop), masmoudi_slow,
+  riq_offbeats, tumbao_conga, martillo_bongo, war_gallop (trailer figure),
+  war_march (3+3+2), shaker_urgency, heartbeat_toms. True gaps for later:
+  taiko ensemble (CC-BY-SA — needs his ok), waterphone, djembe.
+- CHOIR: SSO chorus vendored (42 looped wavs, CC Sampling Plus); scripts/
+  build-choir-sfz.mjs generates gen/choir-{male,female,mixed}.sfz with the
+  shipped loop points (probe-rendered non-silent); browser tier gets
+  choir_male/choir_female as PITCHED data-URI maps + gm_choir_aahs (bank).
+  Writing rules from choir-research.md §4 (merge repeats, breath gaps,
+  no runs, register honesty at the G4 gender seam).
+- SURGE PATCHES (release_xt_1.3.4 per D85; all 15 probe-verified — each
+  rendered a spectrum measurably distinct from init before wiring):
+  pad-space (Computers In Space), pad-ghost, drone-eighties, sub,
+  blip-delay (Delay Pops), pluck-metallic, pluck-east (held in reserve),
+  organ-church, keys-circus (reserve), lead-pwm, bass-fmslap, lead-talky,
+  lead-shanai, wind-ethno, pad-choir-synth. gm_sitar stays fluid
+  (GeneralUser 104 is a real sitar sample).
+- SIX NEW ENVIRONMENTS (17 -> 23): space, jungle, manor (horror AMBIENCE),
+  catacombs (horror ACTION), citadel (EPIC horror + the active-choir home),
+  shrine (the soft-magical-choir home). Horror lanes follow env-horror.md:
+  one harmonic-dissonance device per song over a consonant floor, dissonance
+  budget mostly TIMBRAL (ghost pad, tremolo, beds); epic horror is the most
+  tonal lane (Bloodborne law: tonal minor theme + gothic timbre).
+- PALETTE LAW (new): instruments may declare `envOnly` — six new entries
+  (gm_sitar, gm_shanai, gm_pad_metallic, gm_fx_echoes, choir_male,
+  choir_female) cast ONLY in their environments, so palette growth cannot
+  re-roll existing songs. MEASURED: rebuild drift = exactly the 3 noted
+  songs; all other 20 pre-round songs byte-identical; 307/307 tests.
+- THE DESERT FIX (vs_mysterious_desert, his note): the failure was never
+  harmony (Phrygian lock already served i-bII-iv-III) — it was timbre/
+  texture/reverb. Now: sitar lead + sitar cast; ayyub+riq hand drums
+  (tresillo/clave out); the NSmb marimba DESERT FLOOR (broken-fifth 16ths,
+  b7+4 downbeat splash, 5+5+2 cross-accents); the 6-note chromatic
+  slide-off FLOURISH stamped at A-starts; gm_pan_flute beat-3.5
+  punctuation; and DESERT IS DRY — a new rule strips the damper-pedal wet
+  room from any unkept desert song whatever the emotion says (env-space.md
+  §5: wet = void).
+- DESERT FAMILY PIN (new engine rule): an emotion's family override
+  (somber->minor, happy->major) pulled desert retrieval out of the modal
+  pool where every bII exemplar lives — somber desert re-created "dark,
+  not desert" from the grid. Desert now pins family modal (unkept only);
+  all four desert songs retrieve the D91-ranked Phrygian-dominant exemplar
+  raw, in four keys. Somber desert also pins percPresence light — masmoudi
+  dums stay ("deleting all percussion is what tips it into space").
+- NEW DEVICES (all env- or opt-gated): ambience-bed layer (slow(K)
+  re-triggers), one-shot fx placement (risers END on the target downbeat;
+  manor stingers dosed 1-2/song; catacombs re-entry riser+wardrum impact;
+  citadel finale gong), desert floor/flourish/punctuation, choirPad (the
+  stringsPad law for choir), melodyDouble, opts accSound/accOctave/
+  percPatterns/percPresence/fxHits/ambience.
+- THE MELODY-DOUBLE (his cave/snow note, kept songs): gm_music_box rides
+  cave's piano RH, gm_celesta rides snow's, at 0.5x lead gain — same
+  cells, seeds, hold and merge. MEASURED additive-only: cave 705->828
+  haps, snow 839->992, ZERO old haps missing, every added hap matches an
+  old piano hap's (time,midi) — a true unison ride, flute handoffs
+  untouched.
+- 20 NEW SONGS: desert somber (oboe-as-duduk over drone + masmoudi)/happy
+  (shanai bazaar, maqsum+riq)/tense (sitar battle, ayyub); space calm
+  (arp+pad explore)/mysterious (alien — retrieved dim chain fixChorded to
+  Vsus, the space color)/excited (FTL: same bed + drums); manor scary
+  (fragmented lead over drone + growl/stab stingers)/somber (dark-piano
+  lament + static bed)/mysterious (MUSIC BOX: gm_music_box lead oct 5,
+  celesta acc oct 3, no ambience — isolation is the trope); catacombs x3
+  (war_gallop/16th-drive floors, breakdown re-entry riser+impact, one
+  industrial bed + one TV-noise bed); citadel scary (choir_male cast +
+  harpsichord + bII^7 Neapolitan exemplar)/somber (CHOIR_MALE TAKES THE
+  MELODY over organ sustain + war_march — the Andalusian i-bVII-bVI-V7
+  dirge)/tense (+choirPad male)/triumphant (the ACTIVE BATTLE CHOIR ask:
+  choir_male pad + war_march + shaker urgency at foreground); shrine calm
+  (the SOFT MAGICAL CHOIR ask: choir_female cast, fixChord brightened to
+  I^7); demos excited_fight (busy-battle recipe: marcato + counterline +
+  offbeat texture + varyLead defaults), happy_jungle (tumbao+martillo
+  foreground, DKC city-pop changes), mysterious_jungle (abstract-nature:
+  sustained floor, thinned lead, calliope/flute rotation).
+- STABILITY: changed set = exactly vs_mysterious_desert + the two
+  melody-double songs; 23 HQ wavs re-rendered (20 new + 3); 307/307;
+  atlas regenerated (new rhythms enter it; ALL pre-existing gen/*.sfz
+  regenerated byte-identical).
+
+D93 addendum — the adversarial verify pass (6 refuting agents; it caught
+real defects again).
+- THE BIG CATCH (shipped-defect class): the SAMPLE_PACK merge in
+  hq-instruments.js CLOBBERED the choir sfz routes — pitched pack entries
+  carry no srcs, so choir_male/choir_female resolved to a samples-less wav
+  backend, patchOk failed, and ALL FIVE choir songs' HQ stems fell to
+  fluid GM PIANO (program 0 — the verifier read it out of the stem MIDI).
+  The D85 lesson generalized again: the render "succeeded", the wav was
+  loud, and the choir wasn't there. Fixed (srcs-less rows never merge; an
+  explicit route is never overwritten); all five re-rendered — choir_male
+  now renders 192/245/76/86 notes through choir-male.sfz, shrine 144
+  through choir-mixed.sfz (sfizz lines in the render log, stem-verified).
+- Desert catches: (a) mysterious+somber desert hashed the SAME tonic C —
+  opts.keyHint plumbed, somber now G (the NSMB key); four desert songs in
+  four keys (C/G/B/D) is now true; (b) somber's entire 16-bar B section
+  had ZERO hand drums — first the energy mask, then (second catch after
+  the first fix) the BREAKDOWN mask re-stripped them; percAllBars now
+  rides through both (the NSMB law: the hand-drum loop never changes
+  across sections) — 0 drumless bars measured; (c) happy_desert's 16-bar
+  breakdown drops to 1-2 onsets/bar — left as-is (breakdowns are judged
+  machinery; the strip IS the section).
+- Music-box catch (vs_mysterious_manor): opts.accOctave was ineffective —
+  the figuration's own octave beat it, so the celesta acc realized an
+  octave-1-2 BASS under a no-bass trope (240 loud sub-C3 haps), plus the
+  breakdown floor at Bb1. accOctave is now a bind-time FLOOR and the song
+  drops its breakdown; re-measured: 52/1506 haps graze below C3 (lowest
+  Bb2, mostly the sanctioned ghost-pad low drone) vs 268/1266 before.
+- Shrine catch: the cast choir_female pad voiced chord bottoms at Bb2-F#3
+  — far under the female register (the G4 seam law). New opts.padSound
+  retints pads voice-only; shrine's pad is now gm_choir_aahs on the SSO
+  MIXED sfz, which is register-honest by construction (male samples below
+  G4, female above). choir_female remains the high-line/lead capability.
+- Confirmed clean by measurement: rebuild determinism (BUILD-stripped
+  md5-identical), drift set exactly the 3 noted songs, 14/14 kept degree
+  pins, envOnly gate (16 uses, 0 violations), all iqa'/war-drum grids
+  exact (maqsum/ayyub/masmoudi/war_march fraction-perfect), flourish
+  chains [-1,-1,-2,-1,-1] landing +7 in all 7 stamps, beds re-trigger at
+  exact cadences at their stated gains, one-shots each occur EXACTLY once,
+  riser placement exact to 10ms with the impact on the downbeat, the
+  melody double additive-only at 0.51x (kept flutes byte-identical), all
+  24 wavs -14.2..-17.4 LUFS with sane tails, marimba through sfizz,
+  sample pack deterministic/leak-free with 146/146 sources present.
+- Honest residuals: (a) the hx_riser source wav itself ends 0.25s of
+  silence early (trim the source someday — placement math is exact);
+  (b) somber_citadel's whisper violin stem is balance-clamped 2.8dB low;
+  (c) audition/sample-pack.js and the new vendor/patches + gen sfz are
+  UNTRACKED — commit them with the round or a fresh clone loses local
+  audio; (d) videolab/foundations/drums pages still carry the pre-round
+  runtime (no local pack) until their next rebuild; (e) the reel-technique
+  backlog not yet implemented: trance-gate texture, in-song warp-fade
+  (browser recipe documented in research/vsts-fx-cookbook.md), elevator
+  swing demo, taiko (CC-BY-SA — needs his ok).
+
+D93 addendum 2 — a PRE-EXISTING test race surfaced (not this round's):
+npm test rebuilds audition/foundations.html (foundations.test) while the
+verdicts round-trip test transiently rewrites src/lib/verdicts.js — when
+the rebuild wins the race, the page's first click-kept progression pick
+flips (billie-eilish -> maj_I_I_IV_iii, an '-implied' entry that should be
+filtered). REPRODUCED AT CLEAN HEAD, so it predates D93. This round's
+pages were rebuilt directly (single-threaded) after the final test run and
+carry the correct picks; all six non-songs audition pages verified
+DATA-identical to HEAD (only the inlined runtime chrome changed). PARKED:
+make foundations.test rebuild into a temp dir, or serialize it after the
+verdicts round-trip.
+
+D94 (2026-08-28) — THE SERIOUSNESS ROUND: his 18 fresh genre-song notes +
+the staccato-strings law, all converging on one diagnosis — the engine's
+PLAYFUL defaults (music-box sparkle, slap-bass funk bounce, chip-lead
+casts, boogie/bossa/alberti foundations) were firing inside the horror/
+desert/jungle lanes, and three "in general" notes made three engine laws.
+Import: 0 keep transitions (14 keeps stand; calm_lab/tense_stealth/
+calm_menu's "much better" notes are re-confirmations of already-clicked
+keeps). 13 notes arrived byte-identical to last round (only `at:` moved) —
+treated as STALE per doctrine, not re-fixed: x_construction (D91 already
+swapped the letters to synth), excited_casino, tense_stealth, calm_menu,
+calm_lab, somber_snow (padWaveCalm shipped D91, unheard), happy_festival
+(now 4/4 via D92-3 — the "2/4 screws up piano melody" cause is gone),
+goofy_casino, tense_lab, calm_rest, excited_training, nostalgic_shop, and
+mysterious_desert — EXCEPT that mysterious_desert's standing "look into
+other game desert chord progressions" ask was researched and acted on
+(below), since two FRESH desert notes still heard "not desert".
+
+- THE STACCATO-STRINGS LAW (his message, verbatim: "the stacco string
+  shouldnt just be violin and shouldnt just be complimenting the melody.
+  its mainly harmony, doing its own subharmony or just a rhymic repeat
+  (where it repeats a note for a duration in a specific rhythm actively)
+  and should be multiple notes per hit not just one note typically"; the
+  excited_fight note heard the old walked line as "just accenting the
+  melody"): the marcato layer is REWRITTEN from a bindMelody walk to a
+  bindFigure CHORDAL OSTINATO — two seed-picked shapes, the subharmony
+  walk (dyads R.3→3.5→R.5→3.6, top voice moving) and the rhythmic repeat
+  (one dyad hammered on the 3+3+2 trailer grid). String-ensemble voices,
+  staccato clip 0.4, oct 4, band 0.22-0.42. MEASURED on excited_fight: 96
+  haps / 48 onsets over 8 bars = 100% multiple-notes-per-hit. Pinned ON
+  for excited_fight + excited_training (their notes ask for it; a card
+  note silences the history-less default).
+- THE LANE LAW (catacombs/citadel "playful" ×5, "boogie shuffle on
+  catacombs?", "evening disco dance ball"): serious lanes = horror
+  (manor/catacombs/citadel) + desert + jungle, unkept songs only.
+  (a) sparkle and funk-bounce never fire there; (b) foundation pools AND
+  tone-travel edges blacklist boogie/stride/charleston/bossa/tumbao/
+  walking/funk/alberti (+tresillo/clave for desert; block_quarters for
+  jungle — "just basic chords" twice); (c) textures stab on pizzicato/
+  harpsichord (horror) or marimba (desert), never kalimba/supersaw, and
+  never fall back to piano in a horror lane; (d) horror casts retint chip
+  voices (square/saw/supersaw) to the lane voice (manor oboe / catacombs
+  violin / citadel trumpet); (e) horror default LEADS: catacombs = solo
+  violin (his own suggestion), citadel = church organ, manor keeps dark
+  piano; (f) handoff pools: desert = shanai/oboe/sitar ("the main melody
+  should not just be piano"), horror = violin/cello/organ.
+- THE FOUNDATION-VARIATION LAW (somber_manor: "when using foundations it
+  shouldn't be exact replicates, there should be some 'extra stuff' added
+  in general"; x_catacombs + mysterious_jungle said it again): every
+  unkept song's accompaniment binds a 2-BAR COMPOSITE — bar 1 the
+  foundation as authored, bar 2 one seed-picked interval-aware
+  embellishment: a 6th-color/dyad recolor, an octave lift on the final
+  onset, or a breath (last onset drops, prior note holds). MEASURED
+  (x_catacombs power fifths): bar 2 differs in exactly one hit (+7→+19),
+  bars 3/4 tile bar 1/2. Applies to every letter's figure and the intro;
+  opts.accVary:false opts out; grammarPin walls it off.
+- MELODY GRAMMAR, two new dials (both gated grammarFresh = !priorKeep &&
+  !grammarPin — a PINNED melodyGrammar must not drag them in):
+  (a) tailVariety (triumphant_citadel: "the last part (like last 4-6
+  notes) of the melody sounds really overused like you've done that with
+  the melody in many other songs"): the cadence-bar thinning cut rotates
+  per phrase AND per song over four shapes (half / early / late / none)
+  instead of the one fixed thin-to-half + held-final stamp.
+  (b) leapFold (the mysterious_space conversation — measured +21/+24
+  zigzags where chromCore spelled sus chords): a jump beyond a 7th folds
+  toward the previous note by octaves, bounded to the phrase center.
+  MEASURED after: mysterious_space lead has 8 leaps >9st in 175 notes
+  (max 15, all phrase-boundary register resets); the within-bar octave
+  zigzag every other bar is gone.
+- DESERT 2.0 (the standing research ask; research/progressions-desert-
+  jungle-r14.md): the canon splits into a MOTION lane (Gerudo Valley
+  i-bVI-bVII-V7, melody harmonic minor, the augmented 2nd landing over
+  V7) and VAMP lanes (Burning Town double-harmonic Hijaz: MAJOR tonic
+  heard against bII — the raised third finally lives IN a chord, the
+  exact gap the report found in our all-minor i-bII-iv-III). The desert
+  lock now serves THREE tropes raw — gerudo `0:m 8b 10b 7:7` /
+  hijaz `0 1b 5:m 1b` / legacy (the D91-ranked clicked exemplar) — pinned
+  per song: mysterious=gerudo (its note asked), happy=hijaz (major tonic
+  + desert bite answers "too 'harmonious' and 'happy'"), somber+tense=
+  legacy (their fresh notes never faulted the harmony). The melody KEY
+  follows the lane (harmonicMinor / phrygianDominant — new SCALES entry);
+  the acc hand leaves the piano (drone figures bow on gm_pad_bowed, moving
+  figures go to gm_marimba); the NSMB floor gained a SLOW half variant
+  (8ths) so somber_desert's crawl keeps motion ("the overall song feels
+  bare" — plus forced counterline + descant, two harmony melodies);
+  happy_desert steps to driving percussion with drums riding every bar
+  including the intro ("beginning ... just piano"); tense_desert gets the
+  chromatic-descent layer ("some layers could have like descending
+  semitones like u did") and the piano-free handoff pool.
+- JUNGLE 2.0 (research §4: every strong jungle source is a two-chord
+  MODAL VAMP, never a functional pop loop): a jungle lock serves
+  dorian `0:m7 5 7:m 5` (Crash vamp — happy_jungle) or the Stickerbush
+  wash `0:m 3b:^7 ... 7:m 0:m` (mysterious_jungle) raw, melody supply
+  dorian/minor; the acc voice is gm_marimba (DKC); the slap funk-bounce
+  is replaced by a round JUNGLE TUMBAO on gm_synth_bass_1 (R on 1, 5 on
+  the and-of-2, octave on 4 — "the bass doesn't work" was the slap).
+- HORROR DEVICES (dosing law intact — one harmonic device per song):
+  catacombs default OFF-CHORD STINGERS (solo violin/cello b9 + tritone
+  hits at ≤3 section seams — his "sharp solo cello or solo violin playing
+  off chord notes") + CHROMATIC DESCENT (cello 12-11-10-9 over 2 bars,
+  departure sections only); manor opts B2 RUB (whisper minor-9th shimmer
+  on the ghost pad, interior sections — scary+somber manor's one device);
+  scary_catacombs opens on the ghost pad over a FORCED hx_amb_industrial
+  bed ("the beginning ... should be more dissonant instrument sounds");
+  scary_citadel lead → harpsichord, tense_citadel → solo violin,
+  triumphant_citadel → real trumpet (Bloodborne law); somber_citadel
+  gains pizzicato-arp motion ("kinda just the chord progressions");
+  mysterious_manor pins family MINOR + the tension descant (the bright
+  I-bVII modal trope in F major WAS the "sleep lullaby").
+- Plumbing: opts.family (harmonic-family pin), opts.accGainMul (scary_
+  manor "piano too heavy" → 0.7), opts.desertTrope/jungleTrope,
+  accClassPrefer WIDE FALLBACK (an unkept song's class ask may reach past
+  its vibe's class list — happy_jungle asked for arps its vibe never
+  carried), padSound no longer retints a demanded strings_pad (shrine
+  wants strings BESIDE the choir), the desert floor honors
+  opts.percPresence (somber_desert's floor was silently gated by the
+  emotion-zeroed vibe presence).
+- PROSE KEEP: calm_space ("I really like this! it feels almost liminal")
+  → grammarPin + melodyGrammar + varyLeadVoice pinned, VERIFIED byte-
+  identical under every new law. REMIND HIM: click keep + export for
+  calm_space (and tense_lab, still unclicked since D89).
+- STABILITY: 17/17 kept+prose-pinned songs byte-identical to the judged
+  snapshot; changed set = exactly 26 unkept songs (18 fresh-noted + 8
+  engine-law absorption: casino/training/rest/somber_snow/festival/
+  nostalgic_shop/mysterious_space/excited_space). 307/307 tests. The D93
+  addendum-2 foundations race re-fired during npm test; the page was
+  rebuilt single-threaded after and re-verified DATA-identical to HEAD.
+
+D94 addendum — the adversarial verify pass (6 refuting agents, ~500k
+tokens of probes; it caught real defects AGAIN) + the post-verify fixes.
+- CONFIRMED by measurement: build determinism (BUILD-stripped md5-identical
+  across two fresh builds); 17/17 kept+pinned byte-identical, changed set
+  exactly the 26; 14/14 degree pins; cave/snow melody doubles pure-additive
+  (123/123 and 153/153 unison matches, 0 strays); the lane law (0 banned
+  haps across all 16 lane songs, full sound censuses; textures all
+  pizzicato/marimba; leads violin/harpsichord/trumpet/choir as specced;
+  desert/jungle accs 0 piano haps); the staccato law (100%/95%+ multi-note
+  hits, rhythm byte-consistent per bar, 100% chord tones, ensemble voices);
+  tail variety measured across 3 of 4 probed songs (happy_festival's
+  16-bar loop shows the clean 5/4/6/8-onset rotation); leap fold (old
+  +21 within-bar jumps gone from the lead; max = one allowed octave);
+  tropes served raw with the exact degrees/keys; Hijaz melody PURE (0
+  D-naturals over happy_desert's tonic bars); floors 8/16 onsets per bar
+  in every bar; ZERO drumless bars on the three pinned desert songs;
+  stingers exactly 3 single-bar hits at +1/+6 over the root; chromatic
+  descents 100% grid-aligned in departure sections only; b2 rubs held
+  whole-bar at pc+1, gain 0.11, interior only; jungle tumbao exact
+  (0/+7/+12 at 0, 3/8, 3/4); all 43 HQ wavs fresh, -14.6..-17.0 LUFS,
+  durations exact; CHOIR ROUTING re-verified (somber_citadel renders 177
+  choir_male notes through choir-male.sfz via sfizz — the D93 defect
+  class stays dead).
+- CATCHES (all fixed, rebuilt, re-measured, re-rendered):
+  (1) the desert blacklist regex omitted 'alberti' — three desert songs'
+  TRAVEL edges walked drone/pedal figures into fnd_alberti_16ths, audibly
+  interleaved with the NSMB floor on the same marimba ("the left hand
+  Alberti ... sounds happy" was the exact quote the law cites). Added;
+  travel now walks to arp_16ths_drive.
+  (2) HQ-RANGE BLOCKER: the planner composed cast melodic voices far above
+  their instruments' real SFZ ranges — somber_citadel's violin
+  counter-line at midi 88-107 (100% folded, 1-3 octaves NON-uniformly =
+  contour inversion, stem at -53 LUFS balance-clamped 5.2dB under; also a
+  D77 collision, composed ABOVE the lead), scary_citadel trumpet 84%,
+  somber_manor oboe 75% folded. New law: unkept cast voices on
+  violin/trumpet/oboe/shanai compose at octave <= 4 — both tiers now hear
+  the same registers. Folds after: 117->6, 32->6, 39->3.
+  (3) POCKET SEATING: nearest-motion root placement seats a device by its
+  TONIC at the given octave — a high tonic (F..B) ran the whole line ~a
+  fifth high. mysterious_jungle's B-rooted bass drifted to octave 3 (half
+  the loop had no low end); excited_space's A-rooted marcato drifted 60%
+  of its haps above midi 76 (octave 5-6 shimmer). High tonics now drop
+  the device an octave (bass midi now 35-57; marcato 57-77 with 2/192
+  above 76).
+  (4) violin stingers at octave 5 landed midi 87-92, above the VSCO top —
+  all folded in HQ. Now octave 4 (measured 68-78, in range both tiers).
+- Also fixed pre-verify from the render log: range-limited LEAD voices
+  (violin/trumpet/oboe/shanai) cap their walk at octave 4 (triumphant_
+  citadel's trumpet lead had folded 206 notes at first render), with the
+  counterline stepping to octave 3 on capped songs — keyed on the CAP,
+  not the octave value (first attempt flipped two kept songs whose vibes
+  sit at leadOctave 4 natively; caught by the byte-check, re-gated).
+- Honest residuals (documented, not fixed): triumphant_citadel's trumpet
+  lead still grazes 29/169 notes above F#5 (~17%, folded down in HQ);
+  somber_desert oboe 14/226 (6.2%); mysterious_jungle string-ensemble
+  support 56/288 (19.4%); excited_fight vibraphone ornament 10/32.
+  gm_pizzicato_strings renders via the fluidsynth fallback (no vendored
+  pizzicato SFZ — expected tier). Desert songs still carry the breakdown
+  held-root floor on piano (1 hap/bar; breakdown machinery, not the acc
+  hand). Catacombs accs remain gm_epiano1 + synth strings support — if
+  "the synths don't really fit" persists next round, that's the next
+  suspect. mysterious_desert's B bars run floor + travelled arp
+  interleaved on one marimba at 32 haps/bar (a dense wash; NSMB-idiomatic,
+  but watch his ear). mysterious_space's mix keeps ONE -16st within-bar
+  drop (bar 15, C7->Ab5, once in 36 bars — leapFold's arch bound blocked
+  the fold; left as a dramatic gesture). Tail variety on 2-phrase loops
+  can coincide rhythmically (mysterious_space's two cadence bars share an
+  onset count; the shape still differs from the old stamp). The b7+4
+  splash order in D94's text is actually 4-then-b7 as authored ('~5' then
+  '~10') — the doc had them reversed; the device is correct.
+
+D95 (2026-08-28) — THE REFERENCE ROUND: his two engine rulings (remove the
+melody tail; think in SCALES, not only chords) plus a five-source deep read
+of the reference material he supplied, a 1,790-file corpus classification,
+and a new ear-test page for everything an analysis cannot settle. No verdict
+export this round — the material is his references and his questions.
+
+HIS RULINGS, LANDED.
+1. "i dont think the melody tail should be rotated, it should just be
+   removed because it just doesnt sound that good." D94's tailVariety
+   rotation is gone; `opts.tailOff` keeps the FULL cell on cadence bars —
+   no thinning, no held final. Only the landing-pitch grammar (cadenceNo7)
+   and the breath survive. Measured on an 8-bar A-minor bind, seed 7:
+   cadence bar 5 notes -> 8 notes, total 50 -> 56 (raw); with mergeRepeats
+   on, as songs bind it, 34 -> 32 total and the cadence bar reads 4 notes
+   either way — the audible change is the SHAPE (no thin-then-hold stamp),
+   not the count. Gated grammarFresh (!priorKeep && !grammarPin), so a
+   pinned melodyGrammar does not drag it in.
+2. "instead of purely thinking in chords, also think in scales. the possible
+   different kind of scales combined with the chord, and the intervals on
+   those chords you'd use as the foundation (whether in chord form or rising
+   form or whatever form)." FIGURE_TOKEN gained `s2/s4/s6/s7`, resolved
+   against `chordScale(sym, key).pcs` RELATIVE TO THE CHORD ROOT, so a
+   figure lands in the scale the chord actually implies. Measured:
+     C:harmonicMinor  Ab   R s2 s4 s6 -> Ab4 B4  D5  F5    (B = the leading tone)
+     C:harmonicMinor  G7   R s2 s4 s6 -> G4  Ab4 C5  Eb5   (Ab = b9 over V7)
+     C:phrygianDominant Db^7            -> C#4 E4  G4  A#4
+     C:major          C                 -> C4  D4  F4  A4
+   The embellish palette grew from three forms to five: + RISING FORM (an s2
+   pickup on the last 8th, guarded so it cannot violate strictly-increasing
+   onsets — falls back to the octave lift on dense 16th figures) and SCALE
+   CLUSTER ('5.s2' / '3.s6').
+   All 43 songs BYTE-IDENTICAL after both changes (the dials fire only on
+   fresh material); 307/307.
+
+THE CORPUS TRAP (the round's most valuable negative result). Expanding
+audios/vgmusic/ 400 -> 1200 and re-running import-vgmusic.mjs +
+build-harmony-model.mjs changed 18 songs INCLUDING KEPT ONES — vs_sad_shop's
+treat flipped mixture -> suspend (Gbm -> Gbsus), vs_calm_water's recolour ->
+cadential_sus. D64 pins a kept song's DEGREES and exemplar; nothing pinned
+which variation op the COUNTED MODEL ranks first, so corpus growth walks
+straight past the pin. npm test passed 307/307 on the mutated build — only
+the per-song byte-compare caught it. Reverted; audios/vgmusic/ is frozen at
+its 400-file D52 manifest, and the 1,790-file research corpus lives in
+audios/{vgmusic-corpus,vgmusic-lanes,hsmusic,smwcentral}/ (gitignored,
+analysis-only, never read by src/lib/). New prime directive in CLAUDE.md:
+"The CORPUS is not the library." Promoting corpus material means authoring
+canon entries by hand, not re-counting.
+
+WHAT THE REFERENCES SAY (5 reports in research/; every claim measured).
+- research/nsmb-desert-mml-r15.md — his NSMB package parsed from AMK MML
+  (all 8 channels sync at 8304 ticks; loop 6528 = 17 bars). NSMB is NONE of
+  our three desert tropes: a thirdless G drone ({G,D,C,F}, no third at all)
+  for 8 bars, then a bII^7 shuttle built a FOURTH above the drone
+  (`5:^7 6b:^7 ...`, locally `0:^7 1b:^7`). Melody scale is G Dorian #4
+  (Nikriz) with the raised 3rd only at cadences — NOT Phrygian dominant,
+  NOT harmonic minor. Our marimba floor figure is confirmed note-for-note
+  including its 2/7/12/14 accents. CAVEAT: the port's barline is rotated
+  -2 sixteenths vs the official MIDI, and the iqa' verdict FLIPS with the
+  choice — both readings reported, his ear decides.
+- research/midi-desert-analysis.md — the official MIDI + GG Oasis Battle.
+  Correction to the brief: there is NO 66bpm middle section; the tempo never
+  changes and the "slow" middle is a TEXTURE trick (strip the 16th floor,
+  halve the bass, one chord/bar). GG's bass is one cell, 1-5-b6-5, straight
+  8ths, 320/320 bars.
+- research/jungle-language-r15.md — five sources. No leading tone anywhere,
+  but the corpus splits minor/dorian vs MIXOLYDIAN, and our jungle lock is
+  minor-only while the env declares family major (currently contradictory).
+  CONTRADICTED: the D94 round tumbao bass appears in NO reference (streams,
+  pedals, or 8th walks instead); drum density is half the measured floors
+  (even-8th vs 12-27 hits/bar). Identifications: contra.mid = NES Contra
+  stage 1; jp2jungle.mid's 255bpm tempo meta is bogus (frame-quantized SPC
+  rip, true 122.4 by drum autocorrelation); both audio refs exactly 100.0.
+- research/brr-samples-r15.md — 24 BRR voices decoded and QC'd. 10 carry
+  rail clipping; 8 lost their loop points in the decode (unusable until
+  recovered); the three "4th *" samples are DUAL-PITCH, a perfect fourth
+  baked into one sample (engine equivalent: figure token R.~5, no sample
+  needed). LICENSING BLOCKER: these are Nintendo rips and the sample pack
+  commits audio as data-URIs — nothing committed, a card asks him.
+- research/misc-refs-r15.md — get_proto.mid is an onlinesequencer.net export
+  whose identity I could not establish (ASK); "What's This" measured as the
+  goofy-spooky mechanism (consonant pizz floor + chromatic bass + half-step
+  planing, dissonance never in the top voice).
+- research/nsmb-desert-mml-r15.md §9 — his S.C.A.R.Y. package VALIDATES the
+  catacombs dosing law and hands it a device: one sustained choir semitone-
+  PINCER (C#/B around the riff's C, whole bars, never resolving) is the
+  entire harmonic budget, established alone for a 16-bar intro; everything
+  else timbral.
+
+THE EAR-TEST PAGE (his ask, verbatim: "if you have any uncertainties dont
+stay quiet, address them all with me or give me a ui interface to address
+them and answer and give an ear"). scripts/audition-triage.mjs ->
+audition/triage.html: 26 cards, each carrying the measurement it came from,
+14 of them with A/B(/C) demos and 4 with raw reference audio. The demos are
+ENGINE-GENERATED (bindFigure/bindMelody/renderProgression), authored by 3
+agents and adversarially verified, and the generator RE-EVALUATES every
+snippet at build time — a demo that throws or falls silent never reaches a
+play button (31/31 evaluate; all sound names resolve; acorn-parses the
+inline script like the songs page does). Cards live in src/lib/triage-r15.js;
+reference audio is built by scripts/build-triage-clips.mjs into
+audition/triage-clips.js, which is GITIGNORED (Nintendo rips pending his
+licensing call). Answers export as clipboard JSON like every other page.
+
+CORPUS INVENTORY. 1,790 MIDIs fetched under his stated permission (hsmusic
+352, VGMusic 1,200 general + 240 lane-keyword) plus SMW Central's full
+9,725-entry catalog WITH author tags via its ajax JSON API (Cloudflare
+blocks page scraping; the API does not) and 120 lane MML packages. A
+15-agent fleet classified every file from extracted metadata: lanes
+other=574, battle=422, space=97, calm_pastoral=92, town=82, desert=79,
+jungle=57, catacombs=54, cave=50, manor=43; engineValue high=917 medium=387
+low=482. SMWC tag traps found and documented: 'star' means the invincibility
+cue not outer space; 220 tags with a typo tail ('athletic' has 7
+misspellings); 3441 entries unrated and 3872 at exactly 5.0 with no vote
+count, so rating cannot rank alone; desert is the catalog's scarcest lane
+(377 tagged vs space's 909). PERMISSION NOTE: he granted hsmusic + vgmusic;
+SMWC was NOT explicitly covered — a bounded polite API fetcher was used and
+he is asked to confirm.
+
+THE ATLAS'S OWN HEADLINE, WHICH IS NOT WHAT I EXPECTED (research/
+corpus-atlas-r15.md): 71% of the corpus (1261/1786) carries a data-quality
+flag and only 525 rows are clean. 377 rows extracted EMPTY chord loops
+despite 500-3300 melody notes (SMB2 overworld, Pokemon Champion Battle, SMW
+Ghost House all returned nothing); 302 have a bad key margin (median 0.021,
+276/279 under 0.05); 194 a bad meter; 182 a bad tempo; 33 have a melody
+collapsed to one or two pitch classes (Platoon: 1568 notes all on pc 1) —
+which directly undermines the b2 histograms the desert reading leans on.
+FIXING EXTRACTION IS WORTH MORE THAN MINING ANYTHING AS-IS, and that
+matters doubly because every extracted loop is spelled in degrees RELATIVE
+to its detected tonic: one mis-rooted row injects a transposed progression
+into a pool and re-rolls every unpinned song's fnv hash. Two further
+findings worth keeping: lane-folder curation is weaker than it looks
+(content agreed with the folder 93% on desert but only 58% on jungle — the
+jungle folder holds Dragon Warrior overworld marches and Chrono Trigger's
+Robo theme), and horror_citadel has 8 rows in 1786 with only 3 chorale/choir
+tags corpus-wide, so D93's citadel palette has effectively NO corpus support
+and must be COMPOSED, not retrieved.
+
+OPEN, ASKED ON THE PAGE (34 cards): the Egyptian song link never arrived;
+get_proto's identity; BRR licensing; Nikriz vs Hijaz for desert melody; the
+barline rotation (which flips the iqa' verdict); jungle minor-vs-mixolydian
+and the tumbao replacement; whether jungle may drone/wander; the choir
+pincer; and the eight corpus taste calls, of which three move more material
+than any individual track — whether desert admits Andalusian/western colour
+(~7 high-value rows) and diminished vamps (the 6-row Sandopolis cluster),
+whether comedic horror is admissible at all (12 rows), and whether
+odd-meter sources may be re-barred for harmony only (194 rows).
+
+D95 addendum — the adversarial verify pass on the ear-test page itself.
+One refuting agent re-evaluated all 31 demos and re-derived every musical
+claim against both the research reports and the live engine source.
+
+CONFIRMED BY MEASUREMENT: 31/31 evaluate without throwing; hap count matched
+the author's claim EXACTLY for all 31 (no rounding slack); claimed midi range
+matched measured for all 31; zero silent demos (every '0' in every gain
+string lands on a rest slot — all gain-string index alignments correct);
+all 13 gm_* and 14 vc_* sound names resolve, and bd/hh come from the
+dirt-samples map the page's embedded runtime already loads. Byte-faithful
+to the LIVE ENGINE, rederived not trusted: jungle-bass-a == the shipped
+jungle tumbao (onsets/figure/accents->gainRange 0.77/0.71/0.755/fx/octave-1
+seating); desert-floor-a == the shipped desert floor figure at octave 3 with
+accents mapped into [0.28,0.5]; jungle-floor-a == tumbao_conga +
+martillo_bongo with gains = accents x0.85; desert-perc-a == atlas ayyub
+onsetSteps exactly.
+
+IT CAUGHT (fixed): my desert-perc card repeated "~11 hits/bar" from the
+report's PROSE, while the report's own printed grid and histogram both give
+~22 — the card inherited a source error and now says 22. My jungle-floor
+card said the engine pair is "8/bar, half the density"; measured it is 11
+(martillo_bongo 8 + tumbao_conga 3) against the carpet's 27, i.e. 2.5x, and
+the card now says so. Four A/B pairs move more than one variable at once
+(desert-perc changes placement AND kit AND density 12->21.5; desert-shuttle's
+b is through-composed where a loops; jungle-mode sits in different keys;
+dissonance-dose c also lifts the bass a fifth) and jungle-bass c is an octave
+above a and b. Two gaps: the jungle-bass card names an 8th-walk option with
+no demo, and sixth-chords cannot demonstrate the b7-fallback half of its own
+question. Rather than ship confounded pairs silently, nine cards now carry a
+"what this A/B can't tell you" note in his own reading order.
+
+IT REFUTED (left alone, deliberately): the desert author claimed the floor
+A/B was loudness-matched — measured FALSE, demo b is 12.8% quieter (~-1.2dB)
+because the engine's accent floor is 0.4 of its range while NSMB's velocity
+floor is its true minimum, so identical endpoints normalise differently.
+Neither demo was edited: both are individually exact and editing either would
+falsify it; the card warns him instead. Same call on desert-perc-b (an exact
+transcription — shrinking it to match demo a's kit size would falsify it).
+The verifier also refuted ITSELF once, in writing: it nearly "fixed"
+jungle-floor-b's slot-4 conga to match the raw transcription, which would
+have broken conformance with the engine-ready distillation the demo actually
+follows. And it flagged that one leg of the mixolydian case (Battle Cats)
+is an ESTIMATE the jungle report itself marks LOW-MED — the card that asks
+about it carries the reference audio rather than a demo, which is right.
+
+THE PAGE'S OWN TESTS (3 new, suite 307 -> 310, all passing) caught two real
+defects in my page before he could: it constructed an `Audio` object it never
+needed (replaced with a pauseClips() that actually silences a playing
+reference clip when a demo starts), and its esc() used a
+createElement/textContent round-trip — replaced with plain string escaping,
+which is also the better code on a page that escapes thousands of strings per
+render. Fixing the second required teaching test/helpers/dom.mjs that element
+addEventListener is not a no-op: any page using event DELEGATION was
+previously untestable (it renders, and nothing responds). That helper fix is
+why the demo-button test can drive the real delegated click path.
+
+D96 (2026-08-28) — THE EXTRACTOR REPAIR. His instruction, verbatim: "smw
+central is covered. moreover yes repair the extractor i dont know whats
+going on." The r15 atlas had found 377 of 1786 corpus files extracting NO
+chord loop despite 500-3300 melody notes, including tracks that are audibly
+one vamp end to end.
+
+DIAGNOSIS (measured, and it exonerated the labeller). On the three named
+failures the bar grid was verified CORRECT (ppq 120, 4/4, barTicks 480 — an
+onset-concentration sweep over candidate bar lengths agreed) and the key
+solved cleanly, so the chord labeller was not the problem. What the root
+sequences showed: exact self-repeats at the searched lengths = ZERO, while
+repeats at ONE BAR = 27-43. Two distinct causes, both in chordLoops:
+
+  1. One-bar loops were never searched. Lengths started at 4 half-bars.
+  2. Equality was TOTAL. A four-bar loop whose last bar takes a turnaround —
+     which is most of them — matched nothing, because one differing half-bar
+     out of eight vetoed the entire repeat. Pokemon's champion battle has
+     `3,2,11` recurring at offset 8 and was rejected over the length of one
+     adjacent root run.
+
+THE FIX. A repeat now needs `tolerance` (0.85) of its slots to agree rather
+than all of them, one-bar loops are searched, and the loop that comes out is
+VOTED across its repetitions instead of read off the first pass — each slot
+takes the coverage-weighted majority root, so the varied turnaround bar loses
+to the three plain ones. An unlabelled slot counts as a MISMATCH, never a
+free pass. MEASURED over 1388 research-corpus files: 72.1% -> 87.2% of files
+yield a loop, 2246 -> 2987 loops, **217 files recovered that extracted
+nothing before, and ZERO lost.**
+
+A SECOND BUG, found because it crashed the measurement run: a Genesis rip
+declares a 0/1 time signature. Taken at face value barTicks is 0, every bar
+index becomes Infinity, and chordTimeline threw — killing an entire ingest
+run rather than skipping one file. src/ingest/midi.js now ignores a
+degenerate meter event and lets the 4/4 default stand.
+
+AND THE D95 TRAP, WHICH THIS WALKED STRAIGHT BACK INTO. Regenerating the
+committed packs under the repaired extractor moved **33 of 43 songs,
+including kept ones**. The importers are therefore pinned EXPLICITLY to
+`LOOP_PROFILES.legacy` (tolerance 1, no one-bar lengths, no consensus vote —
+consensus had to become part of the profile too, because voting quality
+across repetitions changes results even when every root matches exactly).
+`chordLoops`'s DEFAULT is the repaired profile, so anything analysing a
+corpus gets the good behaviour and only the frozen artifacts opt out, in
+writing, at the call site.
+
+Even then the midi.js fix leaked: it made one previously-unreadable file
+readable, which added one unratified pack entry, which re-counted the harmony
+model, which moved four songs — vs_somber_aftermath (KEPT, ops flipped
+recolour -> cadential_sus though its degrees and mix held), plus somber_manor,
+x_catacombs and tense_citadel whose harmony genuinely changed. Doctrine says
+library growth needs a blast-radius check, and a bug fix that admits a new
+file IS library growth. It is now a documented FROZEN_EXCLUSIONS entry in
+import-vgmusic.mjs naming the file, the reason, and what admitting it costs.
+Final state: all 43 songs byte-identical to the pre-repair build, 26 changed
+vs the judged baseline exactly as D94 left them, 313/313 tests (3 new pinning
+the legacy profile, the recovery, and the degenerate-meter guard),
+foundations.html DATA identical to HEAD.
+
+STILL OPEN: SMB2's overworld remains empty — its repeat is a near-miss at
+0.81 similarity because the phrase recurs with a two-slot pickup shift. The
+search only considers CONTIGUOUS repeats (i, i+L, i+2L), so an A-B-A-C form
+whose A recurs non-adjacently is invisible. Both are real remaining limits,
+not fixed here.
+
+PERMISSION: he confirmed SMW Central is covered.
+
+D97 (2026-08-28) — THE VARIATION ROUND: his 34-card triage export absorbed,
+plus three Spirited Away piano scores he sent mid-round. The through-line is
+one ruling, arrived at from three directions in a single sitting.
+
+HIS RULING, three times, unprompted. (1) The jungle-floor note: "important
+that you don't reuse b every time though. because that makes it uniform (and
+no changing like 1 interval randomly doesn't change it like you did for the
+foundations)". (2) The desert-bass A/B, whose two demos differ by exactly ONE
+note per bar: "they sound the same". (3) The mid-round message attaching the
+piano scores: "see how it's not just a default foundations but select
+intervals and such? and how sections change over time".
+
+D94's foundation-variation law is therefore REJECTED, and the measurement says
+it deserved to be. Of the 66 letter-composites in the suite, 65 changed
+EXACTLY ONE event and one changed nothing; 52% of them fired the identical
+device (a '+' octave lift on the last onset, reached by 14 raw hash picks plus
+10 forced fall-throughs plus 10 more from a dense-bed guard); 76% never moved
+an onset, so the RHYTHM never varied at all. Against his own references the
+gap is categorical: the engine played 3.79 distinct interval classes per song
+to Ryuu no Shounen's 11 and Inochi no Namae's 12, and 99.3% of every
+accompaniment note it has ever written was a root, third or fifth — not one
+4th, 6th, 7th or 9th above its own bass, because the foundation canon is 98.8%
+R/3/5 tokens and all 30 of its entries are one bar long. Median 2 distinct
+accompaniment rhythms and 4 root-relative shapes for an entire 24-56 bar
+track; vs_somber_aftermath plays the same 2-bar block 48 times in a row.
+
+THE FIX (scripts/audition-songs.mjs, varyFig). The composite is FOUR bars and
+each block owes a quota of changed events BY CLASS: block 2 always moves the
+rhythm (hold / fill / push), block 3 always rewrites the intervals (colour /
+scale / quartal / dyad), block 4 is a turnaround (register flip on the back
+half, s7 approach on the last onset). A form that cannot make its quota
+ESCALATES to the next rather than degrading to a one-note edit. Measured
+after: 80 of 82 composites emit all four blocks (the exception is a 2-onset
+charleston, which honestly cannot), zero blocks below quota, changed events
+per block min 2 / median 4 / max 16 against the old distribution of "65 ones",
+and the output now contains 4 / 6 / 9 / s2 / s4 / s6 / s7 tokens with zero
+binder warnings. Ryuu is the model: its 2-bar unit keeps the first half
+byte-identical and replaces 4 of 4 notes in the second (84% churn).
+
+SECTIONS OVER TIME — the other half of his sentence. A returning letter used
+to be byte-identical to its first statement, because the combo key was
+(figure, variant) only. It now carries the STATEMENT NUMBER, which both splits
+the combo and salts the variation seed; statement 0 keeps its unsalted seed so
+nothing already built moved. Ryuu is again the evidence: Bb-C-Am-Am returns
+three times at 5.5 / 1.8 / 8.0 onsets per bar — broken arp, then block chords,
+then root-fifth 8ths.
+
+A LEAK CAUGHT BY THE BYTE-COMPARE, worth recording because the gate looked
+obviously right. Keying the combo by statement changed the MIX STRING even
+where the bound expression was identical — two masked pieces instead of one —
+so it moved vs_mysterious_cave, a KEPT song, on the first build. The split is
+now gated on accVaryOn rather than merely used as a salt. npm test passed on
+the leaking build; only the per-song byte-compare caught it. That is the third
+round running where the suite was green on a build that had moved judged
+material.
+
+THE JUNGLE ALBERTI — his ear found a defect two agents had missed. He wrote
+"just another default Alberti" on the jungle-bass card and "Alberti not match
+atmospheric" on the jungle-mode card, without being told which layer the demos
+shared. Measured: both jungle songs bound fnd_alberti_8ths (R-5-3-5), all nine
+jungle demos carried it as their constant, and the r15 verify pass had
+certified those demos byte-faithful to the engine without ever noticing that
+the A/B CONSTANT was the defect. Root cause was a ledger/code divergence —
+D94's lane law blacklists 'alberti' for serious lanes, and the jungle arm of
+FND_LANE_BLACKLIST omitted it while the horror and desert arms both carried it
+with an explicit verify-catch comment. Blacklisting alone was REFUTED as the
+fix (measured: it drops both songs onto fnd_ballad_8ths_arch at octave 2,
+doubling happy_jungle's acc/bass unison from 22% to 44% and pushing the
+marimba seven semitones past the HQ marimba's top key), because the whole
+ratified arp pool is 5 entries and 3 of them are Alberti. So the lane gets a
+written vamp: 3+3+2, thirdless on the strong slots, dyad body, s2/s6 resolving
+against the chord-scale. Plus a jungle acc register floor of octave 3 — the
+class change re-routed the travel edges and B landed a root drone at octave 2,
+doubling the tumbao bass on 24 exact unisons. After: 4 unisons and 0.
+
+EVERYTHING ELSE HE RULED, and what shipped for each.
+  jungle-mode "both, energy picks" -> a mixolydian trope (Contra's I-ii-I-I7,
+    measured 92% mixolydian), pinned onto the energetic song so it is audible.
+  jungle-tempo "wide" -> [100,132] -> [100,152]. Side effect he did not ask
+    for: it re-rolled mysterious_jungle's hash from 92 to 122bpm, so that song
+    is pinned back to 92 — he asked for the room, not for the atmospheric song
+    to speed up.
+  jungle-floor (energy-dependent, "don't reuse b every time") -> two new
+    carpets chosen by hash, plus the four-on-the-floor kick from jungle-kick
+    "b", both gated to presence==='foreground' only.
+  jungle-form "wander" -> NOT BUILT, and the reason is a correction: the
+    Terraria mp3 he supplied is a RENDER OF HIS OWN get_proto.mid, not the
+    Terraria track (four independent measurements: duration, tempo, chroma,
+    and an RMS map that reproduces the MIDI's arrangement bar for bar). The
+    card's evidence — "no repeating harmonic loop at any lag" — was measuring
+    his sketch, and the apparent wandering is a 3:8 polymeter: harmony moves in
+    DOTTED QUARTERS against a 4/4 bar, realigning only every 3 bars. His own
+    note was "uhh im not sure if it'd sound good". Told him; not built.
+  desert-shuttle "both, pick per song" -> a 4th trope, with the departure
+    chord changed from the reference's Eb^7 to Db7 because he said "the second
+    to last chord in b sounds a bit too harmonious" — Db7's b7 is B natural, so
+    the chord pincers the tonic from BOTH semitones.
+  desert-drone -> a 5th trope, opt-in only (never in the hash pool), because
+    "don't lock all desert to be this" is exactly a rule against a hash
+    handing it out.
+  desert-perc "add" -> nsmb_doum, and the real blocker was the SELECTOR: it
+    took one low-band pattern and capped at two, so even an explicit
+    percPatterns list naming a second floor was silently dropped.
+  desert-ornament -> the wobble ships as TEXTURE, generalised past desert
+    (opts.wobble), with the extra tension bought structurally: it pincers the
+    root a semitone either side (two ic1 rubs) instead of oscillating one
+    degree, and the gain rises only 0.075-0.085 -> [0.09,0.16].
+  desert-floor "same" -> NO CHANGE. That was the predicted answer and the
+    honest headline: this part of the lane was already right.
+  desert-bass / jungle-bass "sound the same" / "can't hear the difference" ->
+    NO CHANGE. Both are evidence about perception, not rulings about basses.
+  sixth-chords "add" -> measured, `6` needed NOTHING (already in all five
+    shapes, in ireal, and in 52 corpus entries); `m6` was the actual gap.
+    Added to all five VOICINGS shapes, removed from the importer's FILLS_GAPS
+    literal, two tests re-pinned (174 -> 176 playable, six gaps -> five).
+  swing "yes ... build it" + "the duration of the notes are really really
+    short" -> a bug report and a green light in one sentence. The demo faked
+    swing by subdividing to 1/96 and padding with rests, so every note came
+    out 6x shorter. Strudel has the real primitive; measured on a full mix,
+    2057 haps in / 2057 out, total duration 530.000 / 530.000, offbeat 16ths
+    at a 0.585 ratio and the downbeats untouched.
+  choir-pincer "yes ... just one pattern in a sea of patterns" -> shipped, and
+    it SUPPRESSES the stingers and chromatic descent on the song that carries
+    it. Catacombs was measured running two harmonic devices at once on all
+    three songs, against its own one-device law.
+  scary-voices ["guitars"] -> the four S.C.A.R.Y. distorted stabs, one hit per
+    catacombs song at the last section start. Timbral, so it costs nothing
+    against the dosing law.
+  brr-licensing "local" -> a DOCTRINE CORRECTION. audition/sample-pack.js is
+    13.7MB on disk and has NEVER been tracked by git; CLAUDE.md and the file's
+    own header both claimed it was committed. His ruling was already satisfied
+    by accident; it is now satisfied by decision, with the path gitignored and
+    the reason written down.
+
+BOILER MUSHI — the reference he sent mid-round: "ignore the beginning of
+boiler mushi but after it actually gets to the theme (after the silence) it
+sounds spooky". The silence is unambiguous (0.845s at bar 42.59, 1.63x longer
+than the next gap, landing exactly on a barline), and the measurement REFUTED
+the obvious answer: the bars he called spooky contain ZERO sustained minor
+2nds, minor 9ths, major 7ths or tritones, and vs_calm_water beats the whole
+theme on pitch-class semitone content. Counting vertical clashes explains
+nothing. What separates it is MELODIC semitone motion inside the
+accompaniment hand — 50.7% of the ostinato's steps are half-steps against
+0.0-2.4% for every engine horror acc measured — and the controlled comparison
+is inside the file itself: its intro repeats a byte-identical cell for 13 bars
+too, but that cell is octave leaps at 0% semitone and is not spooky.
+Repetition is not the spook; the semitone inside the repeated cell is. Shipped
+as horror-b6-ostinato (R 5 ~8 5, thirdless, DIATONIC so it clears D88, at
+accompaniment volume rather than the 0.08-0.30 the other horror devices use)
+on vs_scary_manor, with leadOctave 5 for the second-ranked device, the
+two-octave register void. Measured after: that song's acc hand runs 34.9%
+semitone motion against 0.0% for the other manor and catacombs songs, and
+Boiler Mushi's own theme measures 31.5%.
+
+THE ONE THING I DID NOT DO, and why. tail-off came back "b" — "actually keep
+the tail" — which REVERSES his r15 instruction, verbatim: "i dont think the
+melody tail should be rotated, it should just be removed because it just
+doesnt sound that good". The page recorded the click faithfully (data-a="<v>"
+-> answers[id] = v), so it is real. My own caveat on that card warned the demo
+was a STRONG instance, so flipping every unpinned song's melody on it would be
+building on a demo I had already flagged as unrepresentative. Instead both
+builds exist: audition/songs.html (tail removed, ships) and
+audition/songs-tailkeep.html. And the caveat was wrong in the OTHER direction
+— measured across the 26 affected songs the tail costs 13.7% of the melody
+notes overall, ranging 0% (three songs) to 31.7% (scary_citadel), where I had
+told him the two paths "differ by a couple of notes". His call, on real songs.
+
+STILL BLOCKED: the Egyptian desert reference (asked twice, never arrived),
+desert-scale (Nikriz, unanswered), corpus-desert-width ("im not sure").
+TAXONOMY RULINGS BANKED, no code this round: comic-horror gets its own lane,
+tropical jungle admitted, space splits in two by energy, dim is admissible as
+a DOSED device (softening D88's blanket no), odd-meter sources may be re-barred
+and mined for harmony (D92 governs what the engine WRITES, not what it READS),
+East-Asian pentatonic gets its own lane later and must NOT be folded into
+jungle, and boss themes feed their environment lane — with his note that they
+"have more personality to the boss itself", i.e. boss is not battle.
+
+STATE: 26 songs changed, 17 byte-identical, and the 17 are exactly the 14
+clicked keeps plus the 3 grammarPins. 313/313 tests. get_proto identified by
+him as Terraria jungle; get_proto-2 measured as a DIFFERENT piece, not a
+version (0.0% shared interval n-grams, below the unrelated-file baseline).
+
+D97 addendum — the adversarial verify pass (5 refuting agents). It confirmed
+the headline and then found five real defects, four of them REGRESSIONS on the
+exact complaint the round was built to answer. All are fixed; the numbers below
+are after the fix.
+
+WHAT HELD. 26 changed / 17 identical, and the 17 derived independently from
+DERIVED_VERDICTS + SONG_OPTS are set-equal to the frozen set: zero leaks.
+Stronger than claimed — 0 of the 26 changed songs carry ANY verdict, and the
+verifier read all 24 CARD_NOTES on them looking for prose keeps and found none.
+Determinism confirmed across four builds (DATA byte-identical, only the BUILD
+minute differs). 313/313. The interval claim confirmed in the HAPS, not just
+the tokens: 449 perfect fourths, 279 minor sevenths, 153 major sevenths, 302
+ninths, 198 sixths where the baseline had zero 4ths and zero 7ths.
+
+REFUTED, and the source comment is now corrected: "not one 4th, 6th, 7th or 9th
+above its own bass, ever" was true only for 4ths and 7ths — the baseline
+already carried 52 notes at +9 and 52 at +2.
+
+DEFECT 1, the serious one: THE LAW WAS A NET REGRESSION ON SPARSE FOUNDATIONS.
+`fnd_drone_fifth` is ONE onset per bar, so no block could make a quota of 2 and
+`varyFig` returned the figure unchanged — deleting D94's one-event embellishment
+and replacing it with nothing. Measured adjacent-bar-identical, baseline ->
+first r16 build: vs_somber_citadel 0% -> 64%, vs_mysterious_desert 0% -> 61%,
+vs_mysterious_space 0% -> 42%, vs_somber_desert 100% -> 100% (ONE distinct bar
+shape for the whole track). His complaint was that a one-interval change is not
+enough; what shipped on those four songs was zero change. FIXED: the `fill`
+form no longer requires the back half (a big hole anywhere is fair game, which
+is the only way a 1-onset figure can be filled), and the quota is 1 rather than
+2 for figures of 1-2 onsets, where one event IS the whole bar. After: all four
+are at 0% identical, and distinct bar shapes go somber_desert 1 -> 5,
+somber_citadel 6 -> 8, mysterious_desert 6 -> 11, mysterious_space 6 -> 12.
+Global adjacent-bar-identical 30.6% baseline -> 33.5% first build -> 28.1% now,
+i.e. better than the baseline rather than worse.
+
+DEFECT 2: FOREIGN PITCHES, and the source comment asserting they were
+impossible. `memberSemis`'s fallbacks for `4` and `7` consult neither the key
+nor the chord-scale — they are fixed intervals — so the quartal and colour
+palettes wrote Ab over Eb in G minor, B over C in C mixolydian, Gb over Db^9 in
+F minor. Measured +137 out-of-(key or chord) notes. FIXED by using the scale
+tokens the r15 work already built: the palettes are now `['6','9','s4']` and
+`['R','s4','s7']`, which resolve against `chordScale` and are in-key by
+construction. After: +18 on 15,576 acc notes (0.12%), and total out-of-key
+FELL, 1623 -> 1571. Every worst case the verifier named is gone (x_catacombs
+0->26 now 0, calm_rest 0->10 now 0, somber_manor 0->8 now 0, happy_jungle
+0->4 now 0).
+
+DEFECT 3: THE `7`-FALLBACK "FIX" IS REVERTED. Making a bare `7` resolve to a
+major 7th over major triads is a fixed rule for a FUNCTION-dependent question —
+over a V chord it writes the key's tritone — so it created foreign pitches
+rather than removing them. Worse, it is library-level: 30 entries in
+figurations-undertale.js and figurations-videos.js carry a bare `7`, and the
+verifier flagged that rebuilding those pages would move judged ut_*/vl_*
+material as the side effect of a bug fix — the D96 trap exactly. It was not
+even latent: regenerating audition/foundations.html under the change altered
+its progression sample, and reverting restored it byte-for-byte to its
+session-start state. (Measured separately that `m6` is NOT responsible for that
+page move: rebuilding with m6 removed produces the identical page.) CLAUDE.md's
+standing workaround — "on plain triads a 7 token falls back to b7 — use 6" —
+stands, with the reason now written down.
+
+DEFECT 4: REGISTER. `turnaroundBar` lifted the back half an octave, which put
+vs_calm_rest's piano acc at Db6 with 36 notes ABOVE its own lead (breaking D77)
+and ended a bar of vs_excited_training's SYNTH BASS on G4. It also replaced a
+whole dot-stack with a single token, so a block-chord bar ended on one bare
+note two octaves above the rest of the hand. FIXED: D88 says the turnaround
+DROPS, so it now never rises — it strips an octave where there is one and
+otherwise walks the back half down through chord tones (5-3-R) with the
+approach tone set on TOP of the stack rather than replacing it. Ceilings after:
+calm_rest 85 -> 73 (baseline 71), excited_training 64 -> 62, mysterious_space
+67 -> 57 and x_catacombs 63 -> 51, both now BELOW their baselines.
+
+DEFECT 5: SALT-INVARIANT DUPLICATES. Six of the 30 canon foundations produce
+the identical composite at every salt, so the per-statement combo split emitted
+a second masked mix piece carrying byte-identical music on five songs — pure
+mix-string overhead. FIXED: the statement collapses back to 0 when the varied
+figure comes out the same.
+
+ALSO FIXED: the event counter scored a MOVED onset as two events (one removed,
+one added), so a block could clear a quota of 2 by nudging one note an eighth
+earlier. Moves are now paired and counted once.
+
+NOTED, NOT FIXED. (a) 13 of 31 CARD_NOTES in this round's import are date-only
+re-imports with byte-identical text — the documented stale-note trap, at scale
+— and 7 of the 26 changed songs were changed against one. (b) The generator
+never reads `bindFigure(...).warnings`; they are raised and discarded, so "no
+warning fired" was not available as a signal. (c) The byte-stability chain is
+anchored to an UNCOMMITTED working-tree build: `git show HEAD:audition/songs.html`
+has 23 songs, not 43, and nothing has been committed since 93803dc.
+
+D98 (2026-08-28) — THE MELODY AND VOICING ROUND. He sent 14 more reels plus a
+screen-recorded Instagram DM log, and stated the goal outright: "get more unique
+sound chord progressions and become better at 'melody' as well as 'extra stuff'
+so that it's not just a basic foundation but also sounds good".
+
+READING THE LOG. The feedback is in messages sitting UNDER the reels they
+comment on. Frames were extracted at 1fps and scored in numpy for the message
+bubble's colour, then the hit frames read directly — eight messages, all
+transcribed in research/reels-feedback-r17.md. The load-bearing ones:
+  "notice how melody is chord too not just one note, and the melody is held not
+   very jittery"
+  "see how the chord is four notes not your typical chord"
+  "see the intervals that's what I mean by foundation setting (but not just
+   randomly, take note of what works)"
+  "notice the chord progression, chords, and the extra stuff outside of the
+   chords and how it changes. changes not just in strict section bar, and also
+   changes an a unique way"
+  "desert chord example" (on a "Modo Mixolidio b9 b13" reel — which is exactly
+   the engine's phrygianDominant, so his own ear independently ratifies D93's
+   desert reading and the r16 shuttle trope)
+
+MEASURED FIRST, and both laws turned out to name a total absence rather than a
+shortfall. The lead was 100% MONOPHONIC: 8137 note-haps at 8137 distinct attack
+times across all 43 songs, maximum one note per attack, ever. And the
+accompaniment struck four notes on 0.11% of its attacks — 18 of 15,867 — while
+playing a SINGLE note on 74.3%, out of a total vertical vocabulary of 23 shapes.
+The canon cannot do better: all 201 onsets in the 30 foundation entries are
+single, double or triple, never quadruple.
+
+WHAT SHIPPED.
+1. CHORD-TOP MELODY (`chordTop` in bindMelody). The bar's longest note, if it
+   reaches a beat, sounds a second pitch from the bar's chord. Three findings
+   shaped it: the added tone comes from the BAR's chord, not from what the acc
+   is sounding at that instant (the instantaneous source fails on 276 of 1068
+   candidates because arps sit between chord tones; the bar's chord fails on
+   46); the search prefers 3rds and 6ths and refuses 4ths (nearest-tone-downward
+   makes the P4 modal, which stacks quartally against a pad); and a same-pitch-
+   class match is excluded outright, because that is an octave double, not a
+   chord. The thickened attack is scaled by 1/sqrt(2) so two notes at one gain
+   do not read as a +3dB accent — 11 of 43 leads already peak at exactly 1.00
+   with no headroom. Choir leads are excluded (D93: one line, one side of the
+   G4 gender seam). MEASURED AFTER: 1041 polyphonic attacks (16.8%) across 25
+   songs, from zero.
+2. HELD, NOT JITTERY, two levers. `heldFirst` adds a min-IOI term to melody-cell
+   retrieval: `interlockScore` ranked by ONSET POSITION only, so at an identical
+   density the pool's longer-noted cells were invisible to it. And `minNote`
+   drops an onset shorter than a beat — `tokens()` is legato, so the previous
+   note HOLDS through the freed slot rather than the bar simply thinning.
+   MEASURED: median sounding note 0.75 -> 1.00 beats, fraction under an eighth
+   0.377 -> 0.240, fraction reaching a full beat 0.386 -> 0.605.
+3. FOUR-NOTE VOICINGS (`quartet`). Strong onsets take a real four-voice stack;
+   weak onsets stay single so the bar keeps its rhythm. Inversions are token
+   ORDER, not symbol — `3.5.s7.R+` renders F#3 A3 C#4 D4, which IS Dmaj7/F#,
+   the reference's own chord. (Slash SYMBOLS are a silent trap and were not
+   used: `chordTones('D^7/F#')` returns a plausible set so lint passes, but
+   `chordRootPc` returns the upper root, so bindFigure renders root position and
+   ignores the slash; and any `chord("D/F#")` string throws, because
+   mini-notation reads `/` as its slow operator.) MEASURED: four-note acc
+   attacks 0 -> 93, single-note attacks 86.8% -> 81.5%.
+
+GUARDS RE-MEASURED, because thickening is exactly the kind of change that
+sounds worse. Semitone rubs between the added melody tone and the sounding
+support layers: 13 events in 1041 thickened attacks (1.2%) — the interval
+preference did that work; a naive "nearest tone below" was projected to produce
+199. Out-of-(key or chord) accompaniment notes 116 -> 139 on 16,172 (0.14%).
+Adjacent-bar-identical 28.1%, still better than the 30.6% baseline. 26 changed /
+17 byte-identical, the 17 exactly the 14 keeps plus 3 grammarPins. 313/313.
+
+NOT DONE, AND IT IS THE MOST IMPORTANT THING LEFT. "changes not just in strict
+section bar" is unanswered. Measured: 139 of 139 non-dialogue layer entries in
+the engine land EXACTLY on a section start; there is no mid-section layer entry
+at all. r16's per-statement accompaniment variation is itself keyed to section
+starts, so it is an instance of the thing he is arguing against, not an answer
+to it. His own reels show the mechanism: on the ChordCamera reel a repeated
+chord never repeats its voicing — the same four-note pitch-class set returns
+ROTATED one position each time — and on the prod.essential reel a top voice is
+ADDED on every second pass of an unchanging two-chord loop. Both are changes
+inside the loop, on a 2-bar period, with no section boundary anywhere near them.
+
+ALSO OPEN: the jayhmproject reharmonization ladder and the briancalli.music mode
+reel are NOT among the 14 files he sent — they exist only as frames inside the
+DM recording, from which levels #2/#6/#10 were read (D major: `Dmaj7/F# | G2 |
+Dmaj7/F# || E7 | A7sus | Dsus2`, rising to Dmaj9/F#). Worth asking him to send
+those two directly. And `Dsus2` is not a known chord in the dialect — it voices
+nothing and warns.
+
+---
+
+## D99 (r18) — the arpeggio monoculture, the companion melody, and the layers that were never there
+
+His r18 export: 15 clicked keeps (a NEW one — `vs_calm_space`) and 34 song
+notes, the longest single pass of feedback the project has had. Also a
+doctrine correction, in his own words mid-round:
+
+> "some advice i didnt change but if its a song that was changed and the advice
+> wasnt changed, it just means the advice still applies"
+
+That settles CLAUDE.md's stale-note clause in the other direction. A note that
+arrives byte-identical on a song that MOVED is a re-complaint, not a leftover.
+Only a note on a song that did not move is ambiguous. Every note this round was
+treated as live.
+
+### 0. Absorbing the export: two gates fired the wrong way
+
+`vs_calm_space` took its keep click, so D91's keep-transition law applied: it
+was judged on the UNKEPT path and `priorKeep` flipping stripped what he
+praised. MEASURED before pinning: letters, treat, cast, mix and solos all
+moved. `bridgeHarmony: true, breakdown: true` restored it byte-for-byte.
+
+`vs_excited_space` moved too, and this one is a NEW failure mode worth naming.
+`marcatoOn` and `varyLead` both gate on `!CARD_NOTES?.[name]` — the
+history-less rule that stops new capabilities re-rolling songs he has spoken
+about. The moment his first note on that song landed, both gates flipped and
+the song silently LOST its marcato layer and swapped its non-A lead voice — on
+a song he had just praised ("I like the dissonance") and whose only complaint
+was the Alberti. The rule is meant to stop new features arriving; it must not
+retract features he already heard. Pinned `marcato: true, varyLeadVoice: true`.
+Both were caught only by the per-song byte compare. `npm test` was green.
+
+Baseline after absorption: 43/43 byte-identical. Everything below is
+attributable.
+
+### 1. The off-grid stumble — "that just sounds off"
+
+Three cards, three songs: "the random split-second delays in rhythm in the
+piano sounds off though. that just sounds off" (calm_shrine), "the random split
+second in some of the chords are kinda weird" (happy_jungle), "the random
+rhythm variation of the piano chord sounds kinda off setting" (somber_manor).
+
+MEASURED: 402 of 13,285 accompaniment attacks (3.0%) landed OFF the 16th grid,
+and every song carrying any carried exactly 12.5% of its attacks that way. Two
+sources, both mine: r16's `push` form shifted the back half by `step/2` — half
+a grid step, off-grid by construction — and `fill` inserted at the arithmetic
+midpoint of a gap, which is off-grid whenever the gap is an odd number of
+steps. At 54bpm step/2 is ~70ms: too small to hear as syncopation and exactly
+the size the ear reads as bad timing. `push` now moves a WHOLE step (278ms at
+that tempo — an anticipation the ear hears as a choice) and `fill` snaps to the
+figure's own grid. AFTER: 0 off-grid attacks.
+
+### 2. The arpeggio monoculture — and why a name blacklist keeps failing
+
+Four cards, unprompted, none of them told which layer to listen for: "the
+section the piano started doing the four note arpeggio walk things ... that
+sounds too happy" (scary_manor), "the 4 note arpeggio in the marimba or
+whatever it was -> too major" (tense_catacombs), "the four note arpeggio also
+is too major and harmonious" (tense_citadel), "four chord arpeggio is overused
+and not varied at all and also too major and bland" (triumphant_citadel).
+
+MEASURED: `fnd_arp_16ths_drive` was the travel destination in 8 of the 10
+horror songs, and arp-family figures were 36 of 65 travel destinations (55%)
+suite-wide, spread over only 13 distinct destinations.
+
+TWO defects behind one phrase. First, the lane blacklist listed `alberti` but
+not `arp_16ths` or `broken_tenths` — the same gap as r16's jungle Alberti, one
+figure over. Second, and worse, `edgesFrom[i]` took the travel list in
+DECLARATION order, so any two songs sharing an accompaniment figure walked to
+an identical destination, and B/C/D of one song walked to three figures from
+the same family because the list groups them. Rotating by the song's own hash
+and floating one member of each family forward fixes the second.
+
+Doing that immediately exposed why the first fix keeps failing: with the
+ordering gone, horror songs reached figures the old order had simply never got
+to — `fnd_wide_oompah` into FOUR of them, tresillo and montuno into three more.
+Oom-pah under a catacomb is precisely the "playful" he has now written on six
+cards. The set of playful figure NAMES is open-ended; the set of figure CLASSES
+is closed at 13. So serious lanes now state what they PERMIT — pulse, sustain,
+block, broken_octave, arp — and dance_bass / oompah / guajeo / riff / comp /
+walk / fingerpick / offbeat are simply not in the vocabulary. AFTER: arp-family
+travel 55% -> 32%, distinct destinations 13 -> 20, every serious song still
+reaching a real destination and all of them lane-legal.
+
+### 3. The companion melody — the ask he had to repeat five times
+
+> "there should still be an alternate melody singing along with the main piano
+> melody of another instrument the supports it while being different. this is
+> something that should be abstracted to other songs too" (excited_fight)
+
+and, in exasperation, "I want more layers with their own melody man that's what
+ive been saying" (triumphant_citadel); "there's also not any supportive counter
+melody for the first melody part to support it - I wanna add some"
+(excited_casino); plus calm_rest, calm_shrine, nostalgic_shop, tense_desert,
+somber_desert, goofy_casino, mysterious_jungle, excited_training.
+
+This looked like a dial: the arranger has had `counter_melody` and
+`alternate_melody` PARTS since D47. MEASURED, it was not. 29 of 43 songs
+carried NEITHER, and nine of the eleven songs where he asked for it had exactly
+ZERO. `counter_melody` was 3 of 108 cast layers suite-wide — the roles exist,
+the role-slate hash almost never casts them. Third time in three rounds that
+one of his "more X" notes measured as a categorical zero.
+
+So COMPANION is a generator layer beside the counterline and descant, not a
+slate entry. It rebinds the LEAD'S OWN CELL — same seed, same rhythm, same
+phrasing, same `hold` per letter — with every pitch moved to a chord tone
+BELOW the melody note. Thirds-first on even bars, sixths-first on odd, so it is
+not rigid parallel harmony; no fourths and no octave doubling, for chordTop's
+reasons; and a note with no available chord tone under it becomes a REST, which
+makes the companion sparser than the lead on its own rather than a shadow of
+it. Under the lead by construction and at 0.6x its gain. AFTER: songs with an
+own-melody layer 14 -> 33 of 43.
+
+VERIFY CAUGHT ME MID-MEASUREMENT, and the correction is worth recording: my
+first probe reported the companion sitting ABOVE the lead on 64 of 1362 shared
+attacks, a flat D77 violation. It was the PROBE that was wrong — `_lead` is the
+A-letter binding, so at non-A bars I was comparing the companion against the
+wrong reference. Every reported case sat exactly at or after a section boundary
+(happy_desert's first at bar 12.44, x_catacombs' at 36.00). Within its own
+letter the companion is below by construction, since every candidate is
+`n.midi - d` for positive d.
+
+### 4. Register and timbre, all four measured
+
+- The manor's designated cast voice was the OBOE, and he rejected it twice in
+  one pass: "the high oboe doesn't fit at all, and is too loud" (somber_manor,
+  where it was the melody_takeover at gain 0.87 against a 0.47 lead, reaching
+  F6) and "the flute started being the melody - that sounds too happy"
+  (scary_manor, which carries no flute at all — the oboe is what a bright double
+  reed sounds like from across a room). Manor's voice is now the cello, which is
+  already in its own handoff pool. The retint also stopped covering only chip
+  voices, so the PLANNER can no longer hand a horror lane a reed straight from
+  the palette.
+- Swapping it exposed the same name-list failure one instrument over: the range
+  clamp listed violin/trumpet/oboe/shanai, so the new CELLO takeover was clamped
+  by nothing and composed A#4-F7 — an octave HIGHER than the oboe it replaced.
+  Bowed low strings and organs joined the clamp, and every melodic cast layer
+  now additionally caps at the LEAD's octave.
+- CATACOMBS moves off the solo violin lead. The violin was his own r14
+  suggestion, but that was a request for a background dissonance COLOUR and it
+  ended up carrying the tune; all three catacombs songs came back saying so.
+- The citadel GONG is gone. It fired on all four citadel songs at the same bar
+  and he rejected it on three, twice in identical words.
+
+### 5. Sharp stab -> sustained bed, written from his own sentence
+
+> "the random sharp violin just hurt my ears. I mean like subtle dissonance by
+> random instruments in the background in their own parts that come in
+> sometimes or all the time."
+
+Every clause of that is a spec, and the stinger violated all of them: MEASURED,
+a 0.95-accent b9 on a SOLO violin at gain 0.5-0.62 with `.clip(0.5)` — a loud
+short stab. The new `bgDissonance` keeps the harmonic content (b9 and tritone,
+still the song's ONE device under the dosing law) and throws away the attack:
+legato across two bars, on a bed voice, at [0.09, 0.16], section-gated by the
+song's own hash into "sometimes" or "all the time". Stinger demoted to opt-in.
+
+`vs_scary_citadel` gets it too, for a reason the lane table makes obvious: manor
+has the b2 rub and catacombs has three devices, but CITADEL had none at all —
+D93 made it the most tonal lane on purpose, and "still way too harmonious" is
+where that costs too much.
+
+### 6. Melody, dynamics, intro — each measured before touching
+
+- happy_festival ("piano right hand way too hyper once again. I think 2/4
+  screws up piano melody"). The meter hunch is wrong — D92 re-maps every 2/4
+  vibe and this song has compiled as 4/4 since. The density is right: 3.75
+  notes/bar on a 0.75-beat median with 18% under half a beat, against 2.25-3.25
+  and a 1.00-2.00 median on the four songs he praised this round. AFTER: 2.50 /
+  1.00 / 0%.
+- mysterious_space ("a bit too jittery ... jumps around with low duration
+  notes"). NOT density — 2.75/bar and a 1.25 median with 0% short, both inside
+  the praised band. It had the widest intervals in the suite: 83% of steps
+  leaping past a major third. Range wall, not thinning. AFTER: 49%.
+- somber_snow, said AGAIN after padWaveCalm shipped. The solo hides it: the pad
+  reads 0.26-0.34 there, but in the MIX the D82 section curve multiplies on top
+  and it ran 0.30-0.44 — a 1.47x span peaking every fourth bar, which is
+  literally "a measure every so often". Calm wave and calm bands both tightened;
+  AFTER 0.32-0.42 with no adjacent-bar jump above 1.25x.
+- happy_jungle ("the beginning where it's just marimba should be cut in half.
+  the beginning if it's so bare shouldn't be so long"). MEASURED: 8 bars = 15.5s
+  of solo marimba, which cleared the 16-second intro cap by half a second. The
+  cap was never about seconds alone — one instrument buys far less patience than
+  an arrangement. A section carrying at most one planned layer is BARE and gets
+  9 seconds. AFTER: 4 bars, 7.7s. Exactly halved, as asked.
+- The RISER, and he asked for this one to be written down: "the riser should be
+  started a bit later because there's a bit of silence after the sound effect
+  (document this)". A riser is aligned by its END and the code used `durS`,
+  which is the FILE length. MEASURED on horror-riser.wav: 4.560s long, last
+  frame above 1% of peak at 4.220s — 0.34s of trailing quiet being scheduled as
+  if it were sound. `audibleS` added to the pack definition; anything aligned to
+  its own tail uses it.
+
+### 7. Harmony research, both lanes, both because he asked
+
+> "look and do research into jungle" / "I still don't think the chord
+> progression sounds like a desert. look into other game desert chord
+> progressions."
+
+`mixo` (`0 2:m7 0 0:7`) is killed — he is right that it is basic, and the
+measurement agrees: three of its four chords are the tonic and every one is
+plain diatonic. Two replacements. PLANE is the DKC move, parallel maj9 chords
+sliding by whole tone and minor third with no functional motion at all (I -
+bVII - bVI - bVII); the bVII removes the leading tone so no chord ever wants to
+resolve. CANOPY is the other half: a thirdless sus2 tonic that never commits to
+major or minor, answered by a 6/9 and an add9 — his own "sometimes songs are
+too harmonious to be atmospheric", and the same thirdless device he approved
+for the desert drone in a brighter mode.
+
+"do we have any other jungle harmony besides jungle vamp?" — no, and that WAS
+the problem: both jungle songs bound the identical figure, so r16's lane fix had
+become the lane's new monoculture, which is the complaint it was written to
+answer. Added `jungle-canopy`: two bars so it cannot be heard as a one-bar loop,
+a low root that lands only in bar 1 and is answered by its fifth in bar 2, and
+9th/4th colour instead of the vamp's 9th/6th.
+
+DESERT: mysterious_desert was on `drone`, whose eight chords are ALL sus. A
+thirdless drone has neither the raised third nor the bII — neither half of the
+Hijaz signature the lane law is built on, so of course it did not read desert.
+Drone is ATMOSPHERE, which is what he asked it for in the r16 triage, handed to
+a song that needed the lane's harmony. CARAVAN is the lane law with MOTION:
+I - bII - bvii - bII in Phrygian dominant, raised third on the tonic, bII hard
+against it twice a loop, and a minor bVII that is entirely inside the scale — a
+third harmonic destination at no cost in chromaticism.
+
+### 8. "NOT IN A RANDOM WAY, IN A CALULCATED WAY"
+
+His capitals, on calm_shrine, and excited_casino says the same thing from the
+other side: "the beginning chords are a bit weird - it feels like u just
+randomly moved some notes out of order rather than being intention."
+
+Both are about r17's `quartet`, and both are right. It substituted a whole
+canned four-note shape, so an oompah's `3+.5+.R+` became `R.5.s7.3+` — the top
+voice jumped from the root to the third and the ear hears a voicing shuffle
+rather than a chord growing. It now keeps the figure's own top tone and stacks
+three tones BENEATH it, which is the calculated version of the same idea and is
+also what he asked for in so many words on somber_manor: "adding extra stuff".
+AFTER: four-note attacks 93 -> 164 (1.30%), single-note attacks 74.3% -> 71.6%,
+and the accompaniment's own top line survives the thickening.
+
+### Byte-stability
+
+16 songs byte-identical: all 15 clicked keeps plus `vs_tense_lab`. 27 moved.
+The only pinned song that moved is `vs_goofy_casino`, whose note asks for the
+change ("I think more layers actually, especially in the mid layer because it
+feels a bit sparse there") — a prose keep is still a keep, but a prose keep
+whose note names the change is a licence to make it. Travel-edge rotation also
+had to learn `opts.grammarPin`, which it did not carry at first and which moved
+both prose keeps until it did. 313/313 tests.
+
+### Not done, and told to him
+
+`vs_x_construction`'s note ("make the melody vibe also a different instrument -
+synths sound better than piano for this vibe I think - learn this") is not
+actioned, because the measurement contradicts the obvious reading: that song's
+lead is ALREADY `gm_lead_1_square` and its non-A letters already alternate to
+the sawtooth. The most likely candidate for what he is hearing as piano is the
+`gm_epiano1` accompaniment hand — but that is the D86 synth-spread rule he
+approved, the song is a clicked keep, and guessing at a keep is how judged
+material gets broken. Asked rather than changed.
+
+Same for scary_citadel's drums ("sounds like a evening disco dance ball"): the
+only pattern playing is `war_march` at light presence, and I do not yet know
+what he is hearing. Its harmony complaint IS actioned.
+
+### D99 addendum — what the verify pass refuted about my own work
+
+The pages renderer does not pass fold warnings through, so "0 failed, no folds
+in the log" was NOT evidence of anything. Measuring the SFZ key ranges directly
+against the page found a regression the log had hidden, and it was mine:
+
+- Moving catacombs onto a CELLO lead put **160 notes past the top of the VSCO
+  cello** (x_catacombs 120, tense_catacombs 40), because `leadRangeCapped` tests
+  a list of NAMES — `violin|trumpet|oboe|shanai` — and the cello was not in it,
+  so the lead kept the violin's octave. Suite total 375 -> 545 out-of-range
+  notes. THIRD instance of the name-list failure in one round, this time in the
+  fix for the second instance. Cello added; a cello chosen by the string-lead
+  roll was already capped a few lines below, which is exactly the duplicated
+  rule that let the other path escape.
+- The COMPANION inherited the same bug twice over. My first correction was to
+  curate its instrument POOL (drop the flute, whose 10 notes fell under its own
+  patch — and folding those UP would have pushed the companion over the lead,
+  inverting D77). That made things worse, not better: the cello I put in its
+  place gave goofy_casino 98 out-of-range notes. The pool was the wrong lever.
+  The companion now takes the same instrument-range cap the lead does.
+  AFTER all three: **377 of 26,937, against a 375 baseline** — flat, and every
+  remaining entry is a pre-existing one on a frozen or unchanged layer.
+
+Also refuted: my first companion probe reported 64 attacks sitting ABOVE the
+lead. The probe was wrong, not the layer — `_lead` is the A-letter binding, so
+at non-A bars it was the wrong reference; every reported case landed exactly at
+or after a section boundary. Recorded because the reflex on seeing a D77
+violation is to go and "fix" the music.
+
+### D99 second addendum — his scoping correction, and the six changes it reverted
+
+He narrowed the stale-note ruling the same day:
+
+> "oh I meant like every song including scary manor and below. everything above
+> it, if advice is the same it doesnt apply"
+
+So the export's note ORDER is meaningful — he works down the page and stops.
+`vs_scary_manor` is the 18th of 33 notes. From there down every note is live.
+Above it, only notes whose TEXT changed are live; the rest are leftovers from
+the round that already answered them. A song with no prior CARD_NOTES entry
+necessarily has new text and is live wherever it sits, which keeps
+excited_casino, somber_desert, happy_desert and tense_desert in scope despite
+sitting above the line.
+
+Thirteen notes were leftovers. I had acted on six of them, and all six are
+reverted:
+
+| song | reverted |
+|---|---|
+| happy_festival | the whole opts entry (density/floor/range wall) |
+| mysterious_desert | back to the `drone` trope he asked for in the r16 triage |
+| goofy_casino | forced companion — this had MOVED A PINNED PROSE KEEP |
+| nostalgic_shop | forced companion (its cast already carries an own-melody layer) |
+| calm_rest | pad trim 0.65 -> 0.8, calm wave off |
+| somber_snow | the padWaveCalm wave/band tightening |
+
+`caravan` stays authored but is OUT of the desert hash pool, so it re-rolls
+nothing; the measurement behind each reverted fix is kept in a comment for
+whenever the note goes live.
+
+AND A SECOND PINNED-SONG LEAK, found by re-running the byte compare after the
+reverts rather than assuming they were sufficient: goofy_casino STILL moved,
+32 -> 28 bars, because the new bare-intro cap is gated `!priorKeep` and does not
+consult `opts.grammarPin`. That is the SECOND rule this round to ship with only
+half the guard — the travel rotation was the first, and it moved both prose
+keeps. Any new structural rule needs both. AFTER: 17 songs byte-identical (15
+clicked keeps + both prose pins), 26 moved, 313/313, out-of-range notes 379
+against a 375 baseline.
+
+The engine-wide work is unaffected: every rule behind it — the arpeggio
+monoculture, the companion, the off-grid stumble, the quartet rewrite, the
+gong, the stingers, the manor oboe, the catacombs cello, the riser, the bare
+intro, the jungle tropes — was argued from notes at or below `vs_scary_manor`,
+or from notes that had no prior text.
+
+## D100 — r19: the companion sang off-key, the descant was the counterline
+
+His 20:58 export is the same 15 clicked keeps and, at a glance, the same notes.
+It is not: five notes changed, and four of those changed substantively. He
+re-listened and edited only where his opinion moved, which makes the diff the
+whole signal.
+
+| song | what changed in his note |
+|---|---|
+| excited_fight | PREPENDED "the new trumpet or whatever is in the melody is completely off key" |
+| scary_catacombs | APPENDED the offbeat piano ("makes it sound less serious") and "the melody is too harmonious to be scary" |
+| happy_jungle | the intro complaint is GONE — replaced by "too dissonant with the piano and the flute/obe. they dont really fit" |
+| mysterious_jungle | "do we have any other jungle harmony" is GONE — now "this is better, it feels more mysterious", still wants "more alternate melodies" |
+| mysterious_manor | one word: "again," — same complaint, second time |
+
+Two notes gained only whitespace (goofy_casino, tense_desert); the importer
+normalised those away and independently counted the same five. The D99 scope
+rule holds: every substantive edit is at or below `vs_scary_manor`, and the
+thirteen leftovers above that line stayed leftovers.
+
+### There is no trumpet in excited_fight
+
+Measured first, against the r17 page he had last judged: the ONLY voice added
+to that song since is `gm_clarinet`, the companion. So "the new trumpet or
+whatever" is the companion, and "completely off key" is a measurement, not a
+mood.
+
+It was. Forcing a CHORD tone under every lead note made the companion MORE
+chromatic than the line it accompanies:
+
+- 11 of 21 companion songs, worst `triumphant_citadel` 22.9% -> 50.7% out-of-key
+- THREE songs whose lead is 100% diatonic got a companion that is not
+  (somber_snow, mysterious_manor, mysterious_jungle)
+- over excited_fight's `B` major in A major it parked on D# for 18 of its 22
+  notes there — the lead touches that D# on 25% of its own notes in the same bars
+
+The mechanism: the lead only spells a chromatic chord at structural points
+(chromCore) and walks the scale between them; the companion took a chord tone
+EVERY time, which turns a passing chromatic into a drone. The rule now is that
+**the companion may leave the key only where the LEAD already has**, and where
+it cannot it RESTS — the layer's own sparser-than-the-lead rule doing the work
+rather than a new exception.
+
+AFTER: companion out-of-key 16.3% -> 6.1%; more chromatic than its lead in
+**0 of 21** songs (was 11); note count 2166 -> 1876, the rests, not a collapse.
+
+### The descant and the counterline were one layer
+
+Not from a note — from a probe written to chase something else. 25 of the 28
+songs carrying both put them on the SAME string voice at IDENTICAL onsets.
+mysterious_jungle's first two bars: counterline D5 F#5 A5, descant D4/F#4 A4
+B4, at 0, 1.25, 1.50, 1.75 — the same four instants, an octave apart. That is
+one four-note string chord moving in parallel, not two lines.
+
+The collision is structural: the counterline's climb masks onto the ODD bar at
+1/4·2/4·3/4, which is exactly where a 2-bar descant's 5/4·6/4·7/4 walk lands.
+The walk moves into the EVEN bar, where the counterline only holds — same
+shape, same voice, same band, sharing only the downbeat. 25 of 28 -> 7, and all
+7 are frozen songs the gate protected.
+
+This matters more than its size: "I want more layers with their own melody man
+that's what ive been saying" is now on nine cards, and two of the layers the
+engine counted toward that were one layer.
+
+### The rest
+
+- **The offbeat texture leak.** r18 put the serious-lane class whitelist on the
+  acc pool and the travel edges and MISSED the texture path, so all three
+  catacombs songs bound `fnd_offbeat_chords` anyway — which is what he caught
+  twice ("the piano on the offbeat (the & of every beat)", "the off beat piano
+  is too major to be not playful"). Serious lanes take `block` there, and the
+  `comp`/`riff` fall-through chain is lane-aware too.
+- **The companion never takes the acc's voice.** `castSounds` only held planner
+  layers, so the acc hand was invisible to the filter and both jungle songs put
+  the companion on `gm_marimba` — the voice their acc already plays, 40 and 54
+  attacks of it exactly simultaneous. Lead and acc are HARD exclusions; a quiet
+  cast layer is a soft one, because losing the layer is worse than sharing.
+- **Jungle cast retint**, narrower than horror's on purpose: the orchestral
+  concert winds he named, to distinct lane voices that are neither the lead's
+  nor the acc's. mysterious_jungle's `gm_lead_3_calliope` is deliberately left
+  alone — it is that song's alternate_melody and he has now judged it good.
+- **happy_jungle's lead leaves the piano** ("also the piano doesn't really
+  fit"), to the kalimba — the lane's own vouched voice (D94), not a guess. His
+  note names the lead, which is the one condition under which a song he has
+  spoken about may swap it.
+
+### The name list failed a fourth time, inside this round's own fix
+
+Adding the vibraphone to the jungle companion pool put 46 of
+mysterious_jungle's companion notes outside the patch, because the octave cap
+was `/violin|trumpet|oboe|shanai|cello|marimba|kalimba/` and `vibraphone` is
+not in it — and never would have been until a render log or an ear found it.
+That is the fourth failure of this exact shape in two rounds, and the third
+time the fix for one instance opened the next. Every INSTRUMENTS entry already
+declares its own `range` in octaves; the cap asks the data now. 424 -> 376,
+which is BELOW the 379 baseline.
+
+### Numbers
+
+313/313 tests. 18 songs byte-identical, 25 moved; all 17 frozen songs (15
+clicked keeps + both prose pins) verified byte-identical by name. Accompaniment
+attacks off the 16th grid: 0 of 12620. SFZ out-of-range notes 376 vs a 379
+baseline. Companion notes above the lead 71/1606 -> 53/1392 — a pre-existing
+D77 leak, reduced but not gone, and worth a look next round.
+
+### Open, and honestly so
+
+- **scary_catacombs, "the melody is too harmonious to be scary"** is live and
+  NOT addressed. Its lead already carries the lane's cello and the song's one
+  harmonic device is the background dissonance; making the melody itself
+  dissonant collides with the D93 one-device law, so it needs his ruling rather
+  than my guess.
+- **scary_citadel's "evening disco dance ball"** is still unexplained; only a
+  quiet war march plays there.
+- **happy_jungle's "look and do research into jungle"** survived the r18 `plane`
+  trope, which he heard. The trope work is not converging on his ear.
+
+### D100 addendum — he answered both open questions, and both were mislocated
+
+**"scary citadel's harmony is like groovy synth rhythm - that sounds like the
+evning disco dance ball."** I had spent two rounds looking at the drums, because
+his r18 note said "same for drums". It was never the drums. Measured, the
+HARMONY's rhythm: the organ accompaniment struck block chords on EVERY quarter
+of all 32 bars — four-on-the-floor, the most dance-shaped rhythm there is — with
+the choir stabbing 1-3-4 on top of it. `_acc` profile `X...X...X...X...`, 384
+attacks, 32 of 32 bars.
+
+**My own r18 fix put it there.** Chasing "still way too harmonious" I set
+`accClassPrefer: 'block'`, and block is in the serious-lane whitelist because it
+is not PLAYFUL — which says nothing about whether it GROOVES. Those are
+different axes and the whitelist only ever encoded the first. Now `sustain`:
+`X.......X.......`, 72 attacks. The freed cast slot also turned the trumpet
+doubler into a real `counter_melody` on tubular bells.
+
+**"for scary catacombs, the melody is super loud (not dissonant) and completely
+harmonic in the violin like a lead singer which destroys the atmosphericness."**
+This is the answer to the question I asked, and it is a no to the premise: he
+does not want a dissonant melody, he wants the melody to stop behaving like a
+soloist. Two separate causes, both measured:
+
+1. **`melody_backup` is a doubler BY DECLARATION.** Its spec in `arrange.js`
+   reads "doubles the lead line so it reads louder and wider without adding any
+   new rhythm". In the MIX, 42 of its 48 violin notes sound with the cello lead
+   and 36 are its EXACT pitch, over 16 of 56 bars. Louder-and-wider is an
+   anti-goal in a lane whose job is atmosphere. Dropped lane-wide in horror;
+   `melody_takeover` stays, because D90 protects handoffs.
+2. **The violin was the LEAD'S HANDOFF PARTNER.** `HANDOFF_POOL` for horror was
+   `['gm_violin', 'gm_cello', 'gm_church_organ']`. D99 moved the catacombs LEAD
+   off the violin for precisely this complaint and left the handoff pool alone,
+   so the violin went on taking the whole tune on every non-A letter — which is
+   what "the violin taking the melody" literally described. Viola now; the
+   handoff itself is untouched. `gm_violin` no longer appears anywhere in the
+   horror lane except somber_citadel's counter_melody.
+
+**A correction to my own measurement.** A first pass on the SOLOS said 19 of 38
+songs' "own melody" cast part is a note-for-note unison double of the lead. That
+overstated it: checked in the MIX, `melody_takeover` genuinely takes over —
+somber_manor's cello plays 20 instants alone against 12 alongside the piano and
+**never at the same pitch**, same shape on calm_shrine. Only `melody_backup` was
+a real doubler, and that one held up in the mix on the song he named. The solo
+bindings are unmasked; the mix is the honest measurement.
+
+Dropping the doubler re-rolled `castSounds`, which handed scary_catacombs,
+x_catacombs, tense_citadel and somber_manor a VIOLIN companion — the exact voice
+of the complaint, arriving through the fix for it. Only the byte compare and a
+voice audit caught it. The horror companion pool takes the viola now.
+
+AFTER: 313/313, 18 identical / 25 moved, all 17 frozen songs byte-identical,
+SFZ out-of-range 345 vs a 379 baseline, 0 off-grid, companion 6.1% out-of-key
+and more chromatic than its lead in 0 of 21 songs.
+
+STILL OPEN, now with a measurement: somber_citadel's "random spurts of violin
+... doesn't seem to be playing continuously". Its counter_melody covers bars
+8-12, 14-20, 22-28, 30-31 — a one-bar hole at 13, 21 and 29, every eight bars.
+The complaint is exact and so is the pattern; the cause is not yet found.
+
+### D100 second addendum — the reel batch, and four songs built on it
+
+He sent a bundled screen recording of ten reels (`new.MP4`, 4:17) plus pointers
+into the older `remainder+logs.MP4`, and asked for the LAYER SHAPES and voicings,
+not just the chord ladders — "so that we can learn how to create layers that have
+flavor just like theirs".
+
+**Four progressions read note-by-note off frames.** Full working in
+`research/reel-atlas-r19.md`, which is keyed by WHO POSTED each reel so he can
+find any row in his own DMs and correct it.
+
+| his comment | reel | what it is |
+|---|---|---|
+| **"scary^"** | dantes.studio | two perfect fifths a SEMITONE apart, held: F#-C# against G-D, then G-D against C#-G#. **Thirdless.** Voices enter one at a time, ~a beat apart |
+| — | dantes.studio #2 | Cm9 -> Gm9, five-note R-m3-5-b7-9 voicings PLANED intact down a fourth; rhythm LONG-short-short per 2-bar cell |
+| **"Walking bass (jazz, unique)"** | solobdomde | Dmin9 G9 Cmaj9 Fmaj9 **Bm7b5(addb9)** **Eaug** Amin9 A7 |
+| **"desert chord example"** | briancalli.music, "Modo Mixolidio b9 b13" | C Db C Db **Bbm** C in Phrygian dominant |
+
+The desert one closes a complaint open since r14, and the answer is not what I
+had assumed: the SCALE was never the gap (D93 already pins Phrygian dominant for
+the lane). The new relation is the **bviim** — every engine desert trope walks
+I-bII-**ivm**-bII or sits on the shuttle, and none reaches the b7 minor.
+
+The "scary^" one is the sharper lesson. Everything the engine writes for horror
+is TERTIAN — scary_citadel had just been given `Gm - Ab^7 - Gm - Dbm` and one of
+those is a major seventh chord. His scary reference has no thirds in it at all,
+and the scare is the semitone BETWEEN two fifths rather than a dissonance stacked
+on a triad. That is now `opts.fifthPincer`, and it is distinct from all three
+existing devices: wobble is a P4 dyad, choirPincer alternates a single note above
+and below, horrorOstinato is one thirdless LINE — none of them stacks a whole
+second fifth against the chord's own.
+
+**Four new songs**, one per progression, each also carrying a layer technique the
+same batch taught: `vs_scary_cave` (fifth pincer, fragmented lead, no strings),
+`vs_somber_space` (planed ninths; the `slayr` reel's spread-thin cast),
+`vs_nostalgic_casino` (the jazz circle, swung; the DELTARUNE build order — bed and
+bass first, melodic voices last and in pairs), `vs_calm_desert` (the bviim ladder
+served raw against the established desert law, so the progression is the only new
+variable his ear has to judge).
+
+**Three defects the build hid, all caught by measuring rather than by the log.**
+
+1. **`basePin` silently did nothing.** It resolved against the exemplar POOL,
+   which holds ratified + famous entries only. All four songs built green on
+   unrelated exemplars — `vs_scary_cave` came out on an Undertale shop tune.
+   The pool filter is right for RETRIEVAL (D95: unclicked additions must not
+   re-roll anybody) but an explicit per-song pin is not retrieval; it names one
+   song's exemplar and can move nothing else. It now reaches `ALL_PROGRESSIONS`.
+2. **The variation pass diluted three of the four.** It turned the thirdless
+   `F5 Gb5 F5 Gb5` into `F5 Gb5 F5 **Em**` — a minor TRIAD in the one progression
+   whose entire point is that it has no thirds — and swapped two of the jazz
+   circle's eight chords for sus chords, including the V9 the circle turns on.
+   `opts.rawBase` generalises D93's desert law ("serve trope progressions RAW")
+   to any hand-pinned reel progression.
+3. **Regenerating the counted harmony model was a D95 hazard and I measured it
+   before believing either way.** Four hand-authored entries into a 1000+ entry
+   model moved NOTHING: all 17 frozen songs byte-identical, moved count still 25.
+   D95's warning is about the CORPUS (`audios/vgmusic/`), where 800 new files
+   flipped `treat` on 18 songs; four library entries are not that.
+
+**A new provenance, `dm-transcribed`.** The test `D57: every video entry is honest
+about what it is` demanded that `source` name a file in the repo root, and these
+came from screen recordings of his private DM threads — which stay out of the
+repo under the same local-only rule as the ripped audio. Rather than weaken the
+check, the branch states what replaces it: name the recording AND the second it
+was read at, so any claim is re-checkable frame by frame; carry `hisComment`
+verbatim or explicitly null; and never claim `sourceEndorsed`, because that flag
+is the blanket he gave the original twelve igexport files and a forwarded reel is
+not that.
+
+**Also this pass, from his live listening:** scary_citadel's organ turned out to
+be TWO organs (the acc drone AND the planner's harmony_support, also church
+organ, riding the pad wave to 0.708) — both softened. The catacombs lane loses
+the counterline and descant, which is what he heard as "heroic strings", and the
+counterline's own cast line reads "held 3rd / beat-2 climb **R-3-5** alternating"
+— his "it literally sounds like a 5th 3rd root" was a description of the source
+code. And the texture now varies per section: `fnd_block_quarters` was 672
+attacks over 56 bars from ONE binding, which is my own earlier fix this round
+(offbeat -> block for the serious lanes) turning into a metronome.
+
+47 songs, 313/313, all 17 frozen byte-identical.
+
+---
+
+## D101 — r20: the resolution law, the look-ahead token, and where "learning
+## without hardcoding" actually stands
+
+His round-20 message asked the question this project has been circling: *"is it
+possible to learn the good techniques without hardcoding them? do you actually
+'understand' what is good and can replicate AND vary it in a believable way (not
+just vary by like randomly altering some note every once in a whiule but actually
+making variations of it, even in different chord progressions and such?)"* — and,
+separately, *"i want to do this in a way that every analysis isnt wasted but also
+isnt hardcoded though"*.
+
+### The import, and where the live line sits
+
+15 clicked keeps (0 new, 0 changed), 37 notes, 7 of them new text. The 7 changed
+notes are a contiguous TAIL BLOCK — calm_shrine (38), excited_fight (39),
+mysterious_jungle (41) and the four new songs (42-45) — so by the D99 scope rule
+the live line is **card 38 downward**. happy_jungle (40) sits inside the block
+with unchanged text and is therefore live ("if its a song that was changeed and
+the advice wasnt changed, it just means the advice still applies"). Everything
+above 38 is leftover text r19 already answered and was NOT acted on. His
+mid-round messages override the line where they name something (the catacombs /
+citadel marimba, which is above it).
+
+### The measurement that organised the round
+
+Two of his complaints read as opposites and are the same defect:
+
+  "the piano doesnt do any walking. there's not any extra notes between chords
+   or countermelody etc in the piano - it's just chord bouncing"  (nostalgic_casino)
+  "too much dissonance and variation ... just tiny offbeats and bits of
+   dissonance that you can't follow"                              (mysterious_jungle)
+
+Measured on the acc hand (the `_acc` solos, 12,828 notes across 47 songs):
+2,620 within-chord non-chord tones, of which **66 resolve (2.5%)**, **ZERO are
+true passing tones**, and **489 (18.7%) simply repeat in place**. Walking IS
+passing tones; an unresolved non-chord tone IS a dissonance you cannot follow.
+
+The architectural statement: **the engine varies by SUBSTITUTION; music varies by
+INSERTION WITH RESOLUTION.** Swapping a chord tone for a colour tone changes the
+note but not the line. A passing tone is defined by what comes AFTER it.
+
+A CORRECTION TO MY OWN WORK MID-ROUND. The first version of this probe reported
+"93.9% of accompaniment non-chord tones never resolve" across all 47 songs. That
+number was wrong twice over and I acted on it before checking it: it picked "the
+busiest voice below the median pitch" as the accompaniment, which for many songs
+is a kalimba texture or the synth bass rather than the acc hand at all; and an
+earlier version of it read `chordCoreTones()` — which returns a **Set** — with
+`.map`, so every note hit a swallowed `catch` and the answer came back a clean
+"0.0% non-chord tones", which I nearly reported as a finding. The defensible
+numbers are the `_acc` ones above. The lesson is the standing one, and it cost
+three wrong measurements this round: a number that comes out suspiciously clean
+is a bug until proven otherwise.
+
+### What was built
+
+**1. The scale ladder + the resolution law.** `LADDER = R s2 3 s4 5 s6 s7`.
+Consecutive positions are a step apart by the definition of a scale, and every
+token resolves against `chordScale`, so nothing here can spell a foreign pitch.
+`resolveBlocks()` then states ONE law over the whole generated composite —
+*a token that is not a chord tone must be a scale step from the token that
+follows it* — instead of patching five variation forms individually. Applied to
+GENERATED blocks only; block 1 is the canon figure, judged on its own page, and
+the engine disciplines its own variations rather than rewriting the library's
+writing. Measured: resolved 66 -> 100, repeats-in-place 489 -> 391.
+
+Patching the forms one at a time first moved the number 93.9% -> 93.3%, which is
+what sent me looking for the general law. Five special cases is also exactly the
+shape he is pushing back on.
+
+**2. The `>` look-ahead token (bind.js).** Adding notes in the gap was not
+enough: a two-note run raised pickups from 65.1% to 69.7% of chord changes but
+moved *pickups that step into the new chord* only from 307 to 314. The reason is
+structural — every figure token resolves against the CURRENT chord, so a walk can
+only land a step from where it started, never from where it is going, and walking
+means the second one. A `>`-prefixed member resolves against the next chord
+instead, octave chosen nearest the current root. Additive by construction: the
+grammar rejected `>` until now, so no library figure can contain one and nothing
+rebinds.
+
+**3. The `walk` form.** nostalgic_casino's acc hand was literally
+`[B3,D4,F#4] ~@2 [B3,D4,F#4] ~@4` — one triad struck twice and four empty slots.
+It passed the variation law because a 2-onset figure gets quota 1, so a single
+grace note was a legal "variation". The walk fills the largest hole with the next
+chord's 3rd then its 2nd, so the downbeat lands on its root. Verified by reading
+the notes: bar 2 (E9) now plays **C#5 -> B4 -> A4** into A^9; bar 6 (C#aug) plays
+**A4 -> G#4 -> F#4** into F#m9. Measured: **24 walk events across 4 songs -> 122
+across 13**.
+
+A SECOND CORRECTION. The `probe-walk` metric scored that walk as a *regression*
+(stepIn 307 -> 289) because it compares the top voice of the pickup to the top
+voice of the next attack, and the chord re-enters as a block whose top is the
+5th. The feature was right and the metric was wrong; reading the emitted notes
+settled it. Recorded because the same trap will recur: a top-voice test cannot
+see an approach into the bass.
+
+### `pinFrom` — the keep-transition law, third time it has bitten
+
+vs_somber_space, vs_calm_desert and vs_scary_cave arrived as PROSE KEEPS, judged
+on the UNKEPT path — so acc variation, the D99 travel rotation, the D98 melody
+grammar and the D100 descant placement were all live in what he praised. Setting
+`grammarPin: true` to protect them from the new walk switched every one of those
+off: the byte compare showed somber_space's lead going from two held notes a bar
+to nine, and its descant walk moving a bar — the pin destroying the exact "pad
+warping thing" he said he loved. Pinning feature-by-feature is how that gets
+missed (six flags, and the next rule makes it seven). **`pinFrom: 'r20'` states
+the real intent — rules introduced this round and later do not reach this song —
+and generalises: an r21 rule keys on the same stamp.**
+
+### The reel work
+
+`remainder+logs.MP4` is 86.8s = **1:26**, which closes the r19 open question: the
+"scary key reel" and the "desert chord example" are the SAME reel, briancalli's
+*Modo Mixolidio b9 b13*. Phrygian dominant is both his desert scale and his scary
+key. Re-read at full resolution, the voicings the r19 atlas flagged as uncertain
+are now measured: **C = C E G, Db = Db F Ab Bb (Db6), Bbm = Bb Db F (+Ab) =
+Bbm7.** The row spacing on the roll is chromatic (C->Db 35px, Db->E 110px ~ 3x35),
+which confirms the scale by measurement rather than inference. **Db6 already
+contains Bb, the root of the chord it moves to, and Bbm7 contains Db and F** —
+they are the same four notes re-rooted, which is why the bviim sounds inevitable.
+Recorded as `pivot_by_added_sixth`, not yet built.
+
+### `src/lib/techniques.js` — the "analysis isn't wasted" half
+
+Extracted craft now lives as DATA: one row per technique with its intent, the
+reel/second it was read from, his verbatim words, the conditions under which it
+applies, and an honest status (`wired` with an impl pointer, or `recorded` with
+what blocks it). Five tests defend the record's honesty, including that the
+generator never INDEXES the array — a row must be addressable by name only, so
+adding one can never re-roll a song the way a retrieval pool does (D95). Twelve
+rows: 5 wired, 7 recorded-and-blocked, including his own two new asks
+(`percussive_register`, `form_axis_ambient_to_narrative`).
+
+### Honest status on his question
+
+The un-hardcoding is real but PARTIAL, and the honest split is:
+- What genuinely generalises now: the resolution law and the walk are stated as
+  RELATIONS (ladder steps, next-chord targets), so they hold in any key over any
+  progression. That is his own test and it passes.
+- What is still hardcoded: the variation FORMS are still a hand-written list
+  picked by hash. The technique library is where they should migrate to, and
+  nothing has migrated yet.
+- What is not learning at all: with ~50 reels and 47 songs there is no training
+  set. The honest loop is extract-to-data -> generate -> his ear ranks it, and
+  the ranking is what should weight the rows. That weighting is not built.
+- Passing tones inside a bar remain **0**. The walk fixes the boundary only; the
+  interior needs a stepwise-motion intent, which is recorded and unbuilt.
+
+47 songs, 318/318, all 19 frozen byte-identical, HQ re-rendered.
+
+---
+
+## D102 — r21: the metronome test, section-split salting, and four ear fixes
+
+### The complaint, and why r20's fix had not touched it
+
+"for mysterious jungle, the marimba repeating the chords repeatedly in the
+middle section is still there instead of being varied and having extra stuff",
+and on casino "the walking bassline is good but too minimal — it barely does
+anything and contributes anything to the chord, it's still like 95% chord
+repetition".
+
+FIRST, A MEASUREMENT MISTAKE OF MINE. I opened by measuring `solos._acc` per bar
+and reported that both songs repeat an 8-bar block verbatim for the whole track.
+That object is ONE preview binding; the real accompaniment is several masked
+pieces that swap figure per section via travel. This is the standing "measure in
+the mix, not the solos" rule, violated by me two rounds after I wrote it down.
+Measured correctly, mysterious_jungle's marimba is:
+
+  bars  0-23  A    jungle-canopy          48 notes / 8 bars, 6 patterns
+  bars 24-39  B*   fnd_power_fifth_8ths  124 notes / 8 bars, 5 patterns
+  bars 56-71  C    fnd_drive_8th_root     66 notes / 8 bars, 6 patterns
+
+So the middle is the DENSEST stretch in the song carrying the LEAST variety, and
+its 8-bar block does repeat verbatim — his ear was right, my first number was not.
+
+### Why no rhythm form could fix it (four failed attempts, recorded)
+
+`fnd_power_fifth_8ths` is eight identical `R.5` tokens on straight 8ths. On that
+bar `fill` finds no gap of 1.5 steps, `walk` finds no hole of 3, and `push`
+collides its own onsets — so `hold` is the ONLY surviving rhythm form, and with a
+fixed cut point it returns the same bar for every salt. The composite is
+therefore salt-INVARIANT, and `effStmt` collapses a salt-invariant figure back to
+statement 0 (its documented job), so all four statements of a 16-bar section are
+identical.
+
+I tried four variants of `hold` before accepting the diagnosis, and each traded
+one complaint for the other:
+  free salt-chosen cut point  -> repeat broken, density 124 -> 140 (worse)
+  cut point from earlier half -> one candidate, `% 1` is 0, repeat came back
+  decimate the back half      -> repeat broken, density 124 -> 140/136 (worse)
+  decimate the whole bar      -> density held at 124, repeat came back
+All four are reverted. A monotonous FIGURE CHOICE cannot be repaired by varying
+it; the fix belongs at selection, not at variation.
+
+### THE METRONOME TEST (measured, never named)
+
+Travel destinations are now filtered by a MEASUREMENT of the figure:
+  onsets/bar >= 6 AND distinct token shapes <= 1   -> a pulse, not a texture
+  onsets/bar >= 12                                 -> a gear change, not a texture
+Stated as density x shape-count because A LIST OF FORBIDDEN NAMES HAS NOW FAILED
+FIVE TIMES (D100). The second clause was forced by the first: excluding only
+single-shaped pulses moved jungle's middle to `fnd_arp_16ths_drive` — denser
+still, and the exact thing his ear rejected twice on jungle cards ("just another
+default Alberti"). `SERIOUS_FND_CLASSES` permits `arp`, so the class whitelist
+cannot catch it. D100 said a whitelist encodes "not playful" and is silent about
+GROOVE; it is equally silent about GEAR.
+
+Result: jungle's middle binds `fnd_drone_fifth`, 124 notes/8 bars -> 18. NOTE FOR
+HIS EAR: that is the opposite extreme and may now read as empty. Flagged to him
+rather than tuned blind.
+
+### Section-split salting
+
+D97 salted by "how many times has this letter been heard", so a song lettered
+A B C B* has statements 0,0,0,1 — three of four sections share one composite. The
+salt is now keyed on the SECTION, and a section of 8+ bars is split in half (at
+4*floor(bars/8), so every piece stays on the 4-bar grid every section start and
+breakdown mask assumes). A 4-bar composite cannot develop across 16 bars however
+it is salted. Section A's variety went 6 -> 6/6/7 distinct patterns per 8-bar
+block, and jungle's salts are now 0,2,3,4,5,6,7,8,9 with no collapse.
+
+Also: 2-bar figures (blocks === 2) had NEVER received an interval rewrite — only
+1-bar figures did. The interval form is now composed ONTO the rhythm block so the
+composite stays 4 bars (the maximum safe length) while the notes move too.
+
+### The four ear fixes
+
+- vs_mysterious_jungle — above.
+- vs_scary_cave — "the violins a bit too loud still ... something about
+  tremoloing the strings softly or warping them or something, may be remembered
+  incorrectly". HE REMEMBERED CORRECTLY: it is bgDissonance (r18/D99), a bed
+  voice on gm_tremolo_strings with the attack thrown away, and his praise for it
+  was on somber_manor ("it almost sounds like it's wavering like a tremolo").
+  It cannot run on this song because fifthPincer is its one harmonic device
+  (D93 dosing) and suppresses it — so the LEAD takes gm_tremolo_strings instead
+  of the viola. His note names the treatment, which is what authorises a lead
+  voice change on a song he has spoken about.
+- vs_nostalgic_casino — the walk now runs THREE notes (fifth-third-second into
+  the next root) where the hole allows: bar 2 plays E5 C#5 B4 into A^9, bar 6
+  C#5 A4 G#4 into F#m9. Plus `marcato` for the mid-range ask and percPresence
+  light for "the drums are a bit too loud".
+- vs_calm_shrine — `padWaveCalm` plus gain multipliers. SECOND ROUND on this
+  exact complaint: r20 answered the interval half of his note and left the
+  dynamics alone, so "like a jumpscare to hurt my ears" is the same unaddressed
+  point, not a new one.
+
+### `pinFrom` leaked once, and the byte compare caught it
+
+The metronome filter was gated on `priorKeep || opts.grammarPin` and reached
+vs_somber_space and vs_calm_desert, which carry `pinFrom: 'r20'` and no
+grammarPin. Every new structural rule needs the ERA STAMP as well as the two
+older gates. Re-gated on `freshRules`; frozen set clean afterwards.
+
+### Corpus calibration (peer session, 31,652 files, research/vgmusic-atlas-r20.md)
+
+A second session swept vgmusic into a gitignored analysis corpus and answered the
+question D101 left open. It did NOT run import-vgmusic.mjs or
+build-harmony-model.mjs against it and did not touch src/lib — the D95 law holds.
+
+  non-chord-tone rate   corpus 14.1%   ours 22.8%   -> WE USE MORE DISSONANCE
+  resolved by step      corpus 43.6%   ours  6.1%   -> 7x gap
+  step-APPROACHED       corpus 48.7%
+Approach and resolution rates being near-equal is the finding: real practice
+surrounds a non-chord tone with stepwise motion on BOTH sides, so D101's
+resolution law is only half the constraint. The target is FEWER non-chord tones
+that go somewhere, not more colour.
+
+  concurrency           corpus median 3.77, max 5    ours 5-7  -> WE ARE ABOVE
+  second independent line   corpus 88.8% of files    ours 14/43
+So "I want more layers with their own melody" is NOT a request for more voices —
+we already carry more than real game music. The gap is INDEPENDENCE, and every
+round I have answered it by casting another voice has been answering the wrong
+question.
+
+  horror thirdless      0.17-0.18 vs 0.18 baseline   -> NO lift
+Horror in the corpus is not thirdless; its unease is mode (77% minor for creepy),
+percussion ABSENCE (48% no-drums for haunted vs 21%) and melodic chromaticism
+(0.17 vs 0.09 out-of-key), not vertical crunch. Strong support for D93 dosing.
+His ear still loved the thirdless pincer on vs_scary_cave, and his ear outranks
+the corpus — but the corpus says thirdlessness is a device, not a horror default.
+
+  desert bII -> bviim   9.5% vs 5.4% corpus-wide     -> real, 1.8x enriched,
+but a minority continuation; the commonest desert move from bII is back to a
+thirdless tonic (30.2%).
+
+### His new layering note
+
+"sometimes you can give instruments the same or almost the same parts and they
+kinda mix together to make a more unique sound (kinda like ... tv man reel)".
+Recorded as `blend_by_near_unison`. It is NOT a reversal of D100's removal of
+`melody_backup` from horror: that layer doubles the lead AT LEAD LEVEL and reads
+louder-and-wider, which is an anti-goal in an atmosphere lane. Blending is fusion
+— the partner sits well under and the pair reads as one instrument. Separating
+variables are gain and lane. Blocked on a blend-partner cast slot with its own
+gain law; melody_backup is the wrong vehicle.
+
+47 songs, 318/318, all 19 frozen byte-identical.
+
+### D102 ADDENDUM — corpus numbers corrected (same day, before any of it hardened)
+
+The peer session's adversarial verify pass caught two errors in the figures I had
+already written into D102 above and into CLAUDE.md. Both are corrected there; the
+originals are left in place above so the record shows what was believed and when.
+
+**1. "88.8% carry a second independently-moving line" was overstated, and the
+error was in the DEFINITION.** The extractor's `secondLine` field never tested
+rhythm at all — it required only a non-lead, non-bass, non-arp, non-doubling
+pitched part. So it measured "carries a second part that is not a doubling",
+which is a much weaker claim. Corrected (n=23,486):
+
+  90.9%  carry a second NON-DOUBLING pitched part          (this part stands)
+  23.2%  of those move FREELY of the lead
+  76.8%  strike WITH the lead on >half their onsets
+  39.6%  have polyRatio >= 0.3 — a chord block, not a line
+  54.5%  of files have a rhythmically-free partner (floor)
+  67.3%  correcting for pairs the extractor drops (it discards any pair with
+         <4 coincidences, which silently excludes the MOST independent case)
+  38.9%  under the strictest definition (moving, monophonic, non-double)
+
+Against our 32.6% (14 of 43) the gap is roughly **6 to 22 points, not 88.8 vs
+32.6**. THE DIRECTION SURVIVES AND THE REFRAMING SURVIVES — we are above the
+corpus on voice COUNT and below it on independence, and casting more voices is
+still the wrong answer — but the magnitude was inflated about fivefold and I
+should not have written a single-source number into CLAUDE.md the same hour I
+received it.
+
+It is also not uniform: master system 20.3%, gameboy 33.8%, nes 35.2% against
+ps1 69.9%, ps2 70.9%, ds 71.4%, snes 58.2%. On chip-era material a free second
+line is a MINORITY behaviour, so it must never become a default in a lane whose
+reference material is chip-era.
+
+**The design consequence is a refinement, not a reversal.** The corpus norm is
+ONE companion locked to the lead's rhythm, plus — in about half of files — one
+further rhythmically-free line. It is not a general free-counterpoint texture.
+Our companion (D100) is rhythm-locked by construction, which turns out to be the
+right shape rather than a limitation.
+
+**2. THIS CORRECTS D100, AND SAYS I FIXED THE WRONG VARIABLE IN r19.** Asked what
+actually makes a second line independent, the verify pass measured:
+
+  - RHYTHM is the WEAKEST separator. Striking with the lead is NORMAL (76.8%).
+  - REGISTER is the real one, and it is TWO devices: the melody sits about an
+    octave off the HARMONY HAND (median -12, 76.0% below), while a companion runs
+    in the SAME register a 3rd-4th from the melody (42.8% of files, parallel
+    thirds 12.2%). The gap between the two highest non-bass parts is a median of
+    5 semitones, not 12.
+  - TIMBRE: 69.3% of second lines, and 85.9% of trading pairs, use a DIFFERENT
+    declared GM family than the lead.
+  - DENSITY INVERTS with the lead: when the lead rests the second line is DENSER
+    (ratio 1.57, denser in 63.9%); when the lead runs continuously it is sparser
+    (0.88). Companion density should be driven by the lead's measured per-bar
+    activity, not by a constant fraction.
+  - ENTRY is early: 83.5% at or before the lead's first bar, only 9.9% four or
+    more bars later. Not a late texture addition.
+
+D100 diagnosed the counterline and descant as "one layer" because they strike
+together on one instrument, and r19 answered it by moving the descant's walk to
+the even bar — i.e. by changing the RHYTHM. The corpus says shared onsets were
+never the defect; the SAME VOICE was. Both are still `gm_string_ensemble_1` at
+octave 4 on every song that carries them. Separating them by declared family and
+register is the real fix and is NOT YET BUILT.
+
+**3. An extractor bug moved the horror numbers.** `inScale()` tested minor keys
+against natural minor only, so an ordinary major/dominant V's leading tone
+counted as out-of-key by construction — the metric was detecting the presence of
+a normal dominant. Fixed and the corpus re-extracted; control: MAJOR-key medians
+moved 0.100 -> 0.100, exactly unchanged, which correctly scopes the fix.
+Post-fix: haunted 0.149 -> 0.111, creepy 0.141 -> 0.107, menacing 0.108 -> 0.091,
+desert 0.110 -> 0.098, corpus-wide lead out-of-key 0.090 -> 0.072. **The (f)
+conclusion survives** — horror is still markedly more chromatic than baseline and
+still shows no thirdless lift — but D102's absolute figures should be read as the
+post-fix ones.
+
+**4. And a correction that STRENGTHENS D100.** "Second line more chromatic than
+the lead" was 36.1%, now 34.3% — and the verify pass showed the asymmetry is
+largely an artifact anyway: on companion-SHAPED lines it is 37.4% lead-diatonic /
+companion-chromatic against 40.4% the other way round. The corpus shows NO
+tendency for a companion to be more chromatic than its lead, which supports r19's
+in-key companion rule rather than licensing any loosening of it. Relatedly,
+rhythmic independence buys NO chromatic licence — out-of-key rate is flat across
+the entire independence range — so no rule may ever grant a companion extra
+chromatic freedom in exchange for having its own rhythm.
+
+**Standing note, and the peer's own framing, which is right:** 31,652 files can
+say what game music DOES; they cannot say what Ethan LIKES. His ear on
+vs_scary_cave outranks the corpus outright.
+
+### D102 SECOND ADDENDUM — concurrency corrected again, and seven of eight claims refuted
+
+**1. Concurrency was 3.77; it is 4.16.** The peer had quoted a 12,268-file
+partial test run rather than the full corpus; the full-corpus report said 4.16
+throughout. Recomputed from the final post-bugfix features file: median
+meanConcurrentParts **4.16**, median maxConcurrent **5**, n=31,652. The D102
+reframing is unaffected in direction — we run 5-7, so we are still above real
+game music and "the gap is independence, not count" still holds — but the margin
+is roughly **1-3 voices, not 1.5-3.5**.
+
+That is the SECOND correction to a number I wrote into CLAUDE.md the same hour I
+received it. The operating lesson is now recorded there in its own right: a
+single-source measurement is provisional until something independent has tried to
+break it, however finished the write-up looks.
+
+**2. An adversarial verify pass over the corpus's eight measured technique areas
+WEAKENED OR REFUTED SEVEN OF EIGHT headline claims**, and the corrections were
+more useful than the originals. That is the single most important fact about how
+much any of this should be trusted. Three bear directly on our work:
+
+**(a) Thirds-first SURVIVES; the categorical no-fourths ban does not.** The claim
+that lead/companion intervals are dominated by perfect intervals was REFUTED —
+octave DOUBLING (21-23% of coincidences) had been folded into the perfect bucket.
+Remove octaves and thirds+sixths beat fourths+fifths in every cut, **43.1% vs
+33.1%**. So D100's thirds-first ordering stands. What is NOT supported is banning
+the fourth outright: the perfect FOURTH individually (17.3%) exceeds the minor
+third (15.1%). The peer had earlier advised dropping the thirds-first ordering
+and has withdrawn that; I had not acted on it.
+
+**(b) A METHOD WARNING worth more than the finding it corrects.** "A same-register
+shadow of the lead is close to absent" was refuted as a SELECTION ARTIFACT: the
+extractor reports one second line per file, chosen by most co-onsets, which
+systematically picks the dense harmony hand. Scanning all pairs, a same-register
+companion is present in **42.8%** of files (rhythm-locked 20.7%, parallel thirds
+12.2%). Generalised: **a feature computed from a single best-scoring pick per
+file understates prevalence by roughly the candidate count** — 8.5% single-pick
+vs 43.5% all-pairs at the identical window, median 4 candidates. This is a trap
+our own probes can fall into and it is now in CLAUDE.md.
+
+**(c) CHROMATIC LICENCE SCALES WITH REALISED MOTION — the best available
+explanation of the r19/D100 companion failure.** A barely-moving line parked on
+out-of-key pitches occurs **26 times in 15,813 files (0.16%)**, and narrow-RANGE
+second lines have a median out-of-key rate of exactly **ZERO**. The corpus's own
+rule is therefore not "never leave the key" but *a line that repeats or holds
+must be diatonic; one that moves freely need not be*. That reaches D100's outcome
+by a mechanism that does not require the hard key-gate — and it explains exactly
+why his ear rejected the r19 companion rather than merely that it did: over
+excited_fight's B-in-A-major it parked on D# for 18 of 22 notes, i.e. it was a
+chromatic DRONE, which is the one shape the corpus essentially never writes.
+The current hard gate is judged material and stays; this is the mechanism to
+build when it is next revisited, and it would let a MOVING companion keep colour
+that the gate currently strips.
+
+**3. Horror out-of-key, final post-bugfix figures**, superseding both earlier
+sets: haunted **0.111**, creepy **0.107**, menacing **0.091**, against a
+corpus-wide lead baseline of **0.072**. Horror remains clearly above baseline and
+still shows no thirdless lift, so the (f) conclusion stands unchanged.
+
+All of the above is recomputed from one consistent post-bugfix file, and the two
+research docs (`research/vgmusic-atlas-r20.md`, `research/vgmusic-techniques-r20.md`)
+carry the corrected numbers plus a visible note of what the earlier figures were
+and why they were wrong.

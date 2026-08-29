@@ -96,7 +96,7 @@ const SOUNDFONT2_URLS = ["https://unpkg.com/soundfont2@0.4.0/lib/SoundFont2.js",
 const SOUNDFONT2_EXPORTS = ["DEFAULT_GENERATOR_VALUES","SoundFont2"];
 const SHIM_EXPORTS = {"@strudel/core":["freqToMidi","noteToMidi","getSoundIndex","Pattern","getPlayableNoteValue"],"@strudel/webaudio":["registerSound","getADSRValues","getAudioContext","getParamADSR","getVibratoOscillator","getPitchEnvelope"]};
 const GM_FALLBACK = 'triangle';
-const BUILD = '2026-08-27 22:32';
+const BUILD = '2026-08-29 05:21';
 const RT = { ready: false, booting: null, note: '', soundfonts: false, gmVoices: 0, gen: 0, maps: {}, problems: [],
   // D56: set once the scheduler tick is running off a Web Worker, so a hidden
   // tab cannot clamp it to 1s. workerTicks is how a probe proves it is live.
@@ -421,6 +421,22 @@ async function rtInit() {
       return { name, ok: false, detail: name + ' samples unreachable:\n' + errors.join('\n') };
     };
     const results = await Promise.all(Object.entries(SAMPLE_MAPS).map(([n, urls]) => loadMap(n, urls)));
+    // Local sample pack (audition/sample-pack.js, built by build-sample-pack
+    // .mjs): a sibling script tag — NOT a fetch, which file:// forbids —
+    // defines window.LOCAL_SAMPLES as a data:-URI strudel map. Lazy-loaded
+    // per name by the sampler, so registration is cheap. Pages without the
+    // tag (or a missing file) just skip this: the global is undefined.
+    // (Do not write a literal script-open-tag in this comment: the page
+    // builder slices the inline script by lastIndexOf of that tag.)
+    if (typeof window !== 'undefined' && window.LOCAL_SAMPLES) {
+      try {
+        await strudel.samples(window.LOCAL_SAMPLES);
+        RT.maps.local = 'sample-pack.js (' + Object.keys(window.LOCAL_SAMPLES).length + ' local names)';
+      } catch (e) {
+        RT.problems.push('local sample pack failed to register: ' + (e && e.message ? e.message : e)
+          + '\nhx_*/vc_* layers will be silent in web playback (HQ renders are unaffected).');
+      }
+    }
     const failed = results.filter((r) => !r.ok);
     RT.ready = true;
     if (failed.length === results.length && !RT.soundfonts) {

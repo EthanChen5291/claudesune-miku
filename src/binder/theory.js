@@ -18,6 +18,11 @@ export const SCALES = {
   melodicMinor: [0, 2, 3, 5, 7, 9, 11],
   majorPentatonic: [0, 2, 4, 7, 9],
   minorPentatonic: [0, 3, 5, 7, 10],
+  // r14 (happy_desert: melody "too 'harmonious' and 'happy' to give off the
+  // desert vibe"): the Hijaz supply — desert songs' melody walks Phrygian
+  // dominant (b2 + raised 3rd) instead of the plain major the modal family
+  // pin was mapping to.
+  phrygianDominant: [0, 1, 4, 5, 7, 8, 10],
 };
 
 const NOTE_NAMES_SHARP = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];

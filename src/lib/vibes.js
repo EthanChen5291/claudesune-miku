@@ -206,7 +206,11 @@ export const ENVIRONMENTS = {
       avoid: ['gm_epiano1', 'gm_lead_1_square', 'gm_celesta'],
     },
     figClasses: ['dance_bass', 'sustain', 'walk'],
-    percussion: { presence: 'light', patterns: ['tresillo', 'son_clave_3'] },
+    // genre-expansion round (his desert-vs-space complaint): the desert floor
+    // is a hand-drum iqa', not a Latin kick — ayyub caravan gallop by
+    // default, riq jingles above; per-song opts pin maqsum/masmoudi
+    // (research/env-desert-jungle.md §2, midi-desert-analysis.md §1.7).
+    percussion: { presence: 'light', patterns: ['ayyub', 'maqsum', 'masmoudi_slow', 'riq_offbeats'] },
     ensemble: { layers: [1, 2] }, loopHint: [30, 60],
     ratified: false, character: null,
   },
@@ -331,6 +335,110 @@ export const ENVIRONMENTS = {
     ensemble: { layers: [2, 3], anchor: 'duet' }, loopHint: [30, 60],
     ratified: false, character: null,
   },
+
+  // ---- genre-expansion environments (2026-08-27 round) ---------------------
+  // Researched in research/env-space.md, env-desert-jungle.md, env-horror.md,
+  // midi-desert-analysis.md, choir-research.md. The three horror LANES are
+  // three places: manor = horror ambience (exploration), catacombs = horror
+  // action (chase), citadel = epic horror (boss/main-theme). shrine is the
+  // sacred/magical choir home (his mid-round ask: "1 soft song that uses
+  // choir (magical)").
+  space: {
+    // Mass Effect / FTL / Metroid recipe: slow harmonic rhythm over a pedal,
+    // arp pulse + slow detuned pad, sensor blips, sparse electronic drums.
+    role: 'overworld', bpm: [70, 110], meters: ['4/4'], family: 'minor',
+    register: { accOctave: 3, leadOctave: 5 }, salience: 'background',
+    envMoods: ['spacious', 'dreamy', 'airy', 'ethereal', 'lonely'],
+    instBias: {
+      boost: ['gm_pad_halo', 'gm_fx_echoes', 'gm_pad_warm', 'gm_epiano1', 'gm_synth_bass_1', 'choir_female'],
+      avoid: ['gm_acoustic_guitar_nylon', 'gm_trumpet', 'gm_accordion', 'gm_xylophone'],
+    },
+    figClasses: ['arp', 'sustain', 'pulse'],
+    percussion: { presence: 'light', patterns: ['two_step_kick', 'backbeat_ghost'] },
+    ensemble: { layers: [2, 4] }, loopHint: [60, 120],
+    ratified: false, character: null,
+  },
+  jungle: {
+    // DKC/Crash recipe: percussion-forward (tumbao/martillo hand drums),
+    // marimba/kalimba ostinati, pentatonic-friendly, groove-first.
+    // r16 (jungle-tempo: "widen to [100,152]"). Groove references sit at
+    // 100-122, but the action ones — Sburban 140, Contra 152 — sat outside the
+    // band and were being forced down to a groove tempo. Per-environment, so
+    // widening this moves jungle songs only (measured: 2 songs, both unfrozen).
+    role: 'overworld', bpm: [100, 152], meters: ['4/4'], family: 'major',
+    register: { accOctave: 3, leadOctave: 5 }, salience: 'background',
+    envMoods: ['playful', 'questing', 'pastoral', 'driving'],
+    instBias: {
+      boost: ['gm_marimba', 'gm_kalimba', 'gm_flute', 'gm_clarinet', 'gm_synth_bass_1'],
+      avoid: ['gm_epiano1', 'gm_celesta', 'gm_church_organ'],
+    },
+    figClasses: ['riff', 'pulse', 'block'],
+    percussion: { presence: 'foreground', patterns: ['tumbao_conga', 'martillo_bongo', 'son_clave_3'] },
+    ensemble: { layers: [2, 4] }, loopHint: [30, 60],
+    ratified: false, character: null,
+  },
+  manor: {
+    // HORROR AMBIENCE lane: <=75bpm or pulseless, drone floor, fragmented
+    // melody, one harmonic-dissonance device per song over a consonant bed
+    // (research/env-horror.md dosing law). hx_* ambience beds live here.
+    role: 'cutscene', bpm: [55, 75], meters: ['4/4'], family: 'minor',
+    register: { accOctave: 2, leadOctave: 4 }, salience: 'background',
+    envMoods: ['eerie', 'grave', 'dark', 'spacious', 'lonely'],
+    instBias: {
+      boost: ['gm_pad_metallic', 'gm_music_box', 'gm_tremolo_strings', 'gm_harpsichord', 'choir_female', 'gm_fx_echoes'],
+      avoid: ['gm_trumpet', 'gm_accordion', 'gm_lead_1_square', 'gm_xylophone'],
+    },
+    figClasses: ['sustain', 'arp'],
+    percussion: { presence: 'none', patterns: [] },
+    ensemble: { layers: [2, 4], anchor: 'duet' }, loopHint: [60, 120],
+    ratified: false, character: null,
+  },
+  catacombs: {
+    // HORROR ACTION lane: relentless near-consonant low ostinato, war/tom
+    // drums, cluster stabs dosed sparsely, tempo = proximity (Jaws law).
+    role: 'chase', bpm: [128, 160], meters: ['4/4'], family: 'minor',
+    register: { accOctave: 2, leadOctave: 5 }, salience: 'background',
+    envMoods: ['tense', 'ominous', 'driving', 'dark'],
+    instBias: {
+      boost: ['gm_synth_bass_1', 'gm_lead_2_sawtooth', 'gm_tremolo_strings', 'gm_pad_metallic', 'choir_male'],
+      avoid: ['gm_celesta', 'gm_music_box', 'gm_accordion', 'gm_kalimba'],
+    },
+    figClasses: ['pulse', 'riff', 'broken_octave'],
+    percussion: { presence: 'foreground', patterns: ['war_gallop', 'sixteenth_drive', 'shaker_urgency'] },
+    ensemble: { layers: [3, 5] }, loopHint: [15, 30],
+    ratified: false, character: null,
+  },
+  citadel: {
+    // EPIC HORROR lane (and the active-choir home): the MOST tonal horror —
+    // Bloodborne/Castlevania law: tonal minor theme + gothic timbre (organ,
+    // choir, big low drums); dissonance only at cadences.
+    role: 'boss', bpm: [96, 132], meters: ['4/4'], family: 'minor',
+    register: { accOctave: 2, leadOctave: 5 }, salience: 'foreground',
+    envMoods: ['grave', 'epic', 'ominous', 'sacred'],
+    instBias: {
+      boost: ['gm_church_organ', 'choir_male', 'gm_choir_aahs', 'gm_string_ensemble_1', 'gm_tremolo_strings'],
+      avoid: ['gm_epiano1', 'gm_kalimba', 'gm_celesta', 'gm_lead_1_square'],
+    },
+    figClasses: ['block', 'pulse', 'broken_octave'],
+    percussion: { presence: 'driving', patterns: ['war_march', 'war_gallop'] },
+    ensemble: { layers: [3, 6] }, loopHint: [15, 30],
+    ratified: false, character: null,
+  },
+  shrine: {
+    // The sacred/magical soft-choir home (Journey/Ori register): female aahs
+    // over harp/celesta arps, breath gaps, no percussion.
+    role: 'menu', bpm: [60, 90], meters: ['4/4'], family: 'major',
+    register: { accOctave: 3, leadOctave: 5 }, salience: 'background',
+    envMoods: ['sacred', 'magical', 'ethereal', 'tender', 'calm'],
+    instBias: {
+      boost: ['choir_female', 'gm_choir_aahs', 'gm_celesta', 'gm_orchestral_harp', 'gm_pad_halo'],
+      avoid: ['gm_lead_2_sawtooth', 'gm_synth_bass_1', 'gm_trombone'],
+    },
+    figClasses: ['arp', 'block', 'sustain'],
+    percussion: { presence: 'none', patterns: [] },
+    ensemble: { layers: [2, 4] }, loopHint: [60, 120],
+    ratified: false, character: null,
+  },
 };
 
 // tonic practice pools per family (keys census, research/keys-census.md —
@@ -351,6 +459,9 @@ const ENV_ARTIC = {
   construction: ['detached', false], lab: ['detached', false], boss: ['detached', false],
   shop: ['detached', false], casino: ['detached', false], festival: ['detached', false],
   desert: ['legato', false], stealth: ['detached', false],
+  // genre-expansion round
+  space: ['legato', true], manor: ['legato', true], shrine: ['legato', true],
+  jungle: ['detached', false], catacombs: ['staccato', false], citadel: ['detached', false],
 };
 const weightedPick = (pool, h) => {
   const entries = Object.entries(pool);

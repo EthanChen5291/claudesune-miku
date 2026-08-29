@@ -362,6 +362,61 @@ export const INSTRUMENTS = {
     moods: ['jazzy', 'relaxed', 'warm', 'retro'],
     character: 'an upright bass: plucked wood with a little growl — walks rather than pedals, and swings where a synth bass drives.',
   },
+
+  // ---- genre-expansion voices (2026-08-27) --------------------------------
+  // Every entry below carries `envOnly`: it can ONLY be cast in the listed
+  // environments, so adding it cannot re-roll any existing song's casting
+  // (the library-growth law applied to the palette). envOnly sets must never
+  // name a pre-expansion environment except desert, whose one song is under
+  // an open note this round.
+  gm_sitar: {
+    gm: 'gm_sitar', family: 'pluck', attack: 'quick', sustain: 'medium',
+    cuts: 0.8, weight: 0.4, range: [3, 5], level: 1.1, lanes: ['lead', 'mid'],
+    parts: ['melody_takeover', 'alternate_melody', 'counter_melody'],
+    moods: ['lonely', 'questing', 'eerie', 'spacious'],
+    envOnly: ['desert'],
+    character: 'a sitar: buzzing sympathetic wire under every note — the NSMB-desert lead voice; ornaments read as slides on it.',
+  },
+  gm_shanai: {
+    gm: 'gm_shanai', family: 'wind', attack: 'soft', sustain: 'long',
+    cuts: 0.85, weight: 0.4, range: [4, 5], level: 1.15, lanes: ['lead', 'high'],
+    parts: ['melody_takeover', 'alternate_melody'],
+    moods: ['lonely', 'plaintive', 'questing'],
+    envOnly: ['desert'],
+    character: 'a shanai: a nasal double reed that wails — the desert caravan lead where the sitar is the desert night.',
+  },
+  gm_pad_metallic: {
+    gm: 'gm_pad_metallic', family: 'pad', attack: 'slow', sustain: 'long',
+    cuts: 0.35, weight: 0.6, range: [2, 4], level: 1.0, lanes: ['low', 'mid'],
+    parts: ['harmony_support'],
+    moods: ['eerie', 'ominous', 'dark', 'grave'],
+    envOnly: ['manor', 'catacombs', 'citadel', 'space'],
+    character: 'a metallic ghost pad: inharmonic overtones that never settle — the dread bed (HQ: Surge "Ghost Pad").',
+  },
+  gm_fx_echoes: {
+    gm: 'gm_fx_echoes', family: 'synth', attack: 'quick', sustain: 'medium',
+    cuts: 0.7, weight: 0.2, range: [5, 6], level: 0.9, lanes: ['high'],
+    parts: ['counter_melody', 'melody_backup'],
+    moods: ['spacious', 'dreamy', 'magical', 'eerie'],
+    envOnly: ['space', 'manor'],
+    character: 'echo drops: one soft blip and its fading repeats — the Metroid item-room signifier; sparse or it is nothing.',
+  },
+  choir_male: {
+    gm: 'choir_male', family: 'voice', attack: 'slow', sustain: 'long',
+    cuts: 0.55, weight: 0.7, range: [2, 4], level: 1.1, lanes: ['low', 'mid'],
+    parts: ['harmony_support', 'melody_takeover', 'additional_harmony'],
+    moods: ['grave', 'epic', 'sacred', 'ominous'],
+    envOnly: ['citadel', 'manor', 'catacombs', 'shrine', 'space'],
+    character: 'a male chorus (SSO aahs, G2-F#4): mass on one line — chant power; unison or octaves, never busy. HQ: gen/choir-male.sfz.',
+  },
+  choir_female: {
+    gm: 'choir_female', family: 'voice', attack: 'slow', sustain: 'long',
+    cuts: 0.5, weight: 0.6, range: [4, 5], level: 1.1, lanes: ['high', 'mid'],
+    parts: ['harmony_support', 'counter_melody', 'melody_backup'],
+    moods: ['ethereal', 'sacred', 'magical', 'tender'],
+    envOnly: ['shrine', 'manor', 'citadel', 'space'],
+    character: 'a female chorus (SSO aahs, G4-C6): the sacred high line — steps only, long tones, silence between phrases. HQ: gen/choir-female.sfz.',
+  },
 };
 
 /** instruments whose `parts` include this part */

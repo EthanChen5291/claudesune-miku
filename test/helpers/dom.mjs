@@ -52,7 +52,16 @@ export function runPage(path, { breakStrudel = false, failSamples = null, failSo
       remove() {}, select() {}, scrollIntoView() {},
       add(o) { this.children.push(o); },
       classList: { toggle() {}, add() {}, remove() {} },
-      addEventListener() {}, onclick: null, oninput: null, onchange: null,
+      // Element listeners used to be dropped on the floor, which silently made
+      // any page using event DELEGATION (one handler on a container, dispatch
+      // by ev.target.closest) untestable — it renders, and nothing responds.
+      // Registering onto the matching on* slot lets those pages be clicked.
+      addEventListener(type, fn) {
+        const slot = 'on' + type;
+        const prev = this[slot];
+        this[slot] = prev ? function (ev) { prev.call(this, ev); return fn.call(this, ev); } : fn;
+      },
+      onclick: null, oninput: null, onchange: null, onkeydown: null,
     };
     return el;
   };

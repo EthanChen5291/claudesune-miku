@@ -373,7 +373,7 @@ function lit(v) {
   const L = [HDR('Observed chord voicings'), '//',
     "// Semitone offsets from the chord root, exactly as played on the source records.",
     "// This is what MIDI is uniquely good for and a numeral corpus can never give",
-    "// (D28): real register, spacing and inversion. Five of the six qualities D28",
+    "// (D28): real register, spacing and inversion. Four of the five qualities D28",
     "// listed as missing shapes appear here — as OBSERVATIONS, not yet as library",
     "// shapes. Promotion into src/lib/voicings.js is an ear decision.", '',
     'export const VOICING_OBSERVATIONS = {'];
@@ -385,8 +385,12 @@ function lit(v) {
     L.push(`  ],`);
   }
   L.push('}', '');
+  // r16: 'm6' left this list — it was promoted into src/lib/voicings.js when
+  // he ruled "add :6 to the dialect", so it is no longer a gap these records
+  // fill. The list is a hand-kept literal, not derived from VOICINGS, so
+  // promoting a quality means editing it here.
   L.push("/** qualities src/lib/voicings.js has no shape for, that these records DO voice */");
-  L.push(`export const FILLS_GAPS = ${lit([...byQuality.keys()].filter((q) => ['2', '5', '69', 'add9', 'm6', 'madd9'].includes(q)).sort())}`);
+  L.push(`export const FILLS_GAPS = ${lit([...byQuality.keys()].filter((q) => ['2', '5', '69', 'add9', 'madd9'].includes(q)).sort())}`);
   L.push('');
   writeFileSync(join(ROOT, 'src/lib/voicings-unison.js'), L.join('\n'));
 }

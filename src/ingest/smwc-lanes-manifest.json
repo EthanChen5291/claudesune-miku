@@ -1,0 +1,2835 @@
+{
+ "count": 120,
+ "files": [
+  {
+   "id": 12607,
+   "lane": "desert",
+   "name": "Castlevania II: Simon's Quest - \"hyper-realistic\" Bloody Tears (Remix)",
+   "tags": [
+    "desert",
+    "fire",
+    "mountain"
+   ],
+   "rating": 4.7273,
+   "mml": [
+    "12607__bloodytears.txt"
+   ],
+   "brr": []
+  },
+  {
+   "id": 16014,
+   "lane": "desert",
+   "name": "Sonic Mania - Rogues Gallery (Mirage Saloon Zone Act 2)",
+   "tags": [
+    "athletic",
+    "carnival",
+    "desert",
+    "urban"
+   ],
+   "rating": 4.68,
+   "mml": [
+    "16014__Mirage Saloon.txt"
+   ],
+   "brr": [
+    "openhat.brr"
+   ]
+  },
+  {
+   "id": 20312,
+   "lane": "desert",
+   "name": "Super Mario Maker 2 - SMW Desert",
+   "tags": [
+    "desert"
+   ],
+   "rating": 4.6667,
+   "mml": [
+    "20312__desert.txt"
+   ],
+   "brr": []
+  },
+  {
+   "id": 9438,
+   "lane": "desert",
+   "name": "Chrono Trigger - Corridors of Time",
+   "tags": [
+    "desert",
+    "magical",
+    "town"
+   ],
+   "rating": 4.5,
+   "mml": [
+    "9438__Chrono Trigger - Corridors of Time.txt"
+   ],
+   "brr": [
+    "ctcot_20.brr",
+    "ctcot_21.brr",
+    "ctcot_22.brr",
+    "ctcot_23.brr",
+    "ctcot_24.brr",
+    "ctcot_25.brr",
+    "ctcot_26.brr",
+    "ctcot_27.brr",
+    "ctcot_28.brr"
+   ]
+  },
+  {
+   "id": 15959,
+   "lane": "desert",
+   "name": "The Legend of Zelda: Ocarina of Time - Gerudo Valley",
+   "tags": [
+    "calm",
+    "desert",
+    "sad"
+   ],
+   "rating": 4.8,
+   "mml": [
+    "15959__oot_gerudo.txt"
+   ],
+   "brr": [
+    "oot_trumpet.brr",
+    "oot_clap.brr",
+    "oot_nylon.brr"
+   ]
+  },
+  {
+   "id": 15990,
+   "lane": "desert",
+   "name": "Super Mario Maker - SMB3 Desert (Fanmade)",
+   "tags": [
+    "desert",
+    "overworld",
+    "ruins",
+    "submap"
+   ],
+   "rating": 4.8571,
+   "mml": [
+    "15990__SMM SMB3 Desert.txt"
+   ],
+   "brr": []
+  },
+  {
+   "id": 11126,
+   "lane": "desert",
+   "name": "Kirby's Dream Land 3 - Sand Canyon 3",
+   "tags": [
+    "desert",
+    "ice",
+    "night",
+    "sky"
+   ],
+   "rating": 5,
+   "mml": [
+    "11126__sand canyon 3.txt"
+   ],
+   "brr": []
+  },
+  {
+   "id": 7455,
+   "lane": "desert",
+   "name": "The Legend of Zelda: A Link to the Past - Dark World",
+   "tags": [
+    "dark",
+    "desert",
+    "forest",
+    "mountain",
+    "overworld",
+    "ruins"
+   ],
+   "rating": 5,
+   "mml": [
+    "7455__darkworld.txt"
+   ],
+   "brr": [
+    "2A Strings.brr",
+    "2B Trumpet.brr",
+    "31 Tuba.brr",
+    "32 Trombone.brr",
+    "34 Snare.brr",
+    "36 Flute.brr",
+    "38 Bass.brr"
+   ]
+  },
+  {
+   "id": 7885,
+   "lane": "desert",
+   "name": "Arabic Coffee",
+   "tags": [
+    "desert",
+    "overworld",
+    "ruins"
+   ],
+   "rating": 4.7143,
+   "mml": [
+    "7885__Arabic Coffee.txt"
+   ],
+   "brr": []
+  },
+  {
+   "id": 17821,
+   "lane": "desert",
+   "name": "Shovel Knight - A Thousand Leagues Below (KMT Styled)",
+   "tags": [
+    "athletic",
+    "cave",
+    "dark",
+    "final",
+    "water"
+   ],
+   "rating": 5,
+   "mml": [
+    "17821__Shovel Knight - A Thousand Leagues Below (Iron Whale).txt"
+   ],
+   "brr": [
+    "kmthihat.brr",
+    "kmtkick.brr",
+    "kmtsnare.brr",
+    "kmtsquare.brr",
+    "kmtsquarebass.brr"
+   ]
+  },
+  {
+   "id": 13971,
+   "lane": "desert",
+   "name": "Super Mario Land - Ruins",
+   "tags": [
+    "dark",
+    "desert",
+    "ruins"
+   ],
+   "rating": 4,
+   "mml": [
+    "13971__SML Ruins.txt"
+   ],
+   "brr": []
+  },
+  {
+   "id": 8504,
+   "lane": "desert",
+   "name": "Kirby's Dream Land 3 - Sand Canyon 1",
+   "tags": [
+    "athletic",
+    "chase",
+    "grassland",
+    "mountain"
+   ],
+   "rating": 4.3333,
+   "mml": [
+    "8504__synth2.txt"
+   ],
+   "brr": []
+  },
+  {
+   "id": 12902,
+   "lane": "desert",
+   "name": "Cave Story - Meltdown 2",
+   "tags": [
+    "athletic",
+    "cave",
+    "desert",
+    "mountain"
+   ],
+   "rating": 4,
+   "mml": [
+    "12902__meltdown2.txt"
+   ],
+   "brr": [
+    "hi-hat_closed.brr",
+    "hi-hat_open.brr",
+    "kick.brr",
+    "toms.brr",
+    "wave_16_octave.brr",
+    "wave_37.brr",
+    "wave_9_octave.brr",
+    "wave_7.brr",
+    "wave_30.brr",
+    "wave_34.brr"
+   ]
+  },
+  {
+   "id": 20378,
+   "lane": "desert",
+   "name": "Paper Mario: The Thousand-Year Door - Rogueport Sewers",
+   "tags": [
+    "cave",
+    "sewer"
+   ],
+   "rating": 5,
+   "mml": [
+    "20378__rogueportsewers.txt"
+   ],
+   "brr": []
+  },
+  {
+   "id": 11988,
+   "lane": "desert",
+   "name": "Dark Pyramid",
+   "tags": [
+    "castle",
+    "dark",
+    "desert",
+    "ruins"
+   ],
+   "rating": 4.4,
+   "mml": [
+    "11988__Dark Pyramid.txt"
+   ],
+   "brr": []
+  },
+  {
+   "id": 17128,
+   "lane": "desert",
+   "name": "The Legend of Zelda: Majora's Mask - Stone Tower Temple (normal)",
+   "tags": [
+    "dark",
+    "desert",
+    "mountain",
+    "ruins",
+    "temple"
+   ],
+   "rating": 5,
+   "mml": [
+    "17128__loz_stone.txt"
+   ],
+   "brr": [
+    "drone.brr",
+    "humming.brr",
+    "ocarina.brr",
+    "perc1.brr",
+    "perc2.brr",
+    "perc3.brr",
+    "reed.brr",
+    "santoor.brr",
+    "smallpipe.brr",
+    "strings5th.brr"
+   ]
+  },
+  {
+   "id": 7866,
+   "lane": "desert",
+   "name": "Desert",
+   "tags": [
+    "desert",
+    "jungle",
+    "overworld",
+    "ruins",
+    "temple"
+   ],
+   "rating": 4.1667,
+   "mml": [
+    "7866__CUSTOM - Desert.txt"
+   ],
+   "brr": []
+  },
+  {
+   "id": 15601,
+   "lane": "desert",
+   "name": "Super Mario RPG: Legend of the Seven Stars - Moleville Mountain Rail",
+   "tags": [
+    "athletic",
+    "cave",
+    "chase",
+    "desert",
+    "mountain"
+   ],
+   "rating": 5,
+   "mml": [
+    "15601__Super Mario RPG - Docaty Mountain Railroad.txt"
+   ],
+   "brr": []
+  },
+  {
+   "id": 32226,
+   "lane": "desert",
+   "name": "b3313 - Dry Town",
+   "tags": [
+    "desert",
+    "mysterious",
+    "town",
+    "water"
+   ],
+   "rating": 5,
+   "mml": [
+    "32226__B3313_Dry_Town.txt"
+   ],
+   "brr": [
+    "electric_piano_2.brr",
+    "french_horn.brr",
+    "strings.brr"
+   ]
+  },
+  {
+   "id": 15395,
+   "lane": "desert",
+   "name": "The Legend of Zelda: Ocarina of Time - Gerudo Valley",
+   "tags": [
+    "desert",
+    "town"
+   ],
+   "rating": 4.8,
+   "mml": [
+    "15395__Gerudo Valley.txt"
+   ],
+   "brr": [
+    "Bass.brr",
+    "Brass.brr",
+    "Castanets.brr",
+    "Guitar.brr"
+   ]
+  },
+  {
+   "id": 8221,
+   "lane": "desert",
+   "name": "Desert Stage",
+   "tags": [
+    "desert"
+   ],
+   "rating": 4,
+   "mml": [
+    "8221__CUSTOM - Desert Stage.txt",
+    "8221__Readme.txt"
+   ],
+   "brr": []
+  },
+  {
+   "id": 17431,
+   "lane": "desert",
+   "name": "Mario & Luigi: Partners in Time - Gritzy Desert (16-bit Remix)",
+   "tags": [
+    "desert"
+   ],
+   "rating": 4.6667,
+   "mml": [
+    "17431__Gritzy Desert.txt"
+   ],
+   "brr": []
+  },
+  {
+   "id": 16841,
+   "lane": "desert",
+   "name": "Sonic 3 & Knuckles - Sandopolis Zone Act 1",
+   "tags": [
+    "desert",
+    "ruins",
+    "temple"
+   ],
+   "rating": 4.1667,
+   "mml": [
+    "16841__Sonic 3 & Knuckles - Sandopolis Zone Act 1.txt"
+   ],
+   "brr": []
+  },
+  {
+   "id": 14634,
+   "lane": "desert",
+   "name": "Mario & Luigi: Superstar Saga - Oho Oasis",
+   "tags": [
+    "beach",
+    "grassland",
+    "town"
+   ],
+   "rating": 4.5,
+   "mml": [
+    "14634__Oho Oasis.txt"
+   ],
+   "brr": []
+  },
+  {
+   "id": 7140,
+   "lane": "desert",
+   "name": "Final Fantasy VI - Terra's Theme",
+   "tags": [
+    "cutscene",
+    "dark",
+    "desert",
+    "forest",
+    "grassland",
+    "ice",
+    "mountain",
+    "overworld",
+    "ruins",
+    "title"
+   ],
+   "rating": 3.75,
+   "mml": [
+    "7140__readme.txt",
+    "7140__Terra.txt"
+   ],
+   "brr": []
+  },
+  {
+   "id": 17512,
+   "lane": "desert",
+   "name": "Jurassic Park - Triceratops Trot",
+   "tags": [
+    "desert",
+    "mountain"
+   ],
+   "rating": 5,
+   "mml": [
+    "17512__Jurassic Park - Triceratops Trot.txt"
+   ],
+   "brr": [
+    "jp-1c.brr",
+    "jp-1d.brr",
+    "jp-1e.brr",
+    "jp-1f.brr",
+    "jp-20.brr"
+   ]
+  },
+  {
+   "id": 11570,
+   "lane": "desert",
+   "name": "Ninja Gaiden (NES) - Ryu's Determination",
+   "tags": [
+    "athletic",
+    "desert"
+   ],
+   "rating": 3.5,
+   "mml": [
+    "11570__Ninja Gaiden - Ryu's Determination.txt"
+   ],
+   "brr": [
+    "ng_strings.brr",
+    "ng_share.brr",
+    "ng_oguitar.brr",
+    "ng_koto.brr",
+    "ng_kick.brr",
+    "ng_hihat.brr"
+   ]
+  },
+  {
+   "id": 20348,
+   "lane": "desert",
+   "name": "Super Mario Maker 2 - SMB Desert",
+   "tags": [
+    "desert",
+    "ruins"
+   ],
+   "rating": 4,
+   "mml": [
+    "20348__SMM2 - SMB Desert.txt",
+    "20348__._SMM2 - SMB Desert.txt"
+   ],
+   "brr": []
+  },
+  {
+   "id": 14164,
+   "lane": "desert",
+   "name": "Wario Land 4 - Hall of Hieroglyphs Remix",
+   "tags": [
+    "beach",
+    "bonus",
+    "calm",
+    "carnival",
+    "castle",
+    "cave",
+    "cutscene",
+    "dark",
+    "desert",
+    "forest",
+    "ghost house",
+    "ice",
+    "industrial",
+    "jungle",
+    "mountain",
+    "night",
+    "overworld",
+    "swamp",
+    "temple",
+    "town",
+    "urban"
+   ],
+   "rating": 3.5,
+   "mml": [
+    "14164__HallOfHieroglyphs.txt"
+   ],
+   "brr": []
+  },
+  {
+   "id": 22314,
+   "lane": "desert",
+   "name": "Paper Mario: The Thousand Year Door - X-Naut Fortress",
+   "tags": [
+    "abstract",
+    "athletic",
+    "castle",
+    "space"
+   ],
+   "rating": 5,
+   "mml": [
+    "22314__x-naut.txt",
+    "22314__._x-naut.txt"
+   ],
+   "brr": [
+    "08.brr",
+    "._08.brr",
+    "14.brr",
+    "._14.brr",
+    "51.brr",
+    "._51.brr",
+    "52.brr",
+    "._52.brr",
+    "Drawbar Organ.brr",
+    "._Drawbar Organ.brr",
+    "Electric Bass.brr",
+    "._Electric Bass.brr",
+    "o4 high.brr",
+    "._o4 high.brr",
+    "o4 low.brr",
+    "._o4 low.brr",
+    "o5 high.brr",
+    "._o5 high.brr",
+    "o5 low.brr",
+    "._o5 low.brr",
+    "o6 low.brr",
+    "._o6 low.brr",
+    "o7 low.brr",
+    "._o7 low.brr",
+    "Synth Chord 1.brr",
+    "._Synth Chord 1.brr",
+    "Synth Chord 2.brr",
+    "._Synth Chord 2.brr"
+   ]
+  },
+  {
+   "id": 7111,
+   "lane": "jungle",
+   "name": "Donkey Kong Country 2: Diddy's Kong Quest - Forest Interlude",
+   "tags": [
+    "calm",
+    "environmental",
+    "forest",
+    "jungle"
+   ],
+   "rating": 4.75,
+   "mml": [
+    "7111__Donkey Kong Country 2 - Forest Interlude.txt",
+    "7111__._Donkey Kong Country 2 - Forest Interlude.txt"
+   ],
+   "brr": [
+    "00.brr",
+    "01.brr",
+    "02.brr",
+    "03.brr",
+    "04.brr",
+    "05.brr",
+    "06.brr",
+    "07.brr",
+    "08.brr",
+    "09.brr",
+    "0a.brr",
+    "0b.brr",
+    "0c.brr",
+    "0d.brr",
+    "0e.brr",
+    "0f.brr",
+    "10.brr",
+    "11.brr",
+    "12.brr",
+    "13.brr",
+    "14.brr",
+    "15.brr",
+    "16.brr",
+    "17.brr",
+    "18.brr",
+    "19.brr",
+    "1a.brr",
+    "1b.brr",
+    "1c.brr",
+    "1d.brr",
+    "1e.brr",
+    "1f.brr",
+    "20.brr",
+    "21.brr",
+    "22.brr",
+    "23.brr",
+    "24.brr",
+    "25.brr",
+    "26.brr",
+    "27.brr",
+    "28.brr",
+    "29.brr",
+    "2a.brr",
+    "2b.brr",
+    "2c.brr",
+    "2d.brr",
+    "2e.brr",
+    "2f.brr",
+    "30.brr",
+    "31.brr",
+    "32.brr",
+    "33.brr",
+    "34.brr",
+    "35.brr",
+    "36.brr",
+    "37.brr",
+    "38.brr",
+    "39.brr",
+    "3a.brr",
+    "3b.brr",
+    "3c.brr",
+    "3d.brr",
+    "3e.brr",
+    "3f.brr",
+    "40.brr",
+    "41.brr",
+    "42.brr",
+    "e4.brr"
+   ]
+  },
+  {
+   "id": 22622,
+   "lane": "jungle",
+   "name": "Super Mario Odyssey - Steam Gardens",
+   "tags": [
+    "athletic",
+    "beach",
+    "forest",
+    "grassland",
+    "jungle",
+    "town",
+    "urban"
+   ],
+   "rating": 5,
+   "mml": [
+    "22622__SMO - Wooded Kingdom.txt"
+   ],
+   "brr": [
+    "b3_organ.brr",
+    "b3_organ_maj3rd.brr",
+    "b3_organ_min3rd.brr",
+    "clean_strat.brr",
+    "dGhost.brr",
+    "dHat1.brr",
+    "dHat2.brr",
+    "dHat3.brr",
+    "dKick.brr",
+    "dSnare.brr",
+    "horns_fmaj7_normal.brr",
+    "horns_gmaj_inv1.brr",
+    "horns_gmin_inv1.brr",
+    "JazzBs_Hi.brr",
+    "JazzBs_Low.brr",
+    "jz_clean_4th.brr",
+    "jz_clean_maj3rd.brr",
+    "jz_clean_min3rd.brr"
+   ]
+  },
+  {
+   "id": 23119,
+   "lane": "jungle",
+   "name": "Sonic CD - Palmtree Panic Zone (Past)",
+   "tags": [
+    "beach",
+    "calm",
+    "environmental",
+    "forest",
+    "grassland",
+    "jungle",
+    "mountain"
+   ],
+   "rating": 5,
+   "mml": [
+    "23119__Palmtree Panic Zone (Past).txt"
+   ],
+   "brr": [
+    "Bass.brr",
+    "Beat.brr",
+    "Flute.brr",
+    "Hit.brr",
+    "Piano1.brr",
+    "Piano2.brr",
+    "SoftLead.brr",
+    "Violin.brr"
+   ]
+  },
+  {
+   "id": 8617,
+   "lane": "jungle",
+   "name": "Terra Diver - Ota City Sky",
+   "tags": [
+    "athletic",
+    "bonus",
+    "boss",
+    "forest",
+    "ice",
+    "industrial",
+    "jungle",
+    "sky"
+   ],
+   "rating": 4.7778,
+   "mml": [
+    "8617__Ota City Sky.txt"
+   ],
+   "brr": [
+    "@0_octup@WP.brr",
+    "bang@WP.brr",
+    "epiano@WP.brr",
+    "epiano_abe@WP.brr",
+    "Kick@GP.brr",
+    "pizzicato_low@WP.brr",
+    "Square@WP.brr",
+    "String2@WP.brr",
+    "String@.brr",
+    "synthbass@WP.brr",
+    "tambourine@WP.brr"
+   ]
+  },
+  {
+   "id": 11011,
+   "lane": "jungle",
+   "name": "Sonic Heroes - Ocean Palace",
+   "tags": [
+    "athletic",
+    "credits",
+    "jungle",
+    "sky",
+    "water"
+   ],
+   "rating": 4.6667,
+   "mml": [
+    "11011__Ocean Palace.txt"
+   ],
+   "brr": [
+    "DKC2 Harpscord.brr",
+    "Ocean Palace Snare.brr",
+    "Bass Drum.brr",
+    "Bass.brr",
+    "Cymbal Crash.brr",
+    "Dist Guitar.brr",
+    "Guitar.brr",
+    "Ride Cymbal.brr",
+    "Snare.brr",
+    "SynthBrass.brr",
+    "Tom.brr"
+   ]
+  },
+  {
+   "id": 7499,
+   "lane": "jungle",
+   "name": "Donkey Kong Country 3: Dixie's Double Trouble! - Rockface Rumble",
+   "tags": [
+    "cave",
+    "fire",
+    "jungle",
+    "mountain"
+   ],
+   "rating": 5,
+   "mml": [
+    "7499__blist.txt",
+    "7499__4B_Rockface_Rumble.txt"
+   ],
+   "brr": [
+    "Donkey Kong Country 3 - Rockface Rumble_1c.brr",
+    "Donkey Kong Country 3 - Rockface Rumble_1d.brr",
+    "Donkey Kong Country 3 - Rockface Rumble_16.brr",
+    "Donkey Kong Country 3 - Rockface Rumble_17.brr",
+    "Donkey Kong Country 3 - Rockface Rumble_18.brr",
+    "Donkey Kong Country 3 - Rockface Rumble_19.brr",
+    "Donkey Kong Country 3 - Rockface Rumble_1a.brr",
+    "Donkey Kong Country 3 - Rockface Rumble_1b.brr"
+   ]
+  },
+  {
+   "id": 7494,
+   "lane": "jungle",
+   "name": "DuckTales - The Moon",
+   "tags": [
+    "athletic",
+    "credits",
+    "forest",
+    "jungle",
+    "mountain",
+    "night",
+    "sky",
+    "space"
+   ],
+   "rating": 4.2857,
+   "mml": [
+    "7494__Duck Tales - The Moon.txt",
+    "7494__._Duck Tales - The Moon.txt"
+   ],
+   "brr": [
+    "14.brr",
+    "15.brr",
+    "16.brr",
+    "17.brr",
+    "18.brr",
+    "19.brr",
+    "1a.brr",
+    "1b.brr"
+   ]
+  },
+  {
+   "id": 10880,
+   "lane": "jungle",
+   "name": "Fortress 2 Blue - Culture Shock",
+   "tags": [
+    "athletic",
+    "boss",
+    "cave",
+    "chase",
+    "dark",
+    "final",
+    "fire",
+    "industrial",
+    "jungle",
+    "mountain",
+    "ruins",
+    "temple"
+   ],
+   "rating": 4.3333,
+   "mml": [
+    "10880__Culture Shock.txt"
+   ],
+   "brr": [
+    "BassDrum(power)@WP.brr",
+    "bottle@WP.brr",
+    "ClosedHat(power)@WP.brr",
+    "dist_guitar_noloop@WP.brr",
+    "Hit3(loud)@WP.brr",
+    "OpenHat(power,short)@WP.brr",
+    "ring@WP.brr",
+    "sawtooth_low@WP.brr",
+    "sawtooth_noloop@WP.brr",
+    "snare2@WP.brr",
+    "Square@WP.brr",
+    "synthbass2@WP.brr"
+   ]
+  },
+  {
+   "id": 7913,
+   "lane": "jungle",
+   "name": "Donkey Kong Country - Life in the Mines",
+   "tags": [
+    "ambient",
+    "cave",
+    "dark",
+    "environmental",
+    "jungle"
+   ],
+   "rating": 4.6667,
+   "mml": [
+    "7913__Donkey Kong Country - Life in the Mines.txt"
+   ],
+   "brr": [
+    "0B Stick.brr",
+    "0F Kick.brr",
+    "20 Strings.brr",
+    "22 Claves.brr",
+    "23 Harp.brr",
+    "24 Tom.brr",
+    "26 Synthbass.brr",
+    "27 Harp.brr",
+    "28 Vibraslap.brr",
+    "29 Hi-Hat.brr",
+    "2A Drip.brr",
+    "2B Vox.brr",
+    "2C Clank.brr",
+    "2D Wood Block.brr",
+    "2E Pan Flute.brr",
+    "2F Metallic rise.brr",
+    "30 Harp 2.brr"
+   ]
+  },
+  {
+   "id": 11538,
+   "lane": "jungle",
+   "name": "One Must Fall 2097 - Arena 1",
+   "tags": [
+    "abstract",
+    "bonus",
+    "castle",
+    "final",
+    "industrial",
+    "jungle",
+    "space",
+    "tense"
+   ],
+   "rating": 5,
+   "mml": [
+    "11538__Arena 1.txt"
+   ],
+   "brr": [
+    "5~1.brr",
+    "5~10.brr",
+    "5~11.brr",
+    "5~12.brr",
+    "5~13.brr",
+    "5~14.brr",
+    "5~2.brr",
+    "5~3.brr",
+    "5~4.brr",
+    "5~5.brr",
+    "5~6.brr",
+    "5~7.brr",
+    "5~8.brr",
+    "5~9.brr"
+   ]
+  },
+  {
+   "id": 10298,
+   "lane": "jungle",
+   "name": "Crusader: No Remorse - Rebel Base 2",
+   "tags": [
+    "calm",
+    "castle",
+    "forest",
+    "jungle",
+    "overworld",
+    "ruins",
+    "swamp",
+    "temple"
+   ],
+   "rating": 4.1111,
+   "mml": [
+    "10298__Addmusic_sample groups.txt",
+    "10298__m16a.txt",
+    "10298__readme.txt"
+   ],
+   "brr": [
+    "1.brr",
+    "10.brr",
+    "11.brr",
+    "12a.brr",
+    "13-2000.brr",
+    "15z.brr",
+    "2z.brr",
+    "3.brr",
+    "5.brr",
+    "6x.brr",
+    "8y.brr",
+    "9.brr"
+   ]
+  },
+  {
+   "id": 16344,
+   "lane": "jungle",
+   "name": "Jurassic Park 2 - Dark Jungle",
+   "tags": [
+    "dark",
+    "forest",
+    "jungle",
+    "night",
+    "swamp"
+   ],
+   "rating": 5,
+   "mml": [
+    "16344__Jurassic Park 2 - Dark Jungle.txt"
+   ],
+   "brr": [
+    "Bongo High.brr",
+    "Bongo Low.brr",
+    "Choir.brr",
+    "Cicada.brr",
+    "Cymbal.brr",
+    "Djembe Bass.brr",
+    "Orchestra Hit.brr",
+    "Quenacho.brr",
+    "Saw Bass.brr",
+    "Sine.brr",
+    "Square Bass.brr",
+    "StringLow.brr",
+    "Synth Snare.brr"
+   ]
+  },
+  {
+   "id": 19821,
+   "lane": "jungle",
+   "name": "Donkey Kong Country: Tropical Freeze - Scorch 'n' Torch",
+   "tags": [
+    "fire"
+   ],
+   "rating": 5,
+   "mml": [
+    "19821__Donkey Kong Country Tropical Freeze - Scorch 'n' Torch.txt"
+   ],
+   "brr": [
+    "bass.brr",
+    "cymb.brr",
+    "growl.brr",
+    "highstrings.brr",
+    "noise.brr",
+    "pad1.brr",
+    "pad2.brr",
+    "pad3.brr",
+    "ride.brr",
+    "ridebell.brr",
+    "shakuhachi.brr",
+    "sineping.brr",
+    "snare.brr",
+    "stringsstac.brr",
+    "tom.brr",
+    "triangle.brr"
+   ]
+  },
+  {
+   "id": 7156,
+   "lane": "jungle",
+   "name": "Journey to Silius - Stage 2",
+   "tags": [
+    "athletic",
+    "boss",
+    "cave",
+    "dark",
+    "final",
+    "fire",
+    "industrial",
+    "jungle",
+    "night",
+    "ruins"
+   ],
+   "rating": 4.75,
+   "mml": [
+    "7156__Journey to Silius - Stage 2 (SMW).txt"
+   ],
+   "brr": [
+    "Cymbal.brr"
+   ]
+  },
+  {
+   "id": 8255,
+   "lane": "jungle",
+   "name": "Kirby's Adventure - Grape Garden",
+   "tags": [
+    "beach",
+    "grassland",
+    "jungle",
+    "sky"
+   ],
+   "rating": 4.5,
+   "mml": [
+    "8255__Kirby's Adventure - Grape Garden.txt"
+   ],
+   "brr": [
+    "14 Diamond.brr",
+    "15 Kirby-ish Synth.brr",
+    "16 Star Synth.brr",
+    "17 Guitar.brr",
+    "1B Pan Flute.brr",
+    "21 Synth Bass.brr",
+    "23 Bass Drum.brr",
+    "24 Hihat.brr",
+    "29 Snare Drum.brr",
+    "2F Poko Poko.brr",
+    "30 Acid Bass.brr",
+    "3C Crystal.brr"
+   ]
+  },
+  {
+   "id": 7649,
+   "lane": "jungle",
+   "name": "Donkey Kong Country - Forest Frenzy",
+   "tags": [
+    "calm",
+    "forest",
+    "jungle",
+    "temple"
+   ],
+   "rating": 4.4,
+   "mml": [
+    "7649__DKC - Forest Frenzy.txt"
+   ],
+   "brr": []
+  },
+  {
+   "id": 8024,
+   "lane": "jungle",
+   "name": "Kirby's Dream Land 3 - Ripple Field 2",
+   "tags": [
+    "grassland",
+    "jungle",
+    "water"
+   ],
+   "rating": 4.875,
+   "mml": [
+    "8024__Kirby's Dream Land 3 - Ripple Field 2.txt"
+   ],
+   "brr": []
+  },
+  {
+   "id": 7092,
+   "lane": "jungle",
+   "name": "Donkey Kong Country 3: Dixie's Double Trouble! - Cascade Capers",
+   "tags": [
+    "calm",
+    "jungle",
+    "mountain",
+    "water"
+   ],
+   "rating": 5,
+   "mml": [
+    "7092__Donkey Kong Country 3 - Cascade Capers.txt"
+   ],
+   "brr": [
+    "DKC3_CC-15.brr",
+    "DKC3_CC-16.brr",
+    "DKC3_CC-17.brr",
+    "DKC3_CC-18.brr",
+    "DKC3_CC-19.brr",
+    "DKC3_CC-1a.brr",
+    "DKC3_CC-1b.brr",
+    "DKC3_CC-1c.brr",
+    "DKC3_CC-1d.brr",
+    "DKC3_CC-1e.brr",
+    "DKC3_CC-1f.brr",
+    "DKC3_CC-20.brr",
+    "DKC3_CC-21.brr",
+    "DKC3_CC-22.brr",
+    "DKC3_CC-23.brr",
+    "DKC3_CC-24.brr",
+    "DKC3_CC-25.brr",
+    "DKC3_CC-26.brr",
+    "DKC3_CC-27.brr",
+    "DKC3_CC-28.brr",
+    "DKC3_CC-29.brr",
+    "DKC3_CC-2a.brr",
+    "DKC3_CC-2b.brr",
+    "DKC3_CC-2c.brr",
+    "DKC3_CC-2d.brr",
+    "DKC3_CC-2e.brr",
+    "DKC3_CC-2f.brr",
+    "DKC3_CC-30.brr",
+    "DKC3_CC-31.brr",
+    "DKC3_CC-32.brr",
+    "DKC3_CC-33.brr"
+   ]
+  },
+  {
+   "id": 16262,
+   "lane": "jungle",
+   "name": "Donkey Kong Country - Treetop Rock",
+   "tags": [
+    "dark",
+    "forest",
+    "jungle",
+    "mountain",
+    "temple"
+   ],
+   "rating": 4.4286,
+   "mml": [
+    "16262__Treetop Rock.txt"
+   ],
+   "brr": [
+    "bass.brr",
+    "flute.brr",
+    "flute2.brr",
+    "harp.brr",
+    "vibra.brr",
+    "voice.brr"
+   ]
+  },
+  {
+   "id": 7179,
+   "lane": "jungle",
+   "name": "Boo Takes Charge",
+   "tags": [
+    "athletic",
+    "boss",
+    "cave",
+    "chase",
+    "dark",
+    "final",
+    "fire",
+    "industrial",
+    "jungle"
+   ],
+   "rating": 4.6,
+   "mml": [
+    "7179__Boo takes charge.txt"
+   ],
+   "brr": []
+  },
+  {
+   "id": 7947,
+   "lane": "jungle",
+   "name": "Donkey Kong Country 2: Diddy's Kong Quest - Jib Jig",
+   "tags": [
+    "beach",
+    "environmental",
+    "jungle",
+    "sky"
+   ],
+   "rating": 4.4,
+   "mml": [
+    "7947__Donkey Kong Country 2 - Jib Jig (Rain).txt",
+    "7947__Donkey Kong Country 2 - Jib Jig.txt"
+   ],
+   "brr": [
+    "14 Fiddle.brr",
+    "15 Flute.brr",
+    "16 Kick.brr",
+    "17 Harp.brr",
+    "18 Accordion.brr",
+    "19 Stick.brr",
+    "1A Flap.brr",
+    "1B Rain.brr",
+    "1C Wind.brr",
+    "1D Tom.brr"
+   ]
+  },
+  {
+   "id": 11542,
+   "lane": "jungle",
+   "name": "One Must Fall 2097 - End",
+   "tags": [
+    "abstract",
+    "castle",
+    "cave",
+    "credits",
+    "ice",
+    "industrial",
+    "jungle",
+    "mountain",
+    "night",
+    "ruins",
+    "space",
+    "swamp",
+    "temple",
+    "title",
+    "town"
+   ],
+   "rating": 4.6,
+   "mml": [
+    "11542__End.txt"
+   ],
+   "brr": [
+    "9~1.brr",
+    "9~10.brr",
+    "9~11.brr",
+    "9~12.brr",
+    "9~13.brr",
+    "9~2.brr",
+    "9~3.brr",
+    "9~4.brr",
+    "9~5.brr",
+    "9~6.brr",
+    "9~7.brr",
+    "9~8.brr",
+    "9~9.brr"
+   ]
+  },
+  {
+   "id": 7900,
+   "lane": "jungle",
+   "name": "Kirby Squeak Squad - Prism Plains",
+   "tags": [
+    "athletic",
+    "beach",
+    "credits",
+    "forest",
+    "grassland",
+    "jungle",
+    "sky"
+   ],
+   "rating": 4.5,
+   "mml": [
+    "7900__ReadMe.txt",
+    "7900__KSS - Prism Plains.txt"
+   ],
+   "brr": []
+  },
+  {
+   "id": 7866,
+   "lane": "jungle",
+   "name": "Desert",
+   "tags": [
+    "desert",
+    "jungle",
+    "overworld",
+    "ruins",
+    "temple"
+   ],
+   "rating": 4.1667,
+   "mml": [
+    "7866__CUSTOM - Desert.txt"
+   ],
+   "brr": []
+  },
+  {
+   "id": 7220,
+   "lane": "jungle",
+   "name": "Super Mario Land 2: 6 Golden Coins - Treetop",
+   "tags": [
+    "beach",
+    "calm",
+    "forest",
+    "grassland",
+    "jungle",
+    "overworld"
+   ],
+   "rating": 5,
+   "mml": [
+    "7220__Super Mario Land 2 - 6 Golden Coins - Tree Zone (Level).txt"
+   ],
+   "brr": []
+  },
+  {
+   "id": 7050,
+   "lane": "jungle",
+   "name": "Journey to Silius - Stage 3",
+   "tags": [
+    "athletic",
+    "castle",
+    "cave",
+    "dark",
+    "final",
+    "fire",
+    "industrial",
+    "jungle",
+    "night",
+    "ruins",
+    "temple"
+   ],
+   "rating": 4.6667,
+   "mml": [
+    "7050__Journey to Silius Stage 3.txt",
+    "7050__blist.txt"
+   ],
+   "brr": [
+    "Cymbal.brr"
+   ]
+  },
+  {
+   "id": 17332,
+   "lane": "jungle",
+   "name": "Mario & Luigi: Superstar Saga - Beanbean Fields",
+   "tags": [
+    "beach",
+    "forest",
+    "grassland",
+    "jungle"
+   ],
+   "rating": 5,
+   "mml": [
+    "17332__Beanbean Fields.txt"
+   ],
+   "brr": [
+    "LoM Pan Flute.brr",
+    "SD3 Marimba.brr",
+    "SMRPG Mute Conga.brr",
+    "SoM Fretless Bass.brr",
+    "TN Steel Guitar.brr"
+   ]
+  },
+  {
+   "id": 11132,
+   "lane": "jungle",
+   "name": "Mario & Luigi: Bowser's Inside Story - Plack Beach",
+   "tags": [
+    "beach",
+    "jungle"
+   ],
+   "rating": 3.8,
+   "mml": [
+    "11132__Mario & Luigi - Bowser's Inside Story - Plack Beach (v. 1).txt",
+    "11132__Mario & Luigi - Bowser's Inside Story - Plack Beach (v. 2).txt"
+   ],
+   "brr": []
+  },
+  {
+   "id": 15009,
+   "lane": "jungle",
+   "name": "Donkey Kong Country 2: Diddy's Kong Quest - Primal Rave",
+   "tags": [
+    "forest",
+    "jungle",
+    "swamp",
+    "temple"
+   ],
+   "rating": 5,
+   "mml": [
+    "15009__Primal Rave.txt"
+   ],
+   "brr": [
+    "Banana.brr",
+    "Bell.brr",
+    "Bell2.brr",
+    "Bongo.brr",
+    "Chior.brr",
+    "Chirp.brr",
+    "Chirp2.brr",
+    "Clank.brr",
+    "Drum.brr",
+    "Marimba.brr",
+    "Monkey1.brr",
+    "Monkey2.brr",
+    "Pan Flute.brr",
+    "Sticks.brr",
+    "Voice.brr",
+    "WoodBlock.brr"
+   ]
+  },
+  {
+   "id": 9278,
+   "lane": "jungle",
+   "name": "Yoshi's Island DS - In the Clouds",
+   "tags": [
+    "athletic",
+    "beach",
+    "jungle",
+    "sky"
+   ],
+   "rating": 3.8333,
+   "mml": [
+    "9278__Intheclouds.txt"
+   ],
+   "brr": []
+  },
+  {
+   "id": 20360,
+   "lane": "space",
+   "name": "Planet X2 - Oh No! More Square Waves!",
+   "tags": [
+    "calm",
+    "overworld",
+    "retro",
+    "sad",
+    "space",
+    "title"
+   ],
+   "rating": 4.5,
+   "mml": [
+    "20360__ohnomoresquarewaves.txt"
+   ],
+   "brr": [
+    "01 .brr",
+    "02 .brr",
+    "03 .brr"
+   ]
+  },
+  {
+   "id": 11331,
+   "lane": "space",
+   "name": "Pastel Wind",
+   "tags": [
+    "athletic",
+    "forest",
+    "ice",
+    "mountain",
+    "sky",
+    "space"
+   ],
+   "rating": 4.8889,
+   "mml": [
+    "11331__Pastel Wind.txt"
+   ],
+   "brr": [
+    "izu_bass.brr",
+    "izu_chat.brr",
+    "izu_harmonica.brr",
+    "izu_kick.brr",
+    "izu_MAJOR.brr",
+    "izu_MINOR.brr",
+    "izu_ohat.brr",
+    "izu_snare.brr"
+   ]
+  },
+  {
+   "id": 8852,
+   "lane": "space",
+   "name": "Super Mario Galaxy - Gusty Garden Galaxy",
+   "tags": [
+    "athletic",
+    "sky"
+   ],
+   "rating": 4.8636,
+   "mml": [
+    "8852__SMG - Gusty Garden.txt",
+    "8852__SMG - Gusty Garden (SMW-compatible).txt"
+   ],
+   "brr": [
+    "ff6_cymbal.brr",
+    "ff6_flute.brr",
+    "ff6_french horn.brr",
+    "ff6_guitar.brr",
+    "ff6_harp.brr",
+    "ff6_oboe.brr",
+    "ff6_snare.brr",
+    "ff6_string.brr",
+    "ff6_string_32khz.brr",
+    "ff6_string+12.brr",
+    "ff6_timpani.brr",
+    "ff6_trumpet.brr"
+   ]
+  },
+  {
+   "id": 28354,
+   "lane": "space",
+   "name": "Deltarune - A CYBER'S WORLD?",
+   "tags": [
+    "night",
+    "space",
+    "urban"
+   ],
+   "rating": 5,
+   "mml": [
+    "28354__DELTARUNE Chapter 2 - A CYBER'S WORLD.txt"
+   ],
+   "brr": [
+    "8bit_50%o6.brr",
+    "909_openhat.brr",
+    "arachno_powersnare.brr",
+    "customdist2_o6.brr",
+    "drum_crash.brr",
+    "flex_strings2(o6).brr",
+    "fpc_kick4.brr",
+    "MSGS_piano o6.brr",
+    "MSGS_vibraphone.brr",
+    "pmd_bass(@029).brr",
+    "tts1_saw.brr"
+   ]
+  },
+  {
+   "id": 8854,
+   "lane": "space",
+   "name": "Super Mario Galaxy - Buoy Base Galaxy",
+   "tags": [
+    "castle",
+    "water"
+   ],
+   "rating": 4.9545,
+   "mml": [
+    "8854__SMG - Buoy Base.txt",
+    "8854__SMG - Buoy Base (SMW-compatible).txt"
+   ],
+   "brr": [
+    "ff6_cymbal.brr",
+    "ff6_french horn.brr",
+    "ff6_snare.brr",
+    "ff6_string.brr",
+    "ff6_string+12.brr",
+    "ff6_timpani.brr",
+    "ff6_trumpet.brr",
+    "piano1.brr",
+    "FM glock.brr",
+    "lead.brr",
+    "SweepPad.brr",
+    "mm7_square.brr",
+    "mm7_square+24.brr"
+   ]
+  },
+  {
+   "id": 25612,
+   "lane": "space",
+   "name": "MF DOOM - Coffin Nails/Rapp Snitch Knishes",
+   "tags": [
+    "athletic",
+    "night",
+    "overworld",
+    "sky",
+    "space"
+   ],
+   "rating": 5,
+   "mml": [
+    "25612__MFDOOM.txt"
+   ],
+   "brr": [
+    "Crash Cymbal.brr",
+    "Hi-Hat 2.brr"
+   ]
+  },
+  {
+   "id": 12609,
+   "lane": "space",
+   "name": "Mega Man 9 - We're the Robots",
+   "tags": [
+    "castle",
+    "final",
+    "industrial",
+    "space"
+   ],
+   "rating": 5,
+   "mml": [
+    "12609__robotz.txt"
+   ],
+   "brr": [
+    "mm7_crash.brr",
+    "mm7_guitar.brr",
+    "mm7_hihat.brr",
+    "mm7_kick.brr",
+    "mm7_sawtooth.brr",
+    "mm7_slapbass.brr",
+    "mm7_snare.brr",
+    "mm7_square.brr",
+    "mm7_synthbrass.brr",
+    "mm7_tom.brr",
+    "mm7_tremstr.brr"
+   ]
+  },
+  {
+   "id": 17057,
+   "lane": "space",
+   "name": "VVVVVV - Potential For Anything",
+   "tags": [
+    "abstract",
+    "space",
+    "tense"
+   ],
+   "rating": 5,
+   "mml": [
+    "17057__potential for anything.txt"
+   ],
+   "brr": [
+    "crash.brr"
+   ]
+  },
+  {
+   "id": 11147,
+   "lane": "space",
+   "name": "Super Mario Galaxy - Waltz of the Boos",
+   "tags": [
+    "ghost house"
+   ],
+   "rating": 4.4167,
+   "mml": [
+    "11147__Super Mario Galaxy - Waltz of the Boos.txt"
+   ],
+   "brr": []
+  },
+  {
+   "id": 13773,
+   "lane": "space",
+   "name": "Battle Garegga - Degeneracy (Arranged Version)",
+   "tags": [
+    "athletic",
+    "bonus",
+    "industrial",
+    "night",
+    "space",
+    "urban"
+   ],
+   "rating": 5,
+   "mml": [
+    "13773__degeneracy.txt",
+    "13773__PUT THIS INTO SAMPLE GROUPS.txt"
+   ],
+   "brr": [
+    "ct_clap_less_cut.brr",
+    "dx_crash.brr",
+    "ff6_bass.brr",
+    "ff6_hihat.brr",
+    "kdl3_quack.brr",
+    "mm7_sawtooth.brr",
+    "mm7_square.brr",
+    "mmx2_snare_less_cut.brr",
+    "organ_c.brr",
+    "organ_maj.brr",
+    "organ_min.brr",
+    "organ_s.brr",
+    "sai_sax.brr",
+    "square_5.brr",
+    "square_7.brr",
+    "thg_piano.brr",
+    "triangle_cut.brr",
+    "wawo_maj.brr",
+    "wawo_min.brr"
+   ]
+  },
+  {
+   "id": 12361,
+   "lane": "space",
+   "name": "Super Mario Galaxy - Attack of the Airships",
+   "tags": [
+    "airship"
+   ],
+   "rating": 4.7857,
+   "mml": [
+    "12361__Attack of the Airships.txt"
+   ],
+   "brr": [
+    "French Horn.brr",
+    "Snare.brr",
+    "Strings.brr",
+    "Trumpet.brr",
+    "TimpaniCoolmario.brr"
+   ]
+  },
+  {
+   "id": 18492,
+   "lane": "space",
+   "name": "Deltarune - Hip Shop",
+   "tags": [
+    "abstract",
+    "calm",
+    "cutscene",
+    "night",
+    "space"
+   ],
+   "rating": 4.2,
+   "mml": [
+    "18492__hipshop.txt"
+   ],
+   "brr": [
+    "bdh2_tubular_bells.brr",
+    "jv1080_epiano_chd1.brr",
+    "jv1080_epiano_chd2.brr",
+    "jv1080_epiano_chd3.brr",
+    "jv1080_epiano_chd4.brr",
+    "kdl3_kick.brr",
+    "kdl3_strings.brr",
+    "sb5_808_snare.brr",
+    "sb5_open_hat.brr",
+    "bdh2_elecbass_pick.brr",
+    "m1_vibe_downsampled.brr",
+    "sb5_closed_hat.brr"
+   ]
+  },
+  {
+   "id": 16534,
+   "lane": "space",
+   "name": "Super Mario Galaxy - Gateway Galaxy",
+   "tags": [
+    "calm",
+    "night",
+    "overworld",
+    "sky",
+    "space"
+   ],
+   "rating": 5,
+   "mml": [
+    "16534__Addmusic_sample groups.txt",
+    "16534__gateway.txt"
+   ],
+   "brr": [
+    "brightharp.brr",
+    "harp.brr",
+    "lowharp.brr",
+    "lowharpds.brr",
+    "space.brr",
+    "xylophone.brr"
+   ]
+  },
+  {
+   "id": 12713,
+   "lane": "space",
+   "name": "Touhou Kanjuden ~ Legacy of Lunatic Kingdom - The Sea Where One's Home Planet Reflects",
+   "tags": [
+    "abstract",
+    "beach",
+    "cutscene",
+    "environmental",
+    "final",
+    "sky",
+    "space",
+    "water"
+   ],
+   "rating": 4.875,
+   "mml": [
+    "12713__junko_stage.txt",
+    "12713__junko_stage_waves.txt"
+   ],
+   "brr": [
+    "SMW2_tides.brr",
+    "SRW_ohihat.brr"
+   ]
+  },
+  {
+   "id": 11171,
+   "lane": "space",
+   "name": "Groovy",
+   "tags": [
+    "bonus",
+    "credits",
+    "space",
+    "switch palace",
+    "title"
+   ],
+   "rating": 4.6667,
+   "mml": [
+    "11171__Groovy.txt",
+    "11171__Groovy (SMW compatible).txt",
+    "11171__ReadMe.txt"
+   ],
+   "brr": [
+    "Bass.brr",
+    "BG 7th.brr",
+    "BG 7ths.brr",
+    "Formant.brr",
+    "Formant_2.brr",
+    "Hat.brr",
+    "Kick.brr",
+    "Organ3.brr",
+    "Organ4.brr",
+    "Organs.brr",
+    "Pluck.brr",
+    "Snare.brr",
+    "Trumpet.brr"
+   ]
+  },
+  {
+   "id": 14720,
+   "lane": "space",
+   "name": "Mario Kart 64 - Rainbow Road",
+   "tags": [
+    "athletic",
+    "sky",
+    "space"
+   ],
+   "rating": 5,
+   "mml": [
+    "14720__Mario Kart 64 - Rainbow Road.txt"
+   ],
+   "brr": [
+    "Cymbol Crash.brr",
+    "Drum.brr",
+    "Guitar.brr",
+    "Organ.brr",
+    "Pan.brr",
+    "Ride Cymbal.brr",
+    "SlapBass.brr",
+    "String.brr",
+    "Tambourine.brr"
+   ]
+  },
+  {
+   "id": 7752,
+   "lane": "space",
+   "name": "Alcahest - Panakeian Temple",
+   "tags": [
+    "castle",
+    "cutscene",
+    "dark",
+    "ice",
+    "night",
+    "overworld",
+    "sky",
+    "space",
+    "water"
+   ],
+   "rating": 4.75,
+   "mml": [
+    "7752__Alcahest - Castle.txt"
+   ],
+   "brr": []
+  },
+  {
+   "id": 7317,
+   "lane": "space",
+   "name": "Final Fantasy V - Beyond the Deep Blue Sea",
+   "tags": [
+    "calm",
+    "cave",
+    "night",
+    "sky",
+    "space",
+    "water"
+   ],
+   "rating": 4.5,
+   "mml": [
+    "7317__deepblueseaUNsampled.txt"
+   ],
+   "brr": []
+  },
+  {
+   "id": 7427,
+   "lane": "space",
+   "name": "Tower of Heaven - Indignant Divinity",
+   "tags": [
+    "athletic",
+    "cave",
+    "dark",
+    "ice",
+    "industrial",
+    "night",
+    "sky",
+    "space",
+    "water"
+   ],
+   "rating": 4.3333,
+   "mml": [
+    "7427__Tower of Heaven - Indignant Divinity.txt"
+   ],
+   "brr": []
+  },
+  {
+   "id": 7494,
+   "lane": "space",
+   "name": "DuckTales - The Moon",
+   "tags": [
+    "athletic",
+    "credits",
+    "forest",
+    "jungle",
+    "mountain",
+    "night",
+    "sky",
+    "space"
+   ],
+   "rating": 4.2857,
+   "mml": [
+    "7494__Duck Tales - The Moon.txt",
+    "7494__._Duck Tales - The Moon.txt"
+   ],
+   "brr": [
+    "14.brr",
+    "15.brr",
+    "16.brr",
+    "17.brr",
+    "18.brr",
+    "19.brr",
+    "1a.brr",
+    "1b.brr"
+   ]
+  },
+  {
+   "id": 10404,
+   "lane": "space",
+   "name": "daniwellP - Nyanyanyanyanyanyanya!",
+   "tags": [
+    "bonus",
+    "space"
+   ],
+   "rating": 4.75,
+   "mml": [
+    "10404__Nyanyanyanyanyanyanya!.txt"
+   ],
+   "brr": []
+  },
+  {
+   "id": 7635,
+   "lane": "space",
+   "name": "Super Mario Galaxy - Buoy Base Galaxy",
+   "tags": [
+    "space",
+    "water"
+   ],
+   "rating": 4.625,
+   "mml": [
+    "7635__BuoyBase.txt"
+   ],
+   "brr": []
+  },
+  {
+   "id": 15115,
+   "lane": "space",
+   "name": "Kirby's Adventure - Rainbow Resort (KDL3 Remix)",
+   "tags": [
+    "calm",
+    "forest",
+    "night",
+    "sky",
+    "space"
+   ],
+   "rating": 4.8571,
+   "mml": [
+    "15115__rainbowresort.txt"
+   ],
+   "brr": [
+    "bass.brr",
+    "closed.brr",
+    "Ding.brr",
+    "ElePiano.brr",
+    "flute.brr",
+    "kick.brr",
+    "open.brr",
+    "panflute.brr",
+    "snare.brr",
+    "string.brr",
+    "trumpet.brr",
+    "woodblock.brr"
+   ]
+  },
+  {
+   "id": 11129,
+   "lane": "space",
+   "name": "DuckTales - The Moon",
+   "tags": [
+    "retro",
+    "space"
+   ],
+   "rating": 4,
+   "mml": [
+    "11129__DuckTales - The Moon (v. 1).txt",
+    "11129__DuckTales - The Moon (v. 2).txt"
+   ],
+   "brr": []
+  },
+  {
+   "id": 11538,
+   "lane": "space",
+   "name": "One Must Fall 2097 - Arena 1",
+   "tags": [
+    "abstract",
+    "bonus",
+    "castle",
+    "final",
+    "industrial",
+    "jungle",
+    "space",
+    "tense"
+   ],
+   "rating": 5,
+   "mml": [
+    "11538__Arena 1.txt"
+   ],
+   "brr": [
+    "5~1.brr",
+    "5~10.brr",
+    "5~11.brr",
+    "5~12.brr",
+    "5~13.brr",
+    "5~14.brr",
+    "5~2.brr",
+    "5~3.brr",
+    "5~4.brr",
+    "5~5.brr",
+    "5~6.brr",
+    "5~7.brr",
+    "5~8.brr",
+    "5~9.brr"
+   ]
+  },
+  {
+   "id": 25279,
+   "lane": "space",
+   "name": "NARUTO - Artificial Intelligence Bomb",
+   "tags": [
+    "abstract",
+    "athletic",
+    "bonus",
+    "credits",
+    "retro",
+    "sky",
+    "space",
+    "title"
+   ],
+   "rating": 5,
+   "mml": [
+    "25279__aibomb.txt"
+   ],
+   "brr": [
+    "kick.brr",
+    "pulse125-2.brr",
+    "pulse125-3.brr",
+    "pulse125-4.brr",
+    "pulse125.brr",
+    "pulse25-2.brr",
+    "pulse25-3.brr",
+    "pulse25-4.brr",
+    "pulse25.brr",
+    "pulse50-2.brr",
+    "pulse50-3.brr",
+    "pulse50-4.brr",
+    "pulse50.brr",
+    "snare.brr",
+    "snare2.brr",
+    "tom.brr",
+    "triangle.brr",
+    "triangle2.brr",
+    "triangle3.brr",
+    "trianglelow.brr"
+   ]
+  },
+  {
+   "id": 11557,
+   "lane": "space",
+   "name": "Mario Kart 64 - Rainbow Road",
+   "tags": [
+    "bonus",
+    "calm",
+    "space"
+   ],
+   "rating": 3.8889,
+   "mml": [
+    "11557__MK64_Rainbow_Road.txt"
+   ],
+   "brr": []
+  },
+  {
+   "id": 11577,
+   "lane": "space",
+   "name": "Mario Kart: Double Dash!! - Rainbow Road",
+   "tags": [
+    "bonus",
+    "space"
+   ],
+   "rating": 4.3333,
+   "mml": [
+    "11577__RainbowRoad.txt"
+   ],
+   "brr": [
+    "@8.brr",
+    "acusticS.brr",
+    "altKick.brr",
+    "BLING.brr",
+    "choir.brr",
+    "Strings.brr",
+    "Trumpet.brr",
+    "XG_crash.brr"
+   ]
+  },
+  {
+   "id": 11149,
+   "lane": "space",
+   "name": "Silver Surfer - Stage 1",
+   "tags": [
+    "athletic",
+    "space",
+    "title"
+   ],
+   "rating": 4.9545,
+   "mml": [
+    "11149__follin4lyfe.txt"
+   ],
+   "brr": [
+    "@13+12.brr",
+    "cymbal 1.brr",
+    "ride.brr"
+   ]
+  },
+  {
+   "id": 12985,
+   "lane": "space",
+   "name": "Super Mario Galaxy - Tension",
+   "tags": [
+    "boss",
+    "final"
+   ],
+   "rating": 4.75,
+   "mml": [
+    "12985__Super Mario Galaxy - Tension.txt"
+   ],
+   "brr": [
+    "ff5_crash.brr",
+    "ff5_strings.brr",
+    "ff5_timpani.brr",
+    "kdl3_01.brr",
+    "piano1.brr",
+    "ys4-32_0d.brr"
+   ]
+  },
+  {
+   "id": 13121,
+   "lane": "horror",
+   "name": "Undertale - Ghost Fight",
+   "tags": [
+    "abstract",
+    "athletic",
+    "bonus",
+    "boss",
+    "dark",
+    "ghost house",
+    "spooky",
+    "tense"
+   ],
+   "rating": 4.95,
+   "mml": [
+    "13121__ghostfight.txt"
+   ],
+   "brr": [
+    "bass.brr",
+    "brass.brr",
+    "crowd.brr",
+    "cymbal.brr",
+    "ghost.brr",
+    "kick.brr",
+    "piano.brr",
+    "snare.brr",
+    "trumpet.brr",
+    "voice.brr"
+   ]
+  },
+  {
+   "id": 8311,
+   "lane": "horror",
+   "name": "New Super Mario Bros. - Castle",
+   "tags": [
+    "castle",
+    "dark",
+    "final",
+    "ghost house"
+   ],
+   "rating": 4.0769,
+   "mml": [
+    "8311__nsmbcastle_alt.txt",
+    "8311__nsmbcastle.txt"
+   ],
+   "brr": [
+    "smas bass2.brr",
+    "smas timpani.brr",
+    "yi bell.brr",
+    "yi organ.brr",
+    "ct sitar.brr",
+    "dkc bass.brr",
+    "ff6 church organ.brr",
+    "ff6 flute.brr",
+    "ff6 glock.brr",
+    "ff6 normal choir.brr",
+    "ff6 snare.brr",
+    "ff6 timpani.brr",
+    "yi bell.brr"
+   ]
+  },
+  {
+   "id": 28383,
+   "lane": "horror",
+   "name": "Deltarune - NOW'S YOUR CHANCE TO BE A",
+   "tags": [
+    "boss",
+    "chase",
+    "dark",
+    "spooky",
+    "tense"
+   ],
+   "rating": 4.9231,
+   "mml": [
+    "28383__NOW'S YOUR CHANCE TO BE A.txt"
+   ],
+   "brr": [
+    "bass.brr",
+    "goodolddays.brr",
+    "hat.brr",
+    "kick.brr",
+    "orchit.brr",
+    "organ.brr",
+    "phone.brr",
+    "pulse.brr",
+    "snare.brr",
+    "square.brr",
+    "synthbrass.brr",
+    "S_BEABIG.brr",
+    "S_BIGSHOT1.brr",
+    "S_CHANCE1.brr",
+    "S_CHANCE2.brr",
+    "S_IDK.brr",
+    "S_LAUGH.brr",
+    "S_SHOT.brr",
+    "wow.brr"
+   ]
+  },
+  {
+   "id": 8507,
+   "lane": "horror",
+   "name": "Sonic.EXE - Hill.gym",
+   "tags": [
+    "dark",
+    "ghost house",
+    "night",
+    "title",
+    "town"
+   ],
+   "rating": 4.625,
+   "mml": [
+    "8507__SONIC.EXE - ....txt"
+   ],
+   "brr": []
+  },
+  {
+   "id": 11596,
+   "lane": "horror",
+   "name": "Super Mario World - Here We Go (Haunted Remix)",
+   "tags": [
+    "calm",
+    "castle",
+    "dark",
+    "ghost house"
+   ],
+   "rating": 4.0909,
+   "mml": [
+    "11596__SpookyHouse - (U).txt"
+   ],
+   "brr": []
+  },
+  {
+   "id": 11147,
+   "lane": "horror",
+   "name": "Super Mario Galaxy - Waltz of the Boos",
+   "tags": [
+    "ghost house"
+   ],
+   "rating": 4.4167,
+   "mml": [
+    "11147__Super Mario Galaxy - Waltz of the Boos.txt"
+   ],
+   "brr": []
+  },
+  {
+   "id": 11556,
+   "lane": "horror",
+   "name": "New Super Mario Bros. - Tower",
+   "tags": [
+    "castle",
+    "dark",
+    "ghost house"
+   ],
+   "rating": 4.6,
+   "mml": [
+    "11556__nds-newsmb-tower.txt"
+   ],
+   "brr": []
+  },
+  {
+   "id": 16601,
+   "lane": "horror",
+   "name": "Super Mario World - Overworld (Haunted Remix)",
+   "tags": [
+    "carnival",
+    "castle",
+    "dark",
+    "final",
+    "ghost house",
+    "night",
+    "overworld",
+    "spooky"
+   ],
+   "rating": 4.2,
+   "mml": [
+    "16601__SMW_haunted.txt"
+   ],
+   "brr": []
+  },
+  {
+   "id": 8819,
+   "lane": "horror",
+   "name": "The Minstrel - Super Mario Bros. - Castle (Deranged Oni Remix)",
+   "tags": [
+    "castle",
+    "ghost house"
+   ],
+   "rating": 4.5,
+   "mml": [
+    "8819__smbcastle.txt"
+   ],
+   "brr": [
+    "bass-lal.brr",
+    "kick-eb.brr",
+    "rainfx-soe.brr",
+    "shenhai-ao.brr",
+    "snare-eb.brr",
+    "sopsax-lal.brr",
+    "strings-thg.brr",
+    "tamb-ct.brr",
+    "timpani-rs3.brr"
+   ]
+  },
+  {
+   "id": 7398,
+   "lane": "horror",
+   "name": "New Super Mario Bros. - Ghost House",
+   "tags": [
+    "dark",
+    "ghost house"
+   ],
+   "rating": 4.4286,
+   "mml": [
+    "7398__NSMB - Ghost House (Arranged).txt"
+   ],
+   "brr": []
+  },
+  {
+   "id": 8259,
+   "lane": "horror",
+   "name": "Pok\u00e9mon Gold/Silver/Crystal - Dark Cave / Ice Path",
+   "tags": [
+    "cave",
+    "dark",
+    "fire",
+    "ghost house",
+    "ice",
+    "night",
+    "ruins",
+    "water"
+   ],
+   "rating": 5,
+   "mml": [
+    "8259__Dark Cave.txt"
+   ],
+   "brr": []
+  },
+  {
+   "id": 9192,
+   "lane": "horror",
+   "name": "Silent Hill - Alternate Hospital Basement",
+   "tags": [
+    "abstract",
+    "calm",
+    "dark",
+    "ghost house",
+    "spooky"
+   ],
+   "rating": 4.2,
+   "mml": [
+    "9192__basement.txt"
+   ],
+   "brr": [
+    "basement1.brr",
+    "basement2.brr",
+    "basement3.brr"
+   ]
+  },
+  {
+   "id": 13151,
+   "lane": "horror",
+   "name": "Undertale - Spooktune",
+   "tags": [
+    "abstract",
+    "cutscene",
+    "spooky"
+   ],
+   "rating": 4.4,
+   "mml": [
+    "13151__spooktune.txt"
+   ],
+   "brr": [
+    "spooktune.brr"
+   ]
+  },
+  {
+   "id": 12606,
+   "lane": "horror",
+   "name": "Super Mario Maker -  SMW Ghost House (Yoshi)",
+   "tags": [
+    "dark",
+    "ghost house",
+    "spooky",
+    "yoshi drums"
+   ],
+   "rating": 4.75,
+   "mml": [
+    "12606__smw ghost house.txt"
+   ],
+   "brr": []
+  },
+  {
+   "id": 11277,
+   "lane": "horror",
+   "name": "Halloween (1978) - Halloween Theme",
+   "tags": [
+    "chase",
+    "cutscene",
+    "ghost house",
+    "night",
+    "spooky",
+    "tense"
+   ],
+   "rating": 4.3,
+   "mml": [
+    "11277__halloween.txt"
+   ],
+   "brr": []
+  },
+  {
+   "id": 18237,
+   "lane": "horror",
+   "name": "Super Mario Maker - SMB3 Ghost House",
+   "tags": [
+    "ghost house",
+    "spooky"
+   ],
+   "rating": 4.2,
+   "mml": [
+    "18237__smb3 ghost house.txt"
+   ],
+   "brr": []
+  },
+  {
+   "id": 8512,
+   "lane": "horror",
+   "name": "Donkey Kong Country 2: Diddy's Kong Quest - Krook's March",
+   "tags": [
+    "castle",
+    "dark",
+    "final",
+    "ghost house",
+    "night"
+   ],
+   "rating": 5,
+   "mml": [
+    "8512__4A_Krook's_ March.txt",
+    "8512__blist.txt"
+   ],
+   "brr": [
+    "Donkey Kong Country 2 - Krook's March_14.brr",
+    "Donkey Kong Country 2 - Krook's March_15.brr",
+    "Donkey Kong Country 2 - Krook's March_16.brr",
+    "Donkey Kong Country 2 - Krook's March_17.brr",
+    "Donkey Kong Country 2 - Krook's March_18.brr",
+    "Donkey Kong Country 2 - Krook's March_19.brr",
+    "Donkey Kong Country 2 - Krook's March_1a.brr",
+    "Donkey Kong Country 2 - Krook's March_1b.brr",
+    "Donkey Kong Country 2 - Krook's March_1c.brr",
+    "Donkey Kong Country 2 - Krook's March_1d.brr"
+   ]
+  },
+  {
+   "id": 11205,
+   "lane": "horror",
+   "name": "Super Mario Land 2: 6 Golden Coins - Haunted House",
+   "tags": [
+    "dark",
+    "ghost house",
+    "tense"
+   ],
+   "rating": 3.9,
+   "mml": [
+    "11205__SML2HH.txt",
+    "11205__._SML2HH.txt"
+   ],
+   "brr": [
+    "20.brr",
+    "21.brr",
+    "22.brr",
+    "23.brr"
+   ]
+  },
+  {
+   "id": 20935,
+   "lane": "horror",
+   "name": "Super Mario 3D World - Shifty Boo Mansion",
+   "tags": [
+    "calm",
+    "dark",
+    "ghost house",
+    "night",
+    "ruins",
+    "sad",
+    "spooky"
+   ],
+   "rating": 4.75,
+   "mml": [
+    "20935__shifty boo mansion.txt"
+   ],
+   "brr": []
+  },
+  {
+   "id": 7222,
+   "lane": "horror",
+   "name": "Super Mario RPG: Legend of the Seven Stars - Bowser's Keep (Second Visit)",
+   "tags": [
+    "castle",
+    "cave",
+    "cutscene",
+    "dark",
+    "ghost house",
+    "night"
+   ],
+   "rating": 4.4286,
+   "mml": [
+    "7222__SM RPG - Bowser's Castle(Second Time).txt"
+   ],
+   "brr": [
+    "14 Organ.brr",
+    "15 Piano.brr",
+    "16 Strings.brr",
+    "17 Marimba.brr",
+    "18 Cabasa.brr",
+    "19 Kick.brr",
+    "1A Rumbling.brr",
+    "1B Pizzicato.brr"
+   ]
+  },
+  {
+   "id": 8239,
+   "lane": "horror",
+   "name": "EarthBound - Giygas' Lair",
+   "tags": [
+    "cutscene",
+    "dark",
+    "final",
+    "ghost house",
+    "ruins"
+   ],
+   "rating": 4.5,
+   "mml": [
+    "8239__Giygas' Lair.txt",
+    "8239__._Giygas' Lair.txt"
+   ],
+   "brr": [
+    "20.brr"
+   ]
+  },
+  {
+   "id": 18272,
+   "lane": "horror",
+   "name": "The Legend of Zelda: Majora's Mask - Final Hours (No Bells)",
+   "tags": [
+    "abstract",
+    "ambient",
+    "calm",
+    "dark",
+    "final",
+    "night",
+    "sad",
+    "space",
+    "spooky",
+    "temple",
+    "tense"
+   ],
+   "rating": 5,
+   "mml": [
+    "18272__zmm-final.txt"
+   ],
+   "brr": [
+    "clack.brr",
+    "guitar.brr",
+    "icelands.brr",
+    "strings.brr"
+   ]
+  },
+  {
+   "id": 14702,
+   "lane": "horror",
+   "name": "Final Fantasy VI - Phantom Forest",
+   "tags": [
+    "forest",
+    "ghost house",
+    "ruins",
+    "spooky"
+   ],
+   "rating": 4.8,
+   "mml": [
+    "14702__Phantom Forest.txt"
+   ],
+   "brr": [
+    "sample_00.brr",
+    "sample_01.brr",
+    "sample_02.brr",
+    "sample_03.brr",
+    "sample_04.brr"
+   ]
+  },
+  {
+   "id": 7192,
+   "lane": "horror",
+   "name": "Dance with a boo",
+   "tags": [
+    "castle",
+    "ghost house"
+   ],
+   "rating": 4.6667,
+   "mml": [
+    "7192__CUSTOM - Dance with a boo.txt"
+   ],
+   "brr": []
+  },
+  {
+   "id": 10820,
+   "lane": "horror",
+   "name": "Cave Story - Halloween 2",
+   "tags": [
+    "ghost house"
+   ],
+   "rating": 5,
+   "mml": [
+    "10820__Halloween.txt"
+   ],
+   "brr": []
+  },
+  {
+   "id": 11014,
+   "lane": "horror",
+   "name": "Luigi's Mansion: Dark Moon - Gloomy Manor",
+   "tags": [
+    "calm",
+    "cutscene",
+    "dark",
+    "ghost house",
+    "night"
+   ],
+   "rating": 3.6364,
+   "mml": [
+    "11014__Luigi's Mansion Dark Moon - Gloomy Manor.txt"
+   ],
+   "brr": [
+    "bkclarinet.brr",
+    "piano.brr",
+    "pizzicato1.brr"
+   ]
+  },
+  {
+   "id": 14953,
+   "lane": "horror",
+   "name": "Touhou Koumakyou ~ the Embodiment of Scarlet Devil - Voile, the Magic Library",
+   "tags": [
+    "castle",
+    "ghost house",
+    "spooky"
+   ],
+   "rating": 4,
+   "mml": [
+    "14953__voile, the magic library.txt"
+   ],
+   "brr": [
+    "@29.brr",
+    "@8.brr",
+    "acusticS.brr",
+    "altKick.brr",
+    "BLING.brr",
+    "harpiscord.brr",
+    "Piano3+.brr",
+    "Trem+String.brr",
+    "XG_crash.brr",
+    "XG_hihat2.brr"
+   ]
+  },
+  {
+   "id": 7901,
+   "lane": "horror",
+   "name": "Donkey Kong Country 2: Diddy's Kong Quest - Haunted Chase",
+   "tags": [
+    "castle",
+    "chase",
+    "ghost house",
+    "spooky"
+   ],
+   "rating": 4.8,
+   "mml": [
+    "7901__Donkey Kong Country 2 - Haunted Chase.txt",
+    "7901__._Donkey Kong Country 2 - Haunted Chase.txt"
+   ],
+   "brr": [
+    "14.brr",
+    "15.brr",
+    "16.brr",
+    "17.brr",
+    "18.brr",
+    "19.brr",
+    "1a.brr",
+    "1b.brr",
+    "1c.brr",
+    "1d.brr",
+    "1e.brr",
+    "1f.brr",
+    "20.brr",
+    "21.brr",
+    "22.brr"
+   ]
+  },
+  {
+   "id": 10401,
+   "lane": "horror",
+   "name": "The Legend of Zelda: A Link to the Past - Light World Dungeon",
+   "tags": [
+    "castle",
+    "ghost house",
+    "temple"
+   ],
+   "rating": 4.6667,
+   "mml": [
+    "10401__LoZ ATTP - Light World Dungeon.txt"
+   ],
+   "brr": [
+    "14 Strings.brr",
+    "15 Trombone.brr"
+   ]
+  },
+  {
+   "id": 9042,
+   "lane": "horror",
+   "name": "EarthBound - Giygas is Fatally Wounded!",
+   "tags": [
+    "misc",
+    "spooky",
+    "tense"
+   ],
+   "rating": 3.5556,
+   "mml": [
+    "9042__[K] [S] Earthbound - Giygas is Fatally Wounded!.txt"
+   ],
+   "brr": [
+    "GIFW.brr"
+   ]
+  }
+ ]
+}

@@ -88,8 +88,49 @@ export function loadSong(path, { titleOf = (f) => basename(f, '.mid'), dropPercu
  * passes through) and matching on full labels shredded real loops into
  * 13-"chord" runs. Root movement IS the progression; each merged segment's
  * quality is then the coverage-weighted majority of its half-bar labels.
+ *
+ * D96 — WHY MATCHING IS TOLERANT, AND WHY A LOOP IS VOTED. The r15 corpus
+ * classification found 377 of 1786 files extracting NO loop at all despite
+ * 500-3300 melody notes, among them tracks that are audibly one vamp end to
+ * end (SMB2's overworld, Pokemon's champion battle, SMW's ghost house).
+ * Measured on those files: exact repeats at the searched lengths = ZERO, while
+ * repeats at ONE BAR = 27-43. Two causes, both here rather than in the
+ * labeller (the bar grid and key were verified correct on the failures):
+ *
+ *   1. one-bar loops were never searched at all (lengths started at 2 bars);
+ *   2. equality was total. A four-bar loop whose last bar takes a turnaround —
+ *      which is most of them — matched nothing, because a single differing
+ *      half-bar out of eight vetoed the whole repeat.
+ *
+ * So a repeat now needs `tolerance` of its slots to agree rather than all of
+ * them, and the loop that comes out is VOTED across its repetitions rather
+ * than read off the first pass: each slot takes the coverage-weighted majority
+ * root over all reps. That is strictly more robust than trusting one pass —
+ * the varied turnaround bar loses the vote to the three plain ones — and at
+ * tolerance 1 it returns exactly what exact matching returned.
+ *
+ * An unlabelled slot counts as a MISMATCH, never as a free pass; a slot that
+ * is unlabelled in every repetition still discards the span.
  */
-export function chordLoops(song, { max = 3 } = {}) {
+export const LOOP_PROFILES = {
+  // What the COMMITTED packs (progressions-vgmusic.js, progressions-undertale.js)
+  // were extracted with. Frozen deliberately: re-extracting them under
+  // `repaired` changes 33 of the 43 songs INCLUDING KEPT ONES, because clicked
+  // entries feed retrieval pools and the counted harmony model ranks the
+  // variation ops off the same corpus (the D95 lesson). Flipping the importers
+  // to `repaired` is a real round of work — re-audition the affected songs and
+  // pin them — not a side effect of fixing a bug.
+  legacy: { tolerance: 1, lengths: [16, 12, 8, 6, 4], consensus: false },
+  // The repaired extractor (D96). Default for anything ANALYSING a corpus.
+  repaired: { tolerance: 0.85, lengths: [16, 12, 8, 6, 4, 2], consensus: true },
+};
+
+export function chordLoops(song, {
+  max = 3,
+  tolerance = LOOP_PROFILES.repaired.tolerance,
+  lengths = LOOP_PROFILES.repaired.lengths,
+  consensus = LOOP_PROFILES.repaired.consensus,
+} = {}) {
   const nHalf = song.totalBars * 2;
   const roots = [], quals = [], covs = [];
   for (let h = 0; h < nHalf; h++) {
@@ -98,12 +139,17 @@ export function chordLoops(song, { max = 3 } = {}) {
     quals.push(seg ? seg.quality : null);
     covs.push(seg ? seg.coverage : 0);
   }
-  const eqSeg = (i, j, L) => { for (let k = 0; k < L; k++) if (roots[i + k] !== roots[j + k]) return false; return true; };
+  /** fraction of slots where the two windows carry the same LABELLED root */
+  const simSeg = (i, j, L) => {
+    let same = 0;
+    for (let k = 0; k < L; k++) if (roots[i + k] >= 0 && roots[i + k] === roots[j + k]) same++;
+    return same / L;
+  };
   const spans = [];
-  for (const L of [16, 12, 8, 6, 4]) {
+  for (const L of lengths) {
     for (let i = 0; i + 2 * L <= nHalf; i++) {
       let reps = 1;
-      while (i + (reps + 1) * L <= nHalf && eqSeg(i, i + reps * L, L)) reps++;
+      while (i + (reps + 1) * L <= nHalf && simSeg(i, i + reps * L, L) >= tolerance) reps++;
       if (reps >= 2) spans.push({ start: i, L, reps, covered: L * reps });
     }
   }
@@ -112,14 +158,41 @@ export function chordLoops(song, { max = 3 } = {}) {
   const seen = new Set();
   const taken = [];
   for (const s of spans) {
-    // RLE the loop window into root segments, quality by weighted vote
-    const chords = [];
+    // Vote each slot across the repetitions, then RLE into root segments with
+    // quality by weighted vote. Voting is what makes tolerance safe: a slot
+    // that disagrees in one rep is outvoted rather than taken on faith.
+    // `consensus` is what makes the legacy profile reproducible: voting the
+    // quality across every repetition is itself a behaviour change, even when
+    // the roots match exactly, so the frozen packs vote over the first pass only.
+    const votingReps = consensus ? s.reps : 1;
+    const slots = [];
+    let dead = false;
     for (let k = 0; k < s.L; k++) {
-      const h = s.start + k;
-      if (roots[h] < 0) { chords.length = 0; break; }
+      const rootVotes = new Map();
+      for (let r = 0; r < votingReps; r++) {
+        const h = s.start + r * s.L + k;
+        if (h >= nHalf || roots[h] < 0) continue;
+        rootVotes.set(roots[h], (rootVotes.get(roots[h]) ?? 0) + Math.max(0.01, covs[h]));
+      }
+      if (!rootVotes.size) { dead = true; break; } // unlabelled in every rep
+      const rootPc = [...rootVotes.entries()].sort((a, b) => b[1] - a[1] || a[0] - b[0])[0][0];
+      // quality is voted only among the reps that agreed on the winning root
+      const qVotes = new Map();
+      for (let r = 0; r < votingReps; r++) {
+        const h = s.start + r * s.L + k;
+        if (h >= nHalf || roots[h] !== rootPc) continue;
+        qVotes.set(quals[h], (qVotes.get(quals[h]) ?? 0) + Math.max(0.01, covs[h]));
+      }
+      slots.push({ rootPc, qVotes });
+    }
+    if (dead) continue;
+    const chords = [];
+    for (const slot of slots) {
       const last = chords[chords.length - 1];
-      if (last && last.rootPc === roots[h]) { last.half++; last.votes.set(quals[h], (last.votes.get(quals[h]) ?? 0) + Math.max(0.01, covs[h])); }
-      else chords.push({ rootPc: roots[h], half: 1, votes: new Map([[quals[h], Math.max(0.01, covs[h])]]) });
+      if (last && last.rootPc === slot.rootPc) {
+        last.half++;
+        for (const [q, w] of slot.qVotes) last.votes.set(q, (last.votes.get(q) ?? 0) + w);
+      } else chords.push({ rootPc: slot.rootPc, half: 1, votes: new Map(slot.qVotes) });
     }
     if (chords.length < 2) continue;
     for (const c of chords) c.quality = [...c.votes.entries()].sort((a, b) => b[1] - a[1] || String(a[0]).localeCompare(String(b[0])))[0][0];

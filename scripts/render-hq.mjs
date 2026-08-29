@@ -78,7 +78,8 @@ for (const [label, entry] of haps) {
     const s = h.value?.s ?? 'piano';
     const inst = HQ_INSTRUMENTS[s];
     const patchOk = inst && ((inst.backend === 'sfz' && existsSync(join(ROOT, inst.sfz)))
-      || (inst.backend === 'vst' && existsSync(join(ROOT, inst.plugin))));
+      || (inst.backend === 'vst' && existsSync(join(ROOT, inst.plugin)))
+      || (inst.backend === 'wav' && (inst.samples ?? []).some((p) => existsSync(join(ROOT, p)))));
     if (patchOk) put(`hq:${s}`, { ...HQ_DEFAULTS, ...inst, sound: s }, label, h);
     else put('__fluid', null, label, h);
   }
@@ -143,6 +144,68 @@ function applyRoom(wavPath, room) {
   execFileSync('mv', [tmp, wavPath]);
 }
 
+// ---- wav backend: place raw samples at hap times ---------------------------
+// The local sample pack (hx_* horror fx, vc_* percussion — sample-pack-def
+// .js). Each trigger plays the file once through, mirroring the browser
+// sampler's play-through semantics; variants round-robin deterministically
+// (hap .n() wins when present). Mixing happens in node over an
+// ffmpeg-normalized PCM cache — a dense shaker line is hundreds of events,
+// far past what one ffmpeg filtergraph tolerates.
+const SAMPLE_CACHE = join(ROOT, 'vendor', 'build', 'sample-cache');
+const SR = 44100;
+function cachedPcm(rel) {
+  const safe = rel.replace(/[^a-zA-Z0-9._-]+/g, '_');
+  const out = join(SAMPLE_CACHE, `${safe}.wav`);
+  if (!existsSync(out)) {
+    mkdirSync(SAMPLE_CACHE, { recursive: true });
+    execFileSync('ffmpeg', ['-v', 'error', '-y', '-i', join(ROOT, rel), '-ac', '2', '-ar', String(SR), '-c:a', 'pcm_s16le', out], { stdio: 'pipe' });
+  }
+  return out;
+}
+function readPcm16(path) {
+  const buf = readFileSync(path);
+  const dataIx = buf.indexOf(Buffer.from('data'));
+  const size = buf.readUInt32LE(dataIx + 4);
+  const pcm = new Int16Array(buf.buffer, buf.byteOffset + dataIx + 8, Math.floor(Math.min(size, buf.length - dataIx - 8) / 2));
+  return { pcm, frames: Math.floor(pcm.length / 2) };
+}
+const fnv1a = (str) => { let h = 0x811c9dc5; for (let i = 0; i < str.length; i++) { h ^= str.charCodeAt(i); h = Math.imul(h, 0x01000193); } return h >>> 0; };
+function renderSampleStem(stem, allHaps, wavPath) {
+  const variants = (stem.inst.samples ?? []).filter((p) => existsSync(join(ROOT, p))).map((p) => readPcm16(cachedPcm(p)));
+  const velScale = stem.inst.velScale ?? 1;
+  const totalFrames = Math.ceil((seconds + 5) * SR);
+  const mix = new Float64Array(totalFrames * 2);
+  let placed = 0;
+  for (const h of allHaps) {
+    const T = ((Number(h.whole.begin.valueOf()) - from) * 60) / cpm;
+    if (!(T >= -1e-6) || T >= seconds + 4) continue;
+    const n = h.value?.n;
+    const v = variants[(Number.isInteger(n) ? n : fnv1a(`${stem.inst.sound}|${T.toFixed(4)}`)) % variants.length];
+    const amp = Math.min(1.2, Math.max(0, (typeof h.value?.gain === 'number' ? h.value.gain : 0.8) * velScale));
+    const start = Math.round(T * SR);
+    const span = Math.min(v.frames, totalFrames - start);
+    for (let i = 0; i < span; i++) {
+      mix[(start + i) * 2] += (v.pcm[i * 2] / 32768) * amp;
+      mix[(start + i) * 2 + 1] += (v.pcm[i * 2 + 1] / 32768) * amp;
+    }
+    placed++;
+  }
+  // soft-clip the rare overlap peak instead of wrapping
+  const pcmOut = Buffer.alloc(totalFrames * 4);
+  for (let i = 0; i < totalFrames * 2; i++) {
+    const x = mix[i];
+    const y = Math.abs(x) <= 0.9 ? x : Math.sign(x) * (0.9 + 0.1 * Math.tanh((Math.abs(x) - 0.9) / 0.1));
+    pcmOut.writeInt16LE(Math.max(-32768, Math.min(32767, Math.round(y * 32767))), i * 2);
+  }
+  const hdr = Buffer.alloc(44);
+  hdr.write('RIFF', 0); hdr.writeUInt32LE(36 + pcmOut.length, 4); hdr.write('WAVEfmt ', 8);
+  hdr.writeUInt32LE(16, 16); hdr.writeUInt16LE(1, 20); hdr.writeUInt16LE(2, 22);
+  hdr.writeUInt32LE(SR, 24); hdr.writeUInt32LE(SR * 4, 28); hdr.writeUInt16LE(4, 32); hdr.writeUInt16LE(16, 34);
+  hdr.write('data', 36); hdr.writeUInt32LE(pcmOut.length, 40);
+  writeFileSync(wavPath, Buffer.concat([hdr, pcmOut]));
+  return { placed, variants: variants.length };
+}
+
 // ---- build + render each stem ----------------------------------------------
 const stemsDir = `${outBase}-stems`;
 mkdirSync(stemsDir, { recursive: true });
@@ -163,6 +226,13 @@ for (const [key, stem] of stems) {
   const meanRoom = rooms.length ? rooms.reduce((a, x) => a + x, 0) / rooms.length : 0;
   const gainsAll = allHaps.map((h) => (typeof h.value?.gain === 'number' ? h.value.gain : 0.8));
   const meanGain = gainsAll.reduce((a, x) => a + x, 0) / gainsAll.length;
+  if (stem.inst?.backend === 'wav') {
+    const { placed, variants } = renderSampleStem(stem, allHaps, wavPath);
+    console.log(`  ${name.padEnd(22)} samples     ${String(placed).padStart(4)} hits   gain ${meanGain.toFixed(2)}  room ${meanRoom.toFixed(2)}  (${variants} variant${variants === 1 ? '' : 's'})`);
+    applyRoom(wavPath, meanRoom);
+    mixInputs.push({ wav: wavPath, meanGain, trimDb: stem.inst?.trimDb ?? 0 });
+    continue;
+  }
   if (key === '__fluid') {
     stemMap = new Map([...stem.labelMap].map(([label, hs]) => [label, { muted: false, haps: hs }]));
   } else {

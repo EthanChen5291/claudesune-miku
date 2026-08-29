@@ -513,3 +513,52 @@ test('D48 addendum: a broken hop anywhere in the chain is named in the banner', 
   // and the page still plays, on the fallback synth, rather than dying
   assert.ok(r.calls.some((c) => c[0] === 'evaluate'), 'the page must still play something');
 });
+
+// ── the r15 ear-test page (D95) ───────────────────────────────────────────
+// It is the only page whose whole point is that Ethan can PLAY each option
+// before answering, so a demo that renders but cannot sound is the exact
+// failure this catches. The generator already re-evaluates every snippet at
+// build time; this proves the browser path — click handler, sound
+// substitution, runtime boot — reaches evaluate() with playable source.
+
+test('audition/triage.html: regenerated exactly by its script', () => {
+  execFileSync('node', ['scripts/audition-triage.mjs'], { cwd: ROOT });
+});
+
+test('audition/triage.html: every demo button emits playable source', async () => {
+  const r = runPage(join(ROOT, 'audition/triage.html'));
+  // The page renders through innerHTML, which the DOM shim stores rather than
+  // parses — so read the buttons out of the emitted markup, then drive the
+  // DELEGATED handler the way the browser does (it only ever reads
+  // ev.target.closest('[data-demo]')).
+  const markup = r.byId.get('cards').innerHTML;
+  const ids = [...markup.matchAll(/data-demo="([^"]+)"/g)].map((m) => m[1]);
+  assert.ok(ids.length >= 20, `only ${ids.length} demo buttons rendered`);
+
+  const cards = r.byId.get('cards');
+  for (const id of ids) {
+    r.calls.length = 0;
+    cards.onclick({ target: { closest: (sel) => (sel === '[data-demo]' ? { dataset: { demo: id } } : null) } });
+    await flush();
+    const ev = r.calls.filter((c) => c[0] === 'evaluate').pop();
+    assert.ok(ev, `demo ${id}: clicking emitted no pattern`);
+    await playable(ev[1]);
+  }
+});
+
+test('D95: every card carries evidence, and every demo id resolves', () => {
+  const html = readFileSync(join(ROOT, 'audition/triage.html'), 'utf8');
+  const i = html.indexOf('const DATA = ');
+  const DATA = JSON.parse(html.slice(i + 13, html.indexOf(';\n', i)));
+  assert.ok(DATA.cards.length >= 20, `only ${DATA.cards.length} cards`);
+  const ids = new Set(DATA.cards.flatMap((c) => c.demoData.map((d) => d.id)));
+  for (const c of DATA.cards) {
+    // a question with no measurement behind it is a vibe, not a question
+    assert.ok(c.why?.length, `${c.id}: no evidence lines`);
+    assert.ok(c.question?.endsWith('?') || c.askText, `${c.id}: not phrased as a question`);
+    // options or a free-text prompt — a card he cannot answer is dead weight
+    assert.ok(c.options?.length || c.askText, `${c.id}: nothing to answer with`);
+    for (const d of c.demos) assert.ok(ids.has(d), `${c.id}: demo ${d} did not survive the build-time check`);
+    assert.equal(c.demos.length, c.demoData.length, `${c.id}: demo list and data disagree`);
+  }
+});

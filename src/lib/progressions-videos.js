@@ -883,4 +883,100 @@ export const PROGRESSIONS_VIDEOS = {
       + 'moving TOP voice (C6 held over the second Gm7, then Bb5-G5 tag); closing '
       + 'stabs get a velocity fade ramp. Read off FL note labels, high confidence.',
   },
+
+  // ===========================================================================
+  // r19 — the four progressions read off the reels he sent this round, three of
+  // them carrying a comment of his. Full working in research/reel-atlas-r19.md;
+  // every chord below came off a frame, never off the audio. sourceEndorsed stays
+  // FALSE on all four: that flag is the blanket he gave the original twelve
+  // videos ("i am a fan of how all the songs sound"), and a one-word reaction to
+  // a reel is not that blanket. His comments live in each entry's notes instead.
+  // ===========================================================================
+
+  // "scary^" — his one-word verdict on this reel. The most useful thing in the
+  // whole batch, because it is THIRDLESS: the sonority is two perfect fifths a
+  // semitone apart sounding together, not a dissonance stacked on a triad.
+  vid_dantes_scary_fifths: {
+    family: 'minor', pack: 'igvideo', role: 'harmony', style: 'horror',
+    provenance: 'dm-transcribed', ratified: false, needsEar: true, sourceEndorsed: false,
+    song: 'dantes.studio — untitled piano-roll reel', section: 'A', sectionBars: 4,
+    source: null, dmSource: 'new.MP4', dmAt: '104-118s', hisComment: 'scary^',
+    numerals: 'i5-bII5',
+    degrees: '0:5 1b:5 0:5 1b:5',
+    voicedAs: ['F#3 G3 C#4 D4 F#4 G4 C#5 (F#-C# against G-D)',
+      'G3 G#3 C#4 D4 F#4 G4 D5 (G-D against C#-G#)',
+      'F#-C# against G-D (restated)', 'G-D against C#-G# (restated)'],
+    sourceKey: 'F#:minor', coverage: null, moods: ['scary', 'unsettling', 'cold'],
+    character: null,
+    notes: 'HIS COMMENT: "scary^". Read note-by-note. The degrees line is a '
+      + 'simplification and the voicedAs is the truth: BOTH fifths sound at once, so '
+      + 'the engine needs a device layer (opts.fifthPincer) rather than a chord '
+      + 'symbol. Zero thirds in either chord — that is the whole difference from '
+      + 'every horror progression the engine already writes. Voices enter ONE AT A '
+      + 'TIME about a beat apart (F#3+G3, then C#4, then D4, then F#4, then G4, then '
+      + 'C#5) so the stack accumulates instead of striking; notes held ~2 bars.',
+  },
+
+  // the second dantes.studio reel — his comment is not on this one, the caption
+  // "Steal this chords progression" is the poster's
+  vid_dantes_m9_plane: {
+    family: 'minor', pack: 'igvideo', role: 'harmony', style: 'dark-rnb',
+    provenance: 'dm-transcribed', ratified: false, needsEar: true, sourceEndorsed: false,
+    song: 'dantes.studio — "Steal this chords progression"', section: 'A', sectionBars: 4,
+    source: null, dmSource: 'new.MP4', dmAt: '222-230s', hisComment: null,
+    numerals: 'im9-vm9',
+    degrees: '0:m9 0:m9 7:m9 7:m9',
+    voicedAs: ['Cm9 = C5 D#5 G5 A#5 D6', 'Cm9 (held into the stabs)',
+      'Gm9 = G4 A#4 D5 F5 A5', 'Gm9 (held into the stabs)'],
+    sourceKey: 'C:minor', coverage: null, moods: ['dark', 'liminal', 'smooth'],
+    character: null,
+    notes: 'FIVE-note voicings, R-m3-5-b7-9, and the second is the first PLANED '
+      + 'intact down a fourth — same interval stack, no voice-leading. No major '
+      + 'chord anywhere. Rhythm per 2-bar cell is LONG, short, short: one chord held '
+      + '~1.5 bars then two stabs, which is neither the engine\'s sustained nor its '
+      + 'block-quarters. Read off FL note labels, high confidence.',
+  },
+
+  // "Walking bass (jazz, unique)" — his comment. Printed on screen by the
+  // poster, so the symbols are exact rather than transcribed.
+  vid_jazz_circle_b9: {
+    family: 'major', pack: 'igvideo', role: 'harmony', style: 'jazz',
+    provenance: 'dm-transcribed', ratified: false, needsEar: true, sourceEndorsed: false,
+    song: 'solobdomde — "Try this progression"', section: 'A', sectionBars: 8,
+    source: null, dmSource: 'remainder+logs.MP4', dmAt: '83s', hisComment: 'Walking bass (jazz, unique)',
+    numerals: 'iim9-V9-I^9-IV^9-viim7b5-IIIaug-vim9-VI7',
+    degrees: '2:m9 7:9 0:^9 5:^9 11:m7b5 4:aug 9:m9 9:7',
+    voicedAs: ['Dmin9', 'G9', 'Cmaj9', 'Fmaj9', 'Bm7b5(addb9)', 'Eaug', 'Amin9', 'A7'],
+    sourceKey: 'C:major', coverage: null, moods: ['jazzy', 'unique', 'walking'],
+    character: null,
+    notes: 'HIS COMMENT: "Walking bass (jazz, unique)". A descending-fifths circle '
+      + 'with two dark pivots: a half-diminished carrying a FLAT ninth (read twice — '
+      + 'the screen says addb9, not add9) and an AUGMENTED III. Neither the b9 on the '
+      + 'm7b5 nor the aug is expressible in the degrees dialect, so voicedAs carries '
+      + 'them. Ends VI7, a secondary dominant back to the ii.',
+  },
+
+  // "desert chord example" — his comment, and the answer to a complaint that has
+  // been open since r14 ("I still don't think the chord progression sounds like a
+  // desert. look into other game desert chord progressions").
+  vid_hijaz_bviim: {
+    family: 'modal', pack: 'igvideo', role: 'harmony', style: 'desert',
+    provenance: 'dm-transcribed', ratified: false, needsEar: true, sourceEndorsed: false,
+    song: 'briancalli.music — "Modo Mixolidio b9 b13"', section: 'A', sectionBars: 8,
+    source: null, dmSource: 'remainder+logs.MP4', dmAt: '56s', hisComment: 'desert chord example',
+    numerals: 'I-bII-I-bII-I-bII-bviim-I',
+    degrees: '0 1b 0 1b 0 1b 10b:m 0',
+    voicedAs: ['C', 'Db', 'C', 'Db', 'C', 'Db', 'Bbm', 'C'],
+    sourceKey: 'C:phrygianDominant', coverage: null, moods: ['desert', 'hijaz', 'exotic'],
+    character: null,
+    notes: 'HIS COMMENT: "desert chord example". The SCALE was never the gap — the '
+      + 'visualiser lights C Db E F G Ab Bb, which is Phrygian dominant, exactly what '
+      + 'D93 already pins for the lane. The new relation is the Bbm: every engine '
+      + 'desert trope walks I-bII-ivm-bII (hijaz) or stays on the shuttle, and none '
+      + 'of them reaches the b7 MINOR. Source ladder is six chords (C Db C Db Bbm C); '
+      + 'the alternation is extended by one pair here to reach an 8-bar section, '
+      + 'because section lengths must divide by 4. Voicings NOT transcribed — the '
+      + 'visualiser lights scale rows as well as chord tones, so only the ladder is '
+      + 'trustworthy. Worth his eye.',
+  },
 };

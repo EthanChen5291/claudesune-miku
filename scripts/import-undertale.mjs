@@ -27,7 +27,7 @@ import { writeFileSync, readdirSync } from 'node:fs';
 import { join, basename, relative } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { splitHands, chordTimeline, solveKeyKS, barFigures, pickGrid, chordAt } from '../src/ingest/piano.js';
-import { loadSong, chordLoops, mean, median, slug } from '../src/ingest/corpus.js';
+import { loadSong, chordLoops, mean, median, slug, LOOP_PROFILES } from '../src/ingest/corpus.js';
 import { qualityPcs } from '../src/ingest/numerals.js';
 
 const ROOT = join(fileURLToPath(new URL('..', import.meta.url)));
@@ -111,7 +111,8 @@ function buildOwnFigure(song, loop) {
 
 const progressions = [];
 for (const song of songs) {
-  const loops = chordLoops(song);
+  // LOOP_PROFILES.legacy, explicitly — see the note in import-vgmusic.mjs
+  const loops = chordLoops(song, { ...LOOP_PROFILES.legacy });
   loops.forEach((loop, i) => {
     const family = song.key.mode;
     const tonic = song.key.tonicPc;

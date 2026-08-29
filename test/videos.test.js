@@ -44,6 +44,23 @@ test('D57: every video entry is honest about what it is', () => {
       // the twelve igexport videos. This is a thirteenth source he added later;
       // he approved ADDING it, which is not the same as endorsing how it sounds.
       assert.notEqual(e.sourceEndorsed, true, `${name}: the standing endorsement does not reach a later source`);
+    } else if (e.provenance === 'dm-transcribed') {
+      // r19/D100: read off a screen recording of Ethan's own DM thread rather
+      // than off a reel file. Those recordings are his private messages and
+      // stay OUT of the repo (the same local-only rule the ripped audio has),
+      // so the repo-root check below cannot apply — what replaces it is that
+      // the entry must name the recording AND the second it was read at, so any
+      // claim here can be re-checked frame by frame.
+      assert.match(e.dmSource ?? '', /\.(mp4|MP4|mov|MOV)$/, `${name}: dm-transcribed without a recording`);
+      assert.match(String(e.dmAt ?? ''), /^\d+(-\d+)?s$/, `${name}: dm-transcribed without a timestamp`);
+      assert.equal(e.source, null, `${name}: a DM recording is not a repo video`);
+      // his comment is the whole reason these are here — verbatim or explicitly
+      // null, never paraphrased into existence
+      assert.ok(e.hisComment === null || typeof e.hisComment === 'string',
+        `${name}: hisComment must be his words or null`);
+      // the blanket endorsement covers the original twelve igexport files; a
+      // reel he forwarded and reacted to is not that (the D64/D68 rule)
+      assert.notEqual(e.sourceEndorsed, true, `${name}: the standing endorsement does not reach a DM reel`);
     } else {
       assert.equal(e.provenance, 'video-transcribed', name);
       // Ethan endorsed the SOURCES; that must not leak into ratification (A6.1).
@@ -69,7 +86,9 @@ test('D57: every video entry is honest about what it is', () => {
     // every entry names the file it was read from; the pack is igexport-* plus
     // the D64 screen recording, so the check is that the file EXISTS in the repo
     // root, not that it matches one naming scheme
-    assert.ok(e.source && videoFiles.has(e.source), `${name} does not name a video in the repo root`);
+    if (e.provenance !== 'dm-transcribed') {
+      assert.ok(e.source && videoFiles.has(e.source), `${name} does not name a video in the repo root`);
+    }
     // the display labels survive even where the grammar simplified them
     assert.ok(Array.isArray(e.voicedAs) && e.voicedAs.length === parseDegrees(e.degrees).length,
       `${name}: voicedAs does not match the degrees chord-for-chord`);

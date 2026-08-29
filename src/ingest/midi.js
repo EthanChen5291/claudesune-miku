@@ -68,7 +68,12 @@ export function readMidi(path) {
           const usPerQuarter = (data[0] << 16) | (data[1] << 8) | data[2];
           if (tempoBpm == null && usPerQuarter > 0) tempoBpm = 60000000 / usPerQuarter;
         } else if (meta === 0x58 && mlen >= 2 && timeSig == null) {
-          timeSig = [data[0], 2 ** data[1]];
+          // A numerator of 0 is meaningless but does occur in the wild (one
+          // Genesis rip in the r15 corpus declares 0/1). Taken at face value it
+          // makes barTicks 0, and every downstream bar index becomes Infinity —
+          // which crashed the whole ingest run rather than skipping one file.
+          // Ignore the event and let the 4/4 default stand.
+          if (data[0] > 0 && data[1] <= 8) timeSig = [data[0], 2 ** data[1]];
         }
         continue;
       }

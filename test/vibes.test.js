@@ -28,8 +28,8 @@ test('emotions: 12 rows, words ⊆ instrument moods, tags ⊆ ldrolez tags', () 
   assert.ok(Object.entries(EMOTIONS).every(([n, e]) => n === 'mysterious' || e.colorBias < EMOTIONS.mysterious.colorBias));
 });
 
-test('environments: 17 rows, every leaf word references an existing vocabulary', () => {
-  assert.equal(Object.keys(ENVIRONMENTS).length, 17);
+test('environments: 23 rows, every leaf word references an existing vocabulary', () => {
+  assert.equal(Object.keys(ENVIRONMENTS).length, 23);
   for (const [name, env] of Object.entries(ENVIRONMENTS)) {
     assert.ok(ROLES.has(env.role), `${name}: unknown role "${env.role}"`);
     for (const m of env.envMoods) assert.ok(INSTRUMENT_MOODS.has(m), `${name}: mood "${m}" has no instrument consumer`);
@@ -87,7 +87,7 @@ test('key pools cover the three families and pick deterministically', () => {
   for (const fam of ['major', 'minor', 'modal']) assert.ok(Object.keys(KEY_POOLS[fam]).length >= 6);
   const names = vibeNames();
   assert.equal(names.emotions.length, 12);
-  assert.equal(names.environments.length, 17);
+  assert.equal(names.environments.length, 23);
   const picks = new Set(Array.from({ length: 40 }, (_, i) => compileVibe({ environment: 'fight', name: `k${i}` }).keyHint));
   assert.ok(picks.size >= 3, 'tonic variety over 40 hashed names');
 });

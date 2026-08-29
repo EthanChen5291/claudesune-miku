@@ -1,0 +1,2407 @@
+{
+  "source": "https://www.vgmusic.com/",
+  "note": "r15 lane-keyword sweep; owner permission (Ethan, 2026-08-28); .mid files gitignored",
+  "count": 240,
+  "files": [
+    {
+      "system": "nes",
+      "game": "StarTropics",
+      "title": "Main Action Areas (4)",
+      "file": "CB_Startropics.mid",
+      "bytes": 7364,
+      "sequencer": "Corlen Belspar",
+      "lane": "jungle",
+      "path": "audios/vgmusic-lanes/jungle/nes__CB_Startropics.mid"
+    },
+    {
+      "system": "nes",
+      "game": "StarTropics 2: Zoda's Revenge",
+      "title": "Yum-Yum's Cave",
+      "file": "Battle2.mid",
+      "bytes": 9411,
+      "sequencer": "unknown",
+      "lane": "jungle",
+      "path": "audios/vgmusic-lanes/jungle/nes__Battle2.mid"
+    },
+    {
+      "system": "nes",
+      "game": "StarTropics",
+      "title": "Capt. Bell's Memorial (3)",
+      "file": "StarTropics-captain_bell.mid",
+      "bytes": 8229,
+      "sequencer": "Lewis \"XERO\" Thomas",
+      "lane": "jungle",
+      "path": "audios/vgmusic-lanes/jungle/nes__StarTropics-captain_bell.mid"
+    },
+    {
+      "system": "genesis",
+      "game": "Sonic the Hedgehog 2",
+      "title": "Aquatic Ruin Zone (Rainforest Remix) (XG)",
+      "file": "Sonic2_-_AquaticRuinRainforestXG.mid",
+      "bytes": 52785,
+      "sequencer": "Jace",
+      "lane": "jungle",
+      "path": "audios/vgmusic-lanes/jungle/genesis__Sonic2_-_AquaticRuinRainforestXG.mid"
+    },
+    {
+      "system": "snes",
+      "game": "Sailor Moon R (Japan)",
+      "title": "Jungle River",
+      "file": "SailorMoonR_Jungle.mid",
+      "bytes": 50560,
+      "sequencer": "Daniel Lippert",
+      "lane": "jungle",
+      "path": "audios/vgmusic-lanes/jungle/snes__SailorMoonR_Jungle.mid"
+    },
+    {
+      "system": "ps1",
+      "game": "Mega Man X5",
+      "title": "Spike Rosered - \"Into the Jungle\"",
+      "file": "shalpp-rmx5-rosered-1_2.mid",
+      "bytes": 62629,
+      "sequencer": "Shalpp",
+      "lane": "jungle",
+      "path": "audios/vgmusic-lanes/jungle/ps1__shalpp-rmx5-rosered-1_2.mid"
+    },
+    {
+      "system": "nes",
+      "game": "StarTropics",
+      "title": "Island Chief",
+      "file": "StarTropics-island_chief.mid",
+      "bytes": 9282,
+      "sequencer": "Lewis \"XERO\" Thomas",
+      "lane": "jungle",
+      "path": "audios/vgmusic-lanes/jungle/nes__StarTropics-island_chief.mid"
+    },
+    {
+      "system": "n64",
+      "game": "Donkey Kong 64",
+      "title": "Jungle Japes  (v2.1)",
+      "file": "dk64_jungle_2.1.mid",
+      "bytes": 66188,
+      "sequencer": "Dr. Fruitcake",
+      "lane": "jungle",
+      "path": "audios/vgmusic-lanes/jungle/n64__dk64_jungle_2.1.mid"
+    },
+    {
+      "system": "nes",
+      "game": "StarTropics",
+      "title": "Inside the Whale (2)",
+      "file": "stropics-whale.mid",
+      "bytes": 10927,
+      "sequencer": "DoctorJ",
+      "lane": "jungle",
+      "path": "audios/vgmusic-lanes/jungle/nes__stropics-whale.mid"
+    },
+    {
+      "system": "nes",
+      "game": "StarTropics",
+      "title": "Main Action Areas",
+      "file": "st_action.mid",
+      "bytes": 16589,
+      "sequencer": "unknown",
+      "lane": "jungle",
+      "path": "audios/vgmusic-lanes/jungle/nes__st_action.mid"
+    },
+    {
+      "system": "gameboy",
+      "game": "Pitfall - Beyond the Jungle",
+      "title": "Title Screen",
+      "file": "Pitfall_-_Title_Screen.mid",
+      "bytes": 7270,
+      "sequencer": "Stephen Kirkwood - \"Steve-O\"",
+      "lane": "jungle",
+      "path": "audios/vgmusic-lanes/jungle/gameboy__Pitfall_-_Title_Screen.mid"
+    },
+    {
+      "system": "nes",
+      "game": "Dragon Warrior 4",
+      "title": "Taloon's Theme (Tropical Remix)",
+      "file": "DW4TALN.mid",
+      "bytes": 50266,
+      "sequencer": "Zagro",
+      "lane": "jungle",
+      "path": "audios/vgmusic-lanes/jungle/nes__DW4TALN.mid"
+    },
+    {
+      "system": "nes",
+      "game": "StarTropics",
+      "title": "Overworld (2)",
+      "file": "StarTropics-overworld.mid",
+      "bytes": 11865,
+      "sequencer": "Lewis \"XERO\" Thomas",
+      "lane": "jungle",
+      "path": "audios/vgmusic-lanes/jungle/nes__StarTropics-overworld.mid"
+    },
+    {
+      "system": "nes",
+      "game": "StarTropics",
+      "title": "Alien Battle",
+      "file": "st_ab.mid",
+      "bytes": 21711,
+      "sequencer": "Dragoon",
+      "lane": "jungle",
+      "path": "audios/vgmusic-lanes/jungle/nes__st_ab.mid"
+    },
+    {
+      "system": "nes",
+      "game": "StarTropics",
+      "title": "Miracola (3)",
+      "file": "StarTropics-miracola.mid",
+      "bytes": 14501,
+      "sequencer": "Lewis \"XERO\" Thomas",
+      "lane": "jungle",
+      "path": "audios/vgmusic-lanes/jungle/nes__StarTropics-miracola.mid"
+    },
+    {
+      "system": "gba",
+      "game": "Donkey Kong Country 3",
+      "title": "Jungle - \"Jungle Jitter\"",
+      "file": "DKC3-GBA_JungleJitter.mid",
+      "bytes": 32678,
+      "sequencer": "!!!!!",
+      "lane": "jungle",
+      "path": "audios/vgmusic-lanes/jungle/gba__DKC3-GBA_JungleJitter.mid"
+    },
+    {
+      "system": "n64",
+      "game": "Paper Mario",
+      "title": "Koopa Village (Tropical Remix)",
+      "file": "pm_koopa_tropical.mid",
+      "bytes": 22839,
+      "sequencer": "BTHive",
+      "lane": "jungle",
+      "path": "audios/vgmusic-lanes/jungle/n64__pm_koopa_tropical.mid"
+    },
+    {
+      "system": "gameboy",
+      "game": "Donkey Kong Land",
+      "title": "Jungle (2)",
+      "file": "dkljungl.mid",
+      "bytes": 17208,
+      "sequencer": "Matthew Collinson",
+      "lane": "jungle",
+      "path": "audios/vgmusic-lanes/jungle/gameboy__dkljungl.mid"
+    },
+    {
+      "system": "nes",
+      "game": "StarTropics",
+      "title": "Title (2)",
+      "file": "StarTropics-title.mid",
+      "bytes": 6590,
+      "sequencer": "Lewis \"XERO\" Thomas",
+      "lane": "jungle",
+      "path": "audios/vgmusic-lanes/jungle/nes__StarTropics-title.mid"
+    },
+    {
+      "system": "snes",
+      "game": "Jurassic Park",
+      "title": "Jungle (v1.1)",
+      "file": "Jungle%28V1.1%29.mid",
+      "bytes": 33636,
+      "sequencer": "Lychee Akana",
+      "lane": "jungle",
+      "path": "audios/vgmusic-lanes/jungle/snes__Jungle%28V1.1%29.mid"
+    },
+    {
+      "system": "nes",
+      "game": "StarTropics",
+      "title": "Overworld",
+      "file": "st_over.mid",
+      "bytes": 15462,
+      "sequencer": "Sebastian Deken",
+      "lane": "jungle",
+      "path": "audios/vgmusic-lanes/jungle/nes__st_over.mid"
+    },
+    {
+      "system": "genesis",
+      "game": "Jungle Strike",
+      "title": "Title & Staff Roll",
+      "file": "Jungle_Strike.mid",
+      "bytes": 17004,
+      "sequencer": "Gohito",
+      "lane": "jungle",
+      "path": "audios/vgmusic-lanes/jungle/genesis__Jungle_Strike.mid"
+    },
+    {
+      "system": "nes",
+      "game": "StarTropics",
+      "title": "Sub C",
+      "file": "st_sc.mid",
+      "bytes": 7353,
+      "sequencer": "Sebastian Deken",
+      "lane": "jungle",
+      "path": "audios/vgmusic-lanes/jungle/nes__st_sc.mid"
+    },
+    {
+      "system": "genesis",
+      "game": "Sonic the Hedgehog 2",
+      "title": "Aquatic Ruin Zone (Jungle Remix)",
+      "file": "AquaticRuin_Jungle.mid",
+      "bytes": 61041,
+      "sequencer": "MarsJenkar",
+      "lane": "jungle",
+      "path": "audios/vgmusic-lanes/jungle/genesis__AquaticRuin_Jungle.mid"
+    },
+    {
+      "system": "n64",
+      "game": "Mario Party",
+      "title": "Yoshi's Tropical Island (2)",
+      "file": "mpyoshi.mid",
+      "bytes": 34894,
+      "sequencer": "Sirius",
+      "lane": "jungle",
+      "path": "audios/vgmusic-lanes/jungle/n64__mpyoshi.mid"
+    },
+    {
+      "system": "n64",
+      "game": "Super Mario 64",
+      "title": "Course 4 - Cool, Cool Mountain (Jungle Remix)",
+      "file": "sm64-snow-jungle.mid",
+      "bytes": 37451,
+      "sequencer": "BTHive",
+      "lane": "jungle",
+      "path": "audios/vgmusic-lanes/jungle/n64__sm64-snow-jungle.mid"
+    },
+    {
+      "system": "nes",
+      "game": "Hiryu No Ken II: Ryuu No Tsubasa (Japan)",
+      "title": "Jungle Theme 1",
+      "file": "T_HiryuNoKenII_JungleTheme1.mid",
+      "bytes": 79205,
+      "sequencer": "Tsu Ryu & Sailor Raika",
+      "lane": "jungle",
+      "path": "audios/vgmusic-lanes/jungle/nes__T_HiryuNoKenII_JungleTheme1.mid"
+    },
+    {
+      "system": "snes",
+      "game": "Clay Fighter 2",
+      "title": "NanaMan's Stage - \"Bungle Jungle\"",
+      "file": "bunglejungle.mid",
+      "bytes": 13975,
+      "sequencer": "DC",
+      "lane": "jungle",
+      "path": "audios/vgmusic-lanes/jungle/snes__bunglejungle.mid"
+    },
+    {
+      "system": "nes",
+      "game": "StarTropics",
+      "title": "Shecola (2)",
+      "file": "StarTropics-shecola.mid",
+      "bytes": 8148,
+      "sequencer": "Lewis \"XERO\" Thomas",
+      "lane": "jungle",
+      "path": "audios/vgmusic-lanes/jungle/nes__StarTropics-shecola.mid"
+    },
+    {
+      "system": "n64",
+      "game": "Donkey Kong 64",
+      "title": "Jungle Japes: Boss (SB Live)",
+      "file": "DK64JungleJapesBoss.mid",
+      "bytes": 69266,
+      "sequencer": "Dave Phaneuf",
+      "lane": "jungle",
+      "path": "audios/vgmusic-lanes/jungle/n64__DK64JungleJapesBoss.mid"
+    },
+    {
+      "system": "nes",
+      "game": "StarTropics",
+      "title": "The Argonians",
+      "file": "StarTropics-argonians.mid",
+      "bytes": 9360,
+      "sequencer": "Lewis \"XERO\" Thomas",
+      "lane": "jungle",
+      "path": "audios/vgmusic-lanes/jungle/nes__StarTropics-argonians.mid"
+    },
+    {
+      "system": "nes",
+      "game": "Amagon",
+      "title": "Zone 4: Rain Forest",
+      "file": "Amagon-Zone_4_Rain_Forest.mid",
+      "bytes": 22129,
+      "sequencer": "Jedi QuestMaster",
+      "lane": "jungle",
+      "path": "audios/vgmusic-lanes/jungle/nes__Amagon-Zone_4_Rain_Forest.mid"
+    },
+    {
+      "system": "n64",
+      "game": "Diddy Kong Racing",
+      "title": "Jungle Falls (2)",
+      "file": "DKR_Jungle_Falls-KM.mid",
+      "bytes": 68464,
+      "sequencer": "King Meteor",
+      "lane": "jungle",
+      "path": "audios/vgmusic-lanes/jungle/n64__DKR_Jungle_Falls-KM.mid"
+    },
+    {
+      "system": "n64",
+      "game": "Donkey Kong 64",
+      "title": "DK Isle: Jungle Japes Lobby (2)",
+      "file": "dk64junglelobby.mid",
+      "bytes": 20148,
+      "sequencer": "BTHive",
+      "lane": "jungle",
+      "path": "audios/vgmusic-lanes/jungle/n64__dk64junglelobby.mid"
+    },
+    {
+      "system": "nes",
+      "game": "StarTropics",
+      "title": "Inside the Whale",
+      "file": "startropicswhale.mid",
+      "bytes": 18060,
+      "sequencer": "Dragoon",
+      "lane": "jungle",
+      "path": "audios/vgmusic-lanes/jungle/nes__startropicswhale.mid"
+    },
+    {
+      "system": "nes",
+      "game": "Mickey's Safari in Letterland",
+      "title": "Swamp / Jungle",
+      "file": "Swamp-Jungle.mid",
+      "bytes": 12247,
+      "sequencer": "TurquoiseStar",
+      "lane": "jungle",
+      "path": "audios/vgmusic-lanes/jungle/nes__Swamp-Jungle.mid"
+    },
+    {
+      "system": "nes",
+      "game": "StarTropics",
+      "title": "Main Action Areas (Remix)",
+      "file": "ST-Underworld-%28Remix%29.mid",
+      "bytes": 25534,
+      "sequencer": "Rune Walsh",
+      "lane": "jungle",
+      "path": "audios/vgmusic-lanes/jungle/nes__ST-Underworld-%28Remix%29.mid"
+    },
+    {
+      "system": "nes",
+      "game": "StarTropics",
+      "title": "Main Action Areas (Arranged) (2)",
+      "file": "Star_Tropics_Action_Area.mid",
+      "bytes": 8110,
+      "sequencer": "unknown",
+      "lane": "jungle",
+      "path": "audios/vgmusic-lanes/jungle/nes__Star_Tropics_Action_Area.mid"
+    },
+    {
+      "system": "nes",
+      "game": "StarTropics",
+      "title": "Boss Battle",
+      "file": "StarTropics-boss_battle.mid",
+      "bytes": 8200,
+      "sequencer": "Lewis \"XERO\" Thomas",
+      "lane": "jungle",
+      "path": "audios/vgmusic-lanes/jungle/nes__StarTropics-boss_battle.mid"
+    },
+    {
+      "system": "nes",
+      "game": "Flintstones, The",
+      "title": "Jungle Stage",
+      "file": "F_jungle.mid",
+      "bytes": 10414,
+      "sequencer": "FireMario",
+      "lane": "jungle",
+      "path": "audios/vgmusic-lanes/jungle/nes__F_jungle.mid"
+    },
+    {
+      "system": "nes",
+      "game": "StarTropics",
+      "title": "Sub C (2)",
+      "file": "StarTropics-sub_c.mid",
+      "bytes": 15168,
+      "sequencer": "Lewis \"XERO\" Thomas",
+      "lane": "jungle",
+      "path": "audios/vgmusic-lanes/jungle/nes__StarTropics-sub_c.mid"
+    },
+    {
+      "system": "nes",
+      "game": "StarTropics",
+      "title": "Alien Ship",
+      "file": "st_as.mid",
+      "bytes": 11717,
+      "sequencer": "Dragoon",
+      "lane": "jungle",
+      "path": "audios/vgmusic-lanes/jungle/nes__st_as.mid"
+    },
+    {
+      "system": "nes",
+      "game": "Mega Man II",
+      "title": "Woodman's Stage (Jungle Remix) (XG)",
+      "file": "nes_mm2_sm02_XG.mid",
+      "bytes": 24625,
+      "sequencer": "SonicMaster",
+      "lane": "jungle",
+      "path": "audios/vgmusic-lanes/jungle/nes__nes_mm2_sm02_XG.mid"
+    },
+    {
+      "system": "n64",
+      "game": "Donkey Kong 64",
+      "title": "Jungle Japes: Mine Cart",
+      "file": "wocDK64JMC.mid",
+      "bytes": 86065,
+      "sequencer": "Dave Phaneuf",
+      "lane": "jungle",
+      "path": "audios/vgmusic-lanes/jungle/n64__wocDK64JMC.mid"
+    },
+    {
+      "system": "snes",
+      "game": "Joe and Mac 2: Lost in the Tropics",
+      "title": "The Scarlet Carpet",
+      "file": "JM2ScarletCarpetByCryogen.mid",
+      "bytes": 15281,
+      "sequencer": "Cryogen Glacien",
+      "lane": "jungle",
+      "path": "audios/vgmusic-lanes/jungle/snes__JM2ScarletCarpetByCryogen.mid"
+    },
+    {
+      "system": "gba",
+      "game": "Spyro 2: Season of Flame",
+      "title": "Tiki Tropics",
+      "file": "Spyro2_tikitropics.mid",
+      "bytes": 26356,
+      "sequencer": "Alop",
+      "lane": "jungle",
+      "path": "audios/vgmusic-lanes/jungle/gba__Spyro2_tikitropics.mid"
+    },
+    {
+      "system": "nes",
+      "game": "Amagon",
+      "title": "Zone 2: Jungle",
+      "file": "Amagon-Zone_2_Jungle.mid",
+      "bytes": 11296,
+      "sequencer": "Jedi Questmaster",
+      "lane": "jungle",
+      "path": "audios/vgmusic-lanes/jungle/nes__Amagon-Zone_2_Jungle.mid"
+    },
+    {
+      "system": "nes",
+      "game": "StarTropics",
+      "title": "Miracola",
+      "file": "startropicsmiracola.mid",
+      "bytes": 10444,
+      "sequencer": "Dragoon",
+      "lane": "jungle",
+      "path": "audios/vgmusic-lanes/jungle/nes__startropicsmiracola.mid"
+    },
+    {
+      "system": "nes",
+      "game": "Snake's Revenge",
+      "title": "Jungle",
+      "file": "T_SnakesRevenge_Jungle.mid",
+      "bytes": 56454,
+      "sequencer": "Tsu Ryu",
+      "lane": "jungle",
+      "path": "audios/vgmusic-lanes/jungle/nes__T_SnakesRevenge_Jungle.mid"
+    },
+    {
+      "system": "snes",
+      "game": "Joe and Mac 2: Lost in the Tropics",
+      "title": "Murky Swampland",
+      "file": "JM2SwampByCryogen.mid",
+      "bytes": 23235,
+      "sequencer": "Cryogen Glacien",
+      "lane": "jungle",
+      "path": "audios/vgmusic-lanes/jungle/snes__JM2SwampByCryogen.mid"
+    },
+    {
+      "system": "snes",
+      "game": "Flintstones: Treasure of Sierra Madrock",
+      "title": "Jungle Rock Stage",
+      "file": "FlintstonesTTSMJungleByCryogen.mid",
+      "bytes": 15488,
+      "sequencer": "Cryogen Glacien",
+      "lane": "jungle",
+      "path": "audios/vgmusic-lanes/jungle/snes__FlintstonesTTSMJungleByCryogen.mid"
+    },
+    {
+      "system": "n64",
+      "game": "Super Smash Bros.",
+      "title": "Kongo Jungle",
+      "file": "smashbroscongo.mid",
+      "bytes": 32518,
+      "sequencer": "Graeme Duncan",
+      "lane": "jungle",
+      "path": "audios/vgmusic-lanes/jungle/n64__smashbroscongo.mid"
+    },
+    {
+      "system": "nes",
+      "game": "StarTropics",
+      "title": "Alien Ship (2)",
+      "file": "StarTropics-alien_ship.mid",
+      "bytes": 6131,
+      "sequencer": "Lewis \"XERO\" Thomas",
+      "lane": "jungle",
+      "path": "audios/vgmusic-lanes/jungle/nes__StarTropics-alien_ship.mid"
+    },
+    {
+      "system": "snes",
+      "game": "Lost Vikings 2",
+      "title": "Jungle",
+      "file": "lv2w4.mid",
+      "bytes": 18153,
+      "sequencer": "Sephiroth3",
+      "lane": "jungle",
+      "path": "audios/vgmusic-lanes/jungle/snes__lv2w4.mid"
+    },
+    {
+      "system": "nes",
+      "game": "StarTropics",
+      "title": "Peter the Parrot",
+      "file": "StarTropics-peter.mid",
+      "bytes": 9102,
+      "sequencer": "Lewis \"XERO\" Thomas",
+      "lane": "jungle",
+      "path": "audios/vgmusic-lanes/jungle/nes__StarTropics-peter.mid"
+    },
+    {
+      "system": "nes",
+      "game": "Hiryu No Ken II: Ryuu No Tsubasa (Japan)",
+      "title": "Jungle Theme 2",
+      "file": "T_HiryuNoKenII_JungleTheme2.mid",
+      "bytes": 56847,
+      "sequencer": "Tsu Ryu & Sailor Raika",
+      "lane": "jungle",
+      "path": "audios/vgmusic-lanes/jungle/nes__T_HiryuNoKenII_JungleTheme2.mid"
+    },
+    {
+      "system": "n64",
+      "game": "Mario Party",
+      "title": "Yoshi's Tropical Island",
+      "file": "MPTrpIsl.mid",
+      "bytes": 24219,
+      "sequencer": "Princess Peach Toadstool",
+      "lane": "jungle",
+      "path": "audios/vgmusic-lanes/jungle/n64__MPTrpIsl.mid"
+    },
+    {
+      "system": "n64",
+      "game": "Donkey Kong 64",
+      "title": "Jungle Japes Lobby",
+      "file": "dk64_lobby_jungle.mid",
+      "bytes": 21436,
+      "sequencer": "Paper_Luigi",
+      "lane": "jungle",
+      "path": "audios/vgmusic-lanes/jungle/n64__dk64_lobby_jungle.mid"
+    },
+    {
+      "system": "nes",
+      "game": "StarTropics",
+      "title": "Victory",
+      "file": "StarTropics-victory.mid",
+      "bytes": 9535,
+      "sequencer": "Lewis \"XERO\" Thomas",
+      "lane": "jungle",
+      "path": "audios/vgmusic-lanes/jungle/nes__StarTropics-victory.mid"
+    },
+    {
+      "system": "snes",
+      "game": "Chrono Trigger",
+      "title": "Robo's Theme (Tropical Remix)",
+      "file": "Robos_Theme_V4.mid",
+      "bytes": 11057,
+      "sequencer": "Ezumien",
+      "lane": "jungle",
+      "path": "audios/vgmusic-lanes/jungle/snes__Robos_Theme_V4.mid"
+    },
+    {
+      "system": "snes",
+      "game": "Illusion of Gaia",
+      "title": "Pyramid (XG)",
+      "file": "IllusionOfGaia_Pyramid.mid",
+      "bytes": 91339,
+      "sequencer": "Teck",
+      "lane": "desert",
+      "path": "audios/vgmusic-lanes/desert/snes__IllusionOfGaia_Pyramid.mid"
+    },
+    {
+      "system": "genesis",
+      "game": "Sonic & Knuckles",
+      "title": "Sandopolis Zone: Act 2 (5)",
+      "file": "md_sk_sm04.mid",
+      "bytes": 20576,
+      "sequencer": "SonicMaster",
+      "lane": "desert",
+      "path": "audios/vgmusic-lanes/desert/genesis__md_sk_sm04.mid"
+    },
+    {
+      "system": "genesis",
+      "game": "Beyond Oasis",
+      "title": "Mountains",
+      "file": "boasismou.mid",
+      "bytes": 9520,
+      "sequencer": "Ali",
+      "lane": "desert",
+      "path": "audios/vgmusic-lanes/desert/genesis__boasismou.mid"
+    },
+    {
+      "system": "nes",
+      "game": "Crystalis",
+      "title": "Pyramid",
+      "file": "cryst-py.mid",
+      "bytes": 8938,
+      "sequencer": "unknown",
+      "lane": "desert",
+      "path": "audios/vgmusic-lanes/desert/nes__cryst-py.mid"
+    },
+    {
+      "system": "nes",
+      "game": "Crystalis",
+      "title": "Pyramid (Seth's Dance) (3)",
+      "file": "Pyra-x.mid",
+      "bytes": 119524,
+      "sequencer": "unknown",
+      "lane": "desert",
+      "path": "audios/vgmusic-lanes/desert/nes__Pyra-x.mid"
+    },
+    {
+      "system": "snes",
+      "game": "Super Bomberman 3",
+      "title": "Stage 4 - Pyramid",
+      "file": "SBomb3-Stage4.mid",
+      "bytes": 15062,
+      "sequencer": "João *Johnnyz* Buaes",
+      "lane": "desert",
+      "path": "audios/vgmusic-lanes/desert/snes__SBomb3-Stage4.mid"
+    },
+    {
+      "system": "genesis",
+      "game": "Sparkster",
+      "title": "Desert Level",
+      "file": "SprkstrDesert.mid",
+      "bytes": 22359,
+      "sequencer": "unknown",
+      "lane": "desert",
+      "path": "audios/vgmusic-lanes/desert/genesis__SprkstrDesert.mid"
+    },
+    {
+      "system": "genesis",
+      "game": "Dune: The Battle for Arrakis",
+      "title": "Turbulence",
+      "file": "Dune_2_Turbulence.mid",
+      "bytes": 36485,
+      "sequencer": "Kyu Sawamura",
+      "lane": "desert",
+      "path": "audios/vgmusic-lanes/desert/genesis__Dune_2_Turbulence.mid"
+    },
+    {
+      "system": "gba",
+      "game": "Pokémon (Ruby, Sapphire)",
+      "title": "Route 111, Desert",
+      "file": "PkmRS-111.mid",
+      "bytes": 20355,
+      "sequencer": "Joo *Johnnyz* Buaes",
+      "lane": "desert",
+      "path": "audios/vgmusic-lanes/desert/gba__PkmRS-111.mid"
+    },
+    {
+      "system": "snes",
+      "game": "Lost Vikings",
+      "title": "Desert",
+      "file": "lvworld3.mid",
+      "bytes": 9788,
+      "sequencer": "Sephiroth3",
+      "lane": "desert",
+      "path": "audios/vgmusic-lanes/desert/snes__lvworld3.mid"
+    },
+    {
+      "system": "snes",
+      "game": "Super Adventure Island 2",
+      "title": "Sala-Sala (Pyramid and Desert) Island",
+      "file": "SAI2SalaSalaIslandByCryogen.mid",
+      "bytes": 35000,
+      "sequencer": "Cryogen Glacien",
+      "lane": "desert",
+      "path": "audios/vgmusic-lanes/desert/snes__SAI2SalaSalaIslandByCryogen.mid"
+    },
+    {
+      "system": "nes",
+      "game": "Super Mario Bros. 3",
+      "title": "World Map 2 - Koopahari Desert (Remix) (2)",
+      "file": "SMB3_-_Koopahari_Desert.mid",
+      "bytes": 20252,
+      "sequencer": "Jay Reichard",
+      "lane": "desert",
+      "path": "audios/vgmusic-lanes/desert/nes__SMB3_-_Koopahari_Desert.mid"
+    },
+    {
+      "system": "snes",
+      "game": "Secret of Mana",
+      "title": "Kakkara Desert - \"Secret of the Arid Sands\" (2)",
+      "file": "SOMDesert.mid",
+      "bytes": 57219,
+      "sequencer": "Chibi-Usa",
+      "lane": "desert",
+      "path": "audios/vgmusic-lanes/desert/snes__SOMDesert.mid"
+    },
+    {
+      "system": "genesis",
+      "game": "Puggsy",
+      "title": "Pyramids",
+      "file": "pyramid.mid",
+      "bytes": 70318,
+      "sequencer": "unknown",
+      "lane": "desert",
+      "path": "audios/vgmusic-lanes/desert/genesis__pyramid.mid"
+    },
+    {
+      "system": "gba",
+      "game": "Mario & Luigi: Superstar Saga",
+      "title": "Oho Oasis (2)",
+      "file": "ohooasis.mid",
+      "bytes": 17573,
+      "sequencer": "Steve1",
+      "lane": "desert",
+      "path": "audios/vgmusic-lanes/desert/gba__ohooasis.mid"
+    },
+    {
+      "system": "snes",
+      "game": "Dual Orb (Japan)",
+      "title": "Deserted Village",
+      "file": "do1_deserted.mid",
+      "bytes": 54497,
+      "sequencer": "Marine",
+      "lane": "desert",
+      "path": "audios/vgmusic-lanes/desert/snes__do1_deserted.mid"
+    },
+    {
+      "system": "n64",
+      "game": "Paper Mario",
+      "title": "Dry Dry Desert (GS) (v1.27)",
+      "file": "Desert_GS.mid",
+      "bytes": 10253,
+      "sequencer": "Ruben Nunez",
+      "lane": "desert",
+      "path": "audios/vgmusic-lanes/desert/n64__Desert_GS.mid"
+    },
+    {
+      "system": "genesis",
+      "game": "Sonic & Knuckles",
+      "title": "Sandopolis Zone: Act 2 (4)",
+      "file": "SandopolisZoneAct2.mid",
+      "bytes": 13149,
+      "sequencer": "TurquoiseStar",
+      "lane": "desert",
+      "path": "audios/vgmusic-lanes/desert/genesis__SandopolisZoneAct2.mid"
+    },
+    {
+      "system": "nes",
+      "game": "Super Mario Bros. 3",
+      "title": "World Map 2 - Koopahari Desert (Remix)",
+      "file": "smb3desert.mid",
+      "bytes": 10127,
+      "sequencer": "FFfreak42",
+      "lane": "desert",
+      "path": "audios/vgmusic-lanes/desert/nes__smb3desert.mid"
+    },
+    {
+      "system": "snes",
+      "game": "Dragon View",
+      "title": "Desert Field",
+      "file": "DV_-_Desert_Field.mid",
+      "bytes": 14594,
+      "sequencer": "Willow",
+      "lane": "desert",
+      "path": "audios/vgmusic-lanes/desert/snes__DV_-_Desert_Field.mid"
+    },
+    {
+      "system": "gameboy",
+      "game": "Legend of Zelda, The: Oracle of Seasons",
+      "title": "Samasa Desert (2)",
+      "file": "S_desert.mid",
+      "bytes": 17743,
+      "sequencer": "FireMario",
+      "lane": "desert",
+      "path": "audios/vgmusic-lanes/desert/gameboy__S_desert.mid"
+    },
+    {
+      "system": "ps1",
+      "game": "Crash Bandicoot: Warped",
+      "title": "Egypt",
+      "file": "crash_bandicoot_egypt.mid",
+      "bytes": 24127,
+      "sequencer": "James Flynn",
+      "lane": "desert",
+      "path": "audios/vgmusic-lanes/desert/ps1__crash_bandicoot_egypt.mid"
+    },
+    {
+      "system": "ps1",
+      "game": "Mega Man Legends 2",
+      "title": "Saul Kada Desert Attack",
+      "file": "hm-mml2desertattack.mid",
+      "bytes": 22651,
+      "sequencer": "Heat Man",
+      "lane": "desert",
+      "path": "audios/vgmusic-lanes/desert/ps1__hm-mml2desertattack.mid"
+    },
+    {
+      "system": "genesis",
+      "game": "Wonderboy In Monster World",
+      "title": "Pyramid",
+      "file": "MW3-Pyramid.mid",
+      "bytes": 10178,
+      "sequencer": "Joo *Johnnyz* Buaes",
+      "lane": "desert",
+      "path": "audios/vgmusic-lanes/desert/genesis__MW3-Pyramid.mid"
+    },
+    {
+      "system": "gba",
+      "game": "Pokémon (Ruby, Sapphire)",
+      "title": "Desert",
+      "file": "PokeRSdesert.mid",
+      "bytes": 9805,
+      "sequencer": "Kayorei",
+      "lane": "desert",
+      "path": "audios/vgmusic-lanes/desert/gba__PokeRSdesert.mid"
+    },
+    {
+      "system": "genesis",
+      "game": "Desert Strike",
+      "title": "Title (2)",
+      "file": "Dersert_Strike-Return_To_The_Gulf.mid",
+      "bytes": 18627,
+      "sequencer": "Tino-Viljami Vanhala",
+      "lane": "desert",
+      "path": "audios/vgmusic-lanes/desert/genesis__Dersert_Strike-Return_To_The_Gulf.mid"
+    },
+    {
+      "system": "genesis",
+      "game": "Sonic & Knuckles",
+      "title": "Sandopolis Zone: Act 1 (3)",
+      "file": "sonic_and_knuckles-sandopolis_zone_act1.mid",
+      "bytes": 26998,
+      "sequencer": "odinloc",
+      "lane": "desert",
+      "path": "audios/vgmusic-lanes/desert/genesis__sonic_and_knuckles-sandopolis_zone_act1.mid"
+    },
+    {
+      "system": "genesis",
+      "game": "Monsterworld IV",
+      "title": "Ice Pyramid - \"Heart of Icegrave\"",
+      "file": "MW4-Pyramid.mid",
+      "bytes": 14042,
+      "sequencer": "Joo *Johnnyz* Buaes",
+      "lane": "desert",
+      "path": "audios/vgmusic-lanes/desert/genesis__MW4-Pyramid.mid"
+    },
+    {
+      "system": "genesis",
+      "game": "Sonic the Hedgehog 3",
+      "title": "Desert Palace Zone (3)",
+      "file": "Sonic_3_-_Desert_Palace_Zone.mid",
+      "bytes": 18475,
+      "sequencer": "Monster Iestyn",
+      "lane": "desert",
+      "path": "audios/vgmusic-lanes/desert/genesis__Sonic_3_-_Desert_Palace_Zone.mid"
+    },
+    {
+      "system": "ps1",
+      "game": "Mortal Kombat Trilogy",
+      "title": "Desert Stage",
+      "file": "Desert_Stage.mid",
+      "bytes": 9250,
+      "sequencer": "DC",
+      "lane": "desert",
+      "path": "audios/vgmusic-lanes/desert/ps1__Desert_Stage.mid"
+    },
+    {
+      "system": "snes",
+      "game": "Secret of Mana",
+      "title": "Kakkara Desert - \"Secret of the Arid Sands\" (2) (SC-8850)",
+      "file": "SOMDesert-SC8850.mid",
+      "bytes": 58183,
+      "sequencer": "Chibi-Usa",
+      "lane": "desert",
+      "path": "audios/vgmusic-lanes/desert/snes__SOMDesert-SC8850.mid"
+    },
+    {
+      "system": "snes",
+      "game": "Super Bonk",
+      "title": "Lunar Pyramid",
+      "file": "Lunar_Pyramid.mid",
+      "bytes": 29250,
+      "sequencer": "Teck",
+      "lane": "desert",
+      "path": "audios/vgmusic-lanes/desert/snes__Lunar_Pyramid.mid"
+    },
+    {
+      "system": "nes",
+      "game": "Double Dragon 3",
+      "title": "Mission 5 - Egypt: Outside (2)",
+      "file": "DD3OutsideEgyptAS.mid",
+      "bytes": 15753,
+      "sequencer": "Andrew Signor",
+      "lane": "desert",
+      "path": "audios/vgmusic-lanes/desert/nes__DD3OutsideEgyptAS.mid"
+    },
+    {
+      "system": "genesis",
+      "game": "Sonic & Knuckles",
+      "title": "Sandopolis Zone: Act 1 (4) (v1.1)",
+      "file": "Sonic_3_-_Sandopolis_Zone_1_V11.mid",
+      "bytes": 11998,
+      "sequencer": "Monster Iestyn",
+      "lane": "desert",
+      "path": "audios/vgmusic-lanes/desert/genesis__Sonic_3_-_Sandopolis_Zone_1_V11.mid"
+    },
+    {
+      "system": "n64",
+      "game": "Banjo-Tooie",
+      "title": "Jolly Roger's Lagoon (Desert Remix)",
+      "file": "bt_lagoon_desert.mid",
+      "bytes": 44190,
+      "sequencer": "Dr. Fruitcake",
+      "lane": "desert",
+      "path": "audios/vgmusic-lanes/desert/n64__bt_lagoon_desert.mid"
+    },
+    {
+      "system": "genesis",
+      "game": "Sonic & Knuckles",
+      "title": "Sandopolis Zone: Act 2 (2)",
+      "file": "S%26Ksandopolis2B.mid",
+      "bytes": 9385,
+      "sequencer": "unknown",
+      "lane": "desert",
+      "path": "audios/vgmusic-lanes/desert/genesis__S%26Ksandopolis2B.mid"
+    },
+    {
+      "system": "gba",
+      "game": "Mega Man Zero 3",
+      "title": "Twilight Desert - \"For Endless Fight III\" (2)",
+      "file": "MMZ3_-_For_Endless_Fight_III.mid",
+      "bytes": 23877,
+      "sequencer": "Jay Reichard",
+      "lane": "desert",
+      "path": "audios/vgmusic-lanes/desert/gba__MMZ3_-_For_Endless_Fight_III.mid"
+    },
+    {
+      "system": "snes",
+      "game": "Secret of Mana",
+      "title": "Kakkara Desert - \"Secret of the Arid Sands\" (3)",
+      "file": "Seiken_Densetsu_2_-_Secret_of_the_Arid_Sands.mid",
+      "bytes": 37357,
+      "sequencer": "flamingspinach",
+      "lane": "desert",
+      "path": "audios/vgmusic-lanes/desert/snes__Seiken_Densetsu_2_-_Secret_of_the_Arid_Sands.mid"
+    },
+    {
+      "system": "n64",
+      "game": "Mario Kart 64",
+      "title": "Kalamari Desert (Frozen Hyrule Remix)",
+      "file": "mkart64_frozenhyrule.mid",
+      "bytes": 24439,
+      "sequencer": "Forrest Riedl",
+      "lane": "desert",
+      "path": "audios/vgmusic-lanes/desert/n64__mkart64_frozenhyrule.mid"
+    },
+    {
+      "system": "snes",
+      "game": "Bahamut Lagoon (Japan)",
+      "title": "Desert Land Daffera",
+      "file": "bldesert.mid",
+      "bytes": 8678,
+      "sequencer": "unknown",
+      "lane": "desert",
+      "path": "audios/vgmusic-lanes/desert/snes__bldesert.mid"
+    },
+    {
+      "system": "snes",
+      "game": "Zombies Ate My Neighbors",
+      "title": "Pyramid of Fear",
+      "file": "PoF.mid",
+      "bytes": 18615,
+      "sequencer": "Robert Hansson",
+      "lane": "desert",
+      "path": "audios/vgmusic-lanes/desert/snes__PoF.mid"
+    },
+    {
+      "system": "snes",
+      "game": "Lost Vikings",
+      "title": "Egypt",
+      "file": "lvegypt.mid",
+      "bytes": 14853,
+      "sequencer": "unknown",
+      "lane": "desert",
+      "path": "audios/vgmusic-lanes/desert/snes__lvegypt.mid"
+    },
+    {
+      "system": "gameboy",
+      "game": "Wario Land 3",
+      "title": "Desert Ruins",
+      "file": "WarioLand3DesertRuins.mid",
+      "bytes": 11969,
+      "sequencer": "Waddle Dedede at the-warp-zone.com",
+      "lane": "desert",
+      "path": "audios/vgmusic-lanes/desert/gameboy__WarioLand3DesertRuins.mid"
+    },
+    {
+      "system": "snes",
+      "game": "Smart Ball",
+      "title": "Desert",
+      "file": "jerryb-desert.mid",
+      "bytes": 29701,
+      "sequencer": "Total Yosh",
+      "lane": "desert",
+      "path": "audios/vgmusic-lanes/desert/snes__jerryb-desert.mid"
+    },
+    {
+      "system": "genesis",
+      "game": "Sonic the Hedgehog 3",
+      "title": "Desert Palace Zone (2)",
+      "file": "Sonic3_DesertPalace.mid",
+      "bytes": 75834,
+      "sequencer": "Teck",
+      "lane": "desert",
+      "path": "audios/vgmusic-lanes/desert/genesis__Sonic3_DesertPalace.mid"
+    },
+    {
+      "system": "n64",
+      "game": "Mario Golf",
+      "title": "Shy Guy Desert (2)",
+      "file": "mg64ShyguyDesert.mid",
+      "bytes": 39571,
+      "sequencer": "Dentelle",
+      "lane": "desert",
+      "path": "audios/vgmusic-lanes/desert/n64__mg64ShyguyDesert.mid"
+    },
+    {
+      "system": "genesis",
+      "game": "Sonic & Knuckles",
+      "title": "Sandopolis Zone: Act 2 (3)",
+      "file": "Sonic_3_-_Sandopolis_Zone_2.mid",
+      "bytes": 11378,
+      "sequencer": "Monster Iestyn",
+      "lane": "desert",
+      "path": "audios/vgmusic-lanes/desert/genesis__Sonic_3_-_Sandopolis_Zone_2.mid"
+    },
+    {
+      "system": "genesis",
+      "game": "Sonic & Knuckles",
+      "title": "Sandopolis Zone: Act 1 (Arranged)",
+      "file": "sandopolis.mid",
+      "bytes": 6658,
+      "sequencer": "Glenn O'Brien",
+      "lane": "desert",
+      "path": "audios/vgmusic-lanes/desert/genesis__sandopolis.mid"
+    },
+    {
+      "system": "genesis",
+      "game": "Sonic & Knuckles",
+      "title": "Sandopolis Zone:  Act 1",
+      "file": "S%26Ksandopolis1A.mid",
+      "bytes": 12835,
+      "sequencer": "unknown",
+      "lane": "desert",
+      "path": "audios/vgmusic-lanes/desert/genesis__S%26Ksandopolis1A.mid"
+    },
+    {
+      "system": "gameboy",
+      "game": "Asterix",
+      "title": "Egypt",
+      "file": "asterix_-_egypt.mid",
+      "bytes": 19430,
+      "sequencer": "Darren",
+      "lane": "desert",
+      "path": "audios/vgmusic-lanes/desert/gameboy__asterix_-_egypt.mid"
+    },
+    {
+      "system": "genesis",
+      "game": "Sonic the Hedgehog 3",
+      "title": "Desert Palace Zone",
+      "file": "s3desertpalace.mid",
+      "bytes": 20072,
+      "sequencer": "unknown",
+      "lane": "desert",
+      "path": "audios/vgmusic-lanes/desert/genesis__s3desertpalace.mid"
+    },
+    {
+      "system": "gba",
+      "game": "Bomberman Tournament",
+      "title": "Desert Areas",
+      "file": "BT_-_Desert.mid",
+      "bytes": 33358,
+      "sequencer": "The Triforce of Music",
+      "lane": "desert",
+      "path": "audios/vgmusic-lanes/desert/gba__BT_-_Desert.mid"
+    },
+    {
+      "system": "snes",
+      "game": "Lemmings 2",
+      "title": "Egyptian Tribe",
+      "file": "LEM2EGYP.mid",
+      "bytes": 61296,
+      "sequencer": "Zagro",
+      "lane": "desert",
+      "path": "audios/vgmusic-lanes/desert/snes__LEM2EGYP.mid"
+    },
+    {
+      "system": "nes",
+      "game": "Duck Tales 2",
+      "title": "Egyptian Pyramid",
+      "file": "DT2-Egypt.mid",
+      "bytes": 13354,
+      "sequencer": "TurquoiseStar",
+      "lane": "desert",
+      "path": "audios/vgmusic-lanes/desert/nes__DT2-Egypt.mid"
+    },
+    {
+      "system": "n64",
+      "game": "Paper Mario",
+      "title": "Dry Dry Desert (XG) (v1.27)",
+      "file": "Desert_XG_V127.mid",
+      "bytes": 12904,
+      "sequencer": "Ruben Nunez",
+      "lane": "desert",
+      "path": "audios/vgmusic-lanes/desert/n64__Desert_XG_V127.mid"
+    },
+    {
+      "system": "nes",
+      "game": "Mickey's Safari in Letterland",
+      "title": "Yukon / Pyramid",
+      "file": "Yukon-Pyramid.mid",
+      "bytes": 13657,
+      "sequencer": "TurquoiseStar",
+      "lane": "desert",
+      "path": "audios/vgmusic-lanes/desert/nes__Yukon-Pyramid.mid"
+    },
+    {
+      "system": "n64",
+      "game": "Mario Golf",
+      "title": "Shy Guy Desert",
+      "file": "mgshyguy.mid",
+      "bytes": 16504,
+      "sequencer": "Sirius",
+      "lane": "desert",
+      "path": "audios/vgmusic-lanes/desert/n64__mgshyguy.mid"
+    },
+    {
+      "system": "ps1",
+      "game": "Lunar: Silver Star Story Complete",
+      "title": "Thieves' Bazaar",
+      "file": "lun1reza.mid",
+      "bytes": 50337,
+      "sequencer": "SinclairC",
+      "lane": "desert",
+      "path": "audios/vgmusic-lanes/desert/ps1__lun1reza.mid"
+    },
+    {
+      "system": "genesis",
+      "game": "Sonic & Knuckles",
+      "title": "Sandopolis Zone (Waltrapa Remix)",
+      "file": "SAND.mid",
+      "bytes": 24691,
+      "sequencer": "Senyu",
+      "lane": "desert",
+      "path": "audios/vgmusic-lanes/desert/genesis__SAND.mid"
+    },
+    {
+      "system": "genesis",
+      "game": "Dune: the Battle for Arrakis",
+      "title": "Spice Trip",
+      "file": "Spice_Trip.mid",
+      "bytes": 13788,
+      "sequencer": "Cloudburst",
+      "lane": "desert",
+      "path": "audios/vgmusic-lanes/desert/genesis__Spice_Trip.mid"
+    },
+    {
+      "system": "gba",
+      "game": "Astro Boy: Omega Factor",
+      "title": "Title tune - \"Go! Go! Astro Boy!\" (GS)",
+      "file": "AstroboyTOF_title_GS.mid",
+      "bytes": 15746,
+      "sequencer": "Sean Bee",
+      "lane": "space",
+      "path": "audios/vgmusic-lanes/space/gba__AstroboyTOF_title_GS.mid"
+    },
+    {
+      "system": "snes",
+      "game": "Top Gear 3000",
+      "title": "First Race - \"Race in the Galaxy\" (Forever Remix)",
+      "file": "Top_Gear_3000_ParaDise_Forever_HQ_v3_Remix.mid",
+      "bytes": 40235,
+      "sequencer": "Ampharos Holon Veil",
+      "lane": "space",
+      "path": "audios/vgmusic-lanes/space/snes__Top_Gear_3000_ParaDise_Forever_HQ_v3_Remix.mid"
+    },
+    {
+      "system": "snes",
+      "game": "Final Fantasy III",
+      "title": "Terra (Space Epic Remix)",
+      "file": "terremix.mid",
+      "bytes": 45167,
+      "sequencer": "Cyrussaur",
+      "lane": "space",
+      "path": "audios/vgmusic-lanes/space/snes__terremix.mid"
+    },
+    {
+      "system": "snes",
+      "game": "Super Bomberman 5 (Japan)",
+      "title": "Zone 2 - \"Space Station\"",
+      "file": "SB5Zone2.mid",
+      "bytes": 45505,
+      "sequencer": "KDS",
+      "lane": "space",
+      "path": "audios/vgmusic-lanes/space/snes__SB5Zone2.mid"
+    },
+    {
+      "system": "snes",
+      "game": "Pushover",
+      "title": "World 3: Outer Space",
+      "file": "Spaceup.mid",
+      "bytes": 11820,
+      "sequencer": "Iceplug",
+      "lane": "space",
+      "path": "audios/vgmusic-lanes/space/snes__Spaceup.mid"
+    },
+    {
+      "system": "nes",
+      "game": "Mega Man VI",
+      "title": "Mr. X's Castle (Space Adventure Remix)",
+      "file": "strife_mm6mrxremix.mid",
+      "bytes": 20512,
+      "sequencer": "Stephen \"Strife\" DiDuro",
+      "lane": "space",
+      "path": "audios/vgmusic-lanes/space/nes__strife_mm6mrxremix.mid"
+    },
+    {
+      "system": "ps1",
+      "game": "Mega Man X4",
+      "title": "Spaceport",
+      "file": "mmx4spap.mid",
+      "bytes": 79943,
+      "sequencer": "Gigasoft",
+      "lane": "space",
+      "path": "audios/vgmusic-lanes/space/ps1__mmx4spap.mid"
+    },
+    {
+      "system": "gameboy",
+      "game": "Super Mario Land 2",
+      "title": "Space Zone 2 (AWE)",
+      "file": "Ml2spzn2v1_3.mid",
+      "bytes": 39038,
+      "sequencer": "Alluro95",
+      "lane": "space",
+      "path": "audios/vgmusic-lanes/space/gameboy__Ml2spzn2v1_3.mid"
+    },
+    {
+      "system": "snes",
+      "game": "Super Aleste",
+      "title": "Level 7: Space Cruiser",
+      "file": "Saleste_l7.mid",
+      "bytes": 31451,
+      "sequencer": "Sean Bee",
+      "lane": "space",
+      "path": "audios/vgmusic-lanes/space/snes__Saleste_l7.mid"
+    },
+    {
+      "system": "ps1",
+      "game": "Lunar: Silver Star Story Complete",
+      "title": "Toward the Horizon (2)",
+      "file": "LSSSC_Towards_The_Horizon.mid",
+      "bytes": 15505,
+      "sequencer": "Hal_emmerich",
+      "lane": "space",
+      "path": "audios/vgmusic-lanes/space/ps1__LSSSC_Towards_The_Horizon.mid"
+    },
+    {
+      "system": "ps1",
+      "game": "Lunar 2: Eternal Blue Complete",
+      "title": "Boss Battle",
+      "file": "BossBattle.mid",
+      "bytes": 29990,
+      "sequencer": "Stacy Anne Christiansen",
+      "lane": "space",
+      "path": "audios/vgmusic-lanes/space/ps1__BossBattle.mid"
+    },
+    {
+      "system": "gba",
+      "game": "Sonic Advance",
+      "title": "Cosmic Angel Zone: Egg Rocket 2 (2)",
+      "file": "tgc-ca-sa.mid",
+      "bytes": 11771,
+      "sequencer": "unknown",
+      "lane": "space",
+      "path": "audios/vgmusic-lanes/space/gba__tgc-ca-sa.mid"
+    },
+    {
+      "system": "nes",
+      "game": "Ninja Gaiden 3",
+      "title": "Into Subspace",
+      "file": "ng3_into.mid",
+      "bytes": 11072,
+      "sequencer": "Deuce",
+      "lane": "space",
+      "path": "audios/vgmusic-lanes/space/nes__ng3_into.mid"
+    },
+    {
+      "system": "snes",
+      "game": "Top Gear 3000",
+      "title": "Cosmic Freeway",
+      "file": "Top_Gear_3000_Freeway.mid",
+      "bytes": 16259,
+      "sequencer": "unknown",
+      "lane": "space",
+      "path": "audios/vgmusic-lanes/space/snes__Top_Gear_3000_Freeway.mid"
+    },
+    {
+      "system": "snes",
+      "game": "Star Fox",
+      "title": "Space Armada (4)",
+      "file": "armada1.mid",
+      "bytes": 19089,
+      "sequencer": "Dermot Mac Flannchaidh",
+      "lane": "space",
+      "path": "audios/vgmusic-lanes/space/snes__armada1.mid"
+    },
+    {
+      "system": "n64",
+      "game": "Diddy Kong Racing",
+      "title": "Spacedust Alley (XG)",
+      "file": "dkr_starcity_v2_01_xg.mid",
+      "bytes": 71648,
+      "sequencer": "Jordan Davenport",
+      "lane": "space",
+      "path": "audios/vgmusic-lanes/space/n64__dkr_starcity_v2_01_xg.mid"
+    },
+    {
+      "system": "ps1",
+      "game": "Lunar: Silver Star Story Complete",
+      "title": "Stand and Fight",
+      "file": "Lun1boss.mid",
+      "bytes": 18729,
+      "sequencer": "unknown",
+      "lane": "space",
+      "path": "audios/vgmusic-lanes/space/ps1__Lun1boss.mid"
+    },
+    {
+      "system": "ps1",
+      "game": "Lunar: Silver Star Story Complete",
+      "title": "Go Go Go!",
+      "file": "Lghalbat.mid",
+      "bytes": 43611,
+      "sequencer": "unknown",
+      "lane": "space",
+      "path": "audios/vgmusic-lanes/space/ps1__Lghalbat.mid"
+    },
+    {
+      "system": "ps1",
+      "game": "Lunar 2: Eternal Blue Complete",
+      "title": "Larpa",
+      "file": "Larpa.mid",
+      "bytes": 10215,
+      "sequencer": "unknown",
+      "lane": "space",
+      "path": "audios/vgmusic-lanes/space/ps1__Larpa.mid"
+    },
+    {
+      "system": "genesis",
+      "game": "Lightening Force",
+      "title": "Stage 2A - Space Walk",
+      "file": "ThunderForceIV_-_SpaceWalkMSGS.mid",
+      "bytes": 84045,
+      "sequencer": "Jace",
+      "lane": "space",
+      "path": "audios/vgmusic-lanes/space/genesis__ThunderForceIV_-_SpaceWalkMSGS.mid"
+    },
+    {
+      "system": "ps1",
+      "game": "Lunar: Silver Star Story Complete",
+      "title": "Feeling of Fight",
+      "file": "Lun1fof.mid",
+      "bytes": 7998,
+      "sequencer": "unknown",
+      "lane": "space",
+      "path": "audios/vgmusic-lanes/space/ps1__Lun1fof.mid"
+    },
+    {
+      "system": "ps1",
+      "game": "Lunar: Silver Star Story Complete",
+      "title": "Mother",
+      "file": "lunadata25.mid",
+      "bytes": 7637,
+      "sequencer": "Isao Mizoguchi",
+      "lane": "space",
+      "path": "audios/vgmusic-lanes/space/ps1__lunadata25.mid"
+    },
+    {
+      "system": "gameboy",
+      "game": "Super Mario Land 2",
+      "title": "Space Zone 2 (WinGroove)",
+      "file": "Ml2spzn2V1_4.mid",
+      "bytes": 39035,
+      "sequencer": "Alluro95",
+      "lane": "space",
+      "path": "audios/vgmusic-lanes/space/gameboy__Ml2spzn2V1_4.mid"
+    },
+    {
+      "system": "ps1",
+      "game": "Lunar: Silver Star Story Complete",
+      "title": "Street Corner",
+      "file": "Scorner.mid",
+      "bytes": 8395,
+      "sequencer": "Max",
+      "lane": "space",
+      "path": "audios/vgmusic-lanes/space/ps1__Scorner.mid"
+    },
+    {
+      "system": "genesis",
+      "game": "Monsterworld IV",
+      "title": "Lunar Gateway - \"Long Distance\" (2)",
+      "file": "MW4-Entrance2.mid",
+      "bytes": 11434,
+      "sequencer": "Joo *Johnnyz* Buaes",
+      "lane": "space",
+      "path": "audios/vgmusic-lanes/space/genesis__MW4-Entrance2.mid"
+    },
+    {
+      "system": "ps1",
+      "game": "Lunar 2: Eternal Blue Complete",
+      "title": "Crowded Street Corner",
+      "file": "Crowded_Street_Corner.mid",
+      "bytes": 36081,
+      "sequencer": "Blue_Nocturne",
+      "lane": "space",
+      "path": "audios/vgmusic-lanes/space/ps1__Crowded_Street_Corner.mid"
+    },
+    {
+      "system": "gameboy",
+      "game": "Gameboy Camera",
+      "title": "Space Fever II Boss",
+      "file": "GBC-Boss.mid",
+      "bytes": 28802,
+      "sequencer": "TheUltimateKoopa",
+      "lane": "space",
+      "path": "audios/vgmusic-lanes/space/gameboy__GBC-Boss.mid"
+    },
+    {
+      "system": "snes",
+      "game": "Gradius III",
+      "title": "Departure for Space (Remix)",
+      "file": "gra3depa.mid",
+      "bytes": 63650,
+      "sequencer": "unknown",
+      "lane": "space",
+      "path": "audios/vgmusic-lanes/space/snes__gra3depa.mid"
+    },
+    {
+      "system": "snes",
+      "game": "Star Fox",
+      "title": "Space Armada (2)",
+      "file": "Armada.mid",
+      "bytes": 13503,
+      "sequencer": "Jessica Chen",
+      "lane": "space",
+      "path": "audios/vgmusic-lanes/space/snes__Armada.mid"
+    },
+    {
+      "system": "n64",
+      "game": "Banjo-Tooie",
+      "title": "Title Screen (Spacey Remix)",
+      "file": "BTSpaceyRemix.mid",
+      "bytes": 15317,
+      "sequencer": "Dr. Fruitcake",
+      "lane": "space",
+      "path": "audios/vgmusic-lanes/space/n64__BTSpaceyRemix.mid"
+    },
+    {
+      "system": "snes",
+      "game": "Wing Commander",
+      "title": "Space Flight",
+      "file": "wc1sf.mid",
+      "bytes": 10436,
+      "sequencer": "B. Kehler",
+      "lane": "space",
+      "path": "audios/vgmusic-lanes/space/snes__wc1sf.mid"
+    },
+    {
+      "system": "snes",
+      "game": "Sailor Moon: Another Story (Japan)",
+      "title": "Time-Space Door",
+      "file": "SMAS-TSDoor.mid",
+      "bytes": 7669,
+      "sequencer": "Joo *Johnnyz* Buaes",
+      "lane": "space",
+      "path": "audios/vgmusic-lanes/space/snes__SMAS-TSDoor.mid"
+    },
+    {
+      "system": "ps1",
+      "game": "Mega Man 8",
+      "title": "Astro Man's Stage (2)",
+      "file": "Astroman.mid",
+      "bytes": 42611,
+      "sequencer": "Sivak Drac",
+      "lane": "space",
+      "path": "audios/vgmusic-lanes/space/ps1__Astroman.mid"
+    },
+    {
+      "system": "genesis",
+      "game": "Adventures of Batman & Robin, The",
+      "title": "Space Boss",
+      "file": "Space_Boss_No_Panning_Added_1_0.mid",
+      "bytes": 70418,
+      "sequencer": "MrMoonshining",
+      "lane": "space",
+      "path": "audios/vgmusic-lanes/space/genesis__Space_Boss_No_Panning_Added_1_0.mid"
+    },
+    {
+      "system": "n64",
+      "game": "Space Station Silicon Valley",
+      "title": "The Battery Farm",
+      "file": "Raise_the_bridge_sections.mid",
+      "bytes": 43929,
+      "sequencer": "Phillip Utting",
+      "lane": "space",
+      "path": "audios/vgmusic-lanes/space/n64__Raise_the_bridge_sections.mid"
+    },
+    {
+      "system": "gameboy",
+      "game": "Super Mario Land 2",
+      "title": "Space Zone (3)",
+      "file": "SML2SpaceZoneMapTUK.mid",
+      "bytes": 6552,
+      "sequencer": "TheUltimateKoopa",
+      "lane": "space",
+      "path": "audios/vgmusic-lanes/space/gameboy__SML2SpaceZoneMapTUK.mid"
+    },
+    {
+      "system": "n64",
+      "game": "Diddy Kong Racing",
+      "title": "Spaceport Alpha",
+      "file": "SpacePort_Alpha.mid",
+      "bytes": 34760,
+      "sequencer": "Dave Phaneuf",
+      "lane": "space",
+      "path": "audios/vgmusic-lanes/space/n64__SpacePort_Alpha.mid"
+    },
+    {
+      "system": "genesis",
+      "game": "Space Harrier 2",
+      "title": "Ending: Part 2 - \"Illusion\"",
+      "file": "sh2end2.mid",
+      "bytes": 25251,
+      "sequencer": "Magnus Andersson",
+      "lane": "space",
+      "path": "audios/vgmusic-lanes/space/genesis__sh2end2.mid"
+    },
+    {
+      "system": "nes",
+      "game": "Dash Galaxy in the Alien Asylum",
+      "title": "Intro",
+      "file": "Dash_Galaxy_-_Intro.mid",
+      "bytes": 25279,
+      "sequencer": "Jedi QuestMaster",
+      "lane": "space",
+      "path": "audios/vgmusic-lanes/space/nes__Dash_Galaxy_-_Intro.mid"
+    },
+    {
+      "system": "ps1",
+      "game": "Lunar: Silver Star Story Complete",
+      "title": "Title Screen",
+      "file": "lsssintr.mid",
+      "bytes": 47840,
+      "sequencer": "Sylph",
+      "lane": "space",
+      "path": "audios/vgmusic-lanes/space/ps1__lsssintr.mid"
+    },
+    {
+      "system": "genesis",
+      "game": "Monsterworld IV",
+      "title": "Lunar Gateway - \"Long Distance\"",
+      "file": "MonsterWorld4_LunarGateway.mid",
+      "bytes": 43231,
+      "sequencer": "Teck",
+      "lane": "space",
+      "path": "audios/vgmusic-lanes/space/genesis__MonsterWorld4_LunarGateway.mid"
+    },
+    {
+      "system": "ps1",
+      "game": "Lunar: Silver Star Story Complete",
+      "title": "Luna and Alex (2)",
+      "file": "LunarRemix.mid",
+      "bytes": 18883,
+      "sequencer": "Squall Strife",
+      "lane": "space",
+      "path": "audios/vgmusic-lanes/space/ps1__LunarRemix.mid"
+    },
+    {
+      "system": "nes",
+      "game": "Simpsons, The: Bart Vs. the Space Mutants",
+      "title": "Stages 2 and 4",
+      "file": "tss2%264.mid",
+      "bytes": 55406,
+      "sequencer": "Merit Celaire",
+      "lane": "space",
+      "path": "audios/vgmusic-lanes/space/nes__tss2%264.mid"
+    },
+    {
+      "system": "snes",
+      "game": "Super Tetris 3",
+      "title": "Magical Space 1",
+      "file": "BL_st3_magicalspace_I.mid",
+      "bytes": 16212,
+      "sequencer": "Blitz Lunar",
+      "lane": "space",
+      "path": "audios/vgmusic-lanes/space/snes__BL_st3_magicalspace_I.mid"
+    },
+    {
+      "system": "n64",
+      "game": "Space Station Silicon Valley",
+      "title": "Penguin Playpen",
+      "file": "The_penguins_have_built_a_statue.mid",
+      "bytes": 45080,
+      "sequencer": "Phillip Utting",
+      "lane": "space",
+      "path": "audios/vgmusic-lanes/space/n64__The_penguins_have_built_a_statue.mid"
+    },
+    {
+      "system": "nes",
+      "game": "Duck Tales",
+      "title": "The Moon - \"Journey to the Moon\" (7'' Romantic Space Remix)",
+      "file": "Journey_To_The_Moon_%287%27%27_Romantic_Space_Remix%29.mid",
+      "bytes": 91365,
+      "sequencer": "Daniel Genz",
+      "lane": "space",
+      "path": "audios/vgmusic-lanes/space/nes__Journey_To_The_Moon_%287%27%27_Romantic_Space_Remix%29.mid"
+    },
+    {
+      "system": "ps1",
+      "game": "Lunar: Silver Star Story Complete",
+      "title": "Mysterious Cave",
+      "file": "Luncave.mid",
+      "bytes": 46475,
+      "sequencer": "unknown",
+      "lane": "space",
+      "path": "audios/vgmusic-lanes/space/ps1__Luncave.mid"
+    },
+    {
+      "system": "gba",
+      "game": "Astro Boy: Omega Factor",
+      "title": "Title tune - \"Go! Go! Astro Boy!\"",
+      "file": "AstroboyTOF_title.mid",
+      "bytes": 15360,
+      "sequencer": "Sean Bee",
+      "lane": "space",
+      "path": "audios/vgmusic-lanes/space/gba__AstroboyTOF_title.mid"
+    },
+    {
+      "system": "n64",
+      "game": "Space Station Silicon Valley",
+      "title": "Snow Joke",
+      "file": "Switch_on_the_snow_blower.mid",
+      "bytes": 48227,
+      "sequencer": "Phillip Utting",
+      "lane": "space",
+      "path": "audios/vgmusic-lanes/space/n64__Switch_on_the_snow_blower.mid"
+    },
+    {
+      "system": "snes",
+      "game": "Final Fantasy II",
+      "title": "The Lunarians",
+      "file": "ff2lunar.mid",
+      "bytes": 50861,
+      "sequencer": "unknown",
+      "lane": "space",
+      "path": "audios/vgmusic-lanes/space/snes__ff2lunar.mid"
+    },
+    {
+      "system": "ps1",
+      "game": "Lunar 2: Eternal Blue Complete",
+      "title": "Justice - Leo's Theme (v2.0)",
+      "file": "Justice-LeosTheme_WorkingDesignsSdtrk-v2.mid",
+      "bytes": 20112,
+      "sequencer": "Stamm",
+      "lane": "space",
+      "path": "audios/vgmusic-lanes/space/ps1__Justice-LeosTheme_WorkingDesignsSdtrk-v2.mid"
+    },
+    {
+      "system": "n64",
+      "game": "Star Wars: Shadows of the Empire",
+      "title": "Gall Spaceport",
+      "file": "001124071846.mid",
+      "bytes": 13278,
+      "sequencer": "Jedi Questmaster",
+      "lane": "space",
+      "path": "audios/vgmusic-lanes/space/n64__001124071846.mid"
+    },
+    {
+      "system": "snes",
+      "game": "Super Bonk",
+      "title": "Lunar Pyramid",
+      "file": "Lunar_Pyramid.mid",
+      "bytes": 29250,
+      "sequencer": "Teck",
+      "lane": "space",
+      "path": "audios/vgmusic-lanes/space/snes__Lunar_Pyramid.mid"
+    },
+    {
+      "system": "ps1",
+      "game": "Mega Man 8",
+      "title": "Astro Man's Stage (3) (v1.1)",
+      "file": "MM8AstroGMv1_1.mid",
+      "bytes": 78209,
+      "sequencer": "The Jayster",
+      "lane": "space",
+      "path": "audios/vgmusic-lanes/space/ps1__MM8AstroGMv1_1.mid"
+    },
+    {
+      "system": "ps1",
+      "game": "Lunar: Silver Star Story Complete",
+      "title": "Transmission Shrine",
+      "file": "Luntrans.mid",
+      "bytes": 32684,
+      "sequencer": "unknown",
+      "lane": "space",
+      "path": "audios/vgmusic-lanes/space/ps1__Luntrans.mid"
+    },
+    {
+      "system": "ps1",
+      "game": "Lunar: Silver Star Story Complete",
+      "title": "Go Go Go! (3)",
+      "file": "Lunar-GoGoGo.mid",
+      "bytes": 49416,
+      "sequencer": "Yar Kramer",
+      "lane": "space",
+      "path": "audios/vgmusic-lanes/space/ps1__Lunar-GoGoGo.mid"
+    },
+    {
+      "system": "ps1",
+      "game": "Lunar: Silver Star Story Complete",
+      "title": "Second World",
+      "file": "LUNAR-second_world.mid",
+      "bytes": 26211,
+      "sequencer": "TITO OLMEDO",
+      "lane": "space",
+      "path": "audios/vgmusic-lanes/space/ps1__LUNAR-second_world.mid"
+    },
+    {
+      "system": "ps1",
+      "game": "Lunar: Silver Star Story Complete",
+      "title": "Magic City of Vane",
+      "file": "vane.mid",
+      "bytes": 6469,
+      "sequencer": "unknown",
+      "lane": "space",
+      "path": "audios/vgmusic-lanes/space/ps1__vane.mid"
+    },
+    {
+      "system": "snes",
+      "game": "Axelay",
+      "title": "Stage 6 Part 1 - \"Cosmos\" (GS)",
+      "file": "Axestg6a.mid",
+      "bytes": 39951,
+      "sequencer": "nZero",
+      "lane": "space",
+      "path": "audios/vgmusic-lanes/space/snes__Axestg6a.mid"
+    },
+    {
+      "system": "genesis",
+      "game": "Phantasy Star 4",
+      "title": "Spaceport",
+      "file": "ps4space.mid",
+      "bytes": 32512,
+      "sequencer": "Chuck Dodgers",
+      "lane": "space",
+      "path": "audios/vgmusic-lanes/space/genesis__ps4space.mid"
+    },
+    {
+      "system": "snes",
+      "game": "Castlevania Dracula X",
+      "title": "Vampire Hunter (GS)",
+      "file": "cxstage1.mid",
+      "bytes": 16407,
+      "sequencer": "unknown",
+      "lane": "horror",
+      "path": "audios/vgmusic-lanes/horror/snes__cxstage1.mid"
+    },
+    {
+      "system": "snes",
+      "game": "Zombies Ate My Neighbors",
+      "title": "Dr. Tongue's Castle of Terror",
+      "file": "zamn7.mid",
+      "bytes": 12457,
+      "sequencer": "Evilyam",
+      "lane": "horror",
+      "path": "audios/vgmusic-lanes/horror/snes__zamn7.mid"
+    },
+    {
+      "system": "gba",
+      "game": "Castlevania: Aria of Sorrow",
+      "title": "Heart of Fire",
+      "file": "CVAoS-HeartofFire.mid",
+      "bytes": 103316,
+      "sequencer": "Jorge D. Fuentes",
+      "lane": "horror",
+      "path": "audios/vgmusic-lanes/horror/gba__CVAoS-HeartofFire.mid"
+    },
+    {
+      "system": "nes",
+      "game": "Castlevania",
+      "title": "Boss - \"Poison Mind\" (3)",
+      "file": "Poison_Mind.mid",
+      "bytes": 17375,
+      "sequencer": "Timothy Childress",
+      "lane": "horror",
+      "path": "audios/vgmusic-lanes/horror/nes__Poison_Mind.mid"
+    },
+    {
+      "system": "snes",
+      "game": "Super Castlevania IV",
+      "title": "Stage 1: Entrance (Remix)",
+      "file": "CBCv4s1.mid",
+      "bytes": 101797,
+      "sequencer": "Corlen Belspar",
+      "lane": "horror",
+      "path": "audios/vgmusic-lanes/horror/snes__CBCv4s1.mid"
+    },
+    {
+      "system": "nes",
+      "game": "Castlevania 3",
+      "title": "Aquarius (2)",
+      "file": "CV3-_Aquarius.mid",
+      "bytes": 28797,
+      "sequencer": "Jorge D. Fuentes",
+      "lane": "horror",
+      "path": "audios/vgmusic-lanes/horror/nes__CV3-_Aquarius.mid"
+    },
+    {
+      "system": "gba",
+      "game": "Castlevania: Circle of the Moon",
+      "title": "Boss Battle 2 - \"Big Battle\"",
+      "file": "Mid_boss.mid",
+      "bytes": 96460,
+      "sequencer": "Solis",
+      "lane": "horror",
+      "path": "audios/vgmusic-lanes/horror/gba__Mid_boss.mid"
+    },
+    {
+      "system": "nes",
+      "game": "Castlevania",
+      "title": "Stage 2 - \"Stalker\" (Remix)",
+      "file": "cv1s2.mid",
+      "bytes": 68581,
+      "sequencer": "Tsu Ryu",
+      "lane": "horror",
+      "path": "audios/vgmusic-lanes/horror/nes__cv1s2.mid"
+    },
+    {
+      "system": "nes",
+      "game": "Castlevania 3",
+      "title": "Dracula - \"Overture\"",
+      "file": "c3d1st.mid",
+      "bytes": 38351,
+      "sequencer": "unknown",
+      "lane": "horror",
+      "path": "audios/vgmusic-lanes/horror/nes__c3d1st.mid"
+    },
+    {
+      "system": "genesis",
+      "game": "Splatter House 2",
+      "title": "Mansion Ruins",
+      "file": "Splatterhouse_2_-_Mansion_Ruins-11.mid",
+      "bytes": 21448,
+      "sequencer": "Ramon",
+      "lane": "horror",
+      "path": "audios/vgmusic-lanes/horror/genesis__Splatterhouse_2_-_Mansion_Ruins-11.mid"
+    },
+    {
+      "system": "genesis",
+      "game": "Castlevania Bloodlines",
+      "title": "Calling from Heaven (3)",
+      "file": "Calling_From_Heaven3.mid",
+      "bytes": 54436,
+      "sequencer": "Aaron",
+      "lane": "horror",
+      "path": "audios/vgmusic-lanes/horror/genesis__Calling_From_Heaven3.mid"
+    },
+    {
+      "system": "gameboy",
+      "game": "Castlevania Legends",
+      "title": "Stage 1 - \"Bloody Tears\"",
+      "file": "cvl-st1.mid",
+      "bytes": 19509,
+      "sequencer": "Tom Kim",
+      "lane": "horror",
+      "path": "audios/vgmusic-lanes/horror/gameboy__cvl-st1.mid"
+    },
+    {
+      "system": "snes",
+      "game": "Secret of Mana",
+      "title": "Pandora - \"Rose and Ghost\" (2)",
+      "file": "som_troubled.mid",
+      "bytes": 22799,
+      "sequencer": "unknown",
+      "lane": "horror",
+      "path": "audios/vgmusic-lanes/horror/snes__som_troubled.mid"
+    },
+    {
+      "system": "gba",
+      "game": "Castlevania: Aria of Sorrow",
+      "title": "Chapel",
+      "file": "CVAoS-Chapel.mid",
+      "bytes": 58600,
+      "sequencer": "Jorge D. Fuentes",
+      "lane": "horror",
+      "path": "audios/vgmusic-lanes/horror/gba__CVAoS-Chapel.mid"
+    },
+    {
+      "system": "genesis",
+      "game": "Castlevania Bloodlines",
+      "title": "Beating in the Darkness",
+      "file": "Cvbl-st1.mid",
+      "bytes": 31877,
+      "sequencer": "unknown",
+      "lane": "horror",
+      "path": "audios/vgmusic-lanes/horror/genesis__Cvbl-st1.mid"
+    },
+    {
+      "system": "ps1",
+      "game": "Castlevania: Symphony of the Night",
+      "title": "Lost Paintings (Children's Remix)",
+      "file": "sotn-pain_%28children%27s_mix%29.mid",
+      "bytes": 7330,
+      "sequencer": "unknown",
+      "lane": "horror",
+      "path": "audios/vgmusic-lanes/horror/ps1__sotn-pain_%28children%27s_mix%29.mid"
+    },
+    {
+      "system": "nes",
+      "game": "Castlevania 3",
+      "title": "Stage 8 - \"Deja Vu\" (3)",
+      "file": "DG_C3_Vampire_Killer.mid",
+      "bytes": 39801,
+      "sequencer": "Daniel Genz",
+      "lane": "horror",
+      "path": "audios/vgmusic-lanes/horror/nes__DG_C3_Vampire_Killer.mid"
+    },
+    {
+      "system": "n64",
+      "game": "Banjo-Kazooie",
+      "title": "Mad Monster Mansion",
+      "file": "bkmmm.mid",
+      "bytes": 16883,
+      "sequencer": "Mike",
+      "lane": "horror",
+      "path": "audios/vgmusic-lanes/horror/n64__bkmmm.mid"
+    },
+    {
+      "system": "nes",
+      "game": "Maniac Mansion",
+      "title": "Dave's Theme (2)",
+      "file": "MM_Daves_Theme_perc.mid",
+      "bytes": 37251,
+      "sequencer": "unknown",
+      "lane": "horror",
+      "path": "audios/vgmusic-lanes/horror/nes__MM_Daves_Theme_perc.mid"
+    },
+    {
+      "system": "genesis",
+      "game": "Castlevania Bloodlines",
+      "title": "Vampire Killer",
+      "file": "vamp_killer2.mid",
+      "bytes": 14595,
+      "sequencer": "JILost",
+      "lane": "horror",
+      "path": "audios/vgmusic-lanes/horror/genesis__vamp_killer2.mid"
+    },
+    {
+      "system": "nes",
+      "game": "Castlevania 3",
+      "title": "Boss Fight",
+      "file": "c3boss.mid",
+      "bytes": 15723,
+      "sequencer": "unknown",
+      "lane": "horror",
+      "path": "audios/vgmusic-lanes/horror/nes__c3boss.mid"
+    },
+    {
+      "system": "snes",
+      "game": "Super Castlevania IV",
+      "title": "Secret Room",
+      "file": "CV4-_Secret_Room.mid",
+      "bytes": 49222,
+      "sequencer": "Jorge D. Fuentes",
+      "lane": "horror",
+      "path": "audios/vgmusic-lanes/horror/snes__CV4-_Secret_Room.mid"
+    },
+    {
+      "system": "nes",
+      "game": "Castlevania 3",
+      "title": "Stage 5 - \"Nightmare\"",
+      "file": "c3stg5.mid",
+      "bytes": 10077,
+      "sequencer": "unknown",
+      "lane": "horror",
+      "path": "audios/vgmusic-lanes/horror/nes__c3stg5.mid"
+    },
+    {
+      "system": "gba",
+      "game": "Kirby & the Amazing Mirror",
+      "title": "Carrot Mansion (GS)",
+      "file": "KirbyTAM_CarrotMansionMSGS.mid",
+      "bytes": 15784,
+      "sequencer": "Jace",
+      "lane": "horror",
+      "path": "audios/vgmusic-lanes/horror/gba__KirbyTAM_CarrotMansionMSGS.mid"
+    },
+    {
+      "system": "ps1",
+      "game": "Castlevania: Symphony of the Night",
+      "title": "Dracula's Castle (3)",
+      "file": "sotndra3.mid",
+      "bytes": 58256,
+      "sequencer": "Gen",
+      "lane": "horror",
+      "path": "audios/vgmusic-lanes/horror/ps1__sotndra3.mid"
+    },
+    {
+      "system": "snes",
+      "game": "Super Mario World",
+      "title": "Ghost House (2)",
+      "file": "smw_ghost.mid",
+      "bytes": 42480,
+      "sequencer": "Quietust",
+      "lane": "horror",
+      "path": "audios/vgmusic-lanes/horror/snes__smw_ghost.mid"
+    },
+    {
+      "system": "genesis",
+      "game": "Castlevania Bloodlines",
+      "title": "Stage 4 - \"Iron Blue Intention\" (5)",
+      "file": "CVB-_Iron_Blue_Intention.mid",
+      "bytes": 39778,
+      "sequencer": "Jorge D. Fuentes",
+      "lane": "horror",
+      "path": "audios/vgmusic-lanes/horror/genesis__CVB-_Iron_Blue_Intention.mid"
+    },
+    {
+      "system": "snes",
+      "game": "Donkey Kong Country 2",
+      "title": "Haunted Chase (XG)",
+      "file": "jrlepage_-_XG_-_dkc2_-_haunted.mid",
+      "bytes": 63625,
+      "sequencer": "jrlepage",
+      "lane": "horror",
+      "path": "audios/vgmusic-lanes/horror/snes__jrlepage_-_XG_-_dkc2_-_haunted.mid"
+    },
+    {
+      "system": "gameboy",
+      "game": "Castlevania: The Adventure",
+      "title": "Boss",
+      "file": "GCVA_-_Boss.mid",
+      "bytes": 17322,
+      "sequencer": "Manuel Sarmiento",
+      "lane": "horror",
+      "path": "audios/vgmusic-lanes/horror/gameboy__GCVA_-_Boss.mid"
+    },
+    {
+      "system": "nes",
+      "game": "Ghostbusters 2",
+      "title": "Statue of Liberty Stage",
+      "file": "Ghostbusters2-StatueOfLibertyStage.mid",
+      "bytes": 35640,
+      "sequencer": "unknown",
+      "lane": "horror",
+      "path": "audios/vgmusic-lanes/horror/nes__Ghostbusters2-StatueOfLibertyStage.mid"
+    },
+    {
+      "system": "gameboy",
+      "game": "Castlevania II: Belmont's Revenge",
+      "title": "Final Battle - \"Sons of Satan\"",
+      "file": "GB_Castlevania_2_Belmonts_Revenge_Final_Battle.mid",
+      "bytes": 30704,
+      "sequencer": "Mayika",
+      "lane": "horror",
+      "path": "audios/vgmusic-lanes/horror/gameboy__GB_Castlevania_2_Belmonts_Revenge_Final_Battle.mid"
+    },
+    {
+      "system": "n64",
+      "game": "Castlevania 64",
+      "title": "Silent Madness",
+      "file": "Silent_Madness.mid",
+      "bytes": 8825,
+      "sequencer": "Dooey Jo",
+      "lane": "horror",
+      "path": "audios/vgmusic-lanes/horror/n64__Silent_Madness.mid"
+    },
+    {
+      "system": "nes",
+      "game": "Castlevania",
+      "title": "Stage 2 - \"Stalker\"",
+      "file": "cv1-lv2.mid",
+      "bytes": 12111,
+      "sequencer": "unknown",
+      "lane": "horror",
+      "path": "audios/vgmusic-lanes/horror/nes__cv1-lv2.mid"
+    },
+    {
+      "system": "nes",
+      "game": "Castlevania 2",
+      "title": "Night - \"Monster Dance\" (Remix)",
+      "file": "CV2_-_Monster_Dance_-Remix-.mid",
+      "bytes": 44195,
+      "sequencer": "Jay Reichard",
+      "lane": "horror",
+      "path": "audios/vgmusic-lanes/horror/nes__CV2_-_Monster_Dance_-Remix-.mid"
+    },
+    {
+      "system": "gba",
+      "game": "Castlevania: Circle of the Moon",
+      "title": "Machine Tower - \"Clockwork\" (Time's Anxiety Remix)",
+      "file": "clocktower-remix.mid",
+      "bytes": 52026,
+      "sequencer": "Rexy",
+      "lane": "horror",
+      "path": "audios/vgmusic-lanes/horror/gba__clocktower-remix.mid"
+    },
+    {
+      "system": "genesis",
+      "game": "Castlevania Bloodlines",
+      "title": "The Sinking Old Sanctuary (2)",
+      "file": "cbl08.mid",
+      "bytes": 6677,
+      "sequencer": "Sephiroth3",
+      "lane": "horror",
+      "path": "audios/vgmusic-lanes/horror/genesis__cbl08.mid"
+    },
+    {
+      "system": "nes",
+      "game": "Castlevania 3",
+      "title": "Big Battle",
+      "file": "c3d2nd.mid",
+      "bytes": 44074,
+      "sequencer": "unknown",
+      "lane": "horror",
+      "path": "audios/vgmusic-lanes/horror/nes__c3d2nd.mid"
+    },
+    {
+      "system": "n64",
+      "game": "Castlevania: Legacy of Darkness",
+      "title": "Watchtower",
+      "file": "CVLoD-_WatchTower2.mid",
+      "bytes": 38342,
+      "sequencer": "Jorge D. Fuentes",
+      "lane": "horror",
+      "path": "audios/vgmusic-lanes/horror/n64__CVLoD-_WatchTower2.mid"
+    },
+    {
+      "system": "gameboy",
+      "game": "Castlevania Legends",
+      "title": "Stage 4 - \"Inner Hallways\" (2)",
+      "file": "InnerHallways.mid",
+      "bytes": 50962,
+      "sequencer": "Jorge D. Fuentes",
+      "lane": "horror",
+      "path": "audios/vgmusic-lanes/horror/gameboy__InnerHallways.mid"
+    },
+    {
+      "system": "snes",
+      "game": "Super Mario World 2: Yoshi's Island",
+      "title": "Castle (Haunted Remix)",
+      "file": "SMW2CBOX.mid",
+      "bytes": 29571,
+      "sequencer": "Zagro",
+      "lane": "horror",
+      "path": "audios/vgmusic-lanes/horror/snes__SMW2CBOX.mid"
+    },
+    {
+      "system": "gameboy",
+      "game": "Castlevania: The Adventure",
+      "title": "Stage 1 - \"Battle of the Holy\" (2)",
+      "file": "cva-st1.mid",
+      "bytes": 25734,
+      "sequencer": "tdkim",
+      "lane": "horror",
+      "path": "audios/vgmusic-lanes/horror/gameboy__cva-st1.mid"
+    },
+    {
+      "system": "snes",
+      "game": "Super Castlevania IV",
+      "title": "Stage 8 (v2.0)",
+      "file": "Castlevania4-Cellar%28stage8%29V2.mid",
+      "bytes": 22481,
+      "sequencer": "Mark7",
+      "lane": "horror",
+      "path": "audios/vgmusic-lanes/horror/snes__Castlevania4-Cellar%28stage8%29V2.mid"
+    },
+    {
+      "system": "snes",
+      "game": "Super Castlevania IV",
+      "title": "Stage B: Block B-1 - \"Vampire Killer\" (6)",
+      "file": "CB_CVIVVampireKiller.mid",
+      "bytes": 8258,
+      "sequencer": "Corlen Belspar",
+      "lane": "horror",
+      "path": "audios/vgmusic-lanes/horror/snes__CB_CVIVVampireKiller.mid"
+    },
+    {
+      "system": "nes",
+      "game": "Castlevania 2",
+      "title": "Town - \"The Silence of the Daylight\" (5)",
+      "file": "SilenceofDaylight.mid",
+      "bytes": 27098,
+      "sequencer": "FFfreak42",
+      "lane": "horror",
+      "path": "audios/vgmusic-lanes/horror/nes__SilenceofDaylight.mid"
+    },
+    {
+      "system": "snes",
+      "game": "Super Ghouls & Ghosts",
+      "title": "Stage 5: The Ice Forest (2)",
+      "file": "ghouls03.mid",
+      "bytes": 10112,
+      "sequencer": "Sephiroth3",
+      "lane": "horror",
+      "path": "audios/vgmusic-lanes/horror/snes__ghouls03.mid"
+    },
+    {
+      "system": "n64",
+      "game": "Castlevania 64",
+      "title": "Options Menu",
+      "file": "Menu.mid",
+      "bytes": 8682,
+      "sequencer": "JILost",
+      "lane": "horror",
+      "path": "audios/vgmusic-lanes/horror/n64__Menu.mid"
+    },
+    {
+      "system": "snes",
+      "game": "Castlevania: Dracula X",
+      "title": "Beginning",
+      "file": "CVDX_-_Beginning.mid",
+      "bytes": 56777,
+      "sequencer": "Jay Reichard",
+      "lane": "horror",
+      "path": "audios/vgmusic-lanes/horror/snes__CVDX_-_Beginning.mid"
+    },
+    {
+      "system": "snes",
+      "game": "Bram Stoker's Dracula",
+      "title": "Stage 3-1",
+      "file": "Dracula31.mid",
+      "bytes": 18959,
+      "sequencer": "JILost",
+      "lane": "horror",
+      "path": "audios/vgmusic-lanes/horror/snes__Dracula31.mid"
+    },
+    {
+      "system": "snes",
+      "game": "Castlevania Dracula X",
+      "title": "Bloodlines",
+      "file": "dxstage1.mid",
+      "bytes": 69204,
+      "sequencer": "unknown",
+      "lane": "horror",
+      "path": "audios/vgmusic-lanes/horror/snes__dxstage1.mid"
+    },
+    {
+      "system": "genesis",
+      "game": "Castlevania Bloodlines",
+      "title": "Bloody Tears (SB-128)",
+      "file": "Ryan_Bury_-_Castlevania_Bloodlines_-_Bloody_Tears_-_SB-128_Mix.mid",
+      "bytes": 23634,
+      "sequencer": "Ryan J. Bury",
+      "lane": "horror",
+      "path": "audios/vgmusic-lanes/horror/genesis__Ryan_Bury_-_Castlevania_Bloodlines_-_Bloody_Tears_-_SB-128_Mix.mid"
+    },
+    {
+      "system": "genesis",
+      "game": "Splatter House 3",
+      "title": "West Mansion: 1st Floor",
+      "file": "T_SplatterHouse3_FirstFloorTheme.mid",
+      "bytes": 26445,
+      "sequencer": "Tsu Ryu",
+      "lane": "horror",
+      "path": "audios/vgmusic-lanes/horror/genesis__T_SplatterHouse3_FirstFloorTheme.mid"
+    },
+    {
+      "system": "nes",
+      "game": "Castlevania 3",
+      "title": "Pressure (Remix)",
+      "file": "CV3_-_Pressure_-Remix-.mid",
+      "bytes": 16801,
+      "sequencer": "Jay Reichard",
+      "lane": "horror",
+      "path": "audios/vgmusic-lanes/horror/nes__CV3_-_Pressure_-Remix-.mid"
+    },
+    {
+      "system": "nes",
+      "game": "Castlevania 3",
+      "title": "Stage 8 - \"Deja Vu\" (2)",
+      "file": "CV3-_Dejavu.mid",
+      "bytes": 22487,
+      "sequencer": "Jorge D. Fuentes",
+      "lane": "horror",
+      "path": "audios/vgmusic-lanes/horror/nes__CV3-_Dejavu.mid"
+    },
+    {
+      "system": "nes",
+      "game": "Rygar",
+      "title": "Catacombs (2)",
+      "file": "Rygar_Cave.mid",
+      "bytes": 12663,
+      "sequencer": "Michael Martin",
+      "lane": "horror",
+      "path": "audios/vgmusic-lanes/horror/nes__Rygar_Cave.mid"
+    },
+    {
+      "system": "n64",
+      "game": "Castlevania: Legacy of Darkness",
+      "title": "Watchtower (GS)",
+      "file": "CVLoD-_WatchTower.mid",
+      "bytes": 38665,
+      "sequencer": "Jorge D. Fuentes",
+      "lane": "horror",
+      "path": "audios/vgmusic-lanes/horror/n64__CVLoD-_WatchTower.mid"
+    },
+    {
+      "system": "n64",
+      "game": "Mario Golf",
+      "title": "Boo Classic (2)",
+      "file": "MG_Boo_Classic-KM.mid",
+      "bytes": 78472,
+      "sequencer": "King Meteor",
+      "lane": "horror",
+      "path": "audios/vgmusic-lanes/horror/n64__MG_Boo_Classic-KM.mid"
+    },
+    {
+      "system": "nes",
+      "game": "Castlevania",
+      "title": "Stage 3 - \"Wicked Child\"",
+      "file": "cstlv1s3.mid",
+      "bytes": 19015,
+      "sequencer": "Anthony Bellissimo",
+      "lane": "horror",
+      "path": "audios/vgmusic-lanes/horror/nes__cstlv1s3.mid"
+    },
+    {
+      "system": "genesis",
+      "game": "Castlevania Bloodlines",
+      "title": "Bloody Tears (2)",
+      "file": "Ryan_Bury_-_Castlevania_Bloodlines_-_Bloody_Tears.mid",
+      "bytes": 23610,
+      "sequencer": "Ryan J. Bury",
+      "lane": "horror",
+      "path": "audios/vgmusic-lanes/horror/genesis__Ryan_Bury_-_Castlevania_Bloodlines_-_Bloody_Tears.mid"
+    },
+    {
+      "system": "nes",
+      "game": "Castlevania",
+      "title": "Stage 6 - \"Out of Time\" (Remix) (3)",
+      "file": "cv1-6.mid",
+      "bytes": 21237,
+      "sequencer": "unknown",
+      "lane": "horror",
+      "path": "audios/vgmusic-lanes/horror/nes__cv1-6.mid"
+    },
+    {
+      "system": "gameboy",
+      "game": "Castlevania II: Belmont's Revenge",
+      "title": "Dracula's Castle: Stage 1 - \"Original Sin\"",
+      "file": "CVBR_-_Original_Sin.mid",
+      "bytes": 57106,
+      "sequencer": "Jay Reichard",
+      "lane": "horror",
+      "path": "audios/vgmusic-lanes/horror/gameboy__CVBR_-_Original_Sin.mid"
+    }
+  ]
+}

@@ -447,12 +447,27 @@ export function bindComp(rhythmEntry, harmonyContext, meter = '4/4', opts = {}) 
 // progression, any quality.
 // ---------------------------------------------------------------------------
 
-const FIGURE_TOKEN = /^(R|[34567]|9|~\d+)(\+*)$/;
+// r15 (his scale directive: "instead of purely thinking in chords, also
+// think in scales. the possible different kind of scales combined with the
+// chord"): 's<n>' tokens resolve against the CHORD-SCALE (chordScale of the
+// symbol in the key context) — s2/s4/s6/s7 are that scale's 2nd/4th/6th/7th
+// step above the root, so the same figure lands in-scale over every chord.
+const FIGURE_TOKEN = /^(R|[34567]|9|s[2467]|~\d+)(\+*)$/;
 
 /** the chord's own interval for a member, preferring what the chord actually carries */
-function memberSemis(member, rel, warnings, sym) {
+function memberSemis(member, rel, warnings, sym, scaleRel = null) {
   const pick = (...cands) => cands.find((c) => rel.has(c));
   let out;
+  if (member[0] === 's') {
+    const deg = Number(member[1]);
+    if (scaleRel && scaleRel.length) {
+      const ix = deg - 1;
+      return scaleRel[ix % scaleRel.length] + 12 * Math.floor(ix / scaleRel.length);
+    }
+    const SFB = { 2: 2, 4: 5, 6: 9, 7: 11 };
+    warnings.push(`no scale context for ${member} over "${sym}" — using the default interval ${SFB[deg]}`);
+    return SFB[deg];
+  }
   switch (member) {
     case 'R': return 0;
     case '3': out = pick(4, 3); break;
@@ -464,6 +479,19 @@ function memberSemis(member, rel, warnings, sym) {
     default: return Number(member.slice(1)); // '~n' literal
   }
   if (out == null) {
+    // r16 REVERTED after the verify pass measured what it actually did. The
+    // idea was that a `7` token on a chord carrying no seventh should take the
+    // seventh its own third implies (major third -> maj7). Two measurements
+    // killed it. (a) It is a fixed rule for a FUNCTION-dependent question: over
+    // a V chord in a major key it writes the key's tritone, so it created
+    // foreign pitches on the songs it touched rather than removing them.
+    // (b) It is library-level — 30 entries in figurations-undertale.js and
+    // figurations-videos.js carry a bare `7`, and all 30 would rebind the next
+    // time those pages are built, moving judged ut_*/vl_* material as the side
+    // effect of a "bug fix". That is exactly the D96 trap.
+    // The real fix is key-aware and belongs with the scale tokens: the r16
+    // quartal foundation form now emits `s4`/`s7`, which resolve against
+    // chordScale and are in-key by construction. This fallback stays as it was.
     const FALLBACK = { 3: 4, 4: 5, 5: 7, 6: 9, 7: 10, 9: 2 };
     out = FALLBACK[member];
     warnings.push(`chord "${sym}" carries no ${member} — using the default interval ${out}`);
@@ -554,8 +582,13 @@ export function bindFigure(figEntry, harmonyContext, meter = '4/4', opts = {}) {
   if (!figEntry.onsets || figEntry.onsets.length !== figure.length) {
     throw new Error(`figure[] must match onsets[] (${figEntry.onsets?.length ?? 0} onsets, ${figure.length} tokens)`);
   }
+  // r20/D101: a leading '>' resolves the member against the NEXT chord in the
+  // progression rather than the current one. Additive by construction — the
+  // grammar rejected '>' until now, so no existing figure can contain one and
+  // nothing in the library rebinds. See the resolution site below for why it
+  // is the only way a figure can WALK INTO a chord change.
   for (const tok of figure) for (const m of String(tok).split('.')) {
-    if (!FIGURE_TOKEN.test(m)) throw new Error(`bad figure token "${tok}" (member R/3/4/5/6/7/9 or ~<semitones>, then '+' per octave)`);
+    if (!FIGURE_TOKEN.test(m.replace(/^>/, ''))) throw new Error(`bad figure token "${tok}" (member R/3/4/5/6/7/9 or ~<semitones>, optionally '>'-prefixed to target the next chord, then '+' per octave)`);
   }
   const accents = figEntry.accents;
   if (!accents || accents.length !== figure.length) {
@@ -646,20 +679,63 @@ export function bindFigure(figEntry, harmonyContext, meter = '4/4', opts = {}) {
     }
     prevRoot = rootRef;
     const values = [];
+    // r15 scale tokens: the chord-scale's steps relative to the root, computed
+    // lazily — only bars whose figure carries an 's' token pay for it
+    const scaleRel = bar.toks.some((t) => /(^|\.)s[2467]/.test(t)) && sym
+      ? [...chordScale(sym, harmonyContext.key ?? 'C:major').pcs]
+        .map((p) => ((p - (rootPc ?? 0)) % 12 + 12) % 12).sort((a, b) => a - b)
+      : null;
     // D56: opt-in, so every existing binding is byte-identical. The judge page
     // turns it on for its figuration tones; nothing else does yet.
     const swap = stateExtensions && rel.size && sym
       ? extensionSlot(bar.toks, rel, chordCoreTones(sym), rootPc ?? 0)
       : null;
     if (swap) extended++;
+    // r20/D101 — the LOOK-AHEAD reference, and why it had to exist.
+    //
+    // "there's not any extra notes between chords or countermelody etc in the
+    // piano - it's just chord bouncing" (nostalgic_casino). Adding notes in the
+    // gap was not enough: measured, a two-note run in the hole raised pickups
+    // from 65.1% to 69.7% of chord changes but moved the number that matters —
+    // pickups that STEP INTO the new chord — only from 307 to 314. The reason is
+    // structural. Every figure token resolves against the CURRENT chord, so a
+    // walk can only land a step from where it started, never a step from where
+    // it is going, and "walking" means the second one.
+    // A '>'-prefixed member resolves against the next chord instead. The octave
+    // is chosen nearest the current root so the approach stays in the hand
+    // rather than leaping a register to reach its target.
+    const aheadNeeded = bar.toks.some((t) => t.includes('>'));
+    let aheadRef = null, aheadRel = null, aheadScaleRel = null, aheadSym = null;
+    if (aheadNeeded) {
+      aheadSym = harmony[(Math.floor(c / barsPerChord) + 1) % harmony.length];
+      const aPc = chordRootPc(aheadSym);
+      const aPcs = aheadSym ? chordTones(aheadSym) : null;
+      aheadRel = new Set([...(aPcs ?? [])].map((p) => ((p - (aPc ?? 0)) % 12 + 12) % 12));
+      const aAbove = baseC + (((aPc ?? 0) - baseC % 12) + 12) % 12;
+      aheadRef = aAbove;
+      for (const cand of [aAbove - 12, aAbove + 12]) {
+        if (Math.abs(cand - rootRef) < Math.abs(aheadRef - rootRef)) aheadRef = cand;
+      }
+      aheadScaleRel = bar.toks.some((t) => /(^|\.)>s[2467]/.test(t)) && aheadSym
+        ? [...chordScale(aheadSym, harmonyContext.key ?? 'C:major').pcs]
+          .map((p) => ((p - (aPc ?? 0)) % 12 + 12) % 12).sort((a, b) => a - b)
+        : null;
+    }
     for (let i = 0; i < bar.steps.length; i++) {
       const accented = bar.accents[i] >= ACCENT_THRESHOLD;
       const tok = swap && swap.i === i ? swap.token : bar.toks[i];
-      const names = tok.split('.').map((m) => {
+      const names = tok.split('.').map((m0) => {
+        const ahead = m0.startsWith('>');
+        const m = ahead ? m0.slice(1) : m0;
         const [, member, plus] = FIGURE_TOKEN.exec(m);
-        const midi = rootRef + memberSemis(member, rel, warnings, sym) + 12 * plus.length;
+        const midi = (ahead ? aheadRef : rootRef)
+          + memberSemis(member, ahead ? aheadRel : rel, warnings, ahead ? aheadSym : sym, ahead ? aheadScaleRel : scaleRel)
+          + 12 * plus.length;
         const name = midiToNoteName(midi, { flats });
-        boundNotes.push({ cycle: c, step: bar.steps[i], t: fracStr(bar.steps[i], bar.G), note: name, midi, accented, degree: null, voice: 'main', token: m });
+        // record the token AS WRITTEN, '>' included — boundMeta is what the
+        // tests and probes read back, and a stripped token would hide the
+        // look-ahead from every downstream assertion
+        boundNotes.push({ cycle: c, step: bar.steps[i], t: fracStr(bar.steps[i], bar.G), note: name, midi, accented, degree: null, voice: 'main', token: m0 });
         return name;
       });
       values.push(names.length === 1 ? names[0] : `[${names.join(',')}]`);
@@ -919,6 +995,36 @@ export function bindMelody(rhythmEntry, harmonyContext, meter = '4/4', opts = {}
     // hold for longer - it sounds robotic"): a floor under the articulation
     // ratios — short notes lengthen, the style's longer notes are untouched.
     articFloor = null,
+    // r17 (his reel note: "notice how melody is chord too not just one note").
+    // chordTop thickens the BAR'S LONGEST note into a two-note chord when it
+    // reaches chordMinBeats. chordFloor is an absolute register floor — below
+    // G3 a third under the tune is mud, measured on his own references.
+    chordTop = false,
+    chordMinBeats = 1,
+    chordFloor = 55,
+    // r17: a minimum note value. tokens() is legato, so dropping an onset makes
+    // the PREVIOUS note hold through its slot for free — the melody lengthens
+    // rather than merely thinning. His law: "the melody is held not very jittery".
+    minNote = 0,
+    // r18/D99 (excited_fight, his ask, verbatim: "there should still be an
+    // alternate melody singing along with the main piano melody of another
+    // instrument the supports it while being different. this is something that
+    // should be abstracted to other songs too"; casino: "there's also not any
+    // supportive counter melody for the first melody part to support it - I
+    // wanna add some"; triumphant_citadel: "I want more layers with their own
+    // melody man that's what ive been saying").
+    //
+    // COMPANION rebinds the lead's own cell — same seed, same rhythm, same
+    // phrasing — but every pitch becomes a chord tone BELOW the melody note.
+    // That is "singing along ... while being different" exactly: locked to the
+    // tune rhythmically, its own line melodically. The preference rotates by
+    // bar between thirds-first and sixths-first so it is not rigid parallel
+    // harmony (he rejects "too harmonious" as fast as he rejects thin), and a
+    // note with no available chord tone under it becomes a REST, which makes
+    // the companion sparser than the lead on its own — an independent line
+    // rather than a shadow.
+    companion = false,
+    companionFloor = 48,
   } = opts;
   let profile = MELODY_PROFILES[style];
   if (!profile) throw new Error(`unknown melody style "${style}" (have: ${Object.keys(MELODY_PROFILES).join(', ')})`);
@@ -931,6 +1037,8 @@ export function bindMelody(rhythmEntry, harmonyContext, meter = '4/4', opts = {}
 
   const key = parseKey(harmonyContext.key ?? 'C:major');
   const flats = keyUsesFlats(harmonyContext.key ?? 'C:major');
+  const keyPcs = new Set(key.intervals.map((x) => (key.rootPc + x) % 12));
+  const beatsInBar = Number(String(meter).split('/')[0]) || 4;
   const harmony = harmonyContext.harmony;
   const barsPerChord = harmonyContext.barsPerChord ?? 1;
 
@@ -992,7 +1100,17 @@ export function bindMelody(rhythmEntry, harmonyContext, meter = '4/4', opts = {}
     const src = bars[c % B];
     const role = roleOf(c);
     if (role === 'cadence') {
-      const keep = src.steps.map((s, i) => ({ s, i })).filter(({ s }) => s <= src.G / 2);
+      // r14 heard the thin-to-half + long-held-final tail as "really
+      // overused ... in many other songs" (triumphant_citadel); D94 rotated
+      // the cut point, and his r15 ruling went further: "i dont think the
+      // melody tail should be rotated, it should just be removed because it
+      // just doesnt sound that good." Opt-in (tailOff) the cadence bar keeps
+      // its FULL cell — no thinning, no forced held final; only the
+      // landing-pitch grammar and the phrase breath remain. Judged songs
+      // (opt absent) keep the original thinned shape.
+      const keep = opts.tailOff
+        ? src.steps.map((s, i) => ({ s, i }))
+        : src.steps.map((s, i) => ({ s, i })).filter(({ s }) => s <= src.G / 2);
       const ks = keep.length ? keep : [{ s: src.steps[0], i: 0 }];
       cycleBars.push({
         G: src.G, role, breath: true,
@@ -1064,6 +1182,16 @@ export function bindMelody(rhythmEntry, harmonyContext, meter = '4/4', opts = {}
         category = 'anchor';
       } else {
         category = scale.core.has(((midi % 12) + 12) % 12) ? 'chord' : 'scale';
+      }
+      // r14 (the mysterious_space conversation — measured +21/+24-semitone
+      // zigzags where chromCore spelled sus/dim chords): opt-in octave
+      // voice-leading — a jump beyond a 7th folds toward the previous note
+      // by octaves (same pitch class, nearest register), bounded to the
+      // phrase's own center so the line cannot drift off its arch.
+      if (opts.leapFold && flat.length) {
+        const prevM = flat[flat.length - 1].midi;
+        while (midi - prevM > 9 && midi - 12 >= center - 16) midi -= 12;
+        while (prevM - midi > 9 && midi + 12 <= center + 16) midi += 12;
       }
       flat.push({ cycle: c, barIdx: c % B, i, step: bar.steps[i], G: bar.G, accented, midi, category, cellIndex: i, chord: sym, role: bar.role });
     }
@@ -1177,7 +1305,21 @@ export function bindMelody(rhythmEntry, harmonyContext, meter = '4/4', opts = {}
   const clipCycles = [];
   for (let c = 0; c < period; c++) {
     const bar = cycleBars[c];
-    const notes = flat.filter((n) => n.cycle === c);
+    let notes = flat.filter((n) => n.cycle === c);
+    // r17 MINIMUM NOTE VALUE (his "the melody is held not very jittery").
+    // tokens() is legato, so dropping an onset makes the PREVIOUS note hold
+    // through its slot — the line lengthens rather than merely thinning. The
+    // downbeat, the bar's last note and any cadence arrival are never dropped:
+    // the downbeat is the phrase's anchor, the last note has nothing to absorb
+    // into, and a cadence is re-shaped by its own grammar.
+    if (minNote > 0 && notes.length > 2) {
+      const keep = notes.filter((n, i) => {
+        if (i === 0 || i === notes.length - 1 || n.category === 'cadence') return true;
+        const L = ((notes[i + 1]?.step ?? bar.G) - n.step) * (beatsInBar / bar.G);
+        return L >= minNote;
+      });
+      if (keep.length >= 2) notes = keep;
+    }
     // grids follow the SURVIVING notes (a merge may have thinned the bar);
     // with no merge these are exactly the bar's own steps/accents
     const noteSteps = notes.map((n) => n.step);
@@ -1190,16 +1332,108 @@ export function bindMelody(rhythmEntry, harmonyContext, meter = '4/4', opts = {}
     const ratios = hold ? ratios0.map(() => 1)
       : articFloor ? ratios0.map((r) => Math.max(articFloor, r))
       : ratios0;
+    // r17 CHORD-TOP MELODY (his reel note, verbatim: "notice how melody is
+    // chord too not just one note, and the melody is held not very jittery").
+    // The reference he sent is a piano right hand playing the tune WITH the
+    // chord under it — measured on his own ChordCamera reel, every right hand
+    // in it is exactly four notes. The engine's lead was 100% monophonic:
+    // 8137 note-haps at 8137 distinct attack times, across all 43 songs, max
+    // one note per attack, ever.
+    //
+    // Only the BAR'S LONGEST note thickens, and only if it reaches
+    // chordMinBeats — a thickened sixteenth is a clang, a thickened held note
+    // is a chord. The added pitch comes from the bar's chord (scaleOf(sym).core,
+    // free here), never from what the accompaniment happens to be sounding at
+    // that instant: measured, the instantaneous source fails on 276 of 1068
+    // candidates because arps and drones are between chord tones, the bar's
+    // chord fails on 46.
+    const slotBeats = (i) => ((noteSteps[i + 1] ?? bar.G) - noteSteps[i]) * (beatsInBar / bar.G);
+    const gainMul = notes.map(() => 1);
+    let thickenAt = -1;
+    if (chordTop && notes.length) {
+      let best = -1, bestLen = 0;
+      for (let i = 0; i < notes.length; i++) {
+        const L = slotBeats(i);
+        if (L > bestLen) { bestLen = L; best = i; }
+      }
+      if (best >= 0 && bestLen >= chordMinBeats) thickenAt = best;
+    }
     const values = notes.map((n, i) => {
       const name = midiToNoteName(n.midi, { flats });
+      let out = name;
+      if (companion) {
+        // thirds-first on even bars, sixths-first on odd: the same two
+        // intervals chordTop prefers, read from the other side. No fourths and
+        // no octave doubling, for the reasons stated there.
+        const core = scaleOf(n.chord).core;
+        const meloPc = ((n.midi % 12) + 12) % 12;
+        const PREF = c % 2 === 0 ? [3, 4, 9, 8] : [9, 8, 3, 4];
+        // r19/D100 (excited_fight, his ear: "the new trumpet or whatever is in
+        // the melody is completely off key" — measured, the companion's
+        // gm_clarinet was the ONLY voice added to that song since he last
+        // judged it). Forcing a CHORD tone under every lead note made the
+        // companion more chromatic than the line it accompanies: measured over
+        // the shipped page, 11 of 21 companion songs, worst triumphant_citadel
+        // 22.9% -> 50.7% out-of-key, and THREE songs (somber_snow,
+        // mysterious_manor, mysterious_jungle) whose lead is 100% diatonic got
+        // a companion that is not. The mechanism is that the lead only spells a
+        // chromatic chord at structural points (chromCore) while it walks the
+        // scale between them, whereas the companion took a chord tone EVERY
+        // time — over excited_fight's B major in A major that parked it on D#
+        // for 18 of its 22 notes, turning a passing chromatic into a drone.
+        //
+        // So the companion may leave the key only where the LEAD already has.
+        // Where it cannot, it RESTS, which is the layer's own sparser-than-the-
+        // lead rule doing the work rather than a new exception.
+        const leadOut = !keyPcs.has(meloPc);
+        let sub = null;
+        for (const d of PREF) {
+          const cand = n.midi - d;
+          const pc = ((cand % 12) + 12) % 12;
+          if (cand < companionFloor || pc === meloPc || !core.has(pc)) continue;
+          if (!leadOut && !keyPcs.has(pc)) continue;
+          sub = cand; break;
+        }
+        boundNotes.push({
+          cycle: c, step: n.step, t: fracStr(n.step, n.G),
+          note: sub == null ? null : midiToNoteName(sub, { flats }), midi: sub,
+          accented: n.accented, degree: null, voice: 'companion',
+          category: n.category, cellIndex: n.cellIndex, chord: n.chord, role: n.role,
+          artic: ratios[i],
+        });
+        return sub == null ? '~' : midiToNoteName(sub, { flats });
+      }
+      if (i === thickenAt) {
+        const core = scaleOf(n.chord).core;
+        const meloPc = ((n.midi % 12) + 12) % 12;
+        // 3rds and 6ths first, fifths last, NO fourths: measured, "nearest tone
+        // downward" makes the perfect 4th the modal interval, which stacks
+        // quartally against a sustained pad. The octave is excluded outright by
+        // the pitch-class test — that is a doubling, not a chord.
+        let add = null;
+        for (const d of [3, 4, 9, 8, 7]) {
+          const cand = n.midi - d;
+          const pc = ((cand % 12) + 12) % 12;
+          if (cand < chordFloor || pc === meloPc || !core.has(pc)) continue;
+          add = cand; break;
+        }
+        if (add != null) {
+          out = `[${name},${midiToNoteName(add, { flats })}]`;
+          // two notes at one gain is +3dB on that attack, and 11 of 43 leads
+          // already peak at exactly 1.00 with no headroom. 1/sqrt(2) holds the
+          // total power constant so the thickening reads as colour, not accent.
+          gainMul[i] = 0.707;
+        } else thickenAt = -1;
+      }
       boundNotes.push({
         cycle: c, step: n.step, t: fracStr(n.step, n.G), note: name, midi: n.midi,
         accented: n.accented, degree: null, voice: 'main',
         category: n.category, cellIndex: n.cellIndex, chord: n.chord, role: n.role,
         artic: ratios[i],
+        ...(i === thickenAt && out !== name ? { chordUnder: out.slice(out.indexOf(',') + 1, -1) } : {}),
         ...(n.resolvesTo != null ? { resolvesTo: n.resolvesTo } : {}),
       });
-      return name;
+      return out;
     });
     if (!notes.length) { // a rested bar: emit real silence
       noteCycles.push('~'); gainCycles.push(String(round2(gainRange[0]))); clipCycles.push('1');
@@ -1211,7 +1445,7 @@ export function bindMelody(rhythmEntry, harmonyContext, meter = '4/4', opts = {}
       if (holdTo > steps[steps.length - 1]) { steps = [...steps, holdTo]; vals = [...values, '~']; }
     }
     noteCycles.push(tokens(steps, vals, bar.G, { legato }));
-    const gv = noteAccents.map((a) => round2(gainRange[0] + a * (gainRange[1] - gainRange[0])));
+    const gv = noteAccents.map((a, i) => round2((gainRange[0] + a * (gainRange[1] - gainRange[0])) * (gainMul[i] ?? 1)));
     gainCycles.push(tokens(noteSteps, gv.map(String), bar.G, { legato: true, fillLeading: String(gv[0] ?? round2(gainRange[0])) }));
     clipCycles.push(tokens(noteSteps, ratios.map(String), bar.G, { legato: true, fillLeading: String(ratios[0] ?? 1) }));
   }

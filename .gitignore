@@ -16,7 +16,21 @@ songs/**/*.mid
 songs/**/*.wav
 audios/vgmusic/
 
+# r15 research corpora — downloaded for ANALYSIS only, never for retrieval.
+# audios/vgmusic/ stays pinned to the D52 manifest (400 files): growing it
+# re-counts harmony-model.js and re-rolls kept songs' treat ops. Everything
+# fetched beyond that lives here and feeds research/, not src/lib/.
+audios/vgmusic-corpus/
+audios/vgmusic-lanes/
+audios/hsmusic/
+audios/smwcentral/
+
 audios/drum-patterns/
+# r16 piano references (Spirited Away transcriptions + his get_proto sketches).
+# ANALYSIS-only, like every other research corpus (D95): they inform hand-authored
+# rules and never feed src/lib. Also copyrighted transcriptions, and his r16
+# licensing ruling on ripped reference audio was "local-only, never committed".
+audios/piano-refs/
 # HQ render tier (D80): sample libraries, plugins, build trees — multi-GB,
 # re-fetchable; the generated sfz mappings + patches are small and committed
 vendor/sfz/SalamanderGrandPiano-SFZ+FLAC-V3+20200602/
@@ -27,3 +41,46 @@ vendor/pyenv/
 vendor/build/
 audition/hq/*.wav
 audition/hq/*-stems/
+
+# The browser sample pack: ~14MB of mp3 data-URIs built from the wavs above by
+# scripts/build-sample-pack.mjs. It has never been tracked (CLAUDE.md claimed
+# otherwise until r16) and now stays untracked BY DECISION, not by accident —
+# it carries ripped SNES audio, and his r16 licensing ruling was "local-only,
+# never committed". Rebuild it with `node scripts/build-sample-pack.mjs`.
+audition/sample-pack.js
+
+# r15 ear-test reference audio: rips of copyrighted game audio (BRR decodes,
+# a Battle Cats clip) as mp3 data-URIs. Rebuildable with
+# scripts/build-triage-clips.mjs; stays out of git pending the licensing call.
+audition/triage-clips.js
+
+# r16 tail A/B: the "keep the tail" variant build (his triage answer contradicts
+# his r15 instruction, so both exist side by side until he settles it).
+audition/songs-tailkeep.html
+
+# Hyperbits research corpus (350 MIDI chord progressions, filenames carry the
+# numerals). ANALYSIS-only like every other research corpus (D95): it informs
+# hand-authored canon entries and never feeds src/lib by re-counting.
+audios/hyperbits/
+
+# Full VGMusic sweep (31,806 files, ~0.9GB) — owner permission (Ethan,
+# 2026-08-28). ANALYSIS-ONLY like every other research corpus (D95): it informs
+# hand-authored rules and NEVER feeds src/lib by re-counting. Critically it is
+# NOT audios/vgmusic/, which stays pinned to its 400-file D52 manifest — never
+# point import-vgmusic.mjs or build-harmony-model.mjs at this tree. The
+# manifest.json IS tracked so the corpus stays reproducible; the .mid files are
+# third-party transcriptions and stay local.
+audios/vgmusic-full/*/
+audios/vgmusic-full/features.jsonl
+audios/vgmusic-full/_fetch.log
+audios/vgmusic-full/_failures.json
+# Derived analysis outputs: regenerate in seconds from features.jsonl, and
+# clusters.json alone is 16MB. Only the GZIPPED manifest is tracked (1MB vs 10MB)
+# — it is the reproducibility contract that pins which 31,806 files the corpus is,
+# against a site that can change under us. Everything else is recomputable:
+#   gunzip -k audios/vgmusic-full/manifest.json.gz
+#   node scripts/vgmusic-full-fetch.mjs && node scripts/corpus-extract.mjs
+#   node scripts/corpus-cluster.mjs && node scripts/corpus-lanes.mjs
+audios/vgmusic-full/manifest.json
+audios/vgmusic-full/clusters.json
+audios/vgmusic-full/lane-profiles.json

@@ -309,7 +309,12 @@ export function planArrangement(s) {
     };
 
     const candidates = Object.entries(palette)
-      .filter(([name, inst]) => inst.parts.includes(part) && !usedInstruments.has(name))
+      // envOnly (genre-expansion round): an instrument may declare the ONLY
+      // environments it casts in. New voices (sitar, choir, ghost pad …)
+      // carry it so their addition cannot re-roll any existing song's cast —
+      // the library-growth law applied to the palette itself.
+      .filter(([name, inst]) => inst.parts.includes(part) && !usedInstruments.has(name)
+        && (!inst.envOnly || (s.environment && inst.envOnly.includes(s.environment))))
       .map(([name, inst]) => {
         const moodHit = inst.moods.filter((m) => moods.includes(m)).length;
         const cutFit = inst.cuts >= needCut ? 1 : 1 - (needCut - inst.cuts) * 2;
@@ -1026,6 +1031,14 @@ export function renderArrangement(plan, ctx) {
       // opt-in, so every existing page stays byte-identical
       ...(ctx.leadOpts.cadenceNo7 ? { cadenceNo7: true } : {}),
       ...(ctx.leadOpts.chromCore ? { chromCore: true } : {}),
+      ...(ctx.leadOpts.tailOff ? { tailOff: true } : {}),
+      ...(ctx.leadOpts.leapFold ? { leapFold: true } : {}),
+      // r17: the chord-top melody and the minimum note value ride the same
+      // opt-in channel. Every bind path must carry them or the byte-compare
+      // moves songs nobody asked to move — the D89 verify pass caught exactly
+      // this class of miss on the lead-derived rebind.
+      ...(ctx.leadOpts.chordTop ? { chordTop: true } : {}),
+      ...(ctx.leadOpts.minNote ? { minNote: ctx.leadOpts.minNote } : {}),
     };
   };
   for (const layer of plan.layers) {

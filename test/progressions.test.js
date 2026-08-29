@@ -121,14 +121,16 @@ test('D28: retrieval filters by family, mood, length and playable shape', () => 
   assert.ok(ratified.every((r) => KEPT.includes(r.name)));
   assert.equal(findProgressions({ pack: 'ldrolez' }).length, 188);
 
-  // 174 of 188 are playable with the shapes that exist today; the rest need one
-  // of six qualities nobody has auditioned yet.
-  assert.equal(findProgressions({ pack: 'ldrolez', shape: 'shell_37' }).length, 174);
+  // 176 of 188 are playable with the shapes that exist today; the rest need one
+  // of five qualities nobody has auditioned yet. (r16: 174 -> 176 and six -> five
+  // because m6 gained a shape in all five voicings when he ruled "add :6 to the
+  // dialect" — 6 was already there, m6 was the real gap.)
+  assert.equal(findProgressions({ pack: 'ldrolez', shape: 'shell_37' }).length, 176);
   const missing = new Set();
   for (const e of Object.values(PROGRESSIONS)) {
     for (const q of progressionQualities(e)) if (!(q in VOICINGS.shell_37.shapes)) missing.add(q);
   }
-  assert.deepEqual([...missing].sort(), ['2', '5', '69', 'add9', 'm6', 'madd9']);
+  assert.deepEqual([...missing].sort(), ['2', '5', '69', 'add9', 'madd9']);
   assert.equal(playableWith(PROGRESSIONS.min_i_VII_VI_III, 'shell_37'), true);
   assert.throws(() => playableWith(PROGRESSIONS.min_i_VII_VI_III, 'no_such_shape'), /unknown voicing shape/);
 });

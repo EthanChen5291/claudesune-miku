@@ -11,7 +11,7 @@ const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 
 test('songs page: 10 prompts build, every expr green, structure varied', () => {
   const log = execFileSync('node', ['scripts/audition-songs.mjs'], { cwd: ROOT, encoding: 'utf8' });
-  assert.match(log, /23 vibe-prompted songs/);
+  assert.match(log, /47 vibe-prompted songs/);
   // D86: the four fully-synth songs exist and their acc hand left the piano
   for (const n of ['vs_calm_lab', 'vs_calm_menu', 'vs_tense_stealth', 'vs_excited_casino']) {
     const line = log.split('\n').find((l) => l.includes(n));
