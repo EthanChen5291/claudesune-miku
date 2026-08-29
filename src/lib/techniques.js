@@ -204,7 +204,17 @@ export const TECHNIQUES = [
   },
 
   // -------------------------------------------------------------------------
-  // LAYERING — from the production-breakdown reels (the face-cam / DAW ones)
+  // LAYERING — from the production-breakdown reels.
+  //
+  // r22 CORRECTION TO THIS HEADER. It used to read "(the face-cam / DAW ones)",
+  // which overstated what these rows are and appears to have left Ethan believing
+  // a Serum-reels layering analysis exists. IT DOES NOT. These four rows are
+  // title-card layer ORDERS and one legible track list — no per-layer patterns,
+  // no register relationships, nothing about how layers enter or leave. B1 is a
+  // soundfont deconstruction and B2 is FL Studio (Sytrus/Morphine); neither is
+  // Serum. ~36 of the ~51 repo reels have never been opened. His note — "I feel
+  // like it wasn't fully learned how he layered and the specific patterns he put
+  // on each layer" — is correct, and this is the gap it names.
   // -------------------------------------------------------------------------
   {
     id: 'bed_motion_melody_order',
@@ -354,6 +364,116 @@ export const TECHNIQUES = [
     status: 'recorded',
     blocked: 'NOT BUILT. The generator has the narrative end (letters/travel/drop) and reaches the ambient end only by per-song opts, as scary_cave did by hand. Needs the scalar plus a rule mapping vibe -> position.',
   },
+
+  // -------------------------------------------------------------------------
+  // LAYERING — r22, read off the 26 MIDI files Ethan hand-imported 2026-08-29
+  // (Sonic Mania zones, Smash/Splatoon/Mario/Pokemon, two boss themes, an
+  // alien cue, a rest area, a rain cue). Every number is taken inside each
+  // file's STEADY SECTION — his caution: "some songs are abstract or have
+  // specific quirks - just analyze in terms of sections or the 'normal'
+  // sections where it's a good part of the song basically". Whole-file
+  // averages made the Sm4sh menu (a 15-part MEDLEY, each part covering 3% of
+  // the file) read like a sparse arrangement, which is a fact about the
+  // format, not the music.
+  // -------------------------------------------------------------------------
+  {
+    id: 'echo_layer',
+    role: 'layering',
+    intent: 'A second instrument repeats the lead a fixed musical distance later, quieter. It thickens a line by filling its own gaps rather than by making it louder — the opposite of a doubler.',
+    evidence: {
+      kind: 'midi-set', set: 'audios/manual-r22 (26 files)', scope: 'steady sections only',
+      read: '16 of 26 files carry a pair where one part is a constant-lag copy of another (13.5% of all measured pairs). Lag is quantised and clusters: 2 beats (14 pairs), 0.5 (9), 1.5 (8), 1 (7), 0.75 (6). The copy is on a DIFFERENT declared GM family and sits well under the line it follows.',
+    },
+    shape: 'Rebind the lead cell on a different-family voice at ~0.35 of lead gain, then delay the whole pattern by a beat count drawn from the measured lag set. Never at lead gain — that is D100 melody_backup, which his ear rejected.',
+    applies: { roles: ['lead'], notLanes: [] },
+    status: 'wired',
+    impl: 'scripts/audition-songs.mjs opts.echoLayer',
+    // MEASURED after wiring: confirmed on 15 of 16 suite songs at the intended
+    // lag (50-93% of echo onsets matching a lead onset one lag earlier). The
+    // first build emitted `.late(NaN)` on all 16 and was silent — the vibe
+    // object carries `meter`, not `beats`, and Strudel accepted NaN quietly.
+  },
+  {
+    id: 'layer_breathing',
+    role: 'layering',
+    intent: 'Layers stop playing for a bar at a time inside an otherwise unchanged section, staggered so the texture thins in rotation. Sparsity as an ensemble shape, applied per voice rather than per section.',
+    evidence: {
+      kind: 'midi-set', set: 'audios/manual-r22 (26 files)', scope: 'steady sections only',
+      read: 'Inside a steady section with no texture change, 57.5% of parts still rest at least one bar. Median coverage of their own window: lead 50%, counter 66.7%, acc 62.5%, pad 92.9%, bass 100%. Bass and pad are the exceptions and stay continuous.',
+    },
+    shape: 'Mask each non-bass, non-pad layer to rest one bar in eight, with the rest slot offset per layer by a step co-prime to the period so no two layers breathe together.',
+    applies: { roles: ['counter_melody', 'descant', 'marcato', 'sparkle', 'harmony_support'], excludeRoles: ['bass', 'pad'] },
+    status: 'wired',
+    impl: 'scripts/audition-songs.mjs opts.layerRest',
+    // MEASURED: layers rest more than their control on 15 of 16 suite songs
+    // (20-75% fewer sounding bars per voice). The first version reached only
+    // the 2-3 planner layers and moved 3 of 16 — the density that reads as a
+    // wall is in the SUPPORT layers (counterline/descant/marcato/sparkle),
+    // which the engine keeps in a separate list.
+  },
+  {
+    id: 'octave_partner',
+    role: 'layering',
+    intent: 'A second instrument doubles the lead exactly an octave below. The engine had banned this outright; the reference material leans on it heavily.',
+    evidence: {
+      kind: 'midi-set', set: 'audios/manual-r22 (26 files)', scope: 'steady sections only',
+      read: 'Unison/octave is 34.8% of every simultaneous interval in the set — the largest class by far, ahead of P5 (10.3%), P4 (10.0%) and thirds+sixths combined (23.3%).',
+    },
+    shape: 'Bind the lead cell at the LEAD’s own octave so the pitches are identical by construction, then transpose the pattern down twelve. Binding at a lower octave instead re-runs the melody walker, whose range clamp and leapFold are octave-sensitive, and produces a different line (measured: only 35-57% of its notes landed an exact octave under the lead).',
+    applies: { roles: ['lead'], notLanes: ['manor', 'catacombs', 'citadel', 'cave'] },
+    status: 'wired',
+    impl: 'scripts/audition-songs.mjs opts.octaveDouble',
+    // HONEST STATUS: the weakest of the four. It plays and it moves the mix the
+    // right way, but only part of the distance — unison/octave went 21.9% ->
+    // 24.3% against a reference of 34.8%. Horror is excluded because D100 ruled
+    // that a loud wide double is an anti-goal in an atmosphere lane.
+  },
+  {
+    id: 'oblique_companion',
+    role: 'layering',
+    intent: 'The companion holds its pitch while the lead moves stepwise, instead of picking a fresh tone under every note.',
+    evidence: {
+      kind: 'midi-set', set: 'audios/manual-r22 (26 files)', scope: 'steady sections only',
+      read: 'Oblique motion is the plurality pair relation at 27.8%, over parallel 24.7%, contrary 20.9% and similar 19.9%.',
+    },
+    shape: 'Carry the previous companion tone forward while the chord holds and the lead moves by a step or less, subject to every existing companion gate (below the lead, not its pitch class, a chord tone, D100’s in-key rule). A leap re-picks.',
+    applies: { roles: ['companion'] },
+    status: 'wired',
+    impl: 'src/binder/bind.js opts.obliqueCompanion',
+    // THE PREMISE WAS WRONG AND THE MEASUREMENT SAYS SO. The control build was
+    // ALREADY at 27.7% oblique against a reference of 27.8% — a companion that
+    // re-picks still lands on the same tone whenever the lead repeats or the
+    // chord holds, so "the engine cannot make oblique motion" was false.
+    // Holding unconditionally overshot to 45.8%, which is the chromatic-drone
+    // shape D100's ear verdict rejected. Conditioned on stepwise lead motion it
+    // sits at 31.3%. Keep, but it is a small effect on an existing strength.
+  },
+  {
+    id: 'vertical_consonance_gap',
+    role: 'voicing',
+    intent: 'Our vertical writing is markedly more consonant than the reference: we over-use thirds and sixths and almost never sound a second or a seventh.',
+    evidence: {
+      kind: 'midi-set', set: 'audios/manual-r22 (26 files)', scope: 'steady sections only',
+      read: 'Reference vs ours, share of all simultaneities: thirds+sixths 23.3% vs 39.2%; seconds+sevenths 18.9% vs 9.1%; unison/octave 34.8% vs 21.9%; P4+P5 20.3% vs 27.8%.',
+    },
+    shape: 'Not a device — a target. Any future voicing change should be checked against these four buckets rather than against a chord-quality count.',
+    applies: {},
+    status: 'recorded',
+    blocked: 'This is harmony, not layering, and his r22 ask was explicitly layering-only ("i only want these specific layering techniques to basically stack on top of the current engine stuff"). Acting on it would move the acc hand on every unkept song, which is a round of its own.',
+  },
+  {
+    id: 'nct_bracket_both_sides',
+    role: 'melody',
+    intent: 'A non-chord tone is entered by step AND left by step. The bracket is what makes the dissonance legible, not its absence.',
+    evidence: {
+      kind: 'midi-set', set: 'audios/manual-r22 (26 files)', scope: 'steady sections only',
+      read: 'Reference parts carry 22.8% non-chord tones — the same rate we do — but resolve 63.6% by step and APPROACH 63.0% by step. Ours resolve 6.1%. By role: counter 26.0% nct / 69.2% resolved, lead 22.9% / 66.7%, acc 23.4% / 47.6%, pad 9.4% / 14.3% (pads hold, they do not resolve).',
+    },
+    shape: 'Constrain both the entry and the exit of any non-chord tone to a step. D101 built the exit half only, which is half a constraint.',
+    applies: { roles: ['acc', 'lead', 'counter_melody'] },
+    status: 'recorded',
+    blocked: 'The approach half is a bind.js change that would move all 47 judged songs. It independently confirms D102 on a second, hand-picked source — approach and resolution are near-identical there too (48.7% / 43.6%).',
+  },
 ];
 
 /** Look a technique up by id. */
@@ -365,7 +485,6 @@ export function technique(id) {
 export function wiredTechniques() {
   return TECHNIQUES.filter((t) => t.status === 'wired');
 }
-
 /**
  * Recorded-but-unbuilt techniques, with what each is waiting on. This is the
  * "analysis isn't wasted" half — the backlog is queryable instead of buried in

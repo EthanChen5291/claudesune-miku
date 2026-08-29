@@ -260,12 +260,33 @@ flake; rerun before believing it.
   is DENSER (ratio 1.57, denser in 63.9%); when the lead runs continuously it is
   sparser (0.88). Drive companion density from the lead's measured activity, not
   a constant. Entry is early — 83.5% at or before the lead's first bar.
-  Same sweep: our accompaniment uses **more** dissonance than the corpus (22.8%
-  non-chord tones vs 14.1%) and resolves it 7x less often (6.1% vs 43.6%), so the
-  target is FEWER non-chord tones that go somewhere, not more colour. Corpus
-  approach (48.7%) ≈ resolution (43.6%), so real practice brackets a non-chord
-  tone with stepwise motion on BOTH sides — D101's law constrains only the exit
-  and is half a constraint.
+  Same sweep: our accompaniment resolves its non-chord tones 7x less often than
+  the corpus (6.1% vs 43.6%), and corpus approach (48.7%) ≈ resolution (43.6%),
+  so real practice brackets a non-chord tone with stepwise motion on BOTH sides —
+  D101's law constrains only the exit and is half a constraint.
+  **THE NCT *RATE* IS CONTESTED AND NOT ACTIONABLE; THE RESOLUTION GAP IS THE
+  FINDING (r22).** This file briefly asserted "we use MORE dissonance" off a
+  single source. Two references disagree — 31,652 vgmusic files say **14.1%**,
+  the 26 MIDI files Ethan HAND-IMPORTED say **22.8%, identical to ours** — and
+  neither should be treated as the reference:
+  (1) DIFFERENT POPULATIONS. vgmusic is dominated by chip-era 2–4 voice files
+  (the same split that gives master system 20.3% vs ps1 69.9% on free second
+  lines); the hand-imported set is modern and dense (10.3 declared parts, 4.85
+  concurrent). A thin texture has fewer chances to sound a non-chord tone against
+  its own harmony, so part of the lower rate is a voice-count artefact.
+  (2) LOOSER METHOD ON THE SMALL SET. It labels one chord per BAR from every
+  sounding note, so a bar carrying two chords counts every tone of the second as
+  non-chord — an unbounded inflation.
+  **(3) THE RESOLUTION FINDING SURVIVES BOTH**, because it is a ratio internal to
+  each file's own non-chord tones, so the population and labelling differences
+  largely cancel: **63.6% resolved (hand-imported), 43.6% (corpus), 6.1% (ours)**
+  — a 7x–10x gap from two independent sources. Fix resolution; do not act on rate.
+  The per-ROLE split reads as a mechanism rather than a statistic: counter 69.2%
+  resolved, bass 69.2%, lead 66.7%, acc 47.6% — and **the PAD is the outlier at
+  9.4% non-chord and only 14.3% resolved.** The pad is the part that HOLDS rather
+  than passes, and it is the one that does not resolve. That is the same law as
+  "chromatic licence scales with realised motion" arriving from a second
+  direction: a sustaining voice must be diatonic.
   **A companion is NOT more chromatic than its lead** in the corpus (37.4%
   lead-diatonic vs 40.4% the other way on companion-shaped lines) — that
   strengthens D100's in-key rule rather than licensing a loosening of it. And
@@ -556,6 +577,17 @@ flake; rerun before believing it.
   (vs_somber_citadel's lead); opts.choirPad forces a choir pad.
 - **Drums**: his vouched dp_* patterns where the vibe note matches; melody
   outranks drums; cymbals sit far back.
+  **KNOWN BUG, VERIFIED, NOT YET FIXED (r22): the MID band is structurally
+  unreachable.** The default selector is
+  `[byBand('low') ?? pats[0], byBand('high')]` capped at two, so none of the 12
+  mid-band patterns — `backbeat_ghost` among them, i.e. the SNARE/backbeat — can
+  ever be chosen. Measured across the built page: of 27 songs carrying banded
+  drums, **24 have a low pattern, 12 a high, and ZERO a mid**. Every kit in the
+  suite is kick+hat with no snare. Same shape as the r16 second-low-band bug.
+  Fixing it moves the drums on ~27 songs and invalidates their HQ renders, so it
+  is a deliberate round, not a drive-by — and the fix must decide whether mid
+  REPLACES high in the second slot (keeps density, his "drums too loud" note) or
+  becomes a third pick (fuller kit, more density).
 - Sparsity is a legitimate ensemble shape. Repeated uniform anything
   (chords, ornaments, dynamics) reads as "a piano exercise".
 

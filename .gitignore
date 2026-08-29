@@ -84,3 +84,11 @@ audios/vgmusic-full/_failures.json
 audios/vgmusic-full/manifest.json
 audios/vgmusic-full/clusters.json
 audios/vgmusic-full/lane-profiles.json
+
+# r22: hand-picked MIDI (his manual import, 2026-08-29). ANALYSIS ONLY (D95) —
+# never fed to src/lib by counting; techniques are hand-authored from it.
+audios/manual-r22/
+
+# r22: his Miraleste drum kit (commercial pack, imported 2026-08-29).
+# LOCAL-ONLY per his r16 licensing ruling, exactly like the ripped BRR rows.
+audios/miraleste/

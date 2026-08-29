@@ -25,6 +25,7 @@ const SM = (f) => `vendor/sfz/VCSL/Membranophones/Struck Membranophones/${f}`;
 const SI = (f) => `vendor/sfz/VCSL/Idiophones/Struck Idiophones/${f}`;
 const VP = (f) => `vendor/sfz/VSCO-2-CE/VSCO 1 Percussion/${f}`;
 const VS = (f) => `vendor/sfz/VSCO-2-CE/${f}`;
+const MD = (f) => `audios/miraleste/${f}`;
 
 export const SAMPLE_PACK = {
   // ---- Ethan's horror pack (2026-08-27), sorted per his note ---------------
@@ -114,4 +115,33 @@ export const SAMPLE_PACK = {
   // from the nearest sample.
   choir_male: { kind: 'pitched', dir: 'vendor/sfz/SSO-Chorus/Samples', match: /^chorus-male-/, note: 'SSO male chorus aahs, G2-F#4, looped sustains' },
   choir_female: { kind: 'pitched', dir: 'vendor/sfz/SSO-Chorus/Samples', match: /^chorus-female-/, note: 'SSO female chorus aahs, G4-C6, looped sustains' },
+
+  // ---- r22: his Miraleste drum kit (imported 2026-08-29) -------------------
+  // His verdict on the drums, across four cards: "there isn't even a dum being
+  // hit it's just hihat - there should be actual drums like an actual drum
+  // beat", "drums aren't really there", "this isn't 'heavy tribal percussion'
+  // this is bare minimum", and on industrial "it should have more percussion
+  // like metal rod hits or stick hits".
+  //
+  // He attributed part of it to sample quality — "our drum vst isnt very good
+  // compared to like addictive drums (the drums arent very full and dont sound
+  // realistic)" — and handed over this kit. He is half right and the half that
+  // is not sample quality is worse: the DEFAULT drum path had no snare in it at
+  // all (see the band selector in audition-songs.mjs). These give the backbeat
+  // something real to hit; the selector fix is what lets it be hit.
+  //
+  // COMMERCIAL PACK. Local-only under his r16 licensing ruling, exactly like
+  // the ripped BRR rows: audios/miraleste/ is gitignored and the generated
+  // audition/sample-pack.js is untracked.
+  //
+  // Source files are 44.1k stereo float. Round-robin variants per drum so a
+  // repeated hit is not a literal repeat — the machine-gun artefact is a large
+  // part of what reads as "not realistic".
+  md_kick: { kind: 'hit', durS: 0.53, srcs: [MD('md_kick_2.wav'), MD('md_kick_3.wav'), MD('md_kick_1.wav')], note: 'kick, 3-way round robin — punchy over sub' },
+  md_snare: { kind: 'hit', durS: 0.41, srcs: [MD('md_snare_2.wav'), MD('md_snare_3.wav'), MD('md_snare_4.wav'), MD('md_snare_1.wav')], note: 'snare, 4-way round robin — THE backbeat voice the default path never had' },
+  md_clap: { kind: 'hit', durS: 0.18, srcs: [MD('md_clap_1.wav'), MD('md_clap_2.wav'), MD('md_clap_3.wav')], note: 'clap, 3-way round robin — layers WITH the snare on 2 and 4, not instead of it' },
+  md_hat: { kind: 'hit', durS: 0.14, srcs: [MD('md_hat_1.wav'), MD('md_hat_2.wav'), MD('md_hat_3.wav'), MD('md_hat_4.wav')], note: 'closed hat, 4-way round robin' },
+  md_ohat: { kind: 'hit', durS: 1.27, srcs: [MD('md_ohat_1.wav'), MD('md_ohat_2.wav')], note: 'open hat — the & lift before a downbeat' },
+  md_metal: { kind: 'hit', durS: 0.36, srcs: [MD('md_metal_1.wav'), MD('md_metal_2.wav'), MD('md_metal_3.wav')], note: 'metal/gear hits — his industrial ask, "metal rod hits"' },
+  md_stick: { kind: 'hit', durS: 0.22, srcs: [MD('md_stick_1.wav'), MD('md_stick_2.wav')], note: 'stick/rim smack — his industrial ask, "stick hits"' },
 };

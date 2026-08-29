@@ -599,6 +599,9 @@ export function bindFigure(figEntry, harmonyContext, meter = '4/4', opts = {}) {
     octave = figEntry.octave ?? 3, sound = 'piano', fx = '',
     gainRange = DEFAULT_GAIN_RANGE, rhythmName = figEntry.name ?? null,
     stateExtensions = false, loopRoots = false,
+    // r22: keep s2/s4/s6/s7 inside the KEY unless the chord itself leaves it.
+    // See the scaleRel comment below for the measurement that forced this.
+    scaleTokensInKey = false,
   } = opts;
   let extended = 0;
 
@@ -681,9 +684,52 @@ export function bindFigure(figEntry, harmonyContext, meter = '4/4', opts = {}) {
     const values = [];
     // r15 scale tokens: the chord-scale's steps relative to the root, computed
     // lazily — only bars whose figure carries an 's' token pay for it
+    //
+    // r22 — HIS "bad note in G# in the first bar", and the safety claim it broke.
+    //
+    // CLAUDE.md states that s2/s4/s6/s7 "are in-key by construction". Measured,
+    // that is TRUE ONLY FOR A DIATONIC CHORD. chordScale('G#','E:major') returns
+    // the G# MAJOR scale — {G# A# C C# D# F G} — because the chord is chromatic
+    // and gets its own parent scale. Its 6th and 7th degrees are E# and F##,
+    // which render as F and G naturals, both foreign to E major. On
+    // seaside_bounce that wrote `G#3 F4 G5 G#4 F4 G4 ...` across the whole G#
+    // bar, with G5/F5 on top: exactly the "bad HIGH note in G# chord" he heard,
+    // and he heard it on BOTH A/B variants because it long predates r22.
+    //
+    // The fix is the engine's OWN rule, already applied to the melody supply a
+    // few hundred lines down and never applied here: keep a chord-scale pitch
+    // if it is in the KEY, or if the CHORD itself carries it. That preserves
+    // r15/D95's whole point — the harmonic-minor leading tone over a bVI, the
+    // b9 over a V7 — because those are chord tones or in-key, while dropping
+    // the degrees that are neither. It is the D100 companion principle for
+    // figures: leave the key only where the chord already has.
+    //
+    // GATED (opts.scaleTokensInKey). Ungated it moves judged material.
     const scaleRel = bar.toks.some((t) => /(^|\.)s[2467]/.test(t)) && sym
-      ? [...chordScale(sym, harmonyContext.key ?? 'C:major').pcs]
-        .map((p) => ((p - (rootPc ?? 0)) % 12 + 12) % 12).sort((a, b) => a - b)
+      ? (() => {
+        let pcs = [...chordScale(sym, harmonyContext.key ?? 'C:major').pcs];
+        if (scaleTokensInKey) {
+          const kp = parseKey(harmonyContext.key ?? 'C:major');
+          const keySet = new Set(kp.intervals.map((x) => (kp.rootPc + x) % 12));
+          let core = new Set();
+          try { core = new Set([...chordCoreTones(sym)].map((x) => ((x % 12) + 12) % 12)); } catch { core = new Set(); }
+          // FIRST ATTEMPT, and why it is not this: simply DROPPING the foreign
+          // degrees leaves {G#, C, C#, D#} — four pitches, which is not a scale
+          // and makes s6/s7 wrap onto chord tones. Guarding on "at least five
+          // steps" then silently bailed and the flag measured as a no-op.
+          //
+          // Instead the scale is REBUILT as the key's own pitches plus whatever
+          // the chord itself contributes. For G# in E major that is E major
+          // plus B#(C) — the secondary dominant's own third, which is the note
+          // that makes it chromatic and the one that must survive. For any
+          // DIATONIC chord the chord's tones are already in the key, so the set
+          // is the key scale, which is the same seven pitches chordScale
+          // returns for it — those bindings stay byte-identical.
+          const rebuilt = [...new Set([...keySet, ...core])];
+          if (rebuilt.length >= 5) pcs = rebuilt;
+        }
+        return pcs.map((p) => ((p - (rootPc ?? 0)) % 12 + 12) % 12).sort((a, b) => a - b);
+      })()
       : null;
     // D56: opt-in, so every existing binding is byte-identical. The judge page
     // turns it on for its figuration tones; nothing else does yet.
@@ -1025,6 +1071,16 @@ export function bindMelody(rhythmEntry, harmonyContext, meter = '4/4', opts = {}
     // rather than a shadow.
     companion = false,
     companionFloor = 48,
+    // r22 (hand-picked MIDI, 26 files, steady sections only): OBLIQUE motion —
+    // one voice holding while the other moves — is the PLURALITY relation
+    // between layer pairs at 27.8%, ahead of parallel 24.7%, contrary 20.9% and
+    // similar 19.9%. Our companion picks a fresh tone under EVERY lead note, so
+    // it can only move in parallel or similar motion; oblique is unreachable by
+    // construction. With this on it HOLDS its pitch while the chord holds, and
+    // only re-picks when the harmony moves or the held tone stops working under
+    // the lead. Consecutive equal pitches merge, so a hold reads as one long
+    // note rather than a repeated one.
+    obliqueCompanion = false,
   } = opts;
   let profile = MELODY_PROFILES[style];
   if (!profile) throw new Error(`unknown melody style "${style}" (have: ${Object.keys(MELODY_PROFILES).join(', ')})`);
@@ -1300,6 +1356,10 @@ export function bindMelody(rhythmEntry, harmonyContext, meter = '4/4', opts = {}
   // emission — per-cycle note AND gain grids (cadence bars differ), with the
   // breath rendered as an explicit rest before the barline
   const boundNotes = [];
+  // r22: the companion's oblique carry-over. Function-scoped, not per-bar:
+  // a held tone must be able to cross a bar line when the CHORD does, and
+  // the `lastCompanionChord === n.chord` gate is what actually ends the hold.
+  let lastCompanionSub = null, lastCompanionChord = null, lastLeadMidi = null;
   const noteCycles = [];
   const gainCycles = [];
   const clipCycles = [];
@@ -1386,14 +1446,43 @@ export function bindMelody(rhythmEntry, harmonyContext, meter = '4/4', opts = {}
         // Where it cannot, it RESTS, which is the layer's own sparser-than-the-
         // lead rule doing the work rather than a new exception.
         const leadOut = !keyPcs.has(meloPc);
-        let sub = null;
-        for (const d of PREF) {
-          const cand = n.midi - d;
+        const usable = (cand) => {
           const pc = ((cand % 12) + 12) % 12;
-          if (cand < companionFloor || pc === meloPc || !core.has(pc)) continue;
-          if (!leadOut && !keyPcs.has(pc)) continue;
-          sub = cand; break;
+          if (cand < companionFloor || cand >= n.midi || pc === meloPc || !core.has(pc)) return false;
+          if (!leadOut && !keyPcs.has(pc)) return false;
+          return true;
+        };
+        let sub = null;
+        // OBLIQUE FIRST: keep the tone already sounding for as long as it still
+        // works under the moving lead. Every one of the companion's own laws
+        // still gates it — floor, below the lead, not the lead's pitch class,
+        // a chord tone, and D100's in-key rule — so holding can never reach a
+        // pitch a fresh pick could not.
+        // MEASURED DOSE. The control build already sits at 27.7% oblique —
+        // the reference set is 27.8% — because a companion that re-picks still
+        // lands on the same tone whenever the lead repeats or the chord holds.
+        // Holding unconditionally took it to 45.8%, well past the reference and
+        // into drone territory, which is the shape D100's ear verdict rejected.
+        // So the hold applies only where the reference motion actually occurs:
+        // under STEPWISE lead motion. A leap gets a fresh tone, which is what
+        // keeps the companion tracking the line's shape.
+        const leadStep = lastLeadMidi != null && Math.abs(n.midi - lastLeadMidi) <= 2;
+        if (obliqueCompanion && leadStep && lastCompanionSub != null
+            && lastCompanionChord === n.chord && usable(lastCompanionSub)) {
+          sub = lastCompanionSub;
         }
+        if (sub == null) {
+          for (const d of PREF) {
+            const cand = n.midi - d;
+            const pc = ((cand % 12) + 12) % 12;
+            if (cand < companionFloor || pc === meloPc || !core.has(pc)) continue;
+            if (!leadOut && !keyPcs.has(pc)) continue;
+            sub = cand; break;
+          }
+        }
+        lastCompanionSub = sub;
+        lastCompanionChord = n.chord;
+        lastLeadMidi = n.midi;
         boundNotes.push({
           cycle: c, step: n.step, t: fracStr(n.step, n.G),
           note: sub == null ? null : midiToNoteName(sub, { flats }), midi: sub,

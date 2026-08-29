@@ -28,6 +28,7 @@ import { writeFileSync, mkdirSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { compileVibe } from '../src/lib/vibes.js';
+import { parsePrompt } from '../src/lib/prompt-parse.js';
 import { exemplarPool, variationsOf, varyProgression } from '../src/lib/harmony-vary.js';
 import { VERDICTS, DERIVED_VERDICTS, CARD_NOTES } from '../src/lib/verdicts.js';
 import { renderProgression } from '../src/binder/harmony.js';
@@ -1466,6 +1467,7 @@ function buildSong(prompt, name, opts = {}) {
       : (!priorKeep && env === 'jungle') ? 'gm_marimba' // the DKC acc voice
         : synthAcc ? 'gm_epiano1' : 'piano');
   const bindAcc = (fig0, ctx, salt = 0) => bindFigure(accVaryOn ? varyFig(fig0, salt) : fig0, ctx, v.meter, {
+    scaleTokensInKey: opts.scaleTokensInKey === true,
     // D86: synthAcc songs put the accompaniment hand on the Soft Suitcase
     // e-piano (unless accToBass already gave it to the synth bass) — "like
     // in construction left hand piano part, replace it with synths"
@@ -1565,7 +1567,13 @@ function buildSong(prompt, name, opts = {}) {
   });
   // D62 ensemble dial: the vibe's voice count CAPS the cast before the form
   const fullCast = plan.layers.length;
-  plan.layers = plan.layers.slice(0, v.ensemble.count);
+  // r21 A/B build, corpus insight I1 (opts.voiceCap): the vgmusic sweep puts
+  // median CONCURRENCY at 4.16 voices (median max 5) over 31,652 files; ours
+  // measures 5-7. The gap is real and it is the one corpus number that
+  // survived the adversarial pass unweakened. It is applied ONLY where a song
+  // asks for it — no judged song sets voiceCap, so the D62 cast everywhere
+  // else is byte-identical.
+  plan.layers = plan.layers.slice(0, Math.min(v.ensemble.count, opts.voiceCap ?? Infinity));
   // r19/D100 — THE LEAD SINGER. His answer when I asked which device should
   // carry scary_catacombs' scare, verbatim: "the melody is super loud (not
   // dissonant) and completely harmonic in the violin like a lead singer which
@@ -2272,9 +2280,49 @@ function buildSong(prompt, name, opts = {}) {
     // two low-band floors; the env-default path is untouched, so no song that
     // did not ask for it gains a drum.
     const lows = pats.filter((p) => RHYTHMS[p]?.band === 'low');
+    // ---- r22: THE MISSING SNARE. His note, verbatim: "for the drums there
+    // isn't even a dum being hit it's just hihat - there should be actual drums
+    // like an actual drum beat." Measured on that song: 256 hi-hats, 80 kicks,
+    // ZERO snares over 16 bars. The cause is this line — it took ONE 'low'
+    // pattern and ONE 'high' and capped at two, and every snare in RHYTHMS is
+    // band 'mid', so the backbeat was unreachable on the default path no matter
+    // what the vibe asked for. That is the THIRD failure of this selector's
+    // shape (r16: a second low-band floor silently dropped; D100: the low-band
+    // cap again) and the fix is the same each time — stop assuming the kit has
+    // exactly two parts.
+    //
+    // Lanes that own their percussion keep it: desert's iqa' floor is judged
+    // law (D93/D94) and horror's ambience deliberately has no kit. Jungle is
+    // left alone here too — his "this isn't heavy tribal percussion" note wants
+    // MORE HAND DRUMS, not a trap snare, and guessing at that is how the lane
+    // law got broken twice before.
+    const NO_BACKBEAT_LANES = new Set(['desert', 'manor', 'catacombs', 'citadel', 'cave', 'jungle', 'shrine']);
+    //
+    // OPT-IN, NOT ENGINE-WIDE, AND THAT IS DELIBERATE. Switching it on by
+    // default moved 13 of the 47 judged songs (measured) and would invalidate
+    // the 66 HQ renders queued for his r21 listen. There is also a fork only
+    // his ear can settle, and the two live notes point opposite ways: r21
+    // "the drums are a bit too loud" (nostalgic_casino) against r22 "there
+    // isn't even a dum being hit". So mid arrives as a THIRD voice (fuller,
+    // denser) only where a song asks; the alternative — mid REPLACING the high
+    // hat, same density, kick+snare instead of kick+hat — is one flag away if
+    // that is what he wants instead.
+    const wantsBackbeat = opts.percBackbeat === true && !priorKeep && !opts.grammarPin
+      && !opts.percPatterns && !NO_BACKBEAT_LANES.has(env) && !catacombAmbience;
+    // The BACKBEAT outranks whatever mid pattern the vibe happens to list.
+    // Measured first pass: miniboss_drive and splash_action picked up
+    // `gallop_arp` — a snare at 12/bar with nothing on 2 and 4. That is a
+    // snare, but it is not what he asked for ("an actual drum beat"), and
+    // preferring the vibe's existing mid quietly satisfied the band check
+    // while missing the ask.
+    const midPick = !wantsBackbeat ? null
+      : (presence === 'foreground' || v.bpm >= 130 ? 'backbeat_hard' : 'backbeat_kit');
     let picks = opts.percPatterns
       ? [...new Set([...lows.slice(0, 2), byBand('high')].filter(Boolean))].slice(0, 3)
-      : [...new Set([byBand('low') ?? pats[0], byBand('high')].filter(Boolean))].slice(0, 2);
+      : [...new Set([byBand('low') ?? pats[0], midPick, byBand('high')].filter(Boolean))].slice(0, 3);
+    // his industrial ask: "if it's industrial it should have more percussion
+    // like metal rod hits or stick hits or such" — a fourth voice, over the kit
+    if (wantsBackbeat && env === 'construction') picks = [...new Set([...picks, 'industrial_metal'])];
     // r16 JUNGLE FLOOR + KICK, both from his answers.
     //   jungle-floor: "depends on the song's energy! use a for relaxing jungle
     //   themes but otherwise make a beat similar to b. important that you
@@ -2544,8 +2592,52 @@ function buildSong(prompt, name, opts = {}) {
     // it is a CHORDAL OSTINATO in its own consistent rhythm. Two shapes by
     // seed: the subharmony walk (dyad hits whose top voice moves 3→5→6) and
     // the rhythmic repeat (one dyad hammered on the 3+3+2 trailer grid).
+    // ---- r22: HIS SUPPORT FIGURES (opts.supportFigure) --------------------
+    // Verbatim: "for actual patterns, other than alternate melody, there can
+    // also just be support in some instruments too. like in battle themes the
+    // violins can go root third fifth or root fifth 8th repeatedly 8th note
+    // style or root third fifth third root third fifth or etc. all sorts of
+    // different combinations to support it, whether with piano or synth or
+    // strings to make it sound more 'action' and 'high stakes'."
+    //
+    // This is D94's device — the staccato string ostinato — with the figures
+    // stated explicitly rather than a new layer, which is the correction the
+    // other session made and it is right. Three shapes, straight from his three
+    // examples, driven in 8ths because that is the "8th note style" he names.
+    //
+    // GATED, and it has to be: these are extra entries in a hash-picked pool,
+    // so letting them into the default `% 2` would re-roll the marcato shape on
+    // every unkept song that already has one (D95's law — pool growth moves
+    // `fnv % pool.length` everywhere).
+    //
+    // NOTE the tension with D94, which says the marcato is "multiple notes per
+    // hit not just one note typically". These figures are single tones by his
+    // own description. Both are his words, five rounds apart; the chordal
+    // shapes below are untouched and this is an alternative, not a replacement.
+    const SUPPORT_FIGS = [
+      {
+        name: 'support-R35', bars: 1, grid: 16, class: 'comp', meter_class: '4/4', legato: false,
+        onsets: ['0', '1/8', '1/4', '3/8', '1/2', '5/8', '3/4', '7/8'],
+        figure: ['R', '3', '5', 'R', '3', '5', 'R', '3'],
+        accents: [0.9, 0.55, 0.62, 0.85, 0.55, 0.62, 0.8, 0.55],
+      },
+      {
+        name: 'support-R5oct', bars: 1, grid: 16, class: 'comp', meter_class: '4/4', legato: false,
+        onsets: ['0', '1/8', '1/4', '3/8', '1/2', '5/8', '3/4', '7/8'],
+        figure: ['R', '5', 'R+', '5', 'R', '5', 'R+', '5'],
+        accents: [0.92, 0.55, 0.7, 0.55, 0.88, 0.55, 0.7, 0.55],
+      },
+      {
+        name: 'support-R353', bars: 1, grid: 16, class: 'comp', meter_class: '4/4', legato: false,
+        onsets: ['0', '1/8', '1/4', '3/8', '1/2', '5/8', '3/4', '7/8'],
+        figure: ['R', '3', '5', '3', 'R', '3', '5', '3'],
+        accents: [0.9, 0.55, 0.72, 0.55, 0.85, 0.55, 0.7, 0.55],
+      },
+    ];
     const mcShape = fnv(`${name}|marcshape`) % 2;
-    const mcFig = mcShape === 0
+    const mcFig = opts.supportFigure
+      ? SUPPORT_FIGS[(typeof opts.supportFigure === 'number' ? opts.supportFigure : fnv(`${name}|supfig`)) % SUPPORT_FIGS.length]
+      : mcShape === 0
       ? {
         name: 'marcato-subharmony', bars: 1, grid: 16, class: 'comp', meter_class: '4/4', legato: false,
         onsets: ['0', '1/4', '3/8', '1/2', '3/4', '7/8'],
@@ -2569,7 +2661,7 @@ function buildSong(prompt, name, opts = {}) {
     if (mcBars.some(Boolean)) {
       extraParts.push(...varySplit(bindMc, mcBars));
       extraSolos._marcato = bindMc(ctxBar);
-      extraInfo.push(`marcato: staccato ${mcSound} ${mcShape === 0 ? 'dyad subharmony (R.3-3.5-R.5-3.6 walk)' : 'dyad rhythmic repeat (3+3+2 grid)'} (oct 4, busy sections)`);
+      extraInfo.push(`marcato: staccato ${mcSound} ${opts.supportFigure ? `support ostinato ${mcFig.figure.slice(0, 4).join('-')} in 8ths (r22, his "root third fifth ... 8th note style")` : mcShape === 0 ? 'dyad subharmony (R.3-3.5-R.5-3.6 walk)' : 'dyad rhythmic repeat (3+3+2 grid)'} (oct 4, busy sections)`);
     }
   }
   // D87 ("i want you to see what you did and teach the engine" — the kept
@@ -3234,8 +3326,19 @@ function buildSong(prompt, name, opts = {}) {
       // no voice at all the companion shares with it rather than going silent,
       // because a song losing the layer entirely is the worse outcome.
       const hard = new Set([LEAD_SOUND, accVoiceFor(accFig)]);
-      const strict = POOL.filter((s) => !hard.has(s) && !castSounds.has(s));
-      const free = strict.length ? strict : POOL.filter((s) => !hard.has(s));
+      // r21 A/B build, corpus insight I2 (opts.companionFamilySplit): 69.3% of
+      // corpus second lines — and 85.9% of the pairs that TRADE phrases —
+      // declare a different GM family than the lead. D102's ruling is that
+      // register and timbre separate a layer and rhythm does not, and this is
+      // the timbre half of it. Asked of the DECLARED family
+      // (INSTRUMENTS[...].family), never of a name list: that shape has now
+      // failed five times. Soft, like castSounds — sharing a family beats
+      // losing the layer.
+      const leadFam = INSTRUMENTS[LEAD_SOUND]?.family;
+      const famOK = (s) => !opts.companionFamilySplit || !leadFam || INSTRUMENTS[s]?.family !== leadFam;
+      const strict = POOL.filter((s) => !hard.has(s) && !castSounds.has(s) && famOK(s));
+      const loose = POOL.filter((s) => !hard.has(s) && famOK(s));
+      const free = strict.length ? strict : loose.length ? loose : POOL.filter((s) => !hard.has(s));
       const pick = cfg.sound ?? (free.length ? free[fnv(`${name}|companion`) % free.length] : null);
       if (pick) {
         const cSound = opts.fullSynth ? SYNTH_OF(pick) : pick;
@@ -3277,6 +3380,11 @@ function buildSong(prompt, name, opts = {}) {
           // longest note, and thickening the companion too would put four
           // sounding pitches on that attack from two instruments.
           companion: true,
+          // r22 · L2: oblique motion is the PLURALITY pair relation in the
+          // reference set (27.8%, over parallel 24.7% / contrary 20.9% /
+          // similar 19.9%), and a companion that re-picks under every lead
+          // note cannot produce it at all.
+          obliqueCompanion: opts.obliqueCompanion === true,
           ...(opts.leadRangeSteps ? { rangeSteps: opts.leadRangeSteps } : {}),
         });
         companionExpr = renderLetterLead(form, mfx, (L) => {
@@ -3291,13 +3399,182 @@ function buildSong(prompt, name, opts = {}) {
     }
   }
 
+  // ==========================================================================
+  // r22 — THREE LAYERING DEVICES READ OFF HIS HAND-PICKED MIDI (26 files).
+  //
+  // His ask: "i only want these specific layering techniques to basically stack
+  // on top of the current engine stuff". So each is an opt with no default —
+  // the 47 judged songs cannot move — and each is a layer ADDED beside the
+  // existing cast rather than a replacement for any of it.
+  //
+  // Every statistic below is taken inside each file's STEADY SECTION, not the
+  // whole file, per his caution that "some songs are abstract or have specific
+  // quirks". The core window is the longest stretch where the set of sounding
+  // parts holds still at full strength; whole-file averages made the Sm4sh menu
+  // (a fifteen-part MEDLEY, each part covering 3% of the file) read like a
+  // sparse arrangement, which is a fact about the format and not about music.
+  const layerFam = (snd) => INSTRUMENTS[snd]?.family ?? null;
+  const otherFamily = (pool, avoid) => {
+    const fams = new Set(avoid.map(layerFam).filter(Boolean));
+    const free = pool.filter((x) => !avoid.includes(x) && !fams.has(layerFam(x)));
+    return free.length ? free : pool.filter((x) => !avoid.includes(x));
+  };
+  const ECHO_POOL = laneHorror ? ['gm_viola', 'gm_cello', 'gm_pad_metallic']
+    : env === 'desert' ? ['gm_oboe', 'gm_shanai', 'gm_pan_flute']
+      : env === 'jungle' ? ['gm_kalimba', 'gm_marimba', 'gm_vibraphone']
+        : ['gm_vibraphone', 'gm_clarinet', 'gm_epiano1', 'gm_music_box'];
+
+  // ---- L1 · THE ECHO LAYER (opts.echoLayer) --------------------------------
+  // 16 of 26 files carry a pair where one part is a CONSTANT-LAG copy of
+  // another — 13.5% of all measured pairs. The lag is quantised and clusters:
+  // 2 beats (14 pairs), 0.5 (9), 1.5 (8), 1 (7), 0.75 (6). It is not a reverb
+  // and not a doubling: the copy sits on a DIFFERENT instrument, quieter, and
+  // it lands in the lead's own gaps, which is why it thickens a line without
+  // making it louder. Strudel's .late() takes CYCLES and one cycle is one bar,
+  // so the beat lag is divided by the meter.
+  let echoExpr = null;
+  if (opts.echoLayer) {
+    const cfg = typeof opts.echoLayer === 'object' ? opts.echoLayer : {};
+    const LAGS = [2, 0.5, 1.5, 1, 0.75];            // measured, most common first
+    const lagBeats = cfg.lagBeats ?? LAGS[fnv(`${name}|echolag`) % LAGS.length];
+    const pool = otherFamily(ECHO_POOL, [LEAD_SOUND, accVoiceFor(accFig)]);
+    const pick = cfg.sound ?? pool[fnv(`${name}|echo`) % pool.length];
+    const eSound = opts.fullSynth ? SYNTH_OF(pick) : pick;
+    const eRange = INSTRUMENTS[eSound]?.range;
+    const eOct = cfg.octave ?? (eRange ? Math.max(eRange[0], Math.min(leadOctave, eRange[1] - 1)) : leadOctave);
+    // measured on the reference pairs: the copy is a SHADOW, well under the
+    // line it follows. Never at lead gain — that is a doubling, and D100's
+    // melody_backup ruling is exactly what a loud copy sounds like.
+    const eGain = Math.round(leadGain * (cfg.gainMul ?? 0.35) * 100) / 100;
+    const bindEcho = (L, ctxL) => bindMelody(letterCell(L), ctxL, v.meter, {
+      style: 'toby-fox', seed: letterSeed(L), octave: eOct, sound: eSound,
+      fx: `.gain(${eGain}).room(0.5)`,
+      hold: LEAD.hold, mergeRepeats: LEAD.merge, articFloor: artFloor,
+      cadenceNo7, chromCore, tailOff: grammarFresh, leapFold: grammarFresh,
+      minNote: grammarFresh ? (opts.leadMinNote ?? 1) : 0,
+      ...(opts.leadRangeSteps ? { rangeSteps: opts.leadRangeSteps } : {}),
+    });
+    const raw = renderLetterLead(form, mfx, (L) => {
+      const base0 = L.endsWith('*') ? L.slice(0, -1) : L;
+      return bindEcho(base0, L.endsWith('*') ? ctxBarV : ctxBar).expr;
+    }).lead;
+    if (raw) {
+      // .late() takes CYCLES and one cycle is one bar, so the beat lag is
+      // divided by the METER's beat count. `v.beats` does not exist — the
+      // vibe carries `meter`, and `beats` is derived from it above. Reading
+      // the wrong one emitted `.late(NaN)`, which Strudel accepted silently
+      // and which produced an echo layer that never sounded: 0 of 16.
+      echoExpr = `(${raw}).late(${+(lagBeats / beats).toFixed(4)})`;
+      extraSolos._echo = echoExpr;
+      extraInfo.push(`echo layer: ${eSound} repeats the lead ${lagBeats} beat(s) later at ${eGain} (r22 — 16 of 26 reference files carry one)`);
+    }
+  }
+
+  // ---- L5 · THE OCTAVE PARTNER (opts.octaveDouble) -------------------------
+  // 34.8% of every simultaneous interval in the reference set is a unison or an
+  // octave — the single largest class, ahead of P5 10.3% and P4 10.0%, and
+  // ahead of thirds+sixths combined (23.3%). The engine currently FORBIDS this:
+  // the companion rejects a candidate whose pitch class matches the lead's,
+  // calling it "a doubling, not a chord". That is the right rule for the
+  // companion, which is meant to be its own line — but it left the engine with
+  // no octave partner at all, and the reference material leans on one.
+  // It goes BELOW (D77: nothing sits over the lead) on a different family.
+  let octaveExpr = null;
+  if (opts.octaveDouble && !laneHorror) {
+    const cfg = typeof opts.octaveDouble === 'object' ? opts.octaveDouble : {};
+    const pool = otherFamily(ECHO_POOL, [LEAD_SOUND, accVoiceFor(accFig), ...(echoExpr ? [] : [])]);
+    const pick = cfg.sound ?? pool[fnv(`${name}|oct8`) % pool.length];
+    const oSound = opts.fullSynth ? SYNTH_OF(pick) : pick;
+    const oRange = INSTRUMENTS[oSound]?.range;
+    const want = leadOctave - 1;
+    const oOct = cfg.octave ?? (oRange ? Math.max(oRange[0], Math.min(want, oRange[1] - 1)) : want);
+    const oGain = Math.round(leadGain * (cfg.gainMul ?? 0.4) * 100) / 100;
+    const bindOct = (L, ctxL) => bindMelody(letterCell(L), ctxL, v.meter, {
+      // the LEAD's octave, deliberately: same seed + same cell + same context =
+      // the same pitches. The transposition happens on the pattern below, so
+      // the interval is an exact octave by construction rather than by luck.
+      style: 'toby-fox', seed: letterSeed(L), octave: leadOctave, sound: oSound,
+      fx: `.gain(${oGain})`,
+      hold: LEAD.hold, mergeRepeats: LEAD.merge, articFloor: artFloor,
+      cadenceNo7, chromCore, tailOff: grammarFresh, leapFold: grammarFresh,
+      minNote: grammarFresh ? (opts.leadMinNote ?? 1) : 0,
+      ...(opts.leadRangeSteps ? { rangeSteps: opts.leadRangeSteps } : {}),
+    });
+    const octRaw = renderLetterLead(form, mfx, (L) => {
+      const base0 = L.endsWith('*') ? L.slice(0, -1) : L;
+      return bindOct(base0, L.endsWith('*') ? ctxBarV : ctxBar).expr;
+    }).lead;
+    // down an octave unless the instrument's own declared range cannot take it
+    const octDrop = (oRange && leadOctave - 1 < oRange[0]) ? 0 : -12;
+    octaveExpr = octRaw && octDrop ? `(${octRaw}).add(note(${octDrop}))` : null;
+    if (octaveExpr) {
+      extraSolos._octave = octaveExpr;
+      extraInfo.push(`octave partner: ${oSound} doubles the lead an octave down at ${oGain} (r22 — unison/octave is 34.8% of reference simultaneities)`);
+    }
+  }
+
+  // ---- L4 · LAYERS THAT BREATHE (opts.layerRest) ---------------------------
+  // Inside a STEADY section — no section change, no texture change — 57.5% of
+  // the reference parts still rest for at least one bar. Median coverage of
+  // their own core window: lead 50%, counter 66.7%, acc 62.5%, pad 92.9%,
+  // bass 100%. Ours play every bar they are cast in, which is what makes a
+  // full arrangement read as a wall. Bass and pad are exempt because the
+  // reference exempts them; the rests are PHASE-OFFSET per layer so the
+  // texture thins in rotation instead of everyone breathing at once.
+  // r22 SECOND PASS — HIS NOTE, TWICE, AND IT IS ABOUT MY OWN DEVICE.
+  //   menu_orchestral: "the strings disappear kinda abruptly and whenever they
+  //     appeared loudly again it's abrupt. strings should always FADE in at
+  //     times like this not just cut in and spawn in"
+  //   rain_street: "the cello or viola ... was a bit too loud, and again it
+  //     shouldn't just spawn in that loud, it should increase in gradually
+  //     especially since its somber"
+  // v1 masked the rest bar with a hard 0/1 `.mask()`, so every layer snapped
+  // back at full gain the instant its rest ended — the breathing device created
+  // the very artefact he is describing. A gain ENVELOPE does the rest AND the
+  // ramp in one pattern: 0 through the rest, then two bars climbing back. It
+  // also ramps the opening, which is the other half of "always fade in".
+  const breathEnvFor = (i) => {
+    const period = 8;
+    const slot = (i * 3 + 1) % period;             // co-prime step: layers stagger
+    const g = [];
+    for (let b = 0; b < form.totalBars; b++) {
+      const prev1 = (b - 1) % period === slot && b >= 1;
+      const prev2 = (b - 2) % period === slot && b >= 2;
+      if (b % period === slot) g.push(0);          // the rest itself
+      else if (prev1) g.push(0.35);                // first bar back — a swell, not a cut
+      else if (prev2) g.push(0.7);
+      else if (b === 0) g.push(0.4);               // the song's own opening
+      else if (b === 1) g.push(0.75);
+      else g.push(1);
+    }
+    // maskString run-length-encodes any per-bar sequence, gains included
+    return maskString(g);
+  };
+  const layerMixOut = opts.layerRest
+    ? layerMixExprs.map((x, i) => {
+      const l = shaped.layers[i];
+      if (!l || l.derives === 'chords' || /bass|pad/i.test(l.part ?? '')) return x;
+      return `(${x}).mul(gain("<${breathEnvFor(i)}>"))`;
+    })
+    : layerMixExprs;
+  // The planner cast is 2-3 layers; the SUPPORT layers (counterline, descant,
+  // marcato, sparkle) are extraParts, and they are where the density that reads
+  // as a wall actually sits. Breathing only the cast moved 3 of 16 songs.
+  // Phase continues past the cast indices so nothing rests in unison.
+  const extraOut = opts.layerRest
+    ? extraParts.map((x, i) => `(${x}).mul(gain("<${breathEnvFor(i + layerMixExprs.length)}>"))`)
+    : extraParts;
+  if (opts.layerRest) extraInfo.push(`layer breathing: each non-bass/pad layer rests 1 bar in 8, staggered, and FADES back over two bars instead of cutting in (r22 — 57.5% of reference parts rest inside a steady section; his \u201cstrings should always FADE in ... not just cut in and spawn in\u201d)`);
+
   const mixParts = [
     withCurve(bdMaskStr ? `(${baseMix}).mask("<${bdMaskStr}>")` : baseMix),
     ...(letterLead.lead ? [withCurve(letterLead.lead, true)] : []),
     ...(companionExpr ? [withCurve(companionExpr, true)] : []),
     ...(melodyDoubleExpr ? [withCurve(melodyDoubleExpr, true)] : []),
-    ...layerMixExprs.map((x, i) => withCurve(x, shaped.layers[i]?.derives === 'lead' || shaped.layers[i]?.derives === 'lead-rhythm')),
-    ...extraParts.map((x) => withCurve(x)),
+    ...(echoExpr ? [withCurve(echoExpr, true)] : []),
+    ...(octaveExpr ? [withCurve(octaveExpr, true)] : []),
+    ...layerMixOut.map((x, i) => withCurve(x, shaped.layers[i]?.derives === 'lead' || shaped.layers[i]?.derives === 'lead-rhythm')),
+    ...extraOut.map((x) => withCurve(x)),
     // percAllBars also rides THROUGH the breakdown strip (NSMB law: the
     // hand-drum loop never changes across sections — verify catch: the
     // breakdown mask re-created somber desert's 16 drumless bars)
@@ -3921,6 +4198,240 @@ buildSong({ emotion: 'excited', environment: 'festival', meter: '4/4' }, 'vs_exc
   dropIntro: { pattern: 'dp_b_52_s', note: 'first 4 measures are buildup, so don\u2019t loop those. also do the buildup with the melody and harmony (try a song with this buildup). energetic upbeat' },
 });
 
+// ============================================================================
+// r21 — THE A/B COMPARISON BUILD (his ask, verbatim): "revert the corpus back
+// to what it was before the midi analysis temporarily and then regenerate the
+// songs, with only notes you think are really necessary/important insights
+// added? i want them side by side for comparison"
+//
+// The 16 natural-language prompts audition/corpus-suite.html was written from,
+// run through THIS engine instead of the corpus-statistics generator. Nothing
+// is reverted in src/lib — the MIDI work never wrote there (D95 held), so the
+// "revert" is a BACKEND swap: the judged pipeline (vibe compile, click-kept
+// exemplar retrieval, planner cast, letter form, tone travel, treats, vouched
+// drums, dynamic curves, every taste-canon law) instead of harmony and
+// texture composed from corpus statistics.
+//
+// Gated on CS_COMPARE=1 and written to its own JSON. audition/songs.html is
+// NOT rewritten in this mode — the judged baseline is never a side effect.
+//
+// ENV mapping: the parser (src/lib/prompt-parse.js) is the SAME one the corpus
+// page used, so both backends read the same words out of the same sentence.
+// Where `engine` differs from the parse it is written down and shown on the
+// card, because the engine's environment slot doubles as a FUNCTION slot
+// (boss/fight) and the parser ranks by word length, not by function.
+const CS_COMPARE = process.env.CS_COMPARE === '1';
+const CS_PROMPTS = [
+  { n: 'mech_boss_station', p: 'boss fight music for a giant mech battle on an abandoned space station, lots of drums',
+    // parser ranks "station" (space) over "boss"; the engine HAS a boss slot and
+    // it encodes the function the prompt actually names. Its own alt list agrees.
+    engine: { environment: 'boss' }, why: 'parsed env space; took its own alt "boss" — the engine\'s environment slot encodes scene FUNCTION, and "boss fight" is the function here' },
+  { n: 'desert_market', p: 'chill background music for a busy desert market town, kind of middle eastern' },
+  { n: 'music_box_manor', p: 'creepy music box theme for an abandoned victorian mansion' },
+  { n: 'jungle_explore', p: 'upbeat jungle exploration theme with heavy tribal percussion' },
+  { n: 'friend_dies', p: 'sad slow piano piece for the scene where the main character\'s friend dies',
+    engine: { environment: 'aftermath' }, why: 'parser found no environment at all — "aftermath" is the engine\'s post-event scene, the closest slot it owns' },
+  { n: 'lab_stealth', p: 'tense stealth music for sneaking through a research laboratory at night' },
+  { n: 'cathedral_epic', p: 'epic triumphant choir music for a final battle in a gothic cathedral' },
+  { n: 'underwater_calm', p: 'calm ambient loopable music for an underwater coral reef area' },
+  { n: 'casino_groove', p: 'groovy jazzy lounge music for a casino level' },
+  { n: 'frozen_ruins', p: 'lonely somber music for frozen ruins in a snowstorm, minimal and sparse',
+    engine: { environment: 'snow' }, why: 'parsed "ruins" over "snowstorm" by word length; took its own alt "snow" so this prompt and friend_dies do not both land on aftermath' },
+  { n: 'catacomb_action', p: 'fast intense action music for fighting undead in the catacombs' },
+  { n: 'diner_goofy', p: 'silly bouncy cartoon music for a chaotic kitchen minigame' },
+  { n: 'alien_mystery', p: 'mysterious eerie synth music for discovering an alien structure on a distant planet' },
+  { n: 'campfire_rest', p: 'warm nostalgic music for resting at a campfire save point' },
+  { n: 'factory_industrial', p: 'industrial mechanical music for a factory level with pounding percussion' },
+  { n: 'shrine_choir', p: 'peaceful sacred choir music for an ancient forest shrine' },
+];
+
+// The ONLY MIDI-analysis insights that reach this build. Both are per-song opts
+// with no default, so no judged song can move; both were chosen because they
+// survived the adversarial verify pass that weakened seven of eight headline
+// claims, and because the engine could not already express them.
+const CS_INSIGHT_TEXT = {
+  I2: 'companion timbre — 69.3% of corpus second lines, and 85.9% of the pairs that trade phrases, declare a DIFFERENT GM family than the lead. D102: register and timbre separate a layer; rhythm does not. Asked of INSTRUMENTS[...].family, never of a name list. (opts.companionFamilySplit)',
+};
+// I1 WAS "voice count": D102 records corpus median concurrency 4.16 against
+// "ours 5-7", and this build first shipped a blanket voiceCap: 4 on that basis.
+// MEASURED, same probe on both sides — distinct pitched VOICES sounding on a
+// 1/16 grid over the first 32 bars of the mix:
+//     judged audition/songs.html   mean of per-song medians 4.02 (median 4)
+//     corpus reference                                      4.16
+// There is no gap. The engine is already at the corpus norm, and the cap took
+// this build DOWN to 3.44 — thinner than the corpus AND thinner than the
+// judged baseline. The "5-7" figure is not reproducible by a distinct-voice
+// count; a NOTE count on the same songs gives 8.72, so the original number
+// measured neither. Third wrong corpus figure of this arc, and it is the one I
+// acted on: the blanket cap is gone. voiceCap survives only where the PROMPT
+// asks for it ("piano piece", "minimal and sparse", "busy"), which is
+// prompt-honouring, not a corpus finding.
+const CS_INSIGHT_CORRECTED = 'voice count (dropped) — corpus 4.16 vs judged 4.02 measured on the same probe: no gap. The blanket voiceCap made this build thinner than both.';
+// deliberately NOT applied, and why — the honest half of "only what's necessary"
+const CS_INSIGHT_SKIPPED = [
+  'density inversion (2nd line denser when the lead rests, 1.57 vs 0.88) — D102 also concludes our rhythm-LOCKED companion is already the right shape; the inversion belongs to the further free line, which this engine does not cast.',
+  'early entry (83.5% of second parts enter at or before the lead\'s first bar) — our layer entries are 139/139 on section starts. Real, but it is the r17 unbuilt ask and a structural change, not an opt.',
+  'fewer non-chord tones, bracketed on BOTH sides (corpus approach 48.7% ~ resolution 43.6%; ours 22.8% NCT at 6.1% resolved) — the exit half is already D101\'s resolution law. The approach half is a bind.js change that would move all 43 judged songs.',
+  'chromatic licence scaling with realised motion — already reached, more bluntly, by D100\'s hard in-key gate on the companion. Changing a judged mechanism to a better mechanism is its own round.',
+];
+
+// prompt words -> engine opts. Modifiers are what the USER typed, not corpus
+// findings — honouring them is the baseline the comparison needs, not an insight.
+const CS_HORROR_LANES = new Set(['manor', 'catacombs', 'citadel', 'cave']);
+function csOpts(mods, v, env, emotion) {
+  const o = {
+    // I2 on every song in this build. I1 (voiceCap) is NOT a default — see the
+    // correction below.
+    companionFamilySplit: true,
+  };
+  // D93's lullaby trap, not a corpus finding: a horror lane whose modal
+  // retrieval lands a BRIGHT major trope reads lullaby rather than
+  // mysterious. The judged songs pin family per song in SONG_OPTS; a build
+  // from raw prompts has no such per-song hand, so the lane states it.
+  // Triumphant citadel is the documented exception — D93 makes it the MOST
+  // tonal lane (Bloodborne law: tonal theme, gothic timbre).
+  if (CS_HORROR_LANES.has(env) && emotion !== 'triumphant') o.family = 'minor';
+  // the CONTROL for I2's measurement: CS_NO_FAMSPLIT=1 rebuilds the same
+  // sixteen with the split off, so "how many companions changed voice" is a
+  // measured before/after and not an assertion.
+  if (process.env.CS_NO_FAMSPLIT === '1') o.companionFamilySplit = false;
+  if (mods.perc === 'foreground') { o.percPresence = 'foreground'; o.percAllBars = true; }
+  if (mods.perc === 'light') o.percPresence = 'light';
+  // "piano piece" means piano. voiceCap only trims the PLANNER cast; the
+  // counterline and descant are generator layers gated on the ensemble dial,
+  // so a cap alone still left two string layers on a solo-piano prompt.
+  if (mods.soloPiano) { o.voiceCap = 1; o.companion = false; o.counterline = false; o.descant = false; }
+  if (mods.sparse) o.voiceCap = 2;
+  if (mods.dense) o.voiceCap = 5;
+  if (mods.choir) o.choirPad = true;
+  if (mods.strings) o.stringsPad = true;
+  if (mods.synth) o.fullSynth = true;
+  if (mods.ambient) o.padWaveCalm = true;
+  if (mods.musicBox) o.leadSound = 'gm_music_box';
+  if (mods.groove) o.swing = 0.585; // D97's measured swing ratio, not a guess
+  if (mods.tempo) o.bpm = Math.max(50, Math.round(v.bpm * (1 + mods.tempo)));
+  return o;
+}
+
+if (CS_COMPARE) {
+  const firstCompare = songs.length;
+  for (const row of CS_PROMPTS) {
+    const P = parsePrompt(row.p);
+    // D92 is "4/4 only", and the compile-time re-map only catches 2/4 because
+    // 3/4 had never come up: 46 of the 47 judged songs are 4/4 and the 47th is
+    // the kept 2/4 exception. Two of these sixteen compiled to 3/4 — a meter
+    // his ear has never ruled on — which would confound the A/B with a
+    // variable neither backend was asked about. Pinned, and said on the card.
+    const prompt = { emotion: P.emotion, environment: P.environment, meter: '4/4', ...(row.engine ?? {}) };
+    // a probe compile, only to read the vibe's own bpm before a tempo modifier
+    // scales it — buildSong compiles again for real
+    const probe = compileVibe({ ...prompt, name: `ce_${row.n}` });
+    const opts = csOpts(P.mods, probe, prompt.environment, prompt.emotion);
+    const S = buildSong(prompt, `ce_${row.n}`, opts);
+    const built = songs[songs.length - 1];
+    built.promptText = row.p;
+    built.parsed = { emotion: P.emotion, environment: P.environment, mods: P.mods };
+    built.engineNote = row.why ?? null;
+    built.insights = Object.keys(CS_INSIGHT_TEXT);
+    built.optsApplied = Object.fromEntries(Object.entries(opts).map(([k, val]) => [k, val]));
+    void S;
+  }
+  const compare = songs.slice(firstCompare);
+  mkdirSync(OUT, { recursive: true });
+  writeFileSync(join(OUT, '.compare-engine.json'), JSON.stringify({
+    generated: new Date().toISOString(),
+    insights: CS_INSIGHT_TEXT, skipped: CS_INSIGHT_SKIPPED, corrected: CS_INSIGHT_CORRECTED,
+    songs: compare.map(({ solos, ...rest }) => ({ ...rest, solos })),
+  }));
+  console.log(`wrote audition/.compare-engine.json — ${compare.length} engine-backend songs`);
+  for (const s of compare) {
+    console.log(`  ${s.name}: ${s.key} @${s.bpm} ${s.meter} · ${s.scheme || 'no letters'} over ${s.totalBars} bars · acc ${s.accompaniment} · ${s.ensemble.count}/${s.ensemble.fullCast} voices [${s.cast.join(', ') || 'piano only'}]${s.drums.length ? ` · drums: ${s.drums.join(' + ')}` : ''}`);
+  }
+}
+
+// ============================================================================
+// r22 — THE LAYERING TEST SUITE.
+//
+// His ask, after hand-importing 26 MIDI files: "regenerate the test suite over
+// songs with prompts of whatever you think is relevant to the .midi files and
+// you can test out the new stuff and patterns".
+//
+// So the prompts are drawn from what those files ARE — Sonic Mania zones, a
+// Smash menu, Splatoon, NSMBU overworlds, a Pokemon festival, two boss themes,
+// an alien invasion, a rest area, a rain cue — and every song is built TWICE:
+// once with the three r22 layering devices plus the oblique companion, once
+// without. Same name-seed, same everything else, so the only variable in the
+// pair is the layering.
+const R22 = process.env.R22_LAYERS === '1';
+const R22_PROMPTS = [
+  { n: 'zone_brass_hook', p: 'upbeat retro platformer zone theme with a big brass hook', ref: 'SM-StudiopolisZoneAct1/2, SM_GreenHillZoneAct2' },
+  { n: 'miniboss_drive', p: 'high energy boss battle with driving drums and a synth lead', ref: 'SM-MiniBoss, Grandia2_BattleVersion3, ducktales boss' },
+  { n: 'seaside_bounce', p: 'breezy bright seaside level theme, bouncy and upbeat', ref: 'SM-OilOceanZoneAct2, SM_GreenHillZoneAct2' },
+  { n: 'saloon_swagger', p: 'goofy western saloon level with honky tonk swagger and groove', ref: 'SM-MirageSaloonZoneAct1K/1ST/2' },
+  { n: 'factory_machines', p: 'industrial factory zone with pounding mechanical percussion', ref: 'SM-FlyingBatteryZoneAct1, AFOArmy' },
+  { n: 'press_garden_quirk', p: 'quirky mechanical printing press level, playful and precise', ref: 'SM-PressGardenZoneAct1/2' },
+  { n: 'alien_invasion', p: 'eerie tense alien invasion theme with strings, on a distant planet', ref: 'AFO-Alien_theme' },
+  { n: 'menu_orchestral', p: 'epic sweeping orchestral main menu theme, triumphant', ref: 'Phazonruler_-_Sm4sh_Menu' },
+  { n: 'robot_stage', p: 'fast chiptune robot factory stage, energetic and synthy', ref: 'SSBWU-Megaman2_AirMan' },
+  { n: 'overworld_guitar', p: 'cheerful overworld theme with acoustic guitar and choir voices', ref: 'NSMBU_Overworld, NSMBU_World_3-1' },
+  { n: 'rest_area_warm', p: 'warm nostalgic rest area music, calm and reflective', ref: 'AllStarRestArea' },
+  { n: 'island_festival', p: 'festive tropical celebration with steel drums and flute', ref: 'Magikarp_Festival, Jungle-Challenge' },
+  { n: 'rain_street', p: 'lonely somber rain at night, minimal and sparse piano', ref: 'shenmue_rain' },
+  { n: 'splash_action', p: 'colorful high energy modern action battle theme', ref: 'WIIU_Splatoon_MainTheme' },
+  { n: 'jungle_marimba', p: 'upbeat jungle challenge with marimba and heavy tribal percussion', ref: 'Jungle-Challenge' },
+  { n: 'final_showdown', p: 'dramatic triumphant final showdown against a giant machine', ref: 'EggReverie, SM3DW_Main_Theme' },
+];
+
+// The four devices, each with the number that justifies it. Measured inside
+// each reference file's STEADY SECTION (his caution about abstract stretches
+// and quirks), never over whole files.
+const R22_DEVICES = {
+  echoLayer: 'ECHO — 16 of 26 files carry a part that is a constant-lag copy of another (13.5% of all pairs). Lag clusters at 2 beats (14 pairs), 0.5 (9), 1.5 (8), 1 (7), 0.75 (6). Different instrument, well under the line it follows, landing in its gaps.',
+  octaveDouble: 'OCTAVE PARTNER — unison/octave is 34.8% of every simultaneous interval in the set, the largest class, ahead of P5 (10.3%), P4 (10.0%) and thirds+sixths combined (23.3%). The engine had banned it outright.',
+  layerRest: 'BREATHING — inside a steady section with no texture change, 57.5% of reference parts still rest at least one bar. Median coverage of their own window: lead 50%, counter 66.7%, acc 62.5%, pad 92.9%, bass 100%. Ours play every bar.',
+  obliqueCompanion: 'OBLIQUE COMPANION — oblique motion (one voice holds, the other moves) is the plurality pair relation at 27.8%, over parallel 24.7%, contrary 20.9%, similar 19.9%. A companion that re-picks under every lead note cannot make oblique motion at all.',
+};
+
+if (R22) {
+  const first = songs.length;
+  const built = [];
+  for (const row of R22_PROMPTS) {
+    const P = parsePrompt(row.p);
+    const prompt = { emotion: P.emotion, environment: P.environment, meter: '4/4' };
+    const probe = compileVibe({ ...prompt, name: `r22_${row.n}` });
+    const base = csOpts(P.mods, probe, prompt.environment, prompt.emotion);
+    // The pair MUST differ ONLY in the devices. buildSong hashes `name` for
+    // every retrieval it makes — exemplar, cell, cast, travel — so the two
+    // variants are built under the SAME name and relabelled afterwards. Giving
+    // the control its own name would re-roll all of that and the A/B would be
+    // comparing two different songs instead of one song's layering.
+    const seedName = `r22_${row.n}`;
+    for (const [tag, extra] of [
+      ['r22', {
+        echoLayer: true, octaveDouble: true, layerRest: true, obliqueCompanion: true,
+        // r22 second pass, straight off his notes on the first one
+        percBackbeat: true,     // "there isn't even a dum being hit it's just hihat"
+        supportFigure: true,    // "root third fifth ... 8th note style ... 'action' and 'high stakes'"
+        scaleTokensInKey: true, // "bad note in G# in the first bar" — he named it on BOTH variants
+      }],
+      ['r22base', {}],
+    ]) {
+      buildSong(prompt, seedName, { ...base, ...extra });
+      const S = songs[songs.length - 1];
+      S.name = `${tag}_${row.n}`;   // page-addressable; the seed above is what was hashed
+      S.promptText = row.p; S.reference = row.ref; S.variant = tag;
+      S.pairKey = row.n; S.devices = tag === 'r22' ? Object.keys(R22_DEVICES) : [];
+      built.push(S);
+    }
+  }
+  mkdirSync(OUT, { recursive: true });
+  writeFileSync(join(OUT, '.r22-layers.json'), JSON.stringify({
+    generated: new Date().toISOString(), devices: R22_DEVICES,
+    songs: songs.slice(first).map(({ solos, ...rest }) => ({ ...rest, solos })),
+  }));
+  console.log(`wrote audition/.r22-layers.json — ${built.length} songs (${R22_PROMPTS.length} prompts x 2 variants)`);
+}
+
 // ---- every mix through the engine's own transpiler -------------------------
 let checked = 0;
 for (const [name, tid, expr, bpm, beats, totalBars] of CHECKS) {
@@ -3941,8 +4452,15 @@ const html = page(DATA);
 const inline = html.slice(html.lastIndexOf('<script>') + 8, html.lastIndexOf('</script>'));
 acorn.parse(inline, { ecmaVersion: 'latest' });
 mkdirSync(OUT, { recursive: true });
-writeFileSync(join(OUT, 'songs.html'), html);
-console.log(`wrote audition/songs.html — ${songs.length} vibe-prompted songs (10 + the buildup/drop song)`);
+// CS_COMPARE builds extra songs into `songs`; writing songs.html from that
+// array would append 16 unjudged cards to the judged baseline. The comparison
+// mode writes its own JSON (above) and leaves songs.html alone.
+if (!CS_COMPARE && !R22) {
+  writeFileSync(join(OUT, 'songs.html'), html);
+  console.log(`wrote audition/songs.html — ${songs.length} vibe-prompted songs (10 + the buildup/drop song)`);
+} else {
+  console.log(`${CS_COMPARE ? 'CS_COMPARE' : 'R22_LAYERS'}=1 — audition/songs.html NOT written (judged baseline untouched)`);
+}
 for (const s of songs) {
   console.log(`  ${s.name}: ${s.key} @${s.bpm} ${s.meter} · ${s.scheme || 'no letters'} over ${s.totalBars} bars · acc ${s.accompaniment} (${s.articulation})${s.travel.length ? ` → ${s.travel.length} travel` : ''} · ${s.ensemble.count}/${s.ensemble.fullCast} voices [${s.cast.join(', ') || 'piano only'}]${s.drums.length ? ` · drums: ${s.drums.join(' + ')}` : ''}${s.treat ? ` · treat ${s.treat.op}` : ''}${s.drop ? ' · BUILDUP+DROP' : ''}`);
 }

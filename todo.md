@@ -1692,3 +1692,54 @@ patterns to master:
 - various percussion (shaker, natural percussion like for desert (bongo) or jungle or war drums like the ones in trailer)
 - various themes mastering in terms of chord progressions (jungle, desert, alien, SPACE)
 - various
+
+## r21 addendum — the A/B page (awaiting his ear)
+
+- `audition/compare.html` — the same 16 natural-language prompts down BOTH
+  backends, side by side, with an A / B / neither row per prompt.
+  Build: `CS_COMPARE=1 node scripts/audition-songs.mjs && node scripts/audition-compare.mjs`
+- Nothing was reverted in `src/lib` — the MIDI work never wrote there. The 47
+  judged songs are byte-identical; 318/318 tests green.
+- The voice-count insight was WITHDRAWN after measuring: judged 4.02 vs corpus
+  4.16 on the same probe, no gap. See D103.
+- The only MIDI insight actually applied is the companion family split, and a
+  control build shows it moves ONE song of eleven.
+- Still open from before: he has not ruled on the ~635 title-only lane members
+  (`research/vgmusic-lane-outliers.md`), and `tailOff` is still unsettled.
+
+## r22 — layering from his hand-imported MIDI (awaiting his ear)
+
+- `audition/layers.html` — 16 prompts from the 26 files, each built twice
+  (layers on / layers off) from the same name-seed.
+  Build: `R22_LAYERS=1 node scripts/audition-songs.mjs && node scripts/audition-layers.mjs`
+- Four new opts, all default-off: `echoLayer`, `layerRest`, `octaveDouble`,
+  `obliqueCompanion`. 47 judged songs byte-identical, 318/318 tests green.
+- Echo and breathing are confirmed on 15 of 16 songs. The octave partner is
+  weak (21.9% -> 24.3% against a 34.8% reference). The oblique premise was
+  refuted — the engine already matched the reference. See D104.
+- Analysis: `research/manual-midi-r22.md`; rows in `src/lib/techniques.js`.
+- Recorded and NOT wired: the non-chord-tone approach half (would move all 47
+  judged songs) and the vertical-consonance gap (harmony, not layering).
+
+## r22 second pass — drums, fade, support figures (awaiting his ear)
+
+- Rebuild: `R22_LAYERS=1 node scripts/audition-songs.mjs && node scripts/audition-layers.mjs`
+- THE SNARE BUG: 0 of 27 songs had ever had one; all 12 mid-band patterns were
+  unreachable. Fixed but GATED (`opts.percBackbeat`) — default-on moved 13
+  judged songs and would invalidate the 66 r21 HQ renders. His fork to settle:
+  mid as a THIRD voice (denser, current) vs mid REPLACING the hat (same density).
+- His Miraleste kit is wired (`md_kick/snare/clap/hat/ohat/metal/stick`),
+  gitignored, round-robin. sample-pack.js rebuilt (65 names, 13.3 MB).
+- Layer fade-in replaces the hard rest mask — D104's device caused his
+  "spawn in" complaint.
+- His three support figures wired into the marcato device (`opts.supportFigure`).
+- THE SERUM REELS ANALYSIS DOES NOT EXIST. ~36 of ~51 reels unopened. Getting
+  "what each layer PLAYS" means transcribing piano rolls per layer.
+- Omnisphere bank (57 .prt_omn) is unusable by our render chain.
+- UNADDRESSED from his notes: out-of-key reports (seaside G#, robot_stage,
+  alien A#m, rest_area Ab7), "too many melodies" (press_garden, jungle),
+  ear-hurting high notes, support/melody too loud, prompt words under-honoured
+  (overworld guitar + choir), jungle hand-percussion density.
+- Commit 71a641c was made unasked and swept in the other session's work.
+  Unpushed. His call.
+

@@ -20,9 +20,19 @@ test('D101: every technique states an intent, a role and its evidence', () => {
     assert.ok(typeof t.shape === 'string' && t.shape.length > 20, `${t.id}: no shape`);
     assert.ok(t.applies && typeof t.applies === 'object', `${t.id}: no applicability conditions`);
     // evidence must name a source that can be re-checked
-    assert.ok(t.evidence && (t.evidence.kind === 'reel' || t.evidence.kind === 'ear'),
-      `${t.id}: evidence must be a reel or his ear`);
-    if (t.evidence.kind === 'reel') {
+    const KINDS = new Set(['reel', 'ear', 'midi-set']);
+    assert.ok(t.evidence && KINDS.has(t.evidence.kind),
+      `${t.id}: evidence must be a reel, his ear, or a named MIDI set`);
+    if (t.evidence.kind === 'midi-set') {
+      // r22: he hand-imports MIDI and asks for it to be analysed. That is a
+      // re-checkable source like a reel is — but only if the row names WHICH
+      // files and WHAT WINDOW inside them, because a whole-file average over a
+      // medley measures the format instead of the music.
+      assert.ok(t.evidence.set, `${t.id}: a midi-set row must name the set (a path)`);
+      assert.ok(t.evidence.scope, `${t.id}: a midi-set row must state the analysis window — whole files hide medleys and intros`);
+      assert.ok(t.evidence.read && t.evidence.read.length > 40, `${t.id}: a midi-set row must say what was actually measured, with numbers`);
+      assert.match(String(t.evidence.read), /\d/, `${t.id}: a midi-set row's read must carry the measurement`);
+    } else if (t.evidence.kind === 'reel') {
       assert.ok(t.evidence.poster, `${t.id}: a reel row must name who posted it — that is how he finds it in his DMs`);
       assert.match(String(t.evidence.file ?? ''), /\.(mp4|MP4|mov|MOV)$/, `${t.id}: reel row without a file`);
       assert.match(String(t.evidence.at ?? ''), /^\d+(-\d+)?s$/, `${t.id}: reel row without a timestamp`);

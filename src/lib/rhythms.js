@@ -27,6 +27,45 @@ export const RHYTHMS = {
     meter_class: '4/4', tags: ['hat', 'bass', 'house'],
     character: 'Pure offbeat pulse — the exhale between four-floor kicks. Accent tilts to the 3& lift.',
   },
+  // ---- r22: THE BACKBEAT, on real samples -------------------------------
+  // His verdict, verbatim: "for the drums there isn't even a dum being hit
+  // it's just hihat - there should be actual drums like an actual drum beat".
+  // Measured on the song he wrote it about: 256 hi-hats and 80 kicks over 16
+  // bars and ZERO snares. Not a taste problem — the default selector takes one
+  // 'low' pattern and one 'high' and caps at two, and every snare in this file
+  // is band 'mid', so a backbeat was structurally unreachable.
+  //
+  // These carry their own sounds from his Miraleste kit rather than Strudel's
+  // built-in `sd`, which is the other half of his note ("the drums arent very
+  // full and dont sound realistic"). Clap LAYERS with the snare on the
+  // backbeat rather than replacing it — that stacking is most of what reads as
+  // a full kit.
+  backbeat_kit: {
+    role: 'percussion', band: 'mid', style: 'universal', provenance: 'hand-written', ratified: false,
+    onsets: ['1/4', '1/4', '5/8', '3/4', '3/4', '7/8'],
+    sounds: ['md_snare', 'md_clap', 'md_snare', 'md_snare', 'md_clap', 'md_snare'],
+    accents: [1.0, 0.75, 0.3, 1.0, 0.75, 0.35],
+    meter_class: '4/4', tags: ['snare', 'backbeat', 'kit'],
+    character: 'Snare+clap together on 2 and 4, with a ghost snare pushing into each of them. The doubled backbeat is the "actual drum beat".',
+  },
+  backbeat_hard: {
+    role: 'percussion', band: 'mid', style: 'universal', provenance: 'hand-written', ratified: false,
+    onsets: ['1/4', '1/4', '1/2', '3/4', '3/4', '15/16'],
+    sounds: ['md_snare', 'md_clap', 'md_snare', 'md_snare', 'md_clap', 'md_snare'],
+    accents: [1.0, 0.85, 0.4, 1.0, 0.85, 0.55],
+    meter_class: '4/4', tags: ['snare', 'backbeat', 'action'],
+    character: 'The same doubled backbeat with a hit on 3 and a 16th pickup into the bar line — for high-energy songs where the 2-and-4 alone reads thin.',
+  },
+  // his industrial ask: "if it's industrial it should have more percussion like
+  // metal rod hits or stick hits or such"
+  industrial_metal: {
+    role: 'percussion', band: 'mid', style: 'industrial', provenance: 'hand-written', ratified: false,
+    onsets: ['1/8', '1/4', '1/2', '5/8', '3/4', '7/8'],
+    sounds: ['md_stick', 'md_metal', 'md_metal', 'md_stick', 'md_metal', 'md_stick'],
+    accents: [0.5, 1.0, 0.8, 0.45, 1.0, 0.5],
+    meter_class: '4/4', tags: ['perc', 'industrial', 'metal'],
+    character: 'Metal-rod and stick hits on an off-grid pattern over the kit — machinery, not a drummer.',
+  },
   backbeat_ghost: {
     role: 'percussion', band: 'mid', style: 'universal', provenance: 'hand-written', ratified: false,
     onsets: ['1/4', '7/16', '3/4', '15/16'],
