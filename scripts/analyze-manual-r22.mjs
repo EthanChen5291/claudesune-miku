@@ -23,7 +23,9 @@ import { readCorpusMidi, extractParts, GM_NAMES, GM_FAMILY, DRUM_ROLE, PC_NAMES 
 import { detectKey, labelChord, classifyParts } from './corpus-features.mjs';
 
 const ROOT = join(fileURLToPath(new URL('..', import.meta.url)));
-const DIR = join(ROOT, 'audios', 'manual-r22');
+// r22b: he annotated a second set IN THE FILENAMES — "bye_bye(I like chord
+// progression and melody).mid". Point the reader at either set.
+const DIR = process.argv[2] ? join(ROOT, process.argv[2]) : join(ROOT, 'audios', 'manual-r22');
 const mod12 = (x) => ((x % 12) + 12) % 12;
 const median = (a) => { if (!a.length) return 0; const b = [...a].sort((x, y) => x - y); return b[Math.floor(b.length / 2)]; };
 const mean = (a) => (a.length ? a.reduce((x, y) => x + y, 0) / a.length : 0);
@@ -307,8 +309,8 @@ for (const f of files) {
   try { out.push(analyze(join(DIR, f), f.replace(/\.mid$/i, ''))); }
   catch (e) { console.log(`FAILED ${f}: ${e.message}`); }
 }
-writeFileSync(join(ROOT, 'audios', 'manual-r22', '_analysis.json'), JSON.stringify(out, null, 1));
-console.log(`analysed ${out.length}/${files.length} files -> audios/manual-r22/_analysis.json`);
+writeFileSync(join(DIR, '_analysis.json'), JSON.stringify(out, null, 1));
+console.log(`analysed ${out.length}/${files.length} files -> ${DIR}/_analysis.json`);
 for (const a of out) {
   console.log(`\n${a.name}  ${a.key} @${a.bpm} ${a.timeSig} · ${a.totalBars} bars · ${a.nPitched} pitched + ${a.nDrums} drum parts · ${a.chordChanges} chord changes`);
   for (const p of a.parts) {

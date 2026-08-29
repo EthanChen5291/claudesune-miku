@@ -6,7 +6,13 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { TECHNIQUES, technique, wiredTechniques, pendingTechniques } from '../src/lib/techniques.js';
 
-const ROLES = new Set(['harmony', 'voicing', 'acc', 'melody', 'layering', 'timbre', 'form']);
+// 'bass' and 'percussion' added r23. The taxonomy was written when no row
+// covered either part; the battle analysis produced one of each (a repeated-root
+// pedal and a tom kit) and folding them into 'acc'/'timbre' would have made the
+// vocabulary lie about what the row is. Unlike a retrieval pool, this set is
+// hashed by nothing — growing it cannot move a song (the "rows are addressed by
+// NAME" test below is what guarantees that).
+const ROLES = new Set(['harmony', 'voicing', 'acc', 'bass', 'percussion', 'melody', 'layering', 'timbre', 'form']);
 
 test('D101: every technique states an intent, a role and its evidence', () => {
   assert.ok(TECHNIQUES.length >= 10, `only ${TECHNIQUES.length} techniques`);

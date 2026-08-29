@@ -951,29 +951,73 @@ export function planMelodyForm(form, { name = 'song', scheme = null } = {}) {
  *
  * `exprFor(letter)` binds and returns that letter's melody expression.
  */
-export function renderLetterLead(form, mf, exprFor) {
+export function renderLetterLead(form, mf, exprFor, { perStatement = false, phraseBars = 0 } = {}) {
   const letterOf = new Map(mf.sections.map((s) => [s.index, s.letter]));
   const perLetter = {};
   const parts = [];
   for (const letter of mf.letters) {
-    const bars = [];
+    // r24 — bars grouped by STATEMENT, so a returning letter can be bound
+    // differently from its first pass. `exprFor` is called once per statement
+    // and identical results are merged back into a single mask, which is what
+    // keeps a caller that ignores the statement byte-identical to the old path.
+    const byStmt = [];
+    let stmt = 0, cursor = 0;
+    const push = (arr, n, val) => { for (let b = 0; b < n; b++) arr.push(val); };
     for (const sec of form.sections) {
       const mine = letterOf.get(sec.index) === letter;
-      if (!mine) { for (let b = 0; b < sec.bars; b++) bars.push(0); continue; }
-      if (sec.dialogue) {
-        const pb = sec.dialogue.phraseBars;
-        for (let b = 0; b < sec.bars; b++) bars.push(Math.floor(b / pb) % 2 === 0 ? 1 : 0);
+      if (mine) {
+        const own = [];
+        if (sec.dialogue) {
+          const pb = sec.dialogue.phraseBars;
+          for (let b = 0; b < sec.bars; b++) own.push(Math.floor(b / pb) % 2 === 0 ? 1 : 0);
+        } else {
+          push(own, sec.bars, sec.pianoLead ? 1 : 0);
+        }
+        byStmt.push({ stmt: stmt++, bars: [...Array(cursor).fill(0), ...own] });
+        for (let i = 0; i < byStmt.length - 1; i++) push(byStmt[i].bars, sec.bars, 0);
       } else {
-        for (let b = 0; b < sec.bars; b++) bars.push(sec.pianoLead ? 1 : 0);
+        for (const g of byStmt) push(g.bars, sec.bars, 0);
       }
+      cursor += sec.bars;
     }
-    if (!bars.some(Boolean)) continue;
-    const expr = exprFor(letter);
-    if (!expr) continue;
-    const m = maskString(bars);
-    const masked = /^1(@\d+)?$/.test(m) ? expr : `${expr}.mask("<${m}>")`;
-    perLetter[letter] = masked;
-    parts.push(masked);
+    let live = byStmt.filter((g) => g.bars.some(Boolean));
+    if (!live.length) continue;
+    // r24 — and this is where the repetition actually lives. A STATEMENT is a
+    // section, and a section is routinely two or four phrases long, so an 8-bar
+    // melody cell loops inside one 16-bar section however the statements are
+    // seeded. (Measured: keying the seed on the statement number alone moved the
+    // repetition metric by exactly zero.) Splitting a statement at phrase length
+    // is the melody's version of D102's rule for the accompaniment — "a section
+    // of 8+ bars splits in half so every piece stays on the 4-bar grid".
+    if (perStatement && phraseBars >= 2) {
+      const cut = [];
+      for (const g of live) {
+        const on = g.bars.map((x, i) => (x ? i : -1)).filter((i) => i >= 0);
+        if (on.length <= phraseBars) { cut.push(g); continue; }
+        for (let k = 0; k * phraseBars < on.length; k++) {
+          const slice = on.slice(k * phraseBars, (k + 1) * phraseBars);
+          const bars = g.bars.map(() => 0);
+          for (const i of slice) bars[i] = 1;
+          cut.push({ stmt: cut.length, bars });
+        }
+      }
+      live = cut.map((g, i) => ({ ...g, stmt: i }));
+    }
+    const merged = new Map();
+    for (const g of live) {
+      const expr = perStatement ? exprFor(letter, g.stmt) : exprFor(letter, 0);
+      if (!expr) continue;
+      if (!merged.has(expr)) merged.set(expr, g.bars.slice());
+      else { const acc = merged.get(expr); for (let i = 0; i < g.bars.length; i++) acc[i] = acc[i] || g.bars[i]; }
+    }
+    const made = [];
+    for (const [expr, bars] of merged) {
+      const m = maskString(bars);
+      made.push(/^1(@\d+)?$/.test(m) ? expr : `${expr}.mask("<${m}>")`);
+    }
+    if (!made.length) continue;
+    perLetter[letter] = made.length === 1 ? made[0] : `stack(${made.join(', ')})`;
+    parts.push(...made);
   }
   return {
     perLetter,

@@ -474,6 +474,258 @@ export const TECHNIQUES = [
     status: 'recorded',
     blocked: 'The approach half is a bind.js change that would move all 47 judged songs. It independently confirms D102 on a second, hand-picked source — approach and resolution are near-identical there too (48.7% / 43.6%).',
   },
+
+  // -------------------------------------------------------------------------
+  // LAYERING — r22, the FACE-CAM PRODUCTION REELS. His ask: "the reels with the
+  // guy visibly making the beats with a camera in the top half of the reel ...
+  // it wasn't fully learned how he layered and the specific patterns he put on
+  // each layer". 44 reels frame-sampled, 9 are production reels, 4 producers —
+  // SIX OF THE NINE ARE ONE PERSON (the Serum producer). Every row states
+  // reels / independent sources. All 9 are in MINOR: nothing here transfers to
+  // a modal or major lane on its own authority.
+  // Full transcriptions: research/reel-layers-r22.{md,json}
+  // -------------------------------------------------------------------------
+  {
+    id: 'layer_by_reregistration',
+    role: 'layering',
+    intent: 'A new layer is not new material. It is an existing layer transposed by an octave or two with a different note-value class and onset offset, introducing no new pitch class.',
+    evidence: {
+      kind: 'reel', poster: 'multiple (6 reels / 2 sources)', file: 'ScreenRecording_08-26-2026 13-25-13_1.MP4', at: '0-56s',
+      read: 'One reel states it outright: separation comes entirely from register, density and note length, never from new harmony. In another the BASS is drawn as the lead ostinato’s four downbeat pitches sustained an octave down, and the counter is the same lead oscillation an octave up.',
+    },
+    shape: 'Take a bound layer’s pitch sequence, transpose ±12 or ±24, and change its note-value class and onset offset. Never generate a new pitch set.',
+    applies: { roles: ['companion', 'counter_melody', 'bass'] },
+    status: 'recorded',
+    blocked: 'This is D99/D100’s companion generalised — the same rebinding at +12/+24 with different note values would yield the second and third own-melody layer without casting new voices. It replaces how layers are generated, so it needs its own round and an A/B.',
+  },
+  {
+    id: 'freeze_body_move_one_slot',
+    role: 'acc',
+    intent: 'In a repeating figure, bind exactly ONE token to the harmony and hold every other token as a fixed pitch across the whole loop. The frozen tones re-colour themselves as the chord moves underneath.',
+    evidence: {
+      kind: 'reel', poster: 'the Serum producer (4 reels / 1 source)', file: 'igexport-DZS8aawIFrb.mp4', at: '0-55s',
+      read: 'A 4-note per-beat cell whose slots 3 and 4 never change for the whole loop: the frozen dyad reads 9+b3 over Em, #11+5 over C, then 5+b6 over B. Another reel: the body of every bar is byte-identical and only the downbeat moves — and those four downbeats spell the entire progression.',
+    },
+    shape: 'One token binds to the chord root; the rest are pinned scale pitches held for the loop. Colour arises from re-harmonisation, never from substitution.',
+    applies: { roles: ['acc', 'ostinato', 'marcato'] },
+    status: 'wired', impl: 'audition-songs.mjs opts.frozenSlot — the frozen body binds against a CONSTANT tonic context, one slot binds against the real progression',
+    wiredNote: 'r23. Verified on the emitted notes of all 14 stress-test songs: every position in the frozen body carries exactly ONE distinct pitch across all bars, while the moving slot carries 3-6. Opt-in, not a default: rolled by hash it moved 10 of the 47 judged songs including three lanes that pin their own texture.',
+  },
+  {
+    id: 'hold_bar_move_bar',
+    role: 'layering',
+    intent: 'A support layer alternates on a strict 2-bar period: hold one whole note, then walk stepwise and land back on the held pitch.',
+    evidence: {
+      kind: 'reel', poster: 'the Serum producer (4 reels / 1 source)', file: 'igexport-Da3c_kEI25C.mp4', at: '0-55s',
+      read: 'Odd bars a whole note, even bars exactly two notes at beat 2 and the & of 3. In another reel: bar 1 hold, bar 2 a neighbour figure, bar 3 hold, bar 4 a two-note move. The most repeated device across the set — and all four instances are one person.',
+    },
+    shape: 'Parity-gate the layer on bar index. Hold bars sustain a chord tone; move bars walk stepwise against chordScale and resolve onto the next hold.',
+    applies: { roles: ['counter_melody', 'descant', 'harmony_support'] },
+    status: 'recorded',
+    blocked: 'Single-source. Generalises across keys because the walk is defined against chordScale rather than by fixed interval, so it is cheap to build when he wants it.',
+  },
+  {
+    id: 'register_bands_then_duration',
+    role: 'layering',
+    intent: 'Allocate disjoint octave bands to layers first. Where two must share a band, separate them by note-value class — one holds while the other runs.',
+    evidence: {
+      kind: 'reel', poster: 'multiple (7 reels / 3 sources)', file: 'igexport-DalZ717INc7.mp4', at: '0-58s',
+      read: 'Four disjoint octave bands with no doubled pitch. One reel states it verbatim: independence is bought with register, not rhythm. Where a collision is deliberate, one reel says the layer was put in the other’s octave specifically so a sustain can sit against a run.',
+    },
+    shape: 'Assign octave bands before voices. On a forced collision, differentiate by note-value class, not by moving the rhythm.',
+    applies: { roles: ['all'] },
+    status: 'recorded',
+    blocked: 'FLAGGED CONFLICT. This partially contradicts D100 (which kept a shared voice and moved the rhythm) and D102 (same instrument = the defect). The reels never separate by timbre at all and say a shared instrument is fine when octave band and duration class differ. His ear settles it, not the reels — they are 9 files against a 31k sweep.',
+  },
+  {
+    id: 'coprime_cell_length',
+    role: 'form',
+    intent: 'Give one layer a cell length coprime with the bar, so it restarts on a different metric position every bar and realigns only every few bars.',
+    evidence: {
+      kind: 'reel', poster: 'two independent sources (2 reels)', file: 'igexport-Db04jWHop4_.mp4', at: '0-52s',
+      read: 'A keys part on a 3-eighth cell in a 4/4 bar, and a bass at dotted-8th spacing; a second producer runs a chord every 3 eighths, verified at two zoom levels. The phrase ends by BREAKING the cell into a stepwise descent introducing a pitch the cell never contained.',
+    },
+    shape: 'Cell length coprime with the bar length. Variation with zero note edits and no section boundary. Close the phrase by breaking the cell.',
+    applies: { roles: ['acc', 'ostinato'] },
+    status: 'wired', impl: 'audition-songs.mjs opts.coprimeCell — a 3-bar figure with onsets every 3/8',
+    wiredNote: 'r23. Verified: exactly 3 distinct bar-onset patterns over 6 bars, cycling [0,3/8,6/8] -> [1/8,4/8,7/8] -> [2/8,5/8]. This is the r17 "changes not just in strict section bar" ask, built at last. Opt-in for the same measured reason as the frozen slot.',
+  },
+  {
+    id: 'final_bar_breaks_everything',
+    role: 'form',
+    intent: 'On the loop’s last bar every layer breaks its own pattern at once: the floor splits and displaces by an octave, the ornament hits its densest bar, the chord voicing spreads widest.',
+    evidence: {
+      kind: 'reel', poster: 'multiple (5 reels / 2 sources)', file: 'igexport-DYfkq3BouJ_.mp4', at: '0-39s',
+      read: 'The bass leaps UP a major 7th on the turnaround rather than stepping down, putting V near the melody register on the busiest bar; elsewhere it drops an octave at the bar end. One reel’s chord layer spreads its final chord wider than all the others.',
+    },
+    shape: 'Reserve the loop’s last bar as a simultaneous pattern break across every layer, rather than a turnaround in one voice.',
+    applies: { roles: ['all'] },
+    status: 'recorded',
+    blocked: '4 of the 5 are one producer. The engine has a bar-4 turnaround (D88) but it moves the SUB alone; this is the whole ensemble breaking together.',
+  },
+  // -------------------------------------------------------------------------
+  // r23 — WHAT MAKES A BATTLE THEME FEEL LIKE ONE
+  // His ask: "for the boss fights learn what makes them actually feel energetic
+  // with stakes on the line and epic through their layering patterns and what
+  // they do in each instrument and rhythm and intervals."
+  // Contrast set: 13 battle files vs 43 non-battle, ALL hand-picked by him, so a
+  // difference is a battle property rather than a taste property. Core windows
+  // only (his "just analyze in terms of sections or the normal sections").
+  // -------------------------------------------------------------------------
+  {
+    id: 'battle_bass_pedal',
+    role: 'bass',
+    intent: 'A battle bass drives by REPETITION, not by motion: the same pitch hammered in straight 8ths, moving only when the chord moves.',
+    evidence: {
+      kind: 'midi-set', set: 'audios/manual-r22 + manual-r22b (13 battle vs 43 other)', scope: 'core window only',
+      read: 'repeated-note rate 62.2% vs 36.8%; stepwise 19.8% vs 31.5%; onsets/bar 5.38 vs 6.71 (FEWER, not more); grid x.x.x.x.x.x.x.x. in 6 of 10; longest identical-pitch run 13-144 notes',
+    },
+    shape: 'Eight 8ths per bar on the chord root, accented 1 and 3, with an octave DROP on the last 8th of every 4th bar (D88 — lifting there put a synth bass on G4 once already).',
+    applies: { roles: ['bass'], genres: ['battle', 'boss'], notLanes: ['manor', 'catacombs', 'citadel', 'desert', 'jungle'] },
+    status: 'wired', impl: 'audition-songs.mjs opts.driveBass (wantsDriveBass) — REPLACES the sub-bass, never stacks with it',
+    wiredNote: 'r23. Measured on the solo: 85.5% repeated at 8.25 onsets/bar against the control 0.0% at 1.25. It OVERSHOOTS the 62.2% reference, because the references mix pedal bars with moving ones and a pure eight-per-chord pedal is 87.5% by construction.',
+  },
+  {
+    id: 'battle_support_hammer',
+    role: 'acc',
+    intent: 'The battle support layer hammers ONE pitch. Not a figure, not a walk — three onsets a bar, all the same note.',
+    evidence: {
+      kind: 'midi-set', set: 'audios/manual-r22 + manual-r22b (13 battle vs 43 other)', scope: 'core window only',
+      read: 'pure-repeat bar shapes 34.2% of battle support bars vs 7.0% (4.9x, the largest single separation in the analysis); modal shape is 0-0-0, i.e. THREE onsets all one pitch; support repeated-note rate 33.8% vs 20.2%',
+      hisComment: 'in battle themes the violins can go root third fifth or root fifth 8th repeatedly 8th note style ... to make it sound more "action" and "high stakes"',
+    },
+    shape: 'Three onsets placed 3+3+2 (0, 3/8, 3/4), all the SAME chord tone, loopRoots so it moves when the chord moves. On the fifth, not the root, when the bass is already a repeated-root pedal.',
+    applies: { roles: ['harmony_support'], genres: ['battle', 'boss'] },
+    status: 'wired', impl: 'audition-songs.mjs SUPPORT_FIGS[3] support-hammer',
+    wiredNote: 'r23. First write was R-5-5 ("so the chord change stays audible") — two pitches, therefore 0% pure-repeat BY CONSTRUCTION, measured 0.0% on all 10 songs carrying it. One pitch now: 100% against the control 0%.',
+  },
+  {
+    id: 'battle_open_sonority',
+    role: 'voicing',
+    intent: 'Battle harmony is OPEN, and it is LESS dissonant than his other picks. Stakes are made of octaves and fifths, not of tension intervals.',
+    evidence: {
+      kind: 'midi-set', set: 'audios/manual-r22 + manual-r22b (13 battle vs 43 other)', scope: 'core window only',
+      read: 'octave/unison dyads 36.1% vs 28.3%; fifths 15.3% vs 13.0%; THIRDS DOWN 15.5% vs 20.2%; bare power-fifth chords 11.7% vs 4.9% (2.4x); min9 21.8% vs 15.9%. And going the other way: tritone 1.7% vs 2.3%, semitone 1.0% vs 1.8%, dim 0.8% vs 1.5%, dim7 0.3% vs 1.1%, dom7 0.8% vs 3.2%',
+    },
+    shape: 'Thirdless R.5 / 5.R+ dyads in the support ostinato; minor-9 colour rather than dominant; no added chromaticism.',
+    applies: { roles: ['harmony_support', 'voicing'], genres: ['battle', 'boss'] },
+    status: 'wired', impl: 'audition-songs.mjs SUPPORT_FIGS[4] support-open5',
+    wiredNote: 'r23. Direction confirmed on 4-5 of 5 battle songs for EVERY interval class, but the magnitude is small and the target is not reached: 24.7% octaves against 36.1%, thirds 23.7% against 15.5%. Our battle texture is still markedly more third-y than his references. The remaining gap is in the planner cast, not this figure.',
+  },
+  {
+    id: 'battle_kit_toms',
+    role: 'percussion',
+    intent: 'The battle drum voice is the TOM, and a battle kit is not a busier kit — its hats are fewer and plainer.',
+    evidence: {
+      kind: 'midi-set', set: 'audios/manual-r22 + manual-r22b (13 battle vs 43 other)', scope: 'core window only',
+      read: 'toms 1.887 hits/bar vs 0.313 (6.0x), used in 5 of 12 battle files vs 11 of 39; crash on 19.8% of bars vs 13.8%, present in 8 of 12 vs 26 of 39; hats FEWER (5.2/bar vs 6.7) and on 8ths not 16ths (16th-position share 8.8% vs 21.9%); kick/bar 4.00 vs 3.43 but four-on-the-floor DOWN 34.2% vs 42.8%; fill bars 9.4% vs 6.0% and quiet bars 9.2% vs 4.3% — the battle kit BREATHES more at both ends',
+      hisComment: 'the drums don\u2019t feel too solid yet, they feel very bare minimum',
+    },
+    shape: 'A tom answer across the back half of bars 1 and 4 of every four (hi->lo, landing on a wardrum), plus a crash on the 8-bar downbeat and a soft one on the pickup. Extra voices on a band no selector reads.',
+    applies: { roles: ['percussion'], genres: ['battle', 'boss'], notLanes: ['manor', 'catacombs', 'citadel', 'desert', 'jungle', 'cave', 'shrine'] },
+    status: 'wired', impl: 'src/lib/rhythms.js battle_toms + battle_crash, band accent; audition-songs.mjs opts.battleKit',
+    wiredNote: 'r23. Both rates were WRONG on the first write and the probe caught it: 4.00 toms/bar and 50% crash bars (2.1x and 2.5x over) because 8 onsets sat in a 2-bar cell and 2 in a 4-bar cell while the comments claimed 2.0/bar and 25%. Now 2.00/bar and 25.0%.',
+  },
+  {
+    id: 'battle_not_the_mechanism',
+    role: 'form',
+    intent: 'Two things that look like they should carry battle urgency and measurably do not: harmonic rhythm and dynamics.',
+    evidence: {
+      kind: 'midi-set', set: 'audios/manual-r22 + manual-r22b (13 battle vs 43 other)', scope: 'core window only',
+      read: 'chord changes/bar 1.31 battle vs 1.38 other — no faster. Velocity stdev 9.2 vs 9.3 and snare ghost-notes in 2 of 12 files — his reference MIDIs are near-uniform, so this set cannot teach dynamics at all. Concurrency 6 vs 5 and tempo 150 vs 120 are real but modest.',
+    },
+    shape: 'Do not reach for faster harmony or louder dynamics to make a battle cue. Reach for repetition, open intervals and toms.',
+    applies: { roles: ['all'], genres: ['battle', 'boss'] },
+    status: 'recorded',
+    blocked: 'Nothing to build — this row exists so the next round does not spend itself on the two obvious wrong levers. The dynamics half is a LIMIT OF THE SOURCE, not a finding about battle music.',
+  },
+  // -------------------------------------------------------------------------
+  // r24 — the carried list. Each of these answers a card from the r23-suite
+  // export, and three of them exist because a first measurement was wrong.
+  // -------------------------------------------------------------------------
+  {
+    id: 'vertical_corollary',
+    role: 'voicing',
+    intent: 'A horizontal fix may not create a vertical step. Making a line resolve must not make the chord it sits in clash.',
+    evidence: {
+      kind: 'ear', song: 'su_excited_casino / su_calm_water / su_happy_jungle (r23-suite export)',
+      hisComment: 'too much dissonance in some of the chords in the piano / the added notes in the piano onto the Alberti make it sound bad / you do a dissonance pass and randomly add dissonance at certain places',
+      read: 'Acc hand, share of polyphonic attacks sounding a second: 35.0% ours vs 9.0% in his 59 reference MIDI files; a literal SEMITONE 14.5% vs 3.9%. EIGHT suite songs at 100.0% — their acc is monophonic except where a variation form bolts a partner on. After: 5.2% / 0.4%, with the polyphonic-attack count unchanged, so chords were revoiced, not deleted.',
+    },
+    shape: 'Check the sounding interval between every pair of members of a stack, in ladder (scale-position) coordinates so it holds in any key over any chord. Where a rewrite would place a tone a step from a voice already there, lift it an octave (a 9th is colour, a 2nd is a clash) and if it cannot lift, leave the token alone.',
+    applies: { roles: ['acc', 'voicing'], genres: ['all'] },
+    status: 'wired', impl: 'audition-songs.mjs stackPositions / stackBad / setTopVoiced, plus guards in the quartet and dyad forms',
+    wiredNote: 'r24. The first write modelled a stack as resolving each member at or above the one before, on the strength of a comment. bindFigure does not — midi = rootRef + memberSemis(member) + 12*plus.length, each member independent — so the monotone model passed R.3.5.s4 as clean while the song sounded D-F#-G#-A. Reading the binder instead of the comment took the result from 11.5% to 5.2%.',
+  },
+  {
+    id: 'quiet_piano_register',
+    role: 'acc',
+    intent: 'A quiet piano reads PERCUSSIVE when it sits too low: the hammer and the beating of low intervals carry over the pitch.',
+    evidence: {
+      kind: 'ear', song: 'su_mysterious_space / su_calm_water / su_mysterious_cave / su_calm_menu / su_romantic_rest (r23-suite export), against the KEPT calm songs on audition/songs.html',
+      hisComment: 'the percussive nature of the piano here doesnt fit at all / it makes it sound percussive which doesnt make it sound nice / the random low note piano slam doesnt sound good (I think it did in in Dm7)? / piano too loud and "forceful" / dont be afraid to move the piano harmonies up sometimes into a higher octave',
+      read: 'His 7 KEPT calm/slow songs vs the suite\u2019s 10, acc hand only: attacks/bar 8.00 vs 7.25, attacks/sec 1.67 vs 1.75, peak gain 1.00 vs 1.00, room and clip IDENTICAL. Register is the whole difference — kept low 48 / centre 60 / top 66, suite low 42 / centre 53 / top 68, and wider (26 semitones vs 18). After: 50 / 57 / 68.',
+    },
+    shape: 'Lift the hand a whole octave, bounded by a trial bind read back against the reference set\u2019s measured ceiling; where the lift does not fit, take one octave mark off the spread tokens instead, which raises the floor without raising the ceiling.',
+    applies: { roles: ['acc'], genres: ['all'], conditions: 'salience background, acc voice is the piano, no explicit octave already stated' },
+    status: 'wired', impl: 'audition-songs.mjs accLiftMode / closeVoicing / ACC_CEIL',
+    wiredNote: 'r24. Lifting alone overshot to top 79 against his kept 66 (su_calm_menu at G#5, through the lead) because the hand is WIDE, so transposing moves the ceiling as much as the floor. Octave arithmetic on the tokens was not enough either — chord members and ~n tokens add semitones above the mark — so the ceiling is trial-bound and read back.',
+  },
+  {
+    id: 'entry_ramp',
+    role: 'layering',
+    intent: 'A voice arriving mid-song must arrive gradually. The device for this existed and was anchored to bar 0 instead of to the voice\u2019s own first bar.',
+    evidence: {
+      kind: 'ear', song: 'su_calm_water / su_excited_space / su_somber_aftermath (r23-suite export)',
+      hisComment: 'the synth sounds pretty good when it came in but just way too loud / when the synth comes in in the middle it\u2019s good but way too loud / the synth is too loud when it comes in but the synth itself I like and the notes. Earlier: strings should always FADE in at times like this not just cut in and spawn in.',
+      read: 'Measured in the mix per sound, first sounding bar against steady state two bars later: a mid-song entry arrives LOUDER than it then plays — violin 1.40x, flute 1.37x, timpani 1.24x, pad 1.06x. After: 0.3-0.6x.',
+    },
+    shape: 'Read the entry bar off the layer\u2019s own mask so it cannot drift out of sync with it, then ramp gain across the first three bars from that point.',
+    applies: { roles: ['all'], genres: ['all'], conditions: 'not the base accompaniment, the tune itself, or the drums' },
+    status: 'wired', impl: 'audition-songs.mjs ENTRY_RAMP / entrySpanOfExpr / withEntryAt',
+  },
+  {
+    id: 'entry_stagger',
+    role: 'layering',
+    intent: 'Five or more voices switching on in one bar reads as a forced drop. Real arrangements assemble.',
+    evidence: {
+      kind: 'midi-set', set: 'audios/manual-r22 + manual-r22b (58 files)', scope: 'whole file, bar-quantised voice counts; percussion collapsed to one voice on both sides',
+      hisComment: 'you dont have to always do a beat drop, especially in calmer or more atmospheric song / whenever it feels like a beat drop, the note that the piano and stuff begins on sort of negates that drop because it sounds forced',
+      read: 'Voices arriving in one bar, percussion collapsed to ONE voice on both sides and gain-weighted: reference median 4 / p75 5 / p90 6 / max 10, ours 4 / 6 / 7 / 9. After staggering groups of 5+: 4 / 5 / 6.',
+    },
+    shape: 'Delay, never anticipate — a delayed voice stays inside the section it was cast for. Order by a hash of the voice\u2019s own expression, not by its index in the mix, so the stagger does not depend on assembly order.',
+    applies: { roles: ['all'], genres: ['all'] },
+    status: 'wired', impl: 'audition-songs.mjs entryPlan / rampSlot',
+    wiredNote: 'r24. TWO measurement errors before this number. Counting each of our drum SOUNDS as a voice, against a reference that counts a kit as one channel-9 part, reported median 6 / max 13 vs 4 / 10 — a 1-voice gap read as 7. And the un-weighted count could not see the fix at all, because a voice ramped to gain 0 still emits a hap. The breakdown DEPTH, the first hypothesis, was never the problem: 0.69 median dip against the reference\u2019s 0.75.',
+  },
+  {
+    id: 'phrase_split_reseed',
+    role: 'melody',
+    intent: 'A returning phrase is not the same phrase. Repetition lives inside a section, not across statements of a letter.',
+    evidence: {
+      kind: 'midi-set', set: 'audios/manual-r22 + manual-r22b (59 files)', scope: 'whole file, melody part = highest median pitch among parts dense enough to carry a tune',
+      hisComment: 'for the section you repeated the same melody with nothing different for like a full section which was like 16 times or something',
+      read: 'Longest stretch over which the melody repeats with period P in {1,2,4,8}: reference median 5 / p75 9 / p90 15 / max 44; our MASKED lead 11 / 14 / 16 / 32. Keying the seed on the STATEMENT number moved it by exactly zero. Splitting a statement at phrase length: 7 / 9 / 11 / 16.',
+    },
+    shape: 'Split a statement into chunks of the lead\u2019s own bound period and re-seed the walk from the second chunk. The melody\u2019s version of D102\u2019s rule for the accompaniment.',
+    applies: { roles: ['melody'], genres: ['all'] },
+    status: 'wired', impl: 'src/binder/arrange.js renderLetterLead perStatement/phraseBars; audition-songs.mjs leadStmtVary / leadPhraseBars / letterSeed',
+    wiredNote: 'r24. A first pass reported median 24 and "72 of 72 bars" — it measured the UNMASKED _lead solo, which loops for the whole song by design. A second pass split the mix and picked the highest-median-pitch part on both sides; on our side that chose a declared synth BASS at median pitch 62. Only a hook that dumps the exact masked lead settled it, and the real gap was 2x, not 5x.',
+  },
+  {
+    id: 'melody_cell_seed_is_dead',
+    role: 'melody',
+    intent: 'The melody rhythm cell selector takes a seed and never reads it, so two songs with a similar accompaniment retrieve the identical cell.',
+    evidence: {
+      kind: 'ear', song: 'su_happy_jungle (r23-suite export); confirmed by reading melodyRhythm and by the MELDEBUG dump',
+      hisComment: 'is this melody (with random variations) for kalimba used in all jungle? this what it feels like',
+      read: '`seedName` is a parameter of melodyRhythm and appears nowhere in its body; the cell is a pure argmax over meter, target density, accompaniment onset positions and heldFirst. Across the judged page the A letter draws 11 distinct cells from a 27-cell 4/4 pool — utm_dummy_7on_2 covers 12 songs, utm_dummy_6on 10. Both happy-jungle songs retrieve utm_dummy_4on_3 despite 124 vs 144 bpm and different density targets.',
+    },
+    shape: 'Rotate among cells whose interlock score is within epsilon of the top, by a hash of the song — the D99 travel-rotation shape — so retrieval keeps its quality ranking but stops being an argmax.',
+    applies: { roles: ['melody'], genres: ['all'] },
+    status: 'recorded',
+    blocked: 'Seeding it re-rolls the melody cell on every unpinned song, which is a whole round of re-audition. His question is answered; the fix wants his ear on the result.',
+  },
 ];
 
 /** Look a technique up by id. */

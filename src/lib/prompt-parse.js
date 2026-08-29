@@ -69,12 +69,34 @@ const MODIFIERS = [
   [/\b(groov\w*|funky|swagger|bounce)\b/, { groove: true }],
 ];
 
+// r23 BUG FIX. The old test was `t.includes(' ' + w) || t.includes(w + ' ')` —
+// an OR, so the leading-space form anchored only the START of a word and the
+// trailing-space form only its END. Any word beginning or ending with a keyword
+// matched. Measured symptom: the prompt "warm nostalgic morning music,
+// heartfelt piano and strings" compiled to environment `fight`, at 156bpm, with
+// a battle drum kit — because ENV_WORDS.fight contains 'war' and 'warm' starts
+// with it. Same shape reaches 'sub' inside 'subtle', 'war' inside 'toward',
+// 'lab' inside 'elaborate'.
+//
+// Both boundaries are now required, with a small inflection tail so 'battles',
+// 'caves' and 'sneaking' still match the way they did.
+const RE_CACHE = new Map();
+function wordRe(w) {
+  let re = RE_CACHE.get(w);
+  if (!re) {
+    const esc = w.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    re = new RegExp(`(?:^| )${esc}(?:s|es|ed|ing)?(?= |$)`);
+    RE_CACHE.set(w, re);
+  }
+  return re;
+}
+
 export function parsePrompt(text) {
   const t = ' ' + text.toLowerCase().replace(/[^a-z0-9' -]+/g, ' ').replace(/\s+/g, ' ') + ' ';
   const score = (table) => {
     const hits = [];
     for (const [key, words] of Object.entries(table))
-      for (const w of words) if (t.includes(' ' + w) || t.includes(w + ' ')) { hits.push([key, w.length]); break; }
+      for (const w of words) if (wordRe(w).test(t)) { hits.push([key, w.length]); break; }
     return hits.sort((a, b) => b[1] - a[1]);
   };
   const emos = score(EMO_WORDS), envs = score(ENV_WORDS);

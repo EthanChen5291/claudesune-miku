@@ -57,7 +57,14 @@ test('A1.3: arrangement metrics available to musts (gw_density, active_layers)',
 test('A5.2: every rhythm entry carries role, band, style, provenance', () => {
   for (const [name, r] of Object.entries(RHYTHMS)) {
     assert.ok(['percussion', 'harmony', 'support', 'bass', 'melodic', 'chords'].includes(r.role), `${name}: role`);
-    assert.ok(['sub', 'low', 'mid', 'high'].includes(r.band), `${name}: band`);
+    // 'accent' added r23. The four original bands are the KIT SELECTOR's model
+    // (byBand('low')/byBand('high') and the lows filter in audition-songs.mjs).
+    // battle_toms / battle_crash are deliberately outside that model: they are
+    // extra voices a song adds explicitly, never something a band query can
+    // pick. Giving them 'low' or 'mid' would make them reachable by byBand and
+    // re-roll the kit on songs that never asked — the failure this selector has
+    // now had three times (r16, D100, r22).
+    assert.ok(['sub', 'low', 'mid', 'high', 'accent'].includes(r.band), `${name}: band`);
     assert.ok(typeof r.style === 'string' && r.style.length, `${name}: style`);
     assert.ok(['hand-written', 'ethan-requested'].includes(r.provenance), `${name}: provenance (A6.1: seeds are hand-written or user-requested, never engine-ratified)`);
   }

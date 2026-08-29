@@ -122,7 +122,12 @@ test('libraries: counts and abstract-only invariants (§3.5, §5)', () => {
     assert.ok(r.onsets || r.euclid, name);
     const count = r.onsets ? r.onsets.length : euclidOnsets(...r.euclid).length;
     assert.equal(r.accents.length, count, `${name}: accents must cover every onset`);
-    assert.ok(new Set(r.accents).size > 1, `${name}: uniform accent profile is a bug (§3.4)`);
+    // r24: the rule is "a MULTI-onset pattern must not ship a flat profile" — a
+    // one-event pattern has nothing to vary, and the two that arrived this round
+    // (band_roll_swell, band_gong) are single deliberate events: one snare roll
+    // per eight bars, one gong per sixteen. Adding a second hit purely to satisfy
+    // an accent count would put a sound in the music that the music does not want.
+    if (count > 1) assert.ok(new Set(r.accents).size > 1, `${name}: uniform accent profile is a bug (§3.4)`);
     assert.ok(r.character?.length > 20, `${name}: document the taste it encodes`);
     for (const o of r.onsets ?? []) assert.equal(typeof o, 'string', `${name}: onsets are exact fractions, not floats`);
   }

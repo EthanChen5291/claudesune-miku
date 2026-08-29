@@ -92,3 +92,9 @@ audios/manual-r22/
 # r22: his Miraleste drum kit (commercial pack, imported 2026-08-29).
 # LOCAL-ONLY per his r16 licensing ruling, exactly like the ripped BRR rows.
 audios/miraleste/
+
+# r22: extracted Omnisphere arp sequences (analysis only, commercial pack)
+audios/omn-extract/
+
+# r22b: his ANNOTATED midi (notes in the filenames). Analysis only.
+audios/manual-r22b/

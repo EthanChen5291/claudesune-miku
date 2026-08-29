@@ -305,6 +305,122 @@ export const RHYTHMS = {
     meter_class: '4/4', tags: ['perc', 'desert', 'jingle'],
     character: 'Riq (tambourine) jingles on the offbeat 8ths — the bright band over a darbuka floor.',
   },
+  // ==== r24 BAND / ORCHESTRAL PERCUSSION ================================
+  // HIS ASK, verbatim: "also I feel like our drum vst isnt that good. like it
+  // doesnt sound like deep reel drums. bear in mind though that some songs may
+  // not have drum set, they'll have like band drums like snare or bass and
+  // timphany etc. and of course there are the various other ones."
+  //
+  // MEASURED FIRST, and the diagnosis is not the VST: 15 of 33 percussion
+  // patterns declared NO samples and fell back to Strudel's stock bd/sd/hh —
+  // and those 15 were every kick and hat the battle songs use (four_floor,
+  // dembow, sixteenth_drive, two_step_kick). One boss kit was playing a
+  // synthetic stock kick, his real Miraleste snare, a synthetic stock hat and
+  // real orchestral toms: four sonic worlds, with the cheapest sounds carrying
+  // the body. That is what "shallow" was.
+  //
+  // AND THE BAND PERCUSSION HE IS DESCRIBING WAS ALREADY SAMPLED AND NEVER
+  // PLAYED. vc_timpani, vc_snare_mil (field snare), vc_snare_roll, vc_gong,
+  // vc_wardrum_cresc, vc_anvil, vc_windchimes, vc_sleigh — zero patterns
+  // referenced any of them before this block.
+  //
+  // These are a KIT, not accents: band 'low'/'mid'/'high' so a song can seat a
+  // full band floor in place of a drum set. They are only reachable through the
+  // orchestral selector in audition-songs.mjs, which keys on the CAST's declared
+  // instrument families — never on a lane or a song name.
+  band_march_snare: {
+    role: 'percussion', band: 'mid', style: 'orchestral', provenance: 'ethan-requested', ratified: false,
+    onsets: ['0', '3/16', '1/4', '1/2', '11/16', '3/4', '7/8'],
+    sounds: ['vc_snare_mil', 'vc_snare_mil', 'vc_snare_mil', 'vc_snare_mil', 'vc_snare_mil', 'vc_snare_mil', 'vc_snare_mil'],
+    accents: [0.95, 0.45, 0.6, 0.9, 0.45, 0.6, 0.5],
+    meter_class: '4/4', tags: ['perc', 'band', 'snare', 'march'],
+    character: 'Field snare with the double-stroke pickups a marching line actually plays — accent on 1 and 3, ghosted 16ths before 2 and 4. The band answer to a backbeat.',
+  },
+  band_bass_drum: {
+    role: 'percussion', band: 'low', style: 'orchestral', provenance: 'ethan-requested', ratified: false,
+    bars: 2,
+    onsets: ['0', '1/2', '1', '7/4'],
+    sounds: ['vc_wardrum', 'vc_wardrum', 'vc_wardrum', 'vc_wardrum_cresc'],
+    accents: [1.0, 0.6, 0.9, 0.7],
+    meter_class: '4/4', tags: ['perc', 'band', 'bass-drum'],
+    character: 'Concert bass drum on the strong beats with a crescendo stroke into the 2-bar turn. Deep and sparse — it is the floor, not the pulse.',
+  },
+  band_timpani: {
+    role: 'percussion', band: 'low', style: 'orchestral', provenance: 'ethan-requested', ratified: false,
+    bars: 4,
+    onsets: ['0', '3/2', '2', '7/2', '15/4'],
+    sounds: ['vc_timpani', 'vc_timpani', 'vc_timpani', 'vc_timpani', 'vc_timpani'],
+    accents: [1.0, 0.55, 0.85, 0.6, 0.75],
+    meter_class: '4/4', tags: ['perc', 'band', 'timpani'],
+    character: 'Timpani on the structural downbeats of a 4-bar phrase plus a two-note pickup into the next. His "snare or bass and timphany" — the part that makes a cue read orchestral rather than kit.',
+  },
+  band_roll_swell: {
+    role: 'percussion', band: 'mid', style: 'orchestral', provenance: 'ethan-requested', ratified: false,
+    bars: 8,
+    onsets: ['15/2'],
+    sounds: ['vc_snare_roll'],
+    accents: [0.7],
+    meter_class: '4/4', tags: ['perc', 'band', 'transition'],
+    character: 'A snare roll on the last half-bar of every eight — the band transition. One event, never a texture.',
+  },
+  band_gong: {
+    role: 'percussion', band: 'accent', style: 'orchestral', provenance: 'ethan-requested', ratified: false,
+    bars: 16,
+    onsets: ['0'],
+    sounds: ['vc_gong'],
+    accents: [0.8],
+    meter_class: '4/4', tags: ['perc', 'band', 'gong'],
+    character: 'One gong per sixteen bars. The rarest event in the library, deliberately.',
+  },
+
+  // ---- r23 BATTLE KIT (measured, research/boss-r23.md) ----------------
+  // His ask: "for the boss fights learn what makes them actually feel
+  // energetic with stakes on the line and epic ... and rhythm".
+  // Measured over 13 battle files against 43 non-battle files from HIS OWN
+  // hand-picked set (so the contrast is a battle property, not a taste
+  // property): TOMS are the battle drum voice at 1.887 hits/bar against 0.313
+  // (6.0x), present in 5 of 12 battle files vs 11 of 39 others, and the crash
+  // covers 19.8% of bars against 13.8%. Hats go the OTHER way — battle hats are
+  // 8ths, not 16ths (16th-position share 8.8% vs 21.9%) and there are FEWER of
+  // them (5.2/bar vs 6.7). A battle kit is not a busier kit; it is a kit with
+  // toms and a crash and a plainer hat.
+  //
+  // Deliberately band 'accent' — a band no selector picks — so these can only
+  // ever arrive as an explicit extra voice. Adding another 'low' or 'mid' would
+  // re-roll `byBand()` for every song in the suite (D95's pool law), and the
+  // drum selector has now broken three times on exactly that assumption.
+  // BOTH RATES WERE MEASURED WRONG ON THE FIRST WRITE AND ARE CORRECTED HERE.
+  // The first battle_toms put 8 onsets in a 2-bar cell and its own comment
+  // claimed "= 2.0/bar"; 8 over 2 bars is 4.0/bar, and the probe measured
+  // exactly 4.00 — 2.1x the 1.887 it was built to hit. battle_crash put 2
+  // onsets in a 4-bar cell and claimed 25%; 2 in 4 is 50%, and the probe
+  // measured exactly 50% — 2.5x the 19.8%. Both are now 4-bar and 8-bar cells.
+  battle_toms: {
+    role: 'percussion', band: 'accent', style: 'cinematic', provenance: 'hand-written', ratified: false,
+    bars: 4,
+    onsets: ['1/2', '5/8', '3/4', '7/8', '7/2', '29/8', '15/4', '31/8'],
+    sounds: ['vc_tom_hi', 'vc_tom_hi', 'vc_tom_lo', 'vc_tom_lo', 'vc_tom_hi', 'vc_tom_lo', 'vc_tom_lo', 'vc_wardrum'],
+    accents: [0.62, 0.55, 0.78, 0.6, 0.62, 0.6, 0.8, 0.9],
+    meter_class: '4/4', tags: ['perc', 'battle', 'toms'],
+    character: 'Tom answer across the back half of bars 1 and 4 of every four, hi->lo, landing on the wardrum at the turn. 8 hits per 4 bars = 2.0/bar against the measured battle rate of 1.887 — and it leaves bars 2-3 clear, which is what makes it an answer rather than a carpet.',
+  },
+  battle_crash: {
+    role: 'percussion', band: 'accent', style: 'cinematic', provenance: 'ethan-requested', ratified: false,
+    bars: 16,
+    onsets: ['0', '31/2'],
+    sounds: ['vc_cym_cresc', 'vc_cym_cresc'],
+    accents: [0.85, 0.45],
+    meter_class: '4/4', tags: ['perc', 'battle', 'cymbal'],
+    // r24 — HIS EAR, on two separate cards: "the suspended cymbal is overused"
+    // (su_tense_boss) and "the cymbal is overused" (su_triumphant_boss). The
+    // r23 build measured 25.0% of bars carrying a crash against the 19.8% read
+    // off his own battle references, so I had already OVERSHOT my own target and
+    // he heard it. Halved to a 16-bar cell: 2 bars in 16 = 12.5%. Deliberately
+    // UNDER the reference rather than at it — a crash is an event, and the one
+    // measurement I have of his tolerance is that 25% was too many.
+    character: 'A crash on the 16-bar downbeat and a soft one on the back half of bar 16 (the pickup into the next sixteen). 2 bars in 16 = 12.5%; the reference is 19.8% and 25% was judged overused.',
+  },
+
   heartbeat_toms: {
     role: 'percussion', band: 'low', style: 'cinematic', provenance: 'hand-written', ratified: false,
     onsets: ['0', '3/16'],

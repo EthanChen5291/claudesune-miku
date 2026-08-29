@@ -1,0 +1,477 @@
+{
+ "generated": "2026-08-29",
+ "reelsRead": 44,
+ "productionReels": 9,
+ "transcriptions": [
+  {
+   "file": "ScreenRecording_08-26-2026 13-20-54_1.MP4",
+   "isProductionReel": true,
+   "evidence": "Every frame from 0-29s is split: TOP ~32% is a webcam of a young man in a pink t-shirt wearing headphones, sitting in a bedroom, visibly reacting and moving his mouse hand; BOTTOM ~68% is an FL Studio piano roll (and from 29s the FL Playlist/Arrangement view with named tracks). A big white caption names the layer being added at each moment. Account leonardo_made_this, caption \"this beat too swaggy #flstudio #beat #producer\".",
+   "daw": "FL Studio",
+   "bpmOrKey": "no tempo readout visible (transport hidden behind the webcam). Key reads as C MINOR from the notes: bass on G3/G#3/C4/G4 and stab stacks spelling Ab, Gm/Bb and Cm9.",
+   "layers": [
+    {
+     "name": "basses (arrangement track: \"! HARMOR - the bass @karinovvaa #2\")",
+     "order": 1,
+     "register": "low",
+     "whatItPlays": "ONE very long held note per chord — not a bassline. He draws single notes one at a time: G3, G#3, C4, G4. At 5.5s a single G3 spans the entire visible 8-cell window; at 2.5s a C4 spans the full width; at 6.8s a shorter G4 of ~2 cells. Zero repeated onsets, zero rhythm. In the Playlist it renders as an audio clip with one hard attack and a long decaying tail lasting several bars. Bass pitch motion across the loop is C - Ab - G (i, VI, v of C minor).",
+     "relationToOthers": "Sits ~2 octaves below the stab stacks and supplies the root the stabs are voiced over (Ab under the C-Eb-Ab stack, Bb/G under the Gm stack, C under the Cm9 stack). Nothing else occupies the bottom octave."
+    },
+    {
+     "name": "synth stabs (arrangement track: \"VITAL - starter saw @karinovvaa #2\")",
+     "order": 2,
+     "register": "mid",
+     "whatItPlays": "BLOCK CHORDS, all notes ~one grid cell (1/16) long, syncopated — roughly 3 hits per bar, never a steady quarter pulse. Measured onset spacing across the visible window is alternately 2 and 4 grid cells (pattern 0, +2, +4, +2, +4, +4), i.e. two stabs an 8th apart then a quarter-note gap. Voicings alternate between THIN and WIDE: (a) 3-4 note upper triads — C5+D#5+G#5 with D#6 doubled on top (= Ab major in 1st inversion), then A#4+D5+G5 with G6 or D#6 on top (= G minor in 1st inversion); (b) a 6-NOTE stack G4+A#4+C5+D5+D#5+G5 (= Cm9: C, D, Eb, G, Bb) struck three times in a row. In every wide stack ONE voice is drawn long (a D6 or G5 held over 4-5 cells) while the other five are 16th stabs underneath it.",
+     "relationToOthers": "Interlocks with the kick rather than the bass — the stabs land off the strong beats. The held top voice (D6/G5) is the only sustained thing above the bass and acts as the pedal the stabs hammer under."
+    },
+    {
+     "name": "growl",
+     "order": 3,
+     "register": "low",
+     "whatItPlays": "A single extremely long sustained note on one row, drawn as one continuous bar spanning the whole visible window with no re-articulation. No pattern — it is a texture/sub layer added under the existing bass, held for the section.",
+     "relationToOthers": "Doubles the register of the \"basses\" layer; added after the stabs so the low end has both an attacked note and a continuous drone."
+    },
+    {
+     "name": "kick (audio clips \"@karinovva..win) [kick]\")",
+     "order": 4,
+     "register": "low",
+     "whatItPlays": "Hand-placed one-shot audio clips, NOT four-on-the-floor. In the arrangement view kicks sit at 2-3 spots per 2 bars with visibly empty bars between them; two clips are placed adjacent (a doubled kick) at one point, and one clip is dragged off the grid onto a syncopated position. Each clip is a hard transient with a long pitched decay tail (a sustained 808-style kick, tail longer than a beat).",
+     "relationToOthers": "Because the kick tail is long and pitched, it and the \"basses\" layer share the sub range — the stabs stay clear of it by living from A#4 upward."
+    },
+    {
+     "name": "clap",
+     "order": 5,
+     "register": "mid",
+     "whatItPlays": "One short one-shot per 1-2 bars, waveform is a fast attack with an immediate decay. In the arrangement its clips land alone on their own track lane on the backbeat position, one per bar, no rolls or doubles.",
+     "relationToOthers": "Answers the kick; only percussion element on its lane."
+    },
+    {
+     "name": "hats + shakers",
+     "order": 6,
+     "register": "high",
+     "whatItPlays": "Short one-shot clips whose waveform is a narrow triangle (sharp attack, quick taper) — placed sparsely, 1-2 per bar, not a continuous 16th hat grid. A second olive-coloured lane carries a wider triangular fade shape (shaker/open hat) on roughly every other bar.",
+     "relationToOthers": "Occupies the top of the spectrum, off the stab onsets; keeps motion where the stabs leave 4-cell gaps."
+    },
+    {
+     "name": "percs",
+     "order": 7,
+     "register": "mid",
+     "whatItPlays": "Two lanes added together: (a) purple perc clips, small diamond-shaped waveforms, 3-4 per 4 bars at irregular positions; (b) a \"PER...\" looped lane whose waveform is ~8 evenly spaced short hits filling one bar (the only regular subdivision in the whole beat).",
+     "relationToOthers": "The irregular purple hits sit in the holes between kick and clap; the even 8-hit loop is the only continuous pulse layer and enters last of the drums."
+    },
+    {
+     "name": "CRASH - wethebest @karinovvaa",
+     "order": 8,
+     "register": "high",
+     "whatItPlays": "A single long crash clip placed on beat 1 of the section, spanning ~4 bars of decay. One occurrence, at the section start.",
+     "relationToOthers": "Marks the downbeat where the full beat drops in."
+    },
+    {
+     "name": "VOX - girlaintgotno / VOX - bankonit @karinovvaa (vocal chops)",
+     "order": 9,
+     "register": "mid",
+     "whatItPlays": "Two lanes of chopped vocal audio: one short chop repeating on a 2-bar cycle, and one longer phrase clip with 3-4 syllable bursts visible in its waveform, placed once per 4 bars.",
+     "relationToOthers": "Top-layer hook added only in the final \"full beat\" arrangement view; not present during the piano-roll build."
+    },
+    {
+     "name": "Vital (second Vital track, unnamed pattern)",
+     "order": 10,
+     "register": "mid",
+     "whatItPlays": "A single very thin horizontal line spanning 4-8 bars in the arrangement — one sustained note per section (a pad), with no visible re-attack.",
+     "relationToOthers": "Only continuously sustaining pitched layer besides the growl; fills the gaps the 16th stabs leave."
+    }
+   ],
+   "layerOrderNotes": "Strict bottom-up build, each layer CUT in (no fades anywhere in the piano-roll build): basses (1-7s) → synth stabs (8-14s) → growl (~14s, brief) → kick (15-18s) → clap (19-21s) → hats + shakers (22-24s) → percs (25-28s) → full beat / arrangement view (29-55s). Note the order: the whole HARMONY is finished before a single drum is placed, and within the harmony the BASS comes before the chords. The growl is slipped in between the chords and the drums, i.e. the low end is completed in two passes rather than one. The final 26s is spent in the Playlist, where the extra layers that were never shown in the piano roll (crash, vocal chops, the sustained second Vital pad, the PER... loop) are already in place.",
+   "spokenOrCaptioned": "Layer captions verbatim in order: \"damn thats hard\" → \"basses\" → \"synth stabs\" → \"growl\" → \"kick\" → \"clap\" → \"hats + shakers\" → \"percs\" → \"full beat\". Post caption: \"this beat too swaggy #flstudio #beat #producer\". Arrangement track names legible: \"VITAL - starter saw @karinovvaa #2\", \"Vital\", \"! HARMOR - the bass @karinovvaa #2\", \"@karinovva..win) [kick]\", \"CRASH - wethebest @karinovvaa\", \"P..vaa\", \"PER...\", \"VOX - bankonit @karinovvaa\", \"VOX - girlaintgotno @karinovvaa\"."
+  },
+  {
+   "file": "ScreenRecording_08-26-2026 13-25-13_1.MP4",
+   "isProductionReel": true,
+   "evidence": "Every frame across the full 56s is split: TOP ~28% is a webcam of a man in a black t-shirt with headphones, seated against a patterned wall with a framed painting behind him, looking straight at the camera; BOTTOM ~72% is FL Studio — full transport bar (PAT/SONG, play, record, \"102.000\" tempo field, M:S:CS clock) and a piano roll titled \"Piano roll - Serum2 #4 / #3 / #2 / #5\". Account bronikbeats, audio \"Impossible\".",
+   "daw": "FL Studio",
+   "bpmOrKey": "102.000 BPM (transport readout, legible in every frame). Key is C MINOR: every layer draws from {C, D, Eb, F, G}, with the bass line descending C - Bb - Ab - G. Bar ruler legible (bars 1,2,3,4 at even spacing), so all positions below are measured against real bar lines: 1 bar = 16 grid cells, note blocks are 2 cells = one 8th.",
+   "layers": [
+    {
+     "name": "Serum2 #4 (the arpeggio / engine)",
+     "order": 1,
+     "register": "mid",
+     "whatItPlays": "CONTINUOUS STRAIGHT 8THS — 8 notes per bar, zero rests, 32 notes over the 4-bar loop, every note exactly 1/8 long. Each bar is the identical 8-note ascending shape spanning two octaves: [X, D5, D#5, G5, X+12, D6, D#6, G6]. Only X and its octave partner change, and they descend by bar: bar1 C5/C6, bar2 A#4/A#5, bar3 G#4/G#5, bar4 G4/G5. So three of the four pitch classes (D, Eb, G) are INVARIANT across all four bars and only the lowest note walks down C - Bb - Ab - G. Harmonically that yields Cm(add9) → Eb6/Bb (or Gm7/Bb) → Abmaj7(#11) → Cm/G. Contour per bar: straight rise across two octaves, then snap back to the bottom.",
+     "relationToOthers": "This is the constant motor. Everything else is sparser and higher. It defines the harmony purely through its lowest note while the upper three notes never move."
+    },
+    {
+     "name": "Serum2 #3 (topline)",
+     "order": 2,
+     "register": "high",
+     "whatItPlays": "A sparse STEPWISE answer, all notes 1/8 long, ~3-4 notes per bar, living only in C6-F6. Bar 1: two notes — C6 on beat 2, D#6 on the & of 2 (a rising minor 3rd). Bar 2: five notes — C6, D6, D#6, D6, C6 at 16th positions 2, 4, 6, 8, 12 (an up-and-back turn, entirely by step). Bar 3: C6 on beat 2, F6 on the & of 2 (the same 2-note gesture as bar 1 but reaching a 4th instead of a 3rd). Bars 3-4 are literally copy-pasted from bars 1-2 (I caught the paste mid-action at 29.5s, the pasted notes highlighted red). No leap larger than a 4th anywhere.",
+     "relationToOthers": "An octave above the arp's midpoint and roughly one third its density. It never strikes on the arp's bar-1 downbeat — it enters on beat 2, so its attacks land inside the arp's stream rather than on top of it."
+    },
+    {
+     "name": "Serum2 #2 (sustain + walk)",
+     "order": 3,
+     "register": "mid",
+     "whatItPlays": "HOLD-THEN-WALK, alternating by bar. Odd bars: a single C5 drawn as a full-bar whole note (bar 1 and bar 3). Even bars: it breaks into QUARTER notes — bar 2 plays F5 (beat 1), C5 (beat 2), D5 (beat 3), D#5 (beat 4); bar 4 rests on beat 1 then plays C5 (beat 2), D5 (beat 3), D#5 (beat 4). The ascent C-D-Eb is stepwise and lands back on the held C at the top of the next odd bar.",
+     "relationToOthers": "Sits in the same octave as the arp's lower half but is 8x slower on odd bars, so it reads as the harmonic anchor. Its even-bar quarter-note walk is the only layer that moves at quarter-note speed — it fills the metric gap between the arp's 8ths and the topline's phrase-level motion."
+    },
+    {
+     "name": "Serum2 #5 (top ornament)",
+     "order": 4,
+     "register": "high",
+     "whatItPlays": "The sparsest and highest layer: ~3 notes per bar, all 1/8, all in C7-F7 (a full octave above Serum2 #3, two above the arp's centre). Bar 1: C7 on beat 1, then C7 on beat 4 and D7 on the & of 4. Bar 2: C7 on beat 2, D#7 on the & of 2, F7 on beat 4. Bars 3-4 repeat that shape (C7 beat 1; C7 beat 4 + D7 & of 4; C7 beat 2 + D#7 & of 2). Every gesture is a PAIR of 8ths at the end of one bar leading into a pair on beat 2 of the next — it always straddles the bar line rather than sitting inside a bar.",
+     "relationToOthers": "Same pitch classes as Serum2 #3, exactly one octave up, at roughly two-thirds its note count — the reel builds a register ladder where DENSITY FALLS as REGISTER RISES."
+    }
+   ],
+   "layerOrderNotes": "Four Serum2 channels, built in order #4 → #3 → #2 → #5, each cut in with no fade (this is a build-in-the-piano-roll reel; nothing is muted/unmuted on screen). Timings: Serum2 #4 drawn 0-19s (by far the longest, note-by-note), Serum2 #3 ~24-35s (with bars 1-2 copy-pasted to 3-4, visible mid-paste at 29.5s), Serum2 #2 ~36-43s, Serum2 #5 ~44-55s. THE STRUCTURAL LESSON: he builds the densest, lowest-centred layer FIRST and every subsequent layer is higher AND sparser — 8 notes/bar (mid) → 4 quarter notes on alternate bars (mid) → 3.5 notes/bar (one octave up) → 3 notes/bar (two octaves up). All four layers draw from the SAME five pitch classes C-D-Eb-F-G; separation comes entirely from register, density and note length, never from new harmony. Bar-to-bar variation across the 4-bar loop is achieved by moving only ONE note of the arp (its lowest) — the other three are frozen.",
+   "spokenOrCaptioned": "No layer captions on screen. On-screen text is FL Studio UI only: tempo \"102.000\", clock \"0:00:00\"-\"0:08:00\", piano-roll titles \"Piano roll - Serum2 #4\", \"#3\", \"#2\", \"#5\", note-under-cursor readouts \"D#6 / 75\", \"B5 / 71\", \"C6 / 72\", \"E6 / 76\", \"F5 / 65\", \"C7 / 84\", \"F7 / 89\", \"G7 / 91\". Account bronikbeats; audio title \"Impossible\"."
+  },
+  {
+   "file": "igexport-DY77j6wIEcA.mp4",
+   "isProductionReel": true,
+   "evidence": "THE production reel of this slice. Every frame: a young man in a black t-shirt and headphones sits facing the webcam in the upper ~30% of the vertical frame (green wall, framed picture behind him, couch), and directly below it a full FL Studio window — menu bar 'ONS TOOLS HELP', PAT/SONG transport, tempo field reading 63.000, M:S:CS clock, and the piano roll title bar reading 'Piano roll - Serum2 #4' / '#3' / '#2' / 'Serum2' as he switches channels. Note labels (D5, F5, E5, A#4, A4, F6, G6, D6, A5, A6) are legible in the roll.",
+   "daw": "FL Studio",
+   "bpmOrKey": "63.000 BPM (tempo field). Key is D minor: every pitch used is D, E, F, G, A plus one A#(Bb) — D5/F5/E5 ostinato, A#4-A4 in the low part, D6-E6-F6-G6-A6 melody, and a D-F-A-D-F-A sustained arpeggio.",
+   "spokenOrCaptioned": "No burned-in captions or on-screen text of any kind. He talks to camera (no subtitles), so nothing verbatim is recoverable from frames.",
+   "layerOrderNotes": "Four separate instances of the SAME synth (Serum2, Serum2 #2, #3, #4) — the layers are separated by REGISTER and RHYTHM, not by timbre. Build order by timestamp: (1) 0-27s Serum2 #4, the two-note ostinato, written 2 bars first and then extended to 4; (2) ~28-33s Serum2 (unnumbered), the A#4/A4 half notes; (3) ~34-49s Serum2 #3, the melody, written as a 2-bar cell then COPY-PASTED forward — at 42s the duplicated notes are visible in red mid-drag, landing in bars 3-4; (4) ~50-69s Serum2 #2, the sustained rising arpeggio, still being drawn when the reel ends. Nothing fades in or out — every layer is drawn note-by-note in the piano roll and the transport loops the same 4 bars. Structure is a 2-bar cell restated: the ostinato's F-bar/E-bar pair repeats for bars 3-4, the melody's phrase is duplicated verbatim into bars 3-4, and the sustained arpeggio's bars 3-4 are bars 1-2 transposed up an exact octave.",
+   "layers": [
+    {
+     "name": "Serum2 #4 — two-note ostinato (pedal + upper accent)",
+     "order": 1,
+     "register": "mid — D5 pedal with F5/E5 immediately above it, all inside C5-C6",
+     "whatItPlays": "Two interlocking voices on one channel, 2-bar cell repeated to 4 bars. LOWER: D5 repeated as a continuous eighth-note pulse, 8 per bar, never changing pitch, running unbroken through the whole loop (16 notes over bars 1-2). UPPER: one note per beat, 4 per bar — F5 for the whole of bar 1, then E5 for the whole of bar 2 (so the upper voice is a single step down, F->E, once every two bars). Vertical interval is therefore a minor 3rd for bar 1 and a major 2nd for bar 2 — the E5 bar is a deliberate suspension against the D pedal. CRITICALLY, the two voices never strike together: measured at high zoom, each upper note sits exactly halfway between two consecutive D5 eighths (F5 left edges 486, 714, 942, 1172 against D5 left edges 428, 542, 656, 772 — 486 is the exact midpoint of 428 and 542). Per beat the sixteenth grid reads: [rest] D5 F5 D5. The first sixteenth of every beat is empty, so nothing lands on the downbeat and the two lines interlock instead of stacking.",
+     "relationToOthers": "the harmonic bed everything else is built over; the melody (Serum2 #3) is this layer's own pitches an octave up"
+    },
+    {
+     "name": "Serum2 (unnumbered) — low answering half notes",
+     "order": 2,
+     "register": "low — A#4/A4, sitting below the D5 pedal",
+     "whatItPlays": "Long half notes (2 beats each), and it plays ONLY in the even bars — silent in bar 1, enters at the top of bar 2 with A#4 held for 2 beats, then A4 for the next 2 beats, then silent again until bar 4 where A#4 returns. So it is 2 notes per active bar, 0 in the others. The move is a semitone descent A#(Bb) -> A, i.e. b6 -> 5 in D minor: a sighing resolution, not a bass line. Against the ostinato it makes bar 2 read Bb (Bb-D-F) then A (A-D-E).",
+     "relationToOthers": "an ANSWER to the ostinato rather than a continuous part — it fills the second bar of each 2-bar cell, exactly where the ostinato's upper voice drops from F to E"
+    },
+    {
+     "name": "Serum2 #3 — melody",
+     "order": 3,
+     "register": "lead / high — D6 to A6, a full octave above the ostinato",
+     "whatItPlays": "Eighth notes, sparse and gapped, a 2-bar phrase duplicated into bars 3-4. Bar 1: F6 (beat 1), E6 (beat 2), G6 (beat 3), F6 (beat 4), D6 (the 'and' of beat 4) — 5 notes. Bar 2: E6 (beat 2), E6 (the 'and' of beat 3), F6 (just after beat 4) — 3 notes, and beat 1 of bar 2 is silent. Contour is entirely stepwise within a fifth: F-E-G-F-D is a neighbour/turn figure that dips a step, reaches up a third, then falls to the tonic D. Bar 4 answers differently with A6 then D6 (the only leap in the tune, up to the fifth). Pitch set is exactly D E F G A — the same letters as the ostinato, one octave higher.",
+     "relationToOthers": "an octave-transposed elaboration of the ostinato's own pitches (D/E/F); it moves in eighths where the ostinato holds, and rests on the downbeats the ostinato also leaves empty"
+    },
+    {
+     "name": "Serum2 #2 — sustained rising arpeggio",
+     "order": 4,
+     "register": "spans mid to high — starts at D5 in the ostinato's own register and climbs to A6 in the melody's",
+     "whatItPlays": "The slowest layer: whole notes and half notes only, one to two notes per bar, spelling the D minor triad upward across the full 4-bar loop. Bar 1: D5 held a whole bar (4 beats). Bar 2: F5 for 2 beats then A5 for 2 beats. Bar 3: D6 held a whole bar. Bar 4: F6 for 2 beats then A6 for 2 beats. So the rhythm is long-short-short, long-short-short, and bars 3-4 are bars 1-2 transposed up an EXACT octave. Net contour D-F-A-D-F-A: a two-octave rising arpeggio at one chord tone per half-bar.",
+     "relationToOthers": "outlines the chord the other three layers only imply; it starts in unison with the ostinato's pedal (D5) and ends in the melody's register (A6), so it stitches the two registers together over the 4 bars"
+    }
+   ]
+  },
+  {
+   "file": "igexport-DYfkq3BouJ_.mp4",
+   "isProductionReel": true,
+   "evidence": "PRODUCTION REEL. Top ~31% of every frame is a webcam shot of a young man in headphones and a black tee, sitting on a couch under a framed landscape painting; below him, filling the rest of the frame, is FL Studio — transport reading 75.000 BPM / Pattern 1, and a full piano roll whose title bar reads 'Piano roll - Serum2 #4' (0:00-0:16), then 'Piano roll - Serum2' (0:18), then 'Piano roll - Serum2 #5' (0:20-0:39). Notes appear one at a time under the pencil cursor across the whole 39s, so the writing of two complete layers is captured live. Verified frames at 0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 34, 36, 38 plus 1600px and 1900px crops of the note area at 0:18 and 0:38.9 for exact grid positions.",
+   "daw": "FL Studio",
+   "bpmOrKey": "75.000 BPM legible in the transport tempo field. No key indicator on screen; the pitch content of all three layers is exactly {C, D, Eb, F, G, Ab, Bb} = C natural minor.",
+   "layers": [
+    {
+     "name": "Serum2 (root/bass channel — already present as grey ghost notes at 0:00, shown green at 0:18)",
+     "order": 1,
+     "register": "low",
+     "whatItPlays": "MONOPHONIC ROOT LINE, not chords — one whole note per bar, five notes total over the 4-bar loop. Bar 1: C4 held the full bar. Bar 2: A#3 (Bb3) held the full bar. Bar 3: F4 held the full bar. Bar 4 SPLITS in half: G#3 (Ab3) on beats 1-2, then G4 on beats 3-4. Progression = i - bVII - iv - bVI - V in C natural minor. The voice-leading detail worth stealing: at the bar-4 split he does NOT step Ab3 down a semitone to G3, he LEAPS UP a major 7th to G4 — so the V arrives brighter and much nearer the melody's register, precisely on the bar where the melody is busiest.",
+     "relationToOthers": "The floor everything else is measured from. Its one note per bar is what the melody hammers a chord tone of, and what the ornament pings the root/5th of. Its bar-4 half-bar split is the ONLY place any layer changes harmony mid-bar, and both upper layers change behaviour there too."
+    },
+    {
+     "name": "Serum2 #4 (lead melody — written live 0:00-0:14)",
+     "order": 2,
+     "register": "lead",
+     "whatItPlays": "4-bar cell, EVERY note is an 8th-note in length, nothing longer anywhere. The rhythm alternates STATIC bar / MOVING bar. Bar 1: D#5 (Eb, the b3 over C) repeated four times, one 8th-long note on each of beats 1, 2, 3, 4 — i.e. staccato quarters, so half the bar is silence, on a single unchanging pitch. Bar 2: eight STRAIGHT 8THS alternating just two pitches a perfect 4th apart — D5 on every beat, G5 on every '&' (D = 3rd of Bb, G = 6th of Bb); the LOW note is on-beat and the HIGH note off-beat. Bar 3: F5 (the root over F) repeated four times, identical staccato-quarter shape to bar 1. Bar 4 (turnaround): eight straight 8ths, G#5 G5 F5 C5 D5 G5 D5 G5 — a three-note stepwise descent Ab-G-F, then a drop of a perfect 4th to C5, a step up to D5, and the bar-2 D5/G5 fourth-oscillation returns as the tail. Notes per bar = 4, 8, 4, 8. Total pitch inventory is only six notes: C5 D5 D#5 F5 G5 G#5. Each half of bar 4 SPELLS its chord: G#5-G5-F5-C5 over Ab, then D5/G5 (5th and root) over G.",
+     "relationToOthers": "Sits a 7th to an 11th above the root note. Over static bars it picks ONE chord tone and hammers it (b3 over i, root over iv); over moving bars it alternates two chord tones a 4th apart. Its activity curve (4-8-4-8) is the curve the ornament copies at half density."
+    },
+    {
+     "name": "Serum2 #5 (high ornament / counter-figure — written live 0:22-0:39)",
+     "order": 3,
+     "register": "high",
+     "whatItPlays": "Sparse figure whose pitch set is LITERALLY THE MELODY'S SET TRANSPOSED UP TWO OCTAVES: C7, D7, D#7, F7 (plus one G6). All notes 8th-length. Bar 1: C7 on beat 1, G6 on beat 3 — root and 5th only, two hits, a hollow open-fifth ping placed exactly where the melody is sitting on one static pitch. Bar 2: D#7 on the 'a' of beat 2 (a 16th-note pickup — the ONLY sixteenth anywhere in the whole reel, and it overlaps the next note by a 16th so it reads as a grace slide), D7 on beat 3, C7 on beat 4, D7 on the '&' of 4. Bar 3: F7 on beat 1, C7 on beat 3 — the same two-hit root+5th shape as bar 1, transposed to the new chord. Bar 4: six straight 8ths starting on BEAT 2 (beat 1 deliberately left empty), C7 D7 D#7 D7 C7 D7 — a neighbour-tone wiggle around D7. Notes per bar = 2, 4, 2, 6.",
+     "relationToOthers": "Two octaves above the melody and on a separate synth instance. It coincides with a melody onset on 13 of its 14 attacks — only the bar-2 16th pickup is rhythmically free — so it is separated by REGISTER and TIMBRE, not by rhythm. Its bar-1/bar-3 root+5th ping fills the holes left by the melody's staccato-quarter bars; its bar-2 D#7-to-D7 move mirrors the melody's own bar1-D#5-to-bar2-D5 move an octave-doubled two octaves up."
+    }
+   ],
+   "layerOrderNotes": "The root/bass layer ALREADY EXISTS when the reel opens — its five notes are visible as grey ghost notes at 0:00 under an empty melody channel — so what the reel actually captures is layers 2 and 3 being written. He writes STRICTLY LEFT TO RIGHT IN TIME, never track-by-track or phrase-by-phrase: melody bar 1 quarters (0:00-0:04), bar 2's alternating D5/G5 8ths built one alternating note at a time (0:04-0:07), bar 3 quarters (0:07-0:09), bar 4's run (0:10-0:14). At 0:16 he plays it back, at 0:18 he flips the piano roll to the root layer to look at it (adds nothing), at 0:20-0:22 he opens the empty Serum2 #5 and scrolls the roll up two octaves, then builds the ornament bar 1 (0:24-0:28) -> bar 2 (0:30) -> bar 3 (0:34) -> bar 4 (0:36-0:38). NOTHING FADES: every layer is pattern notes that cut in at its first note; there are no automation clips, no volume rides and no filter sweeps anywhere on screen. Two findings that matter for an engine: (1) INDEPENDENCE IS BOUGHT WITH REGISTER, NOT RHYTHM — 13 of the ornament's 14 onsets land on a melody onset, and the two layers are separated by two full octaves and different synth instances. (2) DENSITY IS NOT INVERTED — the ornament tracks the melody's activity curve at roughly half density (melody 4-8-4-8 notes per bar, ornament 2-4-2-6), thinning on the melody's static bars and thickening most in the bar-4 turnaround, rather than filling the melody's rests.",
+   "spokenOrCaptioned": "None. No on-screen text, caption, title card or subtitle appears in any frame of the 39 seconds (checked 0.3s, and every 2s from 0 to 38). Audio was not analysed."
+  },
+  {
+   "file": "igexport-DZS8aawIFrb.mp4",
+   "isProductionReel": true,
+   "evidence": "Exactly the format the owner described. Top ~31% of every frame is a live webcam: a young man in a black t-shirt wearing over-ear headphones, sitting on a beige couch under a framed landscape painting. The bottom ~69% is FL Studio — the transport strip (PAT/SONG, 80.000 tempo field, M:S:CS clock) then a full piano roll whose title bar reads 'Piano roll - Surge XT'. Across the reel that title changes to 'Piano roll - Serum2' (0:22), 'Piano roll - Surge XT #2' (0:26) and 'Piano roll - Surge XT #3' (0:40) as he opens each channel. He draws notes with the pencil tool on camera and the note name readout in the top-left updates (F#5/66, D#6/75, A5/69...).",
+   "bpmOrKey": "80.000 BPM shown in the transport all reel; 4/4; pitch content is E natural minor (E–F#–G–A–B, chords Em / C / B)",
+   "daw": "FL Studio",
+   "spokenOrCaptioned": "No captions, no on-screen text, no title cards anywhere in the 55s — he is speaking to camera (narration only, not transcribable from frames).",
+   "layerOrderNotes": "Four layers, and the sequence is: an existing harmony hand -> the 16th arpeggio -> a high syncopated counter-melody -> a slow sustained line. The Serum2 harmony part is already there when the reel opens (its notes show as grey ghosts under the arpeggio in the very first frame at 0:00); he opens it at 0:22 only to play it back. Everything else is drawn note by note with the pencil during the reel, in that order. NOTHING FADES — there are no volume automation moves, no filter sweeps and no gradual entries anywhere; a layer is either drawn or not drawn. There are no drums in the project at all. The organising principle: each new layer is separated from the last in exactly ONE dimension. #2 (Surge XT #2) separates by REGISTER, sitting an octave-plus above the arpeggio (E6–C7 vs E5–G5), and by RHYTHM, landing almost entirely on weak 16ths while the arpeggio runs straight. #3 (Surge XT #3) separates by DURATION only — whole and half notes against 16ths — and deliberately shares the arpeggio's register and its exact pitch set (E, F#, G), so it reads as the same tune in augmentation rather than as a new voice. Velocities on the arpeggio are uniform at maximum across all 64 notes (checked the Control/Velocity lane): no dynamic shaping at all, the interest is entirely in pitch design and placement.",
+   "layers": [
+    {
+     "name": "Serum2",
+     "order": 1,
+     "register": "low-mid, E4 up to C5 — a fifth to an octave below the arpeggio, the lowest pitched material in the project",
+     "whatItPlays": "The harmony hand, long values only: 5 notes per 2 bars. Bar 1 = E4 held 3 beats, then G4 on beat 4 for 1 beat. Bar 2 = C5 held 2 beats (beats 1-2), B4 on beat 3 for 1 beat, B3 on beat 4 for 1 beat. 2-bar loop. Contour is root-then-third for the tonic bar, then the next chord's root placed ON TOP (C5, higher than the E4 it came from) followed by a descent that DROPS AN OCTAVE at the bar end (B4 -> B3) as a turnaround into the repeat. No block chords anywhere — it is a single moving voice, one note at a time.",
+     "relationToOthers": "It supplies the chord roots the arpeggio's octave pair tracks (E, then C, then B). It is the only layer below C5 and it never collides with the arpeggio's fixed F#5/G5 pedal."
+    },
+    {
+     "name": "Surge XT",
+     "order": 2,
+     "register": "mid, E5 to E6 — the arpeggio spans exactly one octave and the pedal notes sit inside it",
+     "whatItPlays": "The 16th-note arpeggio: 16 notes per bar, one on every 16th, no rests, strictly monophonic (no two notes ever share an x-position). One 4-note cell repeated on all four beats: [chord root low] -> [same root +12] -> [F#5] -> [G5]. Interval shape per beat is +12, -10, +1. Slots 3 and 4 (F#5 and G5) are INVARIANT for the whole 4-bar loop — a fixed two-note pedal buried inside the arpeggio. Only slots 1-2, the octave pair, move with the harmony: bar 1 = E5/E6 on all four beats; bar 2 = C5/C6 on beats 1-2 then B4/B5 on beats 3-4; bars 3-4 repeat bars 1-2 verbatim. So the frozen F#+G dyad reads as 9th+b3 over Em, #11+5 over C, and 5th+b6 over B — consonant, spicy, then coloured, without a single note of it changing. Every note is one 16th long. Velocities all uniform at max.",
+     "relationToOthers": "Interlocks with nothing — it is the continuous bed. Its octave pair doubles Serum2's chord roots two octaves up; its F#/G pedal is the pitch material layer 4 later restates in augmentation."
+    },
+    {
+     "name": "Surge XT #2",
+     "order": 3,
+     "register": "high / lead, E6 to C7 — one to two octaves above the arpeggio, the highest material in the project",
+     "whatItPlays": "A sparse syncopated counter-melody, 3-4 short notes per bar (all 16th-length boxes), on a 2-bar phrase. Bar 1: E6 on beat 1, then three beats of rest, F#6 on beat 4, B6 on the '&' of 4. Bar 2: C7 on beat 2, B6 on the '&' of 2, F#6 on the '&' of 3, B6 on beat 4. Bar 3 repeats bar 1 with G6 in place of E6 as the head note. Bar 4 repeats bar 2 with A6 in place of the last note. Contour: after the head note it is a rising perfect 4th (F#6 -> B6) used as a pickup across the barline, then an upper-neighbour turn (C7 -> B6), then a dip to F#6 and back to B6 — B6 is the axis it keeps returning to. Apart from the phrase-opening downbeat it NEVER lands on beat 1 or beat 3; every other note is on beat 2, beat 4, or an off-16th.",
+     "relationToOthers": "Answers the arpeggio rather than doubling it: it rests through the arpeggio's busiest stretch (beats 2-3 of bar 1) and its head notes E6 then G6 are the same two pitches the arpeggio is pedalling, an octave up. Separated from the arpeggio by register AND by syncopation."
+    },
+    {
+     "name": "Surge XT #3",
+     "order": 4,
+     "register": "mid, E5 to B5 — deliberately the SAME register as the arpeggio's pedal, on a different Surge patch",
+     "whatItPlays": "A sustained stepwise line, long values only, alternating a held bar with a moving bar. Bar 1 = E5 held the entire bar (whole note). Bar 2 = F#5 for 2 beats, E5 for 1 beat, F#5 for 1 beat. Bar 3 = G5 held the entire bar. Bar 4 = A5 for 2 beats, B5 for 1 beat. Net contour is a slow rise up the E minor scale, E-F#-G-A-B, one scale step per held bar, with a neighbour wobble (F#-E-F#) filling the moving bars. Roughly 1 to 3 notes per bar against the arpeggio's 16.",
+     "relationToOthers": "It restates the arpeggio's own pitch set (E, F#, G) in augmentation, at the same octave, then carries it further up the scale to A and B which the arpeggio never reaches. Sustains under Surge XT #2 and over Serum2; it is the only layer whose separation is purely durational."
+    }
+   ]
+  },
+  {
+   "file": "igexport-Da3c_kEI25C.mp4",
+   "isProductionReel": true,
+   "evidence": "This is the format the owner wants. In every frame the top ~31% of the 720x1280 frame is a live webcam shot of a young man in over-ear headphones, seated on a couch in front of a framed landscape painting; the bottom ~69% is FL Studio's piano roll, transport reading 69.000 BPM, header cycling through \"Piano roll - Serum2\", \"- Serum2 #2\", \"#3\", \"#4\", \"#5\". Verified on frames at 0s, 6s, 12s, 24s, 32s, 48s and 55s. He is on camera continuously for all 55s and never speaks to camera. Five separate Serum instances are written one at a time with the pencil tool over a fixed 4-bar pattern; I read note names off the piano-roll labels and onsets off the bar/beat grid (bar = 275px, beat = 68.75px, 8th = 34.4px in my 1300px crops). Every pitch written in the whole reel is C, D, Eb, F, G, Ab or Bb - C natural minor.",
+   "daw": "FL Studio",
+   "bpmOrKey": "69.000 BPM shown in the transport; 4/4 (4-bar pattern, bars 1-5 ruled). No key is written on screen, but every note drawn is C/D/Eb/F/G/Ab/Bb = C natural minor. The bass roots spell i-bVII-iv-v (C-Bb-F-G).",
+   "layers": [
+    {
+     "name": "Serum2 (first instance, shown unnumbered in the piano-roll header at 0:08)",
+     "order": 1,
+     "register": "low - F3 to C4, the octave immediately below middle C",
+     "whatItPlays": "HALF NOTES, exactly 4 per 2-bar cell, monophonic, always on beat 1 and beat 3 and never anywhere else. Bar 1: C4 (beat 1) then Bb3 (beat 3). Bar 2: F3 (beat 1) then G3 (beat 3). Each note is a full 2 beats long so the line is continuous/legato with no gaps. The 2-bar cell repeats verbatim in bars 3-4. As roots: C - Bb - F - G = i - bVII - iv - v in C minor. Contour is step down a whole tone (C->Bb), leap down a P4 (Bb->F), step up a whole tone (F->G), and the G pushes back up a P4 into C at the loop point. Loop length 2 bars.",
+     "relationToOthers": "It is the harmonic floor and the ONLY layer on beats 1 and 3. It never doubles anything; its root is doubled at unison by the lead's 8th-note stab (see Serum2 #4)."
+    },
+    {
+     "name": "Serum2 #4",
+     "order": 2,
+     "register": "lead - Ab4 to Eb5 for the tune, plus two 8th-note stabs down at C4/F3",
+     "whatItPlays": "6 notes per 2-bar cell. The melody notes land ONLY on beats 2 and 4 - never on a downbeat: bar 1 = Eb5 (beat 2), Bb4 (beat 4); bar 2 = Ab4 (beat 2), G4 (beat 4). That is a descending line Eb5-Bb4-Ab4-G4 = b3-b7-b6-5 of C minor, with the intervals SHRINKING as it falls: down a P4, then down a whole tone, then down a semitone (the b6->5 sigh). Every note is short (roughly an 8th to a quarter); there are no held notes and no repeats. Separately, THE SAME CHANNEL plays a short 1/8 stab of the bass root on each downbeat - C4 on bar 1 beat 1 and F3 on bar 2 beat 1 - in exact unison with the bass half note underneath (confirmed at extreme zoom: the green 1/8 note sits on the front quarter of the grey half note). So one patch covers two registers: it gives the bass note its transient and then gets out of the way. At 0:06 he rubber-band selects bars 1-2 and drags a copy to bars 3-4, so bars 3-4 are byte-identical.",
+     "relationToOthers": "Total rhythmic interlock with the bass: bass on 1 and 3, lead on 2 and 4, zero shared melodic onsets across the whole cell. The only coincidence is the deliberate unison root stab on each downbeat."
+    },
+    {
+     "name": "Serum2 #3",
+     "order": 3,
+     "register": "high - C6 to G6, two octaves above the lead",
+     "whatItPlays": "Silent for a whole bar apart from ONE short C6 on the downbeat of bar 1, then a straight-8th figure that fills the first three beats of bar 2 and stops: F6 (beat 1), G6 (and of 1), F6 (beat 2), Eb6 (and of 2), REST on beat 3, D6 (and of 3). Six of the bar's eight 8th slots used, and the single rest sits squarely on beat 3. Contour = an upper-neighbour turn around F6 (F-G-F), a step down to Eb6, a gap, then D6. In scale degrees that is 4-5-4-b3 ... 2, and the 2 resolves onto the C6 downbeat of bar 3 - it WALKS ACROSS THE BARLINE into the next chord rather than resolving inside its own bar. Bar 3 = the C6 stab again, bar 4 = the same 8th figure. 2-bar loop.",
+     "relationToOthers": "The only layer carrying continuous 8ths, and it puts every one of them in bar 2, exactly where the bass and lead are resting. Same register as Serum2 #2 but the opposite duration class - it runs where #2 holds - and it lands in unison with #2 on the D6 at the and of 3."
+    },
+    {
+     "name": "Serum2 #2",
+     "order": 4,
+     "register": "high - C6 to G6, same octave as Serum2 #3",
+     "whatItPlays": "Strict HELD-BAR / MOVING-BAR alternation, one whole-bar note on odd bars and exactly two notes on even bars. Bar 1: C6 held the entire bar (whole note). Bar 2: Eb6 on beat 2 (about 1.5 beats long) then D6 on the and of 3, held to the barline. Bar 3: G6 held the entire bar. Bar 4: C6 on beat 2 then D6 on the and of 3. Note the period is FOUR bars, not two: the held pitch changes C6 -> G6 on the second pass, and the moving pair inverts from falling (Eb6->D6) to rising (C6->D6). Only two onsets ever occur in a moving bar, always at beat 2 and the and of 3.",
+     "relationToOthers": "Deliberately paired with #3 in the SAME register: #3 runs 8ths, #2 sustains, and they converge in unison on D6 at the and of 3. Its held bars (1 and 3) line up with the bars where every other layer is also sparse."
+    },
+    {
+     "name": "Serum2 #5",
+     "order": 5,
+     "register": "highest - D6 up to Eb7",
+     "whatItPlays": "A single 4-BAR ARCH, not a 2-bar loop. Bar 1: two long notes on beats 1 and 3, Eb6 then D6 - a semitone fall, the slowest movement in the whole track. Bar 2: G6 on beat 2 (a quarter), then a rising 8th run C7 (and of 3) - D7 (beat 4) - Eb7 (and of 4) which climbs straight across the barline. Bar 3: Eb7 held on the downbeat - the peak, more than two octaves above where the layer started - then it falls away, D7 (beat 4) - G6 (and of 4). Bar 4: D7 (beat 3) - G6 (beat 4). The descending 2-note tag D7->G6 (a falling P5) appears twice on the way down. Shape: slow and low, lift, peak on the bar-3 downbeat, controlled descent.",
+     "relationToOthers": "The mirror image of #3 within bar 2: #3 descends through the FIRST half of the bar, #5 ascends through the SECOND half, so the two split one bar between them like a question and its answer on separate patches. Across the whole cell they share only two 8th positions. Its 4-bar period is the only thing in the arrangement longer than 2 bars."
+    }
+   ],
+   "layerOrderNotes": "Built strictly BOTTOM-UP, one Serum instance at a time: bass (already on screen as grey ghosts at 0:00) -> lead #4 (0:00-0:08) -> high 8th run #3 (0:10-0:20) -> sustained top #2 (0:22-0:32) -> top counter-line #5 (0:34-0:55). Nothing fades in or out; a layer simply exists once its notes are drawn, and there is no automation or volume ramp shown. Bars 3-4 are made by rubber-band selecting bars 1-2 and dragging a copy (watched at 0:06 on the lead). REGISTER LADDER: F3-C4 -> Ab4-Eb5 -> C6-G6 -> C6-G6 -> D6-Eb7, i.e. every new layer sits an octave or more above the last, with one deliberate exception - #2 is put in #3's octave specifically so a sustain can sit against a run. CONVERGENCE POINTS are the striking thing: on beat 2 of bar 2 three separate layers each contribute ONE note of a cluster, Eb6 (#2) + F6 (#3) + G6 (#5) over the lead's Ab4 - no single layer ever plays a chord, the chord is assembled out of five monophonic lines. On the and of 3 of bar 2, #2 and #3 hit D6 in unison and #5 adds C7 above it: the pre-cadential note is the one instant the whole ensemble strikes together, and it resolves onto C6 on the next downbeat. DENSITY BREATHES ON A 2-BAR PERIOD: bar 1 is held/sparse in every layer (bass half notes, lead two notes, #2 a whole note, #3 one stab, #5 two long notes) and bar 2 is where all the 8th-note motion lives. No drums, no percussion, no audio clips at any point - the channel rack is never opened. Five pitched layers total.",
+   "spokenOrCaptioned": "None. Across 28 sampled frames plus 17 zoom crops there is no text overlay, caption or title anywhere - only the FL Studio UI and the webcam. He does not speak to camera."
+  },
+  {
+   "file": "igexport-DalZ717INc7.mp4",
+   "isProductionReel": true,
+   "evidence": "Every frame is split: top ~32% is a webcam shot of a man in headphones on a couch with a framed painting behind him; below it, full-width FL Studio — transport reading 91.000 BPM, a channel selector cycling \"Massive X\", \"Serum2\", \"Massive X #2\", \"Serum2 #2\", and a Piano roll window whose title bar names the current channel. I watched him draw every note from an empty roll at 0.4s to the finished 4 bars at 56.5s, and read the note labels (C5, D5, D#5, G#4, C6, G6, D#7, C8, G8) directly off the boxes. No drums were ever opened.",
+   "daw": "FL Studio",
+   "bpmOrKey": "91.000 BPM shown in the transport; key is C minor read off the notes (only C, D, D#/Eb, F, G, G#/Ab ever appear)",
+   "spokenOrCaptioned": "None — no captions, no on-screen text of any kind. The reel is purely the screen capture.",
+   "layerOrderNotes": "Strict order: lead ostinato first, then the sustained root layer an OCTAVE BELOW it, then the counter-melody an OCTAVE ABOVE it, then the sparse ladder two-to-three octaves above. Bass is added SECOND, not first, and no drums are ever added. Every layer CUTS in — he draws notes with the pencil, there is not a single fade or volume ramp in the reel, and nothing ever drops out. The four layers occupy four disjoint octave bands (G3-G4 / C5-D5 / C6-G6 / C7-G8) and never double a pitch. He also worked in two passes: on layers 2 and 3 he first placed short notes on the grid, then went back and STRETCHED them (bass short-notes-to-whole-bars between 26s and 28s), and at 40s he copy-pasted the finished 2-bar counter-melody phrase verbatim onto bars 3-4 rather than writing new material.",
+   "layers": [
+    {
+     "name": "Massive X",
+     "order": 1,
+     "register": "lead — C5 to C6, mid-high",
+     "whatItPlays": "Continuous straight 8ths, 32 notes over 4 bars, ZERO rests (the velocity lane shows 32 evenly spaced stems). It is a two-note whole-step oscillation: C5 on every OFFBEAT 8th (the & of 1, 2, 3 and 4 in all four bars, measured at 0.46/1.43/2.44/3.42... beats) and D5 on beats 2, 3 and 4 of every bar. The entire melodic content is ONE substituted note per bar, always on the DOWNBEAT: bar1 beat1 = C6 (an octave leap above the oscillation, struck exactly once, the highest note in the layer), bar2 beat1 = D#5/Eb5, bar3 beat1 = G#4/Ab4, bar4 beat1 = G4. The body of every bar is byte-identical; only the downbeat moves. The four downbeats spell C - Eb - Ab - G = i - III - VI - V in C minor, so the substituted note carries the whole progression.",
+     "relationToOthers": "It is the seed for everything else. Layer 2 plays these four downbeat pitches an octave down; layer 3 plays its C-D-D# oscillation pitches an octave up. The oscillation's offbeat placement leaves every downbeat free for the other layers to accent."
+    },
+    {
+     "name": "Serum2",
+     "order": 2,
+     "register": "low — G3 to G4, exactly one octave under the lead's oscillation",
+     "whatItPlays": "ONE note per bar, held the FULL bar (whole notes), no rhythm whatsoever: bar1 C4, bar2 D#4/Eb4, bar3 G#3/Ab3, bar4 splits — G4 for 2 beats then G3 for 2 beats. That last move is an OCTAVE DROP inside the turnaround bar, the only rhythmic event in the layer. He drew these as short downbeat notes first (visible at 26s) and only afterwards stretched each one to fill its bar (visible at 28s).",
+     "relationToOthers": "It is literally the lead's downbeat skeleton, sustained and transposed down (C6->C4 two octaves, Eb5->Eb4, Ab4->Ab3, G4->G4 in unison). It adds no new pitch and no new rhythm — it converts the lead's per-bar substituted note into held harmony."
+    },
+    {
+     "name": "Massive X #2",
+     "order": 3,
+     "register": "high — C6 to G6, exactly one octave above the lead",
+     "whatItPlays": "A 2-bar phrase, then COPY-PASTED verbatim onto bars 3-4 (I watched the paste at 40s; the pitches and onsets are identical, so the same tune sits over Ab and G as over Cm and Eb). Bar 1: RESTS on beat 1, then quarter notes C6 (beat 2), D6 (beat 3), D#6 (beat 4) — a stepwise rise using the lead's own three pitch classes an octave up, aimed at the next downbeat. Bar 2: leaps up a perfect 4th to G6 held ~1.5 beats (dotted quarter) as the phrase peak on the downbeat, then two 16ths stepping down F6, D#6, landing on D6 held 2 beats. Shape in one line: stepwise quarter-note rise -> leap up to a held peak -> fast 16th step-down -> held landing note.",
+     "relationToOthers": "Never enters on a downbeat in bar 1 (it rests through beat 1 where the lead's C6 accent is), so it interlocks with rather than doubles the lead. It answers the lead: the lead holds a static oscillation, this layer supplies the only actual phrase contour. Its G6 peak lands on the same downbeat where the lead substitutes Eb5, giving Eb-G, a minor third."
+    },
+    {
+     "name": "Serum2 #2",
+     "order": 4,
+     "register": "high — C7 to G8, two to three octaves above the lead",
+     "whatItPlays": "Extremely sparse: per bar, ONE 8th on the downbeat, silence through beats 2-3, then a three-note UPPER-NEIGHBOUR TURN on beat 4 and the & of 4 that resolves onto the next bar's downbeat. Measured: bar1 C7 (beat1) ... D7 (beat4), D#7 (&4) -> bar2 D7 (beat1) ... D#7 (beat4), F7 (&4) -> bar3 D#7 (beat1), C8 (beat2) ... C8 (beat4), D8 (&4) -> bar4 D#8 (beat1) ... G8 (beat3). So the figure is [X, its upper neighbour, back to X] straddling the barline, and each bar's downbeat sits one scale step above the last (C7 -> D7 -> D#7). At bar 3 he JUMPS the whole ladder up an octave (D#7 -> C8) and repeats the same shape, so the layer climbs to G8 by the end — a 4-bar rise built from one 3-note cell.",
+     "relationToOthers": "The only layer that crosses barlines with its figure; everything else is bar-locked. It accents the same downbeats the lead substitutes on, an octave or two up, so the substituted note is doubled at the top of the mix. Its silence through beats 2-3 is where the counter-melody (layer 3) is busiest."
+    }
+   ]
+  },
+  {
+   "file": "igexport-Db04jWHop4_.mp4",
+   "isProductionReel": true,
+   "evidence": "A person IS visible on camera and a DAW piano roll IS visible — but NOT in the top/bottom split the brief describes, so flagging the layout honestly: Ableton Live 12 (Notes / Envelopes / MPE tabs, transport 122 BPM) fills the ENTIRE frame edge to edge, and the producer appears inside a floating macOS \"Photo Booth\" window parked in the lower-middle third (visible in frames at 0s, 6s, 16s, 30s, 34s — at 12s and 16s she is clearly playing a hardware keyboard in a purple-lit room). Plugin windows (Serum 2, Arturia CZ V, Arturia Analog Lab Pro) float over the roll. Note-name labels (F#3, A3, G#3, C#5, E5, F#5, B4, D5, F#1, G#1, E1, C#3, B2, G#2) are legible on the note boxes, so the patterns are readable.",
+   "daw": "Ableton",
+   "bpmOrKey": "122 BPM in the transport (project also shows a session tempo of 122). Ableton's key selector reads \"C Major\" but that does NOT match what is played — the notes are F# minor throughout (F#, G#, A, B, C#, D, E). Remake of Britney Spears \"Gimme More\".",
+   "spokenOrCaptioned": "On-screen text, in order: \"remaking\" / \"the beat\" (over a Windows-95 CD Player mock showing Artist: Britney Spears, Track: Gimme More), then \"1. bass\", \"2. plucks\", \"3. ping pong\", \"4. kick + clap\", \"5. keys\", \"bass....???\" (a joke that the keys preset is filed under BASS), \"6. laser downer\", \"7. synth pad\", \"8. second layer\", \"9. lead\", \"final result\".",
+   "layerOrderNotes": "Numbered build order on screen: bass -> plucks -> ping-pong (FX only) -> kick+clap -> keys -> laser downer (FX only) -> synth pad -> second layer (a doubling of the pad) -> lead. Two things worth transferring: DRUMS ARRIVE FOURTH, after two pitched layers, and THE LEAD IS ADDED LAST AND IS THE SPARSEST THING IN THE PROJECT — one note every two beats against a bass and a keys part that are both playing continuously. Two of the nine numbered steps add no notes at all (ping pong = a delay on the plucks; laser downer = a single swept FX note), and one adds no new part (step 8 is a second synth playing the pad's exact notes). So only six of the nine steps are actual musical layers. In the \"final result\" arrangement view every clip CUTS in together at bar 139 — the kick and clap clips before that bar are drawn dimmed/deactivated — so nothing fades; the whole stack drops in at a section boundary.",
+   "layers": [
+    {
+     "name": "bass (Serum 2, preset titled \"Bass Drive\")",
+     "order": 1,
+     "register": "low — octave 3 (F#3, G#3, A3)",
+     "whatItPlays": "Fully LEGATO — every note runs into the next, zero rests; the note lengths simply fill the gap to the following onset (measured 0.73 / 0.98 / 0.48 beat). It does NOT play a line: it REPEATS the chord root two or three times as a rhythmic ostinato and only moves when the chord moves — F#3 x3, then A3 x2, then G#3 x2. Onsets in 16ths from the start of the group: 0, 3, 6, 10, 14, 16, 19 — i.e. dotted-8th spacing (3+3) inside a chord, quarter-note spacing (4+4) across the chord change, then 2+3. All the interest is the 3/16 syncopation; the pitch is just whatever the harmony is.",
+     "relationToOthers": "Locked to the pad's chord roots (F#m, A, G#m) an octave or two above the pad's bass note. It is the only layer with a syncopated attack pattern — the keys run straight 8ths and the pad holds, so the bass supplies all the push."
+    },
+    {
+     "name": "plucks (Serum 2, preset \"ACS-Serum 2\")",
+     "order": 2,
+     "register": "high — octave 5 (F#5, C#5)",
+     "whatItPlays": "Very short stabs (well under a 16th at the visible zoom), sparse and widely spaced — roughly two attacks per bar-half, alternating just TWO pitch classes: F#5 (root) and C#5 (5th). No stepwise motion at all, no third; a root-and-fifth ping.",
+     "relationToOthers": "Sits an octave above the bass playing the same two scale degrees the bass is outlining, so it reads as a high echo of the root motion rather than a melody. Occupies the same octave as the keys but at a fraction of the density."
+    },
+    {
+     "name": "ping pong (step 3 — FX, no new notes)",
+     "order": 3,
+     "register": "high — applied to the octave-5 pluck material",
+     "whatItPlays": "No notes are drawn in this step. The piano roll behind the caption still shows the same sparse high pluck notes, with Serum 2 open. Read as a ping-pong DELAY placed on the plucks (the caption is the only hard evidence; I did not see the device chain, so this one is inference, not a reading).",
+     "relationToOthers": "Turns the two-pitch pluck into a stereo-bouncing repeat, which is how the sparse pluck fills the space between the keys' 8ths without another part being written."
+    },
+    {
+     "name": "kick + clap (audio one-shots: \"Kick Bla[ckout]\" and a sampled \"Britney Spears - Gimme More\" clap)",
+     "order": 4,
+     "register": "low — percussion",
+     "whatItPlays": "Kick is FOUR-ON-THE-FLOOR: clips at 126.3, 126.4 and 127 in the arrangement ruler, spaced exactly one beat apart, one hit every beat. Clap lands on beats 2 and 4 (clips at 126.2 and 126.4, two beats apart). Nothing else — no hats visible in this step.",
+     "relationToOthers": "Arrives AFTER the bass and plucks, so the syncopated bass was written against silence, not against a grid. The kick's every-beat pulse is the straight reference the bass's dotted-8ths pull against."
+    },
+    {
+     "name": "keys (Arturia Analog Lab Pro, preset \"Driller Sweep\", filed under BASS)",
+     "order": 5,
+     "register": "mid-high — B4 to F#5, octaves 4-5",
+     "whatItPlays": "CONTINUOUS straight 8ths, no rests, built from a THREE-NOTE ascending cell that ROTATES against the 4/4 bar. Measured at bar 7: B4, C#5, E5, B4, C#5, E5, B4 at exactly 0.5-beat spacing off the downbeat; measured over another chord: C#5, E5, F#5, C#5, E5, F#5, C#5. Because the cell is 3 eighths long and the bar is 8 eighths, the cell starts on a different metric position every bar and only realigns every 3 bars — that is the entire source of variation, with no note ever changed. The cell's pitches follow the chord (C#-E-F# over one, B-C#-E over the next). THE PHRASE IS CLOSED BY BREAKING THE CELL: at bar 8 the same continuous 8ths become a stepwise DESCENT — E5, B4, C#5, E5, D5, C#5, B4 — introducing D5, a pitch that is not in the cell at all, and walking E-D-C#-B down by step to the cadence.",
+     "relationToOthers": "The busiest pitched layer and the harmonic filler. Shares octave 5 with the plucks but is continuous where they are sparse. Its 3-against-8 rotation means it never strikes the same way twice against the four-on-the-floor kick, which is how a one-bar cell survives a whole section."
+    },
+    {
+     "name": "laser downer (step 6 — FX)",
+     "order": 6,
+     "register": "high — above the E5 rows, a single swept pitch",
+     "whatItPlays": "ONE long note, ~1.5 beats, running from beat 2 to the & of beat 3 of the bar, at a single high pitch, on a pitch-swept FX patch. One event per section, not a pattern.",
+     "relationToOthers": "A transitional whoosh; it does not participate in the harmony and does not repeat."
+    },
+    {
+     "name": "synth pad (Arturia CZ V, preset \"The CZ Strings\")",
+     "order": 7,
+     "register": "low-mid — A1 to G#3, spanning octaves 1-3",
+     "whatItPlays": "Sustained BLOCK chords, tied across bar lines (a single chord runs from bar 4.3 through bar 5.3 in one frame). Two hard rules were consistent on every chord I could read. (1) VOICING: the ROOT doubled at two octaves plus the THIRD above the upper root, and NO FIFTH — F#1+F#2+A2 (minor 3rd on top), A1+A2+C#3 (major 3rd on top), G#1+G#2+B2, E1+E2+G#2, with a fourth tone (E3 / G#3) added on some. (2) HARMONIC RHYTHM: the bar splits 2.5 + 1.5 beats — the second chord of each bar arrives on the \"&\" OF BEAT 3, a half beat EARLY, never on a beat boundary. Measured repeatedly: chord starts at bar-beat 1.0 and at bar-beat 3.5. Progression read across the frames: F#m -> A -> G#m -> E (-> D), i.e. i - III - ii - VII in F# minor.",
+     "relationToOthers": "The harmonic bed everything else is measured against. Its pushed change on the & of 3 is what the syncopated bass is chasing; the keys' rotating cell re-pitches to whatever this pad is holding."
+    },
+    {
+     "name": "second layer (Serum 2 — a doubling of the pad)",
+     "order": 8,
+     "register": "low-mid — F#1 to C#3, the SAME register as the pad",
+     "whatItPlays": "Note-for-note the pad: the same root-doubled-plus-third voicing (F#1+F#2+A2, then A1+A2+C#3, then G#1+G#2+B2, then E1+E2+G#2), the same onsets, and the same 2.5+1.5-beat pushed harmonic rhythm. No new rhythm, no new pitch — purely a second timbre stacked on the identical part.",
+     "relationToOthers": "A pure timbral thickener of layer 7. Worth noting for the engine: she counts a DOUBLING as a numbered 'layer' in the reel, but it adds nothing melodic — 2 of the 9 numbered steps here are FX and 1 is a doubling."
+    },
+    {
+     "name": "lead (Arturia Analog Lab Pro, preset \"Chorus Vocal\", LEADS)",
+     "order": 9,
+     "register": "lead — F#4 to C#5",
+     "whatItPlays": "By far the SPARSEST layer in the project: ONE note every TWO beats, each note about 3/4 of a beat long (a dotted 8th) followed by more than a beat of silence. Pitches read: B4 (bar3 beat2), C#5 (bar3 beat4), F#4 (bar4 beat2), then F#4 repeated at a strict 2-beat interval. That is 4th -> 5th -> root in F# minor — three pitch classes, no run, no ornament, no stepwise motion.",
+     "relationToOthers": "Added LAST, on top of a bass and a keys part that are both playing continuously. It is defined entirely by its rests: it sits a register above the pad and below/among the plucks, and its 2-beat spacing means it only ever lands where the keys cell is mid-rotation, so the two never state a downbeat together for long."
+    }
+   ]
+  },
+  {
+   "file": "igexport-DcbbGuNCfGv.mp4",
+   "isProductionReel": true,
+   "evidence": "PRODUCTION REEL — confirmed on many frames across the full 63s. A macOS Photo Booth window with a visible person (male, baseball cap worn backwards, over-ear headphones, black hoodie, bedroom with plants and a disco ball behind him) floats over an FL Studio window running at 127.000 BPM. Read directly at t=10, 47, 55 and 62 among others. NOTE for the owner's stated pattern: the webcam is a FLOATING WINDOW that MOVES — it sits in the LOWER portion of the frame for most of the reel, not the top half. Titlebar reads 'Photo Booth'; FL title bar reads '...eoBerg] Lust.flp'. Piano rolls named in the title bar over the course of the reel: Layer, Purity #2, Kontakt, Purity #3, Omnisphere. Playlist is 'Playlist - Video Arr > Chant'.",
+   "daw": "FL Studio",
+   "bpmOrKey": "127.000 BPM (tempo field legible throughout). Key not stated on screen; pitch material is G#/C/D#/G, A#/D/F, B/D/G, E/F low roots — Eb major / C minor region with a chromatic Fm9 -> Em7 style shift.",
+   "layers": [
+    {
+     "name": "Layer",
+     "order": 1,
+     "register": "mid: G#4 to G5, one octave",
+     "whatItPlays": "The first thing written. Three chord STABS in bar 1 then silence for the rest of the bar — it does not fill the bar. Bar = 1095px on screen with the '1' and '2' ruler marks visible, so an eighth = ~137px. Onsets at x=200, 470, 675 = eighth-positions 0, 2 and 3.5 — i.e. beat 1, beat 2, and a syncopated hit a 16th before beat 3 (a 4+3 sixteenth pattern). Each stab is ~1 eighth long — detached, not held. Voicings: stab 1 and stab 2 are the SAME chord, G#4+C5+D#5+G5 = Ab-C-Eb-G = Abmaj7 in root position, four notes. Stab 3 changes to B4+D5+F#5 = a B minor triad. He is caught in the act of drawing the 4th note of stab 3 (an empty rectangle on the G#4 row), so the chord is being thickened from 3 notes to 4.",
+     "relationToOthers": "The harmonic seed. Purity #2 (next) plays essentially the same chord set with a different rhythm and a wider spread."
+    },
+    {
+     "name": "Purity #2",
+     "order": 2,
+     "register": "wide spread: low root at E3/F3, upper structure packed between A#4 and D6",
+     "whatItPlays": "Chord stabs on a DOTTED-QUARTER cycle — measured twice at two different zoom levels and both agree. At the 8th-note zoom, onsets sit at x=285, 628, 970, 1310 — spacing 343, 342, 340px against a gridline every 115px, i.e. exactly 3 grid units apart. At the beat-level zoom, onsets are 265px apart with a beat = 175px = 1.51 beats. So: a chord every 3 eighths, which is 3-against-4 and rolls across the barline, realigning only every 3 bars. Durations ALTERNATE: quarter, eighth, quarter, eighth (2 units then 1 unit). Voicings are 4- and 5-note and are NOT root-position triads: A#4+D5+D#5+G5 = Bb-D-Eb-G = Ebmaj7 in second inversion (the root Eb is in the middle, not the bass); B4+D5+G5 over a low E3 = E-G-B-D = Em7 spread across two and a half octaves with the root way down at E3 and the whole upper structure crammed into C5-G5; G#4+C5+D#5+G5 over a low F3 = F-Ab-C-Eb-G = Fm9. The last chord of the loop SPREADS WIDER than the others — A#4+D5+F5+A#5+D6, a Bb triad octave-doubled top and bottom over two octaves — so the voicing opens up at the turnaround.",
+     "relationToOthers": "Same harmony as 'Layer' but with the root dropped ~2 octaves below the upper structure, and the rhythm changed from an in-bar 4+3 to a bar-crossing dotted-quarter roll. The low E3/F3 roots move by SEMITONE (F3 -> E3) under a stationary-ish upper voicing."
+    },
+    {
+     "name": "Kontakt",
+     "order": 3,
+     "register": "low-mid: F3 to G4, monophonic",
+     "whatItPlays": "Starts as a PEDAL — four notes all on C4, evenly spaced, one per beat/half-bar, identical pitch, ~1 note width each. Then he edits it into a leaping line: C4 -> G4 (up a P5) -> F3 (down a major 9th) -> F4 (up an octave). Onsets are evenly spaced ~232px apart with the last gap stretched to 312px. Still strictly one note at a time, no chords, note lengths uniform except the last which is about half as long. Note that the big downward leap lands on the bar 3 line — the register drop is placed at a bar boundary.",
+     "relationToOthers": "The only monophonic mid-register line under the chords. It moves by LEAPS (5th, 9th, octave) not steps, so it reads as a bass/riff rather than a countermelody."
+    },
+    {
+     "name": "Purity #3",
+     "order": 4,
+     "register": "mid pad: G4/C5 initially, dragged up to C5/G5",
+     "whatItPlays": "Two notes only, both HELD across the entire visible span — at least 4+ bars each, one continuous block per note, no re-articulation at all. Initially G4+C5 (a perfect FOURTH). He then drags the whole thing up and it becomes C5+G5 (a perfect FIFTH). Two notes, thirdless, no 3rd and no 7th — deliberately an open-interval drone, not a chord.",
+     "relationToOthers": "The sustained floor under the stabs. Because it is thirdless it does not fight the Ebmaj7/Em7/Fm9 changes happening above it — the chord quality is carried entirely by Purity #2 while this holds a fixed open interval."
+    },
+    {
+     "name": "Omnisphere",
+     "order": 5,
+     "register": "very high topline: D6 to F6, above everything",
+     "whatItPlays": "Extremely slow held topline — ONE note every 3 to 4 bars. Measured: D6 held from bar 3 through most of bar 4 (a single note spanning ~3 bars, drawn as one continuous block), then D#6 entering at the bar 5 line. Movement is by SEMITONE (D6 -> D#6). A separate frame shows F6 as a short ~1-beat note followed by D6 held long — so the layer is a long tone with an occasional short neighbour note above it.",
+     "relationToOthers": "Sits an octave-plus above the Purity #2 stabs and moves an order of magnitude slower than everything else. Its semitone motion (D->D#) is what re-colours the held harmony without any chord changing."
+    },
+    {
+     "name": "Pattern 9 / String Bus (rendered audio)",
+     "order": 6,
+     "register": "broad sustained band",
+     "whatItPlays": "A frozen/rendered audio clip whose waveform is a FLAT continuous band with no transients across the whole clip — a pure sustained string pad, no rhythm of its own. It carries a visible fade envelope drawn on the clip and, on its own automation lane, a clip labelled 'Balance - String Bus - Volume' whose curve DESCENDS steadily across the section.",
+     "relationToOthers": "The only layer that changes by AUTOMATION rather than by notes — it is faded down across a section rather than cut."
+    },
+    {
+     "name": "Pattern 10 (chimes / high plinks)",
+     "order": 7,
+     "register": "around C5, very short notes",
+     "whatItPlays": "Four very short notes (roughly 16th-length blocks) at about C5, unevenly spaced across the bar — sparse decorative plinks, not a run. The pattern name in the piano roll is not legible; the playlist clip is labelled 'Pattern 10' and an adjacent panel reads 'Chimes 1'.",
+     "relationToOthers": "Highest-frequency decoration; enters late (at the bar-45 section line in the playlist)."
+    },
+    {
+     "name": "Bass (rendered audio clip)",
+     "order": 8,
+     "register": "low",
+     "whatItPlays": "An audio clip, so no piano roll — but the waveform is readable and it CHANGES at the section boundary. Bars 1-44 the waveform is a dense, even, low-amplitude sawtooth-looking band with regular small transients; from bar 45 onward the clip's waveform is visibly SPIKIER with taller, more separated transients. Same lane, different clip: the bass part is rewritten (more percussive/plucked) for the second section rather than repeated.",
+     "relationToOthers": "Runs continuously through both sections; it is the one element that never drops out."
+    },
+    {
+     "name": "Drum one-shot STACK (kick / clap layer)",
+     "order": 9,
+     "register": "low + high transient",
+     "whatItPlays": "Not a drum loop — a vertical STACK of four separate audio one-shots all placed at the SAME instant, on four adjacent playlist lanes. Names legible: 'J..3' (top, a short decaying waveform), 'kick -..ntasy' (a fat kick transient), 'Dry S..deit' (a dry snare-ish short hit), 'HK CP 808 909 09 #2' (an 808/909 clap). The whole 4-clip stack is duplicated at a later section point (the same four names reappear together further right). So one 'kick' event is four layered samples fired simultaneously.",
+     "relationToOthers": "Placed at section boundaries in the visible region rather than as a repeating per-beat pattern."
+    },
+    {
+     "name": "Chant (rendered audio clip)",
+     "order": 10,
+     "register": "vocal mid",
+     "whatItPlays": "An audio clip that starts exactly AT the bar 45 line — it does not exist before it. Waveform is a continuous vocal-looking band with a fade curve drawn over its tail. The whole playlist is named after it ('Playlist - Video Arr > Chant').",
+     "relationToOthers": "The payoff layer: it is the thing the arrangement is being built toward, and it is held back until the bar-45 drop."
+    }
+   ],
+   "layerOrderNotes": "Build order as filmed: Layer (chord stabs) -> Purity #2 (same chords re-voiced wide, on a dotted-quarter roll) -> Kontakt (monophonic leaping bass line) -> Purity #3 (thirdless held 4th/5th drone) -> Omnisphere (very slow high topline) -> String Bus pad + chimes -> Chant vocal + drum stacks. Same shape as the other reel: harmony first, then a low mono line, then sustain, then the very top, then vocals/drums last. ENTRY/EXIT is section-gated on ONE bar line (bar 45, visible in the ruler): Chant, Pattern 2, Pattern 8, Pattern 10, Pattern 14 and a NEW Bass clip all start together on that single line, while Pattern 1, 4, 5, 9, 15, 16 run continuously through it. So it is a hard multi-layer CUT-IN at a section boundary, not a gradual build. The only true FADES are automation: 'Balance - String Bus - Volume' descends across a section, and Pattern 4 carries a long descending automation line over its whole clip. Two layers also change WITHOUT a section boundary: Purity #3's dyad is dragged from a 4th to a 5th, and the Omnisphere topline steps D6 -> D#6 by semitone mid-loop.",
+   "spokenOrCaptioned": "One caption, burned in for the entire 63 seconds: 'Making 90s house from scratch'. No other on-screen text, no numbered layer labels, no arrangement annotations."
+  }
+ ]
+}

@@ -39,6 +39,8 @@ import { FIGURATIONS_FOUNDATION } from '../src/lib/figurations-foundation.js';
 import { FND_TRAVEL } from '../src/lib/figuration-graph.js';
 import { RHYTHMS } from '../src/lib/rhythms.js';
 import { INSTRUMENTS } from '../src/lib/instruments.js';
+import { chordCoreTones } from '../src/binder/theory.js';
+import { colorUpgradeDegrees } from '../src/lib/video-color.js';
 import { MELODY_RHYTHMS_UNDERTALE } from '../src/lib/rhythms-undertale.js';
 import {
   planArrangement, renderArrangement, planForm, renderForm,
@@ -57,6 +59,12 @@ const fnv = (s) => { let h = 0x811c9dc5; for (let i = 0; i < s.length; i++) { h 
 
 // ---- melody-cell retrieval — the audition-undertale machinery (D40/D44) ----
 const MEL_CELLS = Object.entries(MELODY_RHYTHMS_UNDERTALE).map(([name, e]) => ({ name, ...e }));
+// r24 probe hooks. Every measurement in D112 came from one of these, and each
+// exists because the built page does not carry what it reports: which melody
+// CELL a song retrieved, which variation FORM its accompaniment took, and what
+// the finished composite reads. Env-gated and hoisted out of the hot loops, so
+// they cost one boolean when off.
+const DBG_MEL = !!process.env.MELDEBUG, DBG_ACC = !!process.env.ACCDEBUG, DBG_ACCF = !!process.env.ACCFINAL, DBG_LEAD = !!process.env.LEADDEBUG;
 function activityBudget(bpm) { return Math.max(8, Math.min(15, Math.round(16 - (bpm || 110) / 40))); }
 function melodyDensityTarget(bpm, accDensity) {
   return Math.max(2, Math.min(12, Math.round(activityBudget(bpm) - accDensity)));
@@ -112,6 +120,7 @@ function melodyRhythm(meter, bpm, seedName, { target: forced = null, accDensity 
     .map((c) => ({ c, s: interlockScore(accSet, c, beats), h: heldFirst ? minIOI(c) : 0 }))
     .sort((a, b) => b.s - a.s || b.h - a.h || b.c.seen - a.c.seen || (a.c.name < b.c.name ? -1 : 1));
   const pick = ranked[0].c;
+  if (DBG_MEL) console.error(`MELDEBUG\t${seedName}\t${pick.name}\ttarget=${target}\tband=${band.length}\tpool=${pool.length}\tacc=${accOnsets?accOnsets.length:0}`);
   return { name: pick.name, onsets: pick.onsets, accents: pick.accents, artic: pick.artic, density: pick.density, target, interlock: Math.round(ranked[0].s * 100) / 100 };
 }
 
@@ -125,7 +134,16 @@ function barPlan(n) {
 // ---- drums: mini-notation from a rhythms.js percussion entry ---------------
 const BAND_SOUND = { low: 'bd', mid: 'sd', high: 'hh' };
 const PRESENCE_GAIN = { light: 0.5, driving: 0.7, foreground: 0.85 };
-function drumExpr(name, presence) {
+// r24 — HIS "our drum vst isnt that good ... doesnt sound like deep reel drums".
+// MEASURED: 15 of 33 percussion patterns declare no `sounds` and fall through to
+// Strudel's stock one-shots here, and they are every kick and hat the battle
+// songs use. `deep` swaps the band fallback to his own Miraleste pack so a kit
+// stops mixing stock synthetic sounds with real sampled ones.
+//
+// OPT-IN, because it changes the emitted mix string: switching it on by default
+// rewrites the drums of every judged song and invalidates their HQ renders.
+const DEEP_BAND_SOUND = { low: 'md_kick', mid: 'md_snare', high: 'md_hat' };
+function drumExpr(name, presence, deep = false) {
   const entry = RHYTHMS[name];
   const r = normalizeRhythm({ ...entry, accents: entry.accents ?? entry.onsets?.map(() => 0.8) ?? [1] });
   // grid = lcm of onset denominators, capped
@@ -136,7 +154,7 @@ function drumExpr(name, presence) {
   if (G > 48) throw new Error(`drum grid ${G} too fine for ${name}`);
   // genre-expansion: an entry may name a sound per onset (`sounds`, vc_* local
   // samples — a dum and a tak are different drums, not just accent levels)
-  const sound = entry.sound ?? BAND_SOUND[entry.band] ?? 'sd';
+  const sound = entry.sound ?? (deep ? DEEP_BAND_SOUND[entry.band] : null) ?? BAND_SOUND[entry.band] ?? 'sd';
   const gmax = PRESENCE_GAIN[presence] ?? 0.6;
   const slots = Array(G * r.bars).fill('~');
   const gains = Array(G * r.bars).fill('0');
@@ -502,6 +520,12 @@ function buildSong(prompt, name, opts = {}) {
   // else. Without this the four reel progressions were silently ignored and the
   // songs built on them came out on unrelated exemplars — the build looked green
   // and the music was wrong, which is exactly the "returned OK" trap.
+  // The colour upgrade and the raw-serve both change the HARMONY, which is the
+  // one thing D64 pins hardest — a kept song's degrees are the degrees he
+  // judged. History-less songs and explicit opt-in only.
+  const colorFresh = opts.voicedColor === true
+    || (opts.voicedColor !== false && !priorKeep && !opts.grammarPin && !opts.pinFrom
+        && !DERIVED_VERDICTS?.[name] && !CARD_NOTES?.[name]);
   const basePinned = opts.basePin
     && (EX.entries.some(([n]) => n === opts.basePin) || ALL_PROGRESSIONS[opts.basePin])
     ? opts.basePin : null;
@@ -516,7 +540,29 @@ function buildSong(prompt, name, opts = {}) {
   // an E MINOR TRIAD in the one progression whose entire point is that it has
   // no thirds — and swapped two of the jazz circle's eight chords for sus
   // chords, including the V9 the circle turns on.
-  const vars = (phrygianLock || opts.rawBase) ? [] : variationsOf(exName, {
+  // ---- r24 · A TRANSCRIBED, JUDGED PROGRESSION IS SERVED RAW -------------
+  // HIS ASK: "good color is like the songs in videolab.html of the songs i liked
+  // (kpop, citypop, etc. should we save these as foundational chord patterns to
+  // hardcode so we know what's going on)?"
+  //
+  // Same argument D100 already accepted for the reel progressions and D93 for
+  // the desert tropes: the variation pass DILUTES a hand-transcribed loop. It
+  // turned a deliberately thirdless progression into an E minor triad once, and
+  // measured here it rewrites the city-pop loop `7:m7 0:7 9:7 2:m9 7:7 0:^7`
+  // into `7:sus 0:7 9:7 2:m9 7:m 0:^7` — the V7 that the turnaround lives on
+  // becomes a minor chord.
+  //
+  // It also DESTROYS THE COLOUR RECOVERY BELOW: `voicedAs` is aligned
+  // chord-for-chord with the ORIGINAL degrees, so once the variation swaps a
+  // chord the transcribed voicing describes something that is no longer there,
+  // and applying it would invent colour rather than restore it.
+  //
+  // So a videos-pack exemplar carrying a transcription is served RAW on
+  // history-less songs, and then re-coloured from its own voicing.
+  const videoSrc = ALL_PROGRESSIONS[exName];
+  const serveVideoRaw = colorFresh && videoSrc?.pack === 'igvideo'
+    && Array.isArray(videoSrc.voicedAs) && videoSrc.voicedAs.length > 0;
+  const vars = (phrygianLock || opts.rawBase || serveVideoRaw) ? [] : variationsOf(exName, {
     count: 1, intensity: 0.3 + v.colorBias * 0.4, budget: 2, seed: `${name}|harmony`,
   });
   let e = vars[0] ?? (EX.entries.find(([n]) => n === exName) ?? pool.find(([n]) => n === exName)
@@ -530,6 +576,39 @@ function buildSong(prompt, name, opts = {}) {
       ...e, degrees: judged.degrees, numerals: null,
       lineage: { ...(e.lineage ?? {}), ops: [...(e.lineage?.ops ?? []), { op: 'pinned-to-judged (D64)' }], changed: true },
     };
+  }
+  // ---- r24 · GOOD COLOUR: read the transcribed voicing we already had -----
+  // HIS RULING: "there's good color and bad color. the ones i mentioned are bad
+  // color. good color is like the songs in videolab.html of the songs i liked
+  // (kpop, citypop, etc. should we save these as foundational chord patterns to
+  // hardcode so we know what's going on)?"
+  //
+  // They are already saved. All 48 entries in progressions-videos.js carry a
+  // `voicedAs` array — the literal spellings off the video, "G7(9,13)",
+  // "Gm7(9)", "F7(b9)" — a test checks it chord-for-chord, and he clicked KEEP
+  // on 12 of the 13 that reached a page. MEASURED: nothing in the generator ever
+  // read the field. The degrees were retrieved and re-voiced generically, so
+  // city-pop's "2:m9 7:7 0:^7 6:7 5:^7 10:7 9:m9" lost every 9th and 13th that
+  // made it sound like city-pop.
+  //
+  // Upgrading the QUALITY is the whole fix — same roots, same count, richer
+  // chord — so it cannot re-roll a retrieval pool (D95). It is also exactly his
+  // good/bad distinction: colour lives in the CHORD (vertical, the harmony's own
+  // flavour) rather than in an ornament rubbing against it (horizontal, his
+  // "dissonance pass").
+  //
+  // Measured over the pack: 31 of 271 chords upgrade, across 15 of 48 entries.
+  // Conservative by design — the parser refuses `voicedAs` cells that are
+  // transcription prose rather than a chord symbol, because a stray "9" inside a
+  // note name would invent colour that was never played.
+  if (colorFresh && e.voicedAs) {
+    const upgraded = colorUpgradeDegrees(e.degrees, e.voicedAs);
+    if (upgraded !== e.degrees) {
+      e = {
+        ...e, degrees: upgraded, numerals: null,
+        lineage: { ...(e.lineage ?? {}), ops: [...(e.lineage?.ops ?? []), { op: 'voicedAs colour upgrade (r24)' }], changed: true },
+      };
+    }
   }
   // D73 (water: "C D F^7 -> good … however C7 following F^7 doesnt fit too
   // well. I don't like the C7"): a song may excise ONE faulted chord by
@@ -856,7 +935,51 @@ function buildSong(prompt, name, opts = {}) {
     : '.room(0.25)';
   // D65/D67 (cave/snow round 2, then cave + water round 3 — "more reverb"
   // three times): the pedal vibes' whole piano sits in a wetter room
-  const leadFx = ART.pedal ? `.gain(${leadGain}).room(0.7)` : `.gain(${leadGain}).room(0.25)`;
+  // ---- r24 · A SUSTAINED LEAD NEEDS DYNAMICS, NOT A DIFFERENT VOICE -------
+  // His ruling, verbatim: "it depends, i dont want to hardcode anything. like
+  // some calm/slow songs could have strings as the melody but SOFT and fluid in
+  // dynamics. moreover it could also be piano, woodwind, or other instruments
+  // too - there's not really a limitation other than maybe brass and other
+  // stuff i disliked in the past."
+  //
+  // So this is NOT a voice swap and NOT a lane rule. The palette stays open.
+  //
+  // What his five near-identical cards were actually describing: "way too loud
+  // and forceful and a constant screeching", "too loud and constant instead of
+  // flowing", "if the cello were softer and less forceful and more flowing".
+  // MEASURED — the lead's gain is ONE CONSTANT for the entire song, always has
+  // been (`.gain(0.47)` on all five), while pads have breathed per bar since
+  // D67. A struck voice hides that because its own decay envelope supplies the
+  // shape; a bowed voice at a fixed gain is a flat wall of tone.
+  //
+  // That split is exactly what his verdicts drew: all five "cello too loud and
+  // forceful" songs lead on gm_violin (attack slow, sustain long), and
+  // su_triumphant_snow — "definitely a solid song" — leads on piano.
+  //
+  // Keyed on DECLARED DATA (`attack` / `sustain` in INSTRUMENTS), never a name
+  // list — line 845 above still name-matches for LEAD.hold and is the kind of
+  // rule that has failed five times here.
+  const LEAD_INST = INSTRUMENTS[LEAD_SOUND] ?? null;
+  const leadSustained = LEAD_INST?.sustain === 'long';
+  const leadBowed = leadSustained && LEAD_INST?.attack === 'slow';
+  // History-less songs only (D99) plus an explicit opt — the judged page's
+  // leads must not move until his ear rules on this.
+  const leadDynOn = (opts.leadDynamics === true
+      || (opts.leadDynamics !== false && leadSustained && !priorKeep && !opts.grammarPin
+          && !opts.pinFrom
+          && !DERIVED_VERDICTS?.[name] && !CARD_NOTES?.[name]));
+  // Two DIFFERENTLY-SHAPED four-bar arcs, so an eight-bar span never repeats a
+  // contour — "fluid", not a square wave. Peak on bar 3 of the first phrase and
+  // bar 2 of the second.
+  const LEAD_ARC = [0.70, 0.86, 1.00, 0.80, 0.74, 1.00, 0.88, 0.78];
+  // A slow-attack (bowed) voice reads forceful at the struck-voice gain, and
+  // "screeching" is what an un-shaped bow sounds like. Trim the centre unless
+  // the song is loud enough to need it.
+  const leadDynMul = leadBowed && v.percussion.presence !== 'foreground' ? 0.82 : 1;
+  const leadGainExpr = leadDynOn
+    ? `"<${LEAD_ARC.map((x) => Math.round(leadGain * leadDynMul * x * 100) / 100).join(' ')}>"`
+    : String(leadGain);
+  const leadFx = ART.pedal ? `.gain(${leadGainExpr}).room(0.7)` : `.gain(${leadGainExpr}).room(0.25)`;
   // r16 FOUNDATION-VARIATION LAW — supersedes D94's 2-bar composite.
   //
   // He rejected D94 in three independent places in one round. The jungle-floor
@@ -902,7 +1025,17 @@ function buildSong(prompt, name, opts = {}) {
   // rule makes it seven). `pinFrom` states the real intent instead — rules
   // introduced in this round and later do not reach this song — and it
   // generalises: an r21 rule keys on the same stamp.
-  const freshRules = !priorKeep && !opts.grammarPin && opts.pinFrom !== 'r20';
+  //
+  // r24 — GENERALISED, AND IT WAS A LATENT BUG. The comment above says "an r21
+  // rule keys on the same stamp", but the code compared against the literal
+  // string 'r20', so ANY other stamp (`pinFrom: 'r24'`) was silently ignored and
+  // the song it was meant to protect stayed fully exposed. Parsed as a round
+  // NUMBER now, so a rule introduced in round N does not reach a song pinned
+  // from round <= N.
+  const pinnedRound = opts.pinFrom ? Number(String(opts.pinFrom).replace(/\D/g, '')) : null;
+  const ruleFresh = (round) => !priorKeep && !opts.grammarPin
+    && (pinnedRound == null || round < pinnedRound);
+  const freshRules = ruleFresh(20);
   // Onsets are held as INTEGER slots out of ACC_DEN per bar so every comparison
   // and midpoint is exact; only the emitted strings are fractions again.
   const ACC_DEN = 192;
@@ -967,6 +1100,96 @@ function buildSong(prompt, name, opts = {}) {
     if (ix == null) return null;
     if (below) return ix > 0 ? LADDER[ix - 1] : LADDER[LADDER.length - 1];
     return ix < LADDER.length - 1 ? LADDER[ix + 1] : LADDER[0];
+  };
+  // r24 — THE VERTICAL COROLLARY OF THE RESOLUTION LAW (his "too much dissonance
+  // in some of the chords in the piano" / "the added notes in the piano onto the
+  // Alberti make it sound bad").
+  //
+  // D101's law is HORIZONTAL: retarget a non-chord tone so the LINE steps into
+  // whatever follows it. It does that by moving the TOP VOICE of the token it
+  // lands on (`setTop`), and it never looked at the voices underneath. The
+  // ladder's own defining property is what turns that into a defect: consecutive
+  // ladder positions ARE a step apart, so retargeting a top voice to a NEIGHBOUR
+  // of the next token puts it a step from the voice below it whenever that voice
+  // happens to sit one position away.
+  //
+  // MEASURED, r24 suite, accompaniment hand only: 35.0% of its 2,066 polyphonic
+  // attacks sound an interval of a second and 14.5% a literal SEMITONE, against
+  // 9.0% / 3.9% across the 59 MIDI files he hand-picked (per-file median there
+  // 1.4%, p75 11.4%). EIGHT songs measured 100.0% — their acc hand is monophonic
+  // except where a variation form bolts a partner on, so every chord they own is
+  // the clash. su_excited_boss sounds F against F# 64 times; su_triumphant_boss
+  // sounds a whole tone 64 times.
+  //
+  // The law: a horizontal fix may not create a vertical step. It is checkable on
+  // the TOKENS alone — ladder position is scale position, and bindFigure resolves
+  // each member of a stack at or above the one before it, so the sounding gap
+  // between consecutive members needs no chord to compute.
+  //
+  // His own good/bad-colour ruling says how to REPAIR rather than merely refuse:
+  // a 9th above the chord is the colour he keeps (the city-pop and kpop loops he
+  // clicked), a 2nd beside the root is the clash. Same tone, different octave. So
+  // the guard lifts an octave first and only gives up if that is out of range.
+  const verticalGuard = ruleFresh(24);
+  // VERIFY CATCH, and the reason this is stated in code rather than assumed: the
+  // first version of this raised each member to sit at or above the one before
+  // it, on the strength of a comment saying stacks resolve that way. bindFigure
+  // does NOT — `midi = rootRef + memberSemis(member) + 12 * plus.length`, each
+  // member independent of its neighbours. The monotone model passed `R.3.5.s4`
+  // as clean while the song sounded D-F#-G#-A, a semitone at the top. So the
+  // members are placed where the binder places them, and EVERY PAIR is checked,
+  // not just consecutive ones.
+  //
+  // LADDER_IX is the right coordinate for it: checked against memberSemis, the
+  // seven positions map to strictly increasing semitones (R 0, s2/9 2, 3 4,
+  // s4/4 5-6, 5 7, s6/6 9, s7/7 10-11) with no implicit octaves anywhere, so one
+  // ladder position apart IS one scale step apart, in any key over any chord.
+  const stackPositions = (tok) => {
+    const out = [];
+    for (const p of String(tok).split('.')) {
+      const [core, oct] = octSplit(p);
+      const ix = LADDER_IX[core];
+      if (ix == null) return null;           // `~n` and anything unmapped: not analysable
+      out.push(ix + 7 * oct.length);
+    }
+    return out;
+  };
+  // A stack is BAD when two consecutive members sound a step apart (1 ladder
+  // position) or land on the same pitch class in the same or the next octave
+  // (0 or 7). The second clause is the guard's own footprint: retargeting the
+  // top of `R.s4.s6` to `s4` writes `R.s4.s4`, which is not a clash but is a
+  // wasted voice, and D100 already bans octave doubling for the companion.
+  const stackBad = (tok) => {
+    const pos = stackPositions(tok);
+    if (!pos) return false;
+    for (let i = 0; i < pos.length; i++)
+      for (let j = i + 1; j < pos.length; j++) {
+        const d = Math.abs(pos[i] - pos[j]);
+        if (d === 1 || d === 0 || d === 7) return true;
+      }
+    return false;
+  };
+  // setTop, with the vertical guard. A single note has no stack to clash with and
+  // is passed straight through, which is 77% of accompaniment attacks.
+  //
+  // The LIFT is only offered to a plain top voice — `R.s2` -> `R.s2+` is the 9th
+  // instead of the 2nd, which is exactly the good-colour/bad-colour distinction
+  // he drew, and it costs one octave from a stack that has none. A top that is
+  // ALREADY octave-marked gives up instead: measured, lifting there wrote
+  // `3+.5+.s6++` on the casino oompah, two octaves above the hand and over the
+  // lead, and on su_excited_boss it parked a spread b9 on all 64 offbeats of an
+  // 8-bar block. D102's own rule kills that second one on sight — a barely-moving
+  // line parked on an out-of-key pitch is the shape the corpus never writes.
+  // Giving up keeps the dyad's perfect fourth, which is diatonic by construction.
+  const setTopVoiced = (t, tone) => {
+    if (!verticalGuard || !String(t).includes('.')) return setTop(t, tone);
+    const plain = setTop(t, tone);
+    if (!stackBad(plain)) return plain;
+    if (!topOf(t)[1].length) {
+      const lifted = String(t).split('.').slice(0, -1).concat(`${tone}+`).join('.');
+      if (!stackBad(lifted)) return lifted;
+    }
+    return t;                                 // D101: a tone that stays put beats one that clashes
   };
   // A colour tone is picked so that it RESOLVES into the token that follows it.
   // This is his calm_shrine note in his own capitals — "maybe vary the intervals
@@ -1150,13 +1373,13 @@ function buildSong(prompt, name, opts = {}) {
         // since the figure loops) instead of rotating the palette blind. A
         // grammarPinned song keeps the old blind rotation it was judged on.
         if (!freshRules) {
-          if (String(t).includes('.')) return setTop(t, PAL[(k++ + cyc) % PAL.length]);
+          if (String(t).includes('.')) return setTopVoiced(t, PAL[(k++ + cyc) % PAL.length]);
           if (!RECOLOURABLE.test(core)) return t;
           return PAL[(k++ + cyc) % PAL.length] + oct;
         }
         const pick = pickResolving(PAL, b.fig[i + 1] ?? b.fig[0], cyc + (k++));
         if (!pick) return t;
-        if (String(t).includes('.')) return setTop(t, pick);
+        if (String(t).includes('.')) return setTopVoiced(t, pick);
         if (!RECOLOURABLE.test(core)) return t;
         return pick + oct;
       });
@@ -1172,13 +1395,13 @@ function buildSong(prompt, name, opts = {}) {
         if (i === 0 || i % 2 === 0) return t;
         const [core, oct] = octSplit(t);
         if (!freshRules) {
-          if (String(t).includes('.')) return setTop(t, PAL[(k++ + cyc) % PAL.length]);
+          if (String(t).includes('.')) return setTopVoiced(t, PAL[(k++ + cyc) % PAL.length]);
           if (!RECOLOURABLE.test(core)) return t;
           return PAL[(k++ + cyc) % PAL.length] + oct;
         }
         const pick = pickResolving(PAL, b.fig[i + 1] ?? b.fig[0], cyc + (k++));
         if (!pick) return t;
-        if (String(t).includes('.')) return setTop(t, pick);
+        if (String(t).includes('.')) return setTopVoiced(t, pick);
         if (!RECOLOURABLE.test(core)) return t;
         return pick + oct;
       });
@@ -1245,7 +1468,17 @@ function buildSong(prompt, name, opts = {}) {
         const parts = und.filter((x) => x !== tc).slice(0, 3);
         if (parts.length < 3) return t;
         placed++;
-        return `${parts.join('.')}.${tc}${to}`;
+        // r24 vertical corollary: the kept top is appended ABOVE the three
+        // stacked tones, so an under-tone one ladder position below it sounds a
+        // second inside the chord. Drop that one voice rather than the form —
+        // a triad under the melody note beats a cluster under it.
+        let out = `${parts.join('.')}.${tc}${to}`;
+        if (verticalGuard && stackBad(out)) {
+          for (let d = parts.length - 1; d >= 0 && stackBad(out); d--)
+            out = `${parts.filter((_, j) => j !== d).join('.')}.${tc}${to}`;
+          if (stackBad(out)) { placed--; return t; }
+        }
+        return out;
       });
       return placed ? { on: b.on.slice(), fig, acc: b.acc.slice() } : null;
     }],
@@ -1254,12 +1487,16 @@ function buildSong(prompt, name, opts = {}) {
       const fig = b.fig.map((t, i) => {
         if (i % 2 === 0) return t;
         const [core, oct] = octSplit(t);
+        // the PARTNER map itself is clean — every pair in it is 3 or 4 ladder
+        // positions apart (verified r24) — but it is applied on top of tokens
+        // the other forms may already have moved, so it takes the guard too.
+        const guard = (out) => (verticalGuard && stackBad(out) ? t : out);
         if (String(t).includes('.')) {
           const [tc, to] = topOf(t);
-          return `${t}.${PARTNER[tc] ?? 's2'}${to}`;
+          return guard(`${t}.${PARTNER[tc] ?? 's2'}${to}`);
         }
         const p = PARTNER[core];
-        return p ? `${core}${oct}.${p}${oct}` : t;
+        return p ? guard(`${core}${oct}.${p}${oct}`) : t;
       });
       return { on: b.on.slice(), fig, acc: b.acc.slice() };
     }],
@@ -1284,14 +1521,14 @@ function buildSong(prompt, name, opts = {}) {
         const [c, o] = octSplit(p);
         return o.length ? c + o.slice(1) : p;
       }).join('.');
-      fig[i] = setTop(fig[i], DESC[k++ % DESC.length]);
+      fig[i] = setTopVoiced(fig[i], DESC[k++ % DESC.length]);
     }
     const last = fig.length - 1;
     // r16 verify catch: this used to REPLACE the last token outright, so a
     // block-chord bar (`R.3.5`) ended on one bare note two octaves above the
     // rest of the hand. The approach tone belongs on TOP of the stack, not
     // instead of it.
-    fig[last] = setTop(fig[last], 's7');
+    fig[last] = setTopVoiced(fig[last], 's7');
     acc[last] = Math.min(0.95, Math.round((acc[last] + 0.15) * 100) / 100);
     return { on, fig, acc };
   };
@@ -1340,7 +1577,10 @@ function buildSong(prompt, name, opts = {}) {
     const tryFormsOn = (src, forms, start, ...args) => {
       for (let k = 0; k < forms.length; k++) {
         const out = forms[(start + k) % forms.length][1](src, ...args);
-        if (out && events(out) >= quota) return out;
+        if (out && events(out) >= quota) {
+          if (DBG_ACC) console.error(`ACCDEBUG\t${name}\t${fig.name ?? 'acc'}\tsalt${salt}\t${forms[(start + k) % forms.length][0]}\t${out.fig.join(' ')}`);
+          return out;
+        }
       }
       return null;
     };
@@ -1435,7 +1675,7 @@ function buildSong(prompt, name, opts = {}) {
         // step INTO the next token — below it where possible (a leading tone
         // reads as intent), above it when the target is the ladder floor
         const tone = ladderNeighbour(nxIx, nxIx > 0);
-        if (tone) b.fig[i] = setTop(b.fig[i], tone);
+        if (tone) b.fig[i] = setTopVoiced(b.fig[i], tone);
       }
     };
     if (freshRules) resolveBlocks(made);
@@ -1454,6 +1694,7 @@ function buildSong(prompt, name, opts = {}) {
       emitted++;
     }
     if (emitted === 1) return fig;
+    if (DBG_ACCF) console.error(`ACCFINAL\t${name}\t${fig.name ?? 'acc'}\tsalt${salt}\tn=${n}\tbars0=${bars0}\t${figure.join(' ')}`);
     return { ...fig, name: `${fig.name ?? 'acc'}+vary`, bars: bars0 * emitted, onsets, figure, accents };
   };
   // D81: loopRoots everywhere (the D76 spiral guard); the accToBass branch
@@ -1466,7 +1707,57 @@ function buildSong(prompt, name, opts = {}) {
     : (!priorKeep && env === 'desert') ? (/drone|sustain|pad|held/.test(`${fig0.class ?? ''} ${fig0.name ?? ''}`) ? 'gm_pad_bowed' : 'gm_marimba')
       : (!priorKeep && env === 'jungle') ? 'gm_marimba' // the DKC acc voice
         : synthAcc ? 'gm_epiano1' : 'piano');
-  const bindAcc = (fig0, ctx, salt = 0) => bindFigure(accVaryOn ? varyFig(fig0, salt) : fig0, ctx, v.meter, {
+  // The lift is bounded by D77 ("support stays UNDER the lead"). A first cut
+  // lifted every qualifying hand and OVERSHOT: the suite's calm median went from
+  // low 42 / centre 53 / top 68 to 52 / 64 / TOP 79 against his kept reference's
+  // 48 / 60 / 66, with su_calm_menu's acc topping at 83 and su_romantic_rest's at
+  // 80 — straight through the lead. The hand is not merely low, it is WIDE (26
+  // semitones against his kept set's 18), so transposing it moves the ceiling as
+  // much as the floor. So the lift only applies where the figure ACTUALLY BOUND —
+  // the varied composite, not the canon entry, since the variation forms add the
+  // octave marks — still clears the lead after it.
+  // The ceiling is measured, not assumed: octave ARITHMETIC on the tokens is not
+  // enough, because chord members and `~n` tokens add semitones above the octave
+  // mark. A first cut counted `+` marks and still let su_calm_menu's hand climb
+  // to G#5. So the lift is TRIAL-BOUND and read back: his kept calm songs' acc
+  // tops measure 49-72 (median 66), so a lifted hand that would go above C5 keeps
+  // its original octave.
+  const ACC_CEIL = 72;
+  // Closing the voicing is the second half of the same move, and it is what his
+  // romantic_rest ask actually needs: "dont be afraid to move the piano harmonies
+  // up sometimes into a higher octave (just like the entire piano part or
+  // something)". Lifting alone left 8 of 10 calm songs untouched, because their
+  // composites are WIDE — an alberti with a `3+` in it tops out over C5 as soon
+  // as the hand moves. Dropping one octave mark from the spread tokens moves the
+  // FLOOR up without moving the ceiling, which is the shape his kept set has
+  // (span 18 semitones against the suite's 26).
+  const closeVoicing = (f) => ({
+    ...f,
+    figure: (f.figure ?? []).map((t) => String(t).split('.')
+      .map((p) => (p.endsWith('+') ? p.slice(0, -1) : p)).join('.')),
+  });
+  const accLiftMode = (() => {
+    if (!(ruleFresh(24) && v.salience === 'background'
+      && accVoiceFor(accFig) === 'piano' && !opts.accOctave && (v.register.accFloor ?? 0) === 0)) return 0;
+    const oct = Math.max(1, Math.min(4, Math.max(accFig.octave ?? accOct, 0) + 1));
+    const varied = accVaryOn ? varyFig(accFig, 0) : accFig;
+    const topOf_ = (f) => {
+      try {
+        const t = bindFigure(f, ctxBar, v.meter, { octave: oct, sound: 'piano', loopRoots: true });
+        const hi = Math.max(...(t.boundMeta?.notes ?? []).map((n) => n.midi));
+        return Number.isFinite(hi) ? hi : Infinity;
+      } catch { return Infinity; }
+    };
+    if (topOf_(varied) <= ACC_CEIL) return 1;                       // lift only
+    if (topOf_(closeVoicing(varied)) <= ACC_CEIL) return 2;         // lift + close
+    return 0;
+  })();
+  const quietPianoLift = accLiftMode > 0;
+  const accShape = (fig0, salt) => {
+    const f = accVaryOn ? varyFig(fig0, salt) : fig0;
+    return accLiftMode === 2 ? closeVoicing(f) : f;
+  };
+  const bindAcc = (fig0, ctx, salt = 0) => bindFigure(accShape(fig0, salt), ctx, v.meter, {
     scaleTokensInKey: opts.scaleTokensInKey === true,
     // D86: synthAcc songs put the accompaniment hand on the Soft Suitcase
     // e-piano (unless accToBass already gave it to the synth bass) — "like
@@ -1496,8 +1787,33 @@ function buildSong(prompt, name, opts = {}) {
     // changed the travel edges, and B landed fnd_pedal_root_ostinato at octave
     // 2 — a root drone doubling the bass on 24 exact unisons. "One low voice
     // at a time" is a standing law; this is where jungle enforces it.
+    // r24 — THE QUIET PIANO SITS TOO LOW, and he gave the reference himself:
+    // "our other calm songs in songs.html sounded good", "I want our calm songs
+    // to be like the songs from songs.html I liked", and on su_romantic_rest
+    // "dont be afraid to move the piano harmonies up sometimes into a higher
+    // octave (just like the entire piano part or something)".
+    //
+    // MEASURED, his 7 KEPT calm/slow songs against the suite's 10, accompaniment
+    // hand only — attacks/bar (8.00 vs 7.25), attacks/sec (1.67 vs 1.75), peak
+    // gain (1.00 vs 1.00), room and clip (identical) all say the two sets are the
+    // same. REGISTER is the whole difference: his kept hands run low 48 / centre
+    // 60 / top 66, the suite's low 42 / centre 53 / top 68. Half an octave to a
+    // full octave lower, and wider. su_mysterious_space centres on E2 (40).
+    //
+    // A piano hand at F3 and gain 1.0 IS percussive — the hammer and the beating
+    // of low intervals carry over the pitch — which is four of his cards in one:
+    // "the percussive nature of the piano here doesn't fit at all", "it makes it
+    // sound percussive which doesn't make it sound nice", "the random low note
+    // piano slam doesn't sound good (I think it did in in Dm7)?" (su_mysterious_
+    // cave's acc is a drone fifth at D2-C#3, gain 1.0 — the probe that looked for
+    // notes below the HAND'S OWN centre could not see it, because the whole hand
+    // is down there), and "piano too loud and forceful".
+    //
+    // Keyed on declared data: the acc voice IS the piano, the vibe is background
+    // salience, and nothing else already states a floor.
     octave: Math.max(1, Math.min(4, Math.max(fig0.octave ?? accOct, v.register.accFloor ?? 0, opts.accOctave ?? 0,
-      !priorKeep && env === 'jungle' ? 3 : 0))),
+      !priorKeep && env === 'jungle' ? 3 : 0,
+      quietPianoLift ? (fig0.octave ?? accOct) + 1 : 0))),
   }).expr;
   const base = bindAcc(accFig, ctxBar);
 
@@ -1525,6 +1841,38 @@ function buildSong(prompt, name, opts = {}) {
   // melodyGrammar (stealth/menu, judged with the grammar on) must not drag
   // the new dials in and re-roll a judged melody.
   const grammarFresh = !priorKeep && !opts.grammarPin;
+  // ---- r23 GENRE GATE ----------------------------------------------------
+  // His r23 instruction, verbatim: "lots of the techniques and intervals behind
+  // his layering should own be applied to applicable genres. not specific ones
+  // like jungle or desert or etc."
+  //
+  // `v.role` is the vibe table's declared dramatic GENRE — battle, boss, chase,
+  // town, overworld, shop, cutscene, menu... — and it is the right axis for
+  // this. A lane (`env`) says WHERE the song is; a role says WHAT KIND of cue
+  // it is, which is what every measurement this round actually separated on.
+  // Using declared data rather than a name list is also the standing law here
+  // (a forbidden-name list has failed five times).
+  //
+  // EXCLUDES THE LANES THAT ALREADY OWN THEIR LAW. Five of the seven battle/
+  // boss songs on the judged page are CITADEL, and D93 is explicit that
+  // citadel's "epic" is a tonal organ/choir/lament over gothic timbre, while
+  // D100 measured what happens when a dread lane gets a groove: four-on-the-
+  // floor `block_quarters` was heard as "an evening disco dance ball". A
+  // straight-8th synth-bass pedal and a tom kit on scary_citadel would be that
+  // exact defect, arriving through a new door. Desert and jungle likewise pin
+  // their own floors (iqa' hand drums; the tumbao bass). A role gate does not
+  // outrank a lane law — it composes with it.
+  const battleRoleRaw = ['battle', 'boss'].includes(v.role) && !laneHorror
+    && !['desert', 'jungle'].includes(env);
+  const r23Fresh = !priorKeep && !opts.grammarPin;
+  // r18/D99, third application: a NEW capability roll defaults only onto a
+  // HISTORY-LESS song — no verdict and no CARD_NOTES entry. Measured here:
+  // without this clause the battle devices landed on vs_excited_fight, a song
+  // he has written about (its companion is the "completely off key" card in
+  // D100). `opts.r23` switches the whole family on for a page that exists to
+  // be stress-tested, which is what this round's page does.
+  const battleRole = battleRoleRaw && (opts.r23 === true
+    || (!DERIVED_VERDICTS?.[name] && !CARD_NOTES?.[name]));
   // r17 (his reel note: "notice how melody is chord too not just one note").
   // Excluded: choir leads — D93's choir writing rules put one line on one side
   // of the G4 gender seam, and a dyad turns a chant into a two-part texture.
@@ -1872,7 +2220,38 @@ function buildSong(prompt, name, opts = {}) {
     }
     return letterCellMemo.get(L);
   };
-  const letterSeed = (L) => (L === 'A' ? leadSeed : fnv(`${name}|melody|${L}`));
+  // r24 — A RETURNING STATEMENT OF A LETTER IS NOT THE SAME PHRASE.
+  //
+  // His su_tense_boss card: "for the section you repeated the same melody with
+  // nothing different for like a full section which was like 16 times or
+  // something."
+  //
+  // MEASURED — the longest stretch of bars over which the LEAD repeats with some
+  // period P in {1,2,4,8}. His 59 reference files: median 5 bars, p75 9, p90 13.
+  // The suite: MEDIAN 24, p75 36, p90 64, and six songs where the entire song is
+  // one 8-bar phrase restated end to end — su_calm_water, su_excited_space and
+  // su_mysterious_space are 72 bars of 72. The judged page is median 15 with six
+  // songs at 36-72. (BAR-level repetition is fine and was the first thing I
+  // measured: max 2 against the reference's max 6. The repetition is at PHRASE
+  // length, which is also the harmonic loop length — the melody is deterministic
+  // given cell and chord, so it returns note for note every time the loop does.)
+  //
+  // The acc has had the answer since D97/D102: key the variation on the STATEMENT
+  // NUMBER, so A at bar 24 is not A at bar 0. The lead never got it — one
+  // expression per letter, masked across every section that owns it, by
+  // construction identical on every pass.
+  //
+  // Statements 0 and 1 keep the seed. A theme has to be RESTATED before it can
+  // develop, and re-seeding every return would write a new tune each time rather
+  // than a variation of one. From statement 2 the walk re-seeds: restate, then
+  // depart. That lands the periodic stretch at one repeat, which is where the
+  // reference sits (p75 9, p90 13 for 8-bar phrases).
+  const leadStmtVary = ruleFresh(24);
+  const leadPhraseBars = Math.max(2, Math.min(8, leadBound.boundMeta?.period ?? 4));
+  const letterSeed = (L, stmt = 0) => {
+    const base = L === 'A' ? leadSeed : fnv(`${name}|melody|${L}`);
+    return (leadStmtVary && stmt >= 1) ? fnv(`${name}|melody|${L}|s${stmt}`) : base;
+  };
   // D82 (teaching the planner): MELODY HANDOFFS are a generator default. A
   // letter is a complete melodic statement — exactly the D80 boundary rule
   // ("if it plays for half and then another instrument plays the other
@@ -1922,10 +2301,10 @@ function buildSong(prompt, name, opts = {}) {
     const snd = HANDOFF_POOL[(fnv(`${name}|handoff`) + ix) % HANDOFF_POOL.length];
     return opts.fullSynth ? SYNTH_OF(snd) : snd;
   };
-  const bindLetter = (L, ctxL) => {
+  const bindLetter = (L, ctxL, stmt = 0) => {
     const snd = letterSound(L);
     return bindMelody(letterCell(L), ctxL, v.meter, {
-      style: 'toby-fox', seed: letterSeed(L), octave: leadOctave, sound: snd, fx: leadFx,
+      style: 'toby-fox', seed: letterSeed(L, stmt), octave: leadOctave, sound: snd, fx: leadFx,
       hold: /flute|cello|violin|oboe|shanai|organ|choir/.test(snd) ? true : LEAD.hold, mergeRepeats: LEAD.merge, articFloor: artFloor, cadenceNo7, chromCore, tailOff: grammarFresh, leapFold: grammarFresh, chordTop: chordTopOn, minNote: grammarFresh ? (opts.leadMinNote ?? 1) : 0, ...(opts.leadRangeSteps ? { rangeSteps: opts.leadRangeSteps } : {}),
     });
   };
@@ -2144,10 +2523,15 @@ function buildSong(prompt, name, opts = {}) {
   const baseMix = basePieces.length === 1 ? basePieces[0] : `stack(${basePieces.join(', ')})`;
 
   // ---- the letter-formed lead + layers (undertale mix logic) ---------------
-  const letterLead = renderLetterLead(form, mfx, (L) => {
+  const letterLead = renderLetterLead(form, mfx, (L, stmt) => {
     const base0 = L.endsWith('*') ? L.slice(0, -1) : L;
-    return bindLetter(base0, L.endsWith('*') ? ctxBarV : ctxBar).expr;
-  });
+    return bindLetter(base0, L.endsWith('*') ? ctxBarV : ctxBar, stmt).expr;
+  }, { perStatement: leadStmtVary, phraseBars: leadPhraseBars });
+  // the lead AS THE MIX PLAYS IT — masked. The `_lead` solo is deliberately
+  // unmasked (a solo should sound like the layer, not like its placement), and a
+  // repetition probe run against it reports the 8-bar cell looping for the whole
+  // song. That is how a first pass "measured" 72 bars of verbatim repetition.
+  if (DBG_LEAD && letterLead.lead) console.error(`LEADDEBUG\t${name}\t${v.bpm}\t${beats}\t${form.totalBars}\t${letterLead.lead}`);
   const lettersOf = (l) => [...new Set(form.sections
     .filter((s) => s.active.includes(l.id) && s.lead !== 'none')
     .map((s) => mf.sections.find((x) => x.index === s.index)?.letter)
@@ -2297,6 +2681,11 @@ function buildSong(prompt, name, opts = {}) {
     // MORE HAND DRUMS, not a trap snare, and guessing at that is how the lane
     // law got broken twice before.
     const NO_BACKBEAT_LANES = new Set(['desert', 'manor', 'catacombs', 'citadel', 'cave', 'jungle', 'shrine']);
+    // r24: real samples instead of Strudel's stock bd/sd/hh for the 15 patterns
+    // that declare none. Opt-in — it rewrites the mix string, so switching it on
+    // by default would move every judged song's drums and invalidate their HQ
+    // renders. His Miraleste pack is local-only and gitignored (r16 licensing).
+    const deepDrums = opts.deepDrums === true && !priorKeep && !opts.grammarPin && !opts.pinFrom;
     //
     // OPT-IN, NOT ENGINE-WIDE, AND THAT IS DELIBERATE. Switching it on by
     // default moved 13 of the 47 judged songs (measured) and would invalidate
@@ -2323,6 +2712,82 @@ function buildSong(prompt, name, opts = {}) {
     // his industrial ask: "if it's industrial it should have more percussion
     // like metal rod hits or stick hits or such" — a fourth voice, over the kit
     if (wantsBackbeat && env === 'construction') picks = [...new Set([...picks, 'industrial_metal'])];
+    // ---- r23: THE BATTLE KIT (his "for the boss fights learn what makes them
+    // actually feel energetic with stakes on the line and epic ... and rhythm").
+    //
+    // Gated on the vibe's dramatic ROLE, which is exactly what he asked for
+    // this round: "lots of the techniques and intervals behind his layering
+    // should own be applied to applicable genres. not specific ones like jungle
+    // or desert". `v.role` is a GENRE (battle/boss/chase/town/...), declared by
+    // the vibe table; `env` is a lane. Every r23 device below keys on the role.
+    //
+    // Measured (research/boss-r23.md, 13 battle vs 43 other files, all from his
+    // own hand-picked set): toms 1.887 hits/bar vs 0.313, crash on 19.8% of
+    // bars vs 13.8%. Both arrive as EXTRA voices on band 'accent', which no
+    // selector reads — growing 'low' or 'mid' would re-roll `byBand()` across
+    // the whole suite, and this selector has already broken three times on
+    // exactly that (r16, D100, r22).
+    if (opts.battleKit !== false && !priorKeep && !opts.grammarPin && !opts.percPatterns
+        && battleRole && presence !== 'none' && !NO_BACKBEAT_LANES.has(env)) {
+      picks = [...new Set([...picks, 'battle_toms', 'battle_crash'])];
+    }
+    // ---- r24 · THE BAND KIT: "some songs may not have drum set" ------------
+    // His words: "bear in mind though that some songs may not have drum set,
+    // they'll have like band drums like snare or bass and timphany etc."
+    //
+    // Selected from the CAST'S DECLARED FAMILIES, never from a lane or a name:
+    // a song whose pitched cast is mostly acoustic orchestral voices (string /
+    // wind / brass, per INSTRUMENTS[x].family) gets a BAND floor instead of a
+    // drum set — field snare, concert bass drum, timpani, and a roll into every
+    // eighth bar. This is a REPLACEMENT, not an addition; a kit and a band line
+    // playing at once is the "four sonic worlds" problem in a different form.
+    //
+    // Synth songs are excluded by construction: a fullSynth or synth-acc song
+    // is not an orchestral cue whatever its cast says.
+    const castFamilies = rendered.layers
+      .map((l) => INSTRUMENTS[l.instrument]?.family)
+      .filter(Boolean);
+    const orchShare = castFamilies.length
+      ? castFamilies.filter((f) => ['string', 'wind', 'brass'].includes(f)).length / castFamilies.length
+      : 0;
+    // History-less songs only (D99), plus `opts.r23`/explicit: without this the
+    // selector moved THREE judged songs (excited_training, happy_festival,
+    // nostalgic_shop) — swapping a kit for a band line is a large change to a
+    // mix he has already heard, and it invalidates their HQ renders.
+    const bandKitFresh = opts.r23 === true
+      || (!DERIVED_VERDICTS?.[name] && !CARD_NOTES?.[name]);
+    // WHAT DISQUALIFIES A BAND KIT IS THE CONTEXT, NOT THE INSTRUMENT FAMILY.
+    // First cut needed only `orchShare >= 0.5` and put a march snare, timpani
+    // and a GONG under su_nostalgic_casino and su_excited_casino — swing songs
+    // whose brass is a muted trumpet and a french horn. My second cut demanded a
+    // WIND or STRING on the theory that brass alone reads as a big band; that
+    // was wrong in the other direction and disqualified every song including
+    // su_excited_boss, a horns-and-trumpet boss cue that is exactly what band
+    // percussion is for. Measured: 7 songs -> 0.
+    //
+    // The honest discriminator is the ENSEMBLE CONTEXT. A swing feel and the
+    // diegetic/joke roles are combo music, where a field snare and timpani are
+    // absurd whatever the cast declares; everything else with an acoustic
+    // orchestral cast is a concert cue.
+    const combo = Boolean(opts.swing) || ['diegetic', 'joke', 'shop'].includes(v.role);
+    const wantsBandKit = opts.bandKit === true || (opts.bandKit !== false && bandKitFresh
+      // r24: ruleFresh(24) so a PROSE KEEP pinned this round refuses it. Without
+      // this the band kit re-cast su_scary_fight, which he had just called "the
+      // one I like the most of the fight songs" — a pin that new rules ignore is
+      // not a pin, and this is the D99 failure in its own fix.
+      && ruleFresh(24)
+      && !opts.percPatterns && !opts.fullSynth && !synthAcc
+      && castFamilies.length >= 2 && orchShare >= 0.5 && !combo
+      && presence !== 'none' && !['desert', 'jungle'].includes(env));
+    if (wantsBandKit) {
+      picks = ['band_bass_drum', 'band_march_snare'];
+      // timpani only where the song is big enough to carry it; the roll is a
+      // transition and needs 8+ bars to land on
+      const peakEnergy = Math.max(...form.sections.map((sec) => ENERGY[sec.archetype] ?? 3));
+      if (peakEnergy >= 4 || ['battle', 'boss', 'cutscene'].includes(v.role)) picks.push('band_timpani');
+      if (form.totalBars >= 16) picks.push('band_roll_swell');
+      if (['battle', 'boss'].includes(v.role) && form.totalBars >= 32) picks.push('band_gong');
+    }
     // r16 JUNGLE FLOOR + KICK, both from his answers.
     //   jungle-floor: "depends on the song's energy! use a for relaxing jungle
     //   themes but otherwise make a beat similar to b. important that you
@@ -2351,7 +2816,7 @@ function buildSong(prompt, name, opts = {}) {
     const drumBars = form.sections.flatMap((sec) =>
       Array(sec.bars).fill(opts.percAllBars ? 1 : (ENERGY[sec.archetype] ?? 3) >= 3 ? 1 : 0));
     if (drumBars.some(Boolean)) {
-      const parts = picks.map((p) => drumExpr(p, presence));
+      const parts = picks.map((p) => drumExpr(p, presence, deepDrums));
       const dm = maskString(drumBars);
       drumBarsShared = drumBars;
       const stackd = parts.length === 1 ? parts[0] : `stack(${parts.join(', ')})`;
@@ -2494,10 +2959,17 @@ function buildSong(prompt, name, opts = {}) {
   // beat-forward songs a sub-bass holds the chord root at octave 1, masked
   // to the same bars the beat plays, so bass and beat arrive as one floor.
   // Policy, not a song patch: any driving/foreground drum song >= 140bpm.
+  // r23: the battle pedal REPLACES the sub-bass rather than stacking with it —
+  // "one low voice at a time" is the project's own law, and two synth basses at
+  // octave 2 is how the register collision the verify pass keeps finding gets
+  // made. `accToBass` songs already give the low end to the acc hand, so the
+  // pedal stands down there too.
+  const wantsDriveBass = (opts.driveBass === true || (opts.driveBass !== false && battleRole))
+    && r23Fresh && !accToBass && drumBarsShared;
   if (synthAcc && !accToBass) extraInfo.push('acc hand on gm_epiano1 (synth spread \u2014 his round-9 rule)');
   if (accToBass) {
     extraInfo.push('bass pulse: acc roots on gm_synth_bass_1 (the piano low part IS the bass — his fight note)');
-  } else if (drumBarsShared && v.bpm >= 140 && ['driving', 'foreground'].includes(v.percussion.presence)) {
+  } else if (!wantsDriveBass && drumBarsShared && v.bpm >= 140 && ['driving', 'foreground'].includes(v.percussion.presence)) {
     // D73 (+addendum 2): where the acc is NOT a root pulse the bass can
     // take over (boss's 16th octave-bounce stays piano), the sub instead
     // HOLDS the bar root under the beat — on gm_synth_bass_1, not bare
@@ -2520,6 +2992,60 @@ function buildSong(prompt, name, opts = {}) {
     extraParts.push(...varySplit(bindSub, drumBarsShared));
     extraSolos._sub_bass = bindSub(ctxBar);
     extraInfo.push('sub-bass: gm_synth_bass_1 held roots (oct 2) under the beat');
+  }
+  // ---- r23 · THE BATTLE BASS IS A PEDAL, NOT A WALK -----------------------
+  // His ask: "for the boss fights learn what makes them actually feel energetic
+  // with stakes on the line and epic through their layering patterns and what
+  // they do in each instrument and rhythm and intervals."
+  //
+  // The cleanest single answer the measurement gave. Over 13 battle files vs 43
+  // others from his own hand-picked set (research/boss-r23.md):
+  //   repeated-note rate   62.2%  vs  36.8%     <- the mechanism
+  //   stepwise rate        19.8%  vs  31.5%
+  //   onsets/bar            5.38  vs   6.71     <- FEWER notes, not more
+  //   grid                 x.x.x.x.x.x.x.x.  in 6 of 10 battle basses
+  //   longest identical-pitch run   13 to 144 notes
+  // So the battle bass is not busier and it is not more mobile — it is the SAME
+  // note hammered in straight 8ths. It drives by repetition. Every low voice
+  // this engine writes either walks (`accToBass` roots) or holds (`sub-bass`),
+  // and neither of those is this shape; measured on the r23 page before the
+  // fix, the battle songs' low voice repeated 31.6% of the time.
+  //
+  // Written as a pedal on the CHORD root (`loopRoots`), so a bar of one chord
+  // is eight strikes of one pitch — which is exactly what produces the measured
+  // rate — and the root still tracks the progression, which the reference files
+  // do too (bass ranges of 14-19 semitones on most of them; only soabattlev12
+  // pedals a single pitch for its whole core window).
+  //
+  // D88's turnaround law is honoured: the pedal DROPS an octave on the last 8th
+  // of every 4th bar. Lifting there put a synth bass on G4 once already.
+  if (wantsDriveBass) {
+    const pedalFig = {
+      name: 'battle-pedal', bars: 1, grid: 16, legato: false,
+      onsets: ['0', '1/8', '1/4', '3/8', '1/2', '5/8', '3/4', '7/8'],
+      figure: ['R', 'R', 'R', 'R', 'R', 'R', 'R', 'R'],
+      accents: [0.95, 0.6, 0.72, 0.6, 0.9, 0.6, 0.72, 0.62],
+    };
+    const turnFig = { name: 'battle-pedal-turn', bars: 4, onsets: ['31/8'], figure: ['R'], accents: [0.8], legato: false };
+    const bindDrive = (ctx) => {
+      const ped = bindFigure(pedalFig, ctx, v.meter, {
+        octave: 2, sound: 'gm_synth_bass_1', loopRoots: true,
+        gainRange: [0.55, 0.85], fx: '.clip(0.62)', rhythmName: 'battle-pedal',
+      }).expr;
+      const turn = bindFigure(turnFig, ctx, v.meter, {
+        octave: 1, sound: 'gm_synth_bass_1', loopRoots: true,
+        gainRange: [0.6, 0.82], fx: '.clip(0.9)', rhythmName: 'battle-pedal-turn',
+      }).expr;
+      return `stack(${ped}, ${turn})`;
+    };
+    // it runs where the beat runs — bass and kit arrive as one floor
+    const dbBars = drumBarsShared ?? form.sections.flatMap((sec) =>
+      Array(sec.bars).fill((ENERGY[sec.archetype] ?? 3) >= 3 ? 1 : 0));
+    if (dbBars.some(Boolean)) {
+      extraParts.push(...varySplit(bindDrive, dbBars));
+      extraSolos._battle_bass = bindDrive(ctxBar);
+      extraInfo.push('battle bass: repeated-root pedal in straight 8ths on gm_synth_bass_1 (oct 2), octave drop on the bar-4 turn (r23 \u2014 battle basses repeat 62.2% of their notes vs 36.8%)');
+    }
   }
   // D85 (his round-8 ask: "more creative layering ... more supporting
   // melodies in the harmony (like the videos)"): the counterline is now a
@@ -2633,10 +3159,71 @@ function buildSong(prompt, name, opts = {}) {
         figure: ['R', '3', '5', '3', 'R', '3', '5', '3'],
         accents: [0.9, 0.55, 0.72, 0.55, 0.85, 0.55, 0.7, 0.55],
       },
+      // ---- r23, MEASURED, AND IT DIVERGES FROM HIS SENTENCE ---------------
+      // The three shapes above are his words transcribed. The measurement over
+      // his own battle files says something he did not say: the single most
+      // common thing a battle support layer does is HAMMER ONE PITCH.
+      // Pure-repeat bar shapes are 34.2% of battle support bars against 7.0%
+      // of non-battle — a 4.9x gap and the largest separation in the whole
+      // r23 analysis. The modal shape is `0-0-0`: THREE onsets, all the same
+      // pitch. Not eight, not a quarter pulse — three.
+      //
+      // Placed 3+3+2 (onsets 0, 3/8, 3/4) so the repetition drives instead of
+      // marking time, and on the FIFTH rather than the root, because the r23
+      // battle bass below is already a repeated-root pedal and doubling it
+      // would thicken the floor instead of adding a layer.
+      //
+      // ALL THREE TOKENS ARE THE SAME. The first write was `R 5 5` — "the
+      // downbeat takes the root so the chord change stays audible" — and the
+      // probe caught it: a bar of R-5-5 holds TWO pitches, so its pure-repeat
+      // rate is 0% BY CONSTRUCTION and the figure could never reproduce the
+      // thing it was built from. Measured 0.0% on all 10 songs carrying it.
+      // The reference shape is literally one pitch per bar (`0-0-0` as
+      // intervals from the bar's lowest note); `loopRoots` still moves it when
+      // the chord moves, which is where the change comes from — the same
+      // mechanism as the frozen slot, one layer down.
+      {
+        name: 'support-hammer', bars: 1, grid: 16, class: 'comp', meter_class: '4/4', legato: false,
+        onsets: ['0', '3/8', '3/4'],
+        figure: ['5', '5', '5'],
+        accents: [0.92, 0.78, 0.7],
+      },
+      // OPEN SONORITY. Battle harmony measured LESS third-y and MORE open:
+      // octave/unison dyads 36.1% of all sounding pairs vs 28.3%, fifths 15.3%
+      // vs 13.0%, thirds DOWN 15.5% vs 20.2%, and the bare power-fifth chord
+      // quality 11.7% vs 4.9% (2.4x). Note what is NOT there: tritones 1.7% vs
+      // 2.3%, semitones 1.0% vs 1.8%, dim 0.8% vs 1.5%. Battle music is LESS
+      // dissonant than his other picks, not more — an engine reaching for
+      // "stakes" by adding tension intervals would be reaching the wrong way.
+      {
+        name: 'support-open5', bars: 1, grid: 16, class: 'comp', meter_class: '4/4', legato: false,
+        onsets: ['0', '1/8', '1/4', '3/8', '1/2', '5/8', '3/4', '7/8'],
+        figure: ['R.5', 'R.5', '5.R+', 'R.5', 'R.5', '5.R+', 'R.5', '5.R+'],
+        accents: [0.92, 0.55, 0.72, 0.55, 0.88, 0.58, 0.7, 0.6],
+      },
     ];
     const mcShape = fnv(`${name}|marcshape`) % 2;
-    const mcFig = opts.supportFigure
-      ? SUPPORT_FIGS[(typeof opts.supportFigure === 'number' ? opts.supportFigure : fnv(`${name}|supfig`)) % SUPPORT_FIGS.length]
+    // r23: a battle/boss song takes one of the two MEASURED shapes (indices 3
+    // and 4); every other song keeps the hash over his three stated ones, so
+    // growing this pool 3 -> 5 cannot re-roll a song that is not a battle cue.
+    // Pool growth is a retrieval re-roll vector (D95) and this is the gate.
+    // Which of the two measured shapes a battle cue takes is decided by what
+    // the LOW END is already doing, not by a coin flip. If the r23 pedal has
+    // the bass hammering one root in 8ths, a hammered support on top of it is
+    // two hammers and one idea; that song takes the OPEN shape instead. Where
+    // the bass is doing something else, the support hammers.
+    // (The first cut used `fnv % 2` and landed the hammer on 1 of 5 battle
+    // songs — a thin roll for a page that exists to let his ear compare them.)
+    const supIdx = (typeof opts.supportFigure === 'number') ? opts.supportFigure
+      : (battleRole && r23Fresh) ? (wantsDriveBass ? 4 : 3)
+      : fnv(`${name}|supfig`) % 3;
+    // r23: on a battle/boss cue the support ostinato is the DEFAULT, not an
+    // opt-in. It is the layer his note asked for by name ("in battle themes the
+    // violins can go root third fifth ... to make it sound more 'action' and
+    // 'high stakes'") and the layer the measurement found doing the most work.
+    const useSupportFig = Boolean(opts.supportFigure) || (battleRole && r23Fresh && opts.supportFigure !== false);
+    const mcFig = useSupportFig
+      ? SUPPORT_FIGS[supIdx % SUPPORT_FIGS.length]
       : mcShape === 0
       ? {
         name: 'marcato-subharmony', bars: 1, grid: 16, class: 'comp', meter_class: '4/4', legato: false,
@@ -2661,7 +3248,7 @@ function buildSong(prompt, name, opts = {}) {
     if (mcBars.some(Boolean)) {
       extraParts.push(...varySplit(bindMc, mcBars));
       extraSolos._marcato = bindMc(ctxBar);
-      extraInfo.push(`marcato: staccato ${mcSound} ${opts.supportFigure ? `support ostinato ${mcFig.figure.slice(0, 4).join('-')} in 8ths (r22, his "root third fifth ... 8th note style")` : mcShape === 0 ? 'dyad subharmony (R.3-3.5-R.5-3.6 walk)' : 'dyad rhythmic repeat (3+3+2 grid)'} (oct 4, busy sections)`);
+      extraInfo.push(`marcato: staccato ${mcSound} ${useSupportFig ? `support ostinato ${mcFig.name} [${mcFig.figure.slice(0, 4).join('-')}] (r22/r23, his "root third fifth ... 8th note style")` : mcShape === 0 ? 'dyad subharmony (R.3-3.5-R.5-3.6 walk)' : 'dyad rhythmic repeat (3+3+2 grid)'} (oct 4, busy sections)`);
     }
   }
   // D87 ("i want you to see what you did and teach the engine" — the kept
@@ -2681,6 +3268,171 @@ function buildSong(prompt, name, opts = {}) {
       extraParts.push(...varySplit(bindAL, alBars));
       extraSolos._accent_line = bindAL(ctxBar);
       extraInfo.push('accent line: static tonic pedal 8ths + chord-tracking downbeat accents (gm_kalimba, oct 4)');
+    }
+  }
+  // ======================================================================
+  // r23 — THE REEL DEVICES, APPLIED BY MUSICAL APPLICABILITY
+  // ======================================================================
+  // His instruction this round: "lots of the techniques and intervals behind
+  // his layering should own be applied to applicable genres. not specific ones
+  // like jungle or desert or etc."
+  //
+  // So neither of these keys on `env`. They key on what the MUSIC is doing —
+  // a pulse fast enough to carry an ostinato, and a section with a tune — which
+  // is what makes them genre-general. Both are read off the face-cam production
+  // reels (research/reel-layers-r22.md); both were `recorded` in
+  // src/lib/techniques.js and are now wired.
+
+  // ---- R2 · FREEZE THE BODY, MOVE ONE SLOT ------------------------------
+  // 4 reels / 1 source. `DZS8`'s 4-note per-beat cell holds slots 3-4 fixed for
+  // the entire loop, so the SAME frozen dyad reads 9+b3 over Em, then #11+5
+  // over C, then 5+b6 over B. The chord moves underneath and re-colours a
+  // pitch that never changed.
+  //
+  // This is the D101 distinction arriving from the reels: the engine varies by
+  // SUBSTITUTION (pick a different note), and this varies by RE-HARMONISATION
+  // (keep the note, change what it means). It produces the 9ths and 11ths above
+  // the bass that D98 wants without ever choosing them.
+  //
+  // Implementation reuses the accent-line's proven shape: the frozen body binds
+  // against a CONSTANT tonic context so its pitches cannot move, and one slot
+  // binds against the real progression. Scale tokens only (`s2`/`s6`), never a
+  // bare 4 or 7 — those consult neither key nor chord-scale (D97's measured
+  // out-of-key bug).
+  //
+  // OPT-IN, and that is a measured decision rather than caution. Rolled by hash
+  // on every unkept song it moved TEN of the judged page's 47 — including
+  // scary_catacombs, tense_citadel and happy_jungle, i.e. three lanes whose own
+  // law (D93/D94/D100) refuses exactly this kind of new ostinato. That is the
+  // D100 failure shape arriving through a new door: a device that is right for
+  // "applicable genres" is still wrong for a lane that pins its own texture.
+  // It ships enabled on the r23 stress-test page and reaches the judged suite
+  // when his ear says so.
+  // TEMPO GATE CORRECTED, AND THE SOURCE REFUTED MY FIRST GUESS. I shipped
+  // `bpm >= 90` on the assumption this is a pulse device. The six reels it comes
+  // from run at 63, 69, 75, 80, 91 and 102 bpm — FOUR of them under 90. The
+  // device is a held texture re-coloured by the harmony underneath, which is a
+  // slow-music behaviour if anything. Measured cost of the wrong gate: 4 of the
+  // 14 stress-test pairs came out byte-identical.
+  if (opts.frozenSlot === true && r23Fresh && v.bpm >= 55) {
+    const frozenCtx = { harmony: [barSyms[0]], barsPerChord: 1, key };
+    // ---- r24 · THE FROZEN BODY IS A COMMON-TONE PEDAL, NOT A HELD GUESS ----
+    // HIS RULING, and it is the sharpest line in the r23 export: "I feel like
+    // with all the songs it feels like you do a dissonance pass and randomly add
+    // dissonance at certain places which doesn't sound good." Eleven of his 28
+    // cards mention dissonance.
+    //
+    // MEASURED, non-chord-tone rate per layer across the suite: frozen_slot
+    // 45.2% on 25 of 28 songs — the most dissonant widely-cast layer in the
+    // engine, against the lead at 26.9% and the companion at 27.4%. That is not
+    // a bug in the device, it IS the device: "the frozen tones re-colour as the
+    // harmony moves" means manufacturing a rub on every chord that does not
+    // contain them, and it was running on nearly every song.
+    //
+    // The reel it came from shows one producer doing this deliberately once.
+    // His ear says no, and his ear is the only quality signal here.
+    //
+    // The fix keeps the device and changes what gets frozen: hold the pitch
+    // classes the PROGRESSION ITSELF holds in common. A common-tone pedal is
+    // consonant against most of the loop and rubs only where the harmony
+    // genuinely departs — which is the difference between a pedal and a
+    // dissonance pass. Falls back to the old tonic-scale tones only if the
+    // progression shares nothing, which cannot happen for a real loop.
+    const fzCommon = (() => {
+      const counts = new Map();
+      const loop = barSyms.slice(0, Math.max(1, Math.min(barSyms.length, 8)));
+      for (const sym of loop) {
+        let tones = null;
+        try { tones = chordCoreTones(sym); } catch { tones = null; }
+        if (!tones) continue;
+        for (const pc of [...tones]) counts.set(((pc % 12) + 12) % 12, (counts.get(((pc % 12) + 12) % 12) ?? 0) + 1);
+      }
+      // rank by how many of the loop's chords contain the pitch class
+      return [...counts.entries()].sort((a, b) => b[1] - a[1]).map(([pc]) => pc);
+    })();
+    // express the winners as semitone offsets from the tonic, which is what the
+    // `~n` figure token takes; `+` puts one of them an octave up so the body is
+    // a spread dyad rather than a cluster (the reel's shape, kept).
+    const fzOffsets = fzCommon.slice(0, 2).map((pc) => (((pc - tonicPc) % 12) + 12) % 12);
+    const bodyFig = fzOffsets.length >= 2
+      ? {
+        name: 'frozen-body-commontone', bars: 1, grid: 16, legato: false,
+        onsets: ['1/8', '3/8', '5/8', '7/8'],
+        figure: [`~${fzOffsets[0]}`, `~${fzOffsets[1]}`, `~${fzOffsets[0]}`, `~${fzOffsets[1] + 12}`],
+        accents: [0.42, 0.5, 0.42, 0.46],
+      }
+      : {
+        name: 'frozen-body', bars: 1, grid: 16, legato: false,
+        onsets: ['1/8', '3/8', '5/8', '7/8'],
+        figure: ['5', 's6', '5', 's2+'],
+        accents: [0.42, 0.5, 0.42, 0.46],
+      };
+    // the ONE MOVING SLOT: the downbeat, tracking the real chord
+    const slotFig = { name: 'frozen-slot', bars: 1, onsets: ['0', '1/2'], figure: ['R', 'R'], accents: [0.6, 0.5], legato: false };
+    const fzSound = (opts.fullSynth || synthAcc) ? 'gm_synth_strings_1' : 'gm_vibraphone';
+    // REGISTER CAPPED BY THE LEAD (D77 — support tops stay UNDER the lead).
+    // The first cut used `tonicPc >= 5 ? 4 : 5`, a fixed guess that consults
+    // nothing, and the verify probe caught it on SIX songs: festival_hook put
+    // the frozen slot at midi 88 over a lead at 64 — two octaves ABOVE the
+    // tune — and chase_facility, cave_dungeon and training_speed were 100%
+    // above as well. Same shape as the descant's own aftermath fix.
+    const fzOct = Math.max(3, Math.min(tonicPc >= 5 ? 4 : 5, (leadOctave ?? 5) - 1));
+    const bodyExpr = bindFigure(bodyFig, frozenCtx, v.meter, {
+      octave: fzOct, sound: fzSound, gainRange: [0.16, 0.3], fx: '.room(0.35)', rhythmName: 'frozen-body',
+    }).expr;
+    const bindFz = (ctx) => `stack(${bodyExpr}, ${bindFigure(slotFig, ctx, v.meter, {
+      octave: fzOct, sound: fzSound, loopRoots: true, gainRange: [0.2, 0.34], fx: '.room(0.35)', rhythmName: 'frozen-slot',
+    }).expr})`;
+    const fzBars = form.sections.flatMap((sec) => Array(sec.bars).fill((ENERGY[sec.archetype] ?? 3) >= 3 ? 1 : 0));
+    if (fzBars.some(Boolean)) {
+      extraParts.push(...varySplit(bindFz, fzBars));
+      extraSolos._frozen_slot = bindFz(ctxBar);
+      extraInfo.push(`frozen slot: ${fzSound} holds 5-s6-5-s2+ FIXED while the downbeat tracks the chord \u2014 the frozen tones re-colour as the harmony moves (r23 reel R2, oct ${fzOct})`);
+    }
+  }
+
+  // ---- R6 · A CELL LENGTH COPRIME WITH THE BAR --------------------------
+  // 2 reels / 2 INDEPENDENT sources — the only structural device in the reel
+  // set confirmed by two different producers, and the only one that produces
+  // change without a section boundary. That is directly the r17 ask this
+  // project has carried unbuilt for six rounds: "changes not just in strict
+  // section bar". Measured then, and still true: 139 of 139 layer entries land
+  // exactly on a section start.
+  //
+  // A 3-eighth cell in a 4/4 bar restarts on a different metric position every
+  // bar and realigns only every 3 bars: 8 onsets over 3 bars, at 0, 3/8, 6/8,
+  // 9/8, 12/8, 15/8, 18/8, 21/8. Zero note edits, no boundary, and the phase
+  // relationship to the beat is different in each of the three bars.
+  //
+  // `Db04` also shows how to END it — break the cell at the phrase close with a
+  // stepwise descent carrying a pitch the cell never contained. Here the last
+  // onset of the 3-bar cell takes s2 (the cell is otherwise R/3/5), which is
+  // that break.
+  // Opt-in for the same measured reason as the frozen slot above.
+  // Kept higher than the frozen slot's: re-phasing is only audible if the cell
+  // recurs often enough for the ear to hold its shape across the shift. 80 is
+  // the slowest of the two reels that show it (Db04's house tempo and Dcbb's
+  // 127), rounded down rather than up because that pair is thin evidence.
+  if (opts.coprimeCell === true && r23Fresh && v.bpm >= 80) {
+    const cpFig = {
+      name: 'coprime-3-8ths', bars: 3, grid: 8, legato: false,
+      onsets: ['0', '3/8', '6/8', '9/8', '12/8', '15/8', '18/8', '21/8'],
+      figure: ['R', '5', '3+', 'R', '5', '3+', 'R', 's2+'],
+      accents: [0.6, 0.44, 0.5, 0.58, 0.44, 0.5, 0.56, 0.48],
+    };
+    const cpSound = (opts.fullSynth || synthAcc) ? 'gm_synth_bass_2' : 'gm_pizzicato_strings';
+    // capped for the same reason, one octave lower than the frozen slot so the
+    // two r23 devices do not land in each other's band either
+    const cpOct = Math.max(2, Math.min(tonicPc >= 5 ? 3 : 4, (leadOctave ?? 5) - 2));
+    const bindCp = (ctx) => bindFigure(cpFig, ctx, v.meter, {
+      octave: cpOct, sound: cpSound, loopRoots: true,
+      gainRange: [0.18, 0.32], fx: '.room(0.28).clip(0.55)', rhythmName: 'coprime-cell',
+    }).expr;
+    const cpBars = form.sections.flatMap((sec) => Array(sec.bars).fill((ENERGY[sec.archetype] ?? 3) >= 3 ? 1 : 0));
+    if (cpBars.some(Boolean)) {
+      extraParts.push(...varySplit(bindCp, cpBars));
+      extraSolos._coprime_cell = bindCp(ctxBar);
+      extraInfo.push(`coprime cell: ${cpSound} runs a 3-eighth cell against a 4/4 bar \u2014 re-phases every bar, realigns every 3, no section boundary involved (r23 reel R6, oct ${cpOct})`);
     }
   }
   // D87 (his round-10 MAIN directive): HARMONY MELODIES — "in the harmony
@@ -2742,7 +3494,17 @@ function buildSong(prompt, name, opts = {}) {
   // rule per his explicit round-8 ask; his verdicts rule on it.
   // r14 lane law: the music-box sparkle is a PLAYFUL device — it never joins
   // a horror, desert or jungle song (measured on every "playful"-noted card)
+  // r24: remember the sparkle's voice so the echo and the octave partner cannot
+  // pick it too. HIS EAR, two cards: "the high glockenspiel sounds a bit too
+  // erratic like it's making the melody seem jittery" (su_tense_boss) and "the
+  // glockenspiel too active once again" (su_triumphant_boss). MEASURED on both:
+  // gm_music_box was cast TWICE — once as this sparkle at octave 6 and again as
+  // the r22 octave partner or echo — so two high music-box lines were running
+  // against each other. Exactly D100's shape: a voice excluded from one path
+  // arrives through another, and only a per-song voice audit catches it.
+  let sparkleSound = null;
   if (opts.sparkle !== false && !laneSerious && v.bpm >= 90 && v.meter === '4/4') {
+    sparkleSound = 'gm_music_box';
     const spChime = {
       name: 'sparkle-chime', bars: 1, onsets: ['0', '1/2'],
       figure: ['R', '5'], accents: [0.5, 0.4], legato: false,
@@ -3254,14 +4016,14 @@ function buildSong(prompt, name, opts = {}) {
   if (opts.melodyDouble) {
     const md = opts.melodyDouble;
     const mdGain = Math.round(leadGain * (md.gainMul ?? 0.45) * 100) / 100;
-    const bindLetterDbl = (L, ctxL) => bindMelody(letterCell(L), ctxL, v.meter, {
-      style: 'toby-fox', seed: letterSeed(L), octave: md.octave ?? leadOctave, sound: md.sound, fx: `.gain(${mdGain}).room(0.4)`,
+    const bindLetterDbl = (L, ctxL, stmt = 0) => bindMelody(letterCell(L), ctxL, v.meter, {
+      style: 'toby-fox', seed: letterSeed(L, stmt), octave: md.octave ?? leadOctave, sound: md.sound, fx: `.gain(${mdGain}).room(0.4)`,
       hold: LEAD.hold, mergeRepeats: LEAD.merge, articFloor: artFloor, cadenceNo7, chromCore, tailOff: grammarFresh, leapFold: grammarFresh, chordTop: chordTopOn, minNote: grammarFresh ? (opts.leadMinNote ?? 1) : 0, ...(opts.leadRangeSteps ? { rangeSteps: opts.leadRangeSteps } : {}),
     });
-    melodyDoubleExpr = renderLetterLead(form, mfx, (L) => {
+    melodyDoubleExpr = renderLetterLead(form, mfx, (L, stmt) => {
       const base0 = L.endsWith('*') ? L.slice(0, -1) : L;
-      return bindLetterDbl(base0, L.endsWith('*') ? ctxBarV : ctxBar).expr;
-    }).lead;
+      return bindLetterDbl(base0, L.endsWith('*') ? ctxBarV : ctxBar, stmt).expr;
+    }, { perStatement: leadStmtVary, phraseBars: leadPhraseBars }).lead;
     if (melodyDoubleExpr) {
       extraSolos._melody_double = melodyDoubleExpr;
       extraInfo.push(`melody double: ${md.sound} rides the piano RH melody at ${mdGain} (his cave/snow note)`);
@@ -3363,8 +4125,8 @@ function buildSong(prompt, name, opts = {}) {
         const cOct = cfg.octave
           ?? (cRange ? Math.max(cRange[0], Math.min(leadOctave, cRange[1] - 1))
             : leadOctave);
-        const bindComp = (L, ctxL) => bindMelody(letterCell(L), ctxL, v.meter, {
-          style: 'toby-fox', seed: letterSeed(L), octave: cOct, sound: cSound,
+        const bindComp = (L, ctxL, stmt = 0) => bindMelody(letterCell(L), ctxL, v.meter, {
+          style: 'toby-fox', seed: letterSeed(L, stmt), octave: cOct, sound: cSound,
           fx: `.gain(${cGain}).room(0.4)`,
           // `hold` MUST be the lead's own value for this letter, not the song
           // default: a sustaining lead voice sets it true per letter, and taking
@@ -3387,10 +4149,10 @@ function buildSong(prompt, name, opts = {}) {
           obliqueCompanion: opts.obliqueCompanion === true,
           ...(opts.leadRangeSteps ? { rangeSteps: opts.leadRangeSteps } : {}),
         });
-        companionExpr = renderLetterLead(form, mfx, (L) => {
+        companionExpr = renderLetterLead(form, mfx, (L, stmt) => {
           const base0 = L.endsWith('*') ? L.slice(0, -1) : L;
-          return bindComp(base0, L.endsWith('*') ? ctxBarV : ctxBar).expr;
-        }).lead;
+          return bindComp(base0, L.endsWith('*') ? ctxBarV : ctxBar, stmt).expr;
+        }, { perStatement: leadStmtVary, phraseBars: leadPhraseBars }).lead;
         if (companionExpr) {
           extraSolos._companion = companionExpr;
           extraInfo.push(`companion melody: ${cSound} sings the lead's rhythm on its own chord tones underneath, at ${cGain}`);
@@ -3436,8 +4198,27 @@ function buildSong(prompt, name, opts = {}) {
   if (opts.echoLayer) {
     const cfg = typeof opts.echoLayer === 'object' ? opts.echoLayer : {};
     const LAGS = [2, 0.5, 1.5, 1, 0.75];            // measured, most common first
-    const lagBeats = cfg.lagBeats ?? LAGS[fnv(`${name}|echolag`) % LAGS.length];
-    const pool = otherFamily(ECHO_POOL, [LEAD_SOUND, accVoiceFor(accFig)]);
+    // ---- r24 · AN ECHO THAT CROSSES A CHORD CHANGE IS DISSONANT BY
+    // CONSTRUCTION. HIS EAR, three cards: "the harmonica or whatever sounds
+    // dissonant from the main melody" (su_happy_shop), "the clarinet or whatever
+    // hit some weird notes that changed the vibes" (su_excited_casino), "the
+    // clarinet or whatever is sometimes a bit too dissonant" (su_calm_menu) —
+    // and the summary line, "you do a dissonance pass and randomly add
+    // dissonance at certain places".
+    //
+    // The echo is a delayed COPY of the lead. Delay it past a chord boundary and
+    // the copied pitch sounds against a chord that was never chosen for it. That
+    // is not a taste call, it is arithmetic: measured 34.8% non-chord tones on
+    // 28 of 28 songs, and the longest lags are the ones that cross.
+    //
+    // So the lag is bounded by how fast the harmony moves. On a song changing
+    // chords every bar, only lags that stay inside a beat survive; a slower
+    // harmony can carry the long 2-beat lag the reference set prefers.
+    const beatsPerChord = (v.meter === '4/4' ? 4 : 3) * (plan4 ? Math.min(...plan4) : 1);
+    const safeLags = LAGS.filter((x) => x <= Math.max(0.5, beatsPerChord / 2));
+    const lagPool = safeLags.length ? safeLags : [0.5];
+    const lagBeats = cfg.lagBeats ?? lagPool[fnv(`${name}|echolag`) % lagPool.length];
+    const pool = otherFamily(ECHO_POOL, [LEAD_SOUND, accVoiceFor(accFig), sparkleSound].filter(Boolean));
     const pick = cfg.sound ?? pool[fnv(`${name}|echo`) % pool.length];
     const eSound = opts.fullSynth ? SYNTH_OF(pick) : pick;
     const eRange = INSTRUMENTS[eSound]?.range;
@@ -3446,18 +4227,18 @@ function buildSong(prompt, name, opts = {}) {
     // line it follows. Never at lead gain — that is a doubling, and D100's
     // melody_backup ruling is exactly what a loud copy sounds like.
     const eGain = Math.round(leadGain * (cfg.gainMul ?? 0.35) * 100) / 100;
-    const bindEcho = (L, ctxL) => bindMelody(letterCell(L), ctxL, v.meter, {
-      style: 'toby-fox', seed: letterSeed(L), octave: eOct, sound: eSound,
+    const bindEcho = (L, ctxL, stmt = 0) => bindMelody(letterCell(L), ctxL, v.meter, {
+      style: 'toby-fox', seed: letterSeed(L, stmt), octave: eOct, sound: eSound,
       fx: `.gain(${eGain}).room(0.5)`,
       hold: LEAD.hold, mergeRepeats: LEAD.merge, articFloor: artFloor,
       cadenceNo7, chromCore, tailOff: grammarFresh, leapFold: grammarFresh,
       minNote: grammarFresh ? (opts.leadMinNote ?? 1) : 0,
       ...(opts.leadRangeSteps ? { rangeSteps: opts.leadRangeSteps } : {}),
     });
-    const raw = renderLetterLead(form, mfx, (L) => {
+    const raw = renderLetterLead(form, mfx, (L, stmt) => {
       const base0 = L.endsWith('*') ? L.slice(0, -1) : L;
-      return bindEcho(base0, L.endsWith('*') ? ctxBarV : ctxBar).expr;
-    }).lead;
+      return bindEcho(base0, L.endsWith('*') ? ctxBarV : ctxBar, stmt).expr;
+    }, { perStatement: leadStmtVary, phraseBars: leadPhraseBars }).lead;
     if (raw) {
       // .late() takes CYCLES and one cycle is one bar, so the beat lag is
       // divided by the METER's beat count. `v.beats` does not exist — the
@@ -3482,28 +4263,32 @@ function buildSong(prompt, name, opts = {}) {
   let octaveExpr = null;
   if (opts.octaveDouble && !laneHorror) {
     const cfg = typeof opts.octaveDouble === 'object' ? opts.octaveDouble : {};
-    const pool = otherFamily(ECHO_POOL, [LEAD_SOUND, accVoiceFor(accFig), ...(echoExpr ? [] : [])]);
+    // r24: the sparkle's voice is excluded here too, for the same measured
+    // reason as the echo above. The `...(echoExpr ? [] : [])` was a no-op either
+    // way and is left as it was — the echo's own voice is a separate question
+    // his notes have not raised.
+    const pool = otherFamily(ECHO_POOL, [LEAD_SOUND, accVoiceFor(accFig), sparkleSound].filter(Boolean));
     const pick = cfg.sound ?? pool[fnv(`${name}|oct8`) % pool.length];
     const oSound = opts.fullSynth ? SYNTH_OF(pick) : pick;
     const oRange = INSTRUMENTS[oSound]?.range;
     const want = leadOctave - 1;
     const oOct = cfg.octave ?? (oRange ? Math.max(oRange[0], Math.min(want, oRange[1] - 1)) : want);
     const oGain = Math.round(leadGain * (cfg.gainMul ?? 0.4) * 100) / 100;
-    const bindOct = (L, ctxL) => bindMelody(letterCell(L), ctxL, v.meter, {
+    const bindOct = (L, ctxL, stmt = 0) => bindMelody(letterCell(L), ctxL, v.meter, {
       // the LEAD's octave, deliberately: same seed + same cell + same context =
       // the same pitches. The transposition happens on the pattern below, so
       // the interval is an exact octave by construction rather than by luck.
-      style: 'toby-fox', seed: letterSeed(L), octave: leadOctave, sound: oSound,
+      style: 'toby-fox', seed: letterSeed(L, stmt), octave: leadOctave, sound: oSound,
       fx: `.gain(${oGain})`,
       hold: LEAD.hold, mergeRepeats: LEAD.merge, articFloor: artFloor,
       cadenceNo7, chromCore, tailOff: grammarFresh, leapFold: grammarFresh,
       minNote: grammarFresh ? (opts.leadMinNote ?? 1) : 0,
       ...(opts.leadRangeSteps ? { rangeSteps: opts.leadRangeSteps } : {}),
     });
-    const octRaw = renderLetterLead(form, mfx, (L) => {
+    const octRaw = renderLetterLead(form, mfx, (L, stmt) => {
       const base0 = L.endsWith('*') ? L.slice(0, -1) : L;
-      return bindOct(base0, L.endsWith('*') ? ctxBarV : ctxBar).expr;
-    }).lead;
+      return bindOct(base0, L.endsWith('*') ? ctxBarV : ctxBar, stmt).expr;
+    }, { perStatement: leadStmtVary, phraseBars: leadPhraseBars }).lead;
     // down an octave unless the instrument's own declared range cannot take it
     const octDrop = (oRange && leadOctave - 1 < oRange[0]) ? 0 : -12;
     octaveExpr = octRaw && octDrop ? `(${octRaw}).add(note(${octDrop}))` : null;
@@ -3566,15 +4351,138 @@ function buildSong(prompt, name, opts = {}) {
     : extraParts;
   if (opts.layerRest) extraInfo.push(`layer breathing: each non-bass/pad layer rests 1 bar in 8, staggered, and FADES back over two bars instead of cutting in (r22 — 57.5% of reference parts rest inside a steady section; his \u201cstrings should always FADE in ... not just cut in and spawn in\u201d)`);
 
+  // r24 — THE ENTRY RAMP. His three cards, one sentence each and all the same:
+  //   su_calm_water     "the synth sounds pretty good when it came in but just
+  //                      way too loud. it's calm water."
+  //   su_excited_space  "when the synth comes in in the middle it's good but way
+  //                      too loud."
+  //   su_somber_aftermath "the synth is too loud when it comes in but the synth
+  //                      itself I like and the notes."
+  //
+  // MEASURED in the mix, per sound, comparing the mean gain in a voice's FIRST
+  // sounding bar against its steady state two bars later: a layer that enters
+  // mid-song does not fade in, it enters LOUDER than it then plays.
+  // su_somber_aftermath's violin arrives at 1.40x its own steady gain,
+  // su_excited_space's flute at 1.37x, its timpani at 1.24x, su_calm_water's pad
+  // at 1.06x. Nothing was ramping them: `rampMul` only softens the first bar of a
+  // varySplit run to 0.75, and `breathEnvFor` puts its 0.4/0.75 swell at BAR 0 —
+  // the song's opening — so a voice whose own opening is bar 40 gets none of it.
+  // The section curve then lifts the entry section and the voice arrives on top
+  // of the mix.
+  //
+  // This is also his r22 note reaching a case it had missed: "strings should
+  // always FADE in at times like this not just cut in and spawn in", and
+  // "it shouldn't just spawn in that loud, it should increase in gradually".
+  // The device that answers it existed and was anchored to the wrong bar.
+  //
+  // Read the entry bar off the layer's OWN mask rather than tracking it
+  // separately — the mask is what decides when the voice is first heard, so it
+  // cannot drift out of sync with it. A stack of pieces takes the earliest.
+  const ENTRY_RAMP = [0.42, 0.72, 0.9];
+  const entryRampOn = ruleFresh(24);
+  // entry bar and run length, read off the layer's own mask. A stack of pieces
+  // takes the earliest entry and the run that starts there.
+  const entrySpanOfExpr = (expr) => {
+    let bestBar = 0, bestRun = form.totalBars, any = false;
+    for (const m of String(expr).matchAll(/\.mask\("<([^"]*)>"\)/g)) {
+      any = true;
+      let bar = 0, run = 0;
+      const toks = m[1].trim().split(/\s+/);
+      for (let i = 0; i < toks.length; i++) {
+        const [val, n] = toks[i].split('@');
+        const len = Number(n ?? 1);
+        if (Number(val) !== 0) { run = len; break; }
+        bar += len;
+      }
+      if (bar === 0) return { bar: 0, run: form.totalBars };
+      if (!any || bar < bestBar || bestBar === 0) { bestBar = bar; bestRun = run; }
+    }
+    return any ? { bar: bestBar, run: bestRun } : { bar: 0, run: form.totalBars };
+  };
+  // r24 — THE STAGGER, and it is the same defect as the entry ramp seen from the
+  // other side. His two "beat drop" cards:
+  //   su_mysterious_space  "you don't have to always do a beat drop, especially
+  //                         in calmer or more atmospheric song."
+  //   su_excited_training  "whenever it feels like a beat drop, the note that the
+  //                         piano and stuff begins on sort of negates that drop
+  //                         because it sounds forced and not like an actual beat
+  //                         drop."
+  //
+  // FIRST HYPOTHESIS, REFUTED BY MEASUREMENT: that the breakdown fires too often
+  // (27 of 28 suite songs carry one — "always" is literal) or strips too deep.
+  // The depth is fine. Measured as the deepest sustained 2-bar dip against each
+  // file's own median voice count, we sit at median 0.69 / p25 0.55 against the
+  // reference's 0.75 / 0.63 — a little deeper, not a defect.
+  //
+  // WHAT IS LEFT is how many voices arrive in the SAME BAR — and the honest
+  // version of that number is much smaller than the one I first measured.
+  //
+  // TWO MEASUREMENT ERRORS, both caught here rather than shipped. (a) The first
+  // pass counted every drum SOUND as its own voice while the reference counts a
+  // kit as one part (MIDI channel 9), which reported us at a median of 6 and a
+  // max of 13 against the reference's 4 and 10. Collapsing our percussion to one
+  // voice, as the reference already does, gives median 4 / p75 6 / p90 7 / max 9
+  // against 4 / 5 / 6 / 10 — we were about ONE voice over at the top end, not
+  // seven. (b) The un-weighted count could not see this fix at all, because a
+  // voice ramped to gain 0 still emits a hap; the metric had to be gain-weighted
+  // before an A/B on the stagger showed any difference. It is stated here because
+  // the first framing of this fix was wrong and the file should say so.
+  //
+  // So the stagger is a TAIL fix, not a rescue: at a threshold of 5 it takes us
+  // to median 4 / p75 5 / p90 6, which is the reference distribution exactly.
+  // Staggering smaller groups (threshold 3) overshoots to a median of 3, under
+  // the reference — a pile-up of five voices is the drop he is describing; three
+  // arriving together is just an arrangement.
+  //
+  // The repair is in his own words about a reference he liked (Sky_battle): "note
+  // how some instruments lead up to their section before they come in like start
+  // playing before their section". Delaying rather than anticipating keeps every
+  // voice inside the section it was cast for, which anticipation would not.
+  // Voices sharing an entry bar are ordered by a hash of their own expression —
+  // not by their position in the mix array, which would make the stagger depend
+  // on assembly order — and take 0/1/2 bars of silence before their ramp.
+  const entryPlan = (exprs) => {
+    const span = exprs.map((x) => (x ? entrySpanOfExpr(x) : { bar: 0, run: 0 }));
+    const slot = exprs.map(() => 0);
+    const byBar = new Map();
+    span.forEach((sp, i) => {
+      if (!exprs[i] || sp.bar <= 0 || sp.bar >= form.totalBars) return;
+      if (sp.run < 4) return;                    // too short a run to delay into
+      if (!byBar.has(sp.bar)) byBar.set(sp.bar, []);
+      byBar.get(sp.bar).push(i);
+    });
+    for (const ix of byBar.values()) {
+      if (ix.length < 5) continue;
+      ix.slice().sort((a, b) => fnv(exprs[a]) - fnv(exprs[b]))
+        .forEach((i, k) => { slot[i] = k % 3; });
+    }
+    return { span, slot };
+  };
+  const withEntryAt = (expr, sp, slot) => {
+    if (!entryRampOn || !expr) return expr;
+    const e = sp.bar;
+    if (e <= 0 || e >= form.totalBars) return expr;
+    const ramp = [...Array(slot).fill(0), ...ENTRY_RAMP];
+    const g = Array.from({ length: form.totalBars }, (_, b) =>
+      (b >= e && b < e + ramp.length ? ramp[b - e] : 1));
+    return `(${expr}).mul(gain("<${maskString(g)}>"))`;
+  };
+
+  // every voice that is NOT the harmonic spine (base accompaniment, the tune
+  // itself, the drums) is planned together, so the stagger can see them all
+  const rampSrc = [companionExpr, melodyDoubleExpr, echoExpr, octaveExpr, ...layerMixOut, ...extraOut];
+  const { span: rampSpan, slot: rampSlot } = entryPlan(rampSrc);
+  const R = (i) => withEntryAt(rampSrc[i], rampSpan[i], rampSlot[i]);
+  const nFixed = 4, nLayer = layerMixOut.length;
   const mixParts = [
     withCurve(bdMaskStr ? `(${baseMix}).mask("<${bdMaskStr}>")` : baseMix),
     ...(letterLead.lead ? [withCurve(letterLead.lead, true)] : []),
-    ...(companionExpr ? [withCurve(companionExpr, true)] : []),
-    ...(melodyDoubleExpr ? [withCurve(melodyDoubleExpr, true)] : []),
-    ...(echoExpr ? [withCurve(echoExpr, true)] : []),
-    ...(octaveExpr ? [withCurve(octaveExpr, true)] : []),
-    ...layerMixOut.map((x, i) => withCurve(x, shaped.layers[i]?.derives === 'lead' || shaped.layers[i]?.derives === 'lead-rhythm')),
-    ...extraOut.map((x) => withCurve(x)),
+    ...(companionExpr ? [withCurve(R(0), true)] : []),
+    ...(melodyDoubleExpr ? [withCurve(R(1), true)] : []),
+    ...(echoExpr ? [withCurve(R(2), true)] : []),
+    ...(octaveExpr ? [withCurve(R(3), true)] : []),
+    ...layerMixOut.map((x, i) => withCurve(R(nFixed + i), shaped.layers[i]?.derives === 'lead' || shaped.layers[i]?.derives === 'lead-rhythm')),
+    ...extraOut.map((x, i) => withCurve(R(nFixed + nLayer + i))),
     // percAllBars also rides THROUGH the breakdown strip (NSMB law: the
     // hand-drum loop never changes across sections — verify catch: the
     // breakdown mask re-created somber desert's 16 drumless bars)
@@ -4392,6 +5300,229 @@ const R22_DEVICES = {
   obliqueCompanion: 'OBLIQUE COMPANION — oblique motion (one voice holds, the other moves) is the plurality pair relation at 27.8%, over parallel 24.7%, contrary 20.9%, similar 19.9%. A companion that re-picks under every lead note cannot make oblique motion at all.',
 };
 
+// ============================================================================
+// r23 SUITE — a full listening suite with EVERYTHING wired.
+//   SUITE=1 node scripts/audition-songs.mjs   ->  audition/suite.html
+// ============================================================================
+// His ask: "ok, generate a suite of songs for me to analyze" / "with everything
+// you learned".
+//
+// Not an A/B. Twenty-eight fresh songs across the genre map, each built ONCE
+// with the whole accumulated stack on — the r22 layering devices, the r22
+// second-pass fixes, and the r23 battle + reel devices — in the same keep/kill/
+// notes card UI as audition/songs.html so he can judge them AS SONGS and export.
+//
+// Names are `su_*` so they can never collide with the judged `vs_*` set, and the
+// export is tagged `page: 'r23-suite'` with its own localStorage key, so a paste
+// from here can never be mistaken for a judged-suite export.
+//
+// EVERY SONG IS HISTORY-LESS by construction (new name, no verdict, no
+// CARD_NOTES), which is exactly the condition every new-capability gate in this
+// file is written to require.
+const SUITE = process.env.SUITE === '1';
+// Lanes that pin their own texture (D93/D94/D100). They still get everything
+// else; they do NOT get the coprime cell, which is a plucked pulse and is the
+// r23 device most likely to read as a groove where a groove is the documented
+// defect ("an evening disco dance ball"). The frozen slot DOES reach them — it
+// is a sustained held texture, which is what a dread lane wants.
+const SUITE_LANE_LAW = new Set(['manor', 'catacombs', 'citadel', 'desert', 'jungle', 'cave', 'shrine']);
+const SUITE_PROMPTS = [
+  // ---- the r23 battle work, six ways ------------------------------------
+  { e: 'excited', v: 'boss', why: 'battle bass + open fifths + toms, at the top of the tempo band' },
+  { e: 'tense', v: 'boss', why: 'the same devices under a tense reading' },
+  { e: 'triumphant', v: 'boss', why: 'the "epic" end — does open sonority read heroic or hollow?' },
+  { e: 'excited', v: 'fight', why: 'battle role, fight lane' },
+  { e: 'tense', v: 'fight', why: 'his own r22 fight cards were about drums; this has the tom kit' },
+  // r24 PROSE KEEP: "I like this one the most of the fight songs, the different
+  // accompaniments work together and resonate."
+  { e: 'scary', v: 'fight', pin: 'r24', why: 'battle devices against a scary emotion — the measured "battle is LESS dissonant" claim under pressure' },
+  // ---- action / chase ----------------------------------------------------
+  { e: 'tense', v: 'stealth', why: 'reel devices on a sparse texture' },
+  { e: 'excited', v: 'training', why: 'speedhighway-atdawn reference' },
+  { e: 'tense', v: 'construction', why: 'industrial percussion + coprime cell' },
+  // ---- overworld / exploration ------------------------------------------
+  { e: 'calm', v: 'water', why: 'shenmue_sea / shenightfall reference — frozen slot at a slow tempo' },
+  { e: 'mysterious', v: 'cave', why: 'dungeoncave reference; lane law, so no coprime cell' },
+  { e: 'nostalgic', v: 'snow', why: 'snowy reference' },
+  // r24 PROSE KEEP: "I like this ... this is definitely a solid song."
+  { e: 'triumphant', v: 'snow', pin: 'r24', why: 'triumphantexpedition — "layering and dynamics and bass and all the melodies"' },
+  { e: 'excited', v: 'space', why: 'EggReverie / Sm4sh' },
+  { e: 'mysterious', v: 'space', why: 'the slow end of the same lane' },
+  // ---- town / diegetic ---------------------------------------------------
+  { e: 'happy', v: 'shop', why: 'the plainest possible bed for the reel devices' },
+  { e: 'nostalgic', v: 'casino', why: 'Studiopolis — swing + frozen slot' },
+  { e: 'happy', v: 'festival', why: 'Magikarp_Festival / Splatoon' },
+  // r24 PROSE KEEP: "I like this and the groove ... fits the vibe."
+  { e: 'goofy', v: 'kitchen', pin: 'r24', why: 'the playful end — do the r23 devices survive it?' },
+  { e: 'excited', v: 'casino', why: 'full synth + coprime cell' },
+  // ---- cutscene / rest ---------------------------------------------------
+  { e: 'calm', v: 'rest', why: 'shenmue_morning / brightblueday' },
+  { e: 'somber', v: 'aftermath', why: 'fangmei_goodbye — sparse, and the frozen slot has to carry' },
+  { e: 'romantic', v: 'rest', why: 'soa_reflection — "I like how the duet finishes each other"' },
+  // ---- menu ---------------------------------------------------------------
+  { e: 'calm', v: 'menu', why: 'full synth, minimal' },
+  { e: 'mysterious', v: 'shrine', why: 'lane law; choir territory' },
+  // ---- the lanes that own their laws — everything EXCEPT the coprime cell -
+  // r24 PROSE KEEP, the strongest in the export: "big fan of this song."
+  { e: 'mysterious', v: 'desert', pin: 'r24', why: 'Phrygian dominant, iqa\u2019 floor, marimba \u2014 r23 battle devices excluded by lane' },
+  { e: 'happy', v: 'jungle', why: 'dorian vamp, tumbao bass, marimba acc' },
+  { e: 'scary', v: 'manor', why: 'ambience lane \u2014 one harmonic device, beds, no kit' },
+];
+
+let SUITE_FIRST = 0;
+if (SUITE) {
+  SUITE_FIRST = songs.length;
+  for (const row of SUITE_PROMPTS) {
+    const name = `su_${row.e}_${row.v}`;
+    const laneLaw = SUITE_LANE_LAW.has(row.v);
+    buildSong({ emotion: row.e, environment: row.v, meter: '4/4' }, name, {
+      // r24: A PROSE KEEP IS A KEEP. `pinFrom` states the intent — rules from
+      // that round on do not reach this song — where pinning feature-by-feature
+      // is how a judged layer gets silently dropped (D101).
+      ...(row.pin ? { pinFrom: row.pin } : {}),
+      // ---- r23 ----
+      r23: true,
+      frozenSlot: true,
+      coprimeCell: !laneLaw,
+      // battle bass / battle kit / the two measured support figures switch
+      // themselves on from `v.role` where the lane permits; nothing to pass.
+      // ---- r24 ----
+      deepDrums: true,      // his "our drum vst isnt that good ... doesnt sound like deep reel drums"
+      // voicedColor and bandKit default on for a history-less song; a pinned
+      // prose keep (row.pin) refuses both through the same gate.
+      // ---- r22 ----
+      echoLayer: true, octaveDouble: true, layerRest: true, obliqueCompanion: true,
+      percBackbeat: true, supportFigure: true, scaleTokensInKey: true,
+      companionFamilySplit: true,
+    });
+    const S = songs[songs.length - 1];
+    S.why = row.why;
+  }
+}
+
+// ============================================================================
+// r23 — THE STRESS-TEST PAGE.  R23=1 node scripts/audition-songs.mjs
+// ============================================================================
+// His ask: "also, using the midi, show me what you learned by making new songs
+// so i can stress test", alongside "for the boss fights learn what makes them
+// actually feel energetic with stakes on the line and epic through their
+// layering patterns and what they do in each instrument and rhythm and
+// intervals", and the scoping instruction that governs both: "lots of the
+// techniques and intervals behind his layering should own be applied to
+// applicable genres. not specific ones like jungle or desert or etc."
+//
+// Fourteen prompts drawn from the MIDI files he hand-picked, each built TWICE
+// from the same name-seed: once with the r23 device family, once without. Two
+// things are ON IN BOTH so they are not the variable — `percBackbeat` (his "for
+// the drums there isn't even a dum being hit") and `scaleTokensInKey` (his "bad
+// note in G#", which he named on BOTH r22 variants, i.e. a bug not a taste).
+//
+// audition/songs.html is NOT written in this mode.
+const R23 = process.env.R23 === '1';
+const R23_PROMPTS = [
+  // Every row states its environment EXPLICITLY. The parser is good enough to
+  // rank words but the engine's environment slot doubles as a FUNCTION slot
+  // (fight/boss/rest), and leaving that to word length put "warm nostalgic
+  // morning music" into `fight` at 156bpm with a battle kit. That turned out to
+  // be a genuine parser bug ('war' matching inside 'warm' — fixed in
+  // src/lib/prompt-parse.js this round), but the lesson stands: a stress-test
+  // page should not also be testing the parser.
+  // ---- battle / boss: where the r23 measurements came from ----------------
+  { n: 'boss_machine', p: 'intense boss battle music against a giant machine, heavy drums', env: 'boss',
+    ref: 'Grandia2_BattleVersion3, SA2B_Boss_1-KM' },
+  { n: 'boss_final', p: 'epic final boss battle music, high stakes and heroic', env: 'boss',
+    ref: 'soa_battle-2, soabattlev12 ("I like how the layering")' },
+  { n: 'fight_airship', p: 'fast action battle music on the deck of a flying airship', env: 'fight',
+    ref: 'Skies_Deck_Battle ("layering of strings, the drums, the harmony... love it"), Sky_battle' },
+  { n: 'fight_miniboss', p: 'short punchy mechanical miniboss fight, energetic', env: 'fight',
+    ref: 'SM-MiniBoss, SSBWU-Megaman2_AirMan, ducktalesremasteredbosstheme' },
+  { n: 'fight_enemy', p: 'tense dangerous enemy encounter music', env: 'fight',
+    ref: 'enemy_chaos ("I like the melody - conveys enemy, and the drums"), Hand_combat' },
+  { n: 'chase_facility', p: 'high tension chase music escaping through a military facility', env: 'lab',
+    ref: 'RedRum-JimmyQTEChase ("conveys tension"), military facility, Jungle-Challenge' },
+  // ---- NOT battle: the same reel devices on other genres, which is the whole
+  //      point of his "applicable genres" instruction --------------------
+  { n: 'casino_jazz', p: 'groovy jazzy lounge music for a city casino level', env: 'casino',
+    ref: 'SM-StudiopolisZoneAct1 / Act2' },
+  { n: 'festival_hook', p: 'upbeat festival music with a catchy hook and lots of percussion', env: 'festival',
+    ref: 'Magikarp_Festival, WIIU_Splatoon_MainTheme' },
+  { n: 'water_nightfall', p: 'calm reflective music by the sea at night', env: 'water',
+    ref: 'shenmue_sea ("rhythmic pulse of the bass"), shenightfall ("chord progression feels like night")' },
+  { n: 'cave_dungeon', p: 'mysterious uneasy music for an underground dungeon cave', env: 'cave',
+    ref: 'dungeoncave ("I like the left hand, but its complex")' },
+  { n: 'snow_expedition', p: 'triumphant expedition music crossing a snowy mountain', env: 'snow',
+    ref: 'snowy, triumphantexpedition ("layering and dynamics and bass and all the melodies")' },
+  { n: 'rest_morning', p: 'warm nostalgic morning music at a camp, heartfelt piano and strings', env: 'rest',
+    ref: 'shenmue_morning ("feels heartfelt like a new day"), brightblueday' },
+  { n: 'training_speed', p: 'fast energetic music for a highway speed course at dawn', env: 'training',
+    ref: 'speedhighway-atdawn ("layering and melody and harmony melody"), expedition' },
+  { n: 'space_arena', p: 'mysterious floating music for a strange sky arena', env: 'space',
+    ref: 'EggReverie, Phazonruler_-_Sm4sh_Menu' },
+];
+
+// Each device with the number that justifies it, stated on the page so he is
+// ruling against the measurement rather than against my description.
+const R23_DEVICES = {
+  driveBass: 'BATTLE BASS = A PEDAL, NOT A WALK \u2014 battle basses repeat 62.2% of their notes against 36.8% for his non-battle picks, walk stepwise LESS (19.8% vs 31.5%) and play FEWER notes per bar (5.38 vs 6.71). Straight 8ths on one pitch, grid x.x.x.x.x.x.x.x. in 6 of 10, longest identical-pitch run 13-144 notes. The engine\u2019s low voice either walked or held; neither is this.',
+  hammerSupport: 'THE SUPPORT LAYER HAMMERS ONE PITCH \u2014 pure-repeat bar shapes are 34.2% of battle support bars against 7.0% elsewhere, the largest single separation in the analysis (4.9x). The modal shape is three onsets, all the same note. This is his own note arriving from the data: "the violins can go root third fifth or root fifth 8th repeatedly 8th note style ... to make it sound more action and high stakes".',
+  openFifths: 'OPEN, NOT TENSE \u2014 octave/unison dyads are 36.1% of battle sounding pairs vs 28.3%, fifths 15.3% vs 13.0%, bare power-fifth chords 11.7% vs 4.9% (2.4x), and THIRDS GO DOWN (15.5% vs 20.2%). Meanwhile tritones 1.7% vs 2.3%, semitones 1.0% vs 1.8%, diminished 0.8% vs 1.5%: battle music is LESS dissonant than his other picks. Stakes are made of open intervals, not tension intervals.',
+  battleKit: 'TOMS ARE THE BATTLE DRUM \u2014 1.887 tom hits/bar against 0.313 (6.0x), crash on 19.8% of bars vs 13.8%. Hats go the other way: FEWER (5.2/bar vs 6.7) and on 8ths not 16ths (16th-position share 8.8% vs 21.9%). A battle kit is not a busier kit.',
+  frozenSlot: 'FREEZE THE BODY, MOVE ONE SLOT (reel R2, 4 reels / 1 source) \u2014 one slot of a repeating figure tracks the chord and every other pitch is held FIXED for the whole loop, so the same frozen dyad re-reads as 9+b3, then #11+5, then 5+b6 as the harmony moves under it. Variation by RE-HARMONISATION rather than by substitution, which is the D101 distinction arriving from the reels.',
+  coprimeCell: 'A CELL LENGTH COPRIME WITH THE BAR (reel R6, 2 reels / 2 INDEPENDENT sources) \u2014 a 3-eighth cell in a 4/4 bar restarts on a different beat every bar and realigns only every 3. Change with zero note edits and NO SECTION BOUNDARY, which is the r17 ask this project has carried unbuilt for six rounds (measured then: 139 of 139 layer entries land exactly on a section start).',
+};
+const R23_HONEST = [
+  'THE CONTRAST IS HIS OWN SET, NOT A CORPUS. 13 battle files against 43 non-battle files, all from the two folders he hand-picked. Both sides are music he chose, so a difference is a battle property rather than a taste property \u2014 but n is small and nothing here is counted into src/lib (D95).',
+  'THE FIRST PASS OF THIS ANALYSIS WAS WRONG AND IS NOT WHAT IS SHOWN. It reported "minor share: battle 100.0%, other 0.0%" and a flat 0.0% for every chord quality. Cause: a MEDIAN taken over a 0/1 indicator, which is not a statistic. The real minor share is 69.2% vs 46.5%. Project law \u2014 a suspiciously clean number is a bug until proven otherwise.',
+  'THE ROLE GATE DOES NOT OUTRANK A LANE LAW. Five of the seven battle/boss songs on the judged page are CITADEL, and D93/D100 already settled that a dread lane wants its harmony sustained ("an evening disco dance ball"). The battle devices exclude horror, desert and jungle, which pin their own floors.',
+  'THE REEL DEVICES ARE OPT-IN BECAUSE OF A MEASUREMENT, NOT CAUTION. Rolled by hash on every unkept song they moved TEN of the judged 47, including scary_catacombs, tense_citadel and happy_jungle \u2014 the same lanes again. They ship on here and reach the suite when your ear says so.',
+  'NOT ANSWERED BY THIS: velocity. His reference MIDIs are near-uniform (stdev 9.2 battle vs 9.3 other, snare ghost-notes in 2 of 12 files), so nothing in this set can teach dynamics. The "bare minimum" drum complaint is answered here with toms and a crash, not with velocity shaping.',
+  'ALSO NOT THE MECHANISM: harmonic rhythm. Battle chord changes measured 1.31/bar against 1.38 \u2014 no faster. Battle music does not get its urgency from moving harmony more often.',
+];
+
+if (R23) {
+  const first = songs.length;
+  const built = [];
+  for (const row of R23_PROMPTS) {
+    const P = parsePrompt(row.p);
+    const prompt = { emotion: P.emotion, environment: row.env, meter: '4/4' };
+    const probe = compileVibe({ ...prompt, name: `r23_${row.n}` });
+    const base = {
+      ...csOpts(P.mods, probe, prompt.environment, prompt.emotion),
+      // ON IN BOTH VARIANTS so neither is the variable being judged
+      percBackbeat: true, scaleTokensInKey: true,
+    };
+    // r23: battle/boss cues pin family MINOR. Measured 69.2% minor against
+    // 46.5% for his non-battle picks, and the first build of this page put
+    // FOUR of the five battle prompts in MAJOR — E, C, B and F major at
+    // 170-190bpm, which reads as a victory fanfare rather than a fight. Same
+    // shape as D93's lullaby trap in the horror lanes, arriving via role.
+    if (['fight', 'boss'].includes(row.env)) base.family = 'minor';
+    const seedName = `r23_${row.n}`;
+    for (const [tag, extra] of [
+      ['r23', { r23: true, frozenSlot: true, coprimeCell: true }],
+      // THE CONTROL HAS TO SAY NO EXPLICITLY. First build of this page leaked
+      // the battle devices into it: `battleRole` defaults on for a HISTORY-LESS
+      // song (D99's rule), and every song here is new, so the control got the
+      // battle bass and the open-fifth support too and the A/B measured
+      // nothing. Verified after the fix by diffing the two casts.
+      ['r23base', { driveBass: false, battleKit: false, supportFigure: false }],
+    ]) {
+      buildSong(prompt, seedName, { ...base, ...extra });
+      const S = songs[songs.length - 1];
+      S.name = `${tag}_${row.n}`;
+      S.promptText = row.p; S.reference = row.ref; S.variant = tag;
+      S.pairKey = row.n; S.role = probe.role;
+      built.push(S);
+    }
+  }
+  mkdirSync(OUT, { recursive: true });
+  writeFileSync(join(OUT, '.r23-stress.json'), JSON.stringify({
+    generated: new Date().toISOString(), devices: R23_DEVICES, honest: R23_HONEST,
+    songs: songs.slice(first).map(({ solos, ...rest }) => ({ ...rest, solos })),
+  }));
+  console.log(`wrote audition/.r23-stress.json \u2014 ${built.length} songs (${R23_PROMPTS.length} prompts x 2 variants)`);
+}
+
 if (R22) {
   const first = songs.length;
   const built = [];
@@ -4455,11 +5586,31 @@ mkdirSync(OUT, { recursive: true });
 // CS_COMPARE builds extra songs into `songs`; writing songs.html from that
 // array would append 16 unjudged cards to the judged baseline. The comparison
 // mode writes its own JSON (above) and leaves songs.html alone.
-if (!CS_COMPARE && !R22) {
+if (SUITE) {
+  // Same card UI as the judged page — he judges these the way he judges
+  // everything — but rekeyed so a paste from here can never be imported as a
+  // judged-suite export, and so its localStorage cannot collide with his
+  // in-progress verdicts on songs.html.
+  //
+  // ONLY the su_* songs. `buildSong` appends to the shared `songs` array, so the
+  // page built above carries all 47 judged cards as well; rendering that would
+  // put judged material on an unjudged page under a different verdict key, which
+  // is precisely how a stale keep gets re-litigated.
+  const suiteHtml = page({ songs: songs.slice(SUITE_FIRST).map(({ solos, ...rest }) => ({ ...rest, solos })) })
+    .replace(/motif-engine:song-verdicts/g, 'motif-engine:suite-verdicts')
+    .replace(/motif-engine:song-notes/g, 'motif-engine:suite-notes')
+    .replace(/motif-engine:song-cards/g, 'motif-engine:suite-cards')
+    .replace("page: 'songs'", "page: 'r23-suite'")
+    .replace('<title>vibe songs — audition</title>', '<title>r23 suite — everything wired</title>');
+  writeFileSync(join(OUT, 'suite.html'), suiteHtml);
+  const inl = suiteHtml.slice(suiteHtml.lastIndexOf('<script>') + 8, suiteHtml.lastIndexOf('</script>'));
+  acorn.parse(inl, { ecmaVersion: 'latest' });
+  console.log(`wrote audition/suite.html — ${songs.length - SUITE_FIRST} songs, full r22+r23 stack (page script parses clean, ${(inl.length / 1024).toFixed(0)} KB)`);
+} else if (!CS_COMPARE && !R22 && !R23) {
   writeFileSync(join(OUT, 'songs.html'), html);
   console.log(`wrote audition/songs.html — ${songs.length} vibe-prompted songs (10 + the buildup/drop song)`);
 } else {
-  console.log(`${CS_COMPARE ? 'CS_COMPARE' : 'R22_LAYERS'}=1 — audition/songs.html NOT written (judged baseline untouched)`);
+  console.log(`${CS_COMPARE ? 'CS_COMPARE' : R23 ? 'R23' : 'R22_LAYERS'}=1 — audition/songs.html NOT written (judged baseline untouched)`);
 }
 for (const s of songs) {
   console.log(`  ${s.name}: ${s.key} @${s.bpm} ${s.meter} · ${s.scheme || 'no letters'} over ${s.totalBars} bars · acc ${s.accompaniment} (${s.articulation})${s.travel.length ? ` → ${s.travel.length} travel` : ''} · ${s.ensemble.count}/${s.ensemble.fullCast} voices [${s.cast.join(', ') || 'piano only'}]${s.drums.length ? ` · drums: ${s.drums.join(' + ')}` : ''}${s.treat ? ` · treat ${s.treat.op}` : ''}${s.drop ? ' · BUILDUP+DROP' : ''}`);
