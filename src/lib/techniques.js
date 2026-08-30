@@ -330,8 +330,8 @@ export const TECHNIQUES = [
     // measured r17: 139 of 139 layer entries land exactly on a section start.
     shape: 'On the second statement of a repeating cell, transpose by -7 semitones and fix the seam. The change is a transposition of the SAME cell, not new material.',
     applies: { roles: ['texture', 'acc'], repeatingCell: true, minStatements: 2 },
-    status: 'recorded',
-    blocked: 'the per-statement salt (D97) re-generates a cell; this transposes one instead. Needs a statement-level transpose hook.',
+    status: 'wired',
+    impl: 'audition-songs.mjs opts.doublePeriod — applied to the finished PATTERN as .add(note("<-12@2 0@2>")), not to the figure tokens. Tokens resolve against their own bar\'s chord, so \'the same tokens an octave up\' measured as a different pitch up 8 semitones; only a pattern-level transpose is exact. r28: the lift is exactly -12/0 on 100% of bars and statement two is higher than statement one in 100% of 4-bar groups, all 14 songs.',
   },
   {
     id: 'distorted_soundfont',
@@ -495,8 +495,8 @@ export const TECHNIQUES = [
     },
     shape: 'Take a bound layer’s pitch sequence, transpose ±12 or ±24, and change its note-value class and onset offset. Never generate a new pitch set.',
     applies: { roles: ['companion', 'counter_melody', 'bass'] },
-    status: 'recorded',
-    blocked: 'This is D99/D100’s companion generalised — the same rebinding at +12/+24 with different note values would yield the second and third own-melody layer without casting new voices. It replaces how layers are generated, so it needs its own round and an A/B.',
+    status: 'wired',
+    impl: "audition-songs.mjs opts.reregister — the lead's own cell rebound at the same seed, its FIRST bound note per cycle taken off boundMeta (one pitch a bar, held), transposed -12/-24. Pitch set is a subset of the lead's by construction. r28: 0.67-1.00 notes/bar against a lead at 2.4-4.5, foreign pitch classes 0 on 10 of 14 songs.",
   },
   {
     id: 'freeze_body_move_one_slot',
@@ -521,8 +521,8 @@ export const TECHNIQUES = [
     },
     shape: 'Parity-gate the layer on bar index. Hold bars sustain a chord tone; move bars walk stepwise against chordScale and resolve onto the next hold.',
     applies: { roles: ['counter_melody', 'descant', 'harmony_support'] },
-    status: 'recorded',
-    blocked: 'Single-source. Generalises across keys because the walk is defined against chordScale rather than by fixed interval, so it is cheap to build when he wants it.',
+    status: 'wired',
+    impl: "audition-songs.mjs opts.holdMove — a 2-bar figure, hold on the 5th then a scale-ladder walk landing back on it. Two forms by hash (DZS8's 3-note turn, Da3c's exact two notes at beat 2 and the & of 3). r28: measured 100% of even bars hold one note, 100% of odd bars move, 100% of moves are a step or less, on all 14 songs.",
   },
   {
     id: 'register_bands_then_duration',
@@ -534,8 +534,8 @@ export const TECHNIQUES = [
     },
     shape: 'Assign octave bands before voices. On a forced collision, differentiate by note-value class, not by moving the rhythm.',
     applies: { roles: ['all'] },
-    status: 'recorded',
-    blocked: 'FLAGGED CONFLICT. This partially contradicts D100 (which kept a shared voice and moved the rhythm) and D102 (same instrument = the defect). The reels never separate by timbre at all and say a shared instrument is fine when octave band and duration class differ. His ear settles it, not the reels — they are 9 files against a 31k sweep.',
+    status: 'wired',
+    impl: 'audition-songs.mjs r28Band() — downward-first allocation from the lead with a hard ceiling under it. r28: the lead is the top layer on 14 of 14 songs (it was 1-2.5 octaves BELOW its own support before). PARTIAL: realised bands still overlap within a 6th on 0-4 pairs per song, because an octave PARAMETER is not a register — bindFigure seats at C<octave> then stacks the chord member on top. Allocating on realised pitch would need the generator to see notes rather than patterns.',
   },
   {
     id: 'coprime_cell_length',
@@ -560,8 +560,8 @@ export const TECHNIQUES = [
     },
     shape: 'Reserve the loop’s last bar as a simultaneous pattern break across every layer, rather than a turnaround in one voice.',
     applies: { roles: ['all'] },
-    status: 'recorded',
-    blocked: '4 of the 5 are one producer. The engine has a bar-4 turnaround (D88) but it moves the SUB alone; this is the whole ensemble breaking together.',
+    status: 'wired',
+    impl: 'audition-songs.mjs opts.finalBarBreak — the FLOOR clause only, over the r28 re-registered floor: an octave drop on the last bar of every 4-bar group, period independent of the section grid. DROPS rather than leaps because 2 of the 3 readings drop and D88 already says the sub drops. r28: fires on 100% of checked bars on all 14 songs. The ornament and voicing-spread clauses are still unbuilt.',
   },
   // -------------------------------------------------------------------------
   // r23 — WHAT MAKES A BATTLE THEME FEEL LIKE ONE
@@ -725,6 +725,59 @@ export const TECHNIQUES = [
     applies: { roles: ['melody'], genres: ['all'] },
     status: 'recorded',
     blocked: 'Seeding it re-rolls the melody cell on every unpinned song, which is a whole round of re-audition. His question is answered; the fix wants his ear on the result.',
+  },
+
+  // -------------------------------------------------------------------------
+  // r27 — the @vanrivermusic reels. Read off the screen recording Ethan handed
+  // over on 2026-08-29, together with the vibe labels he wrote in the DM thread
+  // (see src/lib/progressions-vanriver.js). These three rows are the "extra
+  // stuff" half of his ask: the chord LIST is in the progressions pack, and what
+  // the hands do between the chords is here.
+  // -------------------------------------------------------------------------
+  {
+    id: 'uneven_chord_length',
+    role: 'harmony',
+    intent: 'A chord\u2019s duration states its function. The chord the loop is ABOUT is held; everything travelling towards it is short. Length is a compositional parameter, not a grid.',
+    evidence: {
+      kind: 'reel', poster: 'vanrivermusic',
+      file: 'ScreenRecording_08-29-2026 23-09-51_1.MP4', at: '265-291s',
+      set: '@vanrivermusic reels, 8 progressions', scope: 'whole reel',
+      read: 'Anchored on the reel above; the figure below aggregates all 8 in the recording. 155 chords, each measured against its own reel\u2019s median chord length. Only 36.8% last the modal unit; 23.2% last half of it or less; 14.8% last two to four times it. vid_vr_reflective holds six structural chords at 2.12s each and gives Bdim/F 0.50s \u2014 exactly a quarter. vid_vr_moody spans 0.5 to 3 units, a 6:1 ratio in one loop.',
+    },
+    shape: 'Give each chord in a pinned progression a duration weight from chordUnits rather than one bar each. The short slots are, in 5 of 8 reels, the unstable chords (dim / altered dominant / slash); in one they are two half-length re-voicings of ONE stable chord; in one (vid_vr_funky) the rule inverts and the diatonic chords are the short ones.',
+    applies: { roles: ['harmony'], genres: ['city-pop', 'neo-soul', 'j-pop'] },
+    status: 'recorded',
+    blocked: 'The generator lays one chord per bar from a degrees string and every downstream mask (melody phrase alignment, section length, breakdown floor) assumes that. Weighted chord slots need a harmonic-rhythm layer under bindFigure, and turning it on would move every unpinned song. A whole round, not a drive-by.',
+  },
+  {
+    id: 'subdivision_through_change',
+    role: 'acc',
+    intent: 'The accompaniment figure does not pause at the chord change. A steady subdivision runs underneath and the harmony moves over it.',
+    evidence: {
+      kind: 'reel', poster: 'vanrivermusic',
+      file: 'ScreenRecording_08-29-2026 23-09-51_1.MP4', at: '294-377s',
+      set: '@vanrivermusic reels, 158 chord slots', scope: 'whole reel',
+      read: 'Anchored on the reel above; the figures below aggregate all 8 in the recording. Spectral-flux onset detection at 22050 Hz. Mean 5.91 audible attacks per chord slot, median 4; only 17.1% of slots carry a single strike and 71.5% carry three or more. Attacks per SECOND is flat regardless of chord length \u2014 vid_vr_ineedyourears plays 25 attacks under a 3-unit chord and 9 under a 1-unit chord, ~6/s either way. Our own accompaniment hand\u2019s median is ONE note per attack (r26).',
+    },
+    shape: 'Bind the acc hand as a continuous rhythmic cell whose PITCHES rebind at the chord change while its onset grid runs through unbroken \u2014 the opposite of re-striking a block on each new chord.',
+    applies: { roles: ['accompaniment'], genres: ['all'] },
+    status: 'recorded',
+    blocked: 'This is D101\u2019s "the piano doesnt do any walking ... it\u2019s just chord bouncing" arriving from a second independent source, and the same thing blocks it: the acc composite is built per-bar from a figure token list, so a cell that spans a chord boundary has no representation. The D101 look-ahead token is half of the mechanism.',
+  },
+  {
+    id: 'finger_order_voicing',
+    role: 'acc',
+    intent: 'A chord is played finger by finger from the top down rather than struck together \u2014 the intervals arrive in sequence, so the listener hears the voicing built rather than presented.',
+    evidence: {
+      kind: 'reel', poster: 'vanrivermusic',
+      file: 'ScreenRecording_08-29-2026 23-09-51_1.MP4', at: '265-291s',
+      scope: 'one reel',
+      read: 'HIS instruction, verbatim: "reflective, sleepy, relaxing music. take note that it goes like pinky to thumb in terms of playing the note intervals rather than just playing the full chord together". MEASURED on that reel: median inter-onset interval 0.244s against a 2.12s chord \u2014 about eight separate strikes per chord, not one block. The DIRECTION was not confirmed: burst analysis found 25 rapid groups in 1207 onsets and split 7 descending / 7 ascending, and the within-chord pitch trace on his reel came out +0.08 (no direction). A spectral-peak tracker cannot separate voices in a polyphonic piano mix, so that is a limit of the method, not evidence against his ear.',
+    },
+    shape: 'Spread a chord\u2019s tones across the beat top-down instead of stacking them on one onset. Distinct from a strum: the spacing measured here is an eighth note, not 30ms.',
+    applies: { roles: ['accompaniment'], genres: ['neo-soul', 'city-pop'] },
+    status: 'recorded',
+    blocked: 'Wants an ear before it is built. The engine already has an arpeggio class and a chordTop thickener; what it lacks is a form that takes ONE chord and spends a whole chord slot on it in a fixed finger order. Also gated on uneven_chord_length \u2014 a top-down spread needs a long slot to spread across.',
   },
 ];
 

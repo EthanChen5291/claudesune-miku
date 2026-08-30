@@ -190,7 +190,16 @@ async function play(c) {
   render();
 }
 function stop() { rtStop(); playing = null; $('now').textContent = '\\u2014 stopped \\u2014'; render(); }
-function esc(t) { const d = document.createElement('div'); d.textContent = t == null ? '' : String(t); return d.innerHTML; }
+// r24 — HIS BUG REPORT: "when i put notes in and click play button on another
+// song, some text gets capped and after the cap it just disappears".
+// div.textContent -> innerHTML escapes &, < and > but NOT the double quote, and
+// every note is written back into a value="..." attribute on re-render. His own
+// writing style is full of quotes — "somber aftermath", "forceful", "relaxed",
+// "tip toe-y" — so the attribute closed at his first quote and the rest of the
+// note was parsed as markup and dropped. It bit 7 of the 8 audition pages
+// (audition-triage.mjs was the one that escaped quotes correctly).
+const ESC_MAP = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' };
+function esc(t) { return t == null ? '' : String(t).replace(/[&<>"']/g, function (c) { return ESC_MAP[c]; }); }
 
 function render() {
   $('grid').innerHTML = DATA.cards.map(function (c) {

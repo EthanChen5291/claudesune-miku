@@ -406,10 +406,10 @@ export const RHYTHMS = {
   },
   battle_crash: {
     role: 'percussion', band: 'accent', style: 'cinematic', provenance: 'ethan-requested', ratified: false,
-    bars: 16,
-    onsets: ['0', '31/2'],
-    sounds: ['vc_cym_cresc', 'vc_cym_cresc'],
-    accents: [0.85, 0.45],
+    bars: 8,
+    onsets: ['31/4'],
+    sounds: ['vc_cym_cresc'],
+    accents: [0.85],
     meter_class: '4/4', tags: ['perc', 'battle', 'cymbal'],
     // r24 — HIS EAR, on two separate cards: "the suspended cymbal is overused"
     // (su_tense_boss) and "the cymbal is overused" (su_triumphant_boss). The
@@ -418,6 +418,26 @@ export const RHYTHMS = {
     // he heard it. Halved to a 16-bar cell: 2 bars in 16 = 12.5%. Deliberately
     // UNDER the reference rather than at it — a crash is an event, and the one
     // measurement I have of his tolerance is that 25% was too many.
+    //
+    // r24 ADVERSARIAL CATCH — the 16-bar cell SILENTLY DELETED THE CYMBAL from the
+    // song he liked most. Measured in the mix: su_scary_fight, 28 bars ("I like
+    // this one the most of the fight songs"), got ZERO cymbal hits, because a
+    // 16-bar cell's two onsets both fall outside what a 28-bar drum mask carries;
+    // su_tense_fight got 6.3% and the 64-bar songs 9.4%, none of them the 12.5%
+    // the comment claimed. A cell longer than a section cannot be relied on to
+    // sound at all. One onset in EIGHT bars states the same 12.5% and always
+    // includes bar 0, so the shortest song still gets its accent. This is D95 in
+    // its plainest form — a library edit re-rolls judged material — and it reached
+    // a judged song through no gate at all, because rhythms.js is DATA.
+    //
+    // r25 — HIS INSTRUCTION, and it is about PLACEMENT, not rate: "make the
+    // suspended cymbal lead up to the drop/section end not on section beginning"
+    // (su_tense_boss). A suspended cymbal crescendo IS a lead-in — it belongs on
+    // the last beat before the seam, not on the downbeat after it. The onset moves
+    // from bar 1 beat 1 to bar 8 beat 4 of the cell, so it arrives INTO the next
+    // section. Two other cards ask for it gone outright from their songs ("just
+    // remove the suspended cymbal from these type of songs", "remove the cymbal"),
+    // which `opts.noCymbal` does per song rather than by deleting the pattern.
     character: 'A crash on the 16-bar downbeat and a soft one on the back half of bar 16 (the pickup into the next sixteen). 2 bars in 16 = 12.5%; the reference is 19.8% and 25% was judged overused.',
   },
 

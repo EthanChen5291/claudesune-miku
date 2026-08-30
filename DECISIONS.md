@@ -8338,3 +8338,1068 @@ shorter in duration and more harmonic"* for happy shop. Low strings as a held
 ambience layer (su_somber_aftermath). Multiple strings in the background for
 romantic. Tension percussion for stealth (triangle/shaker). The mid-band drum fork.
 `tailOff` still unsettled.
+
+## D112 ADDENDUM — the adversarial pass, and what it took back
+
+Nine agents, each told to REFUTE. **One fix was refuted outright and reverted;
+three were weakened; one was confirmed.** The corrections were worth more than
+the fixes.
+
+### REFUTED AND REVERTED: the quiet-piano register lift
+The MEASUREMENT survived independent reproduction (kept-7 calm hands 48/59.5/66
+in the mix, suite-10 41/53/67.5). The FIX broke a standing law: vs_somber_snow,
+a JUDGED song, went from 20.5% to **60.5%** of its accompaniment attacks sounding
+above a simultaneous lead note, acc median five semitones OVER the lead;
+su_mysterious_cave's own separation fell from 15 semitones to 3 against the ~12
+the corpus shows. The ceiling could not catch it — it trial-bound ONE figure at
+ONE chord context while travel letters bind figures the lift also raises, so 4 of
+12 lifted songs finished above it, one at B5.
+
+`closeVoicing` was worse, and it is the reason the shipped acc-dissonance number
+did not match the claim. It ran AFTER the vertical guard and stripped the octave
+lifts the guard had just added — 18 reversions on 4 songs, leaving su_excited_space
+shipping 27 literal-semitone piano attacks. It also flattened
+`fnd_pedal_root_ostinato` to eight identical notes (D102's "pulse, not a texture"),
+turned spread 9ths into major-second clusters, pulled the oom-pah bass into its own
+chord, and is a literal no-op on every alberti figure — so it never reached
+su_romantic_rest, the card that motivated it. Both reverted. With `closeVoicing`
+gone the guard's own number is restored and verified: **suite 5.2% / 0.4%, judged
+0.7% / 0.0%**, against his reference's 9.0% / 3.9%.
+
+**And the better finding came out of the refutation**: "register is the whole
+difference" was measured off the unmasked `_acc` SOLOS. In the MIX the suite's calm
+accompaniment is **39-41% SPARSER** than his kept set (4.88 attacks/bar against
+8.00). Density is the larger difference and I had declared it absent.
+
+### THREE PINS THAT WERE NOT PINS
+1. `r23Fresh` read `priorKeep` and `grammarPin` but NOT `pinFrom`, so all four r24
+   prose keeps got the r23 devices anyway — **su_mysterious_desert**, the strongest
+   prose keep in the export, had 66.7% of its frozen-slot vibraphone pitches
+   rewritten. This is the D111 failure recurring through a second gate inside the
+   round that fixed the first one. Now `ruleFresh(23)`.
+2. `battle_crash` is library DATA and sits behind no gate at all. The 16-bar cell
+   I shipped in D111 **silently deleted the cymbal from su_scary_fight** — "I like
+   this one the most of the fight songs" — because both onsets of a 16-bar cell
+   fall outside a 28-bar song's drum mask. Measured: 0 hits there, 6.3% on
+   su_tense_fight, 9.4% on the 64-bar songs, none of them the 12.5% the comment
+   claimed. A cell longer than a section cannot be relied on to sound.
+3. **vs_happy_desert** is a pure prose keep with no ask in its card and was never
+   pinned. It moved. Now `pinFrom: 'r24'`.
+
+### WEAKENED, and corrected in place
+- **The entry ramp's diagnosis was wrong.** The "entered 1.40x louder" figures
+  averaged the steady state across bars the r22 breathing envelope deliberately
+  sets to gain 0. Excluding those, the violin and flute enter at exactly **1.000**
+  of their own maximum. The honest framing is his own r22 words — mid-song entries
+  **CUT IN at full level** — not "entered louder". The fix is still right; the
+  claim behind it was not. Also flagged and NOT yet fixed: the ramp has no
+  minimum-run guard, so 25 one-bar events (21 horror stingers, a desert stamp) are
+  now permanently at 0.42x, and it cannot see a layer that re-enters after the
+  breakdown — 518 such re-entries, 1 ramped.
+- **The stagger closes a gap that is not distinguishable from noise** (4.64 vs
+  3.95 per-song max, p=0.12), and per BAR we were already at or below the
+  reference before it. Kept, because the tail now matches exactly, but it is a
+  tail fix and the ledger should not have implied more.
+- **The melody split**: `letterSeed` shipped at `stmt >= 1` while the comment
+  claimed 0-and-1, and after the split that argument is a PHRASE index — so the
+  second phrase of the FIRST statement already departed and the theme was never
+  restated. Fixed to `>= 2`. `leadPhraseBars` read `boundMeta.period` (the full
+  period) rather than a phrase length, so every song split at 8 regardless; now
+  mirrors bindMelody's own rule. And the claim that statement-seeding "moved the
+  metric by exactly zero" was true only of a threshold the code did not use.
+  I also built a seed search to fold the seams and **removed it**: A/B'd, every
+  figure identical to three significant digits. Measured properly, the split
+  doubles the seam count (220 -> 477) but does not degrade a seam — leaps over a
+  major 6th 29.6% -> 27.5%, an octave or more 20.1% -> 20.6%.
+
+### CONFIRMED
+The dead `seedName` in `melodyRhythm`, in full.
+
+## D113 — r25: his second suite export
+
+### THE NOTE-LOSS BUG — his own report, and it is a data-loss bug
+*"i feel like some songs, when i put notes in and click play button on another
+song, some text gets capped and after the cap it just disappears."*
+
+`esc()` is `div.textContent -> innerHTML`, which escapes `&`, `<` and `>` but NOT
+the double quote — and every note is written back into a `value="..."` attribute
+on re-render. His writing is full of quotes: *"somber aftermath"*, *"forceful"*,
+*"relaxed"*, *"tip toe-y"*. The attribute closed at his first quote and the rest
+of the note was parsed as markup and dropped. **Seven of the eight audition pages
+carried it**, including `songs.html` and `videolab.html`, where he has been writing
+notes for many rounds; `audition-triage.mjs` was the one that escaped quotes.
+Fixed everywhere.
+
+### "PIANO TOO LOUD" — seven cards, and it is the ensemble, not the piano
+MEASURED in the mix, median piano gain against the median gain of every other
+PITCHED voice in the same song:
+
+| | piano | others | ratio | piano's share of the pitched notes |
+|---|---|---|---|---|
+| his KEPT songs | 0.85 | 0.28 | **2.92** | 53% |
+| the suite | 0.87 | 0.25 | **3.49** | 29% |
+
+The piano did not get louder — the ensemble around it got quieter AND more
+numerous. His kept songs carry a median of **5** pitched voices; the suite carries
+**8**. So the piano is still mixed as though leading a quintet while it is 29% of
+the notes in an octet.
+
+It tracks his verdicts almost exactly: the three songs he was harshest about
+measure the highest ratios (su_scary_manor 4.28, su_excited_training 3.97,
+su_excited_fight 3.61 — *"I cant tell what's going on at all"*), and the two he
+praised measure the lowest (su_triumphant_snow 2.72, su_mysterious_desert 2.29).
+
+So the trim is the ensemble size, not a constant: `sqrt(5 / voices)`, floored at
+0.72, times 0.88 on a background-salience song (ensemble size alone barely touches
+a six-voice calm song, and three of his cards are exactly those). After: suite
+median ratio **2.86** against his kept **2.92**.
+
+### THE BOWED LEAD COMES OFF THE QUIET SONGS
+r24 read his *"SOFT and fluid in dynamics"* as an articulation fix and shipped
+`leadDynamics`. His r25 cards say that was not enough and name the SAMPLE: *"this
+cello/string vst just isn't good for these sort of chill songs"*, *"just remove it
+in general because the vst sucks"*, *"maybe learn in engine to replace with another
+instrument"*. MEASURED: all five songs lead on `gm_violin`, all are salience
+`background`, all 50-60bpm. The predicate is declared data — family `string` with a
+SLOW attack, the same pair `leadDynamics` already keys on — never a name list. The
+pool is the range he named himself (*"piano, woodwind, or other instruments"*) and
+what he praised on the snow song he liked (*"the flutes/clarinets are actually
+really good"*). Applied to `HANDOFF_POOL` too, because D100's lesson is that a
+voice removed from one path arrives through another. All five now lead on piano or
+clarinet, with no bowed string anywhere in their mixes except su_scary_manor's
+whisper-gain horror punctuation.
+
+### THE CYMBAL — placement, not rate
+*"make the suspended cymbal lead up to the drop/section end not on section
+beginning"*. A suspended cymbal crescendo IS a lead-in; it belongs on the last beat
+before the seam. Moved from bar 1 beat 1 of its cell to bar 8 beat 4, so it arrives
+INTO the next section — measured at bars 7.75, 15.75, 23.75, 31.75, 55.75, 63.75.
+Two other cards ask for it gone outright (*"just remove the suspended cymbal from
+these type of songs"*, *"remove the cymbal"*), which `opts.noCymbal` does per song.
+
+### TWO PINS YIELDED TO HIS NOTES
+A pin protects a song from rules its own note never asked for; it does not outrank
+the note. `su_scary_fight` (*"piano is way too loud"*) and `su_goofy_kitchen`
+(*"add some bass though? it still wasn't added"* — the second time of asking) are
+unpinned. Kitchen's bass was missing because it falls through TWO gates at once:
+percussion presence `light` where the funk-bounce block wants driving-or-foreground,
+and 141bpm — one beat over that block's window and under the >=140 sub-bass path's
+own presence gate. `opts.bassLine` relaxes both.
+
+### A BUILD THAT FAILED SILENTLY FOR SIX COMMANDS
+The `esc` fix put backticks inside a comment that is emitted INTO a template
+literal, so `audition-songs.mjs` stopped parsing — and I was redirecting build
+stderr to `/dev/null`, so six rebuilds "succeeded" against a stale page and one
+measurement (the piano trim showing no effect) was read off it. Never send a
+build's stderr to /dev/null. The same class of mistake, one layer up from the
+three measurement errors in D112.
+
+### CARRIED
+Dissonance BETWEEN instruments, now his most repeated complaint (*"lots of random
+dissonance between different instruments which I heavily dislike"*, *"the
+harmonica sounds dissonant from the main melody"*, *"sounds like its arguing with
+the main melody"*, *"they should have a different melody unless it's an intentional
+counter melody"*) — this is D110's ornament-class question and it is still not
+built. Tension chords for su_tense_boss (he describes the device). Drums for
+su_excited_boss. Percussion too loud (4 cards). The hihat at a different tempo
+(su_happy_festival). Strings as constant ambience (su_somber_aftermath,
+su_romantic_rest). Stealth that is "tip toe-y". su_happy_jungle's melody
+disappearing after 4 measures. The acc DENSITY gap on calm songs (39-41% sparser
+than his kept set). The entry ramp's missing minimum-run guard and its blindness to
+post-breakdown re-entries.
+
+## D114 — r26: where "too much dissonance" actually comes from, and a new pack
+
+**His ask, two parts.** First: *"look into it and research the issue and then find
+possible answers"* about the dissonance complaint, then *"ok yes implement"*.
+Second: a screen recording — *"it contains a bunch of chord progressions that are
+nice (kinda like citypop/kpop style chord progressions). copy them as foundations.
+it's important to analyze the rhythm of the chords, the intervals, the extra stuff
+between the chords, and how long each chord lasts in the progression (to ensure u
+understand its place and purpose)"*, and then the exclusion: *"except for
+nonfuctional neo soul melodie, that one doesn't belong."*
+
+### The complaint, counted
+
+**16 of 28 r25 cards mention dissonance**, up from 11 in r24. They name two places
+and it is worth keeping them apart:
+
+- **between instruments** (7 cards) — *"lots of dissonance between the multiple
+  layers, specifically the synths and the woodwinds"*, *"too much dissonance
+  between instruments"*, *"the harmonica or whatever sounds dissonant from the main
+  melody"*, *"they should have a different melody unless it's an intentional
+  counter melody because then it just sounds like they're arguing"*
+- **inside the piano** (7 cards) — *"random dissonance in the piano"*, *"wonky
+  chords"*, *"the added notes in the piano onto the Alberti make it sound bad"*
+
+### The controlled comparison he handed over without meaning to
+
+Ten suite songs share a prompt with a song he KEPT on `songs.html`, and four of his
+cards say *"reference the songs I liked in songs.html"*. Measuring close
+semitone/tritone collisions with the melody in the MIX, duration-weighted:
+
+| | rubs/bar vs melody | cross-layer rubs/bar |
+|---|---|---|
+| his 15 KEPT songs | **0.15** | 1.92 |
+| the r25 suite | **1.48** | 10.92 |
+
+All ten matched pairs move the same way; six of the ten kept songs have ZERO.
+**57% of every rub against the melody comes from four layers the judged page does
+not carry at all** — `frozen_slot`, `echo`, `octave`, `coprime_cell`, the r22/r23
+opt-ins. The frozen slot plus its own slot partner are 1007 of 2058 by themselves,
+on 25 of 28 songs, four attacks a bar, on `gm_vibraphone` — the voice he named
+unprompted: *"I feel like vibraphone is overused and doesn't fit."*
+
+Ablation, off-repo (the rig reproduces the shipped page exactly, 0 of 28 differ):
+frozen slot alone **−53%**, echo alone −22%, all three **−77%**.
+
+### THE ECHO'S CHORD-CROSSING FIX WAS THE WRONG INEQUALITY (r24, corrected here)
+
+r24 bounded the echo's lag by `lag <= beatsPerChord / 2` so a delayed copy could
+not sound against a chord it was not written for. **That cannot work, and the
+arithmetic says why: any positive lag carries every note within `lag` of a chord's
+end across the boundary.** Halving the lag halves the crossings; it never reaches
+zero. Measured on the shipped suite: **626 of 3023 echo notes (20.7%) sound under a
+different chord than their source**, and the rate tracks the lag exactly.
+
+The fix is a REST, not a smaller lag — the same law the companion already follows
+(D100: a note with no tone available under it becomes a rest). On a bar whose chord
+differs from the previous bar's, the first `lagBeats` are masked off. **20.7% →
+0.0% on all 26 unpinned songs**, at a cost of 626 of 3023 echo notes. The layer
+gets sparser, which is what the reference set does anyway (57.5% of its parts stop
+for at least a bar).
+
+**The mask has to read the harmony that actually plays.** Keying it on `barSyms`
+alone left 158 crossings on 13 songs and every one of them was a song with a
+BRIDGE, whose B sections run `ctxBarV`'s own progression and change chords on bars
+the base loop does not.
+
+### THE FROZEN-SLOT GATE IS MUCH WEAKER THAN THE ABLATION, AND THAT IS THE RESULT
+
+r24's common-tone pedal ranks pitch classes by how many of the loop's chords
+contain them and takes the top two **whatever their coverage**. Measured: the held
+tones are foreign to 27% of the loop on average and the second pick covers as
+little as 50%. Requiring >= 75% coverage (r26) drops the device from 25 songs to 22
+and moves the headline number by **12%, not 53%**.
+
+**Why the gate underperforms is now measured and is the more useful finding:** most
+of the frozen slot's rubs are against the MELODY, which moves through non-chord
+tones by design — not against the loop. Fixing *what* it holds cannot fix that.
+Only resting it under the tune, or not casting it, can. Not built; his ear decides
+on `audition/dissonance.html` first.
+
+### THREE MEASUREMENTS OF MINE WERE WRONG THIS ROUND
+
+1. **"igvideo is the most chromatic pack (47.5%)"** — an artifact. `chordTones()`
+   returns upper extensions the arrangement never plays (it gave a plain `Em7` an
+   F#). With core tones only, igvideo is mid-pack. **Claim withdrawn.**
+2. **"two variation ops nearly doubles chromaticism (28% → 49%)"** — confounded.
+   Tracing the pipeline shows the exemplar arrives at 16.6% (kept) / 36.8% (suite)
+   and the variation pass adds **1–3 points**. The chromaticism is INHERITED, not
+   manufactured. Op count was a proxy for group membership. **Also withdrawn.**
+3. **"23.8% of echo notes cross a chord"** — the metric counted BAR-LINE crossings,
+   including harmless ones inside a held chord. Re-measured against actual chord
+   changes: 20.7%. The fix was right; the number describing it was not.
+
+Also: `frozen_slot` at "45% off-harmony" was inflated because the accompaniment
+plays a median of ONE note per attack, which is a bad reference chord. The sound
+figure is 27% by chord symbol.
+
+### THE HONEST NEGATIVE: NO CLASH STATISTIC PREDICTS HIS EAR
+
+Twenty operationalisations of "dissonance" were tested against his 16 flagged / 12
+unflagged suite cards — clash rate, clash density, gain-weighted clash, loud-only
+clash, off-harmony rate, out-of-key rate, chord chromaticism, layer count, register
+overlap, coincident-onset clash. **Every one came back |r| < 0.23, several slightly
+negative.** `su_mysterious_desert`, which he is a *"big fan"* of, is the WORST song
+in the suite on the headline metric (52 cross-layer rubs/bar, 2.3× the next),
+because its rubs come from `opts.wobble` — a device he asked for and praised — at
+gain 0.11.
+
+So loudness and idiom gate what registers as dissonance, the measurements explain
+the PAGE-level difference and not the SONG-level ranking, and the way to settle it
+is an ear test. That is `audition/dissonance.html`: eight flagged songs × four
+builds (as-judged / r26 fixes / no frozen slot / all three off), his own card
+quoted on each song, pick-the-best + notes + JSON export.
+
+One guess killed on the way: **"dissonance in the piano" is NOT vertical.** The acc
+hand's median attack is ONE note, m2-per-bar ≈ 0, harsh stacks 4.4% vs the judged
+page's 2.2%. It is horizontal — its top voice moves by step only ~10% of the time,
+which is D101/D102's unresolved-non-chord-tone gap, still open.
+
+### The @ChordCamera pack — 19 progressions, and the duration finding
+
+`ScreenRecording_08-29-2026 20-04-54_1.MP4`: 4m19s in which he scrolls 21 reels
+from one account, each showing a title, the full chord list, an orange box
+stepping through it in time, and a keyboard lighting the sounding notes.
+
+Method: segmented by frame-difference (22 segments, boundaries confirmed against
+frames either side); chords read off the burned-in text; **the orange box tracked
+at 8 fps** to give each chord's exact duration; lit keys decoded for voicings, with
+each segment's keyboard offset solved against the labelled bass because **the
+keyboard pans horizontally between reels**. Voicings are recorded only where that
+bass agreement is >= 0.75.
+
+**His "place and purpose" ask, answered by the durations.** Chord rhythm is EVEN,
+and the exceptions carry all the meaning. A chord at half the prevailing length is,
+without exception, a PASSING chord (the diminished connectors — reel 19's own title
+is *"& a Passing Chord"*), an APPROACH chord (both halves of a ii-V insert — reel
+18's *"surprising moves"*), or a DECEPTION (the chord that arrives instead of the
+resolution — reel 11). Full length = structural, half length = connective. That
+independently reproduces what was already written for `vid_eunyu_circle`.
+
+Also measured: **block chords, 33 ms to full voicing** at 30 fps (median 1 frame,
+max 8 — one spread chord in reel 18), and **median voicing size 5 notes** against
+our own accompaniment hand's median of ONE. That is D98's "four-note chords are the
+target" arriving from a new source.
+
+**Three of the 21 reels are the same progression in three keys** (F, C#, C) —
+`IV^7 ivo7 iiim7 biiio7 iim7 V7 I^7 biio7`, the chromatic-root diminished walk
+whose top voice spells F-A-C-E. Authored once, all three sources recorded.
+
+**The exclusion is honoured**: reel 12, "Non Functional Neo Soul Harmonies", was
+read and measured like the others and then dropped on his word.
+
+### THE PACK IS DELIBERATELY NOT IN `ALL_PROGRESSIONS`, AND A TEST ENFORCES IT
+
+My first attempt merged it, reasoning that `ratified: false` keeps it out of
+`exemplarPool()`. That is true and was verified — all four pools return zero
+chordcamera entries and both audition pages moved 0 of 75 songs. **But two other
+consumers read `ALL_PROGRESSIONS` and neither honours ratification:**
+
+- `build-harmony-model.mjs` **counts every entry**, so 19 new ones restage the
+  counted model that ranks the variation ops — D95's documented failure verbatim
+  ("at 1200 files it flipped `treat` on 18 songs, KEPT ones included").
+  `--check` caught it.
+- `src/lib/progressions.js` is **importer-generated**; the import line itself fails
+  `import-ldrolez.mjs --check`, which exists to stop exactly that hand edit.
+
+So the pack stands alone in `src/lib/progressions-chordcamera.js` as candidate
+material, `test/chordcamera.test.js` pins that it stays out, and promoting an entry
+is a deliberate per-entry act after his ear — which is what D95 means by "authoring
+canon entries by hand, not re-counting". Every entry carries `chordUnits` (relative
+duration per chord), `voicedAs` (the published symbol), `bassNotes`, and
+`dialectDrops` naming what our smaller grammar could not spell — 11 sus extensions,
+8 altered dominants, 3 m11s, 2 add4s. The video itself stays out of the repo under
+his r16 licensing ruling.
+
+**Verified:** 323/323 tests pass; `audition/songs.html` 0 of 47 songs moved; the
+suite's two pinned prose keeps did not move; all 32 variant mixes on the ear-test
+page evaluate green.
+
+## D115 — r26 continued: the lane budget, the left-hand law, and songs on the new pack
+
+**Three asks in sequence.** *"maybe just cap by genre? like reduce dissonance in
+the genres i mentioned while capping it in like specific ones like desert and
+other ones, and like those specific chord types that i liked"*; *"moreover make
+songs with the progressions with various prompts that match the vibes,
+experimenting as needed"*; and then, after listening to `audition/dissonance.html`,
+eight notes that relocated the problem entirely.
+
+### THE DISSONANCE BUDGET, BY LANE
+
+His framing solved what D114's measurements could not use. Twenty ways of
+measuring dissonance all failed to predict his per-song verdicts because the
+question is not HOW MUCH friction but WHERE: `su_mysterious_desert` is the most
+dissonant song in the suite by 2.3x and he is a "big fan" of it, because its
+friction is `opts.wobble`, a device he asked for. A global threshold cannot say
+that. A per-lane budget can.
+
+Each rub-generating layer declares its MEASURED cost (its close semitone/tritone
+events per bar against the melody, taken from the r26 sweep after this round's
+echo fix). Each lane declares a budget. Layers are offered it cheapest-first, so
+**every layer that carries its own melody — companion, counterline, descant,
+marcato — fits inside even the tightest budget**, and what falls off the end is
+the frozen slot (1.00/bar alone) and then the echo. "More layers with their own
+melody" survives; the ostinati that manufacture rubs do not.
+
+**A lane's signature device is exempt by construction, not by a special case** —
+wobble, b2rub, choirPincer, horrorOstinato, chromDescent and the desert
+flourish/punct are simply not in the cost table, so they are never charged. That
+is his "capping it in like specific ones like desert".
+
+**What is budgeted is CHROMATIC friction only.** m7/^7/9/sus/6 cost nothing and
+are untouched — D88 is explicit that diatonic colour is the norm and chromaticism
+is what he rejects, and he named the chord types he likes.
+
+Measured, suite mean rubs/bar against the melody:
+
+| | non-idiom lanes | idiom lanes (desert/manor/jungle) |
+|---|---|---|
+| shipped r25 | 1.25 | 3.41 |
+| + budget | **0.32** | **2.50** |
+
+His 15 kept songs sit at 0.15. The friction stayed where it belongs and came off
+everywhere else — and his own card independently confirms the shape:
+su_mysterious_cave, *"this isn't as bad as the others because it's meant to be
+dark and mysterious."*
+
+### THE LEFT-HAND LAW — AND A CORRECTION TO D114
+
+D114 reported, in bold, that *"dissonance in the piano is NOT vertical"*, on the
+strength of the acc hand's MEDIAN attack being one note and its m2-per-bar being
+about zero. **That was the median hiding the tail, and his ear found the tail on
+three separate cards of the A/B page:**
+
+- *"when there's two notes at first, that interval combination sucks"* (calm water)
+- *"in the piano left hand, whenever it has two notes at once, it's dissonant"* (nostalgic snow)
+- *"whenever there's two notes in the piano, it doesn't sound good … you're not
+  good at combining notes in the left hand during the variation"* (excited space)
+
+Measured over every simultaneous PAIR in the accompaniment hand:
+
+| pair | suite | HIS 15 KEPT |
+|---|---|---|
+| unison / octave | 1.9% | **0.0%** |
+| m2 / M7 | 4.7% | **0.0%** |
+| M2 / m7 | 5.2% | **0.0%** |
+| tritone | 4.6% | **0.0%** |
+| 3rds / 6ths / 4ths / 5ths | 83.5% | **100.0%** |
+
+**900 pairs in the kept set and not one exception.** That is a law his ear had
+already written and 16.4% of the suite broke it.
+
+**Why the r24 vertical guard missed it:** it works in LADDER positions and rejects
+distances of 0, 1 and 7 — unisons, steps, octave doublings. A ladder distance of
+SIX is a seventh and went straight through, and a distance of three is a tritone
+whenever the chord-scale raises the fourth, which ladder coordinates cannot see at
+all. Both gaps are exactly the intervals above. This is the third time a guard
+written in token space has missed something that only exists in pitch space.
+
+The fix works on the EMITTED NOTES: every simultaneous stack in the bound
+accompaniment expression is rebuilt greedily from the bottom, a note joining only
+if it makes a 3rd/6th/4th/5th with every note already kept. Nothing is transposed
+— a note that cannot join is DROPPED (D101: a tone that stays put beats one that
+clashes). Measured: **16.4% → 1.5%**, and the surviving distribution matches his
+kept set almost exactly (29.3/28.9/40.3 against 28.7/27.3/44.0). The residual 1.5%
+is stacks formed ACROSS separate acc sub-parts rather than inside one bracket,
+which this pass does not see.
+
+Blast radius: 26 of 47 judged songs moved, **0 kept songs moved**.
+
+### SONGS ON THE @ChordCamera PACK
+
+`CHORDCAM=1` builds `audition/chordcam.html` — 23 songs on 19 transcribed
+progressions, each pinned by `basePin` and served RAW (D93/D100/r24: the variation
+pass dilutes a hand transcription). Four are deliberate second readings, because
+"experimenting as needed" is the interesting half of the ask: the chromatic
+diminished walk in a horror lane, the Neapolitan as epic rather than soulful, the
+alphabet bass at festival tempo, the R&B minor read as consolation.
+
+`basePin` had to be taught to see the pack, which is NOT in `ALL_PROGRESSIONS` by
+design (D114). A per-song pin names one song's exemplar outright and can move
+nothing else, so it reaches the pack through a local lookup while the counted
+harmony model stays untouched. **Verified rather than assumed** — the code comment
+at that site warns about exactly this trap ("the songs built on them came out on
+unrelated exemplars — the build looked green and the music was wrong"): all 23
+songs carry their pinned degrees verbatim, and the page's left hand is at 0.0%
+banned intervals.
+
+### WHAT HIS A/B NOTES SAID THAT IS STILL OPEN
+
+He picked NO variant. On su_excited_training: *"all of these options dont really
+change anything"* — which is consistent with D114's own finding that no clash
+statistic predicts him. His actual complaints there, all measured this round and
+none yet fixed:
+
+- **The woodwinds are out of key.** Mean **14.9%** out-of-key across woodwind /
+  free-reed layers, worst 61% (a pan flute) and 45% (the desert echo and octave).
+  His instruction is explicit: *"make them just have supporting roles for the
+  chord progression"* — and they already strike WITH the lead 82% of the time, so
+  the fix is their PITCH set, not their rhythm.
+- **"instruments are just phasing in and out"** — measured **3.01 mask on/off
+  flips per bar** across the arrangement, up to 5.47/bar on su_excited_boss. That
+  is layer-rest plus the entry ramp plus varySplit compounding.
+- **The piano's rhythm is "wobbly and unsure"**, and the "harmonica" he names on
+  three cards is not a harmonica — no song carries one. It is a clarinet, oboe or
+  pan flute reading that way, which matters because the fix is a voice choice.
+
+**Verified:** 323/323 tests; `audition/songs.html` 0 of 15 kept songs moved.
+
+## D116 — r26: the woodwinds, and three measurements of one thing
+
+His instruction: *"the woodwinds's part doesn't agree with the melody at all -
+make them just have supporting roles for the chord progression"* (su_excited_space)
+and *"the woodwinds are out of key"* (su_excited_training).
+
+### MEASUREMENT ONE WAS WRONG: THE SCALE WAS GUESSED
+
+"14.9% of woodwind notes are out of key" used a scale inferred from the key string
+by substring test. `E:phrygianDominant` matched `/phry/` and was scored against
+NATURAL MINOR; `F:mixolydian` matched nothing and was scored against MAJOR. **Every
+desert and jungle song was measured against the wrong scale** — the two lanes whose
+mode is the entire point. Using the engine's own `SCALES` table: support layers run
+**14.5% out-of-key against the lead's 15.0%**. No worse than the tune. Out-of-key,
+as such, is not the fault.
+
+### MEASUREMENT TWO WAS WRONG THE SAME WAY D114'S WAS
+
+Against the pitch classes the harmony hand sounds in a bar: support 14.8%, kept 6.5%.
+But the accompaniment's median attack is ONE note, so that reference chord is nearly
+empty — the identical error D114 had already caught for the frozen slot ("45%
+off-harmony was inflated because the acc plays a median of one note"), made again.
+
+### MEASUREMENT THREE MOVED THE ANSWER AGAIN
+
+Against the chord SYMBOL, with bars-per-chord solved per song by whichever mapping
+best fits the accompaniment's own notes: suite acc 30.3 / lead 27.2 / support 26.9;
+kept acc 21.0 / lead 12.9 / support 21.5. Support now sits level with the acc, and
+the biggest suite-vs-kept divergence is the LEAD (27.2 vs 12.9), not support.
+
+**Three references, three answers. The metric is not stable enough to drive a fix
+and that is the finding to record.** By contrast the left-hand law (D115) needed no
+chord reference at all — it is interval-only, and it came back 0.0% in the kept set
+across 900 pairs with no exceptions. Prefer reference-free statistics.
+
+### WHAT THE READ ACTUALLY FOUND, AND THE RULE IT JUSTIFIES
+
+Reading emitted notes rather than tokens: the descant on su_happy_festival writes
+`[F#3,A3] A3 B3 A3` over D^7 and `[F3,G#3] G#3 A#3 G#3` two bars later. I first
+called F natural and A# foreign. **F is E# — the third of C#7, the secondary
+dominant that bar actually carries.** The support layer was theoretically correct
+and he still hears it as out of key.
+
+That splits the licence by ROLE, which is what his sentence already says. The LEAD
+may spell a chromatic chord — `chromCore` exists for it, and D102 measured chromatic
+licence scaling with realised motion. A SUPPORT layer may not: it gets the key's
+scale, minus any scale tone a semitone off a chord tone (the avoid-note rule), and
+nothing else. The secondary dominant still sounds, because the acc and bass state
+it; the woodwinds stay in the key over the top of it. 9ths, 6ths and sus colour are
+deliberately kept — "those specific chord types that i liked".
+
+Applied to descant, counterline, sparkle, marcato and the coprime cell (the layers
+bound against a chord context; echo/octave/companion are lead-derived copies and
+D100 already governs them). Measured:
+
+| | before | after | his KEPT songs |
+|---|---|---|---|
+| support out-of-key | 14.5% | **8.5%** | **8.3%** |
+| lead out-of-key | 15.0% | 15.0% (by design) | 9.0% |
+
+Support landed on his own material's level to within 0.2 points.
+
+**Verified:** 323/323; `audition/songs.html` 26 of 47 unkept songs moved, **0 kept
+songs moved**; `audition/chordcam.html` all 23 songs still carry their pinned
+progression verbatim.
+
+### STILL HIS, NOT MINE, FROM THE SAME EIGHT NOTES
+
+- *"instruments are just phasing in and out"* — measured **3.01** layer on/off
+  flips per bar, up to 5.47 on su_excited_boss. Not touched.
+- *"the piano rhythm ... wobbly and unsure"* — not yet measured.
+- The **"harmonica"** he names on three cards **is not a harmonica**: no song in the
+  suite casts one. It is a clarinet, oboe or pan flute reading that way, which
+  matters because the remedy is a voice choice, not a pitch rule.
+
+## D117 — r27: the reels made into songs, and three rules the verify pass cut down
+
+**His asks this round, in order.** (1) *"generate songs using the patterns we took
+from them. be in-depth. the songs should just be 16-32 bars long, just to test
+it"*. (2) *"i liked citypop and kpop a lot ... let's trying hardcoding a lot of
+chord progressions, tagging them with emtadata of when to apply, and then
+applying them in songs (with other stuff of course)"* and *"in terms of synths, i
+liked layer stack and funk bounce a lot ... all from videolabs.html"*. (3) *"note
+that engine changes as a result of this should not affect the niche genres"*.
+
+**`audition/vanriver.html` — 23 songs, all 32 bars, 183/183 expressions green.**
+11 on the reel-transcribed progressions (`progressions-vanriver.js`, 8 entries,
+prompts taken from HIS OWN purple-bubble labels in the DM thread), 12 on a new
+hand-authored pack (`progressions-citypop.js`, 13 entries). `audition/songs.html`
+is byte-identical on all 47 judged songs; 342/342 tests pass.
+
+**THE NICHE GATE IS STRUCTURAL, NOT A HABIT (his ruling).** `NICHE_LANES` +
+`nicheLane` + `const r27 = (round) => ruleFresh(round) && !nicheLane`, and every
+r27 rule goes through it. `test/uneven-length.test.js` asserts
+`doesNotMatch(SRC, /ruleFresh\(27\)/)` — a new rule that reaches for a bare
+freshness check fails the suite. The citypop pack carries the same gate in its
+DATA: `CASUAL_LANES` is a PERMITTED set (a forbidden-name list has failed five
+times here), `citypopFor()` returns `[]` for a niche lane, and a test pins both.
+
+**UNEVEN CHORD LENGTH — the round's real device, and it works.** `weightedBarPlan`
+turns the pack's measured `chordUnits` into a per-chord bar count. Independent
+verify: the shipped plan is **L1-optimal on all 11**, and segmenting the EMITTED
+notes reproduces the plan **exactly on 10/11 vanriver and 12/12 citypop**; the
+acc layer's lowest onset pitch class holds within a planned chord **99.5% / 100%**
+of bar-to-bar steps, and the downbeat's lowest pitch class equals the planned
+chord's root in **288/288 bars**.
+
+**My headline number for it was not reproducible and is withdrawn.** I reported
+"94.4% of bar-to-bar steps"; seven plausible definitions of "the chord changed"
+give 65.0 / 85.0 / 90.7 / 90.7 / 90.7 / 98.6 / 100.0 and none is 94.4. The metric
+swings 35 points on definition choice, so it is not reportable without its
+definition — the acc-layer and downbeat readings above are the ones that are.
+My attribution was wrong too: I named `vr_shop_happy` and `vr_cloudy_calm` as the
+weak cases; their acc holds 8/9 and 11/11, and the actual worst song
+(`vr_reflective_somber`, 48%) was not in my report at all.
+
+**THE CONFOUND, caught by verify and fixed.** Switching `chordUnits` on also
+stretched each progression across the whole song: loop repetitions went from 2-8
+to **exactly 1.00 on all 23 songs**, harmonic rhythm slowed **2x-8x (median 4x)**,
+and one song held a chord for **40 seconds**. No ear verdict could then separate
+"uneven chord length" from "four times slower and never repeats" — this project's
+own `ab-demos-share-a-constant` trap. Fixed by capping the song at twice the
+harmonic loop: **17 of 23 songs now play their progression twice**, six need a
+32-bar loop to express their ratios and still get one pass.
+
+**CONTRAST AT BAR 0 — the rule was a net negative and now correctly never fires.**
+Built off a clean r26 measurement (the first non-piano, non-percussion,
+non-doubler voice enters at 16.4-230.4s on the seven songs he complained about
+and 0.0s on all four he liked). Verify measured the implementation and found:
+6 of 8 pulls REDUNDANT (the song already had an audible non-piano voice at bar 0,
+which the `sp.bar > 0` filter structurally cannot see); **7 of 8 resurrected
+layers were lead DOUBLERS by declaration** (`melody_backup` "doubles the lead line
+... without adding any new rhythm", 67-100% co-onset with the lead, 50-73% in
+unison or at the octave) — the exact shape D100 records his ear rejecting; and on
+a single-section form every mask is all-0 or all-1, so the rule could only ever
+select a **never-cast** layer and then played it for 100% of the song (+12-18%
+haps). The fade was measured at **4.0-14.3% of the piano's bar-0 gain** because it
+multiplied with the breath envelope, whose rest slot landed inside the fade window
+— **6 of 8 songs had a bar of exact silence inside their "fade in"**.
+Three guards added (skip if the song already passes; refuse lead-derived layers,
+read from the planner's `derives` and never from a sound name; refuse never-cast
+layers) plus a single-envelope fade. **Result: it fires 0 times on 23 songs** —
+15 already pass, 8 have no safe candidate. It does no harm and no good here.
+
+**So the bare-piano opening is fixed, but NOT by that rule.** Measured: worst
+contrast entry **0.6s on the r27 page against 230.4s on the r26 page**. That came
+from the short single-section form, not from the device. Five songs still have no
+non-doubler contrast voice at ALL — the `cc_neosoul_essence` shape — and fixing
+those means CASTING a voice, which is an arranger change, not a mask rewrite.
+
+**FUNK BOUNCE WAS ALREADY IN THE ENGINE.** He named it; I implemented it; then
+measured the page and found `cp_komuro_triumphant` playing 64 slap-bass notes on a
+row that asked for no devices. `opts.funkBass` already existed with byte-identical
+parameters and is default-ON for any non-serious lane in 4/4 at 96-140bpm with
+driving drums. The duplicate is deleted — two implementations of one device drift
+— and `opts.bassLine` is the knob that widens its window. Its `!laneSerious` gate
+already satisfies his niche ruling; a test pins that there is exactly one
+`name: 'funk-bounce'` in the file. **LAYER STACK** ships as a preset over rules the
+engine already owns (`frozenSlot` IS the card's frozen-pedal/accent-line device,
+plus `fullSynth` and no drums), for the same reason.
+
+**PERCUSSION RAMP — wired, gated opt-in, and honestly unproven.** The measurement
+behind it is solid (at the r26 drop bars, 17 of 18 pitched voices were already
+ramped, median 0.40 of their own median gain, while **12 of 12 percussion entered
+at 0.90 or above**) and it was itself the product of a verify pass refuting my own
+"nothing in the suite actually fades in". But this page's songs all start their kit
+at bar 0, so the rule never fires here. It stays opt-in: turning it on rewrites the
+drums of every unpinned judged song and invalidates their HQ renders.
+
+**Found, not fixed.** (a) `gm_vibraphone` bound as the r22 octave partner plays 36
+notes **below its own declared `INSTRUMENTS.gm_vibraphone.range` floor** — D100's
+"clamp by DECLARED DATA, never by a name list" broken by the device D100 itself
+added; same for a `gm_kalimba` texture 12 semitones low and `gm_french_horn` 70
+above its ceiling. (b) `vr_cloudy_nostalgic::alternate_melody` casts a flute with
+48 notes in its solo and **0 in the mix** — a card advertising a layer that never
+sounds. (c) `s.solos` is an incomplete decomposition of `s.mix` (one song's mix has
+8 `.s("piano")` sub-patterns, solos export 2), so any per-layer statistic read off
+`solos` is measuring a subset — this invalidates a class of probe, not just one.
+
+### D117 addendum — the other two verify agents, and four more fixes
+
+The stability agent did NOT trust my snapshot diff, and was right not to: I wrote
+`songs.SNAP.html` 47 seconds BEFORE the last generator edit, so it could already
+have contained r27 code. It built an **isolation pair** instead — two copies of the
+generator identical except that one forces all four r27 blocks off — and got
+**0/47 songs, 0/28 suite, 0/23 chordcam moved**, plus determinism confirmed (the
+only raw diff is the documented `BUILD` minute stamp). That is the method to use
+from now on; a snapshot taken during a working session is not a baseline.
+
+**The percussion ramp is live, and my reason for it not firing was wrong.** The
+mechanism is reachable — **16 of 47 judged songs, 27 of 75 suite, 22 of 70
+chordcam** carry a drums mask with a leading zero, i.e. a low-energy first
+section, and `withEntryAt` would fire on all of them. It does not fire on the r27
+page because **my own `totalBarsCap` leaves exactly one section**, so `drumBars` is
+all 1s, no `.mask(` is emitted at all, and `entrySpanOfExpr` returns bar 0 via its
+no-mask fallback. The four late percussion voices I pointed at are `fxParts`, which
+are never in `rampSrc` under any setting — they were not evidence either way.
+
+**FOUR MORE DEFECTS, all found by measurement, all now fixed OPT-IN because each
+one moves judged material:**
+
+1. **The metronome test was never applied to the PRIMARY accompaniment pick.**
+   D102's `onsets/bar >= 6 && shapes <= 1 || onsets/bar >= 12` lives only inside
+   `edgesFrom`, the TRAVEL destination filter. The figure that plays for most of a
+   song's bars was never checked. `vr_ineedyourears_excited` bound
+   `fnd_octave_bounce_16ths` as its primary texture — 14.25 emitted onsets/bar,
+   content literally `41, 53, 41, 53…`, bars 0 and 4 identical — a figure the
+   engine's own rule would refuse as a travel destination. Now `opts.metronomeAcc`.
+   OPT-IN because filtering the pool changes `fnv % pool.length`: on by default it
+   moved SIX judged songs, including vs_excited_fight off the very bounce figure
+   his ear was given.
+2. **`withEntryAt` had no run guard, and every firing on this page was a false
+   positive.** An alternating-bar mask (`0 1 0 1 …`, what layer_breathing and the
+   2-bar descant produce) has a leading zero, so `entrySpanOfExpr` reads an entry
+   at bar 1 with run 1 and the ramp attenuates the layer's FIRST SOUNDING BAR to
+   0.42 and its second to 0.9 — permanently, on a layer that never entered.
+   `entryPlan` has skipped these since r24 (`if (sp.run < 4) return`); the ramp
+   never got the same test. Now `opts.entryRunGuard`. OPT-IN: on by default it
+   changes the MIX of NINE judged songs.
+3. **A cast line claimed something the mix does not do.** All 23 songs printed
+   "layer breathing: each non-bass/pad layer rests 1 bar in 8". Measured on GAIN
+   (the rule zeroes gain rather than deleting haps): the **lead rests on 0 of 11
+   songs, the octave partner 0 of 11, the companion 0 of 11**, and two songs have
+   zero silent bars anywhere. Cause is structural — `breathEnvFor` is applied to
+   `layerMixOut` and `extraOut` only, while every lead-derived voice is pushed
+   into `mixParts` outside it. The text is corrected; the behaviour is not, because
+   changing it would move judged songs. This is the exact group whose absence makes
+   the melody read as a wall.
+4. **`fnd_block_quarters` on a 59bpm CALM song** (`vr_hotel_calm`): identical onset
+   set in all 32 bars, 128 attacks, **74.0% of consecutive top-voice moves are
+   repeats, 3.9% steps, 0 passing tones** — D101's "just chord bouncing" verbatim,
+   on the calmest song on the page. Fixed by (1).
+
+**Two numbers that should NOT be acted on.** (a) The lead is 22.0% out-of-key on
+the vanriver songs against ~15% elsewhere, but these transcribed progressions are
+themselves **23.3% chromatic against chordcam's 12.5%**, and the lead sits BELOW
+its own progression's chromaticism on 8 of 11. The licence figure was calibrated
+on less chromatic material. (b) Support is **0.0% out-of-key on all 11** — that is
+r26's `snapSupport` constructing exactly what it was built to construct, not a
+broken probe. But on `vr_ineedyourears_excited` the accompaniment is 44.7%
+out-of-key while the descant is 0.0%; strictly diatonic woodwinds over harmony
+that chromatic is untested by ear and is where the r26 rule could read as wrong.
+
+**Still open, measured, not fixed.** Erratic short notes run **2.1x per bar against
+the chordcam page he already complained about** (1.153 vs 0.546), and the mechanism
+is singular: **58.7% land on the LAST 16TH of the bar** — a 0.25-beat note against
+a 1.5-beat downbeat median, leaping into the next bar — and **81.9% are one lead
+gesture plus its mechanical copies** in `_octave` and `_companion`. It is one
+gesture in one place, played three to four times, not a defect spread across the
+engine. `_companion` and `_octave` also land on the SAME instrument at 100%
+co-onset on 4 of 11 songs, and on `vr_cloudy_nostalgic`/`vr_cloudy_calm` the
+counterline's hold and the descant emit **8 events identical in (time, pitch)** on
+one instrument — audible only as a +3dB accent, and counted by the engine as two
+layers.
+
+## D118 — r28: the synth guy's layer rules, wired at last, and the verdict import that moved 15 judged songs
+
+**His ask, verbatim:** *"ok, now make a song suite learning and applying patterns
+and layering and everything from the synth guy from earlier, in the genre his
+songs are (think layer stack vibe). i feel like not enough of his techniques were
+applied fully."*
+
+**He was right, and the count is the answer.** `research/reel-layers-r22.md` ends
+with six engine-ready rules (R1–R6) plus a near-miss seventh. Before this round
+**two of the seven were wired** — R2 `frozenSlot` and R6 `coprimeCell` — and both
+were **budget-dropped on every casual lane**: `RUB_PRIORITY` charges the frozen
+slot 1.00/bar against a 0.35 lane budget, so it never cast. Measured on the page
+he had just judged, `cp_sus_float_calm` advertises `layerStack` in its `devices`
+field while its own cast line reads **"NOT CAST: coprimeCell, echo, frozenSlot"**.
+The preset he named as a card he likes has been shipping with its own defining
+device switched off.
+
+New page: **`audition/layerstack.html`** — `LAYERSTACK=1 node
+scripts/audition-songs.mjs` — 14 songs, 24–32 bars, on six loops read off the
+reels themselves (`src/lib/progressions-serum.js`), at those reels' own tempi
+(63–127 BPM), all-synth, drumless except the two rows whose source reels have
+drums. 191 expressions, 0 failures.
+
+### THE BIGGEST MOVE OF THE ROUND WAS NOT MINE — IT WAS HIS OWN NOTES
+
+Importing his 23 vanriver notes **moved 15 of the 23 songs on their own page**,
+with nothing else changed. Confirmed by rebuilding against a pre-import copy of
+`verdicts.js`: with the old file, 0 of 23 differ; with the new one, 15 differ and
+**14 of them changed `degrees`, `symbols` and `numerals`** — the harmony itself.
+
+The mechanism is D99's law read backwards. Six gates in the generator test
+`!DERIVED_VERDICTS?.[name] && !CARD_NOTES?.[name]` so a NEW capability only lands
+on a history-less song. That is right and it stays. What it must not also do is
+**RETRACT** a capability the song was judged with — and `colorFresh` (the
+`voicedAs` colour upgrade) does exactly that the instant a note about the song
+exists. Among the 14: `cp_royal_road_nostalgic`, on which he wrote *"this is a
+good theme, very groovy, I like it. no complaints"*, and
+`cp_planing_maj7_mysterious`, *"I like this song a lot ... really good."* Both are
+prose keeps, and a prose keep is a keep.
+
+**Fix: `opts.noteBlind`, ONE flag, and `historyLess()`.** A page declares that its
+own notes are not a history, because they are that page's *first* judgement. The
+`DERIVED_VERDICTS` half of every gate is untouched, so a real keep still gates
+everything it gated before; only the "he has written about this card" half is
+suspended, and only for the page that asks. Pinning feature-by-feature was tried
+first and **overshot** — forcing `varyLeadVoice` and `leadDynamics` on for songs
+whose defaults had them off moved all 23 mixes. That is D101's "six flags, seven
+next round" arriving on schedule.
+
+**After the fix: `audition/songs.html` 0 of 47 moved, `audition/vanriver.html`
+0 of 23 moved.**
+
+### THE FIVE RULES WIRED, AND WHAT EACH MEASURES
+
+| rule | opt | measured on the built page |
+|---|---|---|
+| **R1** a layer is existing material re-registered | `reregister` | 0.67–1.00 notes/bar against a lead at 2.4–4.5; pitch set a subset of the lead's binding **by construction**; 0.0% out-of-key |
+| **R3** hold-bar / move-bar | `holdMove` | **100%** of even bars hold exactly one note, **100%** of odd bars move, **100%** of moves are a step or less — all 14 songs |
+| **R4** disjoint octave bands, duration class on collision | `r28Band()` | the lead is the **top layer on 14 of 14**; realised bands still overlap within a 6th on 0–4 pairs per song (see the limit below) |
+| **R5** one layer at double the loop period | `doublePeriod` | the lift is exactly −12/0 on **100% of bars**; statement two is higher than statement one in **100% of 4-bar groups** |
+| **near-miss** the loop's last bar breaks | `finalBarBreak` | fires on **100%** of checked bars, all 14 songs |
+| **role B** the motor | `motorFall` | 8.00 onsets/bar, 6–7 distinct pitch classes, **0** empty bars, **0.0% out-of-key** |
+
+`motorFall`'s shape is **his**, not the reels': from this round's export, on
+*"one of the best stealth songs"* — *"maybe replace with some synth melodies like
+repeated four-note falling synths ... 8th 5th 2nd root repeated over and over
+again 8th note to convey tension/stealth"*. That is `R+ 5 s2 R` in 8ths. It passes
+his own D102 metronome test (8 onsets/bar is over the 6/bar clause but that clause
+also needs ≤1 distinct shape, and this has four; 8 is under the 12/bar clause).
+
+### FOUR WRONG IMPLEMENTATIONS, EACH CAUGHT BY MEASURING EMITTED NOTES
+
+1. **R1 `minNote: beats` thinned nothing.** bind.js keeps index 0 and requires
+   `keep.length >= 2`, so a bar whose every gap is under a whole-bar floor
+   collapses to one survivor, fails that test, and is left exactly as it was.
+   Result: 4–5 notes a bar — the lead an octave down with `hold` on, which is
+   `melody_backup`, the DOUBLER D100 calls an anti-goal.
+2. **`minNote: beats/2` reached 2.5–5.5/bar**, denser than the lead itself on one
+   song. A thinning floor is a rule about *gaps* and cannot express *one note per
+   bar* at all.
+3. **`.segment(1)` went silent on two songs.** It samples the value at the
+   downbeat, and a melody bar that opens with a breath has none — 0.25–0.97
+   notes/bar where 1.0 was intended, and both `stepwise_floor` rows (whose cells
+   all open `~@3`) produced **zero notes**. The working version reads the first
+   bound note of each cycle straight off `boundMeta`.
+4. **R5's octave lift was not an octave.** Building a 4-bar figure whose second
+   half repeats the tokens with `+` gave bar 0 = D6 and bar 2 = Bb6 — a different
+   pitch, up 8 semitones. A figure token resolves against **its own bar's chord**,
+   so the same token over a different chord is a different note. Only a
+   pattern-level `.add(note(...))` is exact.
+
+### D77 WAS BROKEN BY MY OWN ALLOCATOR, AND THE DIRECTION WAS THE BUG
+
+The first `r28Band` searched `want−d` then `want+d` — the natural "nearest free
+octave" allocator, and **wrong for support**: resolving a collision upward walks
+toward the tune. Measured, the hold/move layer realised at **midi 94–101 against a
+lead at 66** on 12 of 14 songs. That is the frozen slot's own r23 defect (midi 88
+over a lead at 64) reproduced exactly, and it is the shape of his live complaint
+this round — *"the high melody isn't really that good and is sometimes too loud"*,
+*"the oohs are a bit too loud"*. The allocator now searches **downward first** with
+a hard ceiling under the lead, and the r23 devices' bands are seeded into it so
+the claim covers the stack he actually hears.
+
+**R4's honest limit:** an octave *parameter* is not a register. `bindFigure` seats
+a figure at `C<octave>` and then stacks the chord member on top, so `octave: 3`
+with a `5` token realises a fifth higher than the same octave with an `R`;
+`bindMelody` realises differently again. Two layers on distinct octave parameters
+can land in the same actual band, and with five or six layers against
+three-octave instrument ranges there is no allocation that fixes it. Allocating on
+realised pitch would need the generator to see notes rather than patterns.
+
+### THE ERRATIC NOTES, LOCATED — AND THE FIRST METRIC WAS WRONG
+
+His most-repeated complaint, five cards on the page he just judged. **Measured
+across all 23 of its songs: 1185 notes are a 16th or shorter, and 1003 of them
+(84.6%) are the bar's LAST onset — all 1003 sitting in the bar's final 16th slot.**
+Not a tendency; every single one. `_acc` contributes **zero** of them, so "the left
+hand" is not the accompaniment hand: they are the lead (0.58/bar), its octave
+partner (0.61/bar — the lead an octave DOWN, which is what a left hand sounds
+like) and its companion (0.55/bar).
+
+The cause is one line: `minNote` exempts `i === notes.length - 1`
+unconditionally, so the one short note the melody floor can never remove is a 16th
+hanging off the end of the bar. **`minNoteLast` (bind.js, opt-in) lifts that
+exemption**; `opts.noJitter` threads it through every melody-family bind at once,
+because 81.9% of the offending notes are one lead gesture plus its derived copies.
+
+**Isolation pair on this page — same 14 songs, this flag the only difference:
+204 → 84 final-16th onsets, a 59% reduction.** It does NOT change overall
+short-note density (2.390 → 2.385 tight onsets/bar). What remains is 16th activity
+elsewhere in the mix, and that is a separate, unfixed problem.
+
+**A metric correction worth keeping:** the first version of this measurement
+counted any note whose *sounding* length was ≤ a 16th, which scores a deliberately
+staccato 8th as erratic — the motor's own `.clip(0.5)` put one song at 3.8/bar
+without a single extra onset being written. Jitter is an **onset-spacing**
+question. Two other probe bugs this round returned suspiciously clean numbers and
+both were mine, not the engine's: note values arrive as **numbers** after
+`.add(note(-12))`, so a name-only parser reported "0.00 notes/bar" for the floor
+on all 14 songs; and R5 read as "0/14 lifted" because the test demanded an exact
++12 against a bar whose chord had also changed.
+
+### THE ONE DECISION WORTH ARGUING WITH: THE BUDGET LIFT
+
+The page sets `rubBudget: 1.60` so R2 can cast at all. That is the same
+construction that exempts desert's wobble — a lane's signature device is not
+metered — and in this genre the frozen slot *is* the signature: R2 is "the frozen
+tones re-colour themselves as the chord moves", which means manufacturing a rub on
+every chord that does not contain them. **Priced as an isolation pair: with the
+frozen slot the page runs 3.98 close semitone/tritone hits per bar against the
+lead; without it, 2.89; the page he judged last round runs 2.51. So R2 costs +38%
+harmonic friction.** The echo layer was switched off here to pay for part of it
+(4.30 → 3.98) since it is not one of the seven reel rules. Printed on every card.
+His ear decides.
+
+### TWO MORE MEASURED CORRECTIONS
+
+- **The hold/move layer is NOT snapped by D116's support rule, deliberately.**
+  Snapping collapsed the walk — `5 s6 s7` over Gm9 came out D6, D6, D6, three
+  onsets on one pitch, i.e. a move bar that does not move. Un-snapped it measures
+  **4.6% out-of-key against the lead's 9.5%** — half as chromatic as the tune, so
+  D116's actual law ("support is no more chromatic than the lead") holds. Its
+  41.2% out-of-**chord** is what a diatonic neighbour turn is by definition, and
+  is reported rather than hidden.
+- **A sustaining voice must be diatonic (D102).** The floor first measured **12.9%
+  out-of-key, ABOVE the lead's 9.5%**, even though its pitches are a subset of the
+  same binding — because it keeps whatever note opens the bar, so a chromatic the
+  tune passes through in an eighth became the floor's whole bar. That is the held
+  chromatic D100's ear called "completely off key". It now takes the bar's first
+  **diatonic** note and rests if there is none: **0.0% out-of-key on all 14 songs,
+  at a cost of 6 notes out of 319.**
+
+### WHAT DID NOT FIRE, AND WHY
+
+**R6 (`coprimeCell`) does not cast on 5 of the 14 songs** — its documented
+`bpm >= 80` gate, and those rows run at 63/69/69/75/78 because that is what their
+source reels run at. Not forced: the gate's own comment records that 80 is the
+slower of the two reels showing the device, "rounded down rather than up because
+that pair is thin evidence". Reported on the page rather than papered over.
+
+### FILES
+
+`src/lib/progressions-serum.js` (new, 6 entries, `ratified: false`, out of
+`ALL_PROGRESSIONS` and every retrieval pool), `src/binder/bind.js`
+(`minNoteLast`, default off), `scripts/audition-songs.mjs` (the r28 gate,
+`historyLess`/`noteBlind`, `r28Band`, the five rules, the `LAYERSTACK` page),
+`src/lib/techniques.js` (5 rows `recorded` → `wired`, 26 wired / 17 recorded),
+`test/serum.test.js` (6), `test/layerstack.test.js` (5). **npm test 353/353.**
+
+**No adversarial multi-agent verify pass was run this round** — the standing
+instruction in this session is not to launch agents unless asked. The checks above
+were run directly instead, and four of them (the silent floor, the non-octave
+lift, the upward allocation, the held chromatic) each refuted something this entry
+would otherwise have claimed. Three further probe bugs were mine.
+
+## D119 — r29: his r28 verdicts, and the layer he praised that his own praise deleted
+
+**The round worked.** Twelve notes on `audition/layerstack.html`, seven of them
+positive and four naming the layering directly: *"love the melody and this song
+as a whole! and the harmony extra stuff, and the chord progression, and the
+layering"* (ls_descend_bvi_v_tense), *"love the melody and the layering"*,
+*"like this! no complaints, love the layering"*, *"I like the layering ... I like
+the melody and the layering of all the instruments"*. The r28 rules are the first
+thing in this project his ear has praised by name as **layering**.
+
+### THE IMPORT DELETED THE LAYER HIS NOTE PRAISED
+
+D118 added `noteBlind` to the vanriver and citypop loops and **not** to the
+layerstack loop, because that page had no notes yet. Importing his 12 notes moved
+**2 of the 14 songs before a single line of engine code changed**, both by
+DELETING THE MARCATO (`marcatoOn` = `energetic && !priorKeep && historyLess()`).
+
+One of the two is `ls_vi_v_three_tense`, and his note on that exact card reads:
+*"no complaints ... **I like the synth that has like a percussive part (low high
+high low low repeat)**"* — which IS the marcato (`support-R5oct [R-5-R+-5]`). On
+another card he asks for it by name for other songs: *"just add the percussive
+strings I mentioned with their repeated intervals + percussion and boom"*. His
+praise for a layer deleted that layer. `noteBlind: true` on the third loop:
+**0 of 14 moved**.
+
+### THE TEXTURE MONOCULTURE — HE UNDERSTATED IT
+
+*"the offbeat strum synth thing (the one that does like one every other beat) has
+been used in every song so far"*. **Measured: `fnd_offbeat_chords` on
+`gm_kalimba` is 14 of 14 on this page, 3 of 3 on the r27 page and 13 of 22 on the
+judged suite — 30 of 39 songs carrying a texture play the identical figure on the
+identical instrument.**
+
+Two lines cause it, and the older one says so out loud: the class is FIXED to
+`'offbeat'`, and the comment above it notes *"offbeat has ONE ratified 4/4
+entry"*. A pool of one makes `fnv(...) % tPool.length` a no-op, so the hash
+rotation this file uses everywhere else cannot do anything. `texSounds[ti %
+texSounds.length]` is the same shape — the first texture is always index 0.
+
+Fixed by rotating over a PERMITTED SET (`offbeat, comp, block, broken_octave`) —
+enumerating what is allowed rather than blacklisting what is not, the rule this
+project has relearned five times. `riff` stays out of the rotation because its one
+entry is `fnd_boogie_shuffle`, which he has rejected by name. **14/14 identical →
+9 distinct figure/voice combinations, max 4.**
+
+And per D100's own follow-up rule — *"after fixing any list-based rule,
+immediately measure what the newly reachable options are"* — the metronome test
+(D102) now reaches the texture pool: opening `broken_octave` immediately made
+`fnd_octave_bounce_16ths` reachable at **16 onsets a bar**, over the 12/bar
+gear-change clause. It was selected on two songs before the test was added.
+
+### "TOO LOUD" WAS ONE LAYER, AND D77 IS A RELATIVE LAW
+
+Four cards: *"the melody synth is a bit too loud"*, *"the synth sometimes is a bit
+too loud"*, *"the main synth is sometimes too loud"*, *"the high synth is way too
+loud"*.
+
+**Measured: the texture is 0.481 mean on ALL 14 songs and LOUDER THAN THE LEAD on
+11 of them. All four of his cards are in that 11. The three songs where it sits
+under the lead (0.57x, 0.67x) drew no loudness note at all.** The band `[0.3,
+0.52]` was set by D86 for ENERGETIC songs, but the condition that reaches it is
+`(energetic && !pianoVibe) || opts.fullSynth`, so every all-synth song gets the
+energetic band whatever its energy.
+
+CLAUDE.md already carries the correction: the absolute number in the taste canon
+was wrong and *"the law that actually holds is RELATIVE: support stays under the
+lead (D77)"*. The ceiling is now `0.75 × leadGain`. On a lead at 0.85 that is 0.64
+and nothing changes; on a lead at 0.47 it is 0.35. **The cap bites exactly where
+he complained: texture louder than the lead on 0 of 14, was 11 of 14.**
+
+**The same law over the cast.** `gainFor` in arrange.js sets `melody_takeover:
+0.85` and caps with `Math.min(0.9, ...)`, whose comment reads *"Capped so nothing
+can shout over the piano"*. It does not do that — 0.9 is absolute. Measured
+against each song's own lead: **1.91x, 1.60x, 1.53x, 1.53x, 1.25x, 1.09x — six of
+eleven above the tune they support**, and the 1.91x song is his *"the synth
+sometimes is a bit too loud"* card. Capped at the lead's own level; the worst
+song's peak went 0.891 → 0.463 in the mix. Fixed in the generator rather than
+arrange.js because the arranger cannot see `leadGain`.
+
+### THE 16TH-OFF-BEAT NOTE, AND A BUG IN MY OWN r28 FIX
+
+*"the synth has really rapid notes and jumps though and sometimes sounds like a
+16th note off beat - align those"* (ls_vi_v_three_tense). **Measured: its
+`alternate_melody` cell is `~@3 [chord]@12 note`, so 64 of 64 onsets land on an
+ODD 16th and every bar closes with a lone 16th in the final slot** — the r28
+gesture, arriving through a door `minNoteLast` cannot see, because the arranger's
+`derivedOpts` forwards `leadOpts.minNote` and **not** `minNoteLast`. A one-line
+omission from D118. So the lead dropped its final 16th and its own copies kept it.
+
+**Forwarding it exposed a real bug in the r28 change.** bind.js guards the
+thinning with `if (keep.length >= 2)`, and with `minNoteLast` on that guard fires
+MORE often — one fewer survivor — and when it fires **the whole filter is
+abandoned, so the bar keeps every onset it started with.** A/B on his named song:
+`~@3 [F4,Ab3]@12 F4` (3 onsets) became `~@3 F4 C4@3 G4 F4@3 Ab4 G4@3 F4` (8), and
+the cast layers' density went 2.38 → 3.30 per bar. **The flag meant to remove a
+note nearly tripled the layer's density.** The guard now falls back to thinning
+the interior and KEEPING the last note. Cast-melody density is back to 2.38/bar
+and final-16th notes fell from 17.9% to 13.2%.
+
+**Not fully fixed, and stated as such:** on a 3-onset bar the final 16th cannot be
+dropped without leaving one note, so it survives. Removing it there needs a merge
+into the preceding held note, not a drop. `noLateTail` (filtering melody cells
+whose last onset is in the final 16th — 13 of 37) was built and **reverted**: it
+retrieved denser cells and made the layer worse.
+
+### THE ONE REJECTED SONG, AND THE MEASUREMENT THAT REFUTED THE OBVIOUS ANSWER
+
+*"dissonance in the piano and the synths. not a very good song - not good
+combination and instruments seem dissonant"* (ls_planing_chrom_mysterious, lab).
+He judged the SAME progression twice: in casino/tense it is *"an unsettling
+casino. like a casino that is happening where something is obviously wrong.
+dissonance but patterns individually work fine"*.
+
+**Vertical friction is not the difference and runs BACKWARDS: the casino song he
+liked has 38.53 close semitone/tritone pairs per bar, the lab song he rejected
+20.84, and three songs he praised sit between them** (stepwise_floor_mysterious
+38.04, iii_vi_v_mysterious 32.64). That reproduces D115's own result — twenty
+dissonance measures, every |r| < 0.23 — from a second direction. **The question is
+not how much friction but whether the lane wants it.** So `sr_planing_chrom` is
+retagged to the lanes where "something is obviously wrong" is the intent
+(casino/stealth/space, dropping lab and menu) and the page row moved to stealth.
+No mechanism was invented for a hypothesis the numbers refuse.
+
+### FILES
+
+`scripts/audition-songs.mjs` (the r29 gate, texture rotation + metronome test,
+`supportUnderLead`, `noteBlind` on the third loop), `src/binder/bind.js` (the
+`>= 2` guard fallback), `src/binder/arrange.js` (`minNoteLast` forwarding),
+`src/lib/progressions-serum.js` (retag + `hisVerdict`), `test/layerstack.test.js`
+(+1 test, 354 total). **npm test 354/354. `audition/songs.html` 0 of 47 moved,
+`audition/vanriver.html` 0 of 23 moved.**
+
+**Not addressed, deliberately:** `gm_epiano1` (the accompaniment hand) peaks at
+0.892 and is the loudest voice on every song — he did not name it and praised the
+layering repeatedly, so it is reported rather than changed. His three
+"abstract this to any dark/calm/epic environment" notes are a design ask about
+lane-independence that wants its own round.

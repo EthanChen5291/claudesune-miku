@@ -230,7 +230,11 @@ async function play(progName, patName) {
 }
 function stop() { rtStop(); playing = null; $('now').textContent = '\\u2014 stopped \\u2014'; render(); }
 
-function esc(s) { const d = document.createElement('div'); d.textContent = s == null ? '' : String(s); return d.innerHTML; }
+// r24 — see audition-songs.mjs: textContent -> innerHTML does not escape the
+// double quote, and a note goes back into a value="..." attribute, so his notes
+// truncated at their first quote character.
+const ESC_MAP = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' };
+function esc(s) { return s == null ? '' : String(s).replace(/[&<>"']/g, function (c) { return ESC_MAP[c]; }); }
 
 function render() {
   const cards = DATA.progs.map(function (p) {

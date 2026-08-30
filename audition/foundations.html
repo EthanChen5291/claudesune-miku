@@ -112,7 +112,7 @@ const SOUNDFONT2_URLS = ["https://unpkg.com/soundfont2@0.4.0/lib/SoundFont2.js",
 const SOUNDFONT2_EXPORTS = ["DEFAULT_GENERATOR_VALUES","SoundFont2"];
 const SHIM_EXPORTS = {"@strudel/core":["freqToMidi","noteToMidi","getSoundIndex","Pattern","getPlayableNoteValue"],"@strudel/webaudio":["registerSound","getADSRValues","getAudioContext","getParamADSR","getVibratoOscillator","getPitchEnvelope"]};
 const GM_FALLBACK = 'triangle';
-const BUILD = '2026-08-29 22:48';
+const BUILD = '2026-08-30 18:17';
 const RT = { ready: false, booting: null, note: '', soundfonts: false, gmVoices: 0, gen: 0, maps: {}, problems: [],
   // D56: set once the scheduler tick is running off a Web Worker, so a hidden
   // tab cannot clamp it to 1s. workerTicks is how a probe proves it is live.
@@ -568,7 +568,11 @@ async function play(progName, patName) {
 }
 function stop() { rtStop(); playing = null; $('now').textContent = '\u2014 stopped \u2014'; render(); }
 
-function esc(s) { const d = document.createElement('div'); d.textContent = s == null ? '' : String(s); return d.innerHTML; }
+// r24 — see audition-songs.mjs: textContent -> innerHTML does not escape the
+// double quote, and a note goes back into a value="..." attribute, so his notes
+// truncated at their first quote character.
+const ESC_MAP = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' };
+function esc(s) { return s == null ? '' : String(s).replace(/[&<>"']/g, function (c) { return ESC_MAP[c]; }); }
 
 function render() {
   const cards = DATA.progs.map(function (p) {

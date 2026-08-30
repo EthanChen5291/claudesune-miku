@@ -1052,6 +1052,10 @@ export function bindMelody(rhythmEntry, harmonyContext, meter = '4/4', opts = {}
     // the PREVIOUS note hold through its slot for free — the melody lengthens
     // rather than merely thinning. His law: "the melody is held not very jittery".
     minNote = 0,
+    // r28: extend `minNote` to the bar's FINAL onset. See the measurement at the
+    // filter below — the last-note exemption is where 84.6% of the engine's
+    // sub-16th notes come from. Off by default so judged callers do not move.
+    minNoteLast = false,
     // r18/D99 (excited_fight, his ask, verbatim: "there should still be an
     // alternate melody singing along with the main piano melody of another
     // instrument the supports it while being different. this is something that
@@ -1372,13 +1376,60 @@ export function bindMelody(rhythmEntry, harmonyContext, meter = '4/4', opts = {}
     // downbeat, the bar's last note and any cadence arrival are never dropped:
     // the downbeat is the phrase's anchor, the last note has nothing to absorb
     // into, and a cadence is re-shaped by its own grammar.
+    // ---- r28 · THE LAST-NOTE EXEMPTION IS WHERE THE ERRATIC NOTES LIVE ----
+    // MEASURED on audition/vanriver.html, the page he had just judged: of the
+    // 1185 notes at or under a 16th across all 23 songs, 1003 (84.6%) are the
+    // bar's LAST onset — and all 1003 of those sit in the bar's final 16th slot.
+    // Not most of them; every single one. That is not a distribution, it is this
+    // exemption: `i === notes.length - 1` is unconditional, so a 16th hanging off
+    // the end of the bar is the one short note `minNote` can never remove.
+    //
+    // His notes on that page, five separate cards: "the random short bursts sound
+    // weird and erratic" / "random very quick bursts in the left hand" / "the
+    // piano melody is erratic (random really quick notes) at times which I
+    // dislike once again" / "some random erratic chords" / "sounds a bit random".
+    //
+    // The comment above says the last note "has nothing to absorb into", and for
+    // the LAST bar of a pattern that is true. Inside a pattern it is false: the
+    // cycle repeats, so dropping it lets the previous note hold to the barline,
+    // which is the same lengthening the rule already performs everywhere else.
+    //
+    // OPT-IN (`minNoteLast`), and that is not caution — bindMelody is called by
+    // the lead, the octave partner, the companion and the echo on all 47 judged
+    // songs, so changing the default rewrites judged material. A caller that does
+    // not pass it gets byte-identical output.
     if (minNote > 0 && notes.length > 2) {
-      const keep = notes.filter((n, i) => {
-        if (i === 0 || i === notes.length - 1 || n.category === 'cadence') return true;
+      const lastIx = notes.length - 1;
+      const thin = (dropLast) => notes.filter((n, i) => {
+        if (i === 0 || n.category === 'cadence') return true;
+        if (i === lastIx && !dropLast) return true;
+        // the final note has no successor inside the bar; it is measured against
+        // the barline, which is exactly the span it would hand back to its
+        // predecessor if dropped
         const L = ((notes[i + 1]?.step ?? bar.G) - n.step) * (beatsInBar / bar.G);
         return L >= minNote;
       });
+      const keep = thin(minNoteLast);
+      // ---- r29 · THE `>= 2` GUARD CAN MAKE A BAR DENSER, NOT SPARSER --------
+      // The guard exists so a bar is never reduced to a single note. But when
+      // `minNoteLast` is on it fires MORE often — dropping the final note is one
+      // fewer survivor — and when it fires the whole filter is abandoned, so the
+      // bar keeps EVERY onset it started with.
+      //
+      // MEASURED as an A/B on ls_vi_v_three_tense, the song whose note reads "the
+      // synth has really rapid notes and jumps": its `alternate_melody` bar went
+      // from `~@3 [F4,Ab3]@12 F4` (3 onsets) to `~@3 F4 C4@3 G4 F4@3 Ab4 G4@3 F4`
+      // (8 onsets) when minNoteLast was forwarded — the flag meant to REMOVE a
+      // note nearly tripled the layer's density. That is the opposite of the law
+      // it implements, and it is my own r28 change.
+      //
+      // So a bar that cannot afford to lose its last note falls back to thinning
+      // the interior and KEEPING it, rather than to no thinning at all.
       if (keep.length >= 2) notes = keep;
+      else if (minNoteLast) {
+        const softer = thin(false);
+        if (softer.length >= 2) notes = softer;
+      }
     }
     // grids follow the SURVIVING notes (a merge may have thinned the bar);
     // with no merge these are exactly the bar's own steps/accents

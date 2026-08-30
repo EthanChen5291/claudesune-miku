@@ -36,6 +36,38 @@ ambiguous). Read the LAST few D-entries before starting any round.
   `priorKeep` flips and those gates would strip the features he approved.
   Pin them in SONG_OPTS (`bridgeHarmony: true, breakdown: true,
   melodyGrammar: true`) and verify byte-identity against the judged page.
+- **HIS OWN NOTES RETRACT WHAT HE JUDGED (r28/D118) — the keep-transition law's
+  FOURTH bite, and the first one that fires at IMPORT TIME.** Six gates read
+  `!DERIVED_VERDICTS?.[name] && !CARD_NOTES?.[name]` so a NEW capability only
+  lands on a history-less song. Correct, and it stays. But the instant a note
+  about the song exists those gates ALSO strip what the song had when he heard
+  it: importing his 23 vanriver notes moved **15 of 23 songs on their own page**
+  with nothing else changed, and `colorFresh` — which governs HARMONY — changed
+  `degrees`/`symbols`/`numerals` on 14, including two prose keeps ("no
+  complaints", "really good"). **Rebuild against a pre-import copy of
+  `verdicts.js` after every import**; that is the only way to see it. The fix is
+  `opts.noteBlind` + `historyLess()`: a page declares that its OWN notes are not
+  a history because they are its first judgement. One flag — pinning
+  feature-by-feature was tried and overshot, moving all 23 mixes (D101's "six
+  flags, seven next round", on schedule).
+- **A POOL OF ONE MAKES EVERY HASH ROTATION A NO-OP (r29/D119).** `fnv(...) %
+  pool.length` is the engine's variety mechanism and it is silently dead wherever
+  the pool has one member. The texture selector fixed its class to `offbeat`,
+  which has exactly ONE ratified 4/4 figure, so `fnd_offbeat_chords` on
+  `gm_kalimba` was **30 of 39 songs across all three pages** — his "has been used
+  in every song so far". `texSounds[ti % texSounds.length]` is the same shape:
+  index 0, every time. When a selection looks varied, COUNT THE POOL. And after
+  widening one, immediately run the metronome test over what became reachable
+  (D100) — opening `broken_octave` here admitted a 16-onsets-per-bar figure.
+- **D77 IS RELATIVE AND THE ABSOLUTE CAPS DO NOT ENFORCE IT (r29/D119).** Two
+  independent places cap support with a NUMBER and neither compares to the lead:
+  the texture band `[0.3, 0.52]` (D86, set for energetic songs but reached by
+  every `fullSynth` song whatever its energy) and `gainFor`'s `Math.min(0.9, …)`
+  in arrange.js, whose own comment says "Capped so nothing can shout over the
+  piano". Measured: the texture was 0.481 on all 14 r28 songs and **louder than
+  the lead on 11**, with all four of his "too loud" cards inside that 11 and none
+  outside it; `melody_takeover` ran **1.91x, 1.60x, 1.53x** its own song's lead.
+  Cap at a fraction of `leadGain`, and check the RATIO, never the number.
 - **Prose keeps are real.** "love this / I like this a lot" without a keep
   click → pin the song (`grammarPin: true` in SONG_OPTS) so no engine-wide
   rule re-rolls it before the click lands. Remind him to click + export.
@@ -410,6 +442,30 @@ flake; rerun before believing it.
   the mechanism — a repeated chord returns with its voicing ROTATED one position,
   and a top voice is ADDED on every second pass of an unchanging loop. Both are
   2-bar-period changes with no section boundary involved.
+- **THE ERRATIC NOTES ARE THE BAR'S LAST ONSET (r28/D118).** His most-repeated
+  complaint, five cards in one export. Measured over 23 songs: **1185 notes are a
+  16th or shorter and 1003 (84.6%) are the bar's LAST onset — all 1003 in the
+  bar's final 16th slot.** Every one. Cause: `minNote` exempts
+  `i === notes.length - 1` unconditionally, so a 16th hanging off the barline is
+  the one short note the floor can never remove. `minNoteLast` (bind.js, OPT-IN —
+  47 judged songs call bindMelody) lifts it; `opts.noJitter` threads it through
+  the whole melody family at once, because 81.9% of the offending notes are one
+  lead gesture plus its `_octave`/`_companion` copies. Isolation pair: **204 → 84,
+  a 59% cut**, with overall short-note density unchanged (2.390 → 2.385). `_acc`
+  contributes ZERO — when he says "bursts in the left hand" he is hearing the
+  OCTAVE PARTNER, which is the tune an octave down. **Jitter is an ONSET-SPACING
+  question, not a duration one**: measuring sounding length scores a staccato 8th
+  as erratic and put one song at 3.8/bar with no extra onsets written.
+- **`minNoteLast` COMPLETIONS (r29/D119).** Two gaps in the r28 fix, both
+  measured: (a) `arrange.js` forwards `leadOpts.minNote` but NOT `minNoteLast`, so
+  the lead dropped its final 16th and its own cast copies kept it — his "sometimes
+  sounds like a 16th note off beat"; (b) bind.js's `if (keep.length >= 2)` guard
+  fires MORE often with `minNoteLast` on, and each firing abandons the thinning
+  entirely, so the bar keeps EVERY onset — one layer went 3 onsets a bar to 8 and
+  cast density 2.38 → 3.30. The guard now falls back to thinning the interior and
+  keeping the last note. STILL OPEN: on a 3-onset bar the final 16th cannot be
+  dropped without leaving one note; that case needs a MERGE into the preceding
+  held note, not a drop.
 - **Melody**: consecutive same-pitch notes MERGE (melody only); antecedent
   phrase-finals land 3rd/5th, never the 7th (cadenceNo7); over a
   foreign-root chord the melody SPELLS the chord (chromCore); jitter is
@@ -483,6 +539,17 @@ flake; rerun before believing it.
   are violin (catacombs) / church organ (citadel) / dark piano (manor);
   handoff pools are lane voices (desert: shanai/oboe/sitar — never
   epiano/vibraphone).
+- **AN OCTAVE PARAMETER IS NOT A REGISTER (r28/D118).** `bindFigure` seats a
+  figure at `C<octave>` and stacks the chord member on top, so `octave: 3` with a
+  `5` token realises a fifth higher than the same octave with an `R`, and
+  `bindMelody` realises differently again. Two layers on distinct octave
+  parameters can land in the same actual band; with 5-6 layers against 3-octave
+  instrument ranges no allocation fixes it. **A support-layer allocator must
+  search DOWNWARD first with a hard ceiling under the lead** — a symmetric
+  "nearest free octave" search resolves collisions upward, i.e. toward the tune,
+  and measured it put the hold/move layer at midi 94-101 against a lead at 66 on
+  12 of 14 songs (the frozen slot's own r23 defect, reproduced). Verify D77 on
+  REALISED medians, never on the request.
 - **Registers**: energetic songs leave the piano (synth acc/leads) UNLESS
   the vibe is piano territory (goofy/comic/playful/quirky/silly/whimsical
   moods or solo/duet/trio anchor). One low voice at a time. Bare sine at
@@ -577,13 +644,17 @@ flake; rerun before believing it.
   (vs_somber_citadel's lead); opts.choirPad forces a choir pad.
 - **Drums**: his vouched dp_* patterns where the vibe note matches; melody
   outranks drums; cymbals sit far back.
-  **KNOWN BUG, VERIFIED, NOT YET FIXED (r22): the MID band is structurally
-  unreachable.** The default selector is
-  `[byBand('low') ?? pats[0], byBand('high')]` capped at two, so none of the 12
-  mid-band patterns — `backbeat_ghost` among them, i.e. the SNARE/backbeat — can
-  ever be chosen. Measured across the built page: of 27 songs carrying banded
-  drums, **24 have a low pattern, 12 a high, and ZERO a mid**. Every kit in the
-  suite is kick+hat with no snare. Same shape as the r16 second-low-band bug.
+  **KNOWN BUG, NOT YET FIXED — AND THE r22 WORDING WAS TOO STRONG (corrected
+  r28).** The DEFAULT selector is `[byBand('low') ?? pats[0], byBand('high')]`
+  capped at two, so none of the 12 mid-band patterns — `backbeat_ghost` among
+  them, i.e. the SNARE/backbeat — can be chosen **by it**. Re-measured r28 on the
+  judged page: of **33** songs carrying banded drums, **26 low, 12 high, ZERO
+  mid**, so every kit in `audition/songs.html` is still kick+hat with no snare.
+  But "structurally unreachable" is wrong — **`opts.percBackbeat: true` reaches
+  it**, and the pages that pass it get a mid backbeat (vanriver: 14 mid across 11
+  drum songs; layerstack: 2 of 2). So the fix for the judged suite is to decide
+  the DEFAULT, not to build a mechanism. Same shape as the r16 second-low-band
+  bug.
   Fixing it moves the drums on ~27 songs and invalidates their HQ renders, so it
   is a deliberate round, not a drive-by — and the fix must decide whether mid
   REPLACES high in the second slot (keeps density, his "drums too loud" note) or
@@ -658,6 +729,13 @@ Surge patches must come from the release tag matching the vendored build.
   property is what makes recording an analysis cheap. Currently 5 wired, 7
   recorded-and-blocked. NOT yet migrated: the variation FORMS are still a
   hand-written list picked by hash, which is the remaining hardcoding.
+- `src/lib/progressions-serum.js` (r28) + `LAYERSTACK=1 node
+  scripts/audition-songs.mjs` → `audition/layerstack.html` — the Serum
+  producer's genre, with all seven `research/reel-layers-r22.md` rules wired
+  (R1 `reregister`, R2 `frozenSlot`, R3 `holdMove`, R4 `r28Band()`, R5
+  `doublePeriod`, R6 `coprimeCell`, plus `finalBarBreak` and `motorFall`).
+  Casting R2 needs the lane rub budget RAISED — priced as an isolation pair at
+  +38% close semitone/tritone hits per bar.
 - `src/lib/vibes.js` — prompt → vibe compilation.
 - `scripts/audition-triage.mjs` + `src/lib/triage-r15.js` — the EAR-TEST page
   (D95): the questions an analysis cannot settle, each with the measurement

@@ -99,7 +99,7 @@ const SOUNDFONT2_URLS = ["https://unpkg.com/soundfont2@0.4.0/lib/SoundFont2.js",
 const SOUNDFONT2_EXPORTS = ["DEFAULT_GENERATOR_VALUES","SoundFont2"];
 const SHIM_EXPORTS = {"@strudel/core":["freqToMidi","noteToMidi","getSoundIndex","Pattern","getPlayableNoteValue"],"@strudel/webaudio":["registerSound","getADSRValues","getAudioContext","getParamADSR","getVibratoOscillator","getPitchEnvelope"]};
 const GM_FALLBACK = 'triangle';
-const BUILD = '2026-08-27 17:15';
+const BUILD = '2026-08-30 00:07';
 const RT = { ready: false, booting: null, note: '', soundfonts: false, gmVoices: 0, gen: 0, maps: {}, problems: [],
   // D56: set once the scheduler tick is running off a Web Worker, so a hidden
   // tab cannot clamp it to 1s. workerTicks is how a probe proves it is live.
@@ -424,6 +424,22 @@ async function rtInit() {
       return { name, ok: false, detail: name + ' samples unreachable:\n' + errors.join('\n') };
     };
     const results = await Promise.all(Object.entries(SAMPLE_MAPS).map(([n, urls]) => loadMap(n, urls)));
+    // Local sample pack (audition/sample-pack.js, built by build-sample-pack
+    // .mjs): a sibling script tag — NOT a fetch, which file:// forbids —
+    // defines window.LOCAL_SAMPLES as a data:-URI strudel map. Lazy-loaded
+    // per name by the sampler, so registration is cheap. Pages without the
+    // tag (or a missing file) just skip this: the global is undefined.
+    // (Do not write a literal script-open-tag in this comment: the page
+    // builder slices the inline script by lastIndexOf of that tag.)
+    if (typeof window !== 'undefined' && window.LOCAL_SAMPLES) {
+      try {
+        await strudel.samples(window.LOCAL_SAMPLES);
+        RT.maps.local = 'sample-pack.js (' + Object.keys(window.LOCAL_SAMPLES).length + ' local names)';
+      } catch (e) {
+        RT.problems.push('local sample pack failed to register: ' + (e && e.message ? e.message : e)
+          + '\nhx_*/vc_* layers will be silent in web playback (HQ renders are unaffected).');
+      }
+    }
     const failed = results.filter((r) => !r.ok);
     RT.ready = true;
     if (failed.length === results.length && !RT.soundfonts) {
@@ -562,7 +578,16 @@ async function play(c) {
   render();
 }
 function stop() { rtStop(); HQ_AUDIO.pause(); HQ_AUDIO.currentTime = 0; playing = null; $('now').textContent = '\u2014 stopped \u2014'; render(); }
-function esc(t) { const d = document.createElement('div'); d.textContent = t == null ? '' : String(t); return d.innerHTML; }
+// r24 — HIS BUG REPORT: "when i put notes in and click play button on another
+// song, some text gets capped and after the cap it just disappears".
+// div.textContent -> innerHTML escapes &, < and > but NOT the double quote, and
+// every note is written back into a value="..." attribute on re-render. His own
+// writing style is full of quotes — "somber aftermath", "forceful", "relaxed",
+// "tip toe-y" — so the attribute closed at his first quote and the rest of the
+// note was parsed as markup and dropped. It bit 7 of the 8 audition pages
+// (audition-triage.mjs was the one that escaped quotes correctly).
+const ESC_MAP = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' };
+function esc(t) { return t == null ? '' : String(t).replace(/[&<>"']/g, function (c) { return ESC_MAP[c]; }); }
 
 function render() {
   $('cards').innerHTML = DATA.cards.map(function (c) {

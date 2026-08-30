@@ -1083,6 +1083,14 @@ export function renderArrangement(plan, ctx) {
       // this class of miss on the lead-derived rebind.
       ...(ctx.leadOpts.chordTop ? { chordTop: true } : {}),
       ...(ctx.leadOpts.minNote ? { minNote: ctx.leadOpts.minNote } : {}),
+      // r29: `minNoteLast` was added to bindMelody in r28 and threaded through
+      // every bind in the generator — but NOT through here, so the arranger's
+      // lead-derived layers kept the final-16th note the lead itself had just
+      // dropped. Measured on ls_vi_v_three_tense, the song his note names: the
+      // `alternate_melody` sounds a lone 16th in the last slot of all 32 bars
+      // while the lead does not. His words: "sometimes sounds like a 16th note
+      // off beat - align those". Two layers, one cell, different tails.
+      ...(ctx.leadOpts.minNoteLast ? { minNoteLast: true } : {}),
     };
   };
   for (const layer of plan.layers) {
