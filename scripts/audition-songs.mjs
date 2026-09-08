@@ -40,6 +40,8 @@ import { parseDegrees, ALL_PROGRESSIONS } from '../src/lib/progressions.js';
 import { PROGRESSIONS_CHORDCAMERA } from '../src/lib/progressions-chordcamera.js';
 import { PROGRESSIONS_VANRIVER } from '../src/lib/progressions-vanriver.js';
 import { PROGRESSIONS_SERUM } from '../src/lib/progressions-serum.js';
+import { SONG_LABELS, servesLine } from '../src/lib/song-labels.js';
+import { LAYER_PATTERNS, VIBE_CLASSES, REEL_PROGRESSIONS, layersFor, comboScore } from '../src/lib/layer-patterns.js';
 import { PROGRESSIONS_CITYPOP, citypopFor } from '../src/lib/progressions-citypop.js';
 import { dpStack } from './drum-render.js';
 import { bindFigure, bindMelody, normalizeRhythm } from '../src/binder/bind.js';
@@ -225,7 +227,7 @@ const PRESENCE_GAIN = { light: 0.5, driving: 0.7, foreground: 0.85 };
 // OPT-IN, because it changes the emitted mix string: switching it on by default
 // rewrites the drums of every judged song and invalidates their HQ renders.
 const DEEP_BAND_SOUND = { low: 'md_kick', mid: 'md_snare', high: 'md_hat' };
-function drumExpr(name, presence, deep = false) {
+function drumExpr(name, presence, deep = false, stackSlots = false) {
   const entry = RHYTHMS[name];
   const r = normalizeRhythm({ ...entry, accents: entry.accents ?? entry.onsets?.map(() => 0.8) ?? [1] });
   // grid = lcm of onset denominators, capped
@@ -240,12 +242,36 @@ function drumExpr(name, presence, deep = false) {
   const gmax = PRESENCE_GAIN[presence] ?? 0.6;
   const slots = Array(G * r.bars).fill('~');
   const gains = Array(G * r.bars).fill('0');
+  const oSlots = stackSlots ? Array(G * r.bars).fill('~') : null;
+  const oGains = stackSlots ? Array(G * r.bars).fill('0') : null;
   r.onsets.forEach(([n, d], i) => {
     const ix = Math.round((n / d) * G);
-    if (ix < slots.length) { slots[ix] = entry.sounds?.[i] ?? sound; gains[ix] = String(Math.round(r.accents[i] * gmax * 100) / 100); }
+    if (ix >= slots.length) return;
+    const snd = entry.sounds?.[i] ?? sound;
+    const g = String(Math.round(r.accents[i] * gmax * 100) / 100);
+    // r33 — same-slot collision. backbeat_hard/backbeat_kit declare snare+clap
+    // TOGETHER on beats 2 and 4 and the last writer silently won: the clap
+    // erased the snare and its accent-1.0 — measured, md_snare never sounds at
+    // 1/4 or 3/4 in ANY mix carrying either row, on every page. Two drums on
+    // one slot are a simultaneity, not a rewrite. Gated at the call site so
+    // judged pages keep the thinned kit they were judged with.
+    if (stackSlots && slots[ix] !== '~') {
+      // r33 verify: the first form merged the pair into one slot at
+      // Math.max(gains) — which re-accented the clap +18-33% wherever it
+      // shared a slot with the accent-1.0 snare and CANCELLED the kit trim
+      // (kit-vs-lead ratios flat-to-worse with the cap firing). Colliding
+      // onsets go to an OVERLAY pattern instead, each sound keeping its own
+      // declared accent.
+      oSlots[ix] = snd; oGains[ix] = g;
+    } else { slots[ix] = snd; gains[ix] = g; }
   });
   let expr = `s("${slots.join(' ')}").gain("${gains.join(' ')}")`;
   if (r.bars > 1) expr += `.slow(${r.bars})`;
+  if (stackSlots && oSlots.some((x) => x !== '~')) {
+    let o = `s("${oSlots.join(' ')}").gain("${oGains.join(' ')}")`;
+    if (r.bars > 1) o += `.slow(${r.bars})`;
+    expr = `stack(${expr}, ${o})`;
+  }
   return expr;
 }
 
@@ -350,6 +376,52 @@ const DP_GAIN = { light: 0.45, driving: 0.5, foreground: 0.45 };
 const songs = [];
 const CHECKS = [];
 function buildSong(prompt, name, opts = {}) {
+  // ==========================================================================
+  // r32 · opts.reelFaithful — THE REEL IS THE ARRANGEMENT
+  // ==========================================================================
+  // HIS NOTE, the whole of it: "i feel like the combination wasn't that good.
+  // it should be hardcoded more faithfully to the reel in terms of combinations
+  // and such (or maybe other added instruments are just affecting it idk)".
+  //
+  // The second clause is right and the number is worse than "affecting it".
+  // MEASURED on the page he judged: 37 of 203 sounding layers came from the
+  // reel library — 18.2%. A card called FAITHFUL was four fifths this engine's
+  // own arrangement with a reel garnish on top, and almost every complaint on
+  // the page names one of the engine's parts, not the reel's:
+  //   "the vibraphone is a bit overused in general"  -> _sparkle / _companion,
+  //        gm_music_box, on 15 of 16 songs. No reel row picks that voice.
+  //   "boogie again for tense construction ... why?" -> _funk_bass, engine.
+  //   "there doesn't have to be a beat drop in every song ffs" -> the engine's
+  //        breakdown, on 12 of 16.
+  //   "the melody also isn't good" / "doesn't sound on key" -> _lead, generated
+  //        by the melody walker; the reel's own tune is a separate layer.
+  //
+  // ONE FLAG, not twelve. D101's lesson (pinFrom beats feature-pinning, "six
+  // flags, seven next round") applies exactly: a faithful card declares that
+  // the reel supplies the arrangement, and every discretionary engine layer
+  // stands down at once. What is NOT switched off is anything structural —
+  // sections, key, register laws, the D77 cap, the metronome test: the reel's
+  // mix decisions do not outrank his ear's standing rules.
+  if (opts.reelFaithful) {
+    opts = {
+      sparkle: false, descant: false, counterline: false, marcato: false,
+      companion: false, funkBass: false, breakdown: false, echoLayer: false,
+      texture: false, textureOff: true, octaveDouble: false, voiceCap: 0,
+      // A TRANSCRIBED PATTERN MUST PLAY AS TRANSCRIBED. Two of his cards:
+      //   "the random variations of the speed of the synth sounds really weird.
+      //    each iteration shouldn't be a different speed"
+      //   "sometimes it plays at different rhythms which sounds a bit strange
+      //    like it's lagging in its beginning melody"
+      // Both are the engine's own variation machinery applied to a part that
+      // was read off a piano roll. D97's four-bar composite deliberately MOVES
+      // THE RHYTHM in block 2 (that is the law he asked for), and the D62 tone
+      // travel swaps the accompaniment for a different FOUNDATION on every new
+      // letter — neither is wrong in general, and both are wrong on a layer
+      // whose whole claim is that it is what someone actually played.
+      accVary: false, accTravel: false, subBass: false, accUnderLead: true,
+      ...opts,
+    };
+  }
   // ---- r27 · THE LAYER STACK, his kept videolab card ----------------------
   // HIS ASK this round: "in terms of synths, i liked layer stack and funk bounce
   // a lot ... all from videolabs.html". `vl_layerstack` is KEPT (D87).
@@ -452,6 +524,13 @@ function buildSong(prompt, name, opts = {}) {
   // courtesy — it is what the source material permits.
   const r28 = (round = 28) => ruleFresh(round) && !nicheLane;
   const r29 = (round = 29) => ruleFresh(round) && !nicheLane;
+  const r30 = (round = 30) => ruleFresh(round) && !nicheLane;
+  const r31 = (round = 31) => ruleFresh(round) && !nicheLane;
+  const r32 = (round = 32) => ruleFresh(round) && !nicheLane;
+  const r33 = (round = 33) => ruleFresh(round) && !nicheLane;
+  // hoisted (r32): the drum selector, which runs earlier than the support
+  // layers, needs to report its meter filter on the card too.
+  const extraInfo = [];
 
   // ---- r28 · THE ERRATIC NOTES, LOCATED (opts.noJitter) --------------------
   // HIS MOST-REPEATED COMPLAINT ON THE PAGE HE JUST JUDGED — five cards:
@@ -477,7 +556,20 @@ function buildSong(prompt, name, opts = {}) {
   // lead, handoff, takeover, companion, echo and octave partner — because 81.9%
   // of the offending notes measured last round were ONE lead gesture plus its
   // derived copies, so fixing the lead alone would leave the copies playing it.
-  const noJitter = opts.noJitter === true && r28();
+  // r33: noJitter becomes the DEFAULT for fresh songs. It was opt-in for two
+  // rounds while only the test pages passed it — measured on songs.html this
+  // round: the lead's short notes still land in the bar's final 16th slot at
+  // 32.3% in the mix (companion 70.7%) against 2.6-7.5% in EVERY reference
+  // population (uniform = 6.25%) — the D118 shape is engine-only and it was
+  // still live on the main judged page. His r33 brief: "the melody generation
+  // has been ass ... some seemingly really short notes and offbeats."
+  const noJitter = (opts.noJitter === true && r28()) || (opts.noJitter !== false && r33());
+  // r33 — the grid law rides the same opt-in: his "shifted off by like a
+  // sixteenth note" cards are the same family of complaint noJitter exists
+  // for, and 81.9% of the r28 offenders were one lead gesture plus its copies,
+  // so this too must reach every melody-family bind at once (see
+  // gridSnapMelodyEntry in bind.js for the law and its reference numbers).
+  const gridSnapOn = noJitter && r33();
 
   // ---- r28 · `noteBlind` — THE KEEP-TRANSITION LAW, FOURTH BITE ------------
   // Six gates in this file read `historyLess()`
@@ -791,7 +883,7 @@ function buildSong(prompt, name, opts = {}) {
   const colorFresh = opts.voicedColor === true
     || (opts.voicedColor !== false && !priorKeep && !opts.grammarPin && !opts.pinFrom
         && historyLess());
-  const PROG_ANY = (n) => ALL_PROGRESSIONS[n] ?? PROGRESSIONS_CHORDCAMERA[n] ?? PROGRESSIONS_VANRIVER[n] ?? PROGRESSIONS_CITYPOP[n] ?? PROGRESSIONS_SERUM[n];
+  const PROG_ANY = (n) => ALL_PROGRESSIONS[n] ?? PROGRESSIONS_CHORDCAMERA[n] ?? PROGRESSIONS_VANRIVER[n] ?? PROGRESSIONS_CITYPOP[n] ?? PROGRESSIONS_SERUM[n] ?? REEL_PROGRESSIONS[n];
   const basePinned = opts.basePin
     && (EX.entries.some(([n]) => n === opts.basePin) || PROG_ANY(opts.basePin))
     ? opts.basePin : null;
@@ -893,7 +985,15 @@ function buildSong(prompt, name, opts = {}) {
       };
     }
   }
-  const key = `${v.keyHint}:${desertScale ?? (v.family === 'minor' ? 'minor' : 'major')}`;
+  // r32 — opts.keyScale. HIS CARD on the reel-8 song: "the melody in the
+  // glockenspiel doesn't sound on key and isn't a good melody either."
+  //
+  // Reel 8 is D DORIAN — B and F both natural over the C-major collection — and
+  // `family: 'modal'` fell through this ternary to 'major', so the song was
+  // built in D MAJOR: F# and C# against Dm9, Em7 and C^7. Every scale token and
+  // the whole melody supply were reading a scale the harmony contradicts. The
+  // key's MODE was simply not expressible: only desert could name one.
+  const key = `${v.keyHint}:${opts.keyScale ?? desertScale ?? (v.family === 'minor' ? 'minor' : 'major')}`;
   const symbols = renderProgression(e, key);
   // r27: `opts.chordUnits` (the pack's measured relative durations) replaces the
   // even plan. Gated on ruleFresh so it can never reach a judged song, and it
@@ -908,9 +1008,36 @@ function buildSong(prompt, name, opts = {}) {
   // recorded on the song so the page can show the measured units against the
   // bars they actually became — the rounding is the thing worth seeing
   const chordBarPlan = unevenOn ? plan4 : null;
-  const barSyms = plan4 ? symbols.flatMap((sym, i) => Array(plan4[i]).fill(sym)) : symbols;
-  const loopBars = barSyms.length;
-  const ctxBar = { harmony: barSyms, barsPerChord: 1, key };
+  // r32 — SUB-BAR HARMONIC RHYTHM (opts.chordBeats), his "hardcoded more
+  // faithfully to the reel". `chordUnits` above allocates whole BARS; six of
+  // his eight reels change chord inside the bar, two of them on every beat, and
+  // reel 3's changes cross the barline. `chordBeats` gives each symbol a
+  // duration in beats and bindFigure resolves the chord PER ONSET (bind.js
+  // r32). `barSyms` is still built — as the DOWNBEAT symbol of each bar — so
+  // every downstream consumer that reasons about bars keeps working.
+  const beatsPerBar = Math.max(1, Number(String(v.meter).split('/')[0]) || 4);
+  const subBarOn = r32() && Array.isArray(opts.chordBeats)
+    && opts.chordBeats.length === symbols.length
+    && opts.chordBeats.every((x) => Number(x) > 0)
+    && Math.abs((opts.chordBeats.reduce((a, b) => a + Number(b), 0) / beatsPerBar) % 1) < 1e-9;
+  let barSyms; let loopBars; let ctxBar;
+  if (subBarOn) {
+    const cb = opts.chordBeats.map(Number);
+    loopBars = Math.round(cb.reduce((a, b) => a + b, 0) / beatsPerBar);
+    const edges = []; let acc = 0;
+    for (const b of cb) { edges.push(acc); acc += b; }
+    barSyms = Array.from({ length: loopBars }, (_, b) => {
+      const pos = b * beatsPerBar;
+      let k = 0;
+      for (let j = 0; j < edges.length; j++) if (edges[j] <= pos + 1e-9) k = j;
+      return symbols[k];
+    });
+    ctxBar = { harmony: symbols, chordBeats: cb, key };
+  } else {
+    barSyms = plan4 ? symbols.flatMap((sym, i) => Array(plan4[i]).fill(sym)) : symbols;
+    loopBars = barSyms.length;
+    ctxBar = { harmony: barSyms, barsPerChord: 1, key };
+  }
 
   // ---- accompaniment: a ratified foundation in the vibe's classes ----------
   let accPool = RATIFIED_FND.filter(([, f]) => v.figClasses.includes(f.class) && f.meter_class === v.meter);
@@ -1094,7 +1221,25 @@ function buildSong(prompt, name, opts = {}) {
     figure: ['R', '5', '~8', '5', 'R', '5', '~8', '5'],
     accents: [1, 0.6, 0.85, 0.6, 0.95, 0.6, 0.85, 0.6],
   } : null;
-  const accFig = horrorOstinato ?? jungleVamp ?? { ...accFig0, name: accName, ...(accHalfTime ? { bars: (accFig0.bars ?? 1) * 2 } : {}) };
+  // r32 — THE REEL'S CHORD ROW *IS* THE ACCOMPANIMENT (opts.reelAcc).
+  //
+  // On the page he judged, a faithful card cast the reel's `chords` row as an
+  // EXTRA layer while the engine's own `_acc` went on playing a different
+  // figure over the same harmony — two harmony hands at once. That is a
+  // doubling, not a stack, and it is the shape D102 warns about from the other
+  // direction ("two layers that always strike together on one instrument are
+  // one layer"). Here the acc slot simply takes the reel's row, so there is one
+  // harmony hand and it is the transcribed one. Same slot as horrorOstinato and
+  // the jungle vamp, which is the precedent for a lane supplying its own acc.
+  const reelAccRow = opts.reelAcc ? LAYER_PATTERNS[opts.reelAcc] : null;
+  const reelAccFig = reelAccRow ? {
+    name: `reel-${opts.reelAcc}`, bars: reelAccRow.rhythm.bars ?? 1,
+    grid: reelAccRow.rhythm.grid ?? 16, class: 'block', meter_class: '4/4',
+    legato: reelAccRow.rhythm.legato ?? false,
+    onsets: reelAccRow.rhythm.onsets, figure: reelAccRow.intervals,
+    accents: reelAccRow.rhythm.accents,
+  } : null;
+  const accFig = reelAccFig ?? horrorOstinato ?? jungleVamp ?? { ...accFig0, name: accName, ...(accHalfTime ? { bars: (accFig0.bars ?? 1) * 2 } : {}) };
   // accDensity feeds the PLANNER and the lead target — computed from the
   // figure as authored, not the half-time stretch, so slowing the piano's
   // pulse cannot re-roll the cast (measured: the halved value handed
@@ -1305,9 +1450,11 @@ function buildSong(prompt, name, opts = {}) {
   const leadBowed = leadSustained && LEAD_INST?.attack === 'slow';
   // History-less songs only (D99) plus an explicit opt — the judged page's
   // leads must not move until his ear rules on this.
+  // r33: `!opts.pinFrom` → ruleFresh(25) — same pin-semantics repair as
+  // deepDrums below; r20/r24 pins keep their judged (off) state, an r33 pin
+  // keeps the capability it was judged with.
   const leadDynOn = (opts.leadDynamics === true
-      || (opts.leadDynamics !== false && leadSustained && !priorKeep && !opts.grammarPin
-          && !opts.pinFrom
+      || (opts.leadDynamics !== false && leadSustained && ruleFresh(25)
           && historyLess()));
   // Two DIFFERENTLY-SHAPED four-bar arcs, so an eight-bar span never repeats a
   // contour — "fluid", not a square wave. Peak on bar 3 of the first phrase and
@@ -1320,7 +1467,20 @@ function buildSong(prompt, name, opts = {}) {
   const leadGainExpr = leadDynOn
     ? `"<${LEAD_ARC.map((x) => Math.round(leadGain * leadDynMul * x * 100) / 100).join(' ')}>"`
     : String(leadGain);
-  const leadFx = ART.pedal ? `.gain(${leadGainExpr}).room(0.7)` : `.gain(${leadGainExpr}).room(0.25)`;
+  // r33 — THE GAIN CLOBBER. bindMelody authors a per-note accent envelope as
+  // .gain("<...>") on its own expr; every melody-family fx here then appended a
+  // SECOND, flat .gain(x) — and a later .gain() REPLACES the earlier one, it
+  // does not compose (measured: note(...).gain("1 .5 .75 .25").gain(0.8)
+  // realizes 0.8/0.8/0.8/0.8; .mul(gain(0.8)) realizes 0.8/0.4/0.6/0.2). So
+  // the ENTIRE melody tier — lead, handoff letters, takeover/alternate/backup,
+  // octave partner — has realized UNIFORM velocity on every page (min==max on
+  // 14/16 reels leads; all 47 songs.html leads carry the double-gain chain).
+  // "Uniform velocity is a bug" is this project's own §3.4. His r33 cards sit
+  // on top of it: a handoff whose authored 0.666–0.98 envelope collapses to a
+  // flat 0.85 IS "the flute is too loud" with no shading. `.mul(gain(x))`
+  // composes; kept/pinned songs were JUDGED with the flat form and keep it.
+  const gainFx = (g) => (r33() ? `.mul(gain(${g}))` : `.gain(${g})`);
+  const leadFx = ART.pedal ? `${gainFx(leadGainExpr)}.room(0.7)` : `${gainFx(leadGainExpr)}.room(0.25)`;
   // r16 FOUNDATION-VARIATION LAW — supersedes D94's 2-bar composite.
   //
   // He rejected D94 in three independent places in one round. The jungle-floor
@@ -2244,7 +2404,37 @@ function buildSong(prompt, name, opts = {}) {
     loopRoots: true,
     // r14 (scary_manor: "piano too heavy"): opts.accGainMul trims the acc
     // hand's whole band, whatever voice carries it
-    ...(opts.accGainMul
+    // r32 — A REEL'S CHORD HAND KEEPS ITS OWN RELATIONSHIP TO THE TUNE.
+    //
+    // The acc's default top is 1.0 for a piano, an ABSOLUTE number that never
+    // consults the lead. Measured on the page he judged, `_acc` averaged 1.15x
+    // the lead's gain across all 16 songs and hit 2.13x where the lead sits at
+    // 0.47 — the accompaniment is louder than the tune it accompanies, which is
+    // the D77 breach CLAUDE.md already warns about in the abstract ("the law
+    // that actually holds is RELATIVE"). Scoped to the reel acc rather than the
+    // whole engine, because widening it is a round of its own: the general acc
+    // gain reaches all 47 judged songs.
+    ...(reelAccRow
+      ? { gainRange: (reelAccRow.gainVsLead ?? [0.3, 0.55])
+        .map((x) => Math.round(Math.max(0.35, Math.min(0.9, x)) * leadGain * 100) / 100) }
+      // …and where the reel has NO chord row, the engine's own foundation still
+      // has to stay under the tune. Measured on the four cards that fall through
+      // here: 1.18x, 2.13x, 2.13x, 1.18x the lead. Scoped to opts.accUnderLead
+      // (set by reelFaithful) rather than made general, because the general acc
+      // band reaches all 47 judged songs and that is a round of its own — the
+      // measurement is in DECISIONS.md so the next round can pick it up.
+      : opts.accUnderLead
+      // r33: the r32 top of 0.9x left the reel-page acc at a REALIZED 0.80-0.85x
+      // the lead and drew "piano too loud" on three more cards (r1, r5, cross
+      // dark). 0.72x matches the kit's own relative cap; the acc is support,
+      // and support tops OUT at the counterline ceiling, not just under the tune.
+      // The extra x0.85 is the r33 VERIFY correction: restoring the lead's
+      // accent envelope dropped its realized mean ~15% below nominal (measured
+      // 0.86-0.88 of nominal), and an acc capped against NOMINAL ran 0.99x the
+      // realized lead on r5. The acc binds before the lead does, so the
+      // envelope mean is approximated by its measured band rather than parsed.
+      ? { gainRange: [Math.round(0.35 * leadGain * 100) / 100, Math.round((r33() ? 0.72 * 0.85 : 0.9) * leadGain * 100) / 100] }
+      : opts.accGainMul
       ? { gainRange: (accToBass ? [0.6, 0.95] : synthAcc ? [0.5, 0.85] : [0.35, 1.0]).map((x) => Math.round(x * opts.accGainMul * 100) / 100) }
       : accToBass ? { gainRange: [0.6, 0.95] } : synthAcc ? { gainRange: [0.5, 0.85] } : {}),
     fx: accToBass ? '.room(0.15).clip(0.95)' : accFx,
@@ -2373,7 +2563,7 @@ function buildSong(prompt, name, opts = {}) {
   const leadSeed = fnv(name);
   const leadBound = bindMelody(leadCell, ctxBar, v.meter, {
     style: 'toby-fox', seed: leadSeed, octave: leadOctave, sound: LEAD_SOUND, fx: leadFx,
-    hold: LEAD.hold, mergeRepeats: LEAD.merge, articFloor: artFloor, cadenceNo7, chromCore, tailOff: grammarFresh, leapFold: grammarFresh, chordTop: chordTopOn, minNote: grammarFresh ? (opts.leadMinNote ?? 1) : 0, minNoteLast: noJitter, ...(opts.leadRangeSteps ? { rangeSteps: opts.leadRangeSteps } : {}),
+    hold: LEAD.hold, mergeRepeats: LEAD.merge, articFloor: artFloor, cadenceNo7, chromCore, tailOff: grammarFresh, leapFold: grammarFresh, chordTop: chordTopOn, minNote: grammarFresh ? (opts.leadMinNote ?? 1) : 0, minNoteLast: noJitter, gridSnap: gridSnapOn, subBarChords: r33(), tissue: r33(), ...(opts.leadRangeSteps ? { rangeSteps: opts.leadRangeSteps } : {}),
   });
   // D73: half-time thinning changes only the SOUNDING piano — the planner
   // still sees the pre-thinning lead (the 0.55 fast-song cap), or the cast
@@ -2586,7 +2776,7 @@ function buildSong(prompt, name, opts = {}) {
     // D65: the lead's manner reaches EVERY melodic layer the arranger binds
     // (round 2: "trumpet still should much more hold"), and support pads are
     // real chord voicings over a low frame (his strings rule)
-    leadOpts: { hold: LEAD.hold, mergeRepeats: LEAD.merge, cadenceNo7, chromCore, tailOff: grammarFresh, leapFold: grammarFresh, chordTop: chordTopOn, minNote: grammarFresh ? (opts.leadMinNote ?? 1) : 0, minNoteLast: noJitter },
+    leadOpts: { hold: LEAD.hold, mergeRepeats: LEAD.merge, cadenceNo7, chromCore, tailOff: grammarFresh, leapFold: grammarFresh, chordTop: chordTopOn, minNote: grammarFresh ? (opts.leadMinNote ?? 1) : 0, minNoteLast: noJitter, gridSnap: gridSnapOn, subBarChords: r33(), tissue: r33(), composeGain: r33() },
     padVoicing: true,
     // D70/D72: pad melody modes are assigned per LAYER above (top pad
     // 'full' under 140bpm, the rest 'subtle') — no ctx-wide flag needed.
@@ -2715,7 +2905,13 @@ function buildSong(prompt, name, opts = {}) {
   }
   const curveOf = (muls) => `"<${form.sections.flatMap((sec, i) => Array(sec.bars).fill(muls[i])).join(' ')}>"`;
   const SEC_CURVE = curveOf(secMul);
-  const LEAD_CURVE = curveOf(secMul.map((m) => Math.round(((1 + m) / 2) * 100) / 100));
+  // r33: the melody tier's curve tops at 1.0 on fresh songs — a late letter
+  // that rides a 1.025-1.05 segment plays LOUDER than the tune he calibrated
+  // in the A section, and with a voice change at the same seam that reads as
+  // "in the second section it randomly got louder" (his r1 card; measured, the
+  // handoff entered at 1.02-1.04x the lead on 10/10 pairs). Support keeps the
+  // full curve; the tune itself never exceeds its own ceiling.
+  const LEAD_CURVE = curveOf(secMul.map((m) => Math.min(r33() ? 1 : Infinity, Math.round(((1 + m) / 2) * 100) / 100)));
   const withCurve = (expr, lead = false) => `${expr}.mul(gain(${lead ? LEAD_CURVE : SEC_CURVE}))`;
 
   const shaped = renderForm(rendered.layers, leadBound.expr, form);
@@ -2796,7 +2992,15 @@ function buildSong(prompt, name, opts = {}) {
   // r14 lane pools: a desert letter hands to the desert voices (tense_desert:
   // "the main melody should not just be piano"), a horror letter to the
   // gothic ones — never the vibraphone/epiano salon pool.
-  const HANDOFF_POOL = !priorKeep && env === 'desert'
+  // r33 — a page/song may state its own handoff voices (the reels pages hand
+  // the tune only to the reel's OWN instruments; the default salon pool below
+  // — flute/vibraphone/epiano — is 10 of his 16 r33 complaint cards: every
+  // "flute too loud", both "glockenspiel way too loud" (= gm_vibraphone; no
+  // glockenspiel exists on the page) and the "melody synth" are D90 handoff
+  // segments of the lead line on exactly these three voices).
+  const HANDOFF_POOL = (Array.isArray(opts.handoffPool) && opts.handoffPool.filter((s) => s !== LEAD_SOUND).length)
+    ? opts.handoffPool.filter((s) => s !== LEAD_SOUND)
+    : !priorKeep && env === 'desert'
     ? ['gm_shanai', 'gm_oboe', 'gm_sitar'].filter((s) => s !== LEAD_SOUND)
     : !priorKeep && laneHorror
       // r19/D100 — "the violin taking the melody" is LITERALLY this line. D99
@@ -2845,12 +3049,46 @@ function buildSong(prompt, name, opts = {}) {
   // three significant digits, because the first candidate seed already lands within
   // a fourth almost every time and the residual leaps come from the phrase ARCH —
   // phrases end high and start low, which is a breath, not a zigzag.
+  // r33 — STATEMENT VARIATION VARIES THE TUNE, NOT THE REGISTER. The r24
+  // re-seed (stmt >= 2) hands the walker a fresh seed, and on rl_device_rise_up
+  // the re-seeded statement realized at midi ~88 — a full octave above the
+  // statement-0 tune (midi 78) — at FULL lead gain, entering at bar 16. That is
+  // his "the high synth is too loud when it comes in in like the second
+  // section" measured: ratio 1.00 to the lead, joint-loudest layer in the mix.
+  // A departure is a variation of the tune; a +12 register jump is a new
+  // instrument. Re-seeded statements whose realized median exceeds statement
+  // 0's by a fifth or more fold down by whole octaves toward it (leapFold's
+  // own convention, D94).
+  const stmtRegAnchor = new Map();
+  const midiMedianOfBound = (b) => {
+    const ms = (b.boundMeta?.notes ?? []).map((n) => n.midi).filter((x) => typeof x === 'number').sort((a, b2) => a - b2);
+    return ms.length ? ms[Math.floor(ms.length / 2)] : null;
+  };
+  // the A theme's statement 0 is leadBound itself (it does not pass through
+  // bindLetter), so its register anchor is seeded here
+  { const m0 = midiMedianOfBound(leadBound); if (m0 != null) stmtRegAnchor.set('A', m0); }
   const bindLetter = (L, ctxL, stmt = 0) => {
     const snd = letterSound(L);
-    return bindMelody(letterCell(L), ctxL, v.meter, {
+    const bound = bindMelody(letterCell(L), ctxL, v.meter, {
       style: 'toby-fox', seed: letterSeed(L, stmt), octave: leadOctave, sound: snd, fx: leadFx,
-      hold: /flute|cello|violin|oboe|shanai|organ|choir/.test(snd) ? true : LEAD.hold, mergeRepeats: LEAD.merge, articFloor: artFloor, cadenceNo7, chromCore, tailOff: grammarFresh, leapFold: grammarFresh, chordTop: chordTopOn, minNote: grammarFresh ? (opts.leadMinNote ?? 1) : 0, minNoteLast: noJitter, ...(opts.leadRangeSteps ? { rangeSteps: opts.leadRangeSteps } : {}),
+      hold: /flute|cello|violin|oboe|shanai|organ|choir/.test(snd) ? true : LEAD.hold, mergeRepeats: LEAD.merge, articFloor: artFloor, cadenceNo7, chromCore, tailOff: grammarFresh, leapFold: grammarFresh, chordTop: chordTopOn, minNote: grammarFresh ? (opts.leadMinNote ?? 1) : 0, minNoteLast: noJitter, gridSnap: gridSnapOn, subBarChords: r33(), tissue: r33(), ...(opts.leadRangeSteps ? { rangeSteps: opts.leadRangeSteps } : {}),
     });
+    if (r33() && leadStmtVary) {
+      const med = midiMedianOfBound(bound);
+      if (stmt === 0) {
+        if (med != null && !stmtRegAnchor.has(L)) stmtRegAnchor.set(L, med);
+      } else {
+        // r33 verify: the first cut clamped only stmt >= 2 (the re-seed
+        // boundary); any later statement that realizes a fifth or more above
+        // its own statement 0 now folds, whatever put it there.
+        const base = stmtRegAnchor.get(L);
+        if (med != null && base != null && med - base >= 7) {
+          const drop = 12 * Math.max(1, Math.round((med - base) / 12));
+          return { ...bound, expr: `${bound.expr}.add(note(-${drop}))` };
+        }
+      }
+    }
+    return bound;
   };
 
   // ---- the harmonic departure ----------------------------------------------
@@ -2872,7 +3110,7 @@ function buildSong(prompt, name, opts = {}) {
     });
     if (t.lineage.changed) vary = t;
   }
-  if (!vary && mf.varySection != null) {
+  if (!vary && mf.varySection != null && opts.rawHarmony !== true) {
     const t = varyProgression(e, {
       budget: 1, intensity: 0.4, seed: `${name}|treat`,
       allow: ['recolour', 'suspend', 'mixture', 'alter_dominant'],
@@ -2911,7 +3149,7 @@ function buildSong(prompt, name, opts = {}) {
 
   // ---- tone travel (D62): each new letter's accompaniment walks an edge ----
   const extraLetters = [...new Set(mf.sections.map((s) => s.letter).filter((L) => L && L !== 'A'))];
-  const edgesFrom = FND_TRAVEL
+  const edgesFrom = (opts.accTravel === false ? [] : FND_TRAVEL)
     .filter((t) => t.a === accName || t.b === accName)
     .map((t) => ({ other: t.a === accName ? t.b : t.a, cost: t.cost, devices: t.devices }))
     .filter((t) => FIGURATIONS_FOUNDATION[t.other]?.ratified && FIGURATIONS_FOUNDATION[t.other].meter_class === v.meter)
@@ -3108,7 +3346,7 @@ function buildSong(prompt, name, opts = {}) {
       if (Ls.length === 1 && Ls[0] !== 'A') {
         const sustainy = /trumpet|trombone|horn|oboe|clarinet|flute|recorder|ocarina|voice|choir|string|cello|violin|viola|bassoon|pan_flute/.test(l.instrument);
         const opts = {
-          style: 'toby-fox', octave: l.octave, sound: l.instrument, fx: `.gain(${l.gain})`,
+          style: 'toby-fox', octave: l.octave, sound: l.instrument, fx: gainFx(l.gain),
           seed: l.derives === 'lead' ? letterSeed(Ls[0]) : l.seed,
           // D66: the merge is the MELODY's — only tune-carrying layers get it
           // D89 addendum: the verify pass caught this rebind as the ONE bind
@@ -3227,7 +3465,29 @@ function buildSong(prompt, name, opts = {}) {
     // is the library's own horror floor — lub-dub, then silence for the rest of
     // the bar — and the high band drops out entirely: ambience has no hats.
     const catacombAmbience = !priorKeep && !opts.grammarPin && env === 'catacombs' && !opts.percPatterns;
-    const pats = catacombAmbience ? ['heartbeat_toms'] : (opts.percPatterns ?? v.percussion.patterns);
+    const patsRaw = catacombAmbience ? ['heartbeat_toms'] : (opts.percPatterns ?? v.percussion.patterns);
+    // r32 — HIS CARD, TWICE: "the shake or tambourine or whatever again sounds
+    // like it's on a different tempo" (rl_holiday_bright_r7) and "this tambourine
+    // or whatever is literally just off beat" (rl_cross_holiday_bright).
+    //
+    // He is describing a real GRID defect, not a mix opinion. `seven_hats_223`
+    // is a 7/8 pattern — seven onsets at 0, 1/7, 2/7 ... 6/7 of the bar — and it
+    // was selected for a 4/4 song, so its hats land on SEVENTHS of a 4/4 bar and
+    // line up with nothing. Its own row says `meter_class: '7/8'`; the data was
+    // right all along and the SELECTOR never looked. The foundation pool has
+    // filtered on `meter_class` since the beginning; the drum pool never did.
+    //
+    // Five library rows are affected — seven_hats_223 (high), seven_pulse_223
+    // (low), seven_syncopated (mid), seven_offbeat_lift (mid) and waltz_lift
+    // (3/4, low). Measured reach: 3 songs across the whole project, all of them
+    // festival/holiday prompts, which is why it took until now to surface.
+    // D92 makes the engine 4/4-only, so an odd-meter drum row can never be right.
+    const patsMeter = patsRaw.filter((p) => {
+      const mc = RHYTHMS[p]?.meter_class;
+      return !mc || mc === v.meter;
+    });
+    const patsDropped = patsRaw.filter((p) => !patsMeter.includes(p));
+    const pats = patsMeter.length ? patsMeter : patsRaw;
     const presence = catacombAmbience ? 'light' : (opts.percPresence ?? v.percussion.presence);
     const byBand = (band) => pats.find((p) => RHYTHMS[p]?.band === band);
     // r16: the selector took ONE low-band pattern and one high, then capped at
@@ -3258,7 +3518,13 @@ function buildSong(prompt, name, opts = {}) {
     // that declare none. Opt-in — it rewrites the mix string, so switching it on
     // by default would move every judged song's drums and invalidate their HQ
     // renders. His Miraleste pack is local-only and gitignored (r16 licensing).
-    const deepDrums = opts.deepDrums === true && !priorKeep && !opts.grammarPin && !opts.pinFrom;
+    // r33: `!opts.pinFrom` treated ANY pin as full-off, violating pinFrom's
+    // documented semantics ("rules from THIS round on do not reach this song")
+    // — a pinFrom:'r33' prose keep lost the deep drums it was JUDGED WITH the
+    // moment it was pinned (the D101 catch-22, third instance). ruleFresh(25)
+    // keeps the r20/r24-pinned songs exactly as they were (25 >= their pins →
+    // still off) and lets an r33 pin keep the judged capability.
+    const deepDrums = opts.deepDrums === true && ruleFresh(25);
     //
     // OPT-IN, NOT ENGINE-WIDE, AND THAT IS DELIBERATE. Switching it on by
     // default moved 13 of the 47 judged songs (measured) and would invalidate
@@ -3284,7 +3550,72 @@ function buildSong(prompt, name, opts = {}) {
       : [...new Set([byBand('low') ?? pats[0], midPick, byBand('high')].filter(Boolean))].slice(0, 3);
     // his industrial ask: "if it's industrial it should have more percussion
     // like metal rod hits or stick hits or such" — a fourth voice, over the kit
-    if (wantsBackbeat && env === 'construction') picks = [...new Set([...picks, 'industrial_metal'])];
+    // r32 — ROTATE. `industrial_metal` was named literally here and it was the
+    // library's only stick row, so every construction song got the same part:
+    // his "the same 3 stick is just used every construction or what?". Two
+    // groove-forward siblings added (rhythms.js) and the pick is hash-rotated,
+    // which is the D119 fix — when a selection looks varied, COUNT THE POOL.
+    // Report the meter filter ONLY where it changes what actually sounds. An
+    // odd-meter row that sat in the list but was never picked is a latent bug,
+    // not an event, and announcing it on a judged card moves the card text for
+    // no audible reason — the byte compare caught exactly that on three songs,
+    // one of them a keep.
+    if (patsDropped.length && patsMeter.length) {
+      const byBandRaw = (band) => patsRaw.find((p2) => RHYTHMS[p2]?.band === band);
+      const lowsRaw = patsRaw.filter((p2) => RHYTHMS[p2]?.band === 'low');
+      const picksRaw = opts.percPatterns
+        ? [...new Set([...lowsRaw.slice(0, 2), byBandRaw('high')].filter(Boolean))].slice(0, 3)
+        : [...new Set([byBandRaw('low') ?? patsRaw[0], midPick, byBandRaw('high')].filter(Boolean))].slice(0, 3);
+      if (JSON.stringify(picksRaw) !== JSON.stringify(picks)) {
+        extraInfo.push(`drum meter filter (r32): dropped ${patsDropped.join(', ')} — `
+          + `meter_class ${patsDropped.map((p2) => RHYTHMS[p2]?.meter_class).join('/')} in a ${v.meter} song. `
+          + 'His "the tambourine sounds like it\u2019s on a different tempo" / "literally just off beat": '
+          + 'a 7/8 row\u2019s onsets are SEVENTHS of the bar and line up with nothing in 4/4');
+      }
+    }
+    // r32 — HIS CARD: "the percussion also a bit too relaxed too sign excited"
+    // (an excited/training song). Measured across the vibe table: SIX
+    // environments declare drums with no HIGH band at all, and two of them —
+    // `training` and `lab` — declare `presence: 'driving'` while carrying no
+    // timekeeper whatsoever. training is a 120-150bpm chase lane whose whole kit
+    // is a four-on-the-floor and a ghost backbeat: no hat, no shaker, nothing
+    // subdividing the beat. That reads relaxed because it IS relaxed.
+    //
+    // The other four are correct as they stand and are left alone: stealth,
+    // kitchen and space all declare `light` (sparse by design, and D93's horror
+    // ambience deliberately has no kit), and citadel is a niche lane the r32
+    // gate excludes anyway.
+    //
+    // Done in the SELECTOR, not in vibes.js: adding a pattern to a vibe's
+    // declared list would re-roll `byBand()` for every song on that lane
+    // including keeps, and the freeze law forbids that. Here it rides r32().
+    if (r32() && !byBand('high') && ['driving', 'foreground'].includes(presence)
+      && !NO_BACKBEAT_LANES.has(env)) {
+      const tick = v.bpm >= 120 ? 'shaker_urgency' : 'swung_lofi_hats';
+      picks = [...new Set([...picks, tick])].slice(0, 4);
+      extraInfo.push(`timekeeper (r32): ${tick} added — this lane declares a "${presence}" kit and its `
+        + 'pattern list carries no HIGH band at all, so nothing was subdividing the beat. His "the '
+        + 'percussion also a bit too relaxed too sign excited". Six environments are in that state; only '
+        + 'the two that declare a driving kit are corrected, because sparse IS the point on the others');
+    }
+    // r33 — HIS FIFTH STICK COMPLAINT, and the r32 rotation was measured a
+    // hash NO-OP on the exact card he judged: fnv('rl_industrial_mission_r4|
+    // industrial') % 3 = 0 = industrial_metal, the identical old row, still
+    // literally "hitting 3 times and rest" (md_stick 3/bar at 1/8·5/8·7/8, one
+    // pattern across all 24 drum bars, interlocking with ZERO kick/clap/snare
+    // onsets while the metal doubled the backbeat 72/72 — redundant, not a
+    // groove). The two r32 siblings were DESIGNED for his sentence ("the stick
+    // should be a notable part of the percussion and be part of a groovy
+    // beat") and the rotation simply never landed on them where he listened.
+    // industrial_metal leaves the default rotation on r33-fresh songs; it stays
+    // in the library for his ear to ratify back via the catalog if wanted.
+    const INDUSTRIAL = r33()
+      ? ['industrial_stick_backbeat', 'industrial_rivet_tresillo']
+      : ['industrial_metal', 'industrial_stick_backbeat', 'industrial_rivet_tresillo'];
+    if (wantsBackbeat && env === 'construction') {
+      const pick = r32() ? INDUSTRIAL[fnv(`${name}|industrial`) % INDUSTRIAL.length] : 'industrial_metal';
+      picks = [...new Set([...picks, pick])];
+    }
     // ---- r23: THE BATTLE KIT (his "for the boss fights learn what makes them
     // actually feel energetic with stakes on the line and epic ... and rhythm").
     //
@@ -3392,12 +3723,78 @@ function buildSong(prompt, name, opts = {}) {
     const drumBars = form.sections.flatMap((sec) =>
       Array(sec.bars).fill(opts.percAllBars ? 1 : (ENERGY[sec.archetype] ?? 3) >= 3 ? 1 : 0));
     if (drumBars.some(Boolean)) {
-      const parts = picks.map((p) => drumExpr(p, presence, deepDrums));
+      const parts = picks.map((p) => drumExpr(p, presence, deepDrums, r33()));
       const dm = maskString(drumBars);
       drumBarsShared = drumBars;
       const stackd = parts.length === 1 ? parts[0] : `stack(${parts.join(', ')})`;
       drums = /^1(@\d+)?$/.test(dm) ? stackd : `${stackd}.mask("<${dm}>")`;
       drumInfo.push(...picks.map((p) => `${p} (${RHYTHMS[p].band}) at ${presence}`));
+    }
+  }
+
+  // ---- r32 · THE DRUMS ARE CAPPED RELATIVE TO THE LEAD, not by a number ----
+  //
+  // His cards this round: "also the drums a bit too loud" and "stick hit also
+  // too loud". Measured on the page he judged, `_drums` peaked at 0.85 with a
+  // MEAN of 0.90x the lead's gain and ran LOUDER than the lead on two songs.
+  // `PRESENCE_GAIN` is absolute (light 0.5 / driving 0.7 / foreground 0.85) and
+  // never consults the tune — the same defect r29/D119 found twice already, in
+  // the texture band and in gainFor: "check the RATIO, never the number".
+  // CLAUDE.md's own drum law is relative too ("melody outranks drums").
+  //
+  // 0.72 rather than 1.0 because a kit reads louder than its peak sample gain
+  // (many onsets, broadband), and because "a bit too loud" asks for a trim, not
+  // a duck. Applied where the kit is ASSEMBLED so the solo carries it as well —
+  // a mix-only trim would have made every probe of `_drums` lie (the
+  // measure-in-the-mix rule cuts both ways).
+  if (drums && r32()) {
+    // r33 — the r32 trim FIRED on his "percussion too loud" cards and was still
+    // defeated twice, both measured: (a) the section-energy curve multiplies
+    // the whole group AFTER this cap (x1.05 in late sections), so the capped
+    // kit's realized peak exceeded the cap on every accent-1.0 hit
+    // (industrial_mission: metal at 0.756 = 1.05 x cap, the loudest drum in the
+    // kit at 0.93x the lead); and (b) the cap compared the kit's PEAK to the
+    // lead's NOMINAL gain, but the lead realizes its accent envelope's MEAN —
+    // measured 0.73-0.86 of nominal — so a "capped" kit still ran 0.86-0.93x
+    // the tune he actually hears (cross_casual_task: kick 0.862x, clap 0.815x
+    // of the solo-matched lead mean 0.357). The r33 form caps against the
+    // lead's REALIZED mean and divides out the curve's own maximum.
+    // r33 verify: boundMeta.gains overstated the realized envelope by ~12%
+    // (0.96-0.99 claimed vs 0.86-0.88 measured per-instant) — the mean now
+    // comes from the EMITTED envelope, duration-weighted.
+    let envMean = 1;
+    {
+      const envStr = (/\.gain\("<([^>]+)>"\)/.exec(leadBound.expr) ?? [])[1];
+      if (envStr) {
+        let sum = 0; let w = 0;
+        for (const m of envStr.matchAll(/([\d.]+)(?:@([\d.]+))?/g)) {
+          const g = Number(m[1]); const dur = Number(m[2] ?? 1);
+          if (Number.isFinite(g) && Number.isFinite(dur)) { sum += g * dur; w += dur; }
+        }
+        if (w > 0) envMean = sum / w;
+      } else {
+        const envGains = (leadBound.boundMeta?.gains ?? []).filter((x) => Number.isFinite(x));
+        if (envGains.length) envMean = envGains.reduce((a, b) => a + b, 0) / envGains.length;
+      }
+    }
+    const secMax = Math.max(...secMul, 1);
+    // r33 verify, second pass: the lead's DYNAMIC ARC (leadDynOn) multiplies
+    // the melody again after the accent envelope — a cap that ignores it runs
+    // the kit at the arc's peak against the lead's arc-mean (measured 1.01x on
+    // vs_excited_fight). Folded in the same way as the envelope.
+    const arcMean = leadDynOn
+      ? LEAD_ARC.reduce((a, b) => a + b, 0) / LEAD_ARC.length * leadDynMul : 1;
+    const leadRealized = r33() ? leadGain * Math.min(1, envMean) * Math.min(1, arcMean) : leadGain;
+    const cap = Math.round((0.72 * leadRealized) / (r33() ? secMax : 1) * 1000) / 1000;
+    const peak = Math.max(...[...String(drums).matchAll(/gain\("([^"]+)"\)/g)]
+      .flatMap((m) => m[1].split(/\s+/).map(Number)).filter((x) => Number.isFinite(x)), 0);
+    if (peak > cap && peak > 0) {
+      const mul = Math.round((cap / peak) * 1000) / 1000;
+      drums = `(${drums}).mul(gain(${mul}))`;
+      extraInfo.push(`drum trim (${r33() ? 'r33: vs the lead’s REALIZED mean, curve max divided out' : 'r32'}): x${mul} — the kit peaked at ${peak} against a lead of `
+        + `${r33() ? leadRealized.toFixed(3) + ' realized (' + leadGain + ' nominal)' : leadGain}, i.e. ${(peak / leadGain).toFixed(2)}x the tune. His "the drums a bit too loud" `
+        + '/ "stick hit also too loud" / "percussion too loud" (x2, r33). PRESENCE_GAIN is an absolute number that never looked at the '
+        + 'lead (the same shape as the two absolute caps r29/D119 had to make relative)');
     }
   }
 
@@ -3409,7 +3806,6 @@ function buildSong(prompt, name, opts = {}) {
   // sounding chord's own third, one held note per bar, voice-led by the
   // binder's nearest-root walk, wherever the tune plays.
   const extraParts = [];
-  const extraInfo = [];
   const extraSolos = {};
   // D82 (teaching the planner): TRANSITIONS — a support layer's entrances
   // ramp and exits taper (first bar of a run x0.75, last x0.85, runs >= 3
@@ -3454,7 +3850,10 @@ function buildSong(prompt, name, opts = {}) {
     // r29: one gate for the whole texture rotation — class AND voice.
     const texVary = r29() && opts.textureVary === true && !laneSerious;
     if (opts.texture) texSpecs.push(opts.texture);
-    if ((energetic && !pianoVibe) || opts.fullSynth) {
+    // r32: a reel-faithful card takes its texture from the reel or not at all
+    // (opts.textureOff, set by opts.reelFaithful). D86's default exists to
+    // thicken an ENGINE arrangement; a transcribed stack is not one.
+    if (!opts.textureOff && ((energetic && !pianoVibe) || opts.fullSynth)) {
       // second/default texture stays a COMPACT class (offbeat chords) — the
       // first cut used 'arp' and fnd_ballad_8ths_arch arched to Eb6, ten
       // semis over fight's lead peak (the verify blocker)
@@ -3644,7 +4043,7 @@ function buildSong(prompt, name, opts = {}) {
   if (synthAcc && !accToBass) extraInfo.push('acc hand on gm_epiano1 (synth spread \u2014 his round-9 rule)');
   if (accToBass) {
     extraInfo.push('bass pulse: acc roots on gm_synth_bass_1 (the piano low part IS the bass — his fight note)');
-  } else if (!wantsDriveBass && drumBarsShared && v.bpm >= 140 && ['driving', 'foreground'].includes(v.percussion.presence)) {
+  } else if (opts.subBass !== false && !wantsDriveBass && drumBarsShared && v.bpm >= 140 && ['driving', 'foreground'].includes(v.percussion.presence)) {
     // D73 (+addendum 2): where the acc is NOT a root pulse the bass can
     // take over (boss's 16th octave-bounce stays piano), the sub instead
     // HOLDS the bar root under the beat — on gm_synth_bass_1, not bare
@@ -3771,6 +4170,42 @@ function buildSong(prompt, name, opts = {}) {
       if (even.some(Boolean)) extraParts.push(...varySplit(bindClimb, even));
       extraSolos._counterline = `stack(${bindCl(ctxBar)}.mask("<1 0>"), ${bindClimb(ctxBar)}.mask("<0 1>"))`;
       extraInfo.push(`counterline: held 3rd / beat-2 climb R-3-5 alternating (${clSound}, oct 4)`);
+    }
+  }
+
+  // ---- r33 · AMBIENT SWELL (his ask, verbatim on rl_cross_casual_task_active:
+  // "there should be some ambiance added over time (in safe notes) though like
+  // ambient strings or something. this should be abstracted to other songs
+  // too.") — a held root+fifth string wash, whisper band, absent for the
+  // opening bars and FADING in over four (his standing "strings should always
+  // FADE in ... not just cut in and spawn in"). "Safe notes" is why the figure
+  // is R.5 only: no 3rd, no color, nothing the harmony can contradict. The
+  // band tops at 0.15 — under the counterline's 0.162, which CLAUDE.md sets as
+  // the ceiling for any NEW support texture. Opt-in per page/song
+  // (opts.ambientSwell); the reels pages default it on.
+  if (opts.ambientSwell === true && r33()) {
+    const swFig = { name: 'ambient_swell', bars: 1, onsets: ['0'], figure: ['R.5'], accents: [0.5], legato: true };
+    const swSound = (opts.fullSynth || synthAcc) ? 'gm_synth_strings_1' : 'gm_string_ensemble_1';
+    const bindSw = (ctx) => snapSupport(bindFigure(swFig, ctx, v.meter, {
+      octave: 3, sound: swSound, loopRoots: true, gainRange: [0.08, 0.15], fx: '.room(0.6)', rhythmName: 'ambient_swell',
+    }).expr, barSyms);
+    // r33 verify: the first cut used entry bar 8 + a 4-bar fade on every card
+    // — "identical envelope, gain, and entry on all 15" is the r32 breakdown
+    // lesson (a device on every card at one setting is what he hears as "in
+    // every song"). Entry and fade length now rotate per song.
+    const swSalt = fnv(`${name}|swell`);
+    const swStart = form.totalBars >= 16 ? [6, 8, 10][swSalt % 3] : 4;
+    const swFade = 3 + (swSalt >> 2) % 3; // 3-5 bars
+    if (form.totalBars > swStart + swFade + 1) {
+      const swMask = Array.from({ length: form.totalBars }, (_, i) => (i < swStart ? 0 : 1)).join(' ');
+      const swEnv = Array.from({ length: form.totalBars }, (_, i) => (i < swStart ? 0
+        : i >= swStart + swFade ? 1
+        : Math.round((0.25 + 0.75 * ((i - swStart) / swFade)) * 100) / 100)).join(' ');
+      extraParts.push(`(${bindSw(ctxBar)}).mask("<${swMask}>").mul(gain("<${swEnv}>"))`);
+      extraSolos.ambient_swell = bindSw(ctxBar);
+      extraInfo.push(`ambient swell (r33, HIS ASK): ${swSound} holds R+5 from bar ${swStart}, fading in over ${swFade} bars `
+        + 'and staying under the counterline ceiling — "some ambiance added over time (in safe notes) ... '
+        + 'like ambient strings", abstracted to any song via opts.ambientSwell');
     }
   }
   // D91 (training: "it doesn't sound 'excited' enough ... some staccato
@@ -4280,10 +4715,35 @@ function buildSong(prompt, name, opts = {}) {
   // base accompaniment strips and a held-root floor carries it with the
   // extras (counterline/descant/pads keep playing by their own gates).
   let bdMaskStr = null;
+  let bdGainStr = null;   // r32: the fade form of the same strip
   let bdReentryBar = null; // genre-expansion: the bar the full texture returns on
   // opts.breakdown === true forces it for a song JUDGED with a breakdown —
   // a new keep must not lose the section-strip he approved
-  if ((opts.breakdown === true || (opts.breakdown !== false && !priorKeep)) && !opts.dropIntro && form.sections.length >= 3) {
+  // r32 — TWO OF HIS CARDS ARE THIS DEVICE, SIX TIMES BETWEEN THEM.
+  //   "when the piano disappears it sounds abrupt because it such a core part"
+  //   "when the piano disappears it sounds really random and abrupt once again"
+  //   "the e piano randomly disappearing is abrupt just like the previous songs"
+  //   "the piano just abruptly cuts off"
+  //   "the pain [piano] disappearing is abrupt"
+  //   "there doesn't have to be a beat drop in every song ffs"
+  // Measured on the page he judged: the breakdown fired on 12 of 16 songs,
+  // because `opts.breakdown !== false && !priorKeep` is true of every unkept
+  // song there is. The last card is the general form of the other five.
+  //
+  // Two separate defects, and they need separate fixes:
+  //   (1) IT IS NOT A CHOICE. A device on 75% of songs is a default, and a beat
+  //       drop is a gesture — it should be a minority. Hash-gated to roughly one
+  //       song in three, on r32-fresh songs only.
+  //   (2) IT IS A HARD CUT. `bdMaskStr` is a 0/1 `.mask()` over the WHOLE base
+  //       mix, so the accompaniment goes to silence between one bar and the next
+  //       and snaps back at full gain a section later. That is exactly the
+  //       artefact r22 already fixed for the breathing layers ("strings should
+  //       always FADE in ... not just cut in and spawn in") and it was never
+  //       applied here. The strip is now a gain envelope: a bar of decay in, a
+  //       two-bar swell back out.
+  const bdRoll = !r32() || (fnv(`${name}|breakdown`) % 3 === 0);
+  if ((opts.breakdown === true || (opts.breakdown !== false && !priorKeep && bdRoll))
+    && !opts.dropIntro && form.sections.length >= 3) {
     const interiorAll = form.sections.filter((sec, i) => i > 0 && i < form.sections.length - 1);
     const interior = interiorAll.filter((sec) => (ENERGY[sec.archetype] ?? 3) <= 2);
     // prefer the form's own breathing point; else strip the section before
@@ -4291,7 +4751,19 @@ function buildSong(prompt, name, opts = {}) {
     const bd = interior.length ? interior[interior.length - 1] : interiorAll[interiorAll.length - 1];
     if (bd) {
       const bdBars = form.sections.flatMap((sec) => Array(sec.bars).fill(sec.index === bd.index ? 0 : 1));
+      // r32: a GAIN envelope, not a mask — the bar before the strip decays, the
+      // two bars after it swell back. Same run-length encoding, so the emitted
+      // pattern is the same shape; only the values in the transition bars move.
+      // Legacy (non-r32) songs keep the hard 0/1 mask byte-for-byte.
+      const bdGain = bdBars.map((x, i) => {
+        if (!x) return 0;
+        if (bdBars[i + 1] === 0) return 0.45;           // last bar before the drop
+        if (bdBars[i - 1] === 0) return 0.4;            // first bar back
+        if (bdBars[i - 2] === 0 && bdBars[i - 1] === 1) return 0.75;
+        return 1;
+      });
       bdMaskStr = maskString(bdBars);
+      bdGainStr = r32() ? maskString(bdGain) : null;
       const floorFig = { name: 'breakdown-floor', bars: 1, onsets: ['0'], figure: ['R'], accents: [0.7], legato: true };
       const floorSound = (accToBass || synthAcc) ? 'gm_synth_bass_1' : 'piano';
       const bindFloor = (ctx) => bindFigure(floorFig, ctx, v.meter, { octave: 2, sound: floorSound, loopRoots: true, gainRange: [0.4, 0.6], fx: '.room(0.4).clip(1.05)' }).expr;
@@ -4744,8 +5216,8 @@ function buildSong(prompt, name, opts = {}) {
     const md = opts.melodyDouble;
     const mdGain = Math.round(leadGain * (md.gainMul ?? 0.45) * 100) / 100;
     const bindLetterDbl = (L, ctxL, stmt = 0) => bindMelody(letterCell(L), ctxL, v.meter, {
-      style: 'toby-fox', seed: letterSeed(L, stmt), octave: md.octave ?? leadOctave, sound: md.sound, fx: `.gain(${mdGain}).room(0.4)`,
-      hold: LEAD.hold, mergeRepeats: LEAD.merge, articFloor: artFloor, cadenceNo7, chromCore, tailOff: grammarFresh, leapFold: grammarFresh, chordTop: chordTopOn, minNote: grammarFresh ? (opts.leadMinNote ?? 1) : 0, minNoteLast: noJitter, ...(opts.leadRangeSteps ? { rangeSteps: opts.leadRangeSteps } : {}),
+      style: 'toby-fox', seed: letterSeed(L, stmt), octave: md.octave ?? leadOctave, sound: md.sound, fx: `${gainFx(mdGain)}.room(0.4)`,
+      hold: LEAD.hold, mergeRepeats: LEAD.merge, articFloor: artFloor, cadenceNo7, chromCore, tailOff: grammarFresh, leapFold: grammarFresh, chordTop: chordTopOn, minNote: grammarFresh ? (opts.leadMinNote ?? 1) : 0, minNoteLast: noJitter, gridSnap: gridSnapOn, subBarChords: r33(), tissue: r33(), ...(opts.leadRangeSteps ? { rangeSteps: opts.leadRangeSteps } : {}),
     });
     melodyDoubleExpr = renderLetterLead(form, mfx, (L, stmt) => {
       const base0 = L.endsWith('*') ? L.slice(0, -1) : L;
@@ -4854,7 +5326,7 @@ function buildSong(prompt, name, opts = {}) {
             : leadOctave);
         const bindComp = (L, ctxL, stmt = 0) => bindMelody(letterCell(L), ctxL, v.meter, {
           style: 'toby-fox', seed: letterSeed(L, stmt), octave: cOct, sound: cSound,
-          fx: `.gain(${cGain}).room(0.4)`,
+          fx: `${gainFx(cGain)}.room(0.4)`,
           // `hold` MUST be the lead's own value for this letter, not the song
           // default: a sustaining lead voice sets it true per letter, and taking
           // the default instead made the companion's note-merging diverge from
@@ -4864,7 +5336,7 @@ function buildSong(prompt, name, opts = {}) {
           // never make. It is a harmony line — it has to ride the same rhythm.
           hold: /flute|cello|violin|oboe|shanai|organ|choir/.test(letterSound(L)) ? true : LEAD.hold,
           mergeRepeats: LEAD.merge, articFloor: artFloor, cadenceNo7, chromCore,
-          tailOff: grammarFresh, leapFold: grammarFresh, minNote: grammarFresh ? (opts.leadMinNote ?? 1) : 0, minNoteLast: noJitter,
+          tailOff: grammarFresh, leapFold: grammarFresh, minNote: grammarFresh ? (opts.leadMinNote ?? 1) : 0, minNoteLast: noJitter, gridSnap: gridSnapOn, subBarChords: r33(), tissue: r33(),
           // chordTop is OFF here: the lead is already a two-note chord on its
           // longest note, and thickening the companion too would put four
           // sounding pitches on that attack from two instruments.
@@ -4956,10 +5428,10 @@ function buildSong(prompt, name, opts = {}) {
     const eGain = Math.round(leadGain * (cfg.gainMul ?? 0.35) * 100) / 100;
     const bindEcho = (L, ctxL, stmt = 0) => bindMelody(letterCell(L), ctxL, v.meter, {
       style: 'toby-fox', seed: letterSeed(L, stmt), octave: eOct, sound: eSound,
-      fx: `.gain(${eGain}).room(0.5)`,
+      fx: `${gainFx(eGain)}.room(0.5)`,
       hold: LEAD.hold, mergeRepeats: LEAD.merge, articFloor: artFloor,
       cadenceNo7, chromCore, tailOff: grammarFresh, leapFold: grammarFresh,
-      minNote: grammarFresh ? (opts.leadMinNote ?? 1) : 0, minNoteLast: noJitter,
+      minNote: grammarFresh ? (opts.leadMinNote ?? 1) : 0, minNoteLast: noJitter, gridSnap: gridSnapOn, subBarChords: r33(), tissue: r33(),
       ...(opts.leadRangeSteps ? { rangeSteps: opts.leadRangeSteps } : {}),
     });
     const raw = renderLetterLead(form, mfx, (L, stmt) => {
@@ -5057,10 +5529,10 @@ function buildSong(prompt, name, opts = {}) {
       // the same pitches. The transposition happens on the pattern below, so
       // the interval is an exact octave by construction rather than by luck.
       style: 'toby-fox', seed: letterSeed(L, stmt), octave: leadOctave, sound: oSound,
-      fx: `.gain(${oGain})`,
+      fx: gainFx(oGain),
       hold: LEAD.hold, mergeRepeats: LEAD.merge, articFloor: artFloor,
       cadenceNo7, chromCore, tailOff: grammarFresh, leapFold: grammarFresh,
-      minNote: grammarFresh ? (opts.leadMinNote ?? 1) : 0, minNoteLast: noJitter,
+      minNote: grammarFresh ? (opts.leadMinNote ?? 1) : 0, minNoteLast: noJitter, gridSnap: gridSnapOn, subBarChords: r33(), tissue: r33(),
       ...(opts.leadRangeSteps ? { rangeSteps: opts.leadRangeSteps } : {}),
     });
     const octRaw = renderLetterLead(form, mfx, (L, stmt) => {
@@ -5325,9 +5797,9 @@ function buildSong(prompt, name, opts = {}) {
       // construction, exactly as the octave partner does it. The transposition
       // is applied to the finished pattern below so the interval is exact.
       style: 'toby-fox', seed: letterSeed(L, stmt), octave: leadOctave, sound: rrSound,
-      fx: `.gain(${rrGain}).room(0.45)`,
+      fx: `${gainFx(rrGain)}.room(0.45)`,
       hold: LEAD.hold, mergeRepeats: LEAD.merge, articFloor: artFloor,
-      minNote: grammarFresh ? (opts.leadMinNote ?? 1) : 0, minNoteLast: noJitter,
+      minNote: grammarFresh ? (opts.leadMinNote ?? 1) : 0, minNoteLast: noJitter, gridSnap: gridSnapOn, subBarChords: r33(), tissue: r33(),
       cadenceNo7, chromCore,
       tailOff: grammarFresh, leapFold: grammarFresh,
       ...(opts.leadRangeSteps ? { rangeSteps: opts.leadRangeSteps } : {}),
@@ -5572,6 +6044,295 @@ function buildSong(prompt, name, opts = {}) {
       + 'short-note density (2.390 -> 2.385 tight onsets/bar): what remains is 16th activity elsewhere in the mix, which is '
       + 'a separate problem. His five cards: \u201cthe random short bursts sound weird and erratic\u201d, \u201crandom very '
       + 'quick bursts in the left hand\u201d, \u201cthe piano melody is erratic (random really quick notes) at times which I dislike once again\u201d');
+  }
+
+
+  // ==========================================================================
+  // r30 · THE REPEATING-INTERVAL ENERGY FIGURE (opts.synthRise)
+  // ==========================================================================
+  // HIS ASK, verbatim: "i think you should try the synth/violin rise i mentioned
+  // in energetic songs though. like some given intervals and it repeats those
+  // intervals over and over to convey energy (changing chords as needed or
+  // repeating). i left an example - it's in piano but look at the right side
+  // repeating chords - like that kinda energy"
+  //
+  // "the rise i mentioned" is r28's "the percussive strings I mentioned with
+  // their repeated intervals + percussion and boom" — the same device, asked for
+  // a second time. He left a 23s Synthesia recording as the reference; it is
+  // measured in research/reel-energy-rise-r30.md and the numbers are:
+  //
+  //   138.4 BPM, one chord per bar, right hand in straight 8ths (median IOI
+  //   0.2160s = exactly one 8th), a 3-4 note DESCENDING cell filling half a bar
+  //   and repeating: B4-G4-F#4-E4 (5-b3-2-1 in E minor) and C5-G4-F4 (5-2-1).
+  //
+  // THE FINDING, and the reason this is not just `motorFall` again: THE CELL DOES
+  // NOT FOLLOW THE CHORD. `C5 G4 F4` plays unchanged over D, C, F, D, C and F
+  // basses; `B4 G4 F#4 E4` over D, B and E. Five different chords, one unchanged
+  // cell. That is his own parenthesis — "changing chords as needed or REPEATING"
+  // — and it is R2 from the r22 reels ("freeze the body") arriving from a
+  // completely independent source: R2 was 4 reels by one producer, this is an
+  // anime OST arrangement by someone else.
+  //
+  // `motorFall` (r28) already plays the same descent — R+ 5 s2 R, his own
+  // "8th 5th 2nd root" spec — but it REBINDS on every chord. The freeze is the
+  // new thing, and it is the whole device.
+  //
+  // FROZEN PER SECTION, NOT PER SONG. The reference holds one cell for ~5 bars
+  // and swaps when the harmony moves somewhere it no longer fits (the swap at
+  // 15.67s lands mid-bar, not on a boundary). A song-long freeze would be a drone
+  // over eight chords, which is the shape his ear rejected in D100. So the cell
+  // binds against ITS OWN SECTION'S FIRST CHORD and re-derives at the next
+  // section.
+  //
+  // REGISTER IS HIGH AND GAIN IS NOT. The reference sits E4-F5, i.e. at and above
+  // the tune — it is the foreground of that arrangement. Four of his r28 cards
+  // say a high synth was too loud, and r29's answer was the RELATIVE law (D77):
+  // cap the gain against the lead, not the register. So this sits where the
+  // reference puts it and stays under the lead in level.
+  // accepts `true` or a config object — `synthRise: { direction: 'up' }` silently
+  // did nothing under an `=== true` gate, and because the empty case had no else
+  // branch it reported nothing either. Both fixed.
+  if ((opts.synthRise === true || (opts.synthRise && typeof opts.synthRise === 'object')) && r30()) {
+    const cfg = typeof opts.synthRise === 'object' ? opts.synthRise : {};
+    // 5 - b3 - 2 - 1 in minor, 5 - 2 - 1 in major: the ladder walked DOWN from
+    // the fifth to the root. Scale tokens throughout (D101) so the descent
+    // resolves against `chordScale` and cannot spell a foreign pitch — the r22
+    // lesson that bare 4/7 wrote out-of-key notes.
+    // ---- r31 · HIS SECOND VARIANT, from the reel-1 aside --------------------
+    // Verbatim: "the chord that they reveal you could also play those intervals
+    // from bottom to top over and over again like D F F# A# repeat and then
+    // repeat for another chord. this is good pattern for the genre as a
+    // supplement and also for energy vibes for dark vibes"
+    //
+    // Two differences from the r30 device, and they are the whole variant:
+    //   DIRECTION  "from bottom to top" — ASCENDING, where the r30 reference
+    //              descends every time (5-b3-2-1).
+    //   FREEZING   "then repeat for another chord" — it RE-PITCHES on the chord
+    //              change, where the r30 device holds one cell across five.
+    // HIS EXAMPLE, CORRECTED BY THE REEL ITSELF. He wrote "D F F# A#", which
+    // reads as R-b3-3-#5 and is a strange set. The piano roll he was quoting
+    // (reel 1, redbowmusic, "The most overpowered chord in all dark music")
+    // spells it **D#** F F# A# — he dropped one sharp. Relative to D# that is
+    // 0-2-3-7: ROOT, 9th, b3, 5th. A minor add9 with the 9 voiced BELOW the b3,
+    // so a minor 2nd sits inside the chord (F/F#, and C/C# on the next one).
+    // That semitone inside a consonant stack is the whole trick, and it is the
+    // same shape as D93's fifth-pincer principle: the dissonance is BETWEEN two
+    // consonant intervals, not smeared across the voicing.
+    // The reel's own next card is "double it and move it 5 notes down", i.e. the
+    // identical shape transposed down a fourth — iv(add9) -> i(add9).
+    // Tokens: `s2` is the 9th resolved against chordScale, `3` the third, `5` the
+    // fifth. Never a bare `7` (the documented foreign-pitch trap).
+    //
+    // `s7` not `7`: on a plain triad a bare `7` falls back to b7 whatever the key
+    // (the documented foreign-pitch trap), while `s7` resolves against
+    // `chordScale`. Measured 0.0% out-of-key on the r30 build with scale tokens.
+    const riseUp = cfg.direction === 'up';
+    const riseMinor = v.family !== 'major';
+    const cell = riseUp ? ['R', 's2', '3', '5']
+      : riseMinor ? ['5', '3', 's2', 'R'] : ['5', 's2', 'R'];
+    const riseFig = riseUp
+      ? {
+        name: 'rise-up-chordtones', bars: 1, grid: 8, legato: false,
+        onsets: ['0', '1/8', '2/8', '3/8', '4/8', '5/8', '6/8', '7/8'],
+        figure: [...cell, ...cell],
+        accents: [0.6, 0.38, 0.4, 0.46, 0.56, 0.36, 0.38, 0.44],
+      }
+      : riseMinor
+      ? {
+        name: 'rise-5-b3-2-1', bars: 1, grid: 8, legato: false,
+        onsets: ['0', '1/8', '2/8', '3/8', '4/8', '5/8', '6/8', '7/8'],
+        figure: [...cell, ...cell],
+        accents: [0.62, 0.4, 0.38, 0.44, 0.58, 0.38, 0.36, 0.42],
+      }
+      : {
+        // the 3-note cell leaves the 4th eighth EMPTY, exactly as the reference
+        // does — `C5 G4 F4` then a rest, twice a bar.
+        name: 'rise-5-2-1', bars: 1, grid: 8, legato: false,
+        onsets: ['0', '1/8', '2/8', '4/8', '5/8', '6/8'],
+        figure: [...cell, ...cell],
+        accents: [0.62, 0.4, 0.38, 0.58, 0.38, 0.36],
+      };
+    // METRONOME TEST (D102), checked rather than assumed: 8 onsets/bar is over
+    // the 6/bar clause, but that clause also needs <= 1 distinct shape and this
+    // has 3-4; and 8 is under the 12/bar gear-change clause. It is a texture.
+    const risePerBar = riseFig.onsets.length;
+    const riseShapes = new Set(riseFig.figure).size;
+    const riseMetronomic = (risePerBar >= 6 && riseShapes <= 1) || risePerBar >= 12;
+    const riseSound = cfg.sound ?? (opts.fullSynth || synthAcc ? 'gm_lead_2_sawtooth' : 'gm_string_ensemble_1');
+    const riseRange = INSTRUMENTS[riseSound]?.range;
+    // REGISTER, and this is the one place the reference is overruled. In the
+    // example the right hand IS the tune, so "high" costs nothing there. Our
+    // songs already have a lead, and D77 says support sits under it. MEASURED at
+    // `octave: leadOctave`: the realised median landed 7-12 semitones ABOVE the
+    // lead on 3 of 4 songs (bindFigure seats at C<octave> and the `5` token adds
+    // a fifth on top), which is the exact shape of his four r28 "the high synth
+    // is too loud" cards. One band down puts it around the tune instead of over
+    // it, and the gain cap below does the rest.
+    const riseWant = cfg.octave ?? (leadOctave - 1);
+    const riseOct = riseRange
+      ? Math.max(riseRange[0], Math.min(riseWant, riseRange[1]))
+      : riseWant;
+    // r29's relative law: support never exceeds the lead.
+    const riseGain = cfg.gainRange ?? [
+      Math.round(0.34 * leadGain * 100) / 100,
+      Math.round(0.62 * leadGain * 100) / 100,
+    ];
+    // FROZEN PER SECTION: each section's cell is bound against that section's
+    // FIRST chord and held for the whole section, which is what the reference
+    // does and what separates this from `motorFall`.
+    let riseAt = 0;
+    const riseParts = [];
+    const riseNotes = [];
+    form.sections.forEach((sec) => {
+      const start = riseAt;
+      riseAt += sec.bars;
+      if ((ENERGY[sec.archetype] ?? 3) < 3) return;          // energetic sections only
+      // FROZEN is the r30 default and the r30 finding. The r31 ascending variant
+      // re-pitches instead — "then repeat for another chord" — so it binds
+      // against the real per-bar harmony like any other figure.
+      const riseFrozen = cfg.frozen ?? !riseUp;
+      const frozenSym = barSyms[start % barSyms.length];
+      const ctxRise = riseFrozen
+        ? { harmony: [frozenSym], barsPerChord: 1, key }
+        : ctxBar;
+      const expr = bindFigure(riseFig, ctxRise, v.meter, {
+        octave: riseOct, sound: riseSound, loopRoots: true,
+        gainRange: riseGain, fx: '.room(0.3).clip(0.55)', rhythmName: 'synth-rise',
+      }).expr;
+      const m = Array(form.totalBars).fill(0);
+      for (let b = start; b < start + sec.bars; b += 1) m[b] = 1;
+      riseParts.push(`(${expr}).mask("<${maskString(m)}>")`);
+      riseNotes.push(riseFrozen ? `${frozenSym}\u00d7${sec.bars}b` : `re-pitched\u00d7${sec.bars}b`);
+    });
+    if (riseParts.length && !riseMetronomic) {
+      extraParts.push(...riseParts);
+      extraSolos._synth_rise = riseParts[0];
+      extraInfo.push(`synth rise (r30, HIS ASK): ${riseSound} at octave ${riseOct} walks the scale ladder DOWN from the 5th `
+        + `${riseUp ? 'UP through the chord tones (R-3-5-s7) in 8ths, twice a bar, RE-PITCHED on every chord \u2014 his r31 aside, "the chord that they reveal you could also play those intervals from bottom to top over and over again ... then repeat for another chord"' : `to the root in 8ths \u2014 ${riseMinor ? '5-b3-2-1' : '5-2-1'} \u2014 twice a bar, and the cell is FROZEN for its whole section`} `
+        + `(${riseNotes.join(', ')}) so the harmony moves underneath it instead of re-pitching it. `
+        + 'Measured off his own example (a 23s Synthesia recording): 138.4 BPM, 8th-note grid, and one three-note cell held unchanged over '
+        + 'FIVE different bass notes. His words: "some given intervals and it repeats those intervals over and over to convey energy '
+        + '(changing chords as needed or repeating)". NOTE he called it a "rise" and the reference DESCENDS every time \u2014 what rises is '
+        + `the re-attack. Gain ${riseGain[0]}-${riseGain[1]} against the lead's ${leadGain} (r29/D77)`);
+    } else if (riseMetronomic) {
+      extraInfo.push('synth rise: NOT CAST \u2014 the figure failed the D102 metronome test');
+    } else {
+      // a device that asks to cast and then does not must SAY so. This branch
+      // caught the `=== true` gate bug above: `{ direction: 'up' }` fell through
+      // in silence and the card advertised nothing either way.
+      extraInfo.push('synth rise: NOT CAST \u2014 no section reached the energy floor');
+    }
+  }
+
+
+  // ==========================================================================
+  // r31 · CAST A LIBRARY LAYER PATTERN (opts.reelLayers)
+  // ==========================================================================
+  // HIS ASK: "hardcode these chord progressions and layering patterns by
+  // instrument and the pattern they're doing via intervals and rhythm ... the
+  // idea is that we can merge all the patterns I feed you and select and choose
+  // and combine regardless of what reel they came from, using metadata and
+  // verification and which combos work well."
+  //
+  // The library is `src/lib/layer-patterns.js`: one row per (reel, instrument),
+  // each carrying a rhythm (onsets + accents on a grid) and an interval shape
+  // (figure tokens). That is exactly a `bindFigure` spec plus placement
+  // metadata, so casting one needs no new binder — this block is the adapter,
+  // and every pattern goes through the SAME path the engine's own foundations
+  // do. Combination is therefore a data question, not a code question, which is
+  // what makes "combine regardless of what reel they came from" cheap.
+  //
+  // Rows are addressed BY NAME and never iterated or length-indexed (the
+  // techniques.js rule), so adding a pattern cannot re-roll any existing song.
+  if (Array.isArray(opts.reelLayers) && opts.reelLayers.length && r31()) {
+    const cast = [];
+    for (const [ix, want] of opts.reelLayers.entries()) {
+      // r32 BUG FIX (latent since r31): this was `const key = ...`, which
+      // SHADOWED the song's own key string a few thousand lines up — so the
+      // frozen-layer context below (`{ harmony: [...], barsPerChord: 1, key }`)
+      // was handed the ROW NAME as its key. Every frozen reel layer has been
+      // spelling its accidentals against "lp_r7_frozen_bell_tune" instead of
+      // "Gb:major", and the moment a frozen row carried an s-token it threw
+      // outright: `unparseable key "lp_r3_catchy_pluck"`. It only surfaced now
+      // because no r31 frozen row used a scale token — `keyUsesFlats` tolerates
+      // nonsense and `parseKey` is called lazily.
+      const lpName = typeof want === 'string' ? want : want.name;
+      const cfg = typeof want === 'object' ? want : {};
+      const lp = LAYER_PATTERNS[lpName];
+      if (!lp) { extraInfo.push(`reel layer: NO SUCH PATTERN "${lpName}"`); continue; }
+      // THE METRONOME TEST (D102) APPLIES TO IMPORTED MATERIAL TOO. A pattern
+      // read off someone else's reel has no special standing — if it is a pulse
+      // or a gear change by his own rule it does not cast, exactly as a travel
+      // destination or a texture would not.
+      const perBar = lp.rhythm.onsets.length / (lp.rhythm.bars ?? 1);
+      const shapes = new Set(lp.intervals).size;
+      if ((perBar >= 6 && shapes <= 1) || perBar >= 12) {
+        extraInfo.push(`reel layer ${lpName}: NOT CAST — fails the D102 metronome test `
+          + `(${perBar}/bar, ${shapes} distinct shape${shapes === 1 ? '' : 's'})`);
+        continue;
+      }
+      const fig = {
+        name: lpName, bars: lp.rhythm.bars ?? 1, grid: lp.rhythm.grid ?? 16,
+        legato: lp.rhythm.legato ?? false,
+        onsets: lp.rhythm.onsets, figure: lp.intervals, accents: lp.rhythm.accents,
+      };
+      const snd = cfg.sound ?? (opts.fullSynth || synthAcc ? (lp.synthSound ?? lp.sound) : lp.sound);
+      const range = INSTRUMENTS[snd]?.range;
+      // Placement follows the ENGINE's laws, not the reel's: allocated downward
+      // from the lead and hard-capped under it (r29/D77), because his four "the
+      // high synth is too loud" cards outrank a stranger's mix decision.
+      const want0 = cfg.octave ?? (leadOctave + (lp.octaveVsLead ?? -2));
+      const { octave: oct, collided } = r28Band(want0, range, Math.max(1, leadOctave - 1));
+      const gr = cfg.gainRange ?? [
+        Math.round((lp.gainVsLead?.[0] ?? 0.28) * leadGain * 100) / 100,
+        Math.round((lp.gainVsLead?.[1] ?? 0.55) * leadGain * 100) / 100,
+      ];
+      // FROZEN vs RE-PITCHED is a property of the pattern as READ, not a default:
+      // some reel layers hold one shape across a chord change and some do not,
+      // and that distinction is the r30/r31 finding.
+      //
+      // r33 — THE FROZEN ROW WAS SEATED ON THE WRONG CHORD. The rows declare
+      // their degrees relative to the KEY'S TONIC; seating them on barSyms[0]
+      // (the loop's FIRST CHORD) re-spells every frozen pitch against whatever
+      // chord happens to open the progression. Machine-verified counterfactual
+      // on rl_casual_task_r3 (first chord Gm9, tonic F): lp_r3_catchy_pluck as
+      // shipped = 71.4% out-of-chord; seated on the tonic per its own spec =
+      // 14.3%. The mis-seating QUINTUPLED the frozen hook's dissonance and is
+      // the largest single number behind his "most of the instruments sound
+      // dissonant". Kept pages keep the mis-seating they were judged with.
+      const keyMode = String(key).split(':')[1] ?? 'major';
+      const tonicSym = String(key).split(':')[0] + (['major', 'lydian', 'mixolydian'].includes(keyMode) ? '' : 'm');
+      const ctxL = lp.frozen ? { harmony: [r33() ? tonicSym : barSyms[0]], barsPerChord: 1, key } : ctxBar;
+      const bindL = (ctx) => {
+        const e = bindFigure(fig, ctx, v.meter, {
+          octave: oct, sound: snd, loopRoots: true, gainRange: gr,
+          fx: lp.fx ?? '.room(0.3)', rhythmName: lpName,
+        }).expr;
+        // r33 verify — the tonic seating REGRESSED one crossed card: a frozen
+        // row re-seated per its contract can grind against a HOST reel's
+        // harmony it was never played over (lp_r5_offbeat_pluck on the E-major
+        // cross went 7 -> 35 m2-against-chord clashes: E held against D# in
+        // every ^7 span). On a FAITHFUL card the transcription is the object
+        // and stands; on a CROSS, the row is a guest — its semitone rubs snap
+        // to an agreeing tone (the r26 support-agreement law, which by design
+        // keeps 9ths/6ths/sus colour and moves only foreign pitches and rubs).
+        return (r33() && lp.frozen && !opts.reelFaithful) ? snapSupport(e, barSyms) : e;
+      };
+      const bars = form.sections.flatMap((sec) => Array(sec.bars)
+        .fill((ENERGY[sec.archetype] ?? 3) >= (lp.minEnergy ?? 0) ? 1 : 0));
+      if (!bars.some(Boolean)) continue;
+      extraParts.push(...varySplit(() => bindL(ctxL), bars));
+      extraSolos[`_lp_${ix}_${lp.role}`] = bindL(ctxL);
+      cast.push(`${lpName} (${lp.role}, ${snd} oct ${oct}${lp.frozen ? ', FROZEN' : ''}${collided ? ', band collision' : ''})`);
+    }
+    if (cast.length) {
+      extraInfo.push(`reel layers (r32): ${cast.join('; ')} \u2014 hardcoded from his 8 layer-stacking reels, `
+        + 'each row a rhythm + interval shape read off the piano roll, on the instrument that was actually '
+        + 'played (r32 \u2014 r31 substituted a synth for every one of them, which turned the accordion into a '
+        + 'square lead and both tubular-bell rows into a music box). Placement and gain still follow the '
+        + 'engine\u2019s own laws \u2014 allocated downward from the lead and capped under it \u2014 rather than the '
+        + 'reel\u2019s mix, because his four "too loud" cards outrank a stranger\u2019s balance');
+    }
   }
 
   // ---- L4 · LAYERS THAT BREATHE (opts.layerRest) ---------------------------
@@ -5911,7 +6672,8 @@ function buildSong(prompt, name, opts = {}) {
   const R = (i) => withEntryAt(rampSrc[i], rampSpan[i], rampSlot[i]);
   const nFixed = 4, nLayer = layerMixOut.length;
   const mixParts = [
-    withCurve(bdMaskStr ? `(${baseMix}).mask("<${bdMaskStr}>")` : baseMix),
+    withCurve(bdGainStr ? `(${baseMix}).mul(gain("<${bdGainStr}>"))`
+      : (bdMaskStr ? `(${baseMix}).mask("<${bdMaskStr}>")` : baseMix)),
     ...(letterLead.lead ? [withCurve(letterLead.lead, true)] : []),
     ...(companionExpr ? [withCurve(R(0), true)] : []),
     ...(melodyDoubleExpr ? [withCurve(R(1), true)] : []),
@@ -6005,7 +6767,19 @@ function buildSong(prompt, name, opts = {}) {
   if (pianoTrim < 1) {
     for (let i = 0; i < mixParts.length; i++)
       if (/\.s\("piano"\)/.test(mixParts[i])) mixParts[i] = `(${mixParts[i]}).mul(gain(${pianoTrim}))`;
-    extraInfo.push(`piano trim: x${pianoTrim} — ${pitchedVoices} pitched voices against the ${KEPT_VOICES} his kept songs carry (r25, his "piano too loud" x7)`);
+    // r33 verify: this trim multiplies the piano LEAD's group AFTER the drum
+    // cap was computed against that lead, so a "capped" kit ran 1.0-1.44x the
+    // lead's realized mean in the mix (15 of 16 songs flagged). When the trim
+    // reaches a piano lead, the kit rides the same trim so the capped RATIO
+    // survives the multiplication.
+    if (r33() && LEAD_SOUND === 'piano') {
+      for (let i = 0; i < mixParts.length; i++) {
+        if (/s\("[^"]*(?:md_|vc_)/.test(mixParts[i]) && !/note\(/.test(mixParts[i])) {
+          mixParts[i] = `(${mixParts[i]}).mul(gain(${pianoTrim}))`;
+        }
+      }
+    }
+    extraInfo.push(`piano trim: x${pianoTrim} — ${pitchedVoices} pitched voices against the ${KEPT_VOICES} his kept songs carry (r25, his "piano too loud" x7)${r33() && LEAD_SOUND === 'piano' ? ' — and the kit rides the same trim so the drum cap’s ratio survives (r33)' : ''}`);
   }
   let mix = mixParts.length > 1 ? `stack(${mixParts.join(', ')})` : mixParts[0];
 
@@ -7052,6 +7826,66 @@ function vrBestTarget(units, targets = [16, 32]) {
 // NICHE LANES ARE UNREACHABLE, twice over: every rule goes through `r28()`, and
 // no row names a niche environment. His r27 ruling and the research's own §5.2
 // agree, so this is not a courtesy.
+// ===========================================================================
+// r30 — audition/energy.html : HIS LABELS, SERVED AT A HIGHER ENERGY
+// ===========================================================================
+//   ENERGY=1 node scripts/audition-songs.mjs  ->  audition/energy.html
+//
+// This page answers BOTH halves of his r30 message at once, because they are the
+// same feature.
+//
+// HALF ONE — the labels. His ruling: "no i mean label-wise for that song, x song
+// could also be used given other various prompts rather than specific that one.
+// so that instrument preset and pattern and what not works." A song he likes is a
+// FINISHED OBJECT; what widens is the set of prompts it may be served for. That
+// is `src/lib/song-labels.js`, built from his own notes only.
+//
+// HALF TWO — the energy layer. His r28 clause, repeated in r30: "if it's
+// energetic just add the percussive strings I mentioned with their repeated
+// intervals + percussion and boom", and then "try the synth/violin rise ... some
+// given intervals and it repeats those intervals over and over to convey energy".
+//
+// Put together: serving a labelled song at a HIGHER energy means ADDING layers to
+// the song he already judged, never regenerating it. So every core appears TWICE:
+//
+//   card 1  the song exactly as he judged it (byte-identical mix expected)
+//   card 2  the same song + the r30 rise + the marcato + percussion
+//
+// The A/B is therefore clean by construction — one variable, and the base card is
+// checkable against the judged page.
+// ===========================================================================
+// r31 — audition/reels.html : THE LAYER PATTERNS, RECOMBINED
+// ===========================================================================
+//   REELS=1 node scripts/audition-songs.mjs  ->  audition/reels.html
+//
+// HIS ASK: "the idea is that we can merge all the patterns I feed you and select
+// and choose and combine regardless of what reel they came from, using metadata
+// and verification and which combos work well" ... "once you're done, generate a
+// song suite showing and experimenting with what you learned".
+//
+// So the page is built in three deliberate blocks:
+//
+//   FAITHFUL   one song per vibe class, using ONLY that class's own reel layers.
+//              This is the control: does the hardcoding reproduce the vibe he
+//              labelled? If a faithful card misses, the transcription is wrong
+//              and no amount of recombination will save it.
+//   CROSSED    the actual ask — stacks built from layers of DIFFERENT reels,
+//              chosen by `comboScore` (disjoint registers, low onset overlap, a
+//              complete bass/harmony/top set). The score and its reasons print on
+//              the card, so a combination he dislikes can be read back against
+//              the numbers that picked it.
+//   DEVICE     his reel-1 aside on its own: the ascending re-pitched arpeggio
+//              ("play those intervals from bottom to top over and over again ...
+//              then repeat for another chord"), against the r30 descending frozen
+//              form, so the two are separable by ear.
+//
+// The three replicate reels (3, 5, 8 — all "sounds like 3") get a card each in
+// FAITHFUL, because they are the only vibe with independent samples and therefore
+// the only place his ear can tell me whether the shared features are the vibe.
+const REELS_PAGE = process.env.REELS === '1';
+
+const ENERGY_PAGE = process.env.ENERGY === '1';
+
 const LAYERSTACK = process.env.LAYERSTACK === '1';
 const LS_PROMPTS = [
   // ---- the descending loop: 4 of 9 reels, one producer's habit --------------
@@ -7145,7 +7979,12 @@ const VR_PROMPTS = [
 const CP_PROMPTS = [
   { pin: 'cp_sus_float',        e: 'calm',       v: 'menu',      opts: { layerStack: true },
     why: 'HIS "lobby" case. A sus that never resolves, on the layer stack: frozen pedal, accent-line harmony, no drums.' },
-  { pin: 'cp_royal_road',       e: 'nostalgic',  v: 'shop',      opts: {},
+  // r33: PROSE KEEP ("this is a good theme, very groovy, I like it. no
+  // complaints") — pinFrom stops this round's rules; voicedColor keeps the
+  // colour upgrade the pin would otherwise retract (colorFresh reads
+  // !opts.pinFrom — the exact D118 catch-22, resolved by forcing the judged
+  // capability explicitly).
+  { pin: 'cp_royal_road',       e: 'nostalgic',  v: 'shop',      opts: { pinFrom: 'r33', voicedColor: true },
     why: 'The ROYAL ROAD (IV-V-iii-vi) — the J-pop backbone, and the progression his "cloudy/moody day" reel turned out to be.' },
   { pin: 'cp_lobby_sixnine',    e: 'calm',       v: 'rest',      opts: { layerStack: true },
     why: 'HIS "hotel lobby": a 6/9 tonic with no leading tone anywhere, and the V short enough to be a hinge rather than a cadence.' },
@@ -7161,7 +8000,9 @@ const CP_PROMPTS = [
     why: 'The one entry that suits an action lane — bVII instead of V, so it drives without ever resolving. Moved off "boss" because the battle lane gives the low end to the acc hand (accToBass), and the funk bounce stands down there — one low voice at a time.' },
   { pin: 'cp_descending_bass',  e: 'nostalgic',  v: 'snow',      opts: {},
     why: 'The city-pop signature: a MINOR IV and a chromatic bass descent under static upper voices — the motion our acc hand has never had.' },
-  { pin: 'cp_planing_maj7',     e: 'mysterious', v: 'space',     opts: { layerStack: true },
+  // r33: PROSE KEEP ("I like this song a lot ... really good") — same pin +
+  // forced colour as cp_royal_road above.
+  { pin: 'cp_planing_maj7',     e: 'mysterious', v: 'space',     opts: { layerStack: true, pinFrom: 'r33', voicedColor: true },
     why: 'Parallel major sevenths moved intact, on the layer stack. Modal, no dominant — an atmosphere lane progression.' },
   { pin: 'cp_backdoor',         e: 'somber',     v: 'aftermath', opts: {},
     why: 'The backdoor cadence: arrives at the tonic from bVII, so it reads as consolation rather than resolution.' },
@@ -7260,6 +8101,337 @@ function buildCityPop() {
     S.devices = fired.join(', ') || 'none';
     S.devicesAsked = Object.keys(row.opts).join(', ') || 'none';
     S.alsoAdmitted = admits.map((x) => x.name).filter((n) => n !== row.pin).join(', ') || '(only this one)';
+  }
+}
+
+let RL_FIRST = 0;
+if (REELS_PAGE) {
+  RL_FIRST = songs.length;
+  const CLASSES = Object.entries(VIBE_CLASSES);
+  // r32 — HIS RULING: "why so many duplicate names? surely you have more
+  // scenarios." Measured on the page he judged: 5 of 16 songs were happy/menu
+  // and 3 were mysterious/space. A vibe class now spends its OWN prompt list
+  // rather than always taking `lanes[0]`/`emotions[0]`, so no two cards on the
+  // page claim the same (emotion, environment) pair.
+  const usedPrompts = new Set();
+  const promptFor = (cls, salt) => {
+    const combos = [];
+    for (const env of cls.lanes) for (const emo of cls.emotions) combos.push([emo, env]);
+    const start = fnv(`${salt}|prompt`) % Math.max(1, combos.length);
+    for (let i = 0; i < combos.length; i += 1) {
+      const [emo, env] = combos[(start + i) % combos.length];
+      if (!usedPrompts.has(`${emo}|${env}`)) { usedPrompts.add(`${emo}|${env}`); return { emotion: emo, environment: env, meter: '4/4' }; }
+    }
+    const [emo, env] = combos[start];
+    return { emotion: emo, environment: env, meter: '4/4' };
+  };
+
+  // r33 — per-card answers to his notes, keyed BY NAME so they can never leak
+  // to another card:
+  //  - r5: "more of a sneaky/goofy vibe because of the boogy, not happy" (the
+  //    D122 riff-pool shape reaching his ear a second time — prefer pulse) +
+  //    "maybe add more layers" (the companion is his most-repeated love);
+  //  - cross_casual_task: "it should be more layers";
+  //  - cross_industrial_mission: "the percussion too loud and doesn't really
+  //    fit the vibe" — the kit stood at FOREGROUND with 52.9% of ALL mix
+  //    events on a lab card; one notch down.
+  const REELS_CARD_OPTS = {
+    // (accSound pins the hand to the piano — the class swap alone re-rolled
+    // the acc voice to a synth bass at 0.99x the lead, r33 verify)
+    rl_casual_task_r5: { accClassPrefer: 'pulse', companion: true, accSound: 'piano' },
+    rl_cross_casual_task: { companion: true },
+    rl_cross_industrial_mission: { percPresence: 'driving' },
+    // r33: PROSE KEEP — "love this vibe ... otherwise love the layering and it
+    // fits the vibe", his strongest card of the round, with exactly ONE
+    // complaint: "main synth is too loud". Measured: the complaint is the
+    // gm_epiano1 melody complex (lead 0.46 + register copy 0.42 + acc 0.34 —
+    // three layers on one sound, 47% of all onsets). So the song is PINNED
+    // from this round's rules and gets only the named fix: a 15% trim on the
+    // lead complex (leadGainMul is opts-level, so it survives the pin; the acc
+    // rides accUnderLead x leadGain and trims with it).
+    rl_device_rise_down: { pinFrom: 'r33', leadGainMul: 0.85 },
+  };
+  const mk = (name, prompt, opts, meta) => {
+    // r32: a FAITHFUL card takes a LEAN default set. The rich set below exists
+    // to make an ENGINE arrangement good; spreading it before `...opts` would
+    // hand `octaveDouble: true` etc. straight past opts.reelFaithful's stand-down.
+    // r33 additions to BOTH sets: `noHandoff` — the D90 handoff chain put the
+    // tune on flute/vibraphone/epiano at 1.01-1.04x the lead's gain in its
+    // 78-83 register, and those segments are TEN of his sixteen r33 complaint
+    // cards ("flute too loud" x5, "glockenspiel way too loud" x2 — there is no
+    // glockenspiel on the page, it is gm_vibraphone — "melody synth", r1's
+    // "second section randomly got louder" = the same-timbre 2.54x jump at the
+    // first handoff seam, and r2's "the piano just abruptly cuts off" = the
+    // lead stopping dead at its handoff). A reel plays one instrument per
+    // role; the tune keeps its voice. `ambientSwell` — his cross_casual_task_
+    // active ask, defaulted page-wide exactly as he said ("abstracted to other
+    // songs too").
+    const base = opts.reelFaithful
+      ? {
+        totalBarsCap: 32, noteBlind: true, noJitter: true, supportUnderLead: true,
+        metronomeAcc: true, entryRunGuard: true, scaleTokensInKey: true,
+        percBackbeat: true, deepDrums: true, noHandoff: true, ambientSwell: true,
+        // r33: the reel's harmony plays AS TRANSCRIBED — the bridge/treat
+        // departure recoloured rl_dark_space_r1's two madd9 chords into D#- and
+        // A#-MAJOR triads for bars 12-19 (a `mixture` op; 32 out-of-key notes =
+        // 100% of the song's OOK, exactly the section his "is major for some
+        // reason" names). D122 already set accVary/accTravel false here for the
+        // same reason; the harmony departure was the half still standing.
+        bridgeHarmony: false, rawHarmony: true,
+      }
+      : {
+        totalBarsCap: 32, noteBlind: true, noJitter: true, supportUnderLead: true,
+        textureVary: true, layerRest: true, metronomeAcc: true, entryRunGuard: true,
+        echoLayer: false, r23: true, deepDrums: true, octaveDouble: true,
+        obliqueCompanion: true, percBackbeat: true, supportFigure: true,
+        scaleTokensInKey: true, companionFamilySplit: true, noHandoff: true, ambientSwell: true,
+        // r33: crossed cards keep the reel's harmony untouched too (same
+        // mixture-recolour risk; a cross is engine layers over REEL harmony)
+        bridgeHarmony: false, rawHarmony: true,
+      };
+    buildSong(prompt, name, { ...base, ...(REELS_CARD_OPTS[name] ?? {}), ...opts });
+    const S = songs[songs.length - 1];
+    Object.assign(S, meta);
+    const castTxt = (S.cast ?? []).join(' | ');
+    const m = /reel layers \(r3[12]\): ([^|]+)/.exec(castTxt);
+    S.reelLayersCast = m ? m[1].trim() : (opts.reelLayers ? 'NONE CAST — check the metronome test / energy floor' : 'n/a (device card, no library layers)');
+    return S;
+  };
+
+  // The reel's own harmony, served with its measured sub-bar rhythm (r32).
+  const harmonyOf = (prog, progKey) => (progKey ? {
+    basePin: progKey, rawBase: true,
+    ...(prog.family ? { family: prog.family } : {}),
+    ...(prog.bpm ? { bpm: prog.bpm } : {}),
+    // AND THE REEL'S ACTUAL KEY — `keyHint` is otherwise picked by hashing the
+    // song NAME (r30/D120), so a "faithful" card would render the reel's
+    // progression in an arbitrary tonic.
+    ...(prog.key ? { keyHint: String(prog.key).split(':')[0] } : {}),
+    // …AND ITS MODE. `family` only distinguishes major/minor, so a modal reel
+    // (reel 8 is D dorian) was built in the parallel MAJOR — his "the melody in
+    // the glockenspiel doesn't sound on key".
+    ...(String(prog.key).includes(':') && !['major', 'minor'].includes(String(prog.key).split(':')[1])
+      ? { keyScale: String(prog.key).split(':')[1] } : {}),
+    // r32 · THE SUB-BAR HARMONIC RHYTHM. This is the fix for his "it should be
+    // hardcoded more faithfully to the reel". r31 expressed every reel through
+    // `chordUnits`, which allocates whole BARS, so reel 7's four-chords-per-bar
+    // turnaround became four bars and reel 4's seventeen chords became four.
+    ...(Array.isArray(prog.chordBeats) ? { chordBeats: prog.chordBeats } : {}),
+  } : {});
+
+  // pick the mutually-compatible set of a reel's rows, primary first
+  const stackOf = (rows) => {
+    const out = [];
+    for (const l of [...rows].sort((a, b) => (b.primary ? 1 : 0) - (a.primary ? 1 : 0))) {
+      if (out.some((c) => (c.exclusiveWith ?? []).includes(l.name)
+        || (l.exclusiveWith ?? []).includes(c.name))) continue;
+      out.push(l);
+    }
+    return out;
+  };
+
+  // ---- BLOCK 1 · FAITHFUL --------------------------------------------------
+  // One song per (vibe class, reel) from that reel's OWN layers, its OWN chords
+  // at their OWN harmonic rhythm, in its OWN key, on its OWN instruments, with
+  // the engine's discretionary cast stood down (opts.reelFaithful).
+  for (const [vibe, cls] of CLASSES) {
+    for (const reel of cls.reels) {
+      const mine = stackOf(layersFor({ vibe }).filter((l) => l.reel === reel));
+      if (!mine.length) continue;
+      const progEntry = Object.entries(REEL_PROGRESSIONS).find(([, p]) => p.reel === reel);
+      const [progKey, prog] = progEntry ?? [null, null];
+      const sc = comboScore(mine.map((l) => l.name));
+      const name = `rl_${vibe}_r${reel}`;
+      // the reel's chord row takes the ACC slot rather than stacking beside the
+      // engine's own harmony hand (r32 — see opts.reelAcc)
+      const accRow = mine.find((l) => l.role === 'chords');
+      const rest = mine.filter((l) => l !== accRow);
+      mk(name, promptFor(cls, name), {
+        ...(prog ? harmonyOf(prog, progKey) : {}),
+        ...(accRow ? { reelAcc: accRow.name, accSound: accRow.sound, accOctave: 3 } : {}),
+        reelLayers: rest.map((l) => l.name),
+        reelFaithful: true,
+        // AND THE REEL'S OWN INSTRUMENTS. r31 set `fullSynth: true` on every
+        // card, and the adapter reads `lp.synthSound` when it is on — so the
+        // accordion became a square lead, the pizzicato strings a sawtooth, the
+        // contrabass a synth bass and BOTH tubular-bell rows a music box. That
+        // last substitution is most of his "the vibraphone is a bit overused in
+        // general": gm_music_box was on 15 of 16 songs and not one reel row
+        // names it. A faithful card plays what was played.
+        fullSynth: false,
+      }, {
+        block: 'FAITHFUL', vibeClass: vibe, sourceReel: reel, hisLabel: cls.his,
+        combo: `${sc.score}/100 — ${sc.reasons.join(' · ')}`,
+        why: `FAITHFUL (r32): reel ${reel}'s own layers, its own chords AT ITS OWN HARMONIC RHYTHM `
+          + `(${prog?.chordBeats?.length ?? '?'} chords over ${prog?.chordBeats ? prog.chordBeats.reduce((a, b) => a + b, 0) / 4 : '?'} bars), `
+          + `in its own key (${prog?.key ?? '?'}), on its own instruments — and with the engine's `
+          + `discretionary cast stood down. His label for that reel: "${cls.his}". `
+          + 'r31 served this reel as four chords of one bar each with a full engine arrangement on top; '
+          + 'he heard that as "the combination wasn’t that good".',
+      });
+    }
+  }
+
+  // ---- BLOCK 2 · CROSSED ---------------------------------------------------
+  // HIS ASK: "combine regardless of what reel they came from ... using metadata
+  // and verification and which combos work well". A cross keeps a reel's
+  // HARMONY (r32 — r31 let these retrieve whatever the engine had, and 5 of 6
+  // came out on a non-reel progression; his "it has some random Egyptian chord
+  // D13" is `vid_citypop_c_a`, which no reel ever played) and crosses the
+  // LAYERS over it.
+  const ROLE_ORDER = ['bass', 'chords', 'pad', 'pluck', 'arp', 'lead', 'counter', 'perc'];
+  for (const [vibe, cls] of CLASSES) {
+    // THE POOL MUST BE VIBE-ANCHORED OR EVERY CROSS CONVERGES (r31, measured:
+    // three vibes produced the identical stack). A cross starts from the vibe's
+    // own material and reaches outward.
+    const own = layersFor({ vibe });
+    const others = Object.entries(LAYER_PATTERNS)
+      .map(([nm, lp]) => ({ ...lp, name: nm }))
+      .filter((l) => !l.vibes.includes(vibe));
+    const pool = [...own, ...others];
+    if (own.length < 1 || pool.length < 3) continue;
+    const chosen = [];
+    for (const role of ROLE_ORDER) {
+      const cands = pool.filter((l) => l.role === role && !chosen.some((c) => c.name === l.name)
+        && !chosen.some((c) => (c.exclusiveWith ?? []).includes(l.name) || (l.exclusiveWith ?? []).includes(c.name)));
+      if (!cands.length) continue;
+      let best = null;
+      for (const c of cands) {
+        const s2 = comboScore([...chosen, c].map((x) => x.name));
+        if (!best || s2.score > best.sc.score) best = { c, sc: s2 };
+      }
+      if (best && (chosen.length < 2 || best.sc.score >= comboScore(chosen.map((x) => x.name)).score)) chosen.push(best.c);
+      if (chosen.length >= 5) break;
+    }
+    if (chosen.length < 3) continue;
+    const reels = [...new Set(chosen.map((c) => c.reel))];
+    if (reels.length < 2) continue;                                   // not a CROSS unless it crosses
+    if (!chosen.some((c) => c.vibes.includes(vibe))) continue;        // and it keeps its own vibe
+    // the harmony comes from a reel in the cross — preferring the vibe's own
+    const hostReel = reels.find((r) => cls.reels.includes(r)) ?? reels[0];
+    const hostEntry = Object.entries(REEL_PROGRESSIONS).find(([, p]) => p.reel === hostReel);
+    const [hostKey, hostProg] = hostEntry ?? [null, null];
+    const sc = comboScore(chosen.map((c) => c.name));
+    const name = `rl_cross_${vibe}`;
+    const accRow = chosen.find((c) => c.role === 'chords');
+    const rest = chosen.filter((c) => c !== accRow);
+    mk(name, promptFor(cls, name), {
+      ...(hostProg ? harmonyOf(hostProg, hostKey) : {}),
+      ...(accRow ? { reelAcc: accRow.name, accSound: accRow.sound, accOctave: 3 } : {}),
+      reelLayers: rest.map((c) => c.name),
+      reelFaithful: true, fullSynth: false,
+    }, {
+      block: 'CROSSED', vibeClass: vibe, sourceReel: reels.join('+'), hisLabel: cls.his,
+      combo: `${sc.score}/100 — ${sc.reasons.join(' · ')}`,
+      why: `CROSSED: layers taken from reels ${reels.join(', ')} and stacked over reel ${hostReel}'s `
+        + `own chords (${hostProg?.key ?? '?'}), chosen greedily by the combination score — disjoint `
+        + 'registers, low onset overlap, a complete bass/harmony/top set. This is the ask: "combine '
+        + 'regardless of what reel they came from". The score that picked this stack is printed above, '
+        + 'so if it sounds wrong you can tell me which term is lying.',
+    });
+  }
+
+  // ---- BLOCK 3 · THE REEL-1 DEVICE, A/B ------------------------------------
+  // His aside on reel 1: "the chord that they reveal you could also play those
+  // intervals from bottom to top over and over again like D F F# A# repeat and
+  // then repeat for another chord". That is the r30 rise INVERTED — ascending,
+  // and re-pitched instead of frozen.
+  const DEV_PROMPTS = [{ emotion: 'mysterious', environment: 'space', meter: '4/4' },
+    { emotion: 'tense', environment: 'lab', meter: '4/4' }];
+  for (const [ix, [dir, note]] of [['down', 'r30 — DESCENDING and FROZEN, as measured off the Demon Slayer example (one cell held over five different chords)'],
+    ['up', 'r31 — ASCENDING and RE-PITCHED, his reel-1 aside: "those intervals from bottom to top over and over again ... then repeat for another chord"']].entries()) {
+    mk(`rl_device_rise_${dir}`, DEV_PROMPTS[ix], {
+      basePin: 'sr_stepwise_floor', rawBase: true, family: 'minor', bpm: 80,
+      // his note on the A card: "otherwise this song sounds good but synths a bit
+      // too loud". Measured, the loud synth is the ACC — gm_epiano1 at 1.81x the
+      // lead, because the acc's band tops out at an absolute 1.0 and never looks
+      // at the tune (see opts.accUnderLead). The cast layers were already capped
+      // relative to the lead by r29; only the acc was not.
+      accUnderLead: true,
+      layerStack: true, rubBudget: 1.60, frozenSlot: true, coprimeCell: true,
+      reregister: true, holdMove: true, doublePeriod: true, finalBarBreak: true,
+      synthRise: dir === 'up' ? { direction: 'up' } : true,
+    }, {
+      block: 'DEVICE', vibeClass: 'dark_space', sourceReel: dir === 'up' ? 1 : null,
+      hisLabel: VIBE_CLASSES.dark_space.his, combo: 'n/a — single device A/B',
+      why: `DEVICE A/B, ${dir === 'up' ? 'B' : 'A'}: the rise ${dir === 'up' ? 'ASCENDING' : 'DESCENDING'}. ${note}. `
+        + 'Same device, same settings — the direction and the freeze are the only variables. '
+        + '(r32: the two cards now take DIFFERENT prompts, per "why so many duplicate names?")',
+    });
+  }
+}
+let EN_FIRST = 0;
+if (ENERGY_PAGE) {
+  EN_FIRST = songs.length;
+  // The rows are HIS LABELS, read from src/lib/song-labels.js — a song is on this
+  // page only because one of his notes put it there. `servedAs` is the prompt the
+  // label says it also covers, so the card can be judged as that prompt.
+  const EN_ROWS = [
+    { pin: 'sr_stepwise_floor', e: 'mysterious', v: 'space', bpm: 80, label: 'ls_stepwise_floor_mysterious',
+      servedAs: { emotion: 'tense', environment: 'lab' } },
+    { pin: 'sr_stepwise_floor', e: 'calm', v: 'water', bpm: 80, label: 'ls_stepwise_floor_calm',
+      servedAs: { emotion: 'calm', environment: 'menu' } },
+    { pin: 'sr_iii_vi_v', e: 'mysterious', v: 'space', bpm: 91, label: 'ls_iii_vi_v_mysterious',
+      // its layerstack row carries motorFall; the base card must carry it too or
+      // it is not the song he judged (caught by the byte compare — `mix` differed)
+      motor: true,
+      servedAs: { emotion: 'triumphant', environment: 'boss' } },
+    { pin: 'sr_descend_iv_v', e: 'somber', v: 'snow', bpm: 69, label: 'ls_descend_iv_v_somber',
+      servedAs: { emotion: 'somber', environment: 'aftermath' } },
+  ];
+  for (const row of EN_ROWS) {
+    const entry = PROGRESSIONS_SERUM[row.pin];
+    if (!entry) { console.error(`missing progression ${row.pin}`); continue; }
+    // The BASE options are byte-for-byte the r28/r29 layerstack row, so card 1
+    // reproduces exactly what he judged. Any drift here invalidates the A/B.
+    const base = {
+      basePin: row.pin, rawBase: true, family: 'minor', bpm: row.bpm,
+      totalBarsCap: 32, layerStack: true, rubBudget: 1.60,
+      reregister: true, holdMove: true, doublePeriod: true, finalBarBreak: true,
+      motorFall: row.motor === true, frozenSlot: true, coprimeCell: true, layerRest: true,
+      noJitter: true, supportUnderLead: true, textureVary: true, noteBlind: true,
+      echoLayer: false,
+      r23: true, deepDrums: true, octaveDouble: true,
+      obliqueCompanion: true, percBackbeat: true, supportFigure: true,
+      scaleTokensInKey: true, companionFamilySplit: true,
+      metronomeAcc: true, entryRunGuard: true,
+    };
+    for (const lift of [false, true]) {
+      // BOTH CARDS ARE BUILT UNDER THE JUDGED SONG'S NAME, then the energised one
+      // is renamed for display. This is not cosmetic: `keyHint` is
+      // `weightedPick(KEY_POOLS[family], fnv(`${name}|tonic`))` and a dozen other
+      // choices hash on the name too, so building the pair under two names would
+      // give them different KEYS and different retrievals — measured this round,
+      // five names for one prompt produced C, G, A, D and A#. The A/B would then
+      // be testing the name, not the energy.
+      const name = row.label;
+      buildSong({ emotion: row.e, environment: row.v, meter: '4/4' }, name, {
+        ...base,
+        // THE ONLY DIFFERENCE between the two cards. Everything above is shared.
+        ...(lift ? {
+          synthRise: true,          // r30, his example
+          marcato: true,            // "the percussive strings I mentioned"
+          percPresence: 'background', // "+ percussion and boom"
+        } : {}),
+      });
+      const S = songs[songs.length - 1];
+      if (lift) S.name = `${row.label}_energised`;
+      S.pinned = row.pin;
+      S.idiomName = entry.idiomName;
+      S.published = entry.voicedAs.join('  ');
+      S.hisLabel = SONG_LABELS[row.label]?.source ?? null;
+      S.servesLine = servesLine(row.label);
+      S.servedAs = `${row.servedAs.emotion} / ${row.servedAs.environment}`;
+      S.why = lift
+        ? `ENERGISED. The same song as the card above plus three additions and nothing else: the r30 synth rise (his example), the marcato ("the percussive strings I mentioned with their repeated intervals") and percussion ("+ percussion and boom"). If the base card and this one differ anywhere else, that is a bug.`
+        : `BASE \u2014 the song as he judged it on audition/layerstack.html. His label says it also serves ${row.servedAs.emotion}/${row.servedAs.environment}; this card is here so the energised one has an honest control.`;
+      const castTxt = (S.cast ?? []).join(' | ');
+      S.devices = [
+        /synth rise \(r30/.test(castTxt) ? 'r30 rise' : null,
+        /marcato:/.test(castTxt) ? 'marcato' : null,
+        (S.drums ?? []).length ? 'percussion' : null,
+      ].filter(Boolean).join(', ') || 'none (base)';
+    }
   }
 }
 
@@ -7738,6 +8910,34 @@ if (SUITE) {
   const inl2 = ccHtml.slice(ccHtml.lastIndexOf('<script>') + 8, ccHtml.lastIndexOf('</script>'));
   acorn.parse(inl2, { ecmaVersion: 'latest' });
   console.log(`wrote audition/chordcam.html — ${songs.length - CC_FIRST} songs on ${new Set(CC_PROMPTS.map((r) => r.pin)).size} transcribed progressions (page script parses clean, ${(inl2.length / 1024).toFixed(0)} KB)`);
+} else if (REELS_PAGE) {
+  const rlHtml = page({ songs: songs.slice(RL_FIRST).map(({ solos, ...rest }) => ({ ...rest, solos })) })
+    .replace(/motif-engine:song-verdicts/g, 'motif-engine:reels-verdicts')
+    .replace(/motif-engine:song-notes/g, 'motif-engine:reels-notes')
+    .replace(/motif-engine:song-cards/g, 'motif-engine:reels-cards')
+    .replace("page: 'songs'", "page: 'r31-reels'")
+    .replace('<title>vibe songs — audition</title>', '<title>r31 — the reel layer patterns, recombined</title>');
+  writeFileSync(join(OUT, 'reels.html'), rlHtml);
+  const inl6 = rlHtml.slice(rlHtml.lastIndexOf('<script>') + 8, rlHtml.lastIndexOf('</script>'));
+  acorn.parse(inl6, { ecmaVersion: 'latest' });
+  const built = songs.slice(RL_FIRST);
+  const byBlock = {};
+  for (const b of built) byBlock[b.block] = (byBlock[b.block] ?? 0) + 1;
+  console.log(`wrote audition/reels.html — ${built.length} songs (${Object.entries(byBlock).map(([k, v]) => `${v} ${k}`).join(', ')}), page script parses clean, ${(inl6.length / 1024).toFixed(0)} KB`);
+  for (const b of built) console.log(`   ${b.name.padEnd(28)} ${b.reelLayersCast}`);
+} else if (ENERGY_PAGE) {
+  const enHtml = page({ songs: songs.slice(EN_FIRST).map(({ solos, ...rest }) => ({ ...rest, solos })) })
+    .replace(/motif-engine:song-verdicts/g, 'motif-engine:energy-verdicts')
+    .replace(/motif-engine:song-notes/g, 'motif-engine:energy-notes')
+    .replace(/motif-engine:song-cards/g, 'motif-engine:energy-cards')
+    .replace("page: 'songs'", "page: 'r30-energy'")
+    .replace('<title>vibe songs — audition</title>', '<title>r30 — his labels, served at a higher energy</title>');
+  writeFileSync(join(OUT, 'energy.html'), enHtml);
+  const inl5 = enHtml.slice(enHtml.lastIndexOf('<script>') + 8, enHtml.lastIndexOf('</script>'));
+  acorn.parse(inl5, { ecmaVersion: 'latest' });
+  const built = songs.slice(EN_FIRST);
+  console.log(`wrote audition/energy.html — ${built.length} songs (${built.length / 2} cores x base/energised), page script parses clean, ${(inl5.length / 1024).toFixed(0)} KB`);
+  for (const b of built.filter((x) => x.name.endsWith('_energised'))) console.log(`   ${b.name}: ${b.devices}`);
 } else if (LAYERSTACK) {
   // Same rule as the chordcam and vanriver pages: render ONLY the ls_* songs.
   // buildSong appends to the shared array, so `page()` carries every judged card

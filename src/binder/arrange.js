@@ -1091,12 +1091,22 @@ export function renderArrangement(plan, ctx) {
       // while the lead does not. His words: "sometimes sounds like a 16th note
       // off beat - align those". Two layers, one cell, different tails.
       ...(ctx.leadOpts.minNoteLast ? { minNoteLast: true } : {}),
+      // r33: the grid law rides the same channel, for the same r29 reason —
+      // a lead-derived layer that keeps the odd-16th onset the lead just
+      // snapped plays the very displacement the fix removed.
+      ...(ctx.leadOpts.gridSnap ? { gridSnap: true } : {}),
+      ...(ctx.leadOpts.subBarChords ? { subBarChords: true } : {}),
+      ...(ctx.leadOpts.tissue ? { tissue: true } : {}),
     };
   };
   for (const layer of plan.layers) {
     const common = {
       style: ctx.style ?? 'toby-fox', octave: layer.octave,
-      sound: layer.instrument, fx: `.gain(${layer.gain})`,
+      // r33 (composeGain): a flat .gain() APPENDED to bindMelody's authored
+      // accent envelope REPLACES it — later .gain wins — so every arranged
+      // melody-family layer realized uniform velocity. .mul(gain()) composes.
+      // Threaded via leadOpts like minNoteLast so judged callers do not move.
+      sound: layer.instrument, fx: ctx.leadOpts?.composeGain ? `.mul(gain(${layer.gain}))` : `.gain(${layer.gain})`,
     };
     let expr = null, rhythmSource = null;
     try {

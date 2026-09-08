@@ -66,6 +66,48 @@ export const RHYTHMS = {
     meter_class: '4/4', tags: ['perc', 'industrial', 'metal'],
     character: 'Metal-rod and stick hits on an off-grid pattern over the kit — machinery, not a drummer.',
   },
+  // ==========================================================================
+  // r32 — HIS CONSTRUCTION CARD, twice in one export:
+  //   "I feel like the stick hit you're using for construction should be a
+  //    notable part of the percussion and be part of a groovy beat rather than
+  //    just hitting 3 times once per beat every measure"
+  //   "also the same 3 stick is just used every construction or what?"
+  //
+  // Both are the same defect and it is the D119 shape AGAIN: `industrial_metal`
+  // was the ONLY row in the whole library carrying a stick or a metal rod, and
+  // the generator names it literally — `if (env === 'construction') picks =
+  // [...picks, 'industrial_metal']`. One member, so there was nothing for a
+  // hash to rotate over and every construction song got the identical part.
+  //
+  // These two are its groove-forward siblings. The design brief is his sentence:
+  // the stick has to be STRUCTURAL (it lands where a backbeat or an accent
+  // lands, so the ear files it as part of the beat) rather than three decorative
+  // offbeats, and the pattern has to have a shape a listener can follow.
+  industrial_stick_backbeat: {
+    role: 'percussion', band: 'mid', style: 'industrial', provenance: 'hand-written', ratified: false,
+    bars: 2,
+    // the STICK is the backbeat (2 and 4); metal rods ghost around it and a
+    // 16th pickup drags into the next bar. Two bars so the second answers.
+    onsets: ['1/4', '3/8', '3/4', '15/16', '5/4', '11/8', '7/4', '15/8', '31/16'],
+    sounds: ['md_stick', 'md_metal', 'md_stick', 'md_metal',
+      'md_stick', 'md_metal', 'md_stick', 'md_metal', 'md_stick'],
+    accents: [1.0, 0.4, 0.95, 0.35, 1.0, 0.42, 0.95, 0.5, 0.6],
+    meter_class: '4/4', tags: ['perc', 'industrial', 'metal', 'backbeat'],
+    character: 'The stick IS the backbeat — 2 and 4 — with metal rods ghosting off it and a 16th '
+      + 'pickup into the next bar. His "should be a notable part of the percussion" rather than an ornament.',
+  },
+  industrial_rivet_tresillo: {
+    role: 'percussion', band: 'mid', style: 'industrial', provenance: 'hand-written', ratified: false,
+    // 3+3+2 over the bar (the tresillo the kick already knows) with the stick on
+    // the group heads and rivets filling the 16ths between — a machine that
+    // swings rather than a machine that ticks.
+    onsets: ['0', '3/16', '3/8', '9/16', '3/4', '7/8', '15/16'],
+    sounds: ['md_stick', 'md_metal', 'md_stick', 'md_metal', 'md_stick', 'md_metal', 'md_metal'],
+    accents: [1.0, 0.38, 0.9, 0.36, 0.95, 0.42, 0.3],
+    meter_class: '4/4', tags: ['perc', 'industrial', 'metal', 'tresillo'],
+    character: 'Stick on the 3+3+2 group heads with metal rivets filling the 16ths between them — '
+      + 'the industrial floor as a GROOVE, not a tick.',
+  },
   backbeat_ghost: {
     role: 'percussion', band: 'mid', style: 'universal', provenance: 'hand-written', ratified: false,
     onsets: ['1/4', '7/16', '3/4', '15/16'],

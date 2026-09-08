@@ -508,6 +508,7 @@ export const TECHNIQUES = [
     },
     shape: 'One token binds to the chord root; the rest are pinned scale pitches held for the loop. Colour arises from re-harmonisation, never from substitution.',
     applies: { roles: ['acc', 'ostinato', 'marcato'] },
+    secondSource: 'r30 — CONFIRMED BY AN INDEPENDENT SOURCE. He left a 23s Synthesia recording of a Demon Slayer OST piano arrangement (research/reel-energy-rise-r30.md): its right hand plays one unchanged 3-note cell (C5 G4 F4) over FIVE different bass notes, and a 4-note cell (B4 G4 F#4 E4) over three. R2 was 4 reels by one producer; this is a different arranger entirely, and the freeze is identical. Wired a second time as opts.synthRise, which freezes PER SECTION rather than per loop.',
     status: 'wired', impl: 'audition-songs.mjs opts.frozenSlot — the frozen body binds against a CONSTANT tonic context, one slot binds against the real progression',
     wiredNote: 'r23. Verified on the emitted notes of all 14 stress-test songs: every position in the frozen body carries exactly ONE distinct pitch across all bars, while the moving slot carries 3-6. Opt-in, not a default: rolled by hash it moved 10 of the 47 judged songs including three lanes that pin their own texture.',
   },

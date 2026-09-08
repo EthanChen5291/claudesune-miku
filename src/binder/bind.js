@@ -199,7 +199,37 @@ export function resampleShape(parsed, S) {
  * opts: { octave=4, sound=null, fx='', gainRange, cadence=null, transform=null,
  *         legato=(melodic?true:false), motifName=null, rhythmName=null }
  */
+// r32 — a harmony context carrying a SUB-BAR rhythm (`chordBeats`, see
+// bindFigure) collapsed to one symbol per BAR: the chord sounding at each
+// downbeat. bindFigure resolves per onset and wants the real thing; every
+// other binder here reasons in whole bars — melodic phrase logic, cadence
+// landing, masks and section alignment are all bar-quantised — and handing one
+// of them a 17-symbol progression that lasts 4 bars would give it a 17-bar
+// harmonic period misaligned with the 4-bar grid.
+//
+// This is an approximation and it is worth being explicit about: over reel 7,
+// which changes chord every beat, a melody bound this way sees the downbeat
+// chord only. It is safe (the key is right, the downbeat is the bar's
+// structural chord) but it is not the same fidelity the figures get.
+function perBarHarmony(harmonyContext, meter) {
+  const cb = harmonyContext?.chordBeats;
+  if (!Array.isArray(cb) || cb.length !== harmonyContext.harmony?.length) return harmonyContext;
+  const beatsInBar = Math.max(1, Number(String(meter).split('/')[0]) || 4);
+  const total = cb.reduce((a, b) => a + Number(b), 0);
+  const bars = Math.max(1, Math.round(total / beatsInBar));
+  const edges = []; let acc = 0;
+  for (const b of cb) { edges.push(acc); acc += Number(b); }
+  const harmony = Array.from({ length: bars }, (_, i) => {
+    const pos = i * beatsInBar;
+    let k = 0;
+    for (let j = 0; j < edges.length; j++) if (edges[j] <= pos + 1e-9) k = j;
+    return harmonyContext.harmony[k];
+  });
+  return { ...harmonyContext, harmony, chordBeats: undefined, barsPerChord: 1 };
+}
+
 export function bind(rhythmEntry, contourEntry, harmonyContext, meter = '4/4', opts = {}) {
+  harmonyContext = perBarHarmony(harmonyContext, meter);
   const warnings = [];
   const archetype = opts.archetype ?? null; // bass archetypes (interval-grammar §3): anchor|pulse|pedal|alternating
   if (archetype && !['anchor', 'pulse', 'pedal', 'alternating'].includes(archetype)) {
@@ -355,6 +385,7 @@ export function bind(rhythmEntry, contourEntry, harmonyContext, meter = '4/4', o
  *         octave=3 (bounce register), gainRange, fx, rhythmName }
  */
 export function bindComp(rhythmEntry, harmonyContext, meter = '4/4', opts = {}) {
+  harmonyContext = perBarHarmony(harmonyContext, meter);
   const warnings = [];
   if (!harmonyContext?.harmony?.length) throw new Error('comp bind needs a harmony context (section.harmony)');
   if (!opts.dict) throw new Error(`comp bind needs {dict: "<voicing shape>"} (e.g. "drop2" or "ireal")`);
@@ -640,7 +671,53 @@ export function bindFigure(figEntry, harmonyContext, meter = '4/4', opts = {}) {
 
   const harmony = harmonyContext.harmony;
   const barsPerChord = harmonyContext.barsPerChord ?? 1;
-  const period = lcm(harmony.length * barsPerChord, B);
+  // r32 — SUB-BAR HARMONIC RHYTHM. HIS NOTE: "it should be hardcoded more
+  // faithfully to the reel in terms of combinations and such".
+  //
+  // Every chord in this engine lasted a whole number of BARS, because `sym` was
+  // resolved once per cycle. Measured against the eight reels he sent, that is
+  // wrong for six of them and it is the single biggest fidelity loss in the
+  // whole transcription: reel 7 changes chord ON EVERY BEAT (Gb | G o | Abm | Db,
+  // four per bar), reel 5 every two beats, reel 3 in DOTTED QUARTERS that
+  // deliberately cross the barline, reel 2 in a 3+3+2 tresillo, reel 4 in
+  // uneven beat-level spans (1, 1, 1.5, 0.5 ...) totalling fourteen chords over
+  // four bars. All six were flattened to one-chord-per-bar, and two of his
+  // cards are that flattening heard directly — "G to G#m sounds like rising
+  // tension not happy festival" is reel 7's passing G-DIMINISHED stretched from
+  // a beat into a whole bar and spelled as a major triad.
+  //
+  // `chordBeats` gives each symbol a duration IN BEATS. Consecutive spans may
+  // cross the barline, so the loop is expressed in beats and only the total has
+  // to land on a whole number of bars. Absent (the default everywhere else) the
+  // legacy per-cycle path runs unchanged, so every judged binding is
+  // byte-identical by construction.
+  const beatsInBar = Math.max(1, Number(String(meter).split('/')[0]) || 4);
+  const chordBeats = Array.isArray(harmonyContext.chordBeats)
+    && harmonyContext.chordBeats.length === harmony.length
+    && harmonyContext.chordBeats.every((x) => Number(x) > 0)
+    ? harmonyContext.chordBeats.map(Number) : null;
+  let chordEdges = null;
+  let loopBars = harmony.length * barsPerChord;
+  if (chordBeats) {
+    const totalBeats = chordBeats.reduce((a, b) => a + b, 0);
+    const lb = totalBeats / beatsInBar;
+    if (Math.abs(lb - Math.round(lb)) > 1e-9) {
+      throw new Error(`chordBeats total ${totalBeats} is not a whole number of ${beatsInBar}-beat bars`);
+    }
+    loopBars = Math.round(lb);
+    chordEdges = [];
+    let acc = 0;
+    for (const b of chordBeats) { chordEdges.push(acc); acc += b; }
+  }
+  // which chord is sounding at (cycle c, fraction f through the bar)
+  const symAt = (c, f) => {
+    if (!chordEdges) return harmony[Math.floor(c / barsPerChord) % harmony.length];
+    const pos = (((c % loopBars) + f) * beatsInBar) % (loopBars * beatsInBar);
+    let k = 0;
+    for (let j = 0; j < chordEdges.length; j++) if (chordEdges[j] <= pos + 1e-9) k = j;
+    return harmony[k];
+  };
+  const period = lcm(loopBars, B);
   if (period > MAX_PERIOD) throw new Error(`bound pattern period ${period} cycles exceeds ${MAX_PERIOD}`);
   const flats = keyUsesFlats(harmonyContext.key ?? 'C:major');
   const legato = figEntry.legato ?? false;
@@ -662,9 +739,12 @@ export function bindFigure(figEntry, harmonyContext, meter = '4/4', opts = {}) {
   // stay byte-identical; the wrap-drift warning below fires either way.
   let prevRoot = baseC + 5;
   let anchorRoot = null;
-  for (let c = 0; c < period; c++) {
-    const bar = bars[c % B];
-    const sym = harmony[Math.floor(c / barsPerChord) % harmony.length];
+  // r32: the chord-dependent resolution, lifted out of the cycle loop so a
+  // sub-bar harmonic rhythm can re-run it MID-BAR. With `chordEdges` null it is
+  // called exactly once per cycle, with the same symbol, in the same order, and
+  // mutates `prevRoot`/`anchorRoot` in the same sequence — so the root walk
+  // (D76) and every emitted note are unchanged on the legacy path.
+  const resolveChord = (sym, bar, c) => {
     const rootPc = chordRootPc(sym);
     const pcs = sym ? chordTones(sym) : null;
     if (sym && (!pcs || pcs.size === 0)) warnings.push(`unknown chord "${sym}" — figure members use default intervals in cycle ${c}`);
@@ -681,7 +761,6 @@ export function bindFigure(figEntry, harmonyContext, meter = '4/4', opts = {}) {
       while (anchorRoot - rootRef >= 12) rootRef += 12;
     }
     prevRoot = rootRef;
-    const values = [];
     // r15 scale tokens: the chord-scale's steps relative to the root, computed
     // lazily — only bars whose figure carries an 's' token pay for it
     //
@@ -731,12 +810,6 @@ export function bindFigure(figEntry, harmonyContext, meter = '4/4', opts = {}) {
         return pcs.map((p) => ((p - (rootPc ?? 0)) % 12 + 12) % 12).sort((a, b) => a - b);
       })()
       : null;
-    // D56: opt-in, so every existing binding is byte-identical. The judge page
-    // turns it on for its figuration tones; nothing else does yet.
-    const swap = stateExtensions && rel.size && sym
-      ? extensionSlot(bar.toks, rel, chordCoreTones(sym), rootPc ?? 0)
-      : null;
-    if (swap) extended++;
     // r20/D101 — the LOOK-AHEAD reference, and why it had to exist.
     //
     // "there's not any extra notes between chords or countermelody etc in the
@@ -753,7 +826,12 @@ export function bindFigure(figEntry, harmonyContext, meter = '4/4', opts = {}) {
     const aheadNeeded = bar.toks.some((t) => t.includes('>'));
     let aheadRef = null, aheadRel = null, aheadScaleRel = null, aheadSym = null;
     if (aheadNeeded) {
-      aheadSym = harmony[(Math.floor(c / barsPerChord) + 1) % harmony.length];
+      // r32: under a sub-bar rhythm "the next chord" is the next SPAN, which is
+      // usually inside the same bar — that is precisely the change a walk needs
+      // to aim at when the chord moves four times a bar.
+      aheadSym = chordEdges
+        ? harmony[(harmony.indexOf(sym) + 1) % harmony.length]
+        : harmony[(Math.floor(c / barsPerChord) + 1) % harmony.length];
       const aPc = chordRootPc(aheadSym);
       const aPcs = aheadSym ? chordTones(aheadSym) : null;
       aheadRel = new Set([...(aPcs ?? [])].map((p) => ((p - (aPc ?? 0)) % 12 + 12) % 12));
@@ -767,7 +845,30 @@ export function bindFigure(figEntry, harmonyContext, meter = '4/4', opts = {}) {
           .map((p) => ((p - (aPc ?? 0)) % 12 + 12) % 12).sort((a, b) => a - b)
         : null;
     }
+    return { sym, rootPc, rel, rootRef, scaleRel, aheadRef, aheadRel, aheadScaleRel, aheadSym };
+  };
+
+  for (let c = 0; c < period; c++) {
+    const bar = bars[c % B];
+    // the chord at the bar's DOWNBEAT — the only one the legacy path ever sees
+    let st = resolveChord(symAt(c, 0), bar, c);
+    // D56: opt-in, so every existing binding is byte-identical. The judge page
+    // turns it on for its figuration tones; nothing else does yet. Not offered
+    // under a sub-bar rhythm: it rewrites ONE token chosen against the bar's
+    // chord, which is not a well-defined thing to do when the bar has four.
+    const swap = !chordEdges && stateExtensions && st.rel.size && st.sym
+      ? extensionSlot(bar.toks, st.rel, chordCoreTones(st.sym), st.rootPc ?? 0)
+      : null;
+    if (swap) extended++;
+    const values = [];
     for (let i = 0; i < bar.steps.length; i++) {
+      if (chordEdges) {
+        const s2 = symAt(c, bar.steps[i] / bar.G);
+        if (s2 !== st.sym) st = resolveChord(s2, bar, c);
+      }
+      const {
+        sym, rel, rootRef, scaleRel, aheadRef, aheadRel, aheadScaleRel, aheadSym,
+      } = st;
       const accented = bar.accents[i] >= ACCENT_THRESHOLD;
       const tok = swap && swap.i === i ? swap.token : bar.toks[i];
       const names = tok.split('.').map((m0) => {
@@ -1005,6 +1106,63 @@ function ladderStep(midi, k, scalePcs) {
 }
 
 /**
+ * r33 — THE MELODY GRID LAW (opts.gridSnap, opt-in like minNoteLast).
+ *
+ * His card, three songs running: "there are some notes that seem to be shifted
+ * off by like a sixteenth note which sounds off". Measured on the judged reels
+ * page: 7.9% of all pitched onsets sit OFF the 8th grid, 64.9% of those at
+ * exactly slot 3/16 or 7/16, and on the named cards the MELODY component runs
+ * 33-73% off-grid (rise_up lead 43/59) — the cells themselves write odd-16th
+ * onsets, including phrase STARTS at 3/16 in every A bar. Swing and microtimed
+ * rows were ruled out (0/16 mixes carry either).
+ *
+ * What the references do (r33 melody study, four populations kept separate):
+ * his endorsed melodies sit ON the 8th grid 77-99.7% of the time, and their
+ * odd-16th notes are PICKUPS — a same-pitch or stepwise 16th leading directly
+ * into the next onset (the "pre-sounded resolution" device in the files he
+ * annotated "love the melody"), or members of a 16th RUN. An isolated odd-16th
+ * onset hanging in space is what his ear flags.
+ *
+ * So the law: an odd-16th melody onset survives only as part of a pickup/run
+ * pair (next onset within a 16th). Any other odd-16th onset snaps DOWN one
+ * 16th onto the 8th grid; if that slot is already struck, the onset is DROPPED
+ * and — tokens() being legato — its time folds into the neighbouring note (the
+ * melody lengthens rather than thins, the same cure as minNote/D118). Onsets
+ * off the 16th grid entirely (triplets) pass through untouched: a triplet is a
+ * different grid, not a displacement.
+ */
+export function gridSnapMelodyEntry(entry) {
+  const onsets = entry.onsets ?? [];
+  if (!onsets.length) return entry;
+  const accents = entry.accents ?? onsets.map(() => 0.7);
+  const fr = onsets.map((o) => toFrac(o));
+  const pos = fr.map(([n, d]) => n / d);
+  const keptIdx = [];
+  const outPos = [];
+  for (let i = 0; i < pos.length; i++) {
+    const slot16 = pos[i] * 16;
+    const on16 = Math.abs(slot16 - Math.round(slot16)) < 1e-6;
+    const odd = on16 && Math.round(slot16) % 2 === 1;
+    if (!odd) { keptIdx.push(i); outPos.push(pos[i]); continue; }
+    const isPickup = i + 1 < pos.length && (pos[i + 1] - pos[i]) <= 1 / 16 + 1e-6;
+    if (isPickup) { keptIdx.push(i); outPos.push(pos[i]); continue; }
+    const snapped = (Math.round(slot16) - 1) / 16;
+    const clash = pos.some((q, j) => j !== i && Math.abs(q - snapped) < 1e-6)
+      || outPos.some((q) => Math.abs(q - snapped) < 1e-6);
+    if (!clash) { keptIdx.push(i); outPos.push(snapped); }
+    // a clashing snap DROPS the onset — the neighbour holds through the slot
+  }
+  const newOnsets = keptIdx.map((i, k) => {
+    if (Math.abs(outPos[k] - pos[i]) < 1e-9) return onsets[i];
+    return `${Math.round(outPos[k] * 16)}/16`;
+  });
+  const changed = newOnsets.length !== onsets.length
+    || newOnsets.some((o, k) => o !== onsets[keptIdx[k]]);
+  if (!changed) return entry;
+  return { ...entry, onsets: newOnsets, accents: keptIdx.map((i) => accents[i]) };
+}
+
+/**
  * bindMelody(rhythmEntry, harmonyContext, meter, opts) -> { expr, period, boundMeta, warnings }
  * harmonyContext: { harmony: [symbols], barsPerChord, key } (required)
  * opts: { style='toby-fox', seed=1, octave=5, cell=null (explicit scale-step offsets),
@@ -1012,10 +1170,29 @@ function ladderStep(midi, k, scalePcs) {
  *         gainRange, legato=true, rhythmName }
  */
 export function bindMelody(rhythmEntry, harmonyContext, meter = '4/4', opts = {}) {
+  // r33 — opts.subBarChords: the melody consults the chord SOUNDING AT ITS
+  // ONSET when the context carries a sub-bar chordBeats timeline (D122 gave
+  // that to bindFigure only and documented the melody's perBarHarmony collapse
+  // as an approximation; measured cost on the reels page: 61 of 96 engine-layer
+  // out-of-chord notes were members of the bar-DOWNBEAT chord — consonant with
+  // a stale chord IS dissonance against a sub-bar progression). Phrase logic,
+  // centers and the cadence grammar stay bar-quantised on the downbeat chord
+  // (the r33 verify pass's own trap warning); only per-note pitch snapping and
+  // the approach/repeat passes read the true chord.
+  const subBarTl = opts.subBarChords && Array.isArray(harmonyContext?.chordBeats)
+    && harmonyContext.chordBeats.length === harmonyContext.harmony?.length
+    ? (() => {
+      const beats = harmonyContext.chordBeats.map(Number);
+      const edges = []; let acc0 = 0;
+      for (const b of beats) { edges.push(acc0); acc0 += b; }
+      return { syms: harmonyContext.harmony.slice(), edges, total: acc0 };
+    })()
+    : null;
+  harmonyContext = perBarHarmony(harmonyContext, meter);
   const warnings = [];
   if (!harmonyContext?.harmony?.length) throw new Error('melody bind needs a harmony context (section.harmony)');
   if (!rhythmEntry) throw new Error('melody bind needs a rhythm entry (an atlas retrieval or an authored cell)');
-  const r = normalizeRhythm(rhythmEntry);
+  const r = normalizeRhythm(opts.gridSnap ? gridSnapMelodyEntry(rhythmEntry) : rhythmEntry);
   const B = r.bars;
   const bars = splitByBar(r);
   const {
@@ -1215,9 +1392,20 @@ export function bindMelody(rhythmEntry, harmonyContext, meter = '4/4', opts = {}
     const offsets = offsetsFor(c, bar.steps.length);
     for (let i = 0; i < bar.steps.length; i++) {
       const accented = bar.accents[i] >= ACCENT_THRESHOLD;
+      // r33 (subBarChords): the chord sounding AT THIS ONSET, when a sub-bar
+      // timeline exists; the bar's downbeat chord otherwise. The cadence
+      // branch below deliberately stays on the downbeat sym.
+      let noteSym = sym;
+      if (subBarTl) {
+        const beatPos = ((c * beatsInBar + (bar.steps[i] / bar.G) * beatsInBar) % subBarTl.total + subBarTl.total) % subBarTl.total;
+        let k = 0;
+        for (let j = 0; j < subBarTl.edges.length; j++) if (subBarTl.edges[j] <= beatPos + 1e-9) k = j;
+        noteSym = subBarTl.syms[k];
+      }
+      const nScale = noteSym === sym ? scale : scaleOf(noteSym);
       // weak beats walk the SUPPLY ladder (avoid tones stay in the geometry —
       // they may pass on weak slots, they just never get sat on)
-      let midi = ladderStep(center, offsets[i], scale.supply);
+      let midi = ladderStep(center, offsets[i], nScale.supply);
       let category;
       if (bar.role === 'cadence' && i === bar.steps.length - 1) {
         // the ending operator's landing: consequents on the chord root,
@@ -1238,10 +1426,10 @@ export function bindMelody(rhythmEntry, harmonyContext, meter = '4/4', opts = {}
         midi = snapToPcs(midi, target.size ? target : scale.core);
         category = 'cadence';
       } else if (accented) {
-        midi = snapToPcs(midi, scale.anchor);
+        midi = snapToPcs(midi, nScale.anchor);
         category = 'anchor';
       } else {
-        category = scale.core.has(((midi % 12) + 12) % 12) ? 'chord' : 'scale';
+        category = nScale.core.has(((midi % 12) + 12) % 12) ? 'chord' : 'scale';
       }
       // r14 (the mysterious_space conversation — measured +21/+24-semitone
       // zigzags where chromCore spelled sus/dim chords): opt-in octave
@@ -1253,7 +1441,7 @@ export function bindMelody(rhythmEntry, harmonyContext, meter = '4/4', opts = {}
         while (midi - prevM > 9 && midi - 12 >= center - 16) midi -= 12;
         while (prevM - midi > 9 && midi + 12 <= center + 16) midi += 12;
       }
-      flat.push({ cycle: c, barIdx: c % B, i, step: bar.steps[i], G: bar.G, accented, midi, category, cellIndex: i, chord: sym, role: bar.role });
+      flat.push({ cycle: c, barIdx: c % B, i, step: bar.steps[i], G: bar.G, accented, midi, category, cellIndex: i, chord: bar.role === 'cadence' && i === bar.steps.length - 1 ? sym : noteSym, role: bar.role });
     }
   }
 
@@ -1277,6 +1465,63 @@ export function bindMelody(rhythmEntry, harmonyContext, meter = '4/4', opts = {}
     cur.midi = midi;
     cur.category = 'approach';
     cur.resolvesTo = target;
+  }
+
+  // r33 — L1, SKELETON AND TISSUE (opts.tissue), the melody study's top gap.
+  // Measured in the MIX against four reference populations: the engine's lead
+  // runs 16.3% stepwise motion (references 28-57%), 18.9% large leaps (>P5;
+  // reference MEDIANS 1.7-6.5%), ~2% non-chord tones (references 25-52%) with
+  // a FLAT ~97% chord-tone rate on every beat where every reference shows a
+  // strong-beat GRADIENT — five symptoms, one gap: the engine never writes
+  // connective tissue between its chord tones. Two deterministic moves:
+  //
+  // (a) LEAP BUDGET — one leap wider than a P5 per phrase (r22's "ONE
+  //     designated leap"); further wide intervals fold by octaves toward the
+  //     previous note (leapFold's own convention, tightened from >9 to >7 for
+  //     over-budget cases; cadence landings are load-bearing and exempt).
+  // (b) TISSUE — a weak note sitting OUTSIDE the span of its two neighbours,
+  //     when they are a step-to-fourth apart, re-pitches onto the supply
+  //     ladder strictly BETWEEN them: a passing tone approached and left by
+  //     step (D102: corpus approach 55.5% ~ resolution 56.6% — real practice
+  //     brackets both sides, and a tone placed between two neighbours is
+  //     bracketed by construction). The supply ladder is key-aware, so no
+  //     foreign pitch can be spelled (the r32 s4/s7 refutation does not reach
+  //     this path — that measured the ACC's chord-scale tokens).
+  if (opts.tissue) {
+    let phraseIx = -1;
+    let leapUsed = false;
+    for (let n = 1; n < flat.length; n++) {
+      const cur = flat[n];
+      const prev = flat[n - 1];
+      const ph = Math.floor(cur.cycle / phraseBars);
+      if (ph !== phraseIx) { phraseIx = ph; leapUsed = false; }
+      const iv = Math.abs(cur.midi - prev.midi);
+      if (iv <= 7) continue;
+      if (!leapUsed) { leapUsed = true; continue; }
+      if (cur.category === 'cadence') continue;
+      let m = cur.midi;
+      while (m - prev.midi > 7 && m - 12 >= 36) m -= 12;
+      while (prev.midi - m > 7 && m + 12 <= 96) m += 12;
+      cur.midi = m;
+    }
+    for (let n = 1; n < flat.length - 1; n++) {
+      const cur = flat[n];
+      if (cur.category !== 'chord' && cur.category !== 'scale') continue;
+      const prev = flat[n - 1];
+      const next = flat[n + 1];
+      const lo = Math.min(prev.midi, next.midi);
+      const hi = Math.max(prev.midi, next.midi);
+      const span = hi - lo;
+      // span cap 7 (was 5 — r33 verify measured the 2..5 trigger closing only
+      // ~2-6 points of a 12-19-point stepwise gap; a fifth still fills with a
+      // third + step, so the wider window stays inside one hand's reach)
+      if (span < 2 || span > 7) continue;
+      if (cur.midi > lo && cur.midi < hi) continue;
+      const scale = scaleOf(cur.chord);
+      const dir = Math.sign(next.midi - prev.midi) || 1;
+      const cand = ladderStep(prev.midi, dir, scale.supply);
+      if (cand > lo && cand < hi) { cur.midi = cand; cur.category = 'tissue'; }
+    }
   }
 
   // D64: cap consecutive same-pitch repeats. Anchors, cadences and approaches
@@ -1357,6 +1602,37 @@ export function bindMelody(rhythmEntry, harmonyContext, meter = '4/4', opts = {}
     flat = mergeWithinBars(flat);
   }
 
+  // r33 verify — THE PICKUP LEAK. gridSnapMelodyEntry exempts an odd-16th
+  // onset whose partner follows within a 16th (a pickup/run pair) — but that
+  // test ran on the RAW entry, and the same-pitch merge above can then swallow
+  // the partner, leaving exactly the lone odd-16th onset the law exists to
+  // remove. Measured on rl_device_rise_up (his "shifted off by a sixteenth ...
+  // which I want removed once again", the round's escalated card): 34 isolated
+  // odd-16th lead onsets survived the entry-level snap, and the music-box copy
+  // was audibly unchanged. The test re-runs HERE, after every merge: an
+  // odd-16th note whose next same-bar onset is more than a 16th away snaps
+  // down to the 8th grid, or drops (= merges into its held predecessor) when
+  // that slot is taken.
+  if (opts.gridSnap && flat.length) {
+    const out = [];
+    for (let i = 0; i < flat.length; i++) {
+      const n = flat[i];
+      const slot16 = (n.step * 16) / n.G;
+      const on16 = Math.abs(slot16 - Math.round(slot16)) < 1e-6;
+      if (!on16 || Math.round(slot16) % 2 === 0) { out.push(n); continue; }
+      const nxt = flat[i + 1];
+      const sameBar = nxt && nxt.cycle === n.cycle;
+      const gap16 = sameBar ? ((nxt.step - n.step) * 16) / n.G : ((n.G - n.step) * 16) / n.G;
+      if (gap16 <= 1 + 1e-6) { out.push(n); continue; }
+      const target = n.step - n.G / 16;
+      const prev = out[out.length - 1];
+      const prevTaken = prev && prev.cycle === n.cycle && prev.step >= target - 1e-6;
+      if (target >= 0 && !prevTaken) { n.step = target; out.push(n); }
+      // else dropped: tokens() is legato, the predecessor holds through
+    }
+    flat = out;
+  }
+
   // emission — per-cycle note AND gain grids (cadence bars differ), with the
   // breath rendered as an explicit rest before the barline
   const boundNotes = [];
@@ -1429,6 +1705,18 @@ export function bindMelody(rhythmEntry, harmonyContext, meter = '4/4', opts = {}
       else if (minNoteLast) {
         const softer = thin(false);
         if (softer.length >= 2) notes = softer;
+        // r33 — the D119 leftover, closed: on a sparse bar whose only offender
+        // is the bar-final short note, refusing to go below two survivors kept
+        // the exact note the law exists to remove (measured residue: 2-4
+        // bar-final 16ths per named card on the judged reels page). Dropping
+        // to ONE note here is a MERGE, not an emptying — tokens() is legato,
+        // so the survivor holds to the barline. Guarded to the final-note case
+        // (gridSnap-era callers only) so the >=2 rule stands everywhere else.
+        else if (opts.gridSnap && keep.length === 1 && notes.length >= 2) {
+          const last = notes[notes.length - 1];
+          const L = (bar.G - last.step) * (beatsInBar / bar.G);
+          if (L < minNote) notes = keep;
+        }
       }
     }
     // grids follow the SURVIVING notes (a merge may have thinned the bar);
@@ -1637,6 +1925,7 @@ export function bindMelody(rhythmEntry, harmonyContext, meter = '4/4', opts = {}
  * opts: { octave, style, sound=null, fx='', gainRange, legato=true, rhythmName }
  */
 export function bindMelodySpec(spec, harmonyContext, meter = '4/4', opts = {}) {
+  harmonyContext = perBarHarmony(harmonyContext, meter);
   const warnings = [];
   if (!harmonyContext?.harmony?.length) throw new Error('melody spec bind needs a harmony context (section.harmony)');
   if (!spec?.bars?.length) throw new Error('melody spec needs bars[]');

@@ -68,6 +68,160 @@ ambiguous). Read the LAST few D-entries before starting any round.
   the lead on 11**, with all four of his "too loud" cards inside that 11 and none
   outside it; `melody_takeover` ran **1.91x, 1.60x, 1.53x** its own song's lead.
   Cap at a fraction of `leadGain`, and check the RATIO, never the number.
+- **A CHORD DOES NOT HAVE TO LAST A BAR (r32/D122).** `bindFigure` resolved its
+  symbol once per CYCLE, so every chord in this engine lasted a whole number of
+  bars. Measured against the eight reels he sent, that is wrong for SIX of them
+  and it was the largest single fidelity loss in the whole transcription: reel 7
+  changes chord ON EVERY BEAT (16 chords / 4 bars), reel 4 runs 17 chords over 4
+  bars at uneven beat-level spans, reel 3's dotted quarters deliberately CROSS
+  the barline, reel 2 is a 3+3+2 tresillo. `harmonyContext.chordBeats` gives each
+  symbol a duration in BEATS and the chord resolves PER ONSET. Distinct roots per
+  bar went 1.00 -> 4.00 on reel 7. Two of his cards were that flattening heard
+  directly. **Only `bindFigure` gets the real thing** — every other binder
+  collapses it to the bar's DOWNBEAT chord (`perBarHarmony`), because melodic
+  phrase logic, cadence landing, masks and section alignment are all
+  bar-quantised; that is an approximation and it is documented as one.
+- **THE ENGINE'S OWN ARRANGEMENT WAS 82% OF A CARD CALLED "FAITHFUL" (r32/D122).**
+  His note: "it should be hardcoded more faithfully to the reel in terms of
+  combinations and such (or maybe other added instruments are just affecting it
+  idk)". Measured: **37 of 203 sounding layers came from the reel library, 18.2%**,
+  and almost every complaint on the page named an ENGINE part — `gm_music_box` on
+  15 of 16 songs (his "the vibraphone is a bit overused"; NO reel row picks that
+  voice), `_funk_bass` on both construction songs ("boogie again for tense
+  construction — why?"), the breakdown on 12 of 16 ("there doesn't have to be a
+  beat drop in every song ffs"). `opts.reelFaithful` is ONE flag that stands the
+  whole discretionary cast down at once (D101's "six flags, seven next round"),
+  plus: the reel's OWN instruments (`fullSynth: true` was swapping the accordion
+  for a square lead and both bell rows for a music box), the reel's chord row
+  taking the ACC slot rather than stacking beside a second harmony hand, and
+  `accVary: false` + `accTravel: false` because **a transcribed pattern must play
+  as transcribed** — D97's composite moves the RHYTHM in block 2 and D62 swaps
+  the figure every letter, which is his "each iteration shouldn't be a different
+  speed". 18.2% -> 42.9%.
+- **THE LIBRARY IS SMALLER THAN THE SOURCE (r32).** 19 rows across 8 reels
+  against ~60 transcribed layers (reel 5 has ELEVEN parts and 2 rows). A
+  combination cannot be faithful when most of what was played was never
+  recorded. Caveat from r31: timbral doubling is pervasive, so the distinct-part
+  count is lower than the title-card count.
+- **THE DRUM POOL NEVER FILTERED ON METER (r32/D122).** `seven_hats_223` is a
+  **7/8** row — seven onsets at sevenths of the bar — and it was selected for 4/4
+  songs, so its hats aligned with nothing. His words, twice: "sounds like it's on
+  a different tempo", "literally just off beat". **Its own row said
+  `meter_class: '7/8'`**; the foundation pool has filtered on that forever and
+  the drum pool never did. Five rows affected, reach 3 songs, all festival — which
+  is why it took eight rounds to surface. D92 makes the engine 4/4-only.
+- **A LIST OF ONE, AGAIN (r32/D122) — D119's third instance.** `industrial_metal`
+  was the ONLY row in the library carrying a stick or metal rod and the generator
+  named it literally, so every construction song got the identical part: "the same
+  3 stick is just used every construction or what?". Two groove-forward siblings
+  + hash rotation. **When a selection looks varied, COUNT THE POOL — and when a
+  generator names a library entry as a string literal, that IS a pool of one.**
+- **THE BREAKDOWN IS SIX OF HIS CARDS (r32/D122).** Five "the piano disappears …
+  abrupt" plus "there doesn't have to be a beat drop in every song ffs" are ONE
+  device. It fired on 12 of 16 (34 of 47 on the suite) because
+  `opts.breakdown !== false && !priorKeep` is true of every unkept song, and it
+  cut the whole base mix with a 0/1 `.mask()` — the exact artefact r22 already
+  fixed for the breathing layers and never applied here. Now hash-gated to ~1 in
+  3, and a gain envelope: a bar of decay in, a two-bar swell out.
+- **D77, TWICE MORE, AND ONE NUMBER LEFT ON THE TABLE (r32/D122).** The drums:
+  `PRESENCE_GAIN` is absolute and never consults the tune — measured mean **0.90x
+  the lead**, louder than it on two songs; now capped at 0.72 x `leadGain` where
+  the kit is ASSEMBLED, so the solo carries it too. The accompaniment: `_acc`
+  averaged **1.15x the lead across all 16 songs and hit 2.13x**, because the piano
+  band's top is a flat `1.0`. **That fix is SCOPED to reel-faithful cards on
+  purpose** — the acc band reaches all 47 judged songs and widening it is a round
+  of its own. The measurement is in D122 for whoever picks it up.
+- **A MODE WAS NOT EXPRESSIBLE OUTSIDE DESERT (r32/D122).** `family` only
+  distinguishes major/minor, so reel 8 — D DORIAN, B and F both natural — was
+  built in D MAJOR, writing F# and C# against Dm9/Em7/C^7. His card: "the melody
+  in the glockenspiel doesn't sound on key". `opts.keyScale` now names any mode
+  `SCALES` knows; only `desertScale` could before.
+- **A LATER .gain() REPLACES THE EARLIER ONE (r33/D123).** bindMelody authors a
+  per-note accent envelope as `.gain("<env>")`; every melody fx then appended a
+  flat `.gain(x)`, and the flat one WON — the ENTIRE melody tier on EVERY page
+  realized uniform velocity for rounds ("uniform velocity is a bug §3.4", live
+  on the project's own leads; all 47 songs.html chains measured min==max).
+  `.mul(gain(x))` composes. `gainFx()`/`composeGain` are the r33-gated fix;
+  kept songs were judged flat and STAY flat. When auditing gain, count DISTINCT
+  realized values — a 20+-note layer with one value is a clobbered envelope.
+- **THE HANDOFF CHAIN WAS TEN OF SIXTEEN CARDS (r33/D123).** The default
+  handoff pool (flute/vibraphone/epiano) took the tune at 1.01–1.04x the lead
+  (the SECTION CURVE: later letters ride louder segments than the A bars his
+  ear calibrated to; LEAD_CURVE now clamps at 1.0 on fresh songs) — every
+  "flute too loud", both "glockenspiel way too loud" (= gm_vibraphone; no
+  glockenspiel existed), the "melody synth", r1's "second section randomly got
+  louder" (same-timbre 2.54x jump at the handoff seam) and r2's "piano just
+  abruptly cuts off". REGISTER separated the complained flutes (78–83) from
+  the uncomplained (68–70), 5/5 vs 0/3, with gains overlapping. Reels pages
+  now pass `noHandoff` (a reel plays one instrument per role);
+  `opts.handoffPool` steers pages that keep handoffs.
+- **A FROZEN ROW SEATS ON THE KEY TONIC, NOT barSyms[0] (r33/D123).** The reel
+  adapter seated every frozen row on the loop's FIRST CHORD while the rows
+  declare key-tonic degrees — on r3 (first chord Gm9, tonic F) that made the
+  pluck 71.4% out-of-chord vs 14.3% per its own spec, the largest single number
+  behind "most of the instruments sound dissonant". And CONSONANCE WITH A STALE
+  CHORD IS DISSONANCE: 61/96 engine out-of-chord notes were downbeat-chord
+  members against sub-bar progressions (`opts.subBarChords` gives bindMelody
+  per-onset chord resolution; cadence grammar stays on the downbeat chord).
+- **A BARE `!opts.pinFrom` RETRACTS JUDGED CAPABILITIES (r33/D123, the D101
+  catch-22's third instance).** deepDrums and leadDynamics read `!opts.pinFrom`
+  and switched OFF the moment a prose keep was pinned — the pin destroyed what
+  it protected. Every pin-aware gate reads `ruleFresh(N)` with the capability's
+  own round, never pin EXISTENCE; colorFresh's escape is forcing the judged
+  capability explicitly (`voicedColor: true`). A prose-keep pin is verified on
+  MUSIC fields (mix/solos/degrees/bpm/key/drums) — card-text fields may move.
+- **THE MELODY GRID LAW + TISSUE (r33/D123, research/melody-grammar-r33.md).**
+  His "shifted off by like a sixteenth" measured: melody cells write odd-16th
+  onsets (65% at slots 3/7 — anticipations; swing/microtiming ruled out, 0/16),
+  33–73% of the named cards' melody components. References (four populations):
+  odd 16ths are PICKUPS or run members; short notes hit the bar's final slot at
+  2.6–7.5% ≈ uniform vs our in-mix 32.3%/70.7% (lead/companion) — the D118
+  shape exists in NO reference. `gridSnapMelodyEntry` snaps non-pickup odd
+  16ths down an 8th (colliding snaps MERGE — the ≤3-onset-bar case closed);
+  triplets pass (a different grid, not a displacement). `noJitter` is now the
+  fresh-song DEFAULT. The deeper gap: the engine NEVER writes connective tissue
+  — stepwise 16.3% vs 28–57%, NCT ~2% vs 25–52%, leaps 18.9% vs 1.7–6.5%
+  medians, flat 97% chord-tone rate where every reference has a strong-beat
+  GRADIENT. `opts.tissue` = one leap per phrase + between-neighbour passing
+  tones bracketed by step on BOTH sides by construction. And the study's own
+  engine numbers first reproduced only on UNMASKED SOLOS — the
+  measure-in-the-mix trap catches measurers too; re-baseline before targeting.
+- **THE DRUM COMPILER'S LAST WRITER WINS (r33/D123).** drumExpr wrote colliding
+  same-slot onsets into ONE slot cell, so backbeat_hard/kit's clap ERASED the
+  snare's beats 2/4 — the declared backbeat has never fully sounded on ANY page
+  carrying those rows. Same-slot onsets now stack `[a,b]` (r33-gated). The kit
+  cap now compares to the lead's REALIZED mean (envelope mean x nominal) with
+  the section-curve max divided out — the r32 cap FIRED and was still defeated
+  by both (metal at 0.93x lead). The stick rotation was a hash NO-OP on the
+  exact card he judged (fnv%3=0 = the old row): after growing a pool, CHECK
+  WHERE THE HASH LANDS on the complained song.
+- **THE STANDING VERIFICATION WORKFLOW (r33, his ask "create a verifcation
+  process and iterate"):** `.claude/workflows/verify-round.js` — stability /
+  per-claim adversarial verifiers / D77 realized-ratio sweep / melody-grammar
+  sweep vs the r33 reference bands / completeness critic. Run it after fixes,
+  before the D-entry, with args {pages, snapshots, movedExpected, claims}.
+  What predicts his dissonance cards is NOT friction density (the page maximum
+  got "I like this!"): it is out-of-chord-vs-TRUE-harmony on ENGINE layers,
+  exposed struck semitone dyads in sparse mixes, and literal majors/leading
+  tones.
+- **"ABSTRACT THIS TO ANY X" MEANS A LABEL, NOT A REDESIGN (r30/D120).** His four
+  "could be abstracted to any dark/calm/epic environment" notes were read as an
+  engine-redesign ask and planned as `core(mood,energy) x tint(environment)`. His
+  ruling: "no i mean label-wise for that song, x song could also be used given
+  other various prompts rather than specific that one. so that instrument preset
+  and pattern and what not works." A song he likes is a FINISHED OBJECT; what
+  widens is the set of prompts it is SERVED for - `src/lib/song-labels.js`, one
+  entry per song he has spoken about, his note verbatim in `source`, read by name
+  so it can never re-roll anything. Serving at a higher energy means ADDING layers
+  to the judged object, never regenerating it.
+- **THE KEY IS PICKED BY HASHING THE SONG'S NAME (r30/D120).** `keyHint =
+  weightedPick(KEY_POOLS[family], fnv(name|tonic))`. Measured: five names for one
+  identical prompt gave C, G, A, D and A#, with bpm 54-75 and voices 1-3. Two
+  consequences. (a) Any "the same song under another prompt" work must serve the
+  finished object, not re-generate it. (b) **An A/B pair must be built under ONE
+  name** and renamed afterwards, or the comparison is testing the name. Also
+  measured: with the emotion FIXED, the environment alone moves bpm by up to x3.4
+  (a "calm" song is 50-151 BPM).
 - **Prose keeps are real.** "love this / I like this a lot" without a keep
   click → pin the song (`grammarPin: true` in SONG_OPTS) so no engine-wide
   rule re-rolls it before the click lands. Remind him to click + export.
@@ -147,7 +301,13 @@ flake; rerun before believing it.
 ## Grammar & dialect traps
 
 - Chord dialect: `Ab^7` (maj7), never `Abmaj7` — unknown symbols silently
-  get WRONG default intervals. Degrees tokens: `0:m 3 5:m 8b 1b:^7` =
+  get WRONG default intervals. **r32: I wrote `Emaj7`, `Fmaj7` and `Cmaj7` into a
+  brand-new library while this line was on screen; all three rendered as PLAIN
+  TRIADS with the major 7th silently gone.** A test now fails on the `maj7`
+  spelling anywhere in `REEL_PROGRESSIONS`. Other qualities that DO resolve and
+  are easy to miss: `madd9` (R 9 b3 5 — an add9 with no 7th, which is what a
+  `m9` wrongly gives a 7th to), `o` (dim triad), `o7`, `sus`, `7sus`, `6`,
+  `m7b5`. `7b9` and `m11` do NOT — both fall back to a plain triad. Degrees tokens: `0:m 3 5:m 8b 1b:^7` =
   semitone offsets from tonic, `:quality` suffixes, `b` for flat roots.
 - Figure tokens: `R/3/5/6/7/9` or `~<semitones>`, `+` per octave, dots join
   chords (`3.5.7`). NO negative semitones (`~-12` is invalid — use a
@@ -659,6 +819,20 @@ flake; rerun before believing it.
   is a deliberate round, not a drive-by — and the fix must decide whether mid
   REPLACES high in the second slot (keeps density, his "drums too loud" note) or
   becomes a third pick (fuller kit, more density).
+- **THE REPEATING-INTERVAL ENERGY FIGURE (r30/D120, `opts.synthRise`)** - his
+  ask twice over ("the percussive strings I mentioned with their repeated
+  intervals + percussion and boom"; "some given intervals and it repeats those
+  intervals over and over to convey energy"). Measured off the Synthesia example
+  he left: **138.4 BPM, straight 8ths (median IOI 0.2160s = exactly one 8th), a
+  3-4 note DESCENDING cell filling half a bar and repeating** - `5 3 s2 R` in
+  minor, `5 s2 R` in major. **THE CELL DOES NOT FOLLOW THE CHORD**: one 3-note
+  cell plays unchanged over FIVE different basses. That is R2 (freeze the body)
+  confirmed by a source completely independent of the r22 reels, and it is what
+  separates this from `motorFall`, which plays the same descent but rebinds every
+  chord. Frozen PER SECTION (song-long is D100's rejected drone). NOTE: he calls
+  it a "rise" and the reference DESCENDS every time - what rises is the re-attack.
+  At `octave: leadOctave` it realises 7-12 semitones ABOVE the lead (bindFigure
+  seats at C<octave> then the `5` token adds a fifth) - use `leadOctave - 1`.
 - Sparsity is a legitimate ensemble shape. Repeated uniform anything
   (chords, ornaments, dynamics) reads as "a piano exercise".
 
@@ -736,6 +910,19 @@ Surge patches must come from the release tag matching the vendored build.
   `doublePeriod`, R6 `coprimeCell`, plus `finalBarBreak` and `motorFall`).
   Casting R2 needs the lane rub budget RAISED — priced as an isolation pair at
   +38% close semitone/tritone hits per bar.
+- `src/lib/layer-patterns.js` (r31, re-transcribed r32) + `REELS=1 node
+  scripts/audition-songs.mjs` -> `audition/reels.html`. His 8 layer-stacking
+  reels as DATA: `LAYER_PATTERNS` (one row per reel instrument — rhythm, interval
+  shape, register, gain-vs-lead, frozen-or-re-pitched) and `REEL_PROGRESSIONS`
+  (the chords AT THEIR MEASURED HARMONIC RHYTHM via `chordBeats`). Rows are
+  addressed BY NAME, never iterated, so adding one cannot re-roll a song. The
+  page is FAITHFUL (one card per reel, `opts.reelFaithful`) + CROSSED (layers
+  mixed across reels over a reel's own harmony, picked by `comboScore`) + a
+  DEVICE A/B.
+- `src/lib/song-labels.js` (r30) + `ENERGY=1 node scripts/audition-songs.mjs` ->
+  `audition/energy.html` - his SONG labels (which prompts a finished song also
+  serves) and the energy A/B: each labelled core as judged, and the same core plus
+  `synthRise` + marcato + percussion, both built under ONE hash name.
 - `src/lib/vibes.js` — prompt → vibe compilation.
 - `scripts/audition-triage.mjs` + `src/lib/triage-r15.js` — the EAR-TEST page
   (D95): the questions an analysis cannot settle, each with the measurement

@@ -30,7 +30,11 @@ test('r28: THE NICHE GATE — every new rule goes through it', () => {
     /if \(opts\.holdMove === true && r28\(\)\)/,
     /if \(opts\.motorFall === true && r28\(\)\)/,
     /if \(opts\.finalBarBreak === true && r28\(\) && extraSolos\._reregister\)/,
-    /const noJitter = opts\.noJitter === true && r28\(\);/,
+    // r33: noJitter became the DEFAULT for fresh songs (his "some seemingly
+    // really short notes and offbeats"; the D118 final-slot shape measured
+    // still live on songs.html at 32.3% vs 2.6-7.5% in every reference). Both
+    // arms still route through niche-gated round functions.
+    /const noJitter = \(opts\.noJitter === true && r28\(\)\) \|\| \(opts\.noJitter !== false && r33\(\)\);/,
   ]) assert.match(SRC, rule, `an r28 rule stopped going through the niche gate: ${rule}`);
   // and the allocator itself is only seeded when the gate is open
   assert.match(SRC, /const r28Claimed = new Set\(\);\n  if \(r28\(\)\) \{/,
