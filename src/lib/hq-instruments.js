@@ -35,7 +35,9 @@ const UI_GUITAR = 'vendor/sfz/unreal/UI_Standard_Guitar/Programs/01-Standard Gui
 
 export const HQ_INSTRUMENTS = {
   gm_electric_guitar_clean: {
-    backend: 'sfz', sfz: UI_GUITAR, keyswitch: 26, velScale: 0.95, trimDb: -2,
+    // velScale 1.6: the clean arpeggio is written soft (0.29-0.38) and the
+    // library's velocity curve + fil_veltrack close down hard below ~45/127
+    backend: 'sfz', sfz: UI_GUITAR, keyswitch: 26, velScale: 1.6, trimDb: -2,
     fx: { nam: 'vendor/nam-models/Phillipe_P_Bug333-Clean-Cab-ESR0.007.nam', inGainDb: 6 },
   },
   gm_electric_guitar_muted: {
@@ -109,6 +111,15 @@ export const HQ_INSTRUMENTS = {
     backend: 'sfz',
     sfz: 'vendor/sfz/gen/oboe.sfz',
     velScale: 0.9,
+  },
+  // r35: VSCO F Horn sustains (scripts/build-sfz.mjs) — off the fluidsynth
+  // fallback, whose GM horn swells into every note (vg_nostalgic_shop's
+  // "strings ... starts really soft and then becomes really loud", on a song
+  // whose sustained support at that gain is the french horn harmony_support).
+  gm_french_horn: {
+    backend: 'sfz',
+    sfz: 'vendor/sfz/gen/horn.sfz',
+    velScale: 0.9, trimDb: -2,
   },
   gm_cello: {
     backend: 'sfz',

@@ -14,6 +14,7 @@
 import { readdirSync, writeFileSync, mkdirSync, existsSync } from 'node:fs';
 import { join, relative, resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { execFileSync } from 'node:child_process';
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const SFZ_DIR = join(ROOT, 'vendor', 'sfz');
@@ -64,9 +65,43 @@ function collect(dir, filter = null) {
   return out;
 }
 
+// r35 — THE SWELL IS IN THE SAMPLE (his vg_nostalgic_shop card: "it's not
+// really sustaining, it sounds like every new note it starts really soft and
+// then becomes really loud over time rather than more flowy ... just a vst
+// control thing"; vg_romantic_water: "violin much too loud"). Measured on the
+// VSCO section sustains: the SOFT layer — the one a support voice's velocity
+// selects — reaches half its peak RMS 1.1-3.2 s into the note (VlnEns_susVib
+// C4_v1 1.09 s, G4_v1 1.73 s, D5_v1 3.17 s) and 90% only after 4.8-6.7 s; the
+// loud layer gets there in 0.1-0.8 s. A held support note is therefore a
+// crescendo INTO every attack, and its peak sits far above the level the mix
+// stage measured for the stem (the gated loudness averages the swell). The
+// fix is a per-sample `offset`: start playback where the recording has
+// reached SWELL_LEVEL of its own peak (capped so at least MIN_LEFT seconds of
+// sample remain), with a short envelope attack so the skipped-into sample
+// does not click. Measured on each file at build time, so the output stays
+// deterministic for a given library.
+const SWELL = { level: 0.8, maxSec: 4, minLeftSec: 3, attack: 0.04 };
+function swellOffset(path) {
+  const rateTxt = execFileSync('ffprobe', ['-v', 'error', '-select_streams', 'a:0', '-show_entries', 'stream=sample_rate', '-of', 'csv=p=0', path], { encoding: 'utf8' }).trim();
+  const rate = Number(rateTxt) || 44100;
+  const ANALYSIS_RATE = 8000;
+  const buf = execFileSync('ffmpeg', ['-v', 'error', '-i', path, '-f', 'f32le', '-ac', '1', '-ar', String(ANALYSIS_RATE), '-'], { maxBuffer: 1 << 28 });
+  const x = new Float32Array(buf.buffer, buf.byteOffset, Math.floor(buf.byteLength / 4));
+  const w = Math.round(ANALYSIS_RATE * 0.01);
+  const env = [];
+  for (let i = 0; i + w <= x.length; i += w) { let a = 0; for (let k = i; k < i + w; k++) a += x[k] * x[k]; env.push(Math.sqrt(a / w)); }
+  const peak = Math.max(...env, 1e-9);
+  let at = env.findIndex((e) => e >= SWELL.level * peak);
+  if (at < 0) at = 0;
+  let sec = at * w / ANALYSIS_RATE;
+  const len = x.length / ANALYSIS_RATE;
+  sec = Math.min(sec, SWELL.maxSec, Math.max(0, len - SWELL.minLeftSec));
+  return { samples: Math.round(sec * rate), sec, peakSec: env.indexOf(peak) * w / ANALYSIS_RATE };
+}
+
 // samples (one zone) -> sfz <region> lines. Key ranges are midpoints between
 // sampled pitches, clamped to [zoneLo, zoneHi] when given.
-function regions(samples, libRoot, { zoneLo = 0, zoneHi = 127, transpose = 0 } = {}) {
+function regions(samples, libRoot, { zoneLo = 0, zoneHi = 127, transpose = 0, skipSwell = false } = {}) {
   const byNote = new Map();
   for (const s of samples) {
     if (!byNote.has(s.midi)) byNote.set(s.midi, []);
@@ -91,6 +126,11 @@ function regions(samples, libRoot, { zoneLo = 0, zoneHi = 127, transpose = 0 } =
           `lovel=${lovel} hivel=${hivel}`,
         ];
         if (rrs.length > 1) parts.push(`seq_length=${rrs.length} seq_position=${ri + 1}`);
+        if (skipSwell) {
+          const so = swellOffset(s.path);
+          if (so.samples > 0) parts.push(`offset=${so.samples} ampeg_attack=${SWELL.attack}`);
+          parts.push(`// swell: ${so.sec.toFixed(2)}s skipped (peak at ${so.peakSec.toFixed(2)}s)`);
+        }
         lines.push(parts.join(' '));
       }
     }
@@ -102,16 +142,29 @@ function regions(samples, libRoot, { zoneLo = 0, zoneHi = 127, transpose = 0 } =
 // a zone with autoSplit:true claims only pitches above the previous zone's top
 const INSTRUMENTS = [
   {
-    out: 'strings-sections.sfz', lib: 'VSCO-2-CE', release: 0.7,
+    out: 'strings-sections.sfz', lib: 'VSCO-2-CE', release: 0.7, skipSwell: true,
+    // r35 MEASURED: the violin zone had been EMPTY since D80. VSCO's violin
+    // section tops out at D5 (74) — the same top as its viola section — so
+    // with the viola listed first, autoSplit left the violins nothing to claim
+    // (33 regions = 27 cello + 6 viola, 0 violin; the 67-74 band and every
+    // stretched note above it was a VIOLA). The ensemble's upper zone is now
+    // the violins, as a string section is; the violas keep only what the
+    // violins do not cover (nothing, at present — listed so a fuller library
+    // fills the gap by data, not by edit).
     zones: [
       { dir: 'Strings/Cello Section/susvib' },
-      { dir: 'Strings/Viola Section/susvib', autoSplit: true },
       { dir: 'Strings/Violin Section/susVib', autoSplit: true },
+      { dir: 'Strings/Viola Section/susvib', autoSplit: true },
     ],
   },
   { out: 'flute.sfz', lib: 'VSCO-2-CE', release: 0.35, zones: [{ dir: 'Woodwinds/Flute/susvib' }] },
   { out: 'harp.sfz', lib: 'VSCO-2-CE', release: 1.2, zones: [{ dir: 'Strings/Harp' }] },
   { out: 'trumpet.sfz', lib: 'VSCO-2-CE', release: 0.3, zones: [{ dir: 'Brass/Trumpet/sus', filter: /^Sum_/ }] },
+  // r35: the French horn leaves the fluidsynth GM fallback — its harmony_support
+  // whole notes were the "strings ... starts really soft" on vg_nostalgic_shop
+  // (he names timbres approximately; the song has no violin line at that gain).
+  // VSCO's horn sustains reach half their peak in 0.04-0.15 s, no swell to skip.
+  { out: 'horn.sfz', lib: 'VSCO-2-CE', release: 0.4, zones: [{ dir: 'Brass/F Horn/sus' }] },
   { out: 'bassoon.sfz', lib: 'VSCO-2-CE', release: 0.3, zones: [{ dir: 'Woodwinds/Bassoon/sus' }] },
   { out: 'clarinet.sfz', lib: 'VSCO-2-CE', release: 0.3, zones: [{ dir: 'Woodwinds/Clarinet/susLong' }] },
   { out: 'oboe.sfz', lib: 'VSCO-2-CE', release: 0.3, zones: [{ dir: 'Woodwinds/Oboe/sus' }] },
@@ -174,7 +227,7 @@ for (const inst of INSTRUMENTS) {
     const kept = z.autoSplit ? samples.filter((s) => s.midi > prevTop) : samples;
     if (!kept.length) continue;
     prevTop = Math.max(prevTop, ...kept.map((s) => s.midi));
-    const r = regions(kept, libRoot, { zoneLo });
+    const r = regions(kept, libRoot, { zoneLo, skipSwell: inst.skipSwell === true });
     total += r.length;
     lines.push(`// zone: ${z.dir} (${kept.length} samples)`);
     lines.push(...r);

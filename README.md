@@ -104,7 +104,7 @@ Each has keep/kill buttons and a verdicts export.
 | `reels.html` | `REELS=1 …audition-songs.mjs` | His 8 layer-stacking reels transcribed as data (`src/lib/layer-patterns.js`): faithful, crossed, device A/B |
 | `layerstack.html` | `LAYERSTACK=1 …audition-songs.mjs` | The Serum producer's genre with the seven reel-layer rules wired |
 | `energy.html` | `ENERGY=1 …audition-songs.mjs` | Song labels (which prompts a finished song also serves) and the energy A/B |
-| `vocal.html` | `VOCAL=1 …audition-songs.mjs` | The vocal suite: 10 new songs (8 energetic, 2 ballads) whose tune is sung by the vocal tier with generated Japanese lyrics; the instrumental lead is a guide under the voice |
+| `vocal.html` | `VOCAL=1 …audition-songs.mjs` | The vocal suite: 10 songs (8 energetic, 2 ballads) sung by the vocal tier with generated Japanese lyrics and a subtle rhythm guitar, plus 6 guitar-main songs (`vg_*`: anime-opening J-rock, power pop, sports anthem, Vocaloid electro-rock, city pop, guitar ballad) on the J-pop / city-pop idiom progressions |
 | `variations.html` | `scripts/audition-variations.mjs` | Variation labs: 104 byte-frozen experiment cards, melody grammar as a program |
 | `catalog.html` | `scripts/audition-catalog.mjs` | Mined candidates from the curated corpus tier, awaiting labels |
 | `foundations.html`, `drums.html`, `progressions.html`, `facets.html`, `judge.html` | their `audition-*.mjs` | Library-level auditions: accompaniment figures, drum patterns, progressions, per-song facets |
@@ -156,6 +156,27 @@ capture (`vendor/nam-models/`, GPL v3 community captures with the cabinet
 included) applied by `scripts/guitar-amp.py` in the vocal-tier env. Every
 stem's MIDI opens with its keyswitch note because the library's default
 articulation is silent.
+
+**r35 (his first vocal-page export, D138).** The guitar plays **staccato**
+on unpinned songs — every part he called "sustaining … white noise" was the
+ringing open chorus, every part he liked was palm-muted — so the chorus is a
+muted octave chug (B letters) or a 3+3+2 push (bridge letters), the main-mode
+riff and double are muted too, and `guitar: false` / `guitarGainMul` sit on
+the rows where his card asked. The battle crash is a **stamp placed by its
+measured peak time** (the crescendo file peaks 1.44 s in) before each drop's
+downbeat instead of an 8-bar cell. The singer's ceiling is G5, duration-aware
+(`export-vocal.mjs`). The per-row `vocalDb` follows his law — energetic 0 dB
+over the band, calm +1.5 — with pins where he judged. Two render-tier fixes
+reach every page's next HQ render: `scripts/build-sfz.mjs` now writes a
+per-sample `offset` that skips the VSCO sustain layer's recorded swell (a
+soft held note reached half its level at 0.92 s; now 0.04 s), the string
+patch finally carries the **violin** section (its zone had been empty since
+D80 — every rendered violin was a stretched viola), and `gm_french_horn`
+renders from VSCO's horn instead of the swelling GM patch. Renders:
+`render-hq.mjs --reuse-stems` keeps a keyed stem cache (a remix is
+byte-identical and skips every unchanged sampler/synth stem);
+`render-vocal.mjs --rehq` re-renders an existing HQ mix through it, and a
+score whose sung notes changed re-sings by itself.
 
 Setup is local and gitignored under `vendor/vocal/`: a Python 3.12 venv
 (`onnxruntime`, `infer_rvc_python`, torch), the voicebank

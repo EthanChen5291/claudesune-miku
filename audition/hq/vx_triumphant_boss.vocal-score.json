@@ -105,9 +105,9 @@
    "dur": 0.36809,
    "midi": 77,
    "gain": 1,
-   "syl": "wa",
+   "syl": "pa",
    "ph": [
-    "w",
+    "px",
     "a"
    ],
    "melisma": false
@@ -117,11 +117,11 @@
    "phrase": 1,
    "start": 3.31288,
    "dur": 0.7362,
-   "midi": 81,
+   "midi": 69,
    "gain": 0.689,
-   "syl": "ta",
+   "syl": "ra",
    "ph": [
-    "tx",
+    "rj",
     "a"
    ],
    "melisma": false
@@ -133,10 +133,10 @@
    "dur": 0.3681,
    "midi": 75,
    "gain": 0.942,
-   "syl": "shi",
+   "syl": "pa",
    "ph": [
-    "sh",
-    "iy"
+    "px",
+    "a"
    ],
    "melisma": false
   },
@@ -147,10 +147,10 @@
    "dur": 0.55215,
    "midi": 72,
    "gain": 0.566,
-   "syl": "to",
+   "syl": "mi",
    "ph": [
-    "tx",
-    "oo"
+    "m",
+    "iy"
    ],
    "melisma": false
   },
@@ -161,10 +161,10 @@
    "dur": 0.55214,
    "midi": 65,
    "gain": 0.754,
-   "syl": "ki",
+   "syl": "ta",
    "ph": [
-    "kx",
-    "iy"
+    "tx",
+    "a"
    ],
    "melisma": false
   },
@@ -175,9 +175,8 @@
    "dur": 0.18405,
    "midi": 60,
    "gain": 0.754,
-   "syl": "ni",
+   "syl": "i",
    "ph": [
-    "n",
     "iy"
    ],
    "melisma": false
@@ -2521,7 +2520,7 @@
   {
    "start": 2.94479,
    "notes": 6,
-   "text": "wa ta shi to ki ni"
+   "text": "pa ra pa mi ta i"
   },
   {
    "start": 5.88957,

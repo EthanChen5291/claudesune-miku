@@ -118,3 +118,10 @@ audios/manual-r22b/
 *.mov
 *.MOV
 vendor/vocal/
+
+# r34: the "Top MIDI Tracks Pack (Free)" (421 pop/film/classical/Zelda piano
+# arrangements, unpacked 2026-09-12) + its analysis read-out. ANALYSIS ONLY
+# (D95) — research/toppack-r34.md and the pop-lab cards were hand-authored
+# from it; nothing counts it into src/lib. Third-party transcriptions of
+# copyrighted songs stay local.
+audios/toppack-r34/

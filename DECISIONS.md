@@ -11674,3 +11674,569 @@ the log said so; a missing env or capture degrades the same way.
 Nothing here reaches the judged pages; nothing committed; vendor/sfz/
 unreal, vendor/nam-models and vendor/plugins/nam are gitignored with the
 rest of vendor. MEASURED ADDENDUM for the suite follows the re-render.
+
+MEASURED ADDENDUM (the suite re-rendered through the guitar chain, 0 amp
+warnings; per stem, DI -> amped, RMS dB / crest factor dB):
+
+  song                 muted DI    muted amp   open DI     open amp
+  vx_excited_casino    -40.3/26.6  -24.9/17.4  -35.0/23.3  -26.2/16.5
+  vx_excited_festival  -40.1/31.0  -24.1/15.0  -37.3/28.8  -28.6/18.1
+  vx_excited_space     -49.2/28.5  -23.7/13.9  -38.4/22.6  -26.7/17.4
+  vx_excited_training  -39.9/27.0  -25.5/16.2  -35.8/25.4  -28.3/18.9
+  vx_happy_jungle      -48.9/29.5  -29.3/19.5  -34.4/24.4  -25.6/15.8
+  vx_happy_shop        -51.3/30.3  -27.8/18.2  -38.9/24.2  -25.9/15.8
+  vx_tense_fight       -44.8/26.2  -21.2/11.6  -41.2/25.9  -29.2/19.5
+  vx_triumphant_boss   -38.9/26.6  -21.7/14.5  -34.0/27.2  -26.0/16.7
+  Every rock stem: +10-25 dB of level and 6-14 dB LESS crest — the amp
+  compressing the palm-mute chug into a bed, as it should.
+
+THE BALLADS WERE SILENT ON THE FIRST PASS. The clean arpeggio's gain,
+[0.34, 0.44] x a ballad leadGain of 0.47, is velocity ~20/127; the
+library's velocity curve and fil_veltrack close down there and the stem
+rendered at -74 dB RMS (amped -62; the balance stage's x12 cap could not
+lift it and the CLAMPED line was filtered out of the queue log — the
+D83 lesson again: a silence that never reached the console). Fixed by
+band, not by boost: [0.62, 0.8] x leadGain = 0.29-0.38 (still under the
+lead) with velScale 1.6 on the clean patch. Re-rendered: snow -41 -> -32
+dB RMS amped, rest -41 -> -32, balance x0.68 / x0.73 — a normal stem.
+
+Vocal balance held on all ten after the guitar joined the band (the band
+got louder, the sung-span law re-levelled the voice against it): +3 dB on
+eight, training +0 and romantic rest +1.5 as pinned. Suite 398/398.
+
+## D137 — guitar as a subtle layer is LIKED; guitar as the MAIN thing, by genre (his "in the current songs, guitar fits pretty well as a subtle layer i like it actually. take note of this" + "generate some songs with guitar intentionally in it as a main thing ... just make sure to understand which genres it'd make sense in. generate some more songs from scratch in vocals.html, taking inspiration from jpop and relevant genres")
+
+HIS VERDICT, RECORDED: the r34 rhythm guitar under the voice — palm-muted
+8ths / gallop in the verse letters at 0.40-0.50 x leadGain, open power
+chords at 0.46-0.58 in the others, the clean arpeggio on ballads — is a
+liked default and stays exactly that quiet on vocal songs (CLAUDE.md
+guitar note; memory vocal-tier-miku). The louder guitar is a SEPARATE
+mode and it is genre-gated.
+
+WHICH GENRES A MAIN GUITAR MAKES SENSE IN (the ones built), and what
+"main" means in each, written as engine rules under `opts.guitar`:
+- `main` — J-rock / anime opening / power pop / Vocaloid rock: rhythm
+  guitar at 0.55-0.68 (mute) and 0.66-0.80 (open) x leadGain, still under
+  the voice (D77); an INTRO RIFF — the A melody cell bound on the
+  overdriven guitar (bindMelody with the lead's own option set, octave
+  min(leadOctave, 4) so it stays inside the library's B1-D6) over the
+  leading no-lead sections, capped at the LAST 8 intro bars (an anime OP
+  states its hook once; a 16-bar ballad intro would have looped it for
+  51 s); and the FINAL-CHORUS UNISON — the guitar doubling the vocal's
+  last section an octave down at 0.6 x leadGain, the J-rock last-chorus
+  habit.
+- `citypop` — clean 16th OFFBEAT chops (3.5.R+ voicings, octave 3) in the
+  verse, clean R.3.5.R+ 8th strums in the chorus, clean riff and unison —
+  the Tatsuro/Mariya guitar under a voice.
+- `ballad` — the clean arpeggio at main level (0.8-0.95 x leadGain), the
+  clean riff, the clean unison at 0.5.
+NOT built, on purpose: guitar-main in the jungle / desert / horror /
+shrine / cave lanes — no genre there wants a lead guitar; those keep the
+subtle layer or none.
+
+THE SONGS (audition/vocal.html, vg_*, six, four energetic), five on the
+hand-authored J-pop / city-pop idiom progressions (progressions-citypop.js,
+`basePin` + rawBase so the idiom is served raw, tempo from the row and
+clamped into the idiom's own range as the citypop page does):
+  vg_excited_fight       anime opening / J-rock   im9-bVIΔ7-bVIIsus (kpop minor anthem) @140
+  vg_happy_festival      power pop / idol rock    Komuro vi-IV-V-I @136
+  vg_triumphant_training sports anthem J-rock     IΔ7-V/VII-vim7-IVΔ7 (bright hook) @140, marcato
+  vg_excited_space       Vocaloid electro-rock    engine harmony, fullSynth @128 ("excited space" compiled at 83 — a tempo is a genre fact here, stated on the row)
+  vg_nostalgic_shop      city pop                 royal road IV-V-iii-vi @102
+  vg_romantic_water      guitar ballad            descending-bass turnaround @75
+Three of the energetic four have NO intro section (the arrangement
+starts on the voice), so the intro riff fires on space / shop / water
+only; there is no intro-length pin in the engine (only halveIntro and the
+<= 80 bpm drop), and inventing one for this page was out of scope — the
+last-chorus unison and the rhythm guitar carry "main" there.
+
+THE J-POP INPUT. His "the other claude session is doing an analysis over a
+large MIDI library so whenever they finish jpop, take notes and generate":
+that session's audios/toppack-r34/_analysis.json exists (3.3 MB, pop /
+film / anime / Zelda piano arrangements) but research/toppack-r34.md is not
+written yet. These six are built from the idiom library and the genres'
+known habits; the analysis is to be read and the set regenerated when the
+write-up lands (todo.md carries the item).
+
+MEASURED ADDENDUM follows the render.
+
+MEASURED ADDENDUM (the six guitar-main songs as rendered; vocal on the
+pre-room converted wav, guitar stems after the amp):
+
+  song                    bpm notes sung bars range  lines/phr on-pitch lag(ms)  guitar stems (amped RMS / crest)
+  vg_excited_fight        140  100    31/32   60-79   14/16     97.0%     -1     mute -25.0/16.6  open -24.3/15.2
+  vg_happy_festival       136   77    31/32   60-76   12/16     98.7%     -3     mute -22.5/13.0  open -25.0/15.4
+  vg_triumphant_training  140   83    31/32   53-79   13/16     94.0%     -1     mute -26.3/19.0  open -21.4/14.6
+  vg_excited_space        128   60    24/28   55-81   10/12     95.0%    -24     mute -20.9/13.5  open -26.3/16.3
+  vg_nostalgic_shop       102   68    24/28   57-80    9/12     98.5%     -5     clean -30.2/19.3
+  vg_romantic_water        75   91    30/48   54-76    8/16     98.9%    -10     clean -26.3/17.3
+  479 sung notes, median 97.8% on pitch, 0 octave errors, 0 unvoiced,
+  median onset lag -4 ms. Every guitar stem amped (crest 13-19 dB).
+
+One defect on the way: vg_romantic_water's clean amp stage died with a
+libc++ "recursive_mutex lock failed" inside torch while the two queues'
+amp processes overlapped — the WARNING path kept the DI and the log said
+so; re-rendered alone, the amp applied (-24.7 LUFS stem, balance x0.49).
+A threading race in the amp stage under parallel queues: run guitar
+renders one queue at a time, or accept the occasional re-run. Vocal
+balance +3 dB over the band on all six (sung-span law). Page: 16 songs,
+16 with a vocal render. Nothing committed.
+
+## D137 — the Top MIDI Tracks Pack read-out (421 pop/film/classical/Zelda piano arrangements) and the pop-pack labs page
+
+HIS ASK (2026-09-12, the folder unpacked at 00:23): "analyze the new folder,
+just like you analyzed all the previous sample midi suites. extract all sorts
+of patterns, chord progressions, rhythms, layers, and anything else we
+extracted in the past. since the names are labeled, you can sort of figure
+out the vibes of the song. in-depth. and then, just like variations.html,
+create another extensive variation lab testing hypothesis combos, variations,
+etc. just like we did previously to affirm and help the engine learn."
+
+WHICH FOLDER. The four additional working directories were the OLD packs
+(Cottonwood = manual-r22b, Miraleste, the Desert Theme set, the reels) — all
+read in r22/r33. The new one was `~/Downloads/Top MIDI Tracks Pack (Free)`:
+421 files, 420 readable ("Yellow" is a RIFF-wrapped RMID, unwrapped in the
+staged copy; "Rocket Man 41k" is not MIDI), 351 two-track piano with the
+hands on separate tracks, 46 single-track, 33 multi-track, 17 with drums.
+Labeled by TITLE, not by ear — so `scripts/toppack-labels-r34.mjs` carries a
+hand-authored lane / emotion / energy per song (312 distinct songs after
+collapsing the pack's duplicates; ballad 78, pop 64, game/Zelda 41, rock 40,
+film 28, classical 21, edm 16, hiphop 11). These labels are inferred from the
+songs and are NOT verdicts; every "by emotion" number inherits that.
+
+D95 HOLDS. Staged at `audios/toppack-r34/` (gitignored, copyrighted
+transcriptions); `scripts/analyze-toppack-r34.mjs` → `_analysis.json`
+(gitignored); `scripts/report-toppack-r34.mjs` → the lane tables;
+`research/toppack-r34.md` (1,780 lines: my header + four lane reads +
+synthesis). Nothing counted into src/lib. What is different from the r22
+reader: this pack is 89% two-hand piano, so the questions are the engine's
+own piano-path questions — what the LEFT HAND does (behavioural figure
+class per bar, never a name; onset grid; chord-relative figure tokens in the
+figurations format), what the RIGHT HAND's top voice does against the r33
+melody bands, what the harmony does (repaired loop extractor with loops
+written in the LABS DIALECT + chordBeats, harmonic rhythm, borrowed chords,
+cadence class, bass line / inversions / pedals), and how a song is BUILT
+(texture sections, intro, lift, velocity arc). The 33 multi-track files got
+the r22 part/pair read as well. Four lane agents (prog / lh+rhythm / melody
+/ form+layers+mix+combo) each wrote a section AND 10–12 validated lab cards.
+
+1. THE PACK, IN NUMBERS (songs, medians; every lane section carries the n
+   and its raw-note spot checks):
+   - Harmony: I V vi IV is the top loop (17 songs; 9 ballads), then I IV
+     (11), I vi IV (9), I iii vi IV (6); minor V i (5), i iv (4), bIII i (4),
+     bVI i bVII (3, all pop). ROTATION IS MEANING: of 19 axis loops, all 8
+     starting on I are sad/happy/tender with a plagal close, all 8 starting
+     on vi are calm/romantic with a deceptive close. Pop piano is PLAIN:
+     colour (7/9/sus/6) 9–13% of half-bars in ballad/pop/rock/edm vs 33%
+     classical / 60% jazz; V7 is 0.4–0.7% of pop/ballad half-bars vs 10%
+     classical; the major V is the minor-lane switch (film 9/20, classical
+     7/7, pop 1/18 — pop minor is bVI-led aeolian); the major-key iv is in 0
+     of 55 ballads and 0 of 46 pop songs; bVII is the shared borrow. The
+     genuine sub-bar shape is 2-2-4 (vi IV | I) and the anticipated V on the
+     last 8th. Cadence class is lane: plagal = ballad (14), half = pop (8),
+     V→I = classical, bVII→I = rock/game, V→vi = film. Game (Zelda) is
+     two-chord shuttles (I bVII, i iv, i v, IV V) — I V is never game. The
+     canon carries every famous 4-chord loop and NONE of the 2–3-chord
+     shuttles (lane 1 §7 lists them with dialect degrees).
+   - Left hand: on the 8th grid (odd-16th onsets 0–1% in ballad/pop/rock/
+     edm; film 19%, classical 37% as figures); ballad = broken-chord 8ths at
+     5.3 attacks/bar, 1.4 notes per attack, lowest note F2; pop = comp
+     chords with the and-of-2 as the one syncopated slot (10–13%); game =
+     one held attack a bar (0.95-beat notes). The most-shared figure in the
+     pack is the whole-note octave pedal `R.R+` (29 songs), then the root
+     pedal (19) and the held `R.5.R+` (17); the two shared broken-chord
+     shapes are the wave `R 5 R+ 5 3+ 5 R+ 5` (7) and the arch (6). A
+     genuine anticipation (last-8th cluster fitting the NEXT chord) is a
+     SONG-level device — 3–8% of chord-change bars overall, viva_la_vida
+     14/14, stay_with_me 13/13, ≥ 4 in 10 of 249 songs. THE CHORUS DROPS
+     THE LH AN OCTAVE, IT DOES NOT THICKEN IT: loudest-section low note −8
+     st median in ballads (67% of 54 songs ≥ 3 st), −12 in edm (73%),
+     notes/attack +0.05. Accent = bass-loud on beat 1 in pop lanes (53–65%
+     of velocity-varied bars), off-beat in film/classical. The single-shape
+     straight-8th LH (the engine's metronome-test failure) is a ROCK idiom
+     (22% of rock's straight-8 bars, 3–5% pop/ballad); the ≥ 12-onset clause
+     rejects 25% of classical bars that are 16th alberti/broken-octave
+     idiom. Two lane corrections: 15 "triplet-grid" 4/4 files are a
+     `pickGrid` lag artefact (straight 8ths ~1/32 bar late), not swing; the
+     analyzer's `tresillo` field includes beat 4 and is not a syncopation
+     measure.
+   - Melody (top voice): pop 32% stepwise / 28% repeats / 6% leaps > P5, NCT
+     40% step-resolved 36%, gradient +3, odd-16ths 9%, final-slot shorts
+     2.9% OF SHORTS (the engine's D118 shape: 32%), pentatonic 89% with the
+     rest 100% in-scale on 4 (58%) and 7 (31%), short, weak, step-bracketed.
+     REPETITION IS THE HOOK — and the lane's first engine comparison
+     ("the engine already repeats MORE than pop": judged `_lead` SOLOS 84%
+     bar-rhythm repeat, lag-1/2/4 56%) was the r33 solo-vs-mix trap: the
+     verify pass re-measured IN THE MIX and the engine is 59% rhythm / 30%
+     pitch / 35% lag-1/2/4, UNDER pop's 70% / 57% (lag-1 only 10%, period 4
+     bars 22%, ~25 skeletons, 27 points of it NON-local — the hook returns
+     after contrast). Corrected in the doc; the missing-mechanism list
+     stands, the premise that the engine over-repeats does not. Pooled
+     pop repeats: identical 57%, one note differs 11%, re-fit 27%, chromatic
+     transposition 6% — the pack agrees with his "transposition is not
+     variation". THE CHORUS DOES NOT SLOW DOWN OR THIN: over 117 lifted
+     songs note-length ratio 1.00, onsets 0.98; the lift is register
+     +8.5–12 st, thickness 17% → 59%, LH density x1.3–1.5, rhythm repetition
+     FALLING 44% → 29%. The D123 grid law holds with one amendment: pop's odd
+     16ths are pickups 48% / runs 17% / DOTTED 3+3+2 MEMBERS 28% — which
+     `gridSnapMelodyEntry` would snap straight. The pop anticipation is by
+     an EIGHTH (slots 14/15 = 12–13% of onsets), rarely a 16th (≤ 2%). Q/A by
+     direction does not exist (answers end lower 35 / higher 38 / same 29 —
+     matches his nocturne verdict); the held landing does (56% of pop
+     phrases end on ≥ 2 beats, game 100%). Missing engine mechanisms named
+     (lane 3 §7): a 2-bar cell with a frozen body and per-statement landing
+     re-fit; the non-local hook return; a barline anticipation (bindMelody
+     cannot tie across a bar); the dotted-member exemption; a pentatonic
+     supply; the chorus device; a restruck-pitch mode (D65's mergeRepeats
+     makes a restruck hook unwritable).
+   - Form/layers: intro median 0 bars in EVERY lane, 5% of songs over the
+     engine's 16-second cap; 37% of pop songs OPEN on their register
+     maximum (hook first, verse drops). A POP CHORUS IS A CLASS CHANGE AT
+     CONSTANT LOUDNESS (LH class changes 75%, density x1.4, RH +3.5 st,
+     velocity +2.5) while ballads/rock/film build by LEVEL (+21–26). Real
+     pop breakdowns are rare (17%), late, thin the LEFT hand and keep the
+     tune (11 LH-thins / 5 RH / 0 both; nothing stops; velocity halves) —
+     D122's held-root device strips the hand the pack keeps and fires ~2x
+     the pop rate. Layer entries in pop multi-tracks: 56% on the 4-bar grid,
+     23% exactly ONE BAR EARLY as a pickup, 21% mid-phrase — the
+     "not section-locked" device the pack actually uses. EVERY 4/4 pack
+     groove has a backbeat snare (12/12 on beat 4, 10/12 on 2 and 4, kick
+     on 1 in 11/12, and-of-2 in 5/12, hats in 8ths) against the engine's
+     kick+hat default. Inside a bar the accents are melodic, not metrical
+     (melody peaks +2.9, long notes +2.2, LH −3.6 under the RH, on-beat vs
+     off-8th +1.8 over 151 velocity-rich files; 36 songs are single-velocity
+     and the Zelda set is a flat export). Sad ≠ nostalgic ≠ romantic: sad =
+     block LH 3.8 on/bar, 88 bpm, falling arc, 72% MAJOR; romantic = arp 5.5
+     on/bar, 100 bpm, lift 10; nostalgic = 86 bpm, lift 4, colour 4%.
+     Excited ≠ happy by MODE (42% minor vs 0%) and LH class, not tempo.
+
+2. THREE OF MY OWN HEADLINE NUMBERS WERE CORRECTED BY THE LANES (kept in
+   the doc as corrections, not deleted): "49% of segments are half a bar"
+   is 20–38% of BARS (segments weigh a two-chord bar twice); the borrowed
+   table counts SPELLINGS and inherits the key detector — "bII in 55
+   songs" is 42 songs of which 15 are the KS solver parked on the loop's v
+   or iii chord (stay_laroi is Bb minor bVI bVII i v, not F minor bII bIII
+   iv i), 10 genuine (Zelda Phrygian, POTC), 17 single-segment flaps, and
+   11% of the corpus has a better key than the one used; the drum-groove
+   claim in the header was a guess from signature strings until lane 4
+   read the 12 dominant grooves. Also: the labeller's `2` (R-5-9, genuine
+   in payphone 73/156 half-bars) was folded to `sus` = sus4 by my dialect
+   map — a different chord; a `6` next to its relative minor is that minor
+   chord (35% of 1,434 `6` half-bars); the texture segmenter's boundaries
+   are uniform on the 4-bar grid, so it cannot answer "are sections 4/8
+   multiples" and over-segments ballads ~1.6x; the "lift" field is
+   inflated on 5 songs whose first section has no RH.
+
+3. THE LABS PAGE. `audition/poplab.html` (`scripts/audition-poplab.mjs`, a
+   hand-kept clone of the r33 builder; data `src/lib/pop-labs.js`; export
+   page id `poplab-r34`; importer `scripts/import-poplab.mjs` →
+   `src/lib/pop-lab-labels.js`; tests `test/poplab.test.js` incl. the D95
+   boundary and a variations-page isolation test). 44 experiments / 207
+   variants, all evaluated at build: prog 11 / lh 9 / rhythm 2 / melody 10
+   / form 6 / mix 3 / combo 3. A card here answers a MEASURED FINDING (its
+   `finding` + `source_songs`) rather than a note of his — the page is the
+   ear test the analysis cannot settle. Every hook is ORIGINAL material
+   composed from the extracted rules over two beds (C G Am F, Am F C G):
+   patterns yes, tunes no (the pack is copyrighted). Reference variant
+   first, a falsification on every card. The questions, by lane: is
+   rotation heard as home-on-I vs home-on-vi; at what dose does colour
+   leave pop; does 2-2-4 read as energy or fuss; does the LH class alone
+   name the genre; is the octave drop or the class change the chorus; does
+   one anticipation read as a lean; which tresillo is the groove on a pop
+   loop; is the frozen cell's sus/6th over the moving chord a hook or a
+   clash; is one landing-note change audible (the r33 surgical-repair
+   threshold, deliberately re-tested); 8th vs 16th vs D118 anticipation;
+   does a class change at constant loudness read as a chorus; which
+   breakdown grade is "the piano disappears"; does the pad's mid-song
+   entry open a section. HQ renders for every variant (`audition/hq/
+   poplab.<card>.<variant>.wav`, render-hq from the exact page code, ≤ 4-bar
+   cards as two loops).
+
+4. VERIFIED (measured, before the D-entry): `audition/variations.html`
+   byte-identical to its snapshot; variation-labs.js / catalog-candidates.js
+   / audition-variations.mjs / audition-songs.mjs untouched; full suite
+   402/402 with the four new poplab tests (exit 0 captured). Card validator
+   (schema + render + evaluate + pitch probe by declared key) 0 problems on
+   all four lanes; page sweep over 207 variants (208 after the addendum): 0 undeclared out-of-scale
+   tones; 7 metronome-test flags, all deliberate 16th-figure idiom tests
+   (film alberti, chug 16ths, octave-bounce 16ths, block 16ths, frozen cell
+   16ths) whose cards ask exactly whether the clause is wrong; 4 D77 flags
+   from the sweep's "lead = highest median" heuristic misfiring on a piano
+   part that carries both hands — re-probed: the strings pad sits at median
+   62 / max 71 under the piano's RH (p90 76) at 0.22 vs 0.65, i.e. the pad
+   law, not a violation. Boldness: 69 of 163 non-reference variants change
+   under a third of (onset, sound, midi) events — by design and named on
+   the cards: treatment-only variants the metric cannot see (accent
+   placement, velocity arcs, pad level: 0%), one-chord dose ladders on the
+   prog cards (a chord swap in a 4-chord loop = 25%), single-mechanism
+   melody isolations (one landing note, anticipation by an 8th), and form
+   controls (a 1-loop intro). The flow-style variants (rhythm block,
+   interval block, class change, tresillo comp, hook period) all exceed a
+   third; the two surgical variants on the page (wave surgical 5%, hook
+   last_note 22%) are the deliberate re-tests of his inaudibility verdict.
+   An adversarial verifier ran over the doc's cross-lane consistency, ten
+   headline claims, all 44 cards, stability and completeness — its findings
+   are the addendum below.
+
+Nothing committed; nothing feeds retrieval (D95).
+
+### D137 ADDENDUM — the verify pass, what it refuted, and the second iteration
+
+One adversarial verifier over the doc's cross-lane consistency, ten headline
+claims, all 44 cards (evaluated), stability and completeness
+(scratchpad verify-report.md). Per the house rule, what it refuted about
+this round's own work:
+
+**REFUTED (1 of 10 headline claims):** "the engine already repeats MORE
+than pop" — measured on the judged songs' `_lead` SOLOS (84% / 78% / lag
+56%). In the MIX the engine is 59% rhythm / 30% pitch / 35% lag-1/2/4,
+UNDER pop's 70% / 57%. The r33 solo-vs-mix trap, caught again by the same
+habit; corrected in the lane-3 section, the synthesis table, the engine
+comparison and item 1 above. The missing-mechanism list survives; the
+premise reversed.
+
+**WEAKENED (2):** "final-slot shorts 2.9% of pop's shorts" is a median of
+per-song shares — pooled it is 6.4% of 6,193 (≈ uniform 6.25%; the
+engine's 32% stays the outlier); "5% of songs over 16 s" is the ballad/pop
+cell — pooled 3.5–3.8%, and "88–100% within one loop" is 81% for edm.
+Header corrected.
+
+**CONFIRMED (7):** 17 axis songs with the 8/8/1 rotation split; colour
+9.1–13.5% with `7` at 0.4–0.8% vs classical 10.0%; LH odd-16th 0.4–1.1% on
+4/4; `R.R+` the most-shared figure (28 songs ≥ 4 bars, 21 as a whole
+note); the chorus LH drop −7 ballad (68% ≤ −3 st) / −10 edm (73%) with
+notes/attack +0.01; the drum grooves 13/13 with a snare on beat 4;
+the bII audit (42 songs / 55 spelling rows / 25 in-loop / 17 segment-only).
+
+**17 CROSS-LANE NUMBER DRIFTS**, none flipping a conclusion, all from four
+agents reading four POPULATIONS (the report's 312 fullest-non-easy songs;
+the LH lane's 249 in 4/4; the form lane's most-parts dedup for multi-tracks
+(28/14 vs 24/13); the melody lane's 311-song cut and a chorus-lift table
+conditioned on lifts of 5–19 st — its "pop +8.5 st" is a selection, the
+form lane's "pop lift 2, hook-first 37%" is the population). A Populations
+paragraph now sits in the doc's method section naming each, and the nine
+header numbers the verifier re-measured are corrected (bogus meters 13 not
+10; I V IV 5; plagal 34; chords/bar 0.98–1.22; NCT 31–44%; sustain 24–71%;
+phrases by lane; intros; final-slot pooled).
+
+**THE CARDS:** all 207 variants evaluate; D77 holds on all (no support at
+or above the lead's gain in its register — the sweep's 4 flags were its
+own "lead = highest median" heuristic misreading a two-hand piano part,
+re-probed: the pad at median 62 / 0.22 under the RH at p90 76 / 0.65); 43
+of 44 reference variants realize their finding. Four defects, fixed in
+iteration two: (1) COPYRIGHT — `pl_melody_tresillo_frozen`'s cell was
+Shape of You's hook in rhythm (6-6-4 at 0/6/12) and interval class
+(+3/−3), transposed up a minor third; re-composed to a +2/−5 cell (g a e)
+on the same tresillo with chord-tone re-fits, all five variants
+re-validated and re-rendered — the page's "patterns yes, tunes no" claim
+now holds by measurement (every other hook shares ≤ 7 (interval, gap)
+pairs with any pack RH); (2) `pl_form_layer_entry_grid_or_pickup/on_grid`
+entered on beat 3 of bar 5 — the counter-line figure now sits on beats
+1–2 so the on-grid entry IS the downbeat and the pickup leads into it; (3)
+`pl_form_pop_build_verse_chorus/as_measured` runs the chorus LH at x2.67
+where the pack median is x1.4 (call_me_maybe's own jump) — stated on the
+variant; (4) `pl_lh_class_names_the_vibe` had no falsifier — the ballad
+wave at 128 bpm under a four-on-the-floor kick added (208 variants).
+Also stated on the doc: the LH lane's "45%/44% changed" on the wave flows
+re-measures at 37.5%/35.9% (still over a third), and the breakdown
+reference drops a drum bed the drumless finding never had.
+
+**COMPLETENESS against the earlier reads:** nine r22/r33 measurements this
+read-out did not repeat — core windows, per-role step/repeat/range,
+vertical-interval classes, layers-rest, per-role NCT/resolution including
+the LH and pad, density inversion, the gold-transcription devices, melody-
+ness track scoring, highest-and-longest climax — recorded here as the
+next pass's list; the standing asks answered with a number: companion/
+own-melody layers, changes not section-locked, foundations by class,
+melody chordal + held, breakdown, drum default, intros; without: 4/8-grid
+section lengths, string devices, fills/swing/sustain depth.
+
+After iteration two: 44 cards / 208 variants build-verified with HQ
+renders for all 208; `audition/variations.html` byte-identical to its
+snapshot; full suite green (exit 0 captured). Nothing committed.
+
+## D138 — r35: his first vocal-page export (16 cards, one keep click, 15 notes) — the screaming note, the mid-section cymbal, the sustaining guitar, the too-loud voice, and two render-tier defects the strings had carried since D80
+
+(Numbering note: the ledger already holds TWO entries headed D137 — mine on
+the guitar-main songs and the other session's on the Top MIDI Tracks Pack.
+Both stand; this is D138.)
+
+**THE EXPORT.** `page: r34-vocal`, 2026-09-12: one keep click
+(vx_nostalgic_snow) and notes on 15 of the 16 cards. Imported with
+`--page r34-vocal`; the pre-import `verdicts.js` was kept and the page
+rebuilt against both (D118's rule). Two page-level consequences, both
+pinned before any engine line changed:
+
+- `noteBlind: true` on every VX/VG row — the export is the page's FIRST
+  judgement, not a history (without it 15 notes would have stripped the
+  history-less capabilities from 15 songs).
+- **`keepFresh` (new).** The keep click on vx_nostalgic_snow flips
+  `priorKeep`, and `ruleFresh(N)` is `!priorKeep && …` — a click on a
+  history-less page would retract every fresh rule of r20–r34 the song was
+  judged WITH (D91/D118, fifth bite). `keepFresh: true` says the click is
+  the first judgement: `priorKeep` stays false for the rule gates,
+  `historyLess()` ignores the derived record, `pinFrom: 'r35'` walls off
+  this round, `voicedColor: true` forces the judged colour past the bare
+  `!opts.pinFrom` in colorFresh (D123's catch-22, still there). Verified
+  by byte compare: snow moved ONLY in `_acc` (his "piano is a bit too
+  loud" → `accGainMul: 0.8`).
+- The prose keeps ("love the guitar here" casino, "I like this song though"
+  tense_fight, "very good" rest, "love this" water, "love the instrumental"
+  shop-vg, "instrumental is good / I like the guitar here" festival-vg,
+  "overall good" happy_shop) carry `pinFrom: 'r35'` (+ `voicedColor: true`
+  where the first compare showed the colour gate retracting — casino,
+  happy_shop, rest, snow moved in `degrees` before it).
+
+**BYTE COMPARE.** `audition/songs.html`: 0 of 47 moved (every r35 rule is
+gated `ruleFresh(35) && historyLess()` or is page-only). `audition/vocal.html`
+vs the judged snapshot: 15 of 16 moved, each in exactly the fields his card
+names — rest identical in every music field; casino and shop-vg only in the
+new `vocalDb` key; snow only `_acc`; tense_fight only `_drums`; jungle only
+the guide wrap in `mix`. The full per-song list is in the r35 scratch log.
+
+**PER CARD, MEASURED CAUSE → FIX.**
+
+1. **"the 8th vocal note sounds like screaming and glitching" (boss), "the
+   fifth vocal note sounds like screaming" (space-vg).** Both notes are
+   **A5 (midi 81) held 0.70–0.74 s**. The notes he did not flag above the
+   band: A#5/B5 at 0.22–0.44 s (romantic_rest #1/#12/#35, "very good"),
+   B5 0.37 s (boss #157), G5 held 1.3–1.8 s (rest #2/#13). So the singer's
+   ceiling is a minor third over the E5 target top, and it is
+   DURATION-AWARE: export-vocal.mjs now folds a note an octave when
+   `midi > hi+3 && dur >= 0.5 s` (the old "a fifth over" fold stays for
+   anything). Pinned songs keep their sung files (stages 1–2 are kept, and
+   the score-change guard below only re-sings when notes moved).
+
+2. **"random cymbal is in the middle of the section, not before a drop"
+   (tense_fight), "random cymbal doesn't fit" (boss), "cymbal not before the
+   drop of a section" (fight-vg).** Two causes. (a) `battle_crash` is an
+   8-bar CELL (onset 31/4) counting from the drum mask, not from the form —
+   on the 64-bar boss half its six crashes fell mid-section. (b) The sound
+   is a CRESCENDO and the wav backend round-robins three lengths whose
+   peaks sit **1.44 s / 3.57 s / 7.06 s** after the onset (measured on
+   susCymb1-cresc-Short/Median/Long) — a one-beat lead-in peaked one to
+   four bars INTO the next section. r35-fresh battle songs drop the row
+   and stamp `vc_cym_cresc:0` (the short file, the same index in both
+   tiers) 1.44 s before the downbeat of every section that changes letter
+   or lifts energy and carries drums. Verified in the mix: boss's crashes
+   now peak at bars 16.00 and 48.00; tense_fight 8.00 and 16.00; fight-vg
+   8.00 and 16.00 (2 stamps each, not 3–6).
+
+3. **The guitar "too wet/sustaining → white noise" (boss, festival-vx),
+   "when the guitar starts sustaining it doesn't sound good … staccato
+   notes sounds good and the octave alternation thats good" (training-vg),
+   "whenever the guitar sounds like it's sustaining, it doesn't sound good"
+   (space-vg), "the guitar spamming the same chords" (fight-vg).** Every
+   complained part is the ringing open-chord chorus (`jrock-open8`, legato,
+   Sus articulation through the crunch capture); every praised part is the
+   palm-muted verse. r35-fresh songs: the chorus is palm-muted too — the
+   OCTAVE CHUG (R.5 / R+.5+ 8ths, his "octave alternation") on B letters and
+   a 3+3+2 PUSH on the bridge letters (two figures by LETTER, the "spamming"
+   answer), main-mode riff/double on the muted articulation, room 0.06–0.08
+   (his "too wet"). `opts.guitarGainMul` trims a song's whole guitar (space-vg
+   and water 0.75, his "guitar too loud"). Pinned exceptions keep the open
+   chorus he liked: casino ("love the guitar here"), festival-vg ("I like the
+   guitar here"). Verified: no `gm_overdriven_guitar` remains on any unpinned
+   r35 song; jungle (a niche lane, `r35()` false) keeps its open chorus,
+   which his card did not name.
+
+4. **"random fast slightly off-beat synth sounds like glitching" (jungle).**
+   The kalimba `melody_takeover` played bars 14–19 at **0.89** while the
+   voice sang the same line — the vocal guide had wrapped a NEIGHBOURING
+   part. `opts.vocalLead` indexed the layer parts from the constant
+   `nFixed = 4` (the length of rampSrc's fixed head) but `mixParts`' head is
+   variable-length (base + each PRESENT one of lead/companion/double/echo/
+   octave). Fixed to the running index `k`; gated `ruleFresh(35)` (not the
+   niche-gated `r35()` — the bug was found ON a niche lane). Measured after:
+   kalimba 0.40.
+
+5. **"remove the really high woodwind in the middle that plays for a little
+   bit" (festival-vg).** Two candidates in the same bars: the C-letter
+   HANDOFF put the tune on `gm_epiano1` at **83–96 for bars 16–23**, and the
+   clarinet companion peaked at **84** in bars 17/21. `noHandoff: true`
+   (the voice is the lead; the guide needs no instrument handoff) and
+   `companion: { octave: 3 }`. Measured after: no epiano, clarinet max 72.
+
+6. **"the spamming piano drowns out the other stuff and is a bit too loud
+   (use another instrument for the spamming chord stuff)" (training-vx).**
+   The acc hand ran **0.90–1.00 at 16 attacks a bar** against a x0.45 lead
+   guide. `accSound: 'gm_epiano1', accGainMul: 0.6` (the companion moved off
+   the epiano by the hard exclusion). Measured after: epiano max 0.63.
+
+7. **"voice a bit too loud for a energetic section — learn this" (boss);
+   "voice still too loud" (fight-vg), "vocals too loud" (space-vg), "voice
+   too loud" (water), "voice way too loud" (shop-vg).** I looked for a
+   mechanism first: the realized K-weighted vocal-over-band in the sung
+   spans is **5.2 dB on boss vs 5.7 on casino ("love")**, 3.5 on water
+   (complained) vs 3.7 on snow (keep) — it does NOT separate the complained
+   songs from the praised ones, and neither does the per-phrase band spread.
+   So this is his ear's LAW, written as data: `vocalDb = energetic ? 0 :
+   1.5` (training was judged at 0 without a loudness complaint; rest at
+   +1.5 was "very good"), with row pins — fight-vg −1.5 ("still"), shop-vg
+   −1 ("way"), water 0; the praised +3 songs (snow, casino, tense_fight,
+   happy_shop, festival-vx, festival-vg) pinned at 3.
+
+8. **"the strings a bit too loud, and … every new note it starts really soft
+   and then becomes really loud over time … just a vst control thing"
+   (shop-vg); "violin much too loud" (water).** Two render-tier defects,
+   both older than the vocal tier:
+   - **THE SWELL IS IN THE SAMPLE.** VSCO's section sustains, SOFT layer
+     (the one a support voice's velocity selects): time to half of peak RMS
+     **1.09 s (violin C4), 1.73 s (G4), 3.17 s (D5)**, to 90% **4.8–6.7 s**;
+     the loud layer 0.1–0.8 s. Every held support note was a crescendo into
+     its own attack, and its peaks sat far over the level the mix stage
+     measured (gated loudness averages the swell) — that is both cards.
+     `scripts/build-sfz.mjs` now measures each sample and writes a per-region
+     `offset` (start where the recording reaches 80% of its peak, ≤ 4 s,
+     ≥ 3 s left) with a 40 ms envelope attack. A/B on one held soft C5
+     through the old and new patch: **t50 0.92 → 0.04 s, t90 3.66 → 0.84 s,
+     level 0.1 s in −26 → −4 dB below the note's peak.**
+   - **THE VIOLIN ZONE HAD BEEN EMPTY SINCE D80.** strings-sections.sfz was
+     33 regions = 27 cello + 6 viola + **0 violin**: VSCO's violin section
+     tops out at D5, the same top as its viola section, so with the viola
+     listed first `autoSplit` left the violins nothing to claim. Every
+     "violin" line the render tier has ever played (gm_violin included, the
+     D99 "sharp violins" era) was a viola sample, stretched up to an octave
+     above its top. Zone order is now cello → violin → viola.
+   - **The horn leaves fluidsynth.** vg_nostalgic_shop's sustained support
+     at that gain is the `gm_french_horn` harmony_support (whole notes); its
+     GM patch swells. VSCO F Horn sustains (t50 0.04–0.15 s) → `horn.sfz`,
+     `gm_french_horn` mapped in hq-instruments.js. Measured in-song: the
+     horn stem levels at −28.7 LUFS → −32.3 (x0.66) beside the piano.
+
+9. **"with HQ on, I can't hear the accordion and the other layers" (festival-
+   vx).** Measured: the mix stage's per-stem leveling puts every stem at
+   `−20 + 20·log10(meanGain) + trimDb` LUFS and the render followed it
+   (accordion in the fluid stem at ≈−28 against piano −23.9, bass −21.9,
+   guitar −25.4). The guitar leaves this song ("doesn't really fit this
+   vibe"); the browser tier's per-patch loudness is unmeasured, so the
+   remaining gap is OPEN and stated on the todo rather than guessed at.
+
+10. **"at the very beginning, there's a bit of a glitch" (rest).** No
+    discontinuity measured in the first 1.5 s of any tier (max sample step
+    0.023; stems clean); the mix opens on a piano chord at sample 0 at
+    −18 dB RMS. A 20 ms head fade (`afade`) on the vocal mix; the song is
+    otherwise pinned.
+
+11. **"the melody for the vocal doesn't sound good" (training-vg).** The
+    sung line's leap profile is NOT an outlier (step 0.18 / leap≥5 0.40 /
+    zigzag 0.16, beside snow's 0.14 / 0.39 / 0.14 which he loved), so
+    nothing measurable named a defect. `opts.leadSeedSalt` (new) re-rolls
+    ONE song's tune — the lead cell's seed and every letter seed — with
+    harmony, cast and form untouched; eight candidates were built
+    (`VG_SALT_PROBE`) and scored for singability (steps up, leaps ≥ 8 and
+    zigzags down, range ≤ 16). Measured on the sung line (top note per
+    onset of `_lead_mix`): the judged tune step 0.18 / leap≥8 0.07 /
+    zigzag 0.12 / range 32; **salt 1: step 0.23 / leap≥8 0.09 / zigzag 0.07
+    / range 28** — the most stepwise and least zigzagging of the nine, and
+    it is what the row pins (`leadSeedSalt: 1`). Salt 5 was the worst
+    (step 0.12, zigzag 0.20) — the hash is a coin, which is why the pick is
+    measured rather than the next integer.
+
+**RENDER TIER, ALSO THIS ROUND.** `render-hq.mjs --reuse-stems`: a stem
+whose haps, instrument config and patch files hash to the `.key` beside its
+wav is reused (validated on vg_nostalgic_shop: second run reused 8/8 stems
+and the remix is byte-identical to the first). `render-vocal.mjs --rehq`
+re-renders an existing HQ mix through that cache, and a score whose sung
+notes changed forces stages 1–2 by itself (the kept dry/raw would otherwise
+be the old line under the new mix).

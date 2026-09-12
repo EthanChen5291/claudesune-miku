@@ -85,3 +85,18 @@ test('vocal score: --octave pins the register', () => {
   assert.equal(auto.phraseBars, 2);
   assert.ok(auto.phraseCount >= 8, 'two-bar phrasing should split a 30-bar tune into many phrases');
 });
+
+// r35 (D138): the singer's ceiling is G5 and it is duration-aware — both of
+// his "sounds like screaming" notes were A5 (81) held 0.70-0.74 s; the A#5/B5
+// passes under 0.45 s he did not flag stay where they are.
+test('vocal score r35: no note over G5 is held half a second or longer', () => {
+  const out = join(dir, 'boss.json');
+  execFileSync('node', ['scripts/export-vocal.mjs', 'vx_triumphant_boss', '--page', 'audition/vocal.html', '--out', out, '--quiet'], { stdio: 'pipe' });
+  const sc = JSON.parse(readFileSync(out, 'utf8'));
+  const held = sc.notes.filter((n) => n.midi > 79 && n.dur >= 0.5);
+  assert.equal(held.length, 0, `held notes over G5: ${held.map((n) => `${n.midi}@${n.dur}`).join(' ')}`);
+  // the fold is by a whole octave, so the folded note is still the same pitch class as the tune
+  const eighth = sc.notes[7];
+  assert.equal(eighth.midi, 69, `the judged score's 8th note was A5 (81) held 0.74 s; expected it folded to 69, got ${eighth.midi}`);
+  assert.ok(sc.notes.some((n) => n.midi > 79), 'short passes above G5 are still allowed');
+});

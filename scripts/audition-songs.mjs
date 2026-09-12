@@ -478,7 +478,16 @@ function buildSong(prompt, name, opts = {}) {
 
   // ---- harmony: a varied click-kept exemplar of the vibe's family ----------
   const judged = DERIVED_VERDICTS?.[name];
-  const priorKeep = judged?.verdict === 'keep';
+  // r35 · `keepFresh` — THE KEEP-TRANSITION LAW ON A noteBlind PAGE. A keep
+  // clicked on a page whose songs were built history-less (vx_nostalgic_snow,
+  // r34-vocal) was judged WITH every fresh rule of every round up to the one it
+  // was built in; the click flipping `priorKeep` would strip all of them
+  // (D91/D118, now the fifth bite). keepFresh says: this click is the song's
+  // FIRST judgement, not a history — the harmony/base pin the verdict carries
+  // stays (that is read from the verdict, not from priorKeep), the rule gates
+  // stay where they were when he heard it, and `pinFrom` walls off the round
+  // that follows. Verified by byte compare against the judged page.
+  const priorKeep = judged?.verdict === 'keep' && opts.keepFresh !== true;
   // r25: hoisted to sit beside priorKeep. It was declared ~740 lines below and
   // the lead-voice gate needs it, which is a TDZ error rather than a silent
   // wrong answer — but the same shape (a freshness gate a caller cannot reach)
@@ -528,6 +537,7 @@ function buildSong(prompt, name, opts = {}) {
   const r31 = (round = 31) => ruleFresh(round) && !nicheLane;
   const r32 = (round = 32) => ruleFresh(round) && !nicheLane;
   const r33 = (round = 33) => ruleFresh(round) && !nicheLane;
+  const r35 = (round = 35) => ruleFresh(round) && !nicheLane;
   // hoisted (r32): the drum selector, which runs earlier than the support
   // layers, needs to report its meter filter on the card too.
   const extraInfo = [];
@@ -593,7 +603,7 @@ function buildSong(prompt, name, opts = {}) {
   // DERIVED_VERDICTS half of every gate is untouched — so a real keep still gates
   // everything it gated before. Only the "he has written about this card" half is
   // suspended, and only for the page that asks.
-  const historyLess = () => !DERIVED_VERDICTS?.[name]
+  const historyLess = () => (opts.keepFresh === true || !DERIVED_VERDICTS?.[name])
     && (opts.noteBlind === true || !CARD_NOTES?.[name]);
 
   // ==========================================================================
@@ -2560,7 +2570,14 @@ function buildSong(prompt, name, opts = {}) {
   const artFloor = opts.articFloor ?? (meterMul < 1 ? 0.85 : null);
   const meterCap = meterMul < 1 ? { maxDensity: leadTarget } : {};
   const leadCell = melodyRhythm(v.meter, v.bpm, name, { target: leadTarget, accDensity, accOnsets, beats, heldFirst: grammarFresh, ...meterCap });
-  const leadSeed = fnv(name);
+  // r35: `opts.leadSeedSalt` re-rolls the TUNE of one song (the lead cell's
+  // seed, and with it every letter's melody seed below) without touching its
+  // harmony, cast or form — his vg_triumphant_training card: "the melody for
+  // the vocal doesn't sound good". The salt is chosen by MEASUREMENT (the
+  // most singable of the candidates: fewest zigzag leaps, most steps) and
+  // pinned on the row; the key is still hashed from the song's name (D120).
+  const melodyName = opts.leadSeedSalt != null ? `${name}|salt${opts.leadSeedSalt}` : name;
+  const leadSeed = fnv(melodyName);
   const leadBound = bindMelody(leadCell, ctxBar, v.meter, {
     style: 'toby-fox', seed: leadSeed, octave: leadOctave, sound: LEAD_SOUND, fx: leadFx,
     hold: LEAD.hold, mergeRepeats: LEAD.merge, articFloor: artFloor, cadenceNo7, chromCore, tailOff: grammarFresh, leapFold: grammarFresh, chordTop: chordTopOn, minNote: grammarFresh ? (opts.leadMinNote ?? 1) : 0, minNoteLast: noJitter, gridSnap: gridSnapOn, subBarChords: r33(), tissue: r33(), ...(opts.leadRangeSteps ? { rangeSteps: opts.leadRangeSteps } : {}),
@@ -2973,8 +2990,8 @@ function buildSong(prompt, name, opts = {}) {
   // mirrored here so the split lands where the binder's own cadences already do.
   const leadPhraseBars = loopBars <= 3 ? Math.max(2, loopBars) : 4;
   const letterSeed = (L, stmt = 0) => {
-    const base = L === 'A' ? leadSeed : fnv(`${name}|melody|${L}`);
-    return (leadStmtVary && stmt >= 2) ? fnv(`${name}|melody|${L}|s${stmt}`) : base;
+    const base = L === 'A' ? leadSeed : fnv(`${melodyName}|melody|${L}`);
+    return (leadStmtVary && stmt >= 2) ? fnv(`${melodyName}|melody|${L}|s${stmt}`) : base;
   };
   // D82 (teaching the planner): MELODY HANDOFFS are a generator default. A
   // letter is a complete melodic statement — exactly the D80 boundary rule
@@ -3722,6 +3739,24 @@ function buildSong(prompt, name, opts = {}) {
     // "no percussion tips it into space" failure the pin exists to stop)
     const drumBars = form.sections.flatMap((sec) =>
       Array(sec.bars).fill(opts.percAllBars ? 1 : (ENERGY[sec.archetype] ?? 3) >= 3 ? 1 : 0));
+    // ---- r35 · THE CRASH LEADS INTO THE SEAM, AND ITS PEAK LANDS THERE ------
+    // His cards: "random cymbal is in the middle of the section, not before a
+    // drop or anything" (vx_tense_fight), "random cymbal doesn't fit either"
+    // (vx_triumphant_boss), "cymbal not before the drop of a section"
+    // (vg_excited_fight). Two measured causes. (1) `battle_crash` is an 8-bar
+    // CELL (onset 31/4 = bar 7 beat 4) that counts from the drum mask's first
+    // bar, not from the form — on a 16-bar A section its crash lands at bar 8,
+    // mid-section, and on the 64-bar boss half its six crashes were mid-section.
+    // (2) The sound is a CRESCENDO sample and the wav backend round-robins its
+    // three lengths: the swell peaks 1.44 s (short), 3.57 s (median) or 7.06 s
+    // (long) after the onset — a "lead-in" placed a beat before the seam PEAKED
+    // one to four bars INTO the next section. So on r35-fresh songs the crash
+    // row leaves the kit and a single stamp is placed per seam: the SHORT
+    // variant (`vc_cym_cresc:0`, both tiers pick the same file) starting its
+    // measured peak-time before the downbeat of every section that changes
+    // letter or lifts energy and carries drums — the "drop", his word.
+    const seamCrash = opts.crashSeams ?? (r35() && historyLess() && picks.includes('battle_crash'));
+    if (seamCrash) picks = picks.filter((p) => p !== 'battle_crash');
     if (drumBars.some(Boolean)) {
       const parts = picks.map((p) => drumExpr(p, presence, deepDrums, r33()));
       const dm = maskString(drumBars);
@@ -3729,6 +3764,32 @@ function buildSong(prompt, name, opts = {}) {
       const stackd = parts.length === 1 ? parts[0] : `stack(${parts.join(', ')})`;
       drums = /^1(@\d+)?$/.test(dm) ? stackd : `${stackd}.mask("<${dm}>")`;
       drumInfo.push(...picks.map((p) => `${p} (${RHYTHMS[p].band}) at ${presence}`));
+      if (seamCrash) {
+        const CRASH_PEAK_S = 1.44; // measured: susCymb1-cresc-Short_v1.wav peak RMS at 1.44 s
+        const secPerBar = (60 / v.bpm) * beats;
+        const leadBars = CRASH_PEAK_S / secPerBar;
+        const letterAt = (sec) => String(mf.sections.find((x) => x.index === sec.index)?.letter ?? 'A').replace('*', '');
+        const stampBars = Array(form.totalBars).fill(0);
+        const seams = [];
+        let start = 0;
+        form.sections.forEach((sec, i) => {
+          if (i > 0) {
+            const prev = form.sections[i - 1];
+            const drop = drumBars[start] === 1
+              && (letterAt(sec) !== letterAt(prev) || (ENERGY[sec.archetype] ?? 3) > (ENERGY[prev.archetype] ?? 3) || (prev.lead === 'none' && sec.lead !== 'none'));
+            const t = start - leadBars;
+            if (drop && t >= 0) { stampBars[Math.floor(t)] = 1; seams.push(start); }
+          }
+          start += sec.bars;
+        });
+        if (seams.length) {
+          const frac = Math.round((1 - (leadBars - Math.floor(leadBars))) * 10000) / 10000; // bar-local onset inside the stamp bar
+          const g = Math.round(0.85 * (PRESENCE_GAIN[presence] ?? 0.7) * 100) / 100;
+          const stamp = `s("vc_cym_cresc:0").gain(${g}).mask("<${maskString(stampBars)}>").late(${frac})`;
+          drums = `stack(${drums}, ${stamp})`;
+          drumInfo.push(`seam crash (r35): vc_cym_cresc:0 peaking on the downbeat of bar${seams.length > 1 ? 's' : ''} ${seams.join(', ')} (starts ${CRASH_PEAK_S}s = ${leadBars.toFixed(2)} bars early)`);
+        }
+      }
     }
   }
 
@@ -5089,33 +5150,128 @@ function buildSong(prompt, name, opts = {}) {
       arp: { name: 'jrock-arp', bars: 1, grid: 16, class: 'arp', meter_class: '4/4', legato: true,
         onsets: EIGHTHS, figure: ['R', '5', 'R+', '3+', '5+', '3+', 'R+', '5'], accents: [0.8, 0.55, 0.65, 0.6, 0.72, 0.6, 0.65, 0.55] },
     };
+    // ---- r34b GUITAR AS THE MAIN THING (his "generate some songs with guitar
+    // intentionally in it as a main thing ... just make sure to understand
+    // which genres it'd make sense in"). Three MAIN modes, each a genre where
+    // a lead guitar belongs, on top of the subtle 'rock'/'arp' layer he liked:
+    //   main    — J-rock / anime opening / power pop / Vocaloid rock: the
+    //             rhythm guitar louder (still under the voice), an INTRO RIFF
+    //             (the A melody played by the guitar over the intro bars — the
+    //             anime-OP habit of stating the hook instrumentally first),
+    //             and the guitar DOUBLING THE VOCAL an octave down in the
+    //             final chorus (the J-rock last-chorus unison);
+    //   citypop — clean 16th offbeat chops (3.5.R+ voicings at octave 3) in
+    //             the verse, clean 8th strums in the chorus, clean intro riff
+    //             and final double — the Tatsuro/Mariya guitar under a voice;
+    //   ballad  — the clean arpeggio at main level, clean intro riff, and the
+    //             clean guitar joining the voice for the last section.
+    const MAIN = /^(main|citypop|ballad)$/.test(gMode);
+    // ---- r35 · THE GUITAR PLAYS STACCATO (his ear, five cards in one export) --
+    // "the guitar is a bit too wet/sustaining -> it sounds a bit like white
+    // noise" (vx_triumphant_boss), "too sustaining so it sounds like white
+    // noise" (vx_excited_festival), "when the guitar starts sustaining (like
+    // holding), it doesn't sound good. whenever it's just playing staccato
+    // notes it sounds good and the octave alternation thats good"
+    // (vg_triumphant_training), "whenever the guitar sounds like it's
+    // sustaining, it doesn't sound good" (vg_excited_space), "the guitar
+    // spamming the same chords doesn't sound good" (vg_excited_fight).
+    // Measured: every complained part is the ringing (legato) open-chord
+    // chorus on the Sus articulation through the crunch capture; every praised
+    // part is the palm-muted verse ("I like the guitar here" on vg_happy_festival
+    // is the one open chorus he liked — pinned, it keeps it). So on r35-fresh
+    // songs the chorus is palm-muted too: the octave chug (R.5 / R+.5+, the
+    // "octave alternation" he named) on B letters and a 3+3+2 push on the
+    // bridge letters — two chorus figures by LETTER, not one by hash, which is
+    // the "spamming the same chords" answer — and the main-mode riff/double
+    // move to the muted articulation as well; the room drops (his "too wet").
+    const stacc = opts.guitarStaccato ?? r35();
+    GFIGS.chug_oct = { name: 'jrock-chug-oct', bars: 1, grid: 16, class: 'comp', meter_class: '4/4', legato: false,
+      onsets: EIGHTHS, figure: ['R.5', 'R.5', 'R+.5+', 'R.5', 'R.5', 'R+.5+', 'R.5', 'R+.5+'], accents: [0.95, 0.62, 0.88, 0.62, 0.9, 0.86, 0.62, 0.9] };
+    GFIGS.push332 = { name: 'jrock-push332', bars: 1, grid: 16, class: 'comp', meter_class: '4/4', legato: false,
+      onsets: ['0', '1/8', '3/8', '1/2', '3/4', '7/8'], figure: ['R.5.R+', 'R.5', 'R.5.R+', 'R.5', 'R.5.R+', 'R+.5+'], accents: [0.95, 0.55, 0.9, 0.55, 0.92, 0.7] };
+    const gMul = Number(opts.guitarGainMul ?? 1);
+    const OFF16 = ['1/16', '3/16', '5/16', '7/16', '9/16', '11/16', '13/16', '15/16'];
+    GFIGS.chop16 = { name: 'citypop-chop16', bars: 1, grid: 16, class: 'comp', meter_class: '4/4', legato: false,
+      onsets: OFF16, figure: Array(8).fill('3.5.R+'), accents: [0.75, 0.6, 0.8, 0.6, 0.78, 0.6, 0.82, 0.62] };
+    GFIGS.strum8 = { name: 'citypop-strum8', bars: 1, grid: 16, class: 'comp', meter_class: '4/4', legato: true,
+      onsets: EIGHTHS, figure: Array(8).fill('R.3.5.R+'), accents: [0.9, 0.62, 0.78, 0.62, 0.86, 0.62, 0.78, 0.66] };
     const letterOf = (sec) => String(mf.sections.find((x) => x.index === sec.index)?.letter ?? 'A').replace('*', '');
     const leadSecs = form.sections.filter((sec) => sec.lead !== 'none');
     const onlyA = leadSecs.every((sec) => letterOf(sec) === 'A');
     let aCount = 0;
     const roleOf = form.sections.map((sec) => {
       if (sec.lead === 'none') return null;
-      if (gMode === 'arp') return 'arp';
+      if (gMode === 'arp' || gMode === 'ballad') return 'arp';
       const L = letterOf(sec);
       if (onlyA) return (aCount++ % 2 === 0) ? 'verse' : 'chorus';
-      return L === 'A' ? 'verse' : 'chorus';
+      // r35: the bridge letters (C, D, ...) take the second chorus figure
+      return L === 'A' ? 'verse' : (stacc && MAIN && gMode === 'main' && L !== 'B') ? 'chorus2' : 'chorus';
     });
     const verseFig = fnv(`${name}|guitar-verse`) % 3 === 0 ? 'gallop' : 'mute8';
-    const parts = gMode === 'arp'
-      ? [{ key: 'arp', fig: GFIGS.arp, sound: 'gm_electric_guitar_clean', gain: [0.34, 0.44], fx: '.room(0.35)' }]
-      : [{ key: 'verse', fig: GFIGS[verseFig], sound: 'gm_electric_guitar_muted', gain: [0.4, 0.5], fx: '.room(0.12)' },
-         { key: 'chorus', fig: GFIGS.open8, sound: 'gm_overdriven_guitar', gain: [0.46, 0.58], fx: '.room(0.18)' }];
+    const CLEAN = 'gm_electric_guitar_clean', MUTED = 'gm_electric_guitar_muted', OD = 'gm_overdriven_guitar';
+    const parts = gMode === 'arp' || gMode === 'ballad'
+      // the ballads' leadGain is ~0.47: at [0.34, 0.44] x leadGain the arpeggio
+      // rendered at velocity ~20/127 and the sampler's velocity curve + filter
+      // put the stem at -74 dB RMS (measured: inaudible, the balance stage
+      // clamped). [0.62, 0.8] x leadGain = 0.29-0.38 — still under the lead
+      ? [{ key: 'arp', fig: GFIGS.arp, sound: CLEAN, gain: gMode === 'ballad' ? [0.8, 0.95] : [0.62, 0.8], fx: '.room(0.35)', oct: 2 }]
+      : gMode === 'citypop'
+        ? [{ key: 'verse', fig: GFIGS.chop16, sound: CLEAN, gain: [0.5, 0.62], fx: '.room(0.22)', oct: 3 },
+           { key: 'chorus', fig: GFIGS.strum8, sound: CLEAN, gain: [0.55, 0.68], fx: '.room(0.25)', oct: 3 }]
+        : stacc
+          ? [{ key: 'verse', fig: GFIGS[verseFig], sound: MUTED, gain: MAIN ? [0.55, 0.68] : [0.4, 0.5], fx: '.room(0.06)', oct: 2 },
+             { key: 'chorus', fig: GFIGS.chug_oct, sound: MUTED, gain: MAIN ? [0.66, 0.8] : [0.46, 0.58], fx: '.room(0.08)', oct: 2 },
+             ...(MAIN ? [{ key: 'chorus2', fig: GFIGS.push332, sound: MUTED, gain: [0.66, 0.8], fx: '.room(0.08)', oct: 2 }] : [])]
+          : [{ key: 'verse', fig: GFIGS[verseFig], sound: MUTED, gain: MAIN ? [0.55, 0.68] : [0.4, 0.5], fx: '.room(0.12)', oct: 2 },
+             { key: 'chorus', fig: GFIGS.open8, sound: OD, gain: MAIN ? [0.66, 0.8] : [0.46, 0.58], fx: '.room(0.18)', oct: 2 }];
     const cast = [];
     for (const p of parts) {
       const bars = form.sections.flatMap((sec, i) => Array(sec.bars).fill(roleOf[i] === p.key ? 1 : 0));
       if (!bars.some(Boolean)) continue;
-      const gr = [Math.round(p.gain[0] * leadGain * 100) / 100, Math.round(p.gain[1] * leadGain * 100) / 100];
-      const bindG = (ctx) => bindFigure(p.fig, ctx, v.meter, { sound: p.sound, octave: 2, loopRoots: true, gainRange: gr, fx: p.fx }).expr;
+      const gr = [Math.round(p.gain[0] * leadGain * gMul * 100) / 100, Math.round(p.gain[1] * leadGain * gMul * 100) / 100];
+      const bindG = (ctx) => bindFigure(p.fig, ctx, v.meter, { sound: p.sound, octave: p.oct, loopRoots: true, gainRange: gr, fx: p.fx }).expr;
       extraParts.push(...varySplit(bindG, bars));
       extraSolos[`_guitar_${p.key}`] = bindG(ctxBar);
       cast.push(`${p.key} ${p.fig.name} on ${p.sound} (${bars.filter(Boolean).length} bars, gain ${gr[0]}-${gr[1]})`);
     }
-    if (cast.length) extraInfo.push(`electric guitar (r34, J-rock layer under the voice): ${cast.join('; ')}`);
+    if (MAIN) {
+      // the guitar's MELODY parts: bindMelody on the lead's own cells (the
+      // bindLetterDbl option set), an octave under the lead when the lead sits
+      // high (the library plays B1-D6), on the mode's lead-guitar voice
+      const gSound = gMode === 'main' ? (stacc ? MUTED : OD) : CLEAN;
+      const gOct = Math.min(leadOctave, 4);
+      const gMel = (L, stmt, gain, ctx) => bindMelody(letterCell(L), ctx, v.meter, {
+        style: 'toby-fox', seed: letterSeed(L, stmt), octave: gOct, sound: gSound, fx: `${gainFx(String(gain))}.room(${gMode === 'main' ? 0.2 : 0.3})`,
+        hold: LEAD.hold, mergeRepeats: LEAD.merge, articFloor: artFloor, cadenceNo7, chromCore, tailOff: grammarFresh, leapFold: grammarFresh, chordTop: false, minNote: grammarFresh ? (opts.leadMinNote ?? 1) : 0, minNoteLast: noJitter, gridSnap: gridSnapOn, subBarChords: r33(), tissue: r33(), ...(opts.leadRangeSteps ? { rangeSteps: opts.leadRangeSteps } : {}),
+      }).expr;
+      // intro riff: the leading run of no-lead sections plays the A hook
+      const introBars = [];
+      let inIntro = true;
+      for (const sec of form.sections) { if (sec.lead !== 'none') inIntro = false; introBars.push(...Array(sec.bars).fill(inIntro ? 1 : 0)); }
+      // the riff takes at most the LAST 8 intro bars: a 16-bar ballad intro
+      // (51 s at 75 bpm) opens on the arpeggio alone, then the hook, then the
+      // voice — an anime-OP intro states the hook once, it does not loop it
+      { let n = 0; for (let i = introBars.length - 1; i >= 0; i--) if (introBars[i]) { if (++n > 8) introBars[i] = 0; } }
+      if (introBars.some(Boolean) && form.sections.some((s) => s.lead !== 'none')) {
+        const rg = Math.round(0.82 * leadGain * gMul * 100) / 100;
+        extraParts.push(...varySplit((ctx) => gMel('A', 0, rg, ctx), introBars));
+        extraSolos._guitar_riff = gMel('A', 0, rg, ctxBar);
+        cast.push(`intro riff: the A hook on ${gSound} over ${introBars.filter(Boolean).length} intro bars (gain ${rg})`);
+      }
+      // final chorus: the guitar joins the voice in unison (an octave under)
+      const lastIx = form.sections.map((s, i) => (s.lead !== 'none' ? i : -1)).filter((i) => i >= 0).pop();
+      if (lastIx != null) {
+        const lastSec = form.sections[lastIx];
+        const L = letterOf(lastSec);
+        const dblBars = form.sections.flatMap((sec, i) => Array(sec.bars).fill(i === lastIx ? 1 : 0));
+        const dg = Math.round((gMode === 'main' ? 0.6 : 0.5) * leadGain * gMul * 100) / 100;
+        const stmt = form.sections.slice(0, lastIx + 1).filter((s) => s.lead !== 'none' && letterOf(s) === L).length - 1;
+        extraParts.push(...varySplit((ctx) => gMel(L, Math.max(0, stmt), dg, ctx), dblBars));
+        extraSolos._guitar_double = gMel(L, Math.max(0, stmt), dg, ctxBar);
+        cast.push(`final-chorus double: ${gSound} in unison with the voice (${L}, ${lastSec.bars} bars, gain ${dg})`);
+      }
+    }
+    if (cast.length) extraInfo.push(`electric guitar (r34, ${MAIN ? `${gMode.toUpperCase()} — the guitar is the main thing` : 'J-rock layer under the voice'}${stacc ? '; r35 staccato: palm-muted throughout, chorus = octave chug / 3+3+2 push by letter' : ''}${gMul !== 1 ? `; gain x${gMul}` : ''}): ${cast.join('; ')}`);
   }
 
   // (b4b) r16 WOBBLE TEXTURE. His desert-ornament note, verbatim: "a and b are
@@ -6776,7 +6932,16 @@ function buildSong(prompt, name, opts = {}) {
     const doubled = [];
     for (let i = 0; i < layerMixOut.length; i++) {
       const L = shaped.layers[i];
-      if (/melody_backup|melody_takeover/.test(`${L?.part ?? ''} ${L?.id ?? ''}`)) { ix.push(nFixed + i); doubled.push(String(L?.part ?? L?.id).replace(/^.*::/, '')); }
+      // r35 verify catch (his vx_happy_jungle "random fast slightly off-beat
+      // synth sounds like glitching"): the layer parts were indexed from the
+      // CONSTANT nFixed (= 4, the length of rampSrc's fixed head), but mixParts'
+      // head is VARIABLE — base + each present one of lead/companion/double/
+      // echo/octave — so on a song whose head is not exactly four entries the
+      // guide wrapped a NEIGHBOURING layer and left the takeover at full gain
+      // (measured: jungle's kalimba melody_takeover at 0.89 in the mix, bars
+      // 14-19, with the guide on some other part). `k` is the true first-layer
+      // index. r35-gated: the judged suite keeps the part it was judged with.
+      if (/melody_backup|melody_takeover/.test(`${L?.part ?? ''} ${L?.id ?? ''}`)) { ix.push((ruleFresh(35) ? k : nFixed) + i); doubled.push(String(L?.part ?? L?.id).replace(/^.*::/, '')); }
     }
     for (const i of ix) mixParts[i] = `(${mixParts[i]}).mul(gain(${guide}))`;
     extraInfo.push(`vocal lead: the tune is sung (vocal tier, r34); the instrumental lead${ix.length > 1 ? ` and its doublers (${['octave/backup', ...doubled].slice(ix.length > 1 + doubled.length ? 0 : 1).join(', ')})` : ''} play as a x${guide} guide under the voice`);
@@ -7998,22 +8163,48 @@ const ENERGY_PAGE = process.env.ENERGY === '1';
 const VOCAL_PAGE = process.env.VOCAL === '1';
 const VX_PROMPTS = [
   // ---- energetic (8) --------------------------------------------------------
-  { e: 'excited',    v: 'festival', why: 'festival pop anthem — the brightest lane, four-on-the-floor kit with a backbeat, chorus hooks repeat on the returning letter' },
+  // ---- r35: HIS FIRST EXPORT ON THIS PAGE (2026-09-12), per card -------------
+  // "with HQ on, I can't hear the accordion ... guitar doesn't really fit this
+  // vibe and is a bit too sustaining ... otherwise it's a good song" -> the
+  // guitar leaves; the voice stays where he judged it (+3, no complaint).
+  { e: 'excited',    v: 'festival', why: 'festival pop anthem — the brightest lane, four-on-the-floor kit with a backbeat, chorus hooks repeat on the returning letter', extra: { guitar: false }, vocalDb: 3 },
+  // "8th vocal note sounds like screaming" (A5 held, export-vocal's r35 ceiling),
+  // "random cymbal" (seam crash), "voice a bit too loud for a energetic section
+  // - learn this" (the balance law -> 0), "guitar too wet/sustaining" (staccato)
   { e: 'triumphant', v: 'boss',     why: 'power anthem — marcato strings and a driving kit under a soaring line', extra: { marcato: true } },
+  // "random fast slightly off-beat synth sounds like glitching" — measured: the
+  // kalimba melody_takeover at 0.89 in bars 14-19, un-guided (the index bug)
   { e: 'happy',      v: 'jungle',   why: 'dance — the tumbao bass and marimba vamp of the jungle lane as a groove under a voice' },
   { e: 'excited',    v: 'space',    why: 'synth-pop — the all-synth lane is the voice’s home genre (a Vocaloid song is a synth song)', extra: { fullSynth: true } },
-  { e: 'excited',    v: 'casino',   why: 'swing / funk — the swung 16ths lane, a syllabic vocal riding the shuffle', extra: { fullSynth: true, swing: 0.585, leadRangeSteps: 4 } },
-  { e: 'tense',      v: 'fight',    why: 'rock drive — the offbeat texture and counterline of the fight lane under a tense sung line', extra: { texture: { class: 'offbeat', octave: 3 }, counterline: true } },
-  { e: 'happy',      v: 'shop',     why: 'bright everyday pop — the shop lane’s groovy chill beat at a singable tempo' },
+  // "love the guitar here, sounds better than without!" — a prose keep: pinned
+  // as judged, open chorus and all, voice at the judged +3
+  { e: 'excited',    v: 'casino',   why: 'swing / funk — the swung 16ths lane, a syllabic vocal riding the shuffle', extra: { fullSynth: true, swing: 0.585, leadRangeSteps: 4, pinFrom: 'r35', voicedColor: true }, vocalDb: 3 },
+  // "random cymbal is in the middle of the section ... I like this song though"
+  // -> pinned, the seam crash is the one named change
+  { e: 'tense',      v: 'fight',    why: 'rock drive — the offbeat texture and counterline of the fight lane under a tense sung line', extra: { texture: { class: 'offbeat', octave: 3 }, counterline: true, pinFrom: 'r35', crashSeams: true }, vocalDb: 3 },
+  // "the guitar sounds good but makes it less 'happy shop' so doesn't fit the
+  // genre ... overall good though" -> the guitar leaves, nothing else moves
+  { e: 'happy',      v: 'shop',     why: 'bright everyday pop — the shop lane’s groovy chill beat at a singable tempo', extra: { guitar: false, pinFrom: 'r35', voicedColor: true }, vocalDb: 3 },
   // vocalDb = the voice over the band's RMS in its sung spans (render-vocal.mjs
   // reads it from the page; the suite default is +3). HIS r34 NOTES: "in
   // excited training, make the voice softer -> since it's energetic, the
   // voice should not completely overpower the energetic instruments" -> 0;
   // "make the romantic song voice just a bit softer (to a lesser degree)" -> +1.5.
-  { e: 'excited',    v: 'training', why: 'sports montage — marcato ostinato and a rising kit', extra: { marcato: true }, vocalDb: 0 },
+  // r35: "the spamming piano drowns out the other stuff and is a bit too loud
+  // (I think use another instrument for the spamming chord stuff)" — measured:
+  // the acc hand at 0.90-1.00 against a x0.45 lead guide (16 attacks a bar).
+  // The hand moves to the electric piano and to 0.6x.
+  { e: 'excited',    v: 'training', why: 'sports montage — marcato ostinato and a rising kit', extra: { marcato: true, accSound: 'gm_epiano1', accGainMul: 0.6 }, vocalDb: 0 },
   // ---- two slower ones so the suite has a ballad side ---------------------
-  { e: 'nostalgic',  v: 'snow',     why: 'ballad — the royal-road lane; long held vowels, the register pushed up for snow' },
-  { e: 'romantic',   v: 'rest',     why: 'slow ballad — two anchor chords, the voice carries almost everything', vocalDb: 1.5 },
+  // KEEP (clicked, r34-vocal export) + "piano is a bit too loud ... in HQ it's
+  // so much better and the voice melody is so good. fits so well". The keep
+  // pins harmony and base (D64); `keepFresh` keeps every rule it was JUDGED
+  // with live (the keep-transition law, D91/D118) and pinFrom walls off this
+  // round's; the acc trim is the one named change. Voice at the judged +3.
+  { e: 'nostalgic',  v: 'snow',     why: 'ballad — the royal-road lane; long held vowels, the register pushed up for snow', extra: { keepFresh: true, pinFrom: 'r35', voicedColor: true, accGainMul: 0.8 }, vocalDb: 3 },
+  // "at the very beginning, there's a bit of a glitch. otherwise it's very
+  // good" -> pinned; the head fade is in render-vocal.mjs
+  { e: 'romantic',   v: 'rest',     why: 'slow ballad — two anchor chords, the voice carries almost everything', extra: { pinFrom: 'r35', voicedColor: true }, vocalDb: 1.5 },
 ];
 
 const LAYERSTACK = process.env.LAYERSTACK === '1';
@@ -8573,6 +8764,10 @@ if (VOCAL_PAGE) {
     const energetic = !/nostalgic|romantic|calm|somber|sad/.test(row.e);
     buildSong({ emotion: row.e, environment: row.v, meter: '4/4' }, name, {
       vocalLead: true, companion: true,
+      // r35: his first export on this page is its first judgement, not a
+      // history (D118's noteBlind) — without it 15 notes would strip what he
+      // heard from 15 songs before a line of engine code changed
+      noteBlind: true,
       // r34: the electric guitar layer (his ask) — rock figures under the
       // energetic eight, the clean arpeggio under the two ballads
       guitar: energetic ? 'rock' : 'arp',
@@ -8582,7 +8777,98 @@ if (VOCAL_PAGE) {
     const S = songs[songs.length - 1];
     S.why = row.why;
     S.vocalSuite = true;
-    if (row.vocalDb != null) S.vocalDb = row.vocalDb;
+    // r35 · THE VOCAL BALANCE LAW — his "voice a bit too loud for a energetic
+    // section - learn this" (vx_triumphant_boss), then "voice still too loud"
+    // / "vocals too loud" / "voice too loud" / "voice way too loud" on four of
+    // the six guitar-main songs at the +3 dB default. Measured, the realized
+    // K-weighted vocal-over-band did NOT separate the complained songs from
+    // the praised ones (5.2 dB on boss vs 5.7 on casino, "love"), so this is
+    // his ear's law, not a mechanism: an energetic song sits the voice AT the
+    // band (0 dB over its sung-span RMS; training was judged there without a
+    // loudness complaint), a calm one 1.5 dB over (romantic_rest, "very
+    // good"). A row's own `vocalDb` pins what he judged or asked for.
+    S.vocalDb = row.vocalDb ?? (energetic ? 0 : 1.5);
+  }
+  // ---- r34b GUITAR-MAIN SONGS (his "generate some songs with guitar
+  // intentionally in it as a main thing ... understand which genres it'd make
+  // sense in. generate some more songs from scratch in vocals.html, taking
+  // inspiration from jpop and relevant genres"). Six new songs, four energetic,
+  // each in a genre where a lead guitar is idiomatic, on the hand-authored
+  // J-pop / city-pop idiom progressions where one fits the lane (the tempo
+  // clamped into the idiom's own range, as the citypop page does). The other
+  // session's toppack-r34 read-out is not written up yet; these are built
+  // from the idiom library and the genres' known habits, and are to be
+  // revisited when research/toppack-r34.md lands.
+  const VG_PROMPTS = [
+    // r35, his card: "voice still too loud" (-1.5, under the law's 0), "cymbal
+    // not before the drop of a section" (seam crash), "the guitar spamming the
+    // same chords doesn't sound good" (two chorus figures by letter, staccato)
+    { e: 'excited',    v: 'fight',    guitar: 'main',    pin: 'cp_kpop_minor_anthem', genre: 'anime opening / J-rock', bpm: 140, vocalDb: -1.5,
+      why: 'The minor anthem loop (im9-bVIΔ7-bVIIsus) at 140 under palm-muted verse chug, open chorus chords, the A hook as a guitar intro riff and the guitar in unison with the voice for the last chorus — the anime-OP shape.' },
+    // r35, his card: "remove the really high woodwind in the middle that plays
+    // for a little bit. I like the guitar here. instrumental is good" —
+    // measured: the C-letter handoff put the tune on gm_epiano1 at 83-96 for
+    // bars 16-23, and the clarinet companion peaks at 84 in the same bars.
+    // Both go (noHandoff; companion an octave down); the rest is pinned, the
+    // open-chorus guitar he liked included; voice at the judged +3.
+    { e: 'happy',      v: 'festival', guitar: 'main',    pin: 'cp_komuro',            genre: 'power pop / idol rock', bpm: 136, vocalDb: 3, extra: { pinFrom: 'r35', noHandoff: true, companion: { octave: 3 } },
+      why: 'The Komuro progression (vi-IV-V-I), the 90s J-pop backbone, at 140 with a driving kit; guitar riff intro, gallop or chug verse, ringing chorus.' },
+    // r35, his card: "the melody for the vocal doesn't sound good, and when the
+    // guitar starts sustaining (like holding), it doesn't sound good" — the
+    // tune re-rolled by `leadSeedSalt` (eight candidates measured on the sung
+    // line: salt 1 has the most steps (0.23 vs 0.18), the fewest zigzag leaps
+    // (0.07 vs 0.12) and the narrowest useful range; D138), guitar staccato
+    { e: 'triumphant', v: 'training', guitar: 'main',    pin: 'cp_kpop_bright_hook',  genre: 'sports anthem J-rock', bpm: 140, extra: { marcato: true, leadSeedSalt: 1 },
+      why: 'The bright descending-bass hook (IΔ7-V/VII-vim7-IVΔ7) at 145 with marcato strings beside the guitar — the tournament-arc anthem.' },
+    // r35, his card: "guitar too loud, and vocals too loud. also the fifth vocal
+    // note sounds like screaming ... whenever the guitar sounds like it's
+    // sustaining, it doesn't sound good" -> guitar x0.75 + staccato, voice 0,
+    // the A5 folds (export-vocal ceiling)
+    { e: 'excited',    v: 'space',    guitar: 'main',    pin: null,                   genre: 'Vocaloid electro-rock', bpm: 128, extra: { fullSynth: true, guitarGainMul: 0.75 },
+      why: 'The all-synth lane with the guitar as the second main voice — a Vocaloid rock song is synths plus one loud guitar; harmony from the engine so the suite is not all idiom loops.' },
+    // r35, his card: "voice way too loud, but the melody is good, and the guitar
+    // fits well with the piano. love the instrumental too for the vibe, but the
+    // strings a bit too loud ... starts really soft and then becomes really
+    // loud" -> pinned (a prose keep), voice -1, the swell fixed in the render
+    // tier (build-sfz skipSwell + the horn off fluidsynth)
+    { e: 'nostalgic',  v: 'shop',     guitar: 'citypop', pin: 'cp_royal_road',        genre: 'city pop', vocalDb: -1, extra: { pinFrom: 'r35' },
+      why: 'The royal road (IV-V-iii-vi) at 108 with clean 16th offbeat chops in the verse and clean strums in the chorus, clean riff and double — the city-pop guitar under a voice.' },
+    // r35, his card: "really good, love this. voice too loud though and violin
+    // much too loud. guitar a bit too loud" -> pinned (a prose keep), voice 0,
+    // guitar x0.75; the "violin" is the string swell (render tier)
+    { e: 'romantic',   v: 'water',    guitar: 'ballad',  pin: 'cp_descending_bass',   genre: 'guitar ballad', vocalDb: 0, extra: { pinFrom: 'r35', guitarGainMul: 0.75 },
+      why: 'The descending-bass turnaround (IVΔ7-ivm6-iiim7-VI7-iim7-V7sus) at 76: the clean arpeggio carries the song, the guitar states the hook alone first and joins the voice at the end.' },
+  ];
+  for (const row of VG_PROMPTS) {
+    const name = `vg_${row.e}_${row.v}`;
+    const energetic = !/nostalgic|romantic|calm|somber|sad/.test(row.e);
+    const entry = row.pin ? PROGRESSIONS_CITYPOP[row.pin] : null;
+    // tempo: the row's own (a genre tempo — power pop at 136, not the vibe's
+    // 113), else the vibe's clamped into the idiom's range; the pinless
+    // electro-rock row states 128 because "excited space" compiled at 83
+    let bpm = row.bpm;
+    if (entry) {
+      const v0 = compileVibe({ emotion: row.e, environment: row.v, meter: '4/4', name: `vg_probe_${row.e}_${row.v}` });
+      bpm = Math.min(entry.appliesWhen.bpm[1], Math.max(entry.appliesWhen.bpm[0], bpm ?? v0.bpm));
+    }
+    buildSong({ emotion: row.e, environment: row.v, meter: '4/4' }, name, {
+      vocalLead: true, companion: true, guitar: row.guitar, noteBlind: true,
+      // VG_SALT_PROBE="<song>:<salt>" — the measurement hook behind a row's
+      // `leadSeedSalt` pin (r35): build with candidate salts, score each tune's
+      // singability, pin the winner on the row
+      ...(process.env.VG_SALT_PROBE && process.env.VG_SALT_PROBE.split(':')[0] === name ? { leadSeedSalt: Number(process.env.VG_SALT_PROBE.split(':')[1]) } : {}),
+      ...(entry ? { basePin: row.pin, rawBase: true } : {}),
+      ...(bpm ? { bpm } : {}),
+      ...(energetic ? { percBackbeat: true, deepDrums: true } : {}),
+      ...(row.extra ?? {}),
+    });
+    const S = songs[songs.length - 1];
+    S.why = row.why;
+    S.vocalSuite = true;
+    S.guitarMain = row.guitar;
+    S.genre = row.genre;
+    S.vocalDb = row.vocalDb ?? (energetic ? 0 : 1.5); // r35 balance law (above)
+    if (entry) S.idiomName = entry.idiomName;
   }
 }
 

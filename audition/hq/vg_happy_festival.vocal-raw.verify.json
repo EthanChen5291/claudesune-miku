@@ -1,0 +1,84 @@
+{
+ "wav": "/Users/ethanchen/Documents/GitHub/motif-engine/audition/hq/vg_happy_festival.vocal-raw.wav",
+ "seconds": 59.46,
+ "sr": 40000,
+ "notes": 77,
+ "note_hit_rate_mean": 0.8335567487380515,
+ "notes_hit_ge_50pct": 0.987012987012987,
+ "octave_error_rate_mean": 0.0009276437847866418,
+ "notes_octave_wrong": 0,
+ "voiced_coverage_mean": 0.999846003798573,
+ "notes_unvoiced": 0,
+ "sung_rms_db": -18.14561213621199,
+ "rest_rms_db": -64.69246089343146,
+ "rest_leak_db": -46.546848757219465,
+ "onset_lag_median_ms": -3.3799999999987174,
+ "onset_lag_p90_ms": 146.96899999999982,
+ "onset_lag_notes": 64,
+ "worst_notes": [
+  {
+   "start": 49.19118,
+   "midi": 64,
+   "hit": 0.21428571428571427,
+   "oct": 0.0,
+   "voiced": 1.0,
+   "median_dev_cents": -121.6524959411629
+  },
+  {
+   "start": 22.94118,
+   "midi": 72,
+   "hit": 0.5394736842105263,
+   "oct": 0.0,
+   "voiced": 1.0,
+   "median_dev_cents": -38.973025216157
+  },
+  {
+   "start": 4.85294,
+   "midi": 72,
+   "hit": 0.6052631578947368,
+   "oct": 0.0,
+   "voiced": 1.0,
+   "median_dev_cents": -37.029991788942596
+  },
+  {
+   "start": 13.89706,
+   "midi": 60,
+   "hit": 0.6428571428571429,
+   "oct": 0.07142857142857142,
+   "voiced": 1.0,
+   "median_dev_cents": 24.759384514773686
+  },
+  {
+   "start": 3.52941,
+   "midi": 65,
+   "hit": 0.6493506493506493,
+   "oct": 0.0,
+   "voiced": 1.0,
+   "median_dev_cents": -10.488172536445006
+  },
+  {
+   "start": 54.70588,
+   "midi": 71,
+   "hit": 0.65625,
+   "oct": 0.0,
+   "voiced": 1.0,
+   "median_dev_cents": -27.71318692839273
+  },
+  {
+   "start": 0,
+   "midi": 72,
+   "hit": 0.6578947368421053,
+   "oct": 0.0,
+   "voiced": 1.0,
+   "median_dev_cents": -9.665452165899069
+  },
+  {
+   "start": 10.58824,
+   "midi": 65,
+   "hit": 0.6578947368421053,
+   "oct": 0.0,
+   "voiced": 1.0,
+   "median_dev_cents": -16.034325682308292
+  }
+ ]
+}

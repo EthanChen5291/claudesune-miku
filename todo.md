@@ -1,4 +1,93 @@
-# where things stand — r34
+# where things stand — r35
+
+## NEW — your first vocal-page export is in (16 cards, 1 keep, 15 notes) — D138
+
+Everything your cards named is measured and fixed; **open `audition/vocal.html`
+with HQ ON + Vocal ON** once the renders finish (a queue is re-rendering all
+16 mixes; the page's ✓ badges come from the files on disk).
+
+What your ear found, and what it was:
+- **"screaming" notes** (boss #8, space-vg #5) — both were A5 held 0.7 s.
+  The singer now folds any note over G5 that is held ≥ 0.5 s (short A#5/B5
+  passes in romantic_rest were fine and stay).
+- **"random cymbal in the middle of the section"** — two bugs: the crash was
+  an 8-bar cell that ignored the form, AND the crescendo sample peaks 1.4 /
+  3.6 / 7.1 s after it starts (three lengths, picked at random by the render)
+  so it peaked bars into the next section. Now one short crash per drop,
+  started 1.44 s early so its PEAK lands on the downbeat (boss: bars 16 and
+  48; tense_fight and fight-vg: 8 and 16).
+- **guitar "sustaining → white noise" (5 cards)** — every part you disliked was
+  the ringing open chorus; every part you liked was palm-muted. Unpinned
+  songs are muted throughout: octave chug on B, a 3+3+2 push on the bridge
+  letters (your "spamming the same chords"), drier room. Casino and
+  festival-vg keep the open chorus you liked. Guitar removed from happy_shop
+  and excited_festival ("doesn't fit"), trimmed x0.75 on space-vg and water.
+- **"voice too loud"** — no measurement separated your too-loud cards from
+  your loved ones (both ≈ 5 dB over the band), so it is your law as data:
+  energetic songs 0 dB over the band, calm +1.5; fight-vg −1.5 ("still"),
+  shop-vg −1 ("way"), water 0; the +3 songs you praised stay at +3.
+- **jungle "random fast off-beat synth"** — the kalimba takeover was playing at
+  0.89 under the voice because the guide wrapped the wrong layer (an index
+  bug). 0.40 now.
+- **festival-vg "really high woodwind"** — the C-section handoff put the tune on
+  an electric piano at C6–C7 for 8 bars, with the clarinet companion at 84
+  beside it. Handoff off, companion an octave down (max 72).
+- **training-vx "spamming piano"** — the acc hand ran at 0.9–1.0 against a 0.45
+  guide. Electric piano at 0.6x.
+- **snow (your keep) "piano a bit too loud"** — acc x0.8, everything else
+  byte-identical to what you kept (a new `keepFresh` pin makes a keep click
+  on this page stop retracting what you heard).
+- **shop-vg "strings start soft and get loud … a vst thing"** and **water
+  "violin much too loud"** — you were right that it is the instrument: VSCO's
+  soft string layer is RECORDED as a crescendo (half its level at 1–3 s,
+  full at 5–7 s). The patch now skips into each sample past the swell
+  (0.92 s → 0.04 s to half level). Also found: the string patch had **no
+  violin samples at all** since D80 — every "violin" was a stretched viola.
+  Fixed. The horn (shop-vg's sustained support) is on VSCO now too.
+- **training-vg "melody doesn't sound good"** — re-rolled the tune (eight
+  candidates measured; the most stepwise, least zigzagging one is pinned).
+- **rest "glitch at the very beginning"** — nothing measurable in the first
+  1.5 s; a 20 ms head fade is on every vocal mix. If it persists, tell me
+  which tier (HQ off / on).
+- **festival-vx "can't hear the accordion in HQ"** — OPEN. Measured: the HQ
+  mix levels each stem to its written gain (accordion ≈ 4 dB under the
+  piano, as written). The guitar is gone from it; the browser tier's own
+  per-patch loudness is what differs and I have no measurement of it yet.
+
+Nothing on `audition/songs.html` moved (0 of 47). Nothing committed.
+
+
+
+## NEW — the Top MIDI Tracks Pack read-out + `audition/poplab.html` (your 2026-09-12 ask)
+
+The new folder was `Top MIDI Tracks Pack (Free)`: 421 piano arrangements of
+pop / film / classical / anime / Zelda OoT, labeled by title. All 420
+readable files were read (`research/toppack-r34.md`, ~1,800 lines — four
+lane sections: progressions, left hand + rhythm, melody, form + layers +
+vibe mixing), every song hand-labeled by lane / emotion / energy from its
+title (NOT your verdicts — say where a label is wrong and the numbers recut).
+What it says, in one breath: pop piano is PLAIN (colour on one chord per
+loop), the loop's ROTATION carries the emotion (I-start = sad/happy, vi-start
+= calm/romantic), the left hand lives on the 8th grid and the chorus drops it
+an OCTAVE rather than thickening it, the melody repeats a 2-bar cell and
+varies it by re-fitting the landing (never by transposing — the pack agrees
+with you), the tune starts at bar 0, a real pop breakdown thins the left hand
+and keeps the tune, and every pop drum groove has a snare on 2 and 4.
+
+**Open `audition/poplab.html`** — 44 experiments, 208 variants, each a
+measured finding + a hypothesis + a question for you, separate playable
+variants with ✓/✗ marks and note boxes, HQ toggle like the other labs. Play
+the reference first, then the variants; mark ✓/✗ on each; the card verdict
+is for the experiment. Copy the labels JSON → I import it with
+`node scripts/import-poplab.mjs <file.json>`. Every hook on the page is new
+material written from the pack's rules (no copyrighted tune is transplanted).
+The questions your ear settles: is the loop rotation audible; at what dose
+does colour leave pop; does the left-hand class alone name the genre; is the
+chorus the octave drop or the class change; is one anticipation a lean; 8th
+vs 16th vs the old final-slot 16th; is one landing-note change audible at
+all; which breakdown grade is "the piano disappears"; does a class change at
+constant loudness read as a chorus.
+
 
 ## The vocal suite — `audition/vocal.html` (your "suite ... mostly energetic" + "vary the lyrics")
 
@@ -26,6 +115,17 @@ Lines are two bars long with a breath between, and each line is placed by
 octave into a singer's range. They are words, not sentences — if you want
 real lyrics that mean something, that is a prompt field and a proper
 phrasebook, not a pool.
+
+**Your verdict noted:** "guitar fits pretty well as a subtle layer i like
+it actually" — the quiet rhythm guitar under the voice stays the default on
+vocal songs (CLAUDE.md, D137). The louder guitar-MAIN mode is separate and
+genre-gated. **Six guitar-main songs** are on the page (vg_*): anime-opening
+J-rock (fight), power pop (festival), sports-anthem rock (training),
+Vocaloid electro-rock (space), city pop (shop), a guitar ballad (water) —
+guitar intro riff, louder rhythm guitar, and the guitar in unison with the
+voice for the last chorus; five of six on the hand-authored J-pop / city-pop
+idiom progressions. The other session's toppack-r34 analysis is not written
+up yet; when research/toppack-r34.md lands, I take notes and generate again.
 
 **Electric guitar (your ask):** we had none, now we do. Every suite song
 carries a J-rock guitar layer under the voice: palm-muted 8ths or a 16th

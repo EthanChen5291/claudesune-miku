@@ -46,8 +46,17 @@ test('r28: `noteBlind` — the keep-transition law, and it is ONE flag', () => {
   // songs on their own page with nothing else changed, because six gates read
   // `!CARD_NOTES?.[name]` and flip the moment a note exists. `colorFresh` is the
   // worst — it governs harmony, and 14 songs' degrees changed.
-  assert.match(SRC, /const historyLess = \(\) => !DERIVED_VERDICTS\?\.\[name\]\s*\n\s*&& \(opts\.noteBlind === true \|\| !CARD_NOTES\?\.\[name\]\);/,
+  // r35 (D138): `keepFresh` is the ONE escape on the verdict half — a keep
+  // CLICKED on a noteBlind page is that song's first judgement too, and
+  // without it the click retracts every fresh rule the song was judged with
+  // (vx_nostalgic_snow). It is a separate flag, declared per row, never implied
+  // by noteBlind.
+  assert.match(SRC, /const historyLess = \(\) => \(opts\.keepFresh === true \|\| !DERIVED_VERDICTS\?\.\[name\]\)\s*\n\s*&& \(opts\.noteBlind === true \|\| !CARD_NOTES\?\.\[name\]\);/,
     'the historyLess helper is gone or has changed shape');
+  assert.match(SRC, /const priorKeep = judged\?\.verdict === 'keep' && opts\.keepFresh !== true;/,
+    'keepFresh must suspend priorKeep for the rule gates (the keep-transition law on a noteBlind page)');
+  assert.strictEqual((SRC.match(/keepFresh: true/g) ?? []).length, 1,
+    'keepFresh is a per-row pin for a clicked keep on a noteBlind page — exactly one row carries it (vx_nostalgic_snow)');
   // every history-less gate must route through it — a raw one would re-open the bug
   assert.doesNotMatch(SRC, /!DERIVED_VERDICTS\?\.\[name\] && !CARD_NOTES\?\.\[name\]/,
     'a gate is testing CARD_NOTES directly again instead of going through historyLess()');

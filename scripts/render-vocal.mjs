@@ -54,6 +54,9 @@ const { values, positionals } = parseArgs({
     force: { type: 'boolean', default: false },
     lyrics: { type: 'string', default: 'ja' },   // r34: ja | none
     'render-hq': { type: 'boolean', default: true }, // render the HQ mix from the page if missing
+    // r35: re-render the HQ mix even when one exists (the page's mix or an HQ
+    // patch changed); render-hq's stem cache keeps the unchanged stems
+    rehq: { type: 'boolean', default: false },
   },
 });
 const NAME = positionals[0];
@@ -71,20 +74,26 @@ const secs = () => `${((Date.now() - t0) / 1000).toFixed(0)}s`;
 const run = (cmd, args, opts = {}) => execFileSync(cmd, args, { stdio: ['ignore', 'inherit', 'inherit'], ...opts });
 
 // stage 0: score (+ generated lyrics)
+// r35: a score whose SUNG NOTES changed (a re-rolled tune, a folded ceiling,
+// a handoff removed) forces stages 1-2 by itself — the kept .dry/.raw would
+// otherwise be a recording of the old line under the new mix
+const prevNotes = existsSync(score) ? JSON.stringify(JSON.parse(readFileSync(score, 'utf8')).notes.map((n) => [n.start, n.dur, n.midi, n.syl ?? null])) : null;
 run('node', [join(ROOT, 'scripts', 'export-vocal.mjs'), NAME, '--page', values.page, '--out', score, '--octave', values.octave, '--lyrics', values.lyrics]);
 const sc = JSON.parse(readFileSync(score, 'utf8'));
 if (!sc.notes.length) { console.error(`${NAME}: no sung notes (the mix never plays the tune?)`); process.exit(1); }
+const nowNotes = JSON.stringify(sc.notes.map((n) => [n.start, n.dur, n.midi, n.syl ?? null]));
+if (prevNotes != null && prevNotes !== nowNotes && !values.force) { values.force = true; console.log('  score changed since the last render — stages 1-2 will re-run'); }
 
 // the HQ mix, rendered from the page's own mix string when absent (the same
 // job render-hq-pages.mjs does for songs.html; other pages have no batch)
-if (!existsSync(mixIn) && values['render-hq'] && !values['no-mix']) {
+if ((values.rehq || !existsSync(mixIn)) && values['render-hq'] && !values['no-mix']) {
   const html = readFileSync(join(ROOT, values.page), 'utf8');
   const di = html.indexOf('const DATA = ');
   const data = JSON.parse(html.slice(di + 13, html.indexOf(';\n', di)));
   const song = (data.songs ?? data.cards).find((s) => s.name === NAME);
   const tmp = join(VOCAL_DIR, `${NAME}.strudel`);
   writeFileSync(tmp, `setcpm(${song.bpm}/${song.beats ?? 4});\n(stack(${song.mix})).p('song')\n`);
-  run('node', [join(ROOT, 'scripts', 'render-hq.mjs'), tmp, '--to', String(song.totalBars), '--out', mixIn]);
+  run('node', [join(ROOT, 'scripts', 'render-hq.mjs'), tmp, '--to', String(song.totalBars), '--out', mixIn, '--reuse-stems']);
   console.log(`  HQ mix rendered (${secs()})`);
 }
 
@@ -175,7 +184,12 @@ values['vocal-db'] = String(vocalDbUsed);
 const target = bandDb + vocalDbUsed;
 const gain = Math.pow(10, (target - vocDb) / 20);
 run('ffmpeg', ['-v', 'error', '-y', '-i', mixIn, '-i', vocal, '-filter_complex',
-  `[1:a]volume=${gain.toFixed(4)}[v];[0:a][v]amix=inputs=2:duration=first:normalize=0,loudnorm=I=-16:TP=-1.5:LRA=13`,
+  // r35: a 20 ms fade-in on the head. His vx_romantic_rest card: "at the very
+  // beginning, there's a bit of a glitch" — the mix opens on a piano chord at
+  // sample 0 (measured: -18 dB RMS in the first 50 ms, first sample non-zero),
+  // which is a hard edge for any player to start on; nothing else in the
+  // first 1.5 s measured as a discontinuity (max sample step 0.023).
+  `[1:a]volume=${gain.toFixed(4)}[v];[0:a][v]amix=inputs=2:duration=first:normalize=0,loudnorm=I=-16:TP=-1.5:LRA=13,afade=t=in:st=0:d=0.02`,
   '-ar', '44100', out]);
 const outL = lufs(out);
 console.log(`  balance (sung spans): band ${bandDb.toFixed(1)} dB, vocal ${vocDb.toFixed(1)} -> ${target.toFixed(1)} dB (x${gain.toFixed(2)}, ${Number(values['vocal-db']) >= 0 ? '+' : ''}${values['vocal-db']} dB over the band); sum ${outL?.toFixed(1)} LUFS`);

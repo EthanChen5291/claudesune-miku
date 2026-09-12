@@ -13,7 +13,8 @@
 // and mix with ffmpeg. Deterministic given the same libraries and plugins.
 
 import { execFileSync, spawnSync } from 'node:child_process';
-import { existsSync, mkdirSync, writeFileSync, readFileSync, readdirSync } from 'node:fs';
+import { existsSync, mkdirSync, writeFileSync, readFileSync, readdirSync, statSync } from 'node:fs';
+import { createHash } from 'node:crypto';
 import { join, resolve, dirname, basename } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { parseArgs } from 'node:util';
@@ -32,6 +33,11 @@ const { values, positionals } = parseArgs({
   options: {
     out: { type: 'string' }, from: { type: 'string' }, to: { type: 'string' },
     stems: { type: 'boolean', default: false }, gain: { type: 'string' },
+    // r35: reuse a stem wav from the stems dir when its haps, instrument
+    // config and patch files are byte-for-byte what rendered it (a .key file
+    // beside the wav records the hash) — a mix-stage or one-instrument change
+    // no longer re-renders every sampler and synth stem of every song
+    'reuse-stems': { type: 'boolean', default: false },
     meta: { type: 'string' },
   },
 });
@@ -226,10 +232,25 @@ for (const [key, stem] of stems) {
   const meanRoom = rooms.length ? rooms.reduce((a, x) => a + x, 0) / rooms.length : 0;
   const gainsAll = allHaps.map((h) => (typeof h.value?.gain === 'number' ? h.value.gain : 0.8));
   const meanGain = gainsAll.reduce((a, x) => a + x, 0) / gainsAll.length;
+  // r35: the stem's identity — every input that shapes the wav
+  const fileSig = (rel) => { try { const st = statSync(join(ROOT, rel)); return `${rel}:${st.size}:${Math.floor(st.mtimeMs)}`; } catch { return `${rel}:missing`; } };
+  const stemKey = createHash('sha1').update(JSON.stringify({
+    from, to, cpm, meter, inst: stem.inst ?? null,
+    patch: stem.inst ? [stem.inst.sfz, stem.inst.preset, stem.inst.fx?.nam, ...(stem.inst.samples ?? [])].filter(Boolean).map(fileSig) : ['fluid'],
+    haps: allHaps.map((h) => [Number(h.whole.begin), Number(h.whole.end), h.value?.note ?? h.value?.n ?? null, h.value?.gain ?? null, h.value?.room ?? null, h.value?.s ?? null]),
+  })).digest('hex');
+  const keyPath = join(stemsDir, `${name}.key`);
+  if (values['reuse-stems'] && existsSync(wavPath) && existsSync(keyPath) && readFileSync(keyPath, 'utf8').trim() === stemKey) {
+    console.log(`  ${name.padEnd(22)} reused      (stem unchanged: ${stemKey.slice(0, 10)})`);
+    mixInputs.push({ wav: wavPath, meanGain, trimDb: stem.inst?.trimDb ?? 0 });
+    continue;
+  }
+  if (existsSync(keyPath)) execFileSync('rm', ['-f', keyPath]);
   if (stem.inst?.backend === 'wav') {
     const { placed, variants } = renderSampleStem(stem, allHaps, wavPath);
     console.log(`  ${name.padEnd(22)} samples     ${String(placed).padStart(4)} hits   gain ${meanGain.toFixed(2)}  room ${meanRoom.toFixed(2)}  (${variants} variant${variants === 1 ? '' : 's'})`);
     applyRoom(wavPath, meanRoom);
+    writeFileSync(keyPath, stemKey);
     mixInputs.push({ wav: wavPath, meanGain, trimDb: stem.inst?.trimDb ?? 0 });
     continue;
   }
@@ -334,6 +355,7 @@ for (const [key, stem] of stems) {
     console.log(`  ${name.padEnd(22)} surge/vst   ${String(notes).padStart(4)} notes  gain ${meanGain.toFixed(2)}  room ${meanRoom.toFixed(2)}${stem.inst.preset && existsSync(join(ROOT, stem.inst.preset)) ? `  (${basename(stem.inst.preset)})` : '  (init patch)'}`);
   }
   applyRoom(wavPath, meanRoom);
+  writeFileSync(keyPath, stemKey);
   mixInputs.push({ wav: wavPath, meanGain, trimDb: stem.inst?.trimDb ?? 0 });
 }
 

@@ -204,6 +204,19 @@ ambiguous). Read the LAST few D-entries before starting any round.
   got "I like this!"): it is out-of-chord-vs-TRUE-harmony on ENGINE layers,
   exposed struck semitone dyads in sparse mixes, and literal majors/leading
   tones.
+- **FOUR AGENTS ON ONE JSON READ FOUR POPULATIONS (r34/D137).** The pop-pack
+  read-out's four lane agents each silently chose a cut (312 fullest-non-easy
+  songs / 249 in 4/4 / most-parts dedup / a lift table conditioned on 5–19 st)
+  and the verify pass found 17 cross-lane number drifts, none flipping a
+  conclusion, all misleading to anyone re-measuring. Every lane section and
+  every headline number STATES ITS POPULATION, and the header names each
+  lane's. And the solo-vs-mix trap fired a THIRD time: "the engine repeats
+  MORE than pop" was true of `_lead` solos (84%) and false in the mix (59%).
+- **PATTERNS YES, TUNES NO — AND MEASURE IT (r34/D137).** Lab hooks are
+  composed from a corpus's RULES; a verifier comparing every hook's
+  (interval, gap) pairs against every source RH caught one card that had
+  reproduced Shape of You's cell transposed. Run that comparison before a
+  page built on copyrighted material ships.
 - **"ABSTRACT THIS TO ANY X" MEANS A LABEL, NOT A REDESIGN (r30/D120).** His four
   "could be abstracted to any dark/calm/epic environment" notes were read as an
   engine-redesign ask and planned as `core(mood,energy) x tint(environment)`. His
@@ -925,6 +938,56 @@ Surge patches must come from the release tag matching the vendored build.
   note first) then a NAM capture via scripts/guitar-amp.py (`fx.nam` in
   hq-instruments.js; legacy 0.5.x .nam layer configs are converted on load).
   Measured: the amp collapses the DI's crest factor 26 -> 12 dB.
+  **HIS VERDICT ON THE FIRST PASS (r34): "in the current songs, guitar fits
+  pretty well as a subtle layer i like it actually. take note of this."**
+  The subtle rhythm guitar under the voice (mute 0.40-0.50 / open
+  0.46-0.58 x leadGain) is a LIKED default — keep it that quiet on
+  vocal songs; `guitar: 'main'` (D137) is the separate, louder, genre-
+  gated mode with the intro riff and the final-chorus melody double, for
+  J-rock / anime-opening / power-pop / Vocaloid-rock / city-pop lanes only.
+- **r35 — HIS FIRST VOCAL-PAGE EXPORT (D138), the laws it wrote:**
+  - **THE SINGER'S CEILING IS G5 AND IT IS DURATION-AWARE.** Both "sounds
+    like screaming" notes were A5 held 0.70-0.74 s; A#5/B5 at 0.2-0.4 s and
+    G5 held 1.8 s passed. export-vocal folds `midi > hi+3 && dur >= 0.5 s`.
+  - **A CRESCENDO SAMPLE PEAKS AFTER ITS ONSET — PLACE THE PEAK, NOT THE
+    START.** vc_cym_cresc's three files peak 1.44 / 3.57 / 7.06 s in; the
+    wav backend round-robins them, so a beat-4 "lead-in" peaked bars into
+    the next section ("random cymbal in the middle of the section"). And
+    `battle_crash` is an 8-bar CELL counting from the drum mask, not the
+    form. r35-fresh battle songs stamp `vc_cym_cresc:0` 1.44 s before each
+    drop's downbeat (same index in both tiers). Any one-shot with a rise
+    needs the same treatment.
+  - **THE GUITAR PLAYS STACCATO.** Five cards: every complained part was the
+    ringing open chorus through the crunch amp; every praised part was the
+    palm-muted verse ("staccato good, octave alternation good"). Unpinned
+    songs: chorus = muted octave chug (B) / 3+3+2 push (bridge letters),
+    riff/double muted, room 0.06-0.08. `guitar: false` where it "doesn't
+    fit the genre" (happy shop, excited festival). `guitarGainMul` trims.
+  - **THE VOCAL BALANCE LAW IS HIS EAR, NOT A MEASUREMENT.** K-weighted
+    vocal-over-band did not separate "too loud" (boss 5.2 dB) from "love"
+    (casino 5.7 dB). Rows: energetic 0 dB, calm +1.5, with pins.
+  - **A KEEP CLICK ON A noteBlind PAGE NEEDS `keepFresh`** — the click
+    flips `priorKeep` and `ruleFresh(N)` retracts every rule the song was
+    judged with (D91's fifth bite). `keepFresh: true, pinFrom: 'r35',
+    voicedColor: true`; verify by byte compare (snow moved only in `_acc`).
+  - **`nFixed` WAS A CONSTANT INDEXING A VARIABLE-LENGTH HEAD** — the
+    vocal guide wrapped a neighbouring part and left jungle's kalimba
+    takeover at 0.89 ("random fast … glitching"). Index from the running
+    count. And gate a BUG FIX with `ruleFresh(35)`, not the niche-gated
+    `r35()` — the bug was found on a niche lane.
+  - **TWO STRING-PATCH DEFECTS OLDER THAN THE VOCAL TIER.** (a) VSCO's
+    soft sustain layer SWELLS: half-peak at 1.1-3.2 s, 90% at 4.8-6.7 s — his
+    "starts really soft and then becomes really loud" and "violin much too
+    loud" are the same sample; build-sfz measures each file and writes an
+    `offset` (t50 0.92 → 0.04 s on a held C5). (b) **strings-sections.sfz
+    had NO VIOLIN REGIONS since D80** (27 cello + 6 viola): the violin
+    section tops at D5 like the viola, and autoSplit left it nothing — every
+    rendered "violin" was a stretched viola. Zone order cello → violin →
+    viola. gm_french_horn is on VSCO (horn.sfz), off the swelling GM patch.
+  - **Render tier:** `render-hq --reuse-stems` (keyed stem cache, byte-
+    identical remix), `render-vocal --rehq`, and a changed score re-sings
+    by itself. Two D137 entries exist in the ledger (the other session's
+    toppack read-out); the vocal export round is D138.
 
 - `scripts/audition-songs.mjs` — the song generator (SONG_OPTS at the
   bottom = per-song pins/asks; every engine rule lives inline with its
