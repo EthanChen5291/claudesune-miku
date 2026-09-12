@@ -104,6 +104,7 @@ Each has keep/kill buttons and a verdicts export.
 | `reels.html` | `REELS=1 …audition-songs.mjs` | His 8 layer-stacking reels transcribed as data (`src/lib/layer-patterns.js`): faithful, crossed, device A/B |
 | `layerstack.html` | `LAYERSTACK=1 …audition-songs.mjs` | The Serum producer's genre with the seven reel-layer rules wired |
 | `energy.html` | `ENERGY=1 …audition-songs.mjs` | Song labels (which prompts a finished song also serves) and the energy A/B |
+| `vocal.html` | `VOCAL=1 …audition-songs.mjs` | The vocal suite: 10 new songs (8 energetic, 2 ballads) whose tune is sung by the vocal tier with generated Japanese lyrics; the instrumental lead is a guide under the voice |
 | `variations.html` | `scripts/audition-variations.mjs` | Variation labs: 104 byte-frozen experiment cards, melody grammar as a program |
 | `catalog.html` | `scripts/audition-catalog.mjs` | Mined candidates from the curated corpus tier, awaiting labels |
 | `foundations.html`, `drums.html`, `progressions.html`, `facets.html`, `judge.html` | their `audition-*.mjs` | Library-level auditions: accompaniment figures, drum patterns, progressions, per-song facets |
@@ -123,6 +124,47 @@ choir, generated `vendor/sfz/gen/*.sfz`), **DawDreamer + Surge XT** for synths
 -16 LUFS. Sample libraries, plugins and the Python env live under `vendor/`
 and are gitignored; the generated sfz maps and patches are committed. Only
 songs whose mixes changed get re-rendered.
+
+## Vocal tier (r34)
+
+`scripts/render-vocal.mjs <song>` sings a song's tune and lays the vocal over
+its HQ render. Four stages, each measurable on its own:
+
+| Stage | Script | What it does |
+|---|---|---|
+| 0 score | `export-vocal.mjs` | lifts the `_lead` solo as a monophonic line (top note per onset, no overlaps), keeps only bars where the **mix** actually plays the tune (handoff letters count, breakdown bars go silent), shifts by whole octaves into a singer's range |
+| 0b lyrics | `src/lib/lyrics-ja.js` | generated Japanese mora lyrics (default `--lyrics ja`): one mora per note from a pool of the words Miku songs lean on (kimi, boku, sekai, koe, sora, yume…) plus particles and verb endings; a very short run note melismas on the previous vowel; identical melodic phrases get identical lines so a returning letter sings its hook again; every mora is spelled in the voicebank's phoneme set |
+| 1 sing | `vocal-sing.py` | runs a DiffSinger voicebank's ONNX models directly with onnxruntime (no OpenUtau): the pitch model writes a sung f0 curve, acoustic + vocoder make the wav; consonants sung before the beat so the vowel lands on it, breaths at phrase starts, the engine's per-note gain as an amplitude envelope (`--syllable la` when a score has no lyrics) |
+| 2 convert | `vocal-convert.py` | RVC timbre conversion (`infer_rvc_python`) with a target `.pth` + `.index`; pitch, timing and vowels pass through unchanged |
+| verify | `vocal-verify.py` | pyworld f0 of the result vs the score: % voiced frames within 50 cents, octave errors, unvoiced notes, rest leak |
+
+Outputs land in `audition/hq/` (`<song>.vocal-score.json`, `.vocal-dry.wav`,
+`.vocal-raw.wav`, `.vocal.wav` with the lead's room, `.withvocal.wav`,
+`*.verify.json`). `songs.html` shows a VOCAL badge and a **Vocal: off/on**
+toggle that swaps the `.withvocal.wav` in when HQ is on. The flag is only set
+when the file exists, so every other song's DATA stays byte-identical.
+
+**Electric guitar (r34).** The vocal suite carries a J-rock guitar layer
+(`opts.guitar`: `rock` = palm-muted 8ths or a 16th gallop in the verse
+letters, open power chords with the octave in the others; `arp` = a clean
+broken-chord arpeggio for ballads), written by `bindFigure` over the song's
+own chords at octave 2 and mixed under the voice. Browser tier: the GM
+soundfont's electric guitars. HQ tier: Unreal Instruments' free, licence-free
+**Standard Guitar** SFZ (a Japanese DI library with keyswitched articulations;
+`vendor/sfz/unreal/`) rendered by sfizz, then a **Neural Amp Modeler**
+capture (`vendor/nam-models/`, GPL v3 community captures with the cabinet
+included) applied by `scripts/guitar-amp.py` in the vocal-tier env. Every
+stem's MIDI opens with its keyswitch note because the library's default
+articulation is silent.
+
+Setup is local and gitignored under `vendor/vocal/`: a Python 3.12 venv
+(`onnxruntime`, `infer_rvc_python`, torch), the voicebank
+(`vendor/vocal/tiger/voicebank`, Tiger v106, free for non-commercial use)
+and the RVC model (`vendor/vocal/rvc-models/<name>/`). Stage 2 must run with
+`KMP_DUPLICATE_LIB_OK=TRUE OMP_NUM_THREADS=1` on macOS or the RMVPE loader
+segfaults (faiss and torch each bundle an OpenMP runtime); the orchestrator
+sets both. The bundled RVC targets are community models trained on Vocaloid
+output: fine for a local audition, not for anything released.
 
 ## Libraries and corpora
 

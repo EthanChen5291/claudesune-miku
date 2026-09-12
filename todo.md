@@ -1,4 +1,75 @@
-# where things stand — r33
+# where things stand — r34
+
+## The vocal suite — `audition/vocal.html` (your "suite ... mostly energetic" + "vary the lyrics")
+
+Ten new songs, each sung: eight energetic (excited festival, triumphant
+boss, happy jungle, excited space, excited casino, tense fight, happy shop,
+excited training) and two ballads (nostalgic snow, romantic rest). Open the
+page, **HQ: ON**, **Vocal: ON**. What changed to make them "primarily vocal":
+
+- the instrumental lead and anything that doubles it play at 0.45 as a
+  guide under the voice; the companion and any alternate melody stay full —
+  a second independent line beside a singer is the corpus norm, a double is
+  not;
+- the voice sings the lead AS THE MIX PLAYS IT (later letters, varied
+  returns, handoffs) — the first pass sang from the solo loop and lost 54 of
+  96 notes on tense fight;
+- the energetic eight get a kit with a snare (backbeat) under the voice.
+
+The lyrics are now generated Japanese, one mora per note, built from the
+words Miku songs lean on (kimi / boku / sekai / koe / sora / yume / hikari /
+kokoro / mirai / namida …) with particles and verb endings so a line scans,
+set phrases (arigatou, sayonara, daisuki, doki doki, kira kira) and the odd
+"ra ra ra". A returning phrase sings the same words (keyed by contour, so a
+varied return still gets its hook): calm water's 16 lines collapse to 5.
+Lines are two bars long with a breath between, and each line is placed by
+octave into a singer's range. They are words, not sentences — if you want
+real lyrics that mean something, that is a prompt field and a proper
+phrasebook, not a pool.
+
+**Electric guitar (your ask):** we had none, now we do. Every suite song
+carries a J-rock guitar layer under the voice: palm-muted 8ths or a 16th
+gallop in the verse letters, open power chords with the octave in the
+chorus, a clean arpeggio on the two ballads — figures over the song's own
+chords at octave 2. HQ tier: Unreal Instruments' free "Standard Guitar" (a
+Japanese DI library) through a Neural Amp Modeler crunch capture, headless
+(D136). With HQ off you hear the browser's GM guitars instead. If the
+verse chug is too much under the voice, the gains are per-figure in the
+guitar block and the amp capture is one path in hq-instruments.js — say
+which song.
+
+Levels: the voice sits +3 dB over the band in its sung spans by default;
+your two notes are pinned on the page (training 0 dB, romantic rest +1.5).
+Rendering: `node scripts/render-vocal.mjs <name> --page audition/vocal.html`. Every score, dry vocal, converted vocal and mix is measured
+(pitch within 50 cents, onset lag by pitch arrival, octave errors) — the
+table is in D135's addendum.
+
+## Vocal tier: vs_calm_water sings (your "compose with hatsune miku")
+
+`node scripts/render-vocal.mjs <song>` now sings a song's tune and lays it
+over the HQ render. Open `audition/songs.html`, turn **HQ: ON** and
+**Vocal: ON**, and play **vs_calm_water** (it carries a VOCAL badge). What
+you are hearing, stage by stage, all measured (D134):
+
+- the tune is the piano lead shifted down an octave (its median was C6),
+  sung only in the 30 bars where the mix actually plays it — the 4-bar
+  intro and the two breakdown bars stay wordless;
+- a free DiffSinger voice (Tiger) sings it on "la" per note, breaths at
+  phrase starts, the engine's own accent envelope as dynamics; its pitch
+  model writes the portamento and vibrato (0.13 semitones median deviation
+  from the score — ornaments, not a new tune);
+- a community Miku RVC model replaces the timbre (pitch survives: 95.5% of
+  notes on pitch, 0 octave errors, onsets on the beat to within 11 ms,
+  presence band +3.2 dB);
+- the vocal sits 3 dB over the band in its sung spans (your "i dont hear
+  the vocals" — it had been mixed under it) and gets the lead's room.
+
+Not the real Miku: every free "Miku" is trained on Vocaloid output and
+Crypton has no public position on it — fine to audition locally, not to
+release. Real lyrics are the next input if you want them (right now it is
+"la"; `--syllable ah|na|oo|auto` are the other options). If the register
+is wrong for a song, `--octave N` pins it. Other songs: same command; each
+needs its HQ render first. Rendering takes ~7 min a song on CPU.
 
 ## Batch-2 verdicts in (17/17 good) — batch 3 is on the page: 33 new experiments, positions 72–104
 

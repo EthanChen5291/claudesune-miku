@@ -1,0 +1,191 @@
+
+<global>
+delay_random=0.02
+amp_veltrack=100
+ampeg_attack=0.001
+ampeg_release=0.14
+cutoff=30
+fil_type=lpf_1p
+fil_veltrack=9600
+eq1_freq=300
+eq1_bw=2.5
+eq1_gaincc48=-10
+eq2_freq=1290
+eq2_bw=1
+eq2_gaincc48=6
+eq3_freq=100
+eq3_bw=3
+eq3_gaincc48=-9
+volume_oncc48=6
+group=1
+off_by=2
+off_mode=normal
+volume=10
+
+<group>
+seq_length=8
+
+<region>
+sample=..\Samples\Global Noise\Stop Noise\Stop Noise_High1.flac
+lokey=d0
+hikey=d0
+pitch_keycenter=d0
+
+<region>
+sample=..\Samples\Global Noise\Stop Noise\Stop Noise_High2.flac
+lokey=d0
+hikey=d0
+seq_position=2
+pitch_keycenter=d0
+
+<region>
+sample=..\Samples\Global Noise\Stop Noise\Stop Noise_High3.flac
+lokey=d0
+hikey=d0
+seq_position=3
+pitch_keycenter=d0
+
+<region>
+sample=..\Samples\Global Noise\Stop Noise\Stop Noise_High4.flac
+lokey=d0
+hikey=d0
+seq_position=4
+pitch_keycenter=d0
+
+<region>
+sample=..\Samples\Global Noise\Stop Noise\Stop Noise_High5.flac
+lokey=d0
+hikey=d0
+seq_position=5
+pitch_keycenter=d0
+
+<region>
+sample=..\Samples\Global Noise\Stop Noise\Stop Noise_High6.flac
+lokey=d0
+hikey=d0
+seq_position=6
+pitch_keycenter=d0
+
+<region>
+sample=..\Samples\Global Noise\Stop Noise\Stop Noise_High7.flac
+lokey=d0
+hikey=d0
+seq_position=7
+pitch_keycenter=d0
+
+<region>
+sample=..\Samples\Global Noise\Stop Noise\Stop Noise_High8.flac
+lokey=e0
+hikey=e0
+seq_position=8
+pitch_keycenter=e0
+
+<region>
+sample=..\Samples\Global Noise\Stop Noise\Stop Noise_Low1.flac
+lokey=e0
+hikey=e0
+pitch_keycenter=e0
+
+<region>
+sample=..\Samples\Global Noise\Stop Noise\Stop Noise_Low2.flac
+lokey=e0
+hikey=e0
+seq_position=2
+pitch_keycenter=e0
+
+<region>
+sample=..\Samples\Global Noise\Stop Noise\Stop Noise_Low3.flac
+lokey=e0
+hikey=e0
+seq_position=3
+pitch_keycenter=e0
+
+<region>
+sample=..\Samples\Global Noise\Stop Noise\Stop Noise_Low4.flac
+lokey=e0
+hikey=e0
+seq_position=4
+pitch_keycenter=e0
+
+<region>
+sample=..\Samples\Global Noise\Stop Noise\Stop Noise_Low5.flac
+lokey=e0
+hikey=e0
+seq_position=5
+pitch_keycenter=e0
+
+<region>
+sample=..\Samples\Global Noise\Stop Noise\Stop Noise_Low6.flac
+lokey=e0
+hikey=e0
+seq_position=6
+pitch_keycenter=e0
+
+<region>
+sample=..\Samples\Global Noise\Stop Noise\Stop Noise_Low7.flac
+lokey=e0
+hikey=e0
+seq_position=7
+pitch_keycenter=e0
+
+<region>
+sample=..\Samples\Global Noise\Stop Noise\Stop Noise_Low8.flac
+lokey=e0
+hikey=e0
+seq_position=8
+pitch_keycenter=e0
+
+<region>
+sample=..\Samples\Global Noise\Stop Noise\Stop Noise_Mid1.flac
+lokey=f0
+hikey=f0
+pitch_keycenter=f0
+
+<region>
+sample=..\Samples\Global Noise\Stop Noise\Stop Noise_Mid2.flac
+lokey=f0
+hikey=f0
+seq_position=2
+pitch_keycenter=f0
+
+<region>
+sample=..\Samples\Global Noise\Stop Noise\Stop Noise_Mid3.flac
+lokey=f0
+hikey=f0
+seq_position=3
+pitch_keycenter=f0
+
+<region>
+sample=..\Samples\Global Noise\Stop Noise\Stop Noise_Mid4.flac
+lokey=f0
+hikey=f0
+seq_position=4
+pitch_keycenter=f0
+
+<region>
+sample=..\Samples\Global Noise\Stop Noise\Stop Noise_Mid5.flac
+lokey=f0
+hikey=f0
+seq_position=5
+pitch_keycenter=f0
+
+<region>
+sample=..\Samples\Global Noise\Stop Noise\Stop Noise_Mid6.flac
+lokey=f0
+hikey=f0
+seq_position=6
+pitch_keycenter=f0
+
+<region>
+sample=..\Samples\Global Noise\Stop Noise\Stop Noise_Mid7.flac
+lokey=f0
+hikey=f0
+seq_position=7
+pitch_keycenter=f0
+
+<region>
+sample=..\Samples\Global Noise\Stop Noise\Stop Noise_Mid8.flac
+lokey=f0
+hikey=f0
+seq_position=8
+pitch_keycenter=f0

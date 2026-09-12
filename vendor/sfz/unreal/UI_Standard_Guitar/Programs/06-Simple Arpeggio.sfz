@@ -1,0 +1,20 @@
+
+<control>
+set_cc47=64
+set_cc48=0
+set_cc49=0
+set_cc64=127
+
+label_cc47=Pickup
+label_cc48=Magnet
+label_cc49=Effect
+
+#include "Individual Patchs/Simple_Arpeggio/Rear_Sustain.sfz"
+#include "Individual Patchs/Simple_Arpeggio/Both_Sustain.sfz"
+#include "Individual Patchs/Simple_Arpeggio/Front_Sustain.sfz"
+
+#include "Individual Patchs/Simple_Arpeggio/Rear_Legato.sfz"
+#include "Individual Patchs/Simple_Arpeggio/Both_Legato.sfz"
+#include "Individual Patchs/Simple_Arpeggio/Front_Legato.sfz"
+
+#include "Individual Patchs/Simple_Arpeggio/Stop_Key.sfz"

@@ -887,6 +887,45 @@ Surge patches must come from the release tag matching the vendored build.
 
 ## File map
 
+- `scripts/render-vocal.mjs` (r34) — the VOCAL tier: `export-vocal.mjs`
+  (the `_lead` solo as a monophonic score, sung only in bars where the MIX
+  plays the tune, octave-placed into a singer's range) -> `vocal-sing.py`
+  (a DiffSinger voicebank's ONNX models run directly with onnxruntime; its
+  pitch model writes the sung f0) -> `vocal-convert.py` (RVC timbre, pitch
+  and timing pass through) -> `vocal-verify.py` (pyworld f0 vs score: %
+  frames within 50 cents, octave errors, rest leak) -> `.withvocal.wav` over
+  the HQ mix. Everything lives in gitignored `vendor/vocal/` (py3.12 venv,
+  Tiger voicebank, RVC models). Stage 2 needs `KMP_DUPLICATE_LIB_OK=TRUE
+  OMP_NUM_THREADS=1` or RMVPE segfaults (two OpenMP runtimes). The page's
+  `vocal` flag is set ONLY when the file exists — no other song's DATA moves.
+  `src/lib/lyrics-ja.js` (r34, his "vary the lyrics a bit more - learn from
+  miku songs") generates one Japanese mora per note from a word POOL picked
+  by hash (song name + phrase signature) — a retrieval pool under D95, so
+  growing the word list re-rolls unpinned lines. `VOCAL=1` builds
+  `audition/vocal.html` (his "suite ... mostly energetic"): vx_* songs with
+  `opts.vocalLead` (the instrumental lead + doublers at a x0.45 guide, the
+  masks untouched) — page-only, no judged song carries it. Render with
+  `render-vocal.mjs <name> --page audition/vocal.html --vocal-db 0`.
+  SING FROM `_lead_mix` (the lead as the mix plays it + any melody_takeover
+  layer's masked part), never the `_lead` solo — the solo is a loop that
+  diverges from the mix in later letters (42 of 96 notes on tense_fight).
+  Phrase in 2-bar lines with a breath trim; place each PHRASE by octave.
+  ONSET LAW: the singer's CONSONANT precedes the beat; the VOWEL lands on it
+  (measured by pitch arrival, never by amplitude envelope).
+  BALANCE THE VOCAL IN THE SUNG SPANS (+3 dB over the band's RMS there; his
+  per-song pins are `vocalDb` on the VX_PROMPTS row), never by whole-song
+  LUFS — that put it 1-3 dB under the band and he "didn't hear the vocals".
+- **ELECTRIC GUITAR (r34, his ask).** `opts.guitar` (page-only): J-rock
+  figures bound over the song's chords at octave 2 — verse = palm-muted 8ths
+  (`jrock-mute8`) or a 16th gallop, chorus = open R.5.R+ 8ths, ballad =
+  clean arpeggio; sounds `gm_electric_guitar_muted` / `gm_overdriven_guitar`
+  / `gm_electric_guitar_clean` (INSTRUMENTS entries with `envOnly: []`, so
+  the planner never casts them). HQ: Unreal "Standard Guitar" SFZ (DI,
+  keyswitched — `sw_default` is SILENT, render-hq injects the `keyswitch`
+  note first) then a NAM capture via scripts/guitar-amp.py (`fx.nam` in
+  hq-instruments.js; legacy 0.5.x .nam layer configs are converted on load).
+  Measured: the amp collapses the DI's crest factor 26 -> 12 dB.
+
 - `scripts/audition-songs.mjs` — the song generator (SONG_OPTS at the
   bottom = per-song pins/asks; every engine rule lives inline with its
   D-number and his quote).

@@ -1,0 +1,76 @@
+{
+ "wav": "/Users/ethanchen/Documents/GitHub/motif-engine/audition/hq/vs_calm_water.vocal.wav",
+ "seconds": 172.36,
+ "sr": 44100,
+ "notes": 199,
+ "note_hit_rate_mean": 0.7357158140571849,
+ "notes_hit_ge_50pct": 0.8090452261306532,
+ "octave_error_rate_mean": 0.0039266618867185715,
+ "notes_octave_wrong": 0,
+ "voiced_coverage_mean": 0.815038655096923,
+ "notes_unvoiced": 22,
+ "sung_rms_db": -23.797742697949413,
+ "rest_rms_db": -46.19116077944949,
+ "rest_leak_db": -22.393418081500077,
+ "worst_notes": [
+  {
+   "start": 23.52941,
+   "midi": 74,
+   "hit": 0.0,
+   "oct": 0.0,
+   "voiced": 0.1276595744680851,
+   "median_dev_cents": -1413.83354072102
+  },
+  {
+   "start": 28.23529,
+   "midi": 76,
+   "hit": 0.0,
+   "oct": 0.0,
+   "voiced": 0.45652173913043476,
+   "median_dev_cents": -145.42961580037144
+  },
+  {
+   "start": 28.52941,
+   "midi": 81,
+   "hit": 0.0,
+   "oct": 0.0,
+   "voiced": 0.0
+  },
+  {
+   "start": 33.23529,
+   "midi": 76,
+   "hit": 0.0,
+   "oct": 0.0,
+   "voiced": 0.10869565217391304,
+   "median_dev_cents": -138.40232956861627
+  },
+  {
+   "start": 42.35294,
+   "midi": 74,
+   "hit": 0.0,
+   "oct": 0.0,
+   "voiced": 0.0
+  },
+  {
+   "start": 47.05882,
+   "midi": 76,
+   "hit": 0.0,
+   "oct": 0.0,
+   "voiced": 0.0
+  },
+  {
+   "start": 47.35294,
+   "midi": 81,
+   "hit": 0.0,
+   "oct": 0.0,
+   "voiced": 0.0
+  },
+  {
+   "start": 61.17647,
+   "midi": 74,
+   "hit": 0.0,
+   "oct": 0.0,
+   "voiced": 0.0
+  }
+ ]
+}

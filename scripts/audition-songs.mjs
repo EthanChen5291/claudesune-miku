@@ -5058,6 +5058,66 @@ function buildSong(prompt, name, opts = {}) {
     }
   }
 
+  // (b4a2) r34 ELECTRIC GUITAR LAYER (opts.guitar — the VOCAL=1 page; his
+  // "do we have access to high quality electric guitar? i want to try that as
+  // a layer with miku (learning from japanese songs)"). What a J-rock /
+  // Vocaloid-rock guitar does under a voice, as figures the engine binds like
+  // any other (bindFigure over the song's own chords; masks by section):
+  //   verse  — PALM-MUTED 8th-note power chords (R.5), or a 16th GALLOP
+  //            (beat, and-of, a-of: 0 / 2/16 / 3/16) on the hash — the
+  //            "chug" that carries a verse without crowding the singer;
+  //   chorus — OPEN power chords with the octave (R.5.R+) in 8ths, ringing
+  //            (legato) — the lift when the hook arrives;
+  //   ballad — CLEAN broken-chord 8ths (R 5 R+ 3+ 5+ 3+ R+ 5), the arpeggio
+  //            that opens a J-pop ballad.
+  // Register: octave 2 — power chords live E2-B3 on a real guitar (the DI
+  // library plays B1-D6). Gain under the voice (D77): the guitar is a rhythm
+  // part, not a second lead. Sections follow the LETTER: A = verse, any other
+  // letter = chorus; an AA song alternates statement by statement; the
+  // guitar enters with the voice (no lead section = no guitar).
+  if (opts.guitar) {
+    const gMode = typeof opts.guitar === 'string' ? opts.guitar : (energetic ? 'rock' : 'arp');
+    const EIGHTHS = ['0', '1/8', '1/4', '3/8', '1/2', '5/8', '3/4', '7/8'];
+    const GFIGS = {
+      mute8: { name: 'jrock-mute8', bars: 1, grid: 16, class: 'comp', meter_class: '4/4', legato: false,
+        onsets: EIGHTHS, figure: Array(8).fill('R.5'), accents: [0.95, 0.62, 0.82, 0.62, 0.9, 0.62, 0.82, 0.68] },
+      gallop: { name: 'jrock-gallop', bars: 1, grid: 16, class: 'comp', meter_class: '4/4', legato: false,
+        onsets: ['0', '1/8', '3/16', '1/4', '3/8', '7/16', '1/2', '5/8', '11/16', '3/4', '7/8', '15/16'],
+        figure: Array(12).fill('R.5'), accents: [0.95, 0.6, 0.7, 0.85, 0.6, 0.7, 0.9, 0.6, 0.7, 0.85, 0.6, 0.72] },
+      open8: { name: 'jrock-open8', bars: 1, grid: 16, class: 'comp', meter_class: '4/4', legato: true,
+        onsets: EIGHTHS, figure: Array(8).fill('R.5.R+'), accents: [0.95, 0.7, 0.85, 0.7, 0.92, 0.7, 0.85, 0.75] },
+      arp: { name: 'jrock-arp', bars: 1, grid: 16, class: 'arp', meter_class: '4/4', legato: true,
+        onsets: EIGHTHS, figure: ['R', '5', 'R+', '3+', '5+', '3+', 'R+', '5'], accents: [0.8, 0.55, 0.65, 0.6, 0.72, 0.6, 0.65, 0.55] },
+    };
+    const letterOf = (sec) => String(mf.sections.find((x) => x.index === sec.index)?.letter ?? 'A').replace('*', '');
+    const leadSecs = form.sections.filter((sec) => sec.lead !== 'none');
+    const onlyA = leadSecs.every((sec) => letterOf(sec) === 'A');
+    let aCount = 0;
+    const roleOf = form.sections.map((sec) => {
+      if (sec.lead === 'none') return null;
+      if (gMode === 'arp') return 'arp';
+      const L = letterOf(sec);
+      if (onlyA) return (aCount++ % 2 === 0) ? 'verse' : 'chorus';
+      return L === 'A' ? 'verse' : 'chorus';
+    });
+    const verseFig = fnv(`${name}|guitar-verse`) % 3 === 0 ? 'gallop' : 'mute8';
+    const parts = gMode === 'arp'
+      ? [{ key: 'arp', fig: GFIGS.arp, sound: 'gm_electric_guitar_clean', gain: [0.34, 0.44], fx: '.room(0.35)' }]
+      : [{ key: 'verse', fig: GFIGS[verseFig], sound: 'gm_electric_guitar_muted', gain: [0.4, 0.5], fx: '.room(0.12)' },
+         { key: 'chorus', fig: GFIGS.open8, sound: 'gm_overdriven_guitar', gain: [0.46, 0.58], fx: '.room(0.18)' }];
+    const cast = [];
+    for (const p of parts) {
+      const bars = form.sections.flatMap((sec, i) => Array(sec.bars).fill(roleOf[i] === p.key ? 1 : 0));
+      if (!bars.some(Boolean)) continue;
+      const gr = [Math.round(p.gain[0] * leadGain * 100) / 100, Math.round(p.gain[1] * leadGain * 100) / 100];
+      const bindG = (ctx) => bindFigure(p.fig, ctx, v.meter, { sound: p.sound, octave: 2, loopRoots: true, gainRange: gr, fx: p.fx }).expr;
+      extraParts.push(...varySplit(bindG, bars));
+      extraSolos[`_guitar_${p.key}`] = bindG(ctxBar);
+      cast.push(`${p.key} ${p.fig.name} on ${p.sound} (${bars.filter(Boolean).length} bars, gain ${gr[0]}-${gr[1]})`);
+    }
+    if (cast.length) extraInfo.push(`electric guitar (r34, J-rock layer under the voice): ${cast.join('; ')}`);
+  }
+
   // (b4b) r16 WOBBLE TEXTURE. His desert-ornament note, verbatim: "a and b are
   // good, like the string wobble texture for c - it conveys tension and can
   // also be used outside of desert too. I think c would be good if there's a
@@ -6692,6 +6752,35 @@ function buildSong(prompt, name, opts = {}) {
     })())] : []),
     ...fxParts,
   ];
+  // r34 VOCAL LEAD (opts.vocalLead, the VOCAL=1 page only — no judged song
+  // carries it): the tune is SUNG by the vocal tier (scripts/render-vocal.mjs),
+  // so the instrumental lead and its doublers drop to a GUIDE level under the
+  // voice instead of doubling it at full gain. The lead's masks are untouched
+  // (export-vocal.mjs reads bar presence from the mix by time+pitch, gain-blind),
+  // the companion stays (it is harmony, not a double), the octave partner and
+  // the melody_backup doubler ride the same guide. `vocalLead: <number>` sets
+  // the guide multiplier; `true` = 0.45.
+  if (opts.vocalLead) {
+    const guide = typeof opts.vocalLead === 'number' ? opts.vocalLead : 0.45;
+    const ix = [];
+    let k = 1;
+    if (letterLead.lead) ix.push(k++);
+    if (companionExpr) k++;
+    if (melodyDoubleExpr) ix.push(k++);
+    if (echoExpr) k++;
+    if (octaveExpr) ix.push(k++);
+    // cast layers that DOUBLE or TAKE the tune (melody_backup "doubles the
+    // lead line", D100; melody_takeover carries it in its own sections, where
+    // the vocal sings too) ride the guide; alternate_melody is its own line
+    // and stays — independence is what the corpus wants beside a voice (D102)
+    const doubled = [];
+    for (let i = 0; i < layerMixOut.length; i++) {
+      const L = shaped.layers[i];
+      if (/melody_backup|melody_takeover/.test(`${L?.part ?? ''} ${L?.id ?? ''}`)) { ix.push(nFixed + i); doubled.push(String(L?.part ?? L?.id).replace(/^.*::/, '')); }
+    }
+    for (const i of ix) mixParts[i] = `(${mixParts[i]}).mul(gain(${guide}))`;
+    extraInfo.push(`vocal lead: the tune is sung (vocal tier, r34); the instrumental lead${ix.length > 1 ? ` and its doublers (${['octave/backup', ...doubled].slice(ix.length > 1 + doubled.length ? 0 : 1).join(', ')})` : ''} play as a x${guide} guide under the voice`);
+  }
   // r25 — "PIANO TOO LOUD", seven cards in one export: "piano way too loud. I
   // cant tell what's going on at all" (su_excited_fight), "piano is way too loud"
   // (su_scary_fight), "piano too loud" (su_excited_training), "the piano too loud
@@ -6783,7 +6872,20 @@ function buildSong(prompt, name, opts = {}) {
   }
   let mix = mixParts.length > 1 ? `stack(${mixParts.join(', ')})` : mixParts[0];
 
-  const solos = { _acc: base, _lead: leadBound.expr, ...extraSolos, ...(drums ? { _drums: drums } : {}) };
+  // r34: a vocal-lead song also exposes the lead AS THE MIX PLAYS IT (masked,
+  // per letter and statement, handoffs applied) — export-vocal.mjs sings from
+  // it. The unmasked `_lead` is a loop that diverges from the mix in later
+  // letters (measured: vx_tense_fight sang 42 of 96 notes off the solo).
+  // A melody_takeover layer carries the tune in ITS sections (measured: jungle
+  // bars 14-19 on the kalimba, casino bars 16-23 on the square — unsung and
+  // guided, so the tune went quiet); its masked mix part joins the sung line.
+  const takeoverMix = opts.vocalLead
+    ? layerMixOut.filter((x, i) => /melody_takeover/.test(`${shaped.layers[i]?.part ?? ''} ${shaped.layers[i]?.id ?? ''}`))
+    : [];
+  const leadMixExpr = opts.vocalLead && letterLead.lead
+    ? (takeoverMix.length ? `stack(${[letterLead.lead, ...takeoverMix].join(', ')})` : letterLead.lead)
+    : null;
+  const solos = { _acc: base, _lead: leadBound.expr, ...(leadMixExpr ? { _lead_mix: leadMixExpr } : {}), ...extraSolos, ...(drums ? { _drums: drums } : {}) };
   for (const l of rendered.layers) solos[l.id] = l.expr;
   // D67 (verify-pass finding): a pad's SOLO carries its mix-side base wave —
   // without it the solo plays the flat inner gains the mix overrides, and
@@ -7886,6 +7988,34 @@ const REELS_PAGE = process.env.REELS === '1';
 
 const ENERGY_PAGE = process.env.ENERGY === '1';
 
+// r34 — THE VOCAL SUITE (his ask: "generate some more primarily vocal songs -
+// like a suite, of various types, but mostly energetic"). VOCAL=1 builds
+// audition/vocal.html: new songs under new names (vx_*), each with
+// `vocalLead` so the instrumental lead is a guide under the sung tune, a
+// backbeat kit on the energetic ones, and the companion as the harmony voice.
+// The vocal itself is rendered by scripts/render-vocal.mjs --page
+// audition/vocal.html <name>, which also renders the HQ mix if missing.
+const VOCAL_PAGE = process.env.VOCAL === '1';
+const VX_PROMPTS = [
+  // ---- energetic (8) --------------------------------------------------------
+  { e: 'excited',    v: 'festival', why: 'festival pop anthem — the brightest lane, four-on-the-floor kit with a backbeat, chorus hooks repeat on the returning letter' },
+  { e: 'triumphant', v: 'boss',     why: 'power anthem — marcato strings and a driving kit under a soaring line', extra: { marcato: true } },
+  { e: 'happy',      v: 'jungle',   why: 'dance — the tumbao bass and marimba vamp of the jungle lane as a groove under a voice' },
+  { e: 'excited',    v: 'space',    why: 'synth-pop — the all-synth lane is the voice’s home genre (a Vocaloid song is a synth song)', extra: { fullSynth: true } },
+  { e: 'excited',    v: 'casino',   why: 'swing / funk — the swung 16ths lane, a syllabic vocal riding the shuffle', extra: { fullSynth: true, swing: 0.585, leadRangeSteps: 4 } },
+  { e: 'tense',      v: 'fight',    why: 'rock drive — the offbeat texture and counterline of the fight lane under a tense sung line', extra: { texture: { class: 'offbeat', octave: 3 }, counterline: true } },
+  { e: 'happy',      v: 'shop',     why: 'bright everyday pop — the shop lane’s groovy chill beat at a singable tempo' },
+  // vocalDb = the voice over the band's RMS in its sung spans (render-vocal.mjs
+  // reads it from the page; the suite default is +3). HIS r34 NOTES: "in
+  // excited training, make the voice softer -> since it's energetic, the
+  // voice should not completely overpower the energetic instruments" -> 0;
+  // "make the romantic song voice just a bit softer (to a lesser degree)" -> +1.5.
+  { e: 'excited',    v: 'training', why: 'sports montage — marcato ostinato and a rising kit', extra: { marcato: true }, vocalDb: 0 },
+  // ---- two slower ones so the suite has a ballad side ---------------------
+  { e: 'nostalgic',  v: 'snow',     why: 'ballad — the royal-road lane; long held vowels, the register pushed up for snow' },
+  { e: 'romantic',   v: 'rest',     why: 'slow ballad — two anchor chords, the voice carries almost everything', vocalDb: 1.5 },
+];
+
 const LAYERSTACK = process.env.LAYERSTACK === '1';
 const LS_PROMPTS = [
   // ---- the descending loop: 4 of 9 reels, one producer's habit --------------
@@ -8435,6 +8565,27 @@ if (ENERGY_PAGE) {
   }
 }
 
+let VX_FIRST = 0;
+if (VOCAL_PAGE) {
+  VX_FIRST = songs.length;
+  for (const row of VX_PROMPTS) {
+    const name = `vx_${row.e}_${row.v}`;
+    const energetic = !/nostalgic|romantic|calm|somber|sad/.test(row.e);
+    buildSong({ emotion: row.e, environment: row.v, meter: '4/4' }, name, {
+      vocalLead: true, companion: true,
+      // r34: the electric guitar layer (his ask) — rock figures under the
+      // energetic eight, the clean arpeggio under the two ballads
+      guitar: energetic ? 'rock' : 'arp',
+      ...(energetic ? { percBackbeat: true, deepDrums: true } : {}),
+      ...(row.extra ?? {}),
+    });
+    const S = songs[songs.length - 1];
+    S.why = row.why;
+    S.vocalSuite = true;
+    if (row.vocalDb != null) S.vocalDb = row.vocalDb;
+  }
+}
+
 let LS_FIRST = 0;
 if (LAYERSTACK) {
   LS_FIRST = songs.length;
@@ -8867,6 +9018,12 @@ for (const [name, tid, expr, bpm, beats, totalBars] of CHECKS) {
 // D81: songs with an HQ render (audition/hq/<name>.wav, scripts/render-hq.mjs)
 // get an hq flag — the page offers the same HQ playback mode as videolab
 for (const s of songs) s.hq = existsSync(join(OUT, 'hq', `${s.name}.wav`));
+// Vocal tier (r34): a song with audition/hq/<name>.withvocal.wav (scripts/
+// render-vocal.mjs — the tune sung by a DiffSinger voice, timbre-converted
+// with RVC, laid over the HQ mix) gets a vocal flag; the page's "Vocal"
+// toggle swaps it in when HQ mode is on. The field is only SET when the file
+// exists, so songs without a vocal render keep their DATA byte-identical.
+for (const s of songs) if (existsSync(join(OUT, 'hq', `${s.name}.withvocal.wav`))) s.vocal = true;
 const DATA = { songs: songs.map(({ solos, ...rest }) => ({ ...rest, solos })) };
 const html = page(DATA);
 const inline = html.slice(html.lastIndexOf('<script>') + 8, html.lastIndexOf('</script>'));
@@ -8925,6 +9082,21 @@ if (SUITE) {
   for (const b of built) byBlock[b.block] = (byBlock[b.block] ?? 0) + 1;
   console.log(`wrote audition/reels.html — ${built.length} songs (${Object.entries(byBlock).map(([k, v]) => `${v} ${k}`).join(', ')}), page script parses clean, ${(inl6.length / 1024).toFixed(0)} KB`);
   for (const b of built) console.log(`   ${b.name.padEnd(28)} ${b.reelLayersCast}`);
+} else if (VOCAL_PAGE) {
+  const vxHtml = page({ songs: songs.slice(VX_FIRST).map(({ solos, ...rest }) => ({ ...rest, solos })) })
+    .replace(/motif-engine:song-verdicts/g, 'motif-engine:vocal-verdicts')
+    .replace(/motif-engine:song-notes/g, 'motif-engine:vocal-notes')
+    .replace(/motif-engine:song-cards/g, 'motif-engine:vocal-cards')
+    .replace(/motif-engine:songs-hq/g, 'motif-engine:vocal-hq')
+    .replace(/motif-engine:songs-vocal/g, 'motif-engine:vocal-vocal')
+    .replace("page: 'songs'", "page: 'r34-vocal'")
+    .replace('<title>vibe songs — audition</title>', '<title>r34 — the vocal suite</title>');
+  writeFileSync(join(OUT, 'vocal.html'), vxHtml);
+  const inlv = vxHtml.slice(vxHtml.lastIndexOf('<script>') + 8, vxHtml.lastIndexOf('</script>'));
+  acorn.parse(inlv, { ecmaVersion: 'latest' });
+  const built = songs.slice(VX_FIRST);
+  console.log(`wrote audition/vocal.html — ${built.length} songs (${built.filter((s) => s.vocal).length} with a vocal render), page script parses clean, ${(inlv.length / 1024).toFixed(0)} KB`);
+  for (const b of built) console.log(`   ${b.name.padEnd(24)} ${b.bpm}bpm ${b.key}  ${b.hq ? 'HQ' : '--'} ${b.vocal ? 'VOCAL' : '--'}`);
 } else if (ENERGY_PAGE) {
   const enHtml = page({ songs: songs.slice(EN_FIRST).map(({ solos, ...rest }) => ({ ...rest, solos })) })
     .replace(/motif-engine:song-verdicts/g, 'motif-engine:energy-verdicts')
@@ -9034,6 +9206,7 @@ function page(DATA) {
     <h1>vibe songs — 10 environmental + emotional prompts</h1>
     <span class="now" id="now">— click ▶ on a card —</span>
     <button id="hqmode" title="play pre-rendered HQ wavs (audition/hq/) where available">HQ: off</button>
+    <button id="vocalmode" title="with HQ on: play the render with the sung vocal (audition/hq/<song>.withvocal.wav) where one exists">Vocal: off</button>
     <button id="stop">■ stop</button>
     <span class="dim" id="rtstatus">first play loads the instruments</span>
   </div>
@@ -9078,6 +9251,10 @@ try { hqMode = localStorage.getItem(LSHQ) === '1'; } catch {}
 const HQ_AUDIO = new Audio();
 HQ_AUDIO.loop = true;
 function hqButton() { $('hqmode').textContent = 'HQ: ' + (hqMode ? 'ON' : 'off'); $('hqmode').style.fontWeight = hqMode ? 'bold' : ''; }
+const LSVOC = 'motif-engine:songs-vocal';
+let vocalMode = false;
+try { vocalMode = localStorage.getItem(LSVOC) === '1'; } catch {}
+function vocalButton() { $('vocalmode').textContent = 'Vocal: ' + (vocalMode ? 'ON' : 'off'); $('vocalmode').style.fontWeight = vocalMode ? 'bold' : ''; }
 
 function codeFor(s) {
   const which = solo[s.name] || 'mix';
@@ -9089,11 +9266,12 @@ async function play(s) {
   const which = solo[s.name] || 'mix';
   if (hqMode && s.hq && which === 'mix') {
     rtStop();
-    HQ_AUDIO.src = 'hq/' + s.name + '.wav';
+    const withVocal = !!(vocalMode && s.vocal);
+    HQ_AUDIO.src = 'hq/' + s.name + (withVocal ? '.withvocal.wav' : '.wav');
     HQ_AUDIO.currentTime = 0;
     try { await HQ_AUDIO.play(); } catch (e) { $('now').textContent = 'HQ playback failed: ' + e.message; return; }
     playing = s.name;
-    $('now').textContent = '\\u25b6 ' + s.name + ' (HQ wav)';
+    $('now').textContent = '\\u25b6 ' + s.name + ' (HQ wav' + (withVocal ? ' + vocal' : (vocalMode ? ' \\u00b7 no vocal render' : '')) + ')';
     render();
     return;
   }
@@ -9104,7 +9282,7 @@ async function play(s) {
   const ok = await rtPlay(code);
   if (!ok) { playing = null; render(); return; }
   playing = s.name;
-  $('now').textContent = '\\u25b6 ' + s.name + ' (' + which + (hqMode && !s.hq ? ' \\u00b7 no HQ render' : '') + ')';
+  $('now').textContent = '\\u25b6 ' + s.name + ' (' + which + (hqMode && !s.hq ? ' \\u00b7 no HQ render' : '') + (vocalMode && which !== 'mix' ? ' \\u00b7 solos have no vocal' : '') + ')';
   render();
 }
 function stop() { rtStop(); HQ_AUDIO.pause(); HQ_AUDIO.currentTime = 0; playing = null; $('now').textContent = '\\u2014 stopped \\u2014'; render(); }
@@ -9129,6 +9307,7 @@ function render() {
       '<div class="row"><span class="vibe">' + esc((s.prompt.emotion ? s.prompt.emotion + ' ' : '') + s.prompt.environment) + '</span>' +
       '<span class="dim">' + esc(s.name) + '</span>' +
       (s.hq ? '<span class="dim" style="background:#1d3a2a;color:#9fdcb0;padding:0 6px;border-radius:3px" title="has an HQ render">HQ</span>' : '') +
+      (s.vocal ? '<span class="dim" style="background:#3a1d3a;color:#dc9fdc;padding:0 6px;border-radius:3px" title="has a sung vocal render (HQ on + Vocal on)">VOCAL</span>' : '') +
       '<button data-play="' + s.name + '">\\u25b6 play</button>' +
       '<select data-solo="' + s.name + '">' + opts + '</select></div>' +
       '<div class="meta">' + s.key + ' \\u00b7 ' + s.bpm + 'bpm ' + s.meter + ' \\u00b7 ' + s.totalBars + ' bars \\u00b7 form ' + esc(s.scheme || '(no letters)') + ' \\u00b7 role ' + s.role + ' \\u00b7 ' + s.salience + '</div>' +
@@ -9176,6 +9355,16 @@ $('hqmode').onclick = function () {
   stop();
 };
 hqButton();
+$('vocalmode').onclick = function () {
+  vocalMode = !vocalMode;
+  try { localStorage.setItem(LSVOC, vocalMode ? '1' : '0'); } catch {}
+  // the vocal lives in the HQ render: turning it on turns HQ on too (his
+  // "i dont hear the vocals" — HQ off plays the browser synth, which has none)
+  if (vocalMode && !hqMode) { hqMode = true; try { localStorage.setItem(LSHQ, '1'); } catch {} hqButton(); }
+  vocalButton();
+  stop();
+};
+vocalButton();
 $('export').onclick = function () {
   // DERIVED format (D60): page-local songs export degrees + exemplar base, so
   // import-verdicts.mjs lands them in DERIVED_VERDICTS unchanged

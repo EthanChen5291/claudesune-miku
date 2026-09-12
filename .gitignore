@@ -117,3 +117,4 @@ audios/manual-r22b/
 *.MP4
 *.mov
 *.MOV
+vendor/vocal/

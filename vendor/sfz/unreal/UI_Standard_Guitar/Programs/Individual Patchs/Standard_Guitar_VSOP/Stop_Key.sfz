@@ -1,0 +1,8 @@
+
+<group>
+sample=..\Samples\Dummy\Dummy.flac
+lokey=b-1
+hikey=b-1
+group=1
+
+<region>

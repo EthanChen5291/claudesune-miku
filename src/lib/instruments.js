@@ -133,6 +133,32 @@ export const INSTRUMENTS = {
     moods: ['warm', 'intimate', 'folk'],
     character: 'a nylon-string guitar: soft plucked warmth, intimate at low volume.',
   },
+  // ---- r34 ELECTRIC GUITAR (his "do we have access to high quality electric
+  // guitar? i want to try that as a layer with miku (learning from japanese
+  // songs)"). Browser tier: the GM soundfont programs 27/28/29. HQ tier
+  // (hq-instruments.js): Unreal Instruments "Standard Guitar" (a Japanese
+  // free SFZ DI library, keyswitched articulations) through a Neural Amp
+  // Modeler capture. `envOnly: []` — the planner never casts these; they are
+  // written ONLY by the r34 guitar layer (opts.guitar), so palette growth
+  // cannot re-roll a judged song (the library-growth law).
+  gm_electric_guitar_clean: {
+    gm: 'gm_electric_guitar_clean', family: 'guitar', attack: 'quick', sustain: 'medium',
+    cuts: 0.6, weight: 0.4, range: [2, 5], level: 1.0, lanes: ['mid'],
+    parts: ['harmony_support'], moods: ['bright', 'casual'], envOnly: [],
+    character: 'a clean electric guitar: chiming arpeggios and soft chord strums, the J-pop ballad guitar.',
+  },
+  gm_electric_guitar_muted: {
+    gm: 'gm_electric_guitar_muted', family: 'guitar', attack: 'quick', sustain: 'short',
+    cuts: 0.5, weight: 0.5, range: [2, 4], level: 1.0, lanes: ['low', 'mid'],
+    parts: ['harmony_support'], moods: ['driving', 'tense'], envOnly: [],
+    character: 'a palm-muted electric guitar: chugging 8th-note power chords, the J-rock verse engine.',
+  },
+  gm_overdriven_guitar: {
+    gm: 'gm_overdriven_guitar', family: 'guitar', attack: 'quick', sustain: 'long',
+    cuts: 0.45, weight: 0.7, range: [2, 5], level: 1.0, lanes: ['low', 'mid'],
+    parts: ['harmony_support'], moods: ['driving', 'anthemic'], envOnly: [],
+    character: 'an overdriven electric guitar: open power chords ringing under a chorus, the J-rock lift.',
+  },
   gm_orchestral_harp: {
     gm: 'gm_orchestral_harp', family: 'pluck', attack: 'quick', sustain: 'long',
     cuts: 0.55, weight: 0.4, range: [3, 5], level: 1.15, lanes: ['mid', 'high'],

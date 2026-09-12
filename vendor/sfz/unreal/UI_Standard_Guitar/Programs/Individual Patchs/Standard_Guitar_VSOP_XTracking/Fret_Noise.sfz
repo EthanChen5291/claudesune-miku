@@ -1,0 +1,80 @@
+
+<global>
+delay_random=0.02
+amp_veltrack=100
+ampeg_attack=0.001
+ampeg_release=0.14
+cutoff=30
+fil_type=lpf_1p
+fileg_depthcc11=9600
+eq1_freq=300
+eq1_bw=2.5
+eq1_gaincc48=-10
+eq2_freq=1290
+eq2_bw=1
+eq2_gaincc48=6
+eq3_freq=100
+eq3_bw=3
+eq3_gaincc48=-9
+volume_oncc48=6
+group=1
+off_by=2
+off_mode=normal
+volume=10
+
+<group>
+seq_length=4
+
+<region>
+sample=..\Samples\Global Noise\Fret Noise\Fret Noise_First1.flac
+lokey=f#1
+hikey=f#1
+pitch_keycenter=f#1
+
+<region>
+sample=..\Samples\Global Noise\Fret Noise\Fret Noise_First2.flac
+lokey=f#1
+hikey=f#1
+seq_position=2
+pitch_keycenter=f#1
+
+<region>
+sample=..\Samples\Global Noise\Fret Noise\Fret Noise_First3.flac
+lokey=f#1
+hikey=f#1
+seq_position=3
+pitch_keycenter=f#1
+
+<region>
+sample=..\Samples\Global Noise\Fret Noise\Fret Noise_First4.flac
+lokey=f#1
+hikey=f#1
+seq_position=4
+pitch_keycenter=f#1
+
+<region>
+sample=..\Samples\Global Noise\Fret Noise\Fret Noise_Slow1.flac
+lokey=g1
+hikey=g1
+pitch_keycenter=g1
+
+<region>
+sample=..\Samples\Global Noise\Fret Noise\Fret Noise_Slow2.flac
+lokey=g1
+hikey=g1
+seq_position=2
+pitch_keycenter=g1
+
+<region>
+sample=..\Samples\Global Noise\Fret Noise\Fret Noise_Slow3.flac
+lokey=g1
+hikey=g1
+seq_position=3
+pitch_keycenter=g1
+
+<region>
+sample=..\Samples\Global Noise\Fret Noise\Fret Noise_Slow4.flac
+lokey=g1
+hikey=g1
+seq_position=4
+pitch_keycenter=g1

@@ -1,0 +1,204 @@
+
+<control>
+set_cc20=0
+set_cc21=95
+set_cc22=127
+set_cc23=0
+set_cc24=13
+set_cc25=108
+set_cc26=19
+set_cc27=82
+set_cc28=44
+set_cc29=44
+set_cc30=75
+set_cc31=64
+set_cc32=0
+set_cc48=64
+set_cc52=0
+set_cc53=0
+
+label_cc20=Vib_Depth(CC20)
+label_cc21=Vib_Speed(CC21)
+label_cc22=Mute_Time(CC22)
+label_cc23=Long(CC23)
+label_cc24=Rel_Shape(CC24)
+label_cc25=Rel_Level(CC25)
+label_cc26=Interval_A(CC26)
+label_cc27=Interval_B(CC27)
+label_cc28=Bend_Time(CC28)
+label_cc29=Resonance(CC29)
+label_cc30=Picking_Noise
+label_cc31=Picking_Micro
+label_cc32=Sus_P5(CC30)
+label_cc48=Magnet
+label_cc52=Bend_Start
+label_cc53=Bend_Speed
+label_cc111=Slide_Speed
+label_cc112=Trill_Speed
+
+#include "Individual Patchs/Standard_Guitar_KSOP_XTracking/Detail_Slide_In.sfz"
+
+#include "Individual Patchs/Standard_Guitar_KSOP_XTracking/Detail_Mute_Alt.sfz"
+#include "Individual Patchs/Standard_Guitar_KSOP_XTracking/Detail_Mute_Up.sfz"
+#include "Individual Patchs/Standard_Guitar_KSOP_XTracking/Detail_Mute_Down.sfz"
+#include "Individual Patchs/Standard_Guitar_KSOP_XTracking/Detail_Mute_Rep.sfz"
+
+#include "Individual Patchs/Standard_Guitar_KSOP_XTracking/Detail_Sus_Alt.sfz"
+#include "Individual Patchs/Standard_Guitar_KSOP_XTracking/Detail_Sus_Up.sfz"
+#include "Individual Patchs/Standard_Guitar_KSOP_XTracking/Detail_Sus_Down.sfz"
+#include "Individual Patchs/Standard_Guitar_KSOP_XTracking/Detail_Sus_Rep.sfz"
+
+#include "Individual Patchs/Standard_Guitar_KSOP_XTracking/Hello!.sfz"
+#include "Individual Patchs/Standard_Guitar_KSOP_XTracking/Stop_Noise.sfz"
+#include "Individual Patchs/Standard_Guitar_KSOP_XTracking/Fret_Noise.sfz"
+#include "Individual Patchs/Standard_Guitar_KSOP_XTracking/Hit.sfz"
+#include "Individual Patchs/Standard_Guitar_KSOP_XTracking/Pick_Scratch.sfz"
+#include "Individual Patchs/Standard_Guitar_KSOP_XTracking/Slide_FX.sfz"
+#include "Individual Patchs/Standard_Guitar_KSOP_XTracking/Silent_Noise.sfz"
+
+
+
+#include "Individual Patchs/Standard_Guitar_KSOP_XTracking/Noise_Picking_Micro.sfz"
+#include "Individual Patchs/Standard_Guitar_KSOP_XTracking/Noise_Picking_Noise.sfz"
+#include "Individual Patchs/Standard_Guitar_KSOP_XTracking/Noise_Resonance.sfz"
+
+#include "Individual Patchs/Standard_Guitar_KSOP_XTracking/Stop_Key.sfz"
+
+
+
+
+#include "Individual Patchs/Standard_Guitar_KSOP_XTracking/Trill_Maj3.sfz"
+#include "Individual Patchs/Standard_Guitar_KSOP_XTracking/Trill_Min3.sfz"
+#include "Individual Patchs/Standard_Guitar_KSOP_XTracking/Trill_WT.sfz"
+#include "Individual Patchs/Standard_Guitar_KSOP_XTracking/Trill_HT.sfz"
+
+#include "Individual Patchs/Standard_Guitar_KSOP_XTracking/Sus_PBR24.sfz"
+#include "Individual Patchs/Standard_Guitar_KSOP_XTracking/Sus_PBR12.sfz"
+
+#include "Individual Patchs/Standard_Guitar_KSOP_XTracking/Portament.sfz"
+
+#include "Individual Patchs/Standard_Guitar_KSOP_XTracking/Bending_HT.sfz"
+#include "Individual Patchs/Standard_Guitar_KSOP_XTracking/Bending_WH.sfz"
+#include "Individual Patchs/Standard_Guitar_KSOP_XTracking/Bending_1HT.sfz"
+
+#include "Individual Patchs/Standard_Guitar_KSOP_XTracking/Unison_Bend_Auto.sfz"
+#include "Individual Patchs/Standard_Guitar_KSOP_XTracking/Unison_Bend_Manual.sfz"
+
+
+#include "Individual Patchs/Standard_Guitar_KSOP_XTracking/Sus_Down_P5.sfz"
+#include "Individual Patchs/Standard_Guitar_KSOP_XTracking/Sus_Up_P5.sfz"
+#include "Individual Patchs/Standard_Guitar_KSOP_XTracking/Sus_Long_P5.sfz"
+#include "Individual Patchs/Standard_Guitar_KSOP_XTracking/Release7_Sus_Rep_P5.sfz"
+
+#include "Individual Patchs/Standard_Guitar_KSOP_XTracking/Sus_Down.sfz"
+#include "Individual Patchs/Standard_Guitar_KSOP_XTracking/Sus_Up.sfz"
+#include "Individual Patchs/Standard_Guitar_KSOP_XTracking/Sus_Alt_D.sfz"
+#include "Individual Patchs/Standard_Guitar_KSOP_XTracking/Sus_Alt_U.sfz"
+#include "Individual Patchs/Standard_Guitar_KSOP_XTracking/Sus_Long.sfz"
+
+#include "Individual Patchs/Standard_Guitar_KSOP_XTracking/Mute_Down.sfz"
+#include "Individual Patchs/Standard_Guitar_KSOP_XTracking/Mute_Up.sfz"
+#include "Individual Patchs/Standard_Guitar_KSOP_XTracking/Mute_Alt_D.sfz"
+#include "Individual Patchs/Standard_Guitar_KSOP_XTracking/Mute_Alt_U.sfz"
+
+#include "Individual Patchs/Standard_Guitar_KSOP_XTracking/Legato.sfz"
+
+#include "Individual Patchs/Standard_Guitar_KSOP_XTracking/Slide_in_Omni.sfz"
+#include "Individual Patchs/Standard_Guitar_KSOP_XTracking/Slide_in_6ST.sfz"
+#include "Individual Patchs/Standard_Guitar_KSOP_XTracking/Slide_in_5ST.sfz"
+#include "Individual Patchs/Standard_Guitar_KSOP_XTracking/Slide_in_4ST.sfz"
+#include "Individual Patchs/Standard_Guitar_KSOP_XTracking/Slide_in_3ST.sfz"
+#include "Individual Patchs/Standard_Guitar_KSOP_XTracking/Slide_in_2ST.sfz"
+#include "Individual Patchs/Standard_Guitar_KSOP_XTracking/Slide_in_1ST.sfz"
+
+#include "Individual Patchs/Standard_Guitar_KSOP_XTracking/Slide_Up_Omni.sfz"
+#include "Individual Patchs/Standard_Guitar_KSOP_XTracking/Slide_Up_6ST.sfz"
+#include "Individual Patchs/Standard_Guitar_KSOP_XTracking/Slide_Up_5ST.sfz"
+#include "Individual Patchs/Standard_Guitar_KSOP_XTracking/Slide_Up_4ST.sfz"
+#include "Individual Patchs/Standard_Guitar_KSOP_XTracking/Slide_Up_3ST.sfz"
+#include "Individual Patchs/Standard_Guitar_KSOP_XTracking/Slide_Up_2ST.sfz"
+#include "Individual Patchs/Standard_Guitar_KSOP_XTracking/Slide_Up_1ST.sfz"
+
+#include "Individual Patchs/Standard_Guitar_KSOP_XTracking/Slide_Down_Omni.sfz"
+#include "Individual Patchs/Standard_Guitar_KSOP_XTracking/Slide_Down_6ST.sfz"
+#include "Individual Patchs/Standard_Guitar_KSOP_XTracking/Slide_Down_5ST.sfz"
+#include "Individual Patchs/Standard_Guitar_KSOP_XTracking/Slide_Down_4ST.sfz"
+#include "Individual Patchs/Standard_Guitar_KSOP_XTracking/Slide_Down_3ST.sfz"
+#include "Individual Patchs/Standard_Guitar_KSOP_XTracking/Slide_Down_2ST.sfz"
+#include "Individual Patchs/Standard_Guitar_KSOP_XTracking/Slide_Down_1ST.sfz"
+
+#include "Individual Patchs/Standard_Guitar_KSOP_XTracking/Picking_Harmonics.sfz"
+#include "Individual Patchs/Standard_Guitar_KSOP_XTracking/Natural_Harmonics.sfz"
+
+#include "Individual Patchs/Standard_Guitar_KSOP_XTracking/Brush.sfz"
+
+#include "Individual Patchs/Standard_Guitar_KSOP_XTracking/Mute_Fret.sfz"
+
+#include "Individual Patchs/Standard_Guitar_KSOP_XTracking/Slide_Out.sfz"
+
+
+
+#include "Individual Patchs/Standard_Guitar_KSOP_XTracking/Release1_Slide_In.sfz"
+#include "Individual Patchs/Standard_Guitar_KSOP_XTracking/Release1_Legato.sfz"
+#include "Individual Patchs/Standard_Guitar_KSOP_XTracking/Release1_Slide_Up.sfz"
+#include "Individual Patchs/Standard_Guitar_KSOP_XTracking/Release1_Slide_Down.sfz"
+#include "Individual Patchs/Standard_Guitar_KSOP_XTracking/Release1_Mute_Alt.sfz"
+#include "Individual Patchs/Standard_Guitar_KSOP_XTracking/Release1_Mute_Up.sfz"
+#include "Individual Patchs/Standard_Guitar_KSOP_XTracking/Release1_Mute_Down.sfz"
+#include "Individual Patchs/Standard_Guitar_KSOP_XTracking/Release1_Sus_Alt.sfz"
+#include "Individual Patchs/Standard_Guitar_KSOP_XTracking/Release1_Sus_Up.sfz"
+#include "Individual Patchs/Standard_Guitar_KSOP_XTracking/Release1_Sus_Down.sfz"
+
+#include "Individual Patchs/Standard_Guitar_KSOP_XTracking/Release2_Slide_In.sfz"
+#include "Individual Patchs/Standard_Guitar_KSOP_XTracking/Release2_Legato.sfz"
+#include "Individual Patchs/Standard_Guitar_KSOP_XTracking/Release2_Slide_Up.sfz"
+#include "Individual Patchs/Standard_Guitar_KSOP_XTracking/Release2_Slide_Down.sfz"
+#include "Individual Patchs/Standard_Guitar_KSOP_XTracking/Release2_Mute_Alt.sfz"
+#include "Individual Patchs/Standard_Guitar_KSOP_XTracking/Release2_Mute_Up.sfz"
+#include "Individual Patchs/Standard_Guitar_KSOP_XTracking/Release2_Mute_Down.sfz"
+#include "Individual Patchs/Standard_Guitar_KSOP_XTracking/Release2_Sus_Alt.sfz"
+#include "Individual Patchs/Standard_Guitar_KSOP_XTracking/Release2_Sus_Up.sfz"
+#include "Individual Patchs/Standard_Guitar_KSOP_XTracking/Release2_Sus_Down.sfz"
+
+#include "Individual Patchs/Standard_Guitar_KSOP_XTracking/Release3_Slide_In.sfz"
+#include "Individual Patchs/Standard_Guitar_KSOP_XTracking/Release3_Legato.sfz"
+#include "Individual Patchs/Standard_Guitar_KSOP_XTracking/Release3_Slide_Up.sfz"
+#include "Individual Patchs/Standard_Guitar_KSOP_XTracking/Release3_Slide_Down.sfz"
+#include "Individual Patchs/Standard_Guitar_KSOP_XTracking/Release3_Mute_Alt.sfz"
+#include "Individual Patchs/Standard_Guitar_KSOP_XTracking/Release3_Mute_Up.sfz"
+#include "Individual Patchs/Standard_Guitar_KSOP_XTracking/Release3_Mute_Down.sfz"
+#include "Individual Patchs/Standard_Guitar_KSOP_XTracking/Release3_Sus_Alt.sfz"
+#include "Individual Patchs/Standard_Guitar_KSOP_XTracking/Release3_Sus_Up.sfz"
+#include "Individual Patchs/Standard_Guitar_KSOP_XTracking/Release3_Sus_Down.sfz"
+
+#include "Individual Patchs/Standard_Guitar_KSOP_XTracking/Release4_Slide_In.sfz"
+#include "Individual Patchs/Standard_Guitar_KSOP_XTracking/Release4_Legato.sfz"
+#include "Individual Patchs/Standard_Guitar_KSOP_XTracking/Release4_Slide_Up.sfz"
+#include "Individual Patchs/Standard_Guitar_KSOP_XTracking/Release4_Slide_Down.sfz"
+#include "Individual Patchs/Standard_Guitar_KSOP_XTracking/Release4_Mute_Alt.sfz"
+#include "Individual Patchs/Standard_Guitar_KSOP_XTracking/Release4_Mute_Up.sfz"
+#include "Individual Patchs/Standard_Guitar_KSOP_XTracking/Release4_Mute_Down.sfz"
+#include "Individual Patchs/Standard_Guitar_KSOP_XTracking/Release4_Sus_Alt.sfz"
+#include "Individual Patchs/Standard_Guitar_KSOP_XTracking/Release4_Sus_Up.sfz"
+#include "Individual Patchs/Standard_Guitar_KSOP_XTracking/Release4_Sus_Down.sfz"
+
+#include "Individual Patchs/Standard_Guitar_KSOP_XTracking/Release5_Slide_In.sfz"
+#include "Individual Patchs/Standard_Guitar_KSOP_XTracking/Release5_Legato.sfz"
+#include "Individual Patchs/Standard_Guitar_KSOP_XTracking/Release5_Slide_Up.sfz"
+#include "Individual Patchs/Standard_Guitar_KSOP_XTracking/Release5_Slide_Down.sfz"
+#include "Individual Patchs/Standard_Guitar_KSOP_XTracking/Release5_Sus_Alt.sfz"
+#include "Individual Patchs/Standard_Guitar_KSOP_XTracking/Release5_Sus_Up.sfz"
+#include "Individual Patchs/Standard_Guitar_KSOP_XTracking/Release5_Sus_Down.sfz"
+
+#include "Individual Patchs/Standard_Guitar_KSOP_XTracking/Release6_Slide_In.sfz"
+#include "Individual Patchs/Standard_Guitar_KSOP_XTracking/Release6_Legato.sfz"
+#include "Individual Patchs/Standard_Guitar_KSOP_XTracking/Release6_Slide_Up.sfz"
+#include "Individual Patchs/Standard_Guitar_KSOP_XTracking/Release6_Slide_Down.sfz"
+#include "Individual Patchs/Standard_Guitar_KSOP_XTracking/Release6_Sus_Alt.sfz"
+#include "Individual Patchs/Standard_Guitar_KSOP_XTracking/Release6_Sus_Up.sfz"
+#include "Individual Patchs/Standard_Guitar_KSOP_XTracking/Release6_Sus_Down.sfz"
+
+#include "Individual Patchs/Standard_Guitar_KSOP_XTracking/Release7_Mute_Rep.sfz"
+#include "Individual Patchs/Standard_Guitar_KSOP_XTracking/Release7_Sus_Rep.sfz"
+
+sw_default=c1

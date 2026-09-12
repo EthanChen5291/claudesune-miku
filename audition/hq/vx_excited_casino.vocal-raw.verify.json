@@ -1,0 +1,84 @@
+{
+ "wav": "/Users/ethanchen/Documents/GitHub/motif-engine/audition/hq/vx_excited_casino.vocal-raw.wav",
+ "seconds": 46.62,
+ "sr": 40000,
+ "notes": 82,
+ "note_hit_rate_mean": 0.7983623907076656,
+ "notes_hit_ge_50pct": 0.975609756097561,
+ "octave_error_rate_mean": 0.00013550135501355014,
+ "notes_octave_wrong": 0,
+ "voiced_coverage_mean": 1.0,
+ "notes_unvoiced": 0,
+ "sung_rms_db": -20.529988714336014,
+ "rest_rms_db": -59.425719150347824,
+ "rest_leak_db": -38.89573043601181,
+ "onset_lag_median_ms": -17.730000000000246,
+ "onset_lag_p90_ms": 78.27400000000006,
+ "onset_lag_notes": 75,
+ "worst_notes": [
+  {
+   "start": 16.19318,
+   "midi": 70,
+   "hit": 0.1111111111111111,
+   "oct": 0.0,
+   "voiced": 1.0,
+   "median_dev_cents": -174.7136310121448
+  },
+  {
+   "start": 10.90909,
+   "midi": 70,
+   "hit": 0.42105263157894735,
+   "oct": 0.0,
+   "voiced": 1.0,
+   "median_dev_cents": -65.40916701123223
+  },
+  {
+   "start": 19.09091,
+   "midi": 74,
+   "hit": 0.5178571428571429,
+   "oct": 0.0,
+   "voiced": 1.0,
+   "median_dev_cents": -47.7765834116866
+  },
+  {
+   "start": 17.89773,
+   "midi": 58,
+   "hit": 0.5279187817258884,
+   "oct": 0.0,
+   "voiced": 1.0,
+   "median_dev_cents": 5.974630374100087
+  },
+  {
+   "start": 1.63381,
+   "midi": 72,
+   "hit": 0.5405405405405406,
+   "oct": 0.0,
+   "voiced": 1.0,
+   "median_dev_cents": -34.90967255787041
+  },
+  {
+   "start": 26.17926,
+   "midi": 65,
+   "hit": 0.5675675675675675,
+   "oct": 0.0,
+   "voiced": 1.0,
+   "median_dev_cents": 39.262242075920994
+  },
+  {
+   "start": 23.01136,
+   "midi": 70,
+   "hit": 0.5909090909090909,
+   "oct": 0.0,
+   "voiced": 1.0,
+   "median_dev_cents": -9.587069125415582
+  },
+  {
+   "start": 25.73864,
+   "midi": 72,
+   "hit": 0.5909090909090909,
+   "oct": 0.0,
+   "voiced": 1.0,
+   "median_dev_cents": -39.885673867295424
+  }
+ ]
+}

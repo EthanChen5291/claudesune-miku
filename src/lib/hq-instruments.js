@@ -23,7 +23,29 @@
 
 export const HQ_DEFAULTS = { velScale: 1, trimDb: 0 };
 
+// r34 ELECTRIC GUITAR: Unreal Instruments "Standard Guitar" (vendor/sfz/unreal,
+// licence-free per its notice) is a DI library — the raw pickup signal, with
+// keyswitched articulations (sw_last: C1 sustain-down, D1 sustain-alternate,
+// D#1 palm-mute-down; sw_default is F0 = SILENT, so every stem's MIDI must
+// open with its keyswitch, which render-hq injects from `keyswitch`). The
+// amp is a Neural Amp Modeler capture (vendor/nam-models, GPL v3) applied
+// after sfizz by scripts/guitar-amp.py through `fx.nam`; captures named
+// "Cab" carry their speaker cabinet. Playable range B1-D6 (35-86).
+const UI_GUITAR = 'vendor/sfz/unreal/UI_Standard_Guitar/Programs/01-Standard Guitar KSOP.sfz';
+
 export const HQ_INSTRUMENTS = {
+  gm_electric_guitar_clean: {
+    backend: 'sfz', sfz: UI_GUITAR, keyswitch: 26, velScale: 0.95, trimDb: -2,
+    fx: { nam: 'vendor/nam-models/Phillipe_P_Bug333-Clean-Cab-ESR0.007.nam', inGainDb: 6 },
+  },
+  gm_electric_guitar_muted: {
+    backend: 'sfz', sfz: UI_GUITAR, keyswitch: 27, velScale: 1, trimDb: -1,
+    fx: { nam: 'vendor/nam-models/Phillipe_P_Bug6262-Crunch-NoDrive-Cab-ESR0.004.nam', inGainDb: 12 },
+  },
+  gm_overdriven_guitar: {
+    backend: 'sfz', sfz: UI_GUITAR, keyswitch: 26, velScale: 1, trimDb: -1,
+    fx: { nam: 'vendor/nam-models/Phillipe_P_Bug6262-Crunch-NoDrive-Cab-ESR0.004.nam', inGainDb: 12 },
+  },
   // --- sampled (tier 1: sfizz + SFZ libraries) ---
   piano: {
     backend: 'sfz',

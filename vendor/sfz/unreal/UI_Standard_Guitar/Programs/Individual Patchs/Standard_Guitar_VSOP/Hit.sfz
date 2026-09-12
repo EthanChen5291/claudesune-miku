@@ -1,0 +1,60 @@
+
+<global>
+amp_veltrack=100
+ampeg_attack=0.001
+ampeg_release=0.1
+cutoff=30
+fil_type=lpf_1p
+fileg_depthcc11=9600
+eq1_freq=300
+eq1_bw=2.5
+eq1_gaincc48=-10
+eq2_freq=1290
+eq2_bw=1
+eq2_gaincc48=6
+eq3_freq=100
+eq3_bw=3
+eq3_gaincc48=-9
+volume_oncc48=6
+group=1
+off_by=2
+off_mode=normal
+volume=10
+
+<group>
+lokey=f1
+hikey=f1
+seq_length=8
+pitch_keycenter=f1
+
+<region>
+sample=..\Samples\Global Noise\Rhythmical Hit\Rhythmical Hit1.flac
+
+<region>
+sample=..\Samples\Global Noise\Rhythmical Hit\Rhythmical Hit2.flac
+seq_position=2
+
+<region>
+sample=..\Samples\Global Noise\Rhythmical Hit\Rhythmical Hit3.flac
+seq_position=3
+
+<region>
+sample=..\Samples\Global Noise\Rhythmical Hit\Rhythmical Hit4.flac
+seq_position=4
+
+<region>
+sample=..\Samples\Global Noise\Rhythmical Hit\Rhythmical Hit5.flac
+seq_position=5
+
+<region>
+sample=..\Samples\Global Noise\Rhythmical Hit\Rhythmical Hit6.flac
+seq_position=6
+
+<region>
+sample=..\Samples\Global Noise\Rhythmical Hit\Rhythmical Hit7.flac
+seq_position=7
+
+<region>
+sample=..\Samples\Global Noise\Rhythmical Hit\Rhythmical Hit8.flac
+seq_position=8
+

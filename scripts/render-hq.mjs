@@ -285,6 +285,15 @@ for (const [key, stem] of stems) {
     ]));
     if (folded) console.log(`  ${name.padEnd(22)} folded ${folded} note(s) into the patch range ${kLo}..${kHi} (would have been silent)`);
     if (unfoldable) console.log(`  ${name.padEnd(22)} WARNING ${unfoldable} note(s) outside ${kLo}..${kHi} and unfoldable — they will be silent`);
+    // r34: a keyswitched library (the Unreal guitar: sw_default is SILENT)
+    // gets its articulation switch as the FIRST note of the stem, held for
+    // the whole render, so every region's `sw_last` is satisfied before the
+    // first real onset (same tick, earlier in the track).
+    if (Number.isInteger(stem.inst.keyswitch)) {
+      const [firstLabel, firstEntry] = [...stemMap][0];
+      firstEntry.haps.unshift({ whole: { begin: from, end: to + 1 }, part: { begin: from, end: to + 1 }, value: { note: stem.inst.keyswitch, gain: 0.5, s: name } });
+      stemMap.set(firstLabel, firstEntry);
+    }
   }
 
   const res = songToMidi(stemMap, { cpm, meter, from, title: name });
@@ -297,6 +306,25 @@ for (const [key, stem] of stems) {
   } else if (stem.inst.backend === 'sfz') {
     execFileSync(SFIZZ, ['--sfz', join(ROOT, stem.inst.sfz), '--midi', midPath, '--wav', wavPath, '--samplerate', '44100'], { stdio: 'pipe' });
     console.log(`  ${name.padEnd(22)} sfizz       ${String(notes).padStart(4)} notes  gain ${meanGain.toFixed(2)}  room ${meanRoom.toFixed(2)}  (${basename(stem.inst.sfz)})`);
+    // r34: an amp stage after the sampler (the DI guitar through a Neural Amp
+    // Modeler capture, scripts/guitar-amp.py in the vocal-tier env). A missing
+    // env or capture degrades to the DI with a WARNING rather than failing —
+    // the same policy as a missing patch.
+    if (stem.inst.fx?.nam) {
+      const AMP_PY = join(ROOT, 'vendor', 'vocal', 'env', 'bin', 'python');
+      const namPath = join(ROOT, stem.inst.fx.nam);
+      if (existsSync(AMP_PY) && existsSync(namPath)) {
+        const di = wavPath.replace(/\.wav$/, '-di.wav');
+        execFileSync('mv', [wavPath, di]);
+        try {
+          execFileSync(AMP_PY, [join(ROOT, 'scripts', 'guitar-amp.py'), di, wavPath, '--model', namPath, '--in-gain-db', String(stem.inst.fx.inGainDb ?? 0), '--no-norm'], { stdio: 'pipe' });
+          console.log(`  ${name.padEnd(22)} amp         ${basename(namPath).replace(/\.nam$/, '')} (+${stem.inst.fx.inGainDb ?? 0} dB in)`);
+        } catch (e) {
+          execFileSync('mv', [di, wavPath]);
+          console.log(`  ${name.padEnd(22)} WARNING amp stage failed (${String(e.stderr ?? e.message).trim().split('\n').pop()}) — DI kept`);
+        }
+      } else console.log(`  ${name.padEnd(22)} WARNING no amp (${existsSync(AMP_PY) ? 'capture missing' : 'vendor/vocal env missing'}) — DI kept`);
+    }
   } else {
     // D85: +5s tail — the new palette carries releases (juno-strings,
     // sparkle, epiano) that a +3 allowance audibly clipped

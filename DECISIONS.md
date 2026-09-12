@@ -11336,3 +11336,341 @@ compressed in HQ — the browser tier is the cleaner test of level, the HQ
 tier of timbre and envelope. variations + catalog tests 6/6 after the
 rebuild; the full 394-test suite ran green before the HQ-toggle edit, and
 the only tests that read the page are those six.
+
+## D134 — the vocal tier: a song sings (his "are you able to compose with hatsune miku" → "proceed")
+
+His ask, then his ruling on the plan I laid out: the real Miku is a paid
+voicebank (Piapro Studio NT / Vocaloid) with no API; every free "Miku" is a
+community RVC model trained on Vocaloid output, and Crypton has no public
+statement permitting or forbidding that. He read the caveat and said
+"this is fine. proceed". So: local-only, audition-only, never released.
+
+WHAT WAS BUILT (scripts/render-vocal.mjs, one command per song):
+
+0. `export-vocal.mjs` — the `_lead` solo as a monophonic score. Top pitch
+   per onset (chordTop dyads, D98), abutting legato haps truncated so no
+   two notes overlap, and — MEASURED IN THE MIX, never the solo — a bar is
+   sung only when the mix plays that bar's tune on SOME instrument at the
+   same (time, midi): handoff letters count, breakdown bars go silent.
+   vs_calm_water: 199 of 233 lead notes in 30 of 36 tune bars; silent 0-3
+   (the intro) and 23, 27 (the breakdown). Register: the piano lead's
+   median is C6 (84); the line is shifted by WHOLE octaves so its median
+   lands nearest the centre of A3-E5 (the published Miku comfortable
+   range) → -12, sung range 57-81. A 24-semitone tune cannot fit a
+   19-semitone band; the median rule is the tie-break, `--octave N` pins.
+1. `vocal-sing.py` — a DiffSinger voicebank's ONNX models run DIRECTLY with
+   onnxruntime (no OpenUtau, which has no headless render). Voice: Tiger
+   v106 (spicytigermeat; free non-commercial; ships its own vocoder).
+   Its PITCH model writes the sung f0 from the note list (portamento,
+   vibrato, transitions are the model's own — median deviation from the
+   score 0.11-0.14 st per phrase, i.e. ornaments, not a new tune; a phrase
+   whose median deviation exceeds 2 st falls back to a hand curve). One
+   syllable per note, "la" by default (a consonant re-articulates every
+   onset and gives the RVC encoder speech-like content; notes < 120 ms
+   drop it), breaths (AP) at phrase starts after ≥ 0.35 s of rest, phrases
+   split at ≥ 0.5 s rests and render independently (OpenUtau does the
+   same). The voicebank has no energy embedding, so the engine's per-note
+   gain is applied as a smoothed amplitude envelope after synthesis — the
+   only route for its dynamics into the vocal. 110 s for a 172 s song on
+   CPU (5 threads).
+2. `vocal-convert.py` — RVC via infer_rvc_python (MIT) with
+   `NoCrypt/miku_RVC → infamous_miku_v2` (.pth + 368 MB index, the model
+   two independent HF repos carry). RVC replaces TIMBRE ONLY — pitch,
+   timing and vowels pass through — which is exactly why stage 1 must
+   already be singing (the pasted plan's "eSpeak into RVC" would have been
+   a flat robot in her timbre). rmvpe+ pitch, index rate 0.66, protect 0.33.
+3. `vocal-verify.py` — pyworld harvest f0 vs the score per note: % voiced
+   frames within 50 cents, octave errors, unvoiced notes, rest leak, and
+   onset lag by PITCH ARRIVAL (see the trap below).
+4. Mix: the vocal is levelled by gated loudness (D83) to `--vocal-db` (-3)
+   under the HQ mix's integrated LUFS, gets the lead's `.room()` through
+   the same IR and wet law as render-hq's applyRoom, and the sum is
+   loudnorm'd to -16 like every render → `audition/hq/<song>.withvocal.wav`.
+   songs.html: a VOCAL badge and a **Vocal: off/on** toggle that swaps the
+   file in when HQ is on. The `vocal` flag is only SET when the file
+   exists — byte compare against the pre-vocal page: 47 → 47 songs, one
+   moved (vs_calm_water: vocal=true), nothing else.
+
+MEASURED (vs_calm_water):
+- dry Tiger: 85.8% of voiced frames within 50 cents, 93.0% of notes ≥ 50%,
+  0 octave errors, 0 unvoiced notes, rests at -67.9 dB.
+- after RVC: 83.5% / 94.0% / 0 / 0, rests -66.1 dB — the pitch survives the
+  conversion. The timbre CHANGED, not just the level: spectral centroid
+  1903 → 2296 Hz, presence band (2-5 kHz over 0.2-1 kHz) -13.6 → -10.3 dB.
+- in the finished mix: the vocal stem is -23.8 dB in sung bars and never
+  louder than -40.5 dB in a non-sung bar (90 dB apart); withvocal vs mix
+  global offset 0 ms; sum -15.4 LUFS.
+
+TRAPS (each measured, each would have been reported wrong otherwise):
+- **RMVPE SEGFAULTS WHEN faiss AND torch ARE BOTH LIVE (exit 139), AND A
+  PIPE HIDES IT.** The first two runs "finished" with no output file and
+  nothing on stderr because `| grep` swallowed the signal; `-X faulthandler`
+  with the exit code captured showed 139 at the RMVPE constructor. In
+  isolation RMVPE builds fine; with faiss imported it builds fine too — it
+  is the OpenMP runtimes both wheels bundle on macOS. `KMP_DUPLICATE_LIB_OK
+  =TRUE OMP_NUM_THREADS=1` fixes it; the orchestrator sets both. CPU runs
+  at ~1x realtime (167 s for 172 s); MPS is untested after the fix.
+- **MEASURE PITCH BEFORE THE ROOM.** The identical conversion verified
+  83.6% within 50 cents / 0 unvoiced notes on the raw wav and 73.6% / 22
+  unvoiced after the 0.7 room — the reverb tail reads as unvoiced and
+  off-pitch frames to the tracker. The orchestrator verifies dry and raw.
+- **AN AMPLITUDE ENVELOPE CANNOT TIME A SUNG ONSET.** Envelope-derivative
+  cross-correlation against the score's onset train gave +185 ms (dry),
+  +30 ms (converted), +100 ms (roomed) for ONE performance — a sung "la"
+  rises slowly and the room smears it. Pitch arrival (first frame within
+  50 cents of the note, searched from 120 ms before the score onset) gives
+  24 ms median (p90 121) dry and 11 ms (p90 97) converted. Both numbers
+  say the same thing the wrong tool could not: the vowel lands LATE by
+  about the consonant. Cause: I placed the consonant AT the note start.
+  Singers — and OpenUtau's phonemizers — sing the consonant BEFORE the
+  beat so the vowel lands on it. Fixed: the consonant borrows its frames
+  from the previous token (rest or vowel tail); addendum below has the
+  re-measurement.
+- **THE RVC LIBRARY DOWNLOADS INTO THE CWD.** rmvpe.pt (173 MB) landed in
+  the repo root on the first run; the orchestrator runs stage 2 from
+  vendor/vocal/. Everything under vendor/vocal/ is gitignored (venv,
+  voicebank 1.1 GB, RVC model 423 MB, rmvpe.pt).
+- The test caught a rounding overlap: start and dur each rounded to 1e-5 s
+  let abutting notes overlap by microseconds; end is now rounded on its
+  own so a truncated note ends exactly where the next begins.
+
+WHAT IT IS NOT: a lyric engine. "la" per note is the lyric; `--syllable
+ah|na|oo|auto` are the others; words would be a new prompt input and a
+phonemizer (Tiger ships English/Japanese dictionaries). Not the real Miku
+(above). One song rendered; every other song is the same command after its
+HQ render.
+
+Tests: test/vocal.test.js (score invariants: monophony, no overlaps,
+whole-octave placement in range, silent intro, determinism, --octave pin);
+full suite 397/397. Files: scripts/export-vocal.mjs, vocal-sing.py,
+vocal-convert.py, vocal-verify.py, render-vocal.mjs; audition-songs.mjs
+(vocal flag + toggle); README "Vocal tier"; CLAUDE.md file map.
+
+ADDENDUM (the onset fix, measured twice). Moving the consonant before the
+beat alone made it WORSE — pitch arrival 24 → 54 ms median (dry), 11 → 49
+(converted) — because the phrase's leading pad was computed from the SP/AP
+tokens AFTER the consonant had borrowed frames from them, so every phrase
+was placed late by exactly one consonant. The pad is now the first note's
+vowel offset. Final: dry −6 ms median (p90 81), converted −11 ms (p90 71),
+i.e. the vowel lands on the beat; 97.0% / 95.5% of notes ≥ 50% of voiced
+frames within 50 cents (the frame-wise rate drops 85.8 → 79.0% because
+each note's tail now glides into the NEXT note's consonant before the
+barline, which is what a singer does and what the per-note figure keeps);
+0 octave errors, 0 unvoiced notes, rests −73.4 dB. Mix unchanged in shape:
+stem −23.8 dB in sung bars vs ≤ −40.4 dB elsewhere, 0 ms global offset,
+presence −14.0 → −10.8 dB dry → converted. A fix that made the number
+worse was the useful one: it exposed that the pad and the phoneme layout
+were two copies of one fact.
+
+## D135 — the vocal suite + generated Japanese lyrics (his "vary the lyrics a bit more - learn from miku songs. moreover generate some more primarily vocal songs - like a suite, of various types, but mostly energetic")
+
+TWO ASKS, one page. `VOCAL=1 node scripts/audition-songs.mjs` ->
+audition/vocal.html: ten vx_* songs, eight energetic (excited festival /
+triumphant boss / happy jungle / excited space / excited casino / tense
+fight / happy shop / excited training) and two ballads (nostalgic snow /
+romantic rest), every one rendered with a sung lead by
+`scripts/render-vocal.mjs <name> --page audition/vocal.html --vocal-db 0`.
+
+WHAT "PRIMARILY VOCAL" CHANGED IN THE ENGINE (all under `opts.vocalLead`,
+page-only, no judged song carries it — byte compare of songs.html against
+the pre-vocal snapshot after every edit: 47 -> 47, vs_calm_water's own
+`vocal` flag the only mover):
+- the instrumental lead and its DOUBLERS play as a x0.45 GUIDE under the
+  voice: the letter lead, the octave partner, `melody_backup` ("doubles the
+  lead line", D100) and `melody_takeover` (carries the tune in its own
+  sections, where the vocal sings too). `alternate_melody` and the companion
+  stay at full gain — independence beside a voice is what the corpus wants
+  (D102), a double is not. The masks are untouched. Measured on the page:
+  six songs carry two guided parts, four carry one.
+- `_lead_mix` — the lead AS THE MIX PLAYS IT (masked, per letter and
+  statement, handoffs applied; the engine already had it as `letterLead.lead`)
+  is exposed in `solos` so the score sings from it. The unmasked `_lead` is a
+  LOOP: matched against the mix it kept 42 of vx_tense_fight's 96 notes and
+  went silent for 18 of 32 bars, because later letters and later statements
+  (D97 keys a returning letter by statement) are not the solo. The judged
+  page keeps the matching path (adding a solos key would move all 47).
+- the energetic eight take `percBackbeat` + `deepDrums` (a kit with a snare
+  is what a vocal pop song stands on; the judged suite's kits are kick+hat,
+  see the CLAUDE.md drums note); `companion: true` on all ten.
+
+THE LYRICS (src/lib/lyrics-ja.js). "Learn from miku songs" is read as
+DELIVERY + VOCABULARY, not as copying any lyric: one mora per note, syllabic
+and fast; a run note (< 140 ms) melismas on the previous vowel; a long note
+holds one mora; lines built from the words those songs lean on (kimi, boku,
+sekai, koe, sora, yume, hikari, kokoro, mirai, ima, namida, negai, kiseki…),
+particles (wa/ga/o/ni/no/to/e/mo) and verb forms (-ru/-te/-tai/-nai/-yo) as
+the tissue that makes a line scan, set phrases (arigatou, sayonara,
+daisuki, mata ne, doki doki, kira kira), and a vocalise fill (ra ra ra /
+pa ra pa / ah) about one chunk in twelve. Every mora is spelled into the
+voicebank's own phoneme set (Tiger's dsdict-ja.yaml transcribed: ka -> kx a,
+shi -> sh iy, tsu -> ts ux, fu -> fp ux, n -> nn …) so no token the acoustic
+model lacks can be produced (a test pins that). The word list is a POOL
+picked by hash (song name + phrase signature) — a retrieval pool under D95,
+so growing it re-rolls unpinned lines and nothing here reaches judged pages.
+
+THE HOOK. A returning phrase sings the SAME words. First key: exact
+intervals + rhythm — matched nothing on the suite, because statement
+variation (D97) changes a few notes each return. Second key: CONTOUR
+(up/down/same per step) + note count. Measured: vs_calm_water 16 phrases ->
+5 distinct lines (ABAC: A's line comes back), vx_tense_fight 16 -> 12, vx_
+triumphant_boss 32 -> 27. Two different tunes with one contour share a line
+and read as a rhyme.
+
+THREE THINGS THE FIRST SUITE SCORES TAUGHT (each measured, each would have
+shipped wrong):
+- A GENERATED LEAD NEVER RESTS. vx_tense_fight's first score was ONE phrase
+  of 46 s and 60 moras; vx_triumphant_boss had a 90-mora phrase. Singers
+  phrase in 2-4 bar lines with a breath. Phrases now close at a rest >= 0.5 s
+  OR after two bars (`--phrase-bars`), and a phrase running straight into
+  the next gives back up to 150 ms (<= 40% of its last note) as the breath;
+  the singer opens each line with an AP of the gap's length. tense_fight:
+  1 -> 16 phrases; calm_water 8 -> 16.
+- HANDOFF LETTERS SIT AN OCTAVE APART. After the global octave shift,
+  tense_fight's sung range was 41-77 — three octaves, because the square
+  partner takes its letters an octave under the sawtooth. Each PHRASE is now
+  placed by whole octaves until its median sits in A3-E5, and a lone
+  outlier beyond 7 below / 6 above the band folds one octave. 41-77 ->
+  52-77 (2 of 16 phrases re-octaved); festival 48-77 -> 58-77 (4 of 12).
+- THE VOCALISE RATE. At one chunk in seven the lines read "u u u u fu wa fu
+  wa ru ru" (festival's first score); one in twelve keeps it a fill.
+
+THE SINGER GREW: multi-consonant moras (kya = kx y a) split the pre-beat
+consonant frames; a score's own `phrase` index wins over the rest-gap split;
+the breath is as long as the gap allows (80-180 ms). Stage 2 is now kept
+like stage 1 unless --force, so a song whose HQ mix changed re-mixes without
+re-singing or re-converting (2 min, not 6). The orchestrator renders the HQ
+mix itself from the page's mix string when none exists (render-hq-pages
+only batches songs.html and videolab).
+
+TRAPS THIS HALF: (a) background Bash has a 10-minute cap — two 5-song
+queues were killed silently at the cap the first time; long queues run as
+`nohup bash queue.sh &` with a Monitor on the log. (b) A stopped queue
+leaves a half-written wav that the orchestrator's "keep existing" then
+REUSES — every relaunch is `--force` after a cleanup. (c) A page rebuilt
+mid-queue: songs that started before it carry the old mix — their HQ wav is
+deleted and re-rendered on the remix-only path.
+
+MEASURED ADDENDUM follows once the suite has rendered.
+
+MEASURED ADDENDUM (the suite as rendered; pitch on the pre-room converted
+wav, onsets by pitch arrival, all ten + calm_water re-sung with lyrics):
+
+  song                 bpm notes  sung bars  range  phrases lines  on-pitch  oct unv  lag(ms) p90
+  vx_excited_casino    176   82     31/32    55-75    16     14     97.6%     0   0    -18    78
+  vx_excited_festival  118   70     21/28    58-77    12     12     94.3%     0   0     16   159
+  vx_excited_space     124  160     60/72    50-76    32     22     98.1%     0   0      3   158
+  vx_excited_training  170  139     47/56    51-81    24     18     96.4%     0   0      4   143
+  vx_happy_jungle      122   65     23/28    53-79    12     10     86.2%     0   0    -10   134
+  vx_happy_shop         94   49     22/28    53-78    12      8     93.9%     0   0     14   167
+  vx_nostalgic_snow     96   45     16/28    57-76     8      7    100.0%     0   0     -5   165
+  vx_romantic_rest      68   47     16/24    58-82    13      7     93.6%     0   1     -3   188
+  vx_tense_fight       156   93     31/32    52-77    16     11     94.6%     0   0     -6   139
+  vx_triumphant_boss   163  180     61/64    51-82    32     27     96.1%     0   0      9   159
+  vs_calm_water        101  199     30/36    57-81    16      5     90.5%     0   0    -10    96
+  suite: 930 notes, median 95.4% of notes on pitch, 0 octave errors, 1
+  unvoiced note, median onset lag 0 ms. (on-pitch = notes with >= 50% of
+  voiced frames within 50 cents; lines = distinct lyric lines / phrases.)
+
+Two more defects the table found before it was final, both fixed and
+re-rendered: (1) jungle sang 19 of 28 bars and casino 23 of 32 — the unsung
+bars were exactly the melody_takeover sections (kalimba bars 14-19, square
+bars 16-23), where the tune had been guided to x0.45 and nobody sang it;
+the takeover layer's masked mix part now joins `_lead_mix` (jungle 53 -> 65
+notes, casino 51 -> 82). (2) tense_fight's HQ mix predated the doubler
+guide (its queue slot started before the page rebuild) — re-rendered on the
+remix-only path (37 s). Unsung bars that REMAIN are the engine's own
+intros and breakdowns (snow 12 bars, rest 8, space 12, training 9): the
+lead is silent there in the mix too, so the voice is silent with it. The
+jungle 86.2% is its 9 melisma notes (a 16th-note run at 122 bpm sung on the
+held vowel — the tracker scores the glide against each note). calm_water
+on lyrics scores 90.5% against 95.5% on "la": more consonants, more glide.
+
+Byte compare after every edit: songs.html 47 -> 47, vs_calm_water's own
+`vocal` flag the only mover. Suite 398/398 before the takeover edit; final
+run below. Nothing committed; vendor/vocal/ and audition/hq/ gitignored.
+
+ADDENDUM — "i dont hear the vocals" (his reply to the suite). Measured
+before touching anything: fitting withvocal = a·mix + b·vocal over the SUNG
+SPANS put the vocal 1-3 dB UNDER the band (calm_water −24.5 vs −21.7 dB,
+festival −21.2 vs −20.2, tense_fight −22.2 vs −19.8). The balance levelled
+the vocal's gated integrated LUFS to the mix's — but a vocal's breaths,
+tails and rests drag its integrated level down, so "equal loudness" landed
+it under the band exactly where it sings, and a lead under a full band is
+masked. The mix stage now measures BOTH signals as RMS over the score's own
+sung spans and sets the vocal `--vocal-db` ABOVE the band there (default
++3). All eleven re-mixed on the remix-only path (18-49 s each); the same
+independent fit afterwards: festival +2.9, tense_fight +3.0, boss +3.0 dB
+over the band. Second cause closed in the page: the vocal lives in the HQ
+render, so with HQ off the browser synth plays and there is nothing to
+hear — the Vocal toggle now switches HQ on with it, and a solo's status
+line says solos carry no vocal. Same D77 lesson from the other side: a
+NUMBER on a stem is not a relationship; measure the ratio where it sounds.
+
+ADDENDUM — his first two level notes on the suite: "in excited training,
+make the voice softer -> since it's energetic, the voice should not
+completely overpower the energetic instruments. moreover make the romantic
+song voice just a bit softer (to a lesser degree)". Pinned as DATA on the
+page (`vocalDb` per VX_PROMPTS row, read by render-vocal.mjs as the default
+so a re-render keeps it): training +3 -> 0 dB over the band, romantic rest
++3 -> +1.5. Remixed on the remix-only path (27 s / 26 s); the independent
+fit reads them back at the pinned values. The rule he is stating: the
+voice's margin over the band scales INVERSELY with the band's energy — a
+ballad's voice leads, an energetic band's voice sits IN it. The other eight
+stay at +3 until he says otherwise.
+
+## D136 — the electric guitar under the voice (his "do we have access to high quality electric guitar? i want to try that as a layer with miku (learning from japanese songs)")
+
+THE ANSWER WAS NO. Nothing in the HQ tier, no guitar SFZ under vendor, the
+GM soundfont's guitars through fluidsynth the only fallback. Two free
+sources make it yes, both from Japan:
+- Unreal Instruments' **Standard Guitar** (sfzinstruments.github.io, 716 MB
+  FLAC, SFZ): a DI electric guitar with keyswitched articulations (sustain
+  down/up/alternate, palm mute down/up/alternate, harmonics, slides,
+  bends, trills; playable B1-D6). Its notice, in Japanese: licence-free,
+  no credit required. Distributed as RAR on Google Drive behind a
+  JavaScript site — the drive ids were in the page source; bsdtar extracts
+  RAR. `sw_default=f0` means NO articulation is active until a keyswitch
+  arrives: a stem with no switch is SILENT. render-hq.mjs now injects the
+  instrument's `keyswitch` as the first note of the stem.
+- **Neural Amp Modeler** for the amp: the plugin (v0.7.13 dmg, unpacked
+  with pkgutil into vendor/plugins/nam, never installed) turned out
+  unnecessary — the `neural-amp-modeler` Python package loads a .nam
+  capture into the same network, so scripts/guitar-amp.py runs the amp
+  headlessly in the vocal-tier env (tkinter stubbed: the package imports a
+  GUI at import time). Captures from the community collection
+  (pelennor2170/NAM_models, GPL v3): those named "Cab" include the speaker
+  cabinet, so no impulse response is needed. They are .nam version 0.5.x,
+  whose per-layer `head_size`/`head_bias` the current loader rejects; the
+  script maps them to the new `head` object. VALIDATED, not trusted: on a
+  synthetic decaying G3, the clean capture adds harmonics at -41/-36 dB
+  (H2/H3 vs fundamental), the 6262 crunch -27/-27, the JCM2000 crunch
+  -33/-16 — an amp's behaviour, which a misordered weight vector could not
+  produce.
+
+THE LAYER (opts.guitar, page-only — the three sounds carry `envOnly: []`
+so the planner never casts them, and the byte compare of songs.html stayed
+at "vs_calm_water: vocal" after the entries were added). Written as
+FIGURES the engine binds over the song's own chords, because that is how
+a J-rock guitar sits under a Vocaloid: verse = palm-muted 8th-note power
+chords (R.5) or a 16th gallop (0, 2/16, 3/16 per beat; the hash picks),
+chorus = open power chords with the octave (R.5.R+) in 8ths, ringing;
+ballad = a clean broken-chord arpeggio (R 5 R+ 3+ 5+ 3+ R+ 5). Register
+octave 2 — E2-B3 is where power chords live on the instrument and inside
+the library's B1 floor. Sections by LETTER (A = verse, anything else =
+chorus; an AA song alternates statements); the guitar enters with the
+voice. Gains under the voice (D77): mute 0.40-0.50 x leadGain, open
+0.46-0.58, arp 0.34-0.44. Cast on all ten suite songs (8 rock, 2 arp).
+
+HQ CHAIN, MEASURED ON vx_tense_fight: the DI stems render at -45 / -41 dB
+RMS with -19 / -15 dB peaks (the library's group volume is -24 dB); the
+crunch capture at +12 dB input brings the palm-mute stem to -21 dB RMS
+with -10 dB peaks — crest factor 26 -> 12 dB, i.e. the amp compresses and
+distorts as it should. The balance stage then levels the amped stems by
+LUFS like any other (x0.34, x0.50). The first render of the suite went
+through with the amp SILENTLY FAILING to a WARNING (the standalone script
+lacked the legacy conversion the test harness had) — the DI was kept and
+the log said so; a missing env or capture degrades the same way.
+
+Nothing here reaches the judged pages; nothing committed; vendor/sfz/
+unreal, vendor/nam-models and vendor/plugins/nam are gitignored with the
+rest of vendor. MEASURED ADDENDUM for the suite follows the re-render.

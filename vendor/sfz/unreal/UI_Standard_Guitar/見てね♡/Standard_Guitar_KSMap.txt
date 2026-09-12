@@ -1,0 +1,107 @@
+
+104 
+103 
+102 Trill_Maj3
+101 Trill_min3
+100 Trill_WT
+99 Trill_HT
+98 Sus_PBR24
+97 Sus_PRR12
+96 Portament
+95 Unison_Bend_Manual
+94 Unison_Bend_Auto
+93 Bending_1HT
+92 Bending_WT
+91 Bending_HT
+90 
+89 
+88 
+87 
+86
+85
+84
+83
+82
+81	
+80	
+79	
+78	
+77	
+76	
+75	
+74	
+73	
+72	
+71	
+70	
+69	
+68	
+67	
+66	
+65	
+64	
+63	
+62	
+61	
+60	
+59	
+58	
+57	
+56	
+55	
+54	
+53	
+52	
+51	
+50	
+49	
+48	
+47	
+46
+45
+44
+43
+42
+41
+40
+39
+38
+37
+36
+35
+34 Slide_Out
+33 Slide_in	
+32 Slide_Up
+31 Slide_Down	
+30 Hammer/Pull	
+29 Mute_Alt	
+28 Mute_Up
+27 Mute_Down
+26 Sus_Alt
+25 Sus_Up
+24 Sus_Down	
+23 Mute_Fret
+22 Brush
+21 PH
+20 NH
+19 Slide_FX
+18 Slide_FX
+17 Pick_Scrach
+16 Fret_Noise
+15 Fret_Noise
+14 Hit
+13 Open_Noise
+12 Hello!
+11 Stop_Key
+10 
+9 
+8 
+7
+6
+5
+4
+3
+2
+1
+0
+	
