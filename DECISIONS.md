@@ -13003,3 +13003,60 @@ session's queue re-sings every vocal-page song with these words.
   early-queue songs carry slightly earlier lines; c6 runs a second pass so
   every song sings one version). motif-engine-b0 queried the `sections` gate
   (a truncated grep) and retracted. Full suite: `npm test` 434/434.
+
+### D141 ADDENDUM 2 — NOT ALWAYS WORDS (his "it doesnt have to always be lyrics though. like sometimes it could be la la la or meow meow meow etc - depends on the genre and user wants")
+
+His reply to the writer. A VOCALISE is now a MODE with a SET, not the thing
+that happens when the grammar fails.
+
+THE SETS (`VOCALISE_SETS`): la (+ the `la la la ー` cell), na, oh (+ wow), hum
+(a held `mm` — a real nasal phoneme, not a vowel), nyan, meow, doo (doo-bi-doo
+/ shu-bi-doo-wa scat), pa (pa-ra-pa), babble (the r34 word pool with no
+grammar — the ONE place it is the right tool: a tongue-twister jingle). Each
+is a CELL repeated over the segment, bound by the same laws as a word line: a
+long note holds the vowel, the cell never crosses a rest, one mora per note,
+and a tag returns with the refrain. `meow` sings [m y aw] and prints ミャウ;
+every set's phonemes are pinned to the Tiger set by test.
+
+WHO CHOOSES (`vocalisePlan`, three inputs, in order):
+1. THE PIN — a page row's `lyrics:` field (`'meow'`, `'la:mixed'`, `'none'`)
+   or `--vocalise <set>|<set>:mixed|none|auto` on the exporter. "user wants".
+2. THE DESCRIPTION — its own words: "meow"/"cats" → meow, "nyan" → nyan,
+   "la la la" → la, "humming"/"wordless"/"no words" → hum, "scat"/"doo-wop" →
+   doo, "nonsense"/"tongue-twister" → babble, "ooh"/"oh oh" → oh. A set plus a
+   scope phrase ("instead of words", "no lyrics", "only la") = ALL lines;
+   a set alone raises the rate; "real lyrics"/"no la la" = OFF.
+3. THE EMOTION POOL — the genre default: goofy 0.6 {nyan babble pa meow},
+   happy/excited 0.35 {la na pa oh}, triumphant 0.3 {oh la}, calm/romantic/
+   sad/nostalgic 0.2 {la hum}, tense/scary/mysterious/somber 0.1 {hum oh}.
+
+WHERE IT LANDS, AND TWO MEASUREMENTS THAT CHANGED THE DESIGN:
+- The rate was first a per-POSITION coin flip. Measured: a song has exactly
+  ONE tag position (the last line of its chorus), so a 0.6 genre rate produced
+  **0 tags on 12 of 30 songs** and the genre knob said nothing. The rate is now
+  the chance THIS SONG carries a wordless hook — "1 in 3 happy songs has a
+  la-la hook", which is audible and is what a rate should mean. 10 of 30.
+- Then tagging every BRIDGE line put **8 of 16 lines wordless on two songs**
+  (the r34-lead pages call every letter past B a bridge, so C+D is half the
+  song). The tag is now the LAST line of a chorus or bridge STATEMENT, capped
+  at a third of the phrases. Final: 19 of 460 lines (4.1%), max share 33% —
+  vo_lullaby, whose prompt is "the voice barely above a hum".
+- The FALLBACK also changed: a phrase the grammar cannot bind now sings the
+  song's own set (la / oh / hum …) instead of a bare "ra a a".
+
+MEASURED (30 songs, scores to scratch): 10 of 30 carry a hook, 19 wordless
+lines of 460, 0 non-voicebank phonemes, 0 words crossing a rest, 17 fallbacks
+(3.7%). **14 of 30 songs' syllables moved** vs the words-only export (the tag
+lines + every fallback line) — those re-sing by themselves on the next
+render-vocal pass; 16 are byte-identical and are kept. Tests 9/9 (the
+vocalise test pins: every set's phonemes, the description→plan mapping,
+pinned-all = every note the set's cell, pinned-none = no wordless line, and on
+a song whose hook fires, that the tag is chorus/bridge-final, under a third of
+the song, and deterministic). The card's lyric fold-out names the plan and
+tints the wordless lines.
+
+COORDINATION: this broke the writer freeze motif-engine-c6 asked for mid-
+render (D140's batch). Told immediately with the per-song impact; its second
+pass picks up the 14. Its three keeps (vo_reflection, vo_lullaby, vo_march)
+are not to be re-pinned by me. Pinning two rows so his ear gets the extremes
+(vo_kitchen all-babble, one all-la) waits for its "pages done".

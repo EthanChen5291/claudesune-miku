@@ -213,6 +213,19 @@ stored is a line from any song (a test enforces "words, not lines"); the
 lines are J-pop fragments, not a story across verses — say if you want that.
 `--lyrics pool` on export-vocal reproduces the old lines for any song.
 
+**It doesn't have to be words (your follow-up).** A vocalise is now a mode,
+not a failure: **la / na / oh / hum / nyan / meow / doo-bi-doo / pa-ra-pa /
+nonsense babble**. Three ways it gets picked, in order: you pin it on the song
+(`lyrics: 'meow'`, `'la:mixed'`, `'none'`); the description says so ("meow
+instead of words", "humming", "a scat chorus", "tongue-twister" → nonsense);
+or the emotion's own pool decides, at a genre rate — goofy songs 60% of the
+time, happy/excited 35%, calm/sad 20%, tense/scary 10%. The default is MIXED:
+words through the song with a wordless tag on the **last line of the chorus**,
+returning every time the chorus does, never more than a third of the song. As
+it stands 10 of the 30 sung songs carry one. Say "all meow" or "no la la" on
+any song and it does that instead. The lyrics fold-out on each card names the
+plan and tints the wordless lines gold.
+
 ## The vocal suite — `audition/vocal.html` (your "suite ... mostly energetic" + "vary the lyrics")
 
 Ten new songs, each sung: eight energetic (excited festival, triumphant

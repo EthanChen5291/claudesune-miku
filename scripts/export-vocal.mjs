@@ -58,6 +58,13 @@ const { values, positionals } = parseArgs({
     // should be saying the same lyrics": a lead score whose moras this line
     // copies at shared onsets (the harmony voice sings the lead's words)
     'lyrics-from': { type: 'string' },
+    // r36 — his "it doesnt have to always be lyrics though. like sometimes it
+    // could be la la la or meow meow meow etc - depends on the genre and user
+    // wants": auto = the writer's plan from the description + emotion (mixed:
+    // words with a wordless chorus tag at a genre rate); none = words only;
+    // <set> = la | na | oh | hum | nyan | meow | doo | pa | babble, all lines;
+    // <set>:mixed = that set as the tag. The page row's `lyricStyle` pins it.
+    vocalise: { type: 'string', default: 'auto' },
   },
 });
 const NAME = positionals[0];
@@ -222,7 +229,8 @@ if (values.lyrics === 'ja' || values.lyrics === 'pool') {
   // (vocal pages only) for verse/chorus keying; `--lyrics pool` = the r34 lines
   score.theme = { emotion: song.prompt?.emotion ?? null, environment: song.prompt?.environment ?? null, description: song.description ?? null };
   if (Array.isArray(song.sections)) score.sections = song.sections;
-  score.lyrics = assignLyrics(score, { seed: NAME, melismaUnder: Number(values.melisma), mode: values.lyrics === 'pool' ? 'pool' : 'writer' });
+  const vocalise = values.vocalise !== 'auto' ? values.vocalise : (song.lyricStyle ?? 'auto');
+  score.lyrics = assignLyrics(score, { seed: NAME, melismaUnder: Number(values.melisma), mode: values.lyrics === 'pool' ? 'pool' : 'writer', vocalise });
   score.lyricMode = values.lyrics;
   if (values['lyrics-from']) {
     const lead = JSON.parse(readFileSync(values['lyrics-from'], 'utf8'));
@@ -239,7 +247,7 @@ if (!values.quiet) {
   if (score.lyrics) {
     const distinct = new Set(score.lyrics.map((l) => l.text)).size;
     console.log(`  lyrics (ja): ${score.lyrics.length} phrases, ${distinct} distinct lines, ${score.notes.filter((n) => n.melisma).length} melisma notes${score.lyricsFrom ? ` — words copied from the lead (${score.lyricsMatched}/${score.notes.length} at shared onsets)` : ''}`);
-    if (score.lyricStats) { const st = score.lyricStats; console.log(`  lines: ${score.lyrics.filter((l) => !l.refrain).length} written, ${st.refrainReused + st.refrainRebound} refrain returns (${st.refrainRebound} re-bound), ${st.variants} variants, ${st.exts} held vowels, ${st.fallbacks} fallbacks`); }
+    if (score.lyricStats) { const st = score.lyricStats; console.log(`  lines: ${score.lyrics.filter((l) => !l.refrain).length} written, ${st.refrainReused + st.refrainRebound} refrain returns (${st.refrainRebound} re-bound), ${st.variants} variants, ${st.exts} held vowels, ${st.fallbacks} fallbacks; vocalise ${score.vocalise?.mode} ${score.vocalise?.set ?? ''} (${score.vocalise?.why}) — ${st.vocalise ?? 0} wordless lines`); }
     for (const l of score.lyrics.slice(0, 4)) console.log(`    @${l.start.toFixed(1)}s ${l.section ? `[${l.section}] ` : ''}${l.romaji ?? l.text}${l.gloss ? `  — ${l.gloss}` : ''}`);
   }
   console.log(`  wrote ${out}`);

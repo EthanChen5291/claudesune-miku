@@ -1015,6 +1015,15 @@ Surge patches must come from the release tag matching the vendored build.
   D137 on the text side: a test fails on any lexicon entry longer than a word.
   NEVER pre-export a score into audition/hq before a render — render-vocal's
   re-sing check reads the on-disk syllables and would keep the OLD dry wav.
+- **A VOCALISE IS A MODE, NOT A FALLBACK (r36/D141 add.2, his "it doesnt have
+  to always be lyrics though ... la la la or meow meow meow etc - depends on
+  the genre and user wants").** `VOCALISE_SETS` (la/na/oh/hum/nyan/meow/doo/pa/
+  babble) x `vocalisePlan(theme, pin)`: a row's `lyrics:` pin, then the
+  description's own words, then the emotion's pool at a genre rate. Default
+  MIXED = words + a wordless tag on the chorus's LAST line. **A rate over one
+  position per song is not a rate** — as a per-position flip it gave 0 tags on
+  12 of 30 songs; it now decides whether the SONG has a hook. And a tag is a
+  LINE, never a section: tagging every bridge line took half of two songs.
 - **r35 — HIS FIRST VOCAL-PAGE EXPORT (D138), the laws it wrote:**
   - **THE SINGER'S CEILING IS G#5 AND IT IS DURATION-AWARE.** Both "sounds
     like screaming" notes were A5 held 0.70-0.74 s; A#5/B5 at 0.2-0.4 s, G5

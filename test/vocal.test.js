@@ -181,3 +181,60 @@ test('lyrics writer r36: the sections field is absent from every songs.html song
   const data = JSON.parse(html.slice(di + 13, html.indexOf(';\n', di)));
   assert.ok(data.songs.every((s) => !('sections' in s)));
 });
+
+// r36 — his "it doesnt have to always be lyrics though. like sometimes it
+// could be la la la or meow meow meow etc - depends on the genre and user
+// wants": a vocalise is a MODE with a set, pinned or planned from the prompt.
+test('lyrics writer r36: vocalise sets — pinned all / none / the planned mixed tag', async () => {
+  const w = await import('../src/lib/lyrics-ja-writer.js');
+  const sets = Object.keys(w.VOCALISE_SETS);
+  for (const set of sets) {
+    const S = w.VOCALISE_SETS[set];
+    for (const m of [...(S.cell ?? []), ...(S.alt ?? []).flat()]) if (m !== 'ー') for (const p of w.moraPh(m, 'a')) assert.ok(TIGER_PHONEMES.has(p), `${set}:${m} -> ${p}`);
+  }
+  // the plan reads the description
+  assert.equal(w.vocalisePlan({ emotion: 'goofy', description: 'a cat idol song, meow instead of words' }).mode, 'all');
+  assert.equal(w.vocalisePlan({ emotion: 'goofy', description: 'a cat idol song, meow instead of words' }).set, 'meow');
+  assert.equal(w.vocalisePlan({ emotion: 'sad', description: 'real lyrics, no la la' }).mode, 'off');
+  assert.equal(w.vocalisePlan({ emotion: 'happy', description: 'summer' }).mode, 'mixed');
+  assert.equal(w.vocalisePlan({}, 'nyan:mixed').set, 'nyan');
+  // pinned ALL: every sung note is the set's cell or a held vowel
+  const meow = join(dir, 'v1.json');
+  execFileSync('node', ['scripts/export-vocal.mjs', 'vo_kitchen', '--page', 'audition/vocaloid.html', '--out', meow, '--quiet', '--vocalise', 'meow'], { stdio: 'pipe' });
+  const sc = JSON.parse(readFileSync(meow, 'utf8'));
+  assert.equal(sc.vocalise.mode, 'all');
+  for (const n of sc.notes) assert.ok(n.syl === 'meow' || n.syl === 'ー', `not a meow: ${n.syl}`);
+  assert.ok(sc.lyrics.every((l) => l.vocalise === 'meow' && /ミャウ/.test(l.kana)));
+  // pinned NONE: no wordless line at all
+  const none = join(dir, 'v2.json');
+  execFileSync('node', ['scripts/export-vocal.mjs', 'vo_kitchen', '--page', 'audition/vocaloid.html', '--out', none, '--quiet', '--vocalise', 'none'], { stdio: 'pipe' });
+  const sn = JSON.parse(readFileSync(none, 'utf8'));
+  assert.equal(sn.vocalise.mode, 'off');
+  assert.ok(sn.lyrics.every((l) => !String(l.template).startsWith('vocalise')));
+  // auto on the tongue-twister jingle: the description picks babble, mixed, and the plan is recorded
+  const auto = join(dir, 'v3.json');
+  execFileSync('node', ['scripts/export-vocal.mjs', 'vo_kitchen', '--page', 'audition/vocaloid.html', '--out', auto, '--quiet'], { stdio: 'pipe' });
+  const sa = JSON.parse(readFileSync(auto, 'utf8'));
+  assert.equal(sa.vocalise.mode, 'mixed');
+  assert.equal(sa.vocalise.set, 'babble');
+  // MIXED on a song whose hook fires: the tag sits on a chorus/bridge FINAL
+  // line, returns with the refrain, and never takes more than a third of the
+  // song (tagging every bridge line put 8 of 16 lines wordless — measured)
+  const hook = join(dir, 'v4.json');
+  execFileSync('node', ['scripts/export-vocal.mjs', 'vg_excited_fight', '--page', 'audition/vocal.html', '--out', hook, '--quiet'], { stdio: 'pipe' });
+  const sh = JSON.parse(readFileSync(hook, 'utf8'));
+  assert.equal(sh.vocalise.mode, 'mixed');
+  const tags = sh.lyrics.filter((l) => String(l.template).startsWith('vocalise'));
+  assert.ok(tags.length >= 1, 'this song carries a wordless hook');
+  assert.ok(tags.length <= Math.ceil(sh.lyrics.length / 3), `a hook took ${tags.length} of ${sh.lyrics.length} lines`);
+  for (const t of tags) {
+    assert.ok(t.role === 'chorus' || t.role === 'bridge', `tag on a ${t.role} line`);
+    assert.equal(t.vocalise, sh.vocalise.set);
+    for (const n of sh.notes.filter((n) => n.start >= t.start).slice(0, t.notes)) assert.ok(n.syl && n.syl !== '-');
+  }
+  assert.ok(sh.lyrics.some((l) => !String(l.template).startsWith('vocalise') && l.romaji), 'mixed keeps words');
+  // and the plan is deterministic
+  const hook2 = join(dir, 'v5.json');
+  execFileSync('node', ['scripts/export-vocal.mjs', 'vg_excited_fight', '--page', 'audition/vocal.html', '--out', hook2, '--quiet'], { stdio: 'pipe' });
+  assert.deepEqual(JSON.parse(readFileSync(hook2, 'utf8')).lyrics, sh.lyrics);
+});

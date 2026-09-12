@@ -25,7 +25,7 @@
   .card.kill { border-left:3px solid var(--kill); opacity:.7; }
   .vibe { font-size:16px; font-weight:700; }
   .meta { font-size:12px; color:var(--dim); margin:3px 0; }
-  .lyrl { font-size:12px; margin:2px 0 2px 8px; } .lyrl b { font-weight:500; font-size:13px; } .lyrr { color:#9fb4dc; }
+  .lyrl { font-size:12px; margin:2px 0 2px 8px; } .lyrv b { color:#e0c07a; } .lyrl b { font-weight:500; font-size:13px; } .lyrr { color:#9fb4dc; }
   .sym { font-family: ui-monospace, Menlo, monospace; font-size:12.5px; margin:4px 0; }
   select { background:#1e1e28; color:var(--fg); border:1px solid #3a3a4a; border-radius:6px; padding:3px 7px; font:inherit; }
   .acts { display:flex; gap:6px; margin-top:8px; align-items:center; }
@@ -102,7 +102,7 @@ const SOUNDFONT2_URLS = ["https://unpkg.com/soundfont2@0.4.0/lib/SoundFont2.js",
 const SOUNDFONT2_EXPORTS = ["DEFAULT_GENERATOR_VALUES","SoundFont2"];
 const SHIM_EXPORTS = {"@strudel/core":["freqToMidi","noteToMidi","getSoundIndex","Pattern","getPlayableNoteValue"],"@strudel/webaudio":["registerSound","getADSRValues","getAudioContext","getParamADSR","getVibratoOscillator","getPitchEnvelope"]};
 const GM_FALLBACK = 'triangle';
-const BUILD = '2026-09-12 19:20';
+const BUILD = '2026-09-12 19:37';
 const RT = { ready: false, booting: null, note: '', soundfonts: false, gmVoices: 0, gen: 0, maps: {}, problems: [],
   // D56: set once the scheduler tick is running off a Web Worker, so a hidden
   // tab cannot clamp it to 1s. workerTicks is how a probe proves it is live.
@@ -614,8 +614,8 @@ function render() {
       '<div class="sym">' + esc(s.symbols.join(' ')) + (s.treat ? '  \u2192 treat(' + esc(s.treat.op) + '): ' + esc(s.treat.symbols.join(' ')) : '') + '</div>' +
       '<div class="meta">acc: ' + esc(s.accompaniment) + ' (' + esc(s.accClass) + ')' + (s.travel.length ? ' \u00b7 travel: ' + esc(s.travel.join(' \u00b7 ')) : '') + '</div>' +
       '<div class="meta">voices ' + s.ensemble.count + ' of cast ' + s.ensemble.fullCast + ': ' + esc(s.cast.join(', ') || 'piano only') + (s.drums.length ? ' \u00b7 drums: ' + esc(s.drums.join(' + ')) : ' \u00b7 no drums') + '</div>' +
-      (s.lyricSheet ? '<details class="lyr"><summary>lyrics (' + s.lyricSheet.length + ' lines \u00b7 kana / romaji / gloss; \u21bb = the chorus returning its words)</summary>' +
-        s.lyricSheet.map(function (l) { return '<div class="lyrl"><span class="dim">' + esc(l.s) + ' @' + l.t + 's</span> <b>' + esc(l.k) + '</b> <span class="lyrr">' + esc(l.r) + '</span> <span class="dim">\u2014 ' + esc(l.g) + (l.f === 'r' ? ' \u21bb' : l.f === 'v' ? ' \u2248' : '') + '</span></div>'; }).join('') + '</details>' : '') +
+      (s.lyricSheet ? '<details class="lyr"><summary>lyrics (' + s.lyricSheet.length + ' lines \u00b7 kana / romaji / gloss; \u21bb = the chorus returning its words' + (s.lyricVoc ? ' \u00b7 vocalise: ' + esc(s.lyricVoc) : '') + ')</summary>' +
+        s.lyricSheet.map(function (l) { return '<div class="lyrl' + (l.v ? ' lyrv' : '') + '"><span class="dim">' + esc(l.s) + ' @' + l.t + 's</span> <b>' + esc(l.k) + '</b> <span class="lyrr">' + esc(l.r) + '</span> <span class="dim">\u2014 ' + esc(l.g) + (l.f === 'r' ? ' \u21bb' : l.f === 'v' ? ' \u2248' : '') + '</span></div>'; }).join('') + '</details>' : '') +
       '<details><summary>why (compile trace + harmony lineage)</summary>' +
       esc('exemplar ' + s.exemplar + (s.ops.length ? ' \u2192 ' + s.ops.join(', ') : ' (unvaried)')) + '<br>' +
       s.vibeNotes.map(esc).join('<br>') + '</details>' +

@@ -9187,6 +9187,10 @@ if (VOCALOID_PAGE) {
     S.vocalSuite = true;
     S.vocalDb = vocalDb;
     if (vocalStyle !== 'lead') S.vocalStyle = vocalStyle;
+    // r36 — a row may pin the LYRIC style (his "sometimes it could be la la la
+    // or meow meow meow"): `lyrics: 'meow' | 'la:mixed' | 'none' | …`, read by
+    // export-vocal.mjs as `lyricStyle`; absent = the writer's own plan
+    if (row.lyrics) S.lyricStyle = row.lyrics;
   }
 }
 // THE LAB: A/B cards built under ONE name (D120 — the key and every retrieval
@@ -9692,7 +9696,10 @@ for (const s of songs) {
   try {
     const sc = JSON.parse(readFileSync(p, 'utf8'));
     if (sc.lyricMode !== 'ja' || !Array.isArray(sc.lyrics) || !sc.lyrics.some((l) => l.kana)) continue;
-    s.lyricSheet = sc.lyrics.map((l) => ({ t: +l.start.toFixed(1), s: l.section ?? '', k: l.kana ?? '', r: l.romaji ?? l.text, g: l.gloss ?? '', f: l.refrain ? 'r' : l.variant ? 'v' : '' }));
+    s.lyricSheet = sc.lyrics.map((l) => ({ t: +l.start.toFixed(1), s: l.section ?? '', k: l.kana ?? '', r: l.romaji ?? l.text, g: l.gloss ?? '', f: l.refrain ? 'r' : l.variant ? 'v' : '', v: l.vocalise ?? '' }));
+    // r36 — the vocalise plan (his "it doesnt have to always be lyrics"): which
+    // set, chosen how, and where it lands
+    if (sc.vocalise) s.lyricVoc = `${sc.vocalise.mode}${sc.vocalise.set ? ` · ${sc.vocalise.set}` : ''} · ${sc.vocalise.hook} · ${sc.vocalise.why}`;
   } catch { /* a half-written score mid-render: no sheet this build */ }
 }
 const DATA = { songs: songs.map(({ solos, ...rest }) => ({ ...rest, solos })) };
@@ -9889,7 +9896,7 @@ function page(DATA) {
   .card.kill { border-left:3px solid var(--kill); opacity:.7; }
   .vibe { font-size:16px; font-weight:700; }
   .meta { font-size:12px; color:var(--dim); margin:3px 0; }
-  .lyrl { font-size:12px; margin:2px 0 2px 8px; } .lyrl b { font-weight:500; font-size:13px; } .lyrr { color:#9fb4dc; }
+  .lyrl { font-size:12px; margin:2px 0 2px 8px; } .lyrv b { color:#e0c07a; } .lyrl b { font-weight:500; font-size:13px; } .lyrr { color:#9fb4dc; }
   .sym { font-family: ui-monospace, Menlo, monospace; font-size:12.5px; margin:4px 0; }
   select { background:#1e1e28; color:var(--fg); border:1px solid #3a3a4a; border-radius:6px; padding:3px 7px; font:inherit; }
   .acts { display:flex; gap:6px; margin-top:8px; align-items:center; }
@@ -10020,8 +10027,8 @@ function render() {
       '<div class="sym">' + esc(s.symbols.join(' ')) + (s.treat ? '  \\u2192 treat(' + esc(s.treat.op) + '): ' + esc(s.treat.symbols.join(' ')) : '') + '</div>' +
       '<div class="meta">acc: ' + esc(s.accompaniment) + ' (' + esc(s.accClass) + ')' + (s.travel.length ? ' \\u00b7 travel: ' + esc(s.travel.join(' \\u00b7 ')) : '') + '</div>' +
       '<div class="meta">voices ' + s.ensemble.count + ' of cast ' + s.ensemble.fullCast + ': ' + esc(s.cast.join(', ') || 'piano only') + (s.drums.length ? ' \\u00b7 drums: ' + esc(s.drums.join(' + ')) : ' \\u00b7 no drums') + '</div>' +
-      (s.lyricSheet ? '<details class="lyr"><summary>lyrics (' + s.lyricSheet.length + ' lines \\u00b7 kana / romaji / gloss; \\u21bb = the chorus returning its words)</summary>' +
-        s.lyricSheet.map(function (l) { return '<div class="lyrl"><span class="dim">' + esc(l.s) + ' @' + l.t + 's</span> <b>' + esc(l.k) + '</b> <span class="lyrr">' + esc(l.r) + '</span> <span class="dim">\\u2014 ' + esc(l.g) + (l.f === 'r' ? ' \\u21bb' : l.f === 'v' ? ' \\u2248' : '') + '</span></div>'; }).join('') + '</details>' : '') +
+      (s.lyricSheet ? '<details class="lyr"><summary>lyrics (' + s.lyricSheet.length + ' lines \\u00b7 kana / romaji / gloss; \\u21bb = the chorus returning its words' + (s.lyricVoc ? ' \\u00b7 vocalise: ' + esc(s.lyricVoc) : '') + ')</summary>' +
+        s.lyricSheet.map(function (l) { return '<div class="lyrl' + (l.v ? ' lyrv' : '') + '"><span class="dim">' + esc(l.s) + ' @' + l.t + 's</span> <b>' + esc(l.k) + '</b> <span class="lyrr">' + esc(l.r) + '</span> <span class="dim">\\u2014 ' + esc(l.g) + (l.f === 'r' ? ' \\u21bb' : l.f === 'v' ? ' \\u2248' : '') + '</span></div>'; }).join('') + '</details>' : '') +
       '<details><summary>why (compile trace + harmony lineage)</summary>' +
       esc('exemplar ' + s.exemplar + (s.ops.length ? ' \\u2192 ' + s.ops.join(', ') : ' (unvaried)')) + '<br>' +
       s.vibeNotes.map(esc).join('<br>') + '</details>' +

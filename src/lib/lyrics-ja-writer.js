@@ -53,6 +53,19 @@
 // vowel on a new note; を is sung [oo]). Kana is derived from the moras
 // (hiragana; loanwords too — the voice sings hiragana anyway).
 //
+//   5. NOT ALWAYS WORDS (his "it doesnt have to always be lyrics though. like
+//      sometimes it could be la la la or meow meow meow etc - depends on the
+//      genre and user wants"). A VOCALISE is a mode with a SET (la / na / oh /
+//      hum / nyan / meow / doo / pa / babble) chosen by the description's own
+//      words ("meow", "la la la", "humming", "wordless", "nonsense"), by a
+//      per-song pin (`lyricStyle` on the page row, `--vocalise` on the
+//      exporter), or by the emotion's pool; the DEFAULT is MIXED — words
+//      everywhere, with a wordless tag on the last phrase of a chorus statement
+//      or a bridge line at a genre-dependent rate (goofy 0.6, happy/excited
+//      0.35, calm/romantic/sad 0.2, tense/scary/somber 0.1). A vocalise line
+//      is bound like a word line: its cell repeats over the segment, a long
+//      note holds the vowel, the chorus tag returns with the refrain.
+//
 // Determinism: a pure function of (seed, phrase key, theme). Word choice is a
 // hash-rotated POOL (D95): adding a word re-rolls unpinned lines. Nothing here
 // reaches the judged instrumental pages; the lines land only in a song's
@@ -104,7 +117,10 @@ const KANA_BASE = {
   hya: 'ひゃ', hyu: 'ひゅ', hyo: 'ひょ', bya: 'びゃ', byu: 'びゅ', byo: 'びょ', pya: 'ぴゃ', pyu: 'ぴゅ', pyo: 'ぴょ',
   mya: 'みゃ', myu: 'みゅ', myo: 'みょ', rya: 'りゃ', ryu: 'りゅ', ryo: 'りょ', je: 'じぇ', she: 'しぇ', che: 'ちぇ', fa: 'ふぁ', fi: 'ふぃ', fe: 'ふぇ', fo: 'ふぉ', ti: 'てぃ', di: 'でぃ',
 };
+const VOC_KANA = { la: 'ラ', lu: 'ル', lo: 'ロ', meow: 'ミャウ', mm: 'ンー', oh: 'オー', doo: 'ドゥ', bi: 'ビ', dap: 'ダッ', shu: 'シュ', wow: 'ワウ' };
+const VOC_PH = { la: ['l', 'aa'], lu: ['l', 'uw'], lo: ['l', 'ow'], meow: ['m', 'y', 'aw'], mm: ['m'], oh: ['ow'], doo: ['d', 'uw'], dap: ['d', 'aa', 'p'], wow: ['w', 'aw'] };
 export function moraKana(m) {
+  if (VOC_KANA[m]) return VOC_KANA[m];
   if (m === 'wa_') return 'は';          // the topic particle は, sung "wa"
   if (m === 'e_') return 'へ';           // the direction particle へ, sung "e"
   if (m.startsWith('q')) return 'っ' + moraKana(m.slice(1));
@@ -114,6 +130,7 @@ export function moraKana(m) {
 }
 /** phonemes for one mora, with the writer's extras (っ, を, ー) */
 export function moraPh(m, prevVowel = 'a') {
+  if (VOC_PH[m]) return VOC_PH[m];
   if (m === 'ー') return [prevVowel];
   if (m === 'wa_') return ['w', 'a'];
   if (m === 'e_') return ['ee'];
@@ -293,6 +310,73 @@ export function themeTags(theme = {}) {
   const d = String(theme.description ?? '').toLowerCase();
   for (const [re, t] of DESC_TAGS) if (re.test(d)) tags.add(t);
   return tags;
+}
+
+// ---- vocalise -----------------------------------------------------------------------
+// a set = a cell of moras repeated over the segment; `hold` = a long note may
+// hold the vowel; `gloss` for the sheet. 'babble' is the r34 pool (words with
+// no grammar) — the one place it is the right tool: a tongue-twister jingle.
+export const VOCALISE_SETS = {
+  la: { cell: ['la'], alt: [['la', 'la', 'la', 'ー']], gloss: 'la la la', hold: true },
+  na: { cell: ['na'], gloss: 'na na na', hold: true },
+  oh: { cell: ['oh'], alt: [['wow']], gloss: 'oh oh', hold: true },
+  hum: { cell: ['mm'], gloss: 'humming', hold: false },
+  nyan: { cell: ['nya', 'n'], gloss: 'nyan nyan (cat)', hold: false },
+  meow: { cell: ['meow'], gloss: 'meow meow', hold: true },
+  doo: { cell: ['doo', 'bi', 'doo'], alt: [['shu', 'bi', 'doo', 'wa']], gloss: 'doo-bi-doo (scat)', hold: true },
+  pa: { cell: ['pa', 'ra', 'pa'], alt: [['pa', 'ra', 'ri', 'ra']], gloss: 'pa-ra-pa', hold: true },
+  babble: { cell: null, gloss: 'nonsense syllables', hold: true },
+};
+const VOC_HINTS = [
+  [/\bmeow|kitten|\bcats?\b/, 'meow'], [/\bnyan/, 'nyan'], [/la[- ]?la[- ]?la|\bla la\b/, 'la'], [/\bna[- ]na\b|nana/, 'na'],
+  [/humm?ing|\bhum\b|wordless|no lyrics|without words|no words/, 'hum'], [/\bscat\b|doo[- ]?(bi|wop)|shubi/, 'doo'],
+  [/nonsense|gibberish|babble|tongue-twister|tongue twister/, 'babble'], [/\booh\b|\bahh?\b|\bwhoa|\boh oh\b/, 'oh'], [/para ?para|\bpa ?ra\b/, 'pa'],
+];
+const VOC_ALL_RE = /only (la|meow|nyan|humm|nonsense|vocalise|syllable)|instead of (words|lyrics)|no lyrics|wordless|without words|just (la|meow|humm|nonsense)|all vocalise/;
+const VOC_NONE_RE = /real (words|lyrics)|no vocalise|no la la|actual lyrics|every line (sung|words)/;
+const EMO_VOC = {
+  goofy: { rate: 0.6, sets: ['nyan', 'babble', 'pa', 'meow'] }, happy: { rate: 0.35, sets: ['la', 'na', 'pa'] }, excited: { rate: 0.35, sets: ['la', 'oh', 'na'] },
+  calm: { rate: 0.2, sets: ['hum', 'la'] }, romantic: { rate: 0.2, sets: ['la', 'hum'] }, sad: { rate: 0.2, sets: ['la', 'hum'] }, nostalgic: { rate: 0.2, sets: ['la', 'hum'] },
+  tense: { rate: 0.1, sets: ['oh', 'hum'] }, scary: { rate: 0.1, sets: ['hum', 'oh'] }, mysterious: { rate: 0.1, sets: ['hum', 'oh'] }, somber: { rate: 0.1, sets: ['hum', 'oh'] },
+  triumphant: { rate: 0.3, sets: ['oh', 'la'] },
+};
+/** decide the song's vocalise plan from theme + pin: { mode: 'off'|'mixed'|'all', set, rate, why } */
+export function vocalisePlan(theme = {}, pin = null, seed = 'song') {
+  const d = String(theme.description ?? '').toLowerCase();
+  const emo = EMO_VOC[theme.emotion] ?? { rate: 0.2, sets: ['la', 'oh'] };
+  if (pin && pin !== 'auto') {
+    if (pin === 'none' || pin === 'lyrics' || pin === 'off') return { mode: 'off', set: null, rate: 0, why: 'pinned: words only' };
+    if (pin === 'mixed') return { mode: 'mixed', set: emo.sets[fnv(`${seed}|voc`) % emo.sets.length], rate: emo.rate, why: 'pinned: mixed' };
+    const [set, mode] = pin.includes(':') ? pin.split(':') : [pin, 'all'];
+    if (VOCALISE_SETS[set]) return { mode: mode === 'mixed' ? 'mixed' : 'all', set, rate: mode === 'mixed' ? emo.rate : 1, why: `pinned: ${pin}` };
+  }
+  let set = null, why = null;
+  for (const [re, name] of VOC_HINTS) if (re.test(d)) { set = name; why = `description "${d.match(re)[0]}"`; break; }
+  if (VOC_NONE_RE.test(d)) return { mode: 'off', set: null, rate: 0, why: `description "${d.match(VOC_NONE_RE)[0]}"` };
+  if (set && VOC_ALL_RE.test(d)) return { mode: 'all', set, rate: 1, why: `${why} + "${d.match(VOC_ALL_RE)[0]}"` };
+  if (set) return { mode: 'mixed', set, rate: Math.max(emo.rate, 0.5), why: `${why} (mixed, raised rate)` };
+  return { mode: 'mixed', set: emo.sets[fnv(`${seed}|voc`) % emo.sets.length], rate: emo.rate, why: `emotion ${theme.emotion ?? 'default'} pool` };
+}
+/** a vocalise line over segments: the cell repeats, a long note holds the vowel */
+function vocaliseLine(segs, set, seed, poolFn) {
+  const S = VOCALISE_SETS[set];
+  const total = segs.reduce((a, x) => a + x.k, 0);
+  if (!S.cell) { const m = poolFn(total, seed); return { moras: m, gloss: S.gloss, exts: 0 }; }
+  const cell = S.alt && fnv(`${seed}|alt`) % 3 === 0 ? S.alt[fnv(`${seed}|alt2`) % S.alt.length] : S.cell;
+  const out = [];
+  let exts = 0;
+  for (const seg of segs) {
+    let j = 0;
+    for (let i = 0; i < seg.k; i++) {
+      const last = i === seg.k - 1;
+      // a long note (or the segment's last note when the cell allows) holds the previous vowel
+      if (S.hold && i > 0 && (seg.longAfter.has(i - 1) || (last && seg.k >= 3 && j % cell.length !== 0)) && out[out.length - 1] !== 'ー' && out[out.length - 1] !== 'n' && out[out.length - 1] !== 'mm') { out.push('ー'); exts++; continue; }
+      let m = cell[j % cell.length]; j++;
+      if (m === 'ー' && (out[out.length - 1] === 'ー' || i === 0)) { m = cell[0]; j = 1; }
+      out.push(m);
+    }
+  }
+  return { moras: out, gloss: S.gloss, exts };
 }
 
 // ---- templates ------------------------------------------------------------------
@@ -566,7 +650,9 @@ function composeLine(segs, { seed, role, tags, longEnd, avoid, avoidTemplates = 
  * writeLyrics(score, opts) — see the header. Mutates score.notes (syl / ph /
  * melisma / ext) and returns the per-phrase line records.
  */
-export function writeLyrics(score, { seed = score.name ?? 'song', melismaUnder = 0, theme = score.theme ?? {}, sections = score.sections ?? null, phraseGap = 0.5, longNote = 0.6 } = {}) {
+export function writeLyrics(score, { seed = score.name ?? 'song', melismaUnder = 0, theme = score.theme ?? {}, sections = score.sections ?? null, phraseGap = 0.5, longNote = 0.6, vocalise = null, babble = null } = {}) {
+  const plan = vocalisePlan(theme, vocalise, seed);
+  score.vocalise = plan;
   const notes = score.notes;
   const secPerBar = score.secondsPerBar ?? 2;
   // phrases: the exporter's own index wins
@@ -616,7 +702,41 @@ export function writeLyrics(score, { seed = score.name ?? 'song', melismaUnder =
   const out = [];
   const recentWords = [];
   const recentTemplates = [];
-  const stats = { phrases: phrases.length, refrainReused: 0, refrainRebound: 0, variants: 0, fallbacks: 0, exts: 0, templates: {} };
+  const stats = { phrases: phrases.length, refrainReused: 0, refrainRebound: 0, variants: 0, fallbacks: 0, exts: 0, vocalise: 0, templates: {} };
+  // WHICH PHRASES GO WORDLESS. `all` = every line; `off` = none; `mixed` = the
+  // rate is the chance THIS SONG carries a wordless hook at all (measured
+  // first as a per-position coin flip: a song has exactly ONE tag position —
+  // the last line of its chorus — so a 0.6 genre rate produced 0 tags on 12 of
+  // 30 songs and the genre knob said nothing). A song that carries one tags
+  // the LAST line of every chorus statement (one key, so it returns as the
+  // refrain does) and every bridge line — audible as "this song has a la-la
+  // hook", which is what the rate now means.
+  const secLast = new Map();
+  for (const info of infos) if (info.sec) secLast.set(`${info.base}|${info.stmt}`, info.ord);
+  const hookOn = plan.mode === 'mixed' && (fnv(`${seed}|vochook`) % 1000) / 1000 < plan.rate;
+  // The TAG is the LAST line of a chorus or bridge statement — never a whole
+  // section: tagging every bridge line put 8 of 16 lines wordless on two songs
+  // (the r34-lead pages call every letter past B a bridge, so C+D is half the
+  // song). Capped at a third of the phrases, so a hook stays a hook.
+  const cap = Math.max(1, Math.ceil(phrases.length / 3));
+  const tagged = new Set();
+  if (hookOn) {
+    let used = 0;
+    for (const info of infos) {
+      if (!info.sec || (info.role !== 'chorus' && info.role !== 'bridge')) continue;
+      if (info.ord !== secLast.get(`${info.base}|${info.stmt}`)) continue;
+      if (!tagged.has(info.key) && used + infos.filter((x) => x.key === info.key).length > cap) continue;
+      if (!tagged.has(info.key)) used += infos.filter((x) => x.key === info.key).length;
+      tagged.add(info.key);
+    }
+  }
+  plan.hook = plan.mode === 'all' ? 'all lines' : plan.mode === 'off' ? 'none' : tagged.size ? `${tagged.size} tag line(s), chorus/bridge finals` : hookOn ? 'none (no tag position)' : 'none (rate)';
+  const wordless = (info) => {
+    if (plan.mode === 'off') return false;
+    if (plan.mode === 'all') return true;
+    return tagged.has(info.key);
+  };
+  const poolFn = babble ?? ((n, sd) => { const out = []; const POOL = ['pa', 'pi', 'pu', 'po', 'ra', 'ri', 'ru', 'ta', 'te', 'to', 'ka', 'ki', 'ku', 'ma', 'mi', 'mu', 'chi', 'sha', 'nya', 'do']; for (let i = 0; i < n; i++) out.push(POOL[fnv(`${sd}|${i}`) % POOL.length]); return out; });
   for (const info of infos) {
     const { ph } = info;
     const takers = ph.map((n, i) => !(i > 0 && n.dur < melismaUnder && n.start - (ph[i - 1].start + ph[i - 1].dur) < 0.03));
@@ -625,7 +745,16 @@ export function writeLyrics(score, { seed = score.name ?? 'song', melismaUnder =
     const last = ph[ph.length - 1];
     const longEnd = last.dur >= longNote;
     let line = lines.get(info.key), bound = null, refrain = false, variant = false;
-    if (line) {
+    if (line && line.vocalise) {
+      // a returning wordless tag: re-sung over this statement's rhythm
+      const v = vocaliseLine(segs, line.vocalise, `${seed}|${info.key}`, poolFn);
+      bound = { moras: v.moras, exts: v.exts, fillAt: [] }; refrain = true; stats.refrainReused++; stats.vocalise++;
+    } else if (!line && wordless(info)) {
+      const v = vocaliseLine(segs, plan.set, `${seed}|${info.key}`, poolFn);
+      bound = { moras: v.moras, exts: v.exts, fillAt: [] };
+      line = { chunks: [], gloss: `(${v.gloss})`, template: `vocalise:${plan.set}`, moras: v.moras, vocalise: plan.set };
+      lines.set(info.key, line); stats.vocalise++;
+    } else if (line) {
       bound = bindChunks(line.chunks, segs);
       if (!bound && line.chunks[line.chunks.length - 1].ender) bound = bindChunks(line.chunks.slice(0, -1), segs);
       if (bound) { refrain = true; stats[bound.moras.length === line.moras.length && bound.moras.join() === line.moras.join() ? 'refrainReused' : 'refrainRebound']++; }
@@ -639,11 +768,13 @@ export function writeLyrics(score, { seed = score.name ?? 'song', melismaUnder =
         line = { chunks: composed.chunks, gloss: composed.gloss, template: composed.template, moras: composed.moras };
         stats.templates[composed.template] = (stats.templates[composed.template] ?? 0) + 1;
       } else {
-        // nothing binds (a phrase of stranded one-note segments): vocalise on open vowels
+        // nothing binds (a phrase of stranded one-note segments): the song's
+        // own vocalise set carries it (la / oh / hum …), never a bare "ra a a"
         stats.fallbacks++;
-        const ms = []; for (const s of segs) for (let i = 0; i < s.k; i++) ms.push(i === 0 ? 'ra' : 'a');
-        bound = { moras: ms, exts: 0 };
-        line = { chunks: [], gloss: '(vocalise)', template: 'vocalise', moras: ms };
+        const set = plan.set ?? 'la';
+        const v = vocaliseLine(segs, set, `${seed}|${info.key}|fb`, poolFn);
+        bound = { moras: v.moras, exts: v.exts, fillAt: [] };
+        line = { chunks: [], gloss: `(${VOCALISE_SETS[set].gloss})`, template: `fallback:${set}`, moras: v.moras };
       }
     }
     stats.exts += bound.exts ?? 0;
@@ -672,7 +803,7 @@ export function writeLyrics(score, { seed = score.name ?? 'song', melismaUnder =
       start: ph[0].start, notes: ph.length, text: bound.moras.map((m) => m.replace(/_$/, '')).join(' '),
       romaji: words, kana: bound.moras.map(moraKana).join(''), gloss: line.gloss,
       section: info.sec ? `${info.sec.letter}${info.stmt ? `(${info.stmt + 1})` : ''}` : null, role: info.role, key: info.key,
-      refrain, variant, template: line.template,
+      refrain, variant, template: line.template, vocalise: line.vocalise ?? (String(line.template).startsWith('fallback') ? plan.set : undefined),
     });
   }
   score.lyricStats = stats;
