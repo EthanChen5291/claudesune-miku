@@ -1,0 +1,84 @@
+{
+ "wav": "/Users/ethanchen/Documents/GitHub/motif-engine/audition/hq/vo_chase.vocal-raw.wav",
+ "seconds": 30.26,
+ "sr": 40000,
+ "notes": 84,
+ "note_hit_rate_mean": 0.8054245973173726,
+ "notes_hit_ge_50pct": 0.9166666666666666,
+ "octave_error_rate_mean": 0.0,
+ "notes_octave_wrong": 0,
+ "voiced_coverage_mean": 0.9974120082815735,
+ "notes_unvoiced": 0,
+ "sung_rms_db": -23.081574412800716,
+ "rest_rms_db": -56.90630739473336,
+ "rest_leak_db": -33.82473298193264,
+ "onset_lag_median_ms": 2.275000000000027,
+ "onset_lag_p90_ms": 27.543000000001786,
+ "onset_lag_notes": 68,
+ "worst_notes": [
+  {
+   "start": 8.4375,
+   "midi": 69,
+   "hit": 0.0,
+   "oct": 0.0,
+   "voiced": 1.0,
+   "median_dev_cents": -168.80128293869348
+  },
+  {
+   "start": 16.61932,
+   "midi": 72,
+   "hit": 0.0,
+   "oct": 0.0,
+   "voiced": 1.0,
+   "median_dev_cents": -111.409072786536
+  },
+  {
+   "start": 19.34659,
+   "midi": 69,
+   "hit": 0.0,
+   "oct": 0.0,
+   "voiced": 1.0,
+   "median_dev_cents": -145.39697847213233
+  },
+  {
+   "start": 8.18182,
+   "midi": 59,
+   "hit": 0.3181818181818182,
+   "oct": 0.0,
+   "voiced": 1.0,
+   "median_dev_cents": 3.7065914567342872
+  },
+  {
+   "start": 5.71023,
+   "midi": 72,
+   "hit": 0.4,
+   "oct": 0.0,
+   "voiced": 1.0,
+   "median_dev_cents": -96.49301229986378
+  },
+  {
+   "start": 6.98864,
+   "midi": 64,
+   "hit": 0.45454545454545453,
+   "oct": 0.0,
+   "voiced": 1.0,
+   "median_dev_cents": -54.06697860109517
+  },
+  {
+   "start": 16.02273,
+   "midi": 72,
+   "hit": 0.45454545454545453,
+   "oct": 0.0,
+   "voiced": 1.0,
+   "median_dev_cents": -54.24664814958504
+  },
+  {
+   "start": 5.79545,
+   "midi": 71,
+   "hit": 0.5,
+   "oct": 0.0,
+   "voiced": 1.0,
+   "median_dev_cents": -34.97116020676074
+  }
+ ]
+}

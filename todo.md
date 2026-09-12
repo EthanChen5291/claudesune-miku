@@ -1,3 +1,33 @@
+## NEW — the Vocaloid read-out, the vocal writer, `audition/vocalab.html` + `audition/vocaloid.html` (r35, 2026-09-12)
+
+Your 37 Vocaloid MIDIs (staged at `audios/vocaloid-r35/`, gitignored) are read
+out in `research/vocaloid-r35.md` — twelve laws of a sung line, each with the
+engine's own number beside it. The short version: our voice had the RANGE
+right and nothing else — 1.4 syllables/s vs 3.9, leaps where the corpus
+steps, every phrase on the downbeat (corpus 9%), no returning hook, 15% out
+of key vs 4%, no chorus lift, no chorus double.
+
+What to listen to (HQ on, Vocal on):
+1. **`audition/vocalab.html`** — 27 sung A/B variants on 10 cards, ONE
+   variable each (rate/starts/breath also nudge the drum level ≤7%; the tempo
+   card moves everything the tempo moves). The first card (`vl_writer_lead` vs `vl_writer_writer`) is
+   the whole round: the old lead sung as-is vs the new rule-written line.
+   Then: syllable rate 2.4/3.9/5.2 · phrase starts · breath length · chorus
+   lift 0/+4/+8 · chorus octave double off/0.7/1.0 · companion · 120 vs 180 ·
+   hook fixed/varied/fresh · **a second SUNG voice a third below: none /
+   chorus / all** (your "by chorus I meant the harmony for voice"). Each card's `why` states its hypothesis and
+   question — answer the question, not the song.
+2. **`audition/vocaloid.html`** — 14 songs from one-sentence DESCRIPTIONS,
+   every chorus with the second sung voice a third below
+   (the card shows the sentence and how `describe.js` parsed it). If a parse
+   reads wrong to you, say so — the parser is a synonym table, easy to fix.
+3. Export both pages' JSON when done (`page: r35-vocalab` / `r35-vocaloid`).
+
+Not built (measured, deliberately left): a FLUID tempo (your "human isn't
+just a constant static tempo" — a render-tier question, next round) and the
+chorus's accompaniment THICKENING (verse 1 note per strike / chorus 2, ×2.5 strikes) — it needs a
+per-letter figure change in the travel machinery and is a round of its own.
+
 # where things stand — r35
 
 ## NEW — your first vocal-page export is in (16 cards, 1 keep, 15 notes) — D138
@@ -56,12 +86,28 @@ What your ear found, and what it was:
 - **horn chords in HQ** — the VSCO horn stops at B4 and the octave fold was
   collapsing its dyads into unisons; chords now fold as a whole (boss 22 → 10
   unison events, training-vx 40 → 20). A write-side ceiling is next.
+- **HQ drums "way too loud" (your poplab axis card)** — measured cause: the
+  HQ mix levels each stem to the same gated loudness per written gain, and
+  for a one-shot that puts its HITS ~5 dB over the piano's loudest moment
+  (kick −18.9 vs piano −23.5 dB, 100 ms). PROPOSED, not shipped: level
+  percussion by its momentary peak instead. It would move every drum song's
+  HQ mix, so it wants a page for your ear first.
 - **festival-vx "can't hear the accordion in HQ"** — OPEN. Measured: the HQ
   mix levels each stem to its written gain (accordion ≈ 4 dB under the
   piano, as written). The guitar is gone from it; the browser tier's own
   per-patch loudness is what differs and I have no measurement of it yet.
 
 Nothing on `audition/songs.html` moved (0 of 47). Nothing committed.
+
+## NEW — your poplab export is in (16 "good", 14 cards marked, 6 labels)
+
+Imported to `src/lib/pop-lab-labels.js` (D138 addendum 5). Three of your
+lines change what gets built next: "chorus" = vocal HARMONY (a second sung
+voice), not a section; "human" includes a fluid TEMPO, not just accents;
+genre is layers/voices, not the chords. Your hi-hat "way too loud with HQ
+on" is measured below. 19 cards unseen, 15 of them in the answered-by-
+default tail; the four still worth your ear: 13 breakdown grades, 38
+melody anticipation, 41 melody thickness, 7 tresillo comp.
 
 ## NEW — `audition/poplab.html` trimmed to what needs your ear (your "filter the problems after question 9")
 

@@ -57,16 +57,25 @@ const { values, positionals } = parseArgs({
     // r35: re-render the HQ mix even when one exists (the page's mix or an HQ
     // patch changed); render-hq's stem cache keeps the unchanged stems
     rehq: { type: 'boolean', default: false },
+    // r35: a second SUNG voice. `--line _vocal_harmony --tag .harmony --no-mix`
+    // sings the harmony solo into <song>.harmony.vocal.wav; the plain run then
+    // mixes that stem under the lead vocal when it exists (his poplab note:
+    // "by chorus I meant like the harmony for voice — … singing multiple voices")
+    line: { type: 'string', default: '_lead_mix' },
+    tag: { type: 'string', default: '' },
+    'harmony-db': { type: 'string', default: '-4' }, // the harmony voice under the lead voice, dB
   },
 });
 const NAME = positionals[0];
 if (!NAME) { console.error('usage: render-vocal <song> [options]'); process.exit(1); }
 if (!existsSync(PY)) { console.error(`no vocal env at ${PY} — see scripts/vocal-sing.py header for setup`); process.exit(1); }
 
-const score = join(HQ, `${NAME}.vocal-score.json`);
-const dry = join(HQ, `${NAME}.vocal-dry.wav`);
-const raw = join(HQ, `${NAME}.vocal-raw.wav`);
-const vocal = join(HQ, `${NAME}.vocal.wav`);
+const TAG = values.tag ?? '';
+const score = join(HQ, `${NAME}${TAG}.vocal-score.json`);
+const dry = join(HQ, `${NAME}${TAG}.vocal-dry.wav`);
+const raw = join(HQ, `${NAME}${TAG}.vocal-raw.wav`);
+const vocal = join(HQ, `${NAME}${TAG}.vocal.wav`);
+const harmonyStem = join(HQ, `${NAME}.harmony.vocal.wav`); // a second sung voice, if rendered
 const mixIn = join(HQ, `${NAME}.wav`);
 const out = join(HQ, `${NAME}.withvocal.wav`);
 const t0 = Date.now();
@@ -78,7 +87,7 @@ const run = (cmd, args, opts = {}) => execFileSync(cmd, args, { stdio: ['ignore'
 // a handoff removed) forces stages 1-2 by itself — the kept .dry/.raw would
 // otherwise be a recording of the old line under the new mix
 const prevNotes = existsSync(score) ? JSON.stringify(JSON.parse(readFileSync(score, 'utf8')).notes.map((n) => [n.start, n.dur, n.midi, n.syl ?? null])) : null;
-run('node', [join(ROOT, 'scripts', 'export-vocal.mjs'), NAME, '--page', values.page, '--out', score, '--octave', values.octave, '--lyrics', values.lyrics]);
+run('node', [join(ROOT, 'scripts', 'export-vocal.mjs'), NAME, '--page', values.page, '--out', score, '--octave', values.octave, '--lyrics', values.lyrics, '--line', values.line]);
 const sc = JSON.parse(readFileSync(score, 'utf8'));
 if (!sc.notes.length) { console.error(`${NAME}: no sung notes (the mix never plays the tune?)`); process.exit(1); }
 const nowNotes = JSON.stringify(sc.notes.map((n) => [n.start, n.dur, n.midi, n.syl ?? null]));
@@ -183,13 +192,20 @@ const vocalDbUsed = values['vocal-db'] != null ? Number(values['vocal-db']) : (p
 values['vocal-db'] = String(vocalDbUsed);
 const target = bandDb + vocalDbUsed;
 const gain = Math.pow(10, (target - vocDb) / 20);
-run('ffmpeg', ['-v', 'error', '-y', '-i', mixIn, '-i', vocal, '-filter_complex',
+// r35: the harmony voice (a second sung stem, the writer's line a third below
+// in the chorus bars) rides `--harmony-db` under the LEAD voice's level
+const withHarmony = !TAG && existsSync(harmonyStem);
+const hGain = withHarmony ? gain * Math.pow(10, Number(values['harmony-db']) / 20) * Math.pow(10, (vocDb - sungRmsDb(harmonyStem)) / 20) : 0;
+if (withHarmony) console.log(`  harmony voice: ${harmonyStem} mixed ${values['harmony-db']} dB under the lead voice (x${hGain.toFixed(2)})`);
+run('ffmpeg', ['-v', 'error', '-y', '-i', mixIn, '-i', vocal, ...(withHarmony ? ['-i', harmonyStem] : []), '-filter_complex',
   // r35: a 20 ms fade-in on the head. His vx_romantic_rest card: "at the very
   // beginning, there's a bit of a glitch" — the mix opens on a piano chord at
   // sample 0 (measured: -18 dB RMS in the first 50 ms, first sample non-zero),
   // which is a hard edge for any player to start on; nothing else in the
   // first 1.5 s measured as a discontinuity (max sample step 0.023).
-  `[1:a]volume=${gain.toFixed(4)}[v];[0:a][v]amix=inputs=2:duration=first:normalize=0,loudnorm=I=-16:TP=-1.5:LRA=13,afade=t=in:st=0:d=0.02`,
+  withHarmony
+    ? `[1:a]volume=${gain.toFixed(4)}[v];[2:a]volume=${hGain.toFixed(4)}[h];[0:a][v][h]amix=inputs=3:duration=first:normalize=0,loudnorm=I=-16:TP=-1.5:LRA=13,afade=t=in:st=0:d=0.02`
+    : `[1:a]volume=${gain.toFixed(4)}[v];[0:a][v]amix=inputs=2:duration=first:normalize=0,loudnorm=I=-16:TP=-1.5:LRA=13,afade=t=in:st=0:d=0.02`,
   '-ar', '44100', out]);
 const outL = lufs(out);
 console.log(`  balance (sung spans): band ${bandDb.toFixed(1)} dB, vocal ${vocDb.toFixed(1)} -> ${target.toFixed(1)} dB (x${gain.toFixed(2)}, ${Number(values['vocal-db']) >= 0 ? '+' : ''}${values['vocal-db']} dB over the band); sum ${outL?.toFixed(1)} LUFS`);

@@ -31,45 +31,52 @@ const EMOTION_WORDS = {
     happy: 2, happiness: 2, cheerful: 2, cheery: 2, joyful: 2, joy: 2, joyous: 2, upbeat: 2, sunny: 2,
     fun: 2, smile: 2, smiling: 2, glad: 2, merry: 2, jolly: 2, delighted: 2, lighthearted: 2,
     carefree: 2, bouncy: 2, chipper: 2, jaunty: 2, giddy: 2, sunshine: 2, bright: 1, warm: 1,
+    hopeful: 2, sunrise: 1,
   },
   sad: {
     sad: 2, sadness: 2, heartbreak: 3, heartbroken: 3, goodbye: 3, farewell: 3, grief: 3, grieving: 3,
     lonely: 2, loneliness: 2, mourning: 2, loss: 2, tears: 2, crying: 2, cry: 2, weeping: 2,
     melancholy: 2, melancholic: 2, bittersweet: 2, sorrow: 2, sorrowful: 2, blue: 1, wistful: 1,
-    regret: 2, missing: 1, longing: 1, hurt: 1, broken: 1, alone: 2, parting: 2,
+    regret: 2, missing: 1, longing: 1, hurt: 1, broken: 1, alone: 2, parting: 2, losing: 2,
   },
   calm: {
     calm: 2, gentle: 2, gently: 2, soft: 2, softly: 2, quiet: 2, quietly: 2, peaceful: 2, serene: 2,
     tranquil: 2, relaxed: 2, relaxing: 2, chill: 2, mellow: 2, lazy: 2, still: 1, soothing: 2,
-    meditative: 2, ambient: 2, floating: 2, drifting: 2, dreamy: 1, sleepy: 2, lullaby: 2,
+    meditative: 2, ambient: 2, floating: 2, drifting: 2, dreamy: 1, sleepy: 2, lullaby: 3,
     breeze: 1, hush: 2, hushed: 2, unhurried: 2, easygoing: 2,
   },
   excited: {
     excited: 2, exciting: 2, excitement: 2, thrilling: 2, thrill: 2, chase: 2, race: 2, racing: 2,
     rush: 2, rushing: 2, frantic: 1, breathless: 1, adrenaline: 2, wild: 1, energetic: 2, energy: 1,
     hype: 2, hyped: 2, pumped: 2, fast: 1, party: 2, dance: 1, electric: 1, sprint: 2, running: 1,
-    run: 1, dash: 2, dashing: 2, exhilarating: 2,
+    run: 1, dash: 2, dashing: 2, exhilarating: 2, opening: 2, 'anime opening': 3, 'sugar rush': 3,
+    hyper: 2, hyperactive: 2,
   },
   tense: {
     tense: 2, tension: 2, furious: 3, angry: 3, anger: 3, rage: 3, raging: 3, fury: 3, frantic: 2,
     nervous: 2, anxious: 2, anxiety: 2, panic: 2, panicked: 2, urgent: 2, urgency: 2, pressure: 2,
     danger: 2, dangerous: 2, threat: 2, threatening: 2, suspense: 2, suspenseful: 2, stress: 2,
     stressed: 2, pursued: 2, hunted: 2, desperate: 2, paranoid: 2, dread: 1, uneasy: 2, edgy: 2,
+    fight: 2, fighting: 2, breakneck: 3, shouting: 2, shout: 2, shouted: 2, 'no room to breathe': 2,
+    defiant: 1, relentless: 2,
   },
   scary: {
     scary: 2, scared: 2, fear: 2, fearful: 2, terror: 2, terrifying: 2, horror: 2, haunted: 2,
     haunting: 2, creepy: 2, eerie: 2, ghost: 2, ghostly: 2, monster: 2, nightmare: 2, dread: 2,
     sinister: 2, menacing: 2, spooky: 2, chilling: 2, evil: 2, cursed: 2, demon: 2, frightening: 2,
+    villain: 2,
   },
   mysterious: {
     mysterious: 2, mystery: 2, mystical: 2, enigmatic: 2, strange: 2, uncanny: 2, puzzle: 2,
     puzzling: 2, riddle: 2, secret: 2, hidden: 2, magic: 2, magical: 2, arcane: 2, curious: 2,
     wonder: 2, odd: 1, unknown: 2, foggy: 2, fog: 2, mist: 2, misty: 2, cryptic: 2, otherworldly: 2,
+    villain: 1,
   },
   triumphant: {
     triumphant: 2, triumph: 2, victory: 2, victorious: 2, heroic: 2, hero: 2, glory: 2, glorious: 2,
-    epic: 2, anthem: 2, anthemic: 2, majestic: 2, grand: 2, fanfare: 2, conquering: 2, champion: 2,
+    epic: 3, anthem: 2, anthemic: 2, majestic: 2, grand: 2, fanfare: 2, conquering: 2, champion: 2,
     winning: 2, win: 1, proud: 2, pride: 2, noble: 2, soaring: 2, uplifting: 2, valiant: 2,
+    defiant: 1, opening: 1, 'anime opening': 2,
   },
   nostalgic: {
     nostalgic: 2, nostalgia: 2, memory: 2, remember: 2, remembering: 2, childhood: 2, retro: 2,
@@ -80,7 +87,7 @@ const EMOTION_WORDS = {
     romantic: 2, romance: 2, love: 2, loving: 2, lover: 2, kiss: 2, kissing: 2, tender: 2,
     tenderness: 2, intimate: 2, sweet: 2, sweetheart: 2, crush: 2, date: 1, valentine: 2,
     affection: 2, affectionate: 2, passion: 2, passionate: 2, longing: 2, yearning: 2, embrace: 2,
-    dreamy: 1, soft: 1, heartfelt: 1,
+    dreamy: 1, soft: 1, heartfelt: 1, confession: 2, confess: 2, rooftop: 1, sunrise: 1,
   },
   somber: {
     somber: 2, sombre: 2, solemn: 2, grave: 2, funeral: 2, mourning: 2, bleak: 2, grim: 2, heavy: 1,
@@ -103,12 +110,13 @@ const ENVIRONMENT_WORDS = {
   fight: {
     fight: 2, fighting: 2, battle: 2, combat: 2, battlefield: 2, enemy: 2, attack: 2, sword: 2,
     arena: 2, duel: 2, war: 2, clash: 2, brawl: 2, chase: 2, showdown: 1, skirmish: 2, versus: 2,
-    warrior: 2, strike: 1,
+    warrior: 2, strike: 1, 'anime opening': 1,
   },
   boss: {
     boss: 3, villain: 3, nemesis: 2, dragon: 2, titan: 2, overlord: 2, demon: 1, showdown: 1,
     ultimate: 1, colossal: 2, giant: 2, tyrant: 2, doom: 2, evil: 1, 'final battle': 3,
-    'final boss': 3, 'last stand': 2, archenemy: 3,
+    'final boss': 3, 'last stand': 2, archenemy: 3, 'boss fight': 3, army: 1, march: 1,
+    marching: 1, losing: 1,
   },
   construction: {
     construction: 3, building: 2, builder: 2, factory: 2, crane: 2, hammer: 2, machinery: 2,
@@ -155,6 +163,9 @@ const ENVIRONMENT_WORDS = {
     celebrate: 2, celebrating: 2, school: 2, holiday: 1, lantern: 2, crowd: 2, matsuri: 3,
     picnic: 2, fete: 2, street: 1, stall: 2, dancing: 1, village: 1, 'summer break': 3,
     'school day': 3, classroom: 2,
+    // Open-air town material (100-140, major): a rooftop pop-rock build lives
+    // here rather than in `rest` (cutscene, 50-80 bpm).
+    rooftop: 2, sunrise: 1,
   },
   kitchen: {
     kitchen: 3, cooking: 2, cook: 2, chef: 2, restaurant: 2, food: 2, baking: 2, bake: 2, recipe: 2,
@@ -165,12 +176,13 @@ const ENVIRONMENT_WORDS = {
     training: 3, workout: 2, exercise: 2, gym: 2, practice: 2, practicing: 2, drill: 2, sparring: 2,
     montage: 2, dojo: 2, coach: 2, tutorial: 2, lesson: 2, warmup: 2, jog: 2, jogging: 2,
     treadmill: 2, running: 1, race: 1, chase: 1, 'level up': 2, 'getting stronger': 2,
+    'anime opening': 2, opening: 1,
   },
   rest: {
     rest: 2, resting: 2, campfire: 2, camp: 2, camping: 2, bedroom: 2, bed: 2, sleep: 2,
     sleeping: 2, nap: 2, evening: 1, fireplace: 2, hearth: 2, cottage: 2, cabin: 2, sunset: 1,
     dusk: 1, porch: 2, blanket: 2, goodnight: 2, lullaby: 1, 'save point': 3, 'safe room': 3,
-    inn: 1,
+    inn: 1, sunrise: 1, confession: 1,
   },
   menu: {
     menu: 3, title: 2, select: 2, selection: 2, setting: 2, option: 2, loading: 2, interface: 2,
@@ -197,7 +209,7 @@ const ENVIRONMENT_WORDS = {
   manor: {
     manor: 3, mansion: 3, haunted: 2, estate: 2, hallway: 2, corridor: 2, attic: 2, cellar: 2,
     ballroom: 2, victorian: 2, gothic: 1, portrait: 2, candlelight: 2, candle: 2, dusty: 2,
-    cobweb: 2, ghost: 1, 'haunted house': 3, parlor: 2, parlour: 2,
+    cobweb: 2, ghost: 1, 'haunted house': 3, parlor: 2, parlour: 2, villain: 1,
   },
   catacombs: {
     catacombs: 3, catacomb: 3, crypt: 2, tomb: 2, skeleton: 2, bone: 2, undead: 2, zombie: 2,
@@ -207,7 +219,7 @@ const ENVIRONMENT_WORDS = {
   citadel: {
     citadel: 3, castle: 2, fortress: 2, tower: 2, throne: 2, cathedral: 2, kingdom: 2, empire: 2,
     gate: 1, siege: 2, stronghold: 2, spire: 2, gothic: 2, organ: 1, bell: 1, 'dark lord': 3,
-    rampart: 2, battlement: 2,
+    rampart: 2, battlement: 2, army: 2, march: 2, marching: 2, choir: 2, losing: 1, legion: 2,
   },
   shrine: {
     shrine: 3, temple: 2, altar: 2, sacred: 2, holy: 2, prayer: 2, praying: 2, monk: 2, chapel: 2,
@@ -216,18 +228,27 @@ const ENVIRONMENT_WORDS = {
   },
 };
 
+// Energy is a weighted tally, low vs high. Words that describe ONE PART of a
+// song rather than its energy (quiet verse / whispered verses / belted chorus)
+// carry weight 1, so "quiet verse … soaring chorus" reads high and "whispered
+// verses … belted chorus" cancels to mid; whole-song words carry 2–3.
 const ENERGY_WORDS = {
-  low: [
-    'slow', 'slowly', 'gentle', 'gently', 'quiet', 'quietly', 'whisper', 'whispered', 'whispering',
-    'soft', 'softly', 'hushed', 'still', 'lazy', 'sleepy', 'drowsy', 'calm', 'mellow', 'tender',
-    'lullaby', 'unhurried', 'sparse', 'minimal', 'ambient', 'floating', 'serene', 'tranquil',
-  ],
-  high: [
-    'driving', 'frantic', 'fast', 'breathless', 'rush', 'rushing', 'anthem', 'anthemic', 'racing',
-    'race', 'chase', 'sprint', 'pounding', 'hectic', 'relentless', 'furious', 'frenzied', 'frenzy',
-    'hype', 'hyped', 'pumping', 'thrashing', 'blistering', 'urgent', 'adrenaline', 'energetic',
-    'banger', 'explosive', 'intense', 'wild', 'dash', 'dashing', 'galloping', 'upbeat', 'manic',
-  ],
+  low: {
+    slow: 2, slowly: 2, gentle: 2, gently: 2, quiet: 1, quietly: 1, whisper: 1, whispered: 1,
+    whispering: 1, soft: 2, softly: 2, hushed: 2, still: 1, lazy: 2, sleepy: 2, drowsy: 2, calm: 2,
+    mellow: 2, tender: 2, lullaby: 2, unhurried: 2, sparse: 2, minimal: 2, ambient: 2, floating: 2,
+    serene: 2, tranquil: 2, hum: 1, murmur: 1, murmured: 1, 'barely above a hum': 2,
+    somber: 1, sombre: 1, solemn: 1,
+  },
+  high: {
+    driving: 2, frantic: 2, fast: 2, breathless: 2, rush: 2, rushing: 2, anthem: 1, anthemic: 2,
+    racing: 2, race: 2, chase: 2, sprint: 2, pounding: 2, hectic: 2, relentless: 2, furious: 2,
+    frenzied: 2, frenzy: 2, hype: 2, hyped: 2, pumping: 2, thrashing: 2, blistering: 2, urgent: 2,
+    adrenaline: 2, energetic: 2, banger: 2, explosive: 2, intense: 2, wild: 2, dash: 2, dashing: 2,
+    galloping: 2, upbeat: 2, manic: 2, breakneck: 3, shouting: 2, soaring: 2, builds: 1,
+    belted: 1, belting: 1, 'no room to breathe': 2, hyper: 2, 'sugar rush': 3,
+    backbeat: 1, clap: 1, 'clap along': 2, stomping: 2,
+  },
 };
 
 const FAMILY_WORDS = {
@@ -244,9 +265,11 @@ const FAMILY_WORDS = {
   ],
 };
 
-// Genre rows: weight 2 is a real genre word; `pop` is a weight-1 FALLBACK
-// (the spec: "else pop if 'pop'/'idol'/'catchy'") so it only wins when no other
-// genre has a hit. Ties go to this key order.
+// Genre rows: weight 2 is a real genre word; `pop`'s SYNONYMS (idol, catchy,
+// hook…) are a weight-1 FALLBACK (the spec: "else pop if 'pop'/'idol'/'catchy'")
+// so they only win when no other genre has a hit. The literal word "pop" is
+// the key itself and takes KEY_WEIGHT like every other key. Ties go to this
+// key order ("pop-rock" → rock).
 const GENRE_WORDS = {
   rock: {
     guitar: 2, rock: 2, band: 2, punk: 2, riff: 2, distortion: 2, distorted: 2, metal: 2,
@@ -315,17 +338,24 @@ function hit(entry, words, norm) {
   return entry.includes(' ') ? phraseRe(entry).test(norm) : words.has(entry);
 }
 
-// Score one key: synonym table + the entry's own vocabulary words (weight 1).
-function scoreKey(table, own, words, norm) {
+// A word that IS the key (somber, tense, boss, space …) is the user naming the
+// entry outright; it outweighs any synonym.
+const KEY_WEIGHT = 4;
+
+// Score one key: the key's own name (KEY_WEIGHT), then the synonym table, then
+// the entry's own vocabulary lists — `own` is [[words, weight], …] (emotion
+// moods 2, tags 1, envMoods 1). Each word counts once, at the first weight
+// that claims it.
+function scoreKey(key, table, own, words, norm) {
   let score = 0;
   const matched = [];
-  for (const [entry, w] of Object.entries(table)) {
-    if (hit(entry, words, norm)) { score += w; matched.push(entry); }
-  }
-  for (const word of own) {
-    const lw = String(word).toLowerCase();
-    if (!matched.includes(lw) && hit(lw, words, norm)) { score += 1; matched.push(lw); }
-  }
+  const take = (entry, w) => {
+    if (matched.includes(entry) || !hit(entry, words, norm)) return;
+    score += w; matched.push(entry);
+  };
+  take(key, KEY_WEIGHT);
+  for (const [entry, w] of Object.entries(table)) take(entry, w);
+  for (const [list, w] of own) for (const word of list) take(String(word).toLowerCase(), w);
   return { score, matched };
 }
 
@@ -343,8 +373,11 @@ function pick(keys, scorer) {
   return { best, all, tied };
 }
 
-function countHits(list, words, norm) {
-  return list.filter((w) => hit(w, words, norm));
+// Weighted tally over a word→weight table (or an array = every word weight 1).
+function tally(table, words, norm) {
+  const rows = Array.isArray(table) ? table.map((w) => [w, 1]) : Object.entries(table);
+  const matched = rows.filter(([w]) => hit(w, words, norm));
+  return { matched: matched.map(([w]) => w), sum: matched.reduce((a, [, w]) => a + w, 0) };
 }
 
 // ---------------------------------------------------------------------------
@@ -352,7 +385,7 @@ function countHits(list, words, norm) {
 // ---------------------------------------------------------------------------
 
 const VOICE = '(?:voice|vocals?|vocalist|singer|singing|sung|vox)';
-const VOICE_SOFT = '(?:quiet(?:ly)?|soft(?:ly)?|gentl[ey]|behind|whisper(?:ed|ing|y)?|hushed|breathy|low in the mix|buried|subtle|tucked)';
+const VOICE_SOFT = '(?:quiet(?:ly)?|soft(?:ly)?|gentl[ey]|behind|whisper(?:ed|ing|y)?|hushed|breathy|low in the mix|buried|subtle|tucked|barely|hum|hummed|murmur(?:ed|ing)?|under the)';
 const VOICE_LOUD = '(?:loud(?:ly)?|up front|upfront|forward|in front|belting|belted|big|dominant|blaring|front and cent(?:er|re))';
 const NEAR = '(?:\\W+\\w+){0,3}?\\W+';
 
@@ -383,7 +416,7 @@ export function describePrompt(text) {
 
   // --- emotion -----------------------------------------------------------
   const em = pick(EMOTION_KEYS, (k) => scoreKey(
-    EMOTION_WORDS[k], [...(EMOTIONS[k].moods ?? []), ...(EMOTIONS[k].tags ?? [])], words, norm));
+    k, EMOTION_WORDS[k], [[EMOTIONS[k].moods ?? [], 2], [EMOTIONS[k].tags ?? [], 1]], words, norm));
   let emotion = em.best ?? DEFAULTS.emotion;
   if (em.best) {
     const r = em.all[emotion];
@@ -395,7 +428,7 @@ export function describePrompt(text) {
 
   // --- environment -------------------------------------------------------
   const en = pick(ENVIRONMENT_KEYS, (k) => scoreKey(
-    ENVIRONMENT_WORDS[k], [...(ENVIRONMENTS[k].envMoods ?? []), ...(ENVIRONMENTS[k].tags ?? [])], words, norm));
+    k, ENVIRONMENT_WORDS[k], [[ENVIRONMENTS[k].envMoods ?? [], 1], [ENVIRONMENTS[k].tags ?? [], 1]], words, norm));
   let environment = en.best ?? DEFAULTS.environment;
   if (en.best) {
     const r = en.all[environment];
@@ -406,11 +439,11 @@ export function describePrompt(text) {
   tags.push(`environment:${environment}`);
 
   // --- energy ------------------------------------------------------------
-  const lo = countHits(ENERGY_WORDS.low, words, norm);
-  const hi = countHits(ENERGY_WORDS.high, words, norm);
-  const energy = hi.length > lo.length ? 'high' : lo.length > hi.length ? 'low' : 'mid';
-  if (energy === 'mid') notes.push(`energy: mid (${lo.length + hi.length ? `low ${lo.length} vs high ${hi.length}` : 'no energy words'})`);
-  else notes.push(`energy: ${energy} (${(energy === 'high' ? hi : lo).join(', ')})`);
+  const lo = tally(ENERGY_WORDS.low, words, norm);
+  const hi = tally(ENERGY_WORDS.high, words, norm);
+  const energy = hi.sum > lo.sum ? 'high' : lo.sum > hi.sum ? 'low' : 'mid';
+  if (energy === 'mid') notes.push(`energy: mid (${lo.sum + hi.sum ? `low ${lo.sum} [${lo.matched.join(', ')}] vs high ${hi.sum} [${hi.matched.join(', ')}]` : 'no energy words'})`);
+  else notes.push(`energy: ${energy} (${(energy === 'high' ? hi : lo).matched.join(', ')}; ${lo.sum} low vs ${hi.sum} high)`);
   tags.push(`energy:${energy}`);
 
   // --- bpm ---------------------------------------------------------------
@@ -422,14 +455,14 @@ export function describePrompt(text) {
   if (bpm !== null) { notes.push(`bpm: ${bpm} (explicit)`); tags.push('bpm'); }
 
   // --- family ------------------------------------------------------------
-  const mi = countHits(FAMILY_WORDS.minor, words, norm);
-  const ma = countHits(FAMILY_WORDS.major, words, norm);
-  const family = mi.length > ma.length ? 'minor' : ma.length > mi.length ? 'major' : null;
-  if (family) { notes.push(`family: ${family} (${(family === 'minor' ? mi : ma).join(', ')})`); tags.push(`family:${family}`); }
-  else notes.push(`family: null (${mi.length + ma.length ? `minor ${mi.length} vs major ${ma.length}` : 'no mode words'})`);
+  const mi = tally(FAMILY_WORDS.minor, words, norm);
+  const ma = tally(FAMILY_WORDS.major, words, norm);
+  const family = mi.sum > ma.sum ? 'minor' : ma.sum > mi.sum ? 'major' : null;
+  if (family) { notes.push(`family: ${family} (${(family === 'minor' ? mi : ma).matched.join(', ')})`); tags.push(`family:${family}`); }
+  else notes.push(`family: null (${mi.sum + ma.sum ? `minor ${mi.sum} vs major ${ma.sum}` : 'no mode words'})`);
 
   // --- genre -------------------------------------------------------------
-  const ge = pick(GENRE_KEYS, (k) => scoreKey(GENRE_WORDS[k], [], words, norm));
+  const ge = pick(GENRE_KEYS, (k) => scoreKey(k, GENRE_WORDS[k], [], words, norm));
   const genre = ge.best;
   if (genre) {
     const r = ge.all[genre];
@@ -440,10 +473,11 @@ export function describePrompt(text) {
   // --- hints (EXPLICIT words only) --------------------------------------
   const hints = {
     guitar: undefined, fullSynth: undefined, marcato: undefined, swing: undefined,
-    noDrums: undefined, duet: undefined, vocalDb: undefined,
+    noDrums: undefined, duet: undefined, vocalDb: undefined, drums: undefined,
   };
   const hintNote = (k, v, why) => { hints[k] = v; notes.push(`hint ${k}=${v} (${why})`); tags.push(`hint:${k}`); };
   if (RE.noDrums.test(norm)) hintNote('noDrums', true, norm.match(RE.noDrums)[0]);
+  else if (/\b(?:drums?|beat|backbeat|kick|kit|percussion|footsteps)\b/.test(norm)) hintNote('drums', true, norm.match(/\b(?:drums?|beat|backbeat|kick|kit|percussion|footsteps)\b/)[0]);
   if (RE.noGuitar.test(norm)) hintNote('guitar', false, norm.match(RE.noGuitar)[0]);
   else if (RE.guitar.test(norm)) hintNote('guitar', true, norm.match(RE.guitar)[0]);
   if (RE.fullSynth.test(norm)) hintNote('fullSynth', true, norm.match(RE.fullSynth)[0]);

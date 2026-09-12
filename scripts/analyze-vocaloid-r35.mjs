@@ -264,12 +264,16 @@ function analyze(file) {
   const roles = assignRoles(parts);
   if (!roles.voice) return { file, label, skipped: 'no voice track identified', parts: parts.map((p) => ({ name: p.name, n: p.notes.length })) };
   let voice = [...roles.voice.part.notes].sort((a, b) => a.tick - b.tick || a.midi - b.midi);
-  // VOICE-ONLY GRID: in a few transcriptions the vocal track alone sits a 16th
-  // off the accompaniment's grid (Senbonzakura: 92% of voice onsets on odd
-  // 16ths after the file-level correction, none on beat 1 — the transcriber
-  // wrote every vocal onset a 16th early). When more than 80% of voice onsets
-  // are odd 16ths the voice is moved by one 16th in the direction that puts
-  // the most onsets on the 8th grid, and the file is flagged.
+  // VOICE-ONLY GRID (a guard that has never fired: the r35 verify pass measured
+  // every file's voice ON the grid after the file-level shift — the 92%-odd
+  // Senbonzakura reading that motivated it was a pre-fix number). Kept as a
+  // flag: if more than 80% of voice onsets are odd 16ths the voice is moved by
+  // one 16th toward the 8th grid and `voiceShift16ths` says so.
+  // KNOWN LIMITS (r35 verify): Tondemo Wonders is off by a 32nd for bars 0–95
+  // and by a 16th+32nd from bar 96 (one rotation per file cannot fix both);
+  // Gimme×Gimme, Iya Iya Yo, Love Me×3 and Mind Brand sit on TRIPLET grids
+  // (16- or 32-tick), so their odd-16th shares are triplet subdivisions
+  // snapped to 16ths — they supply ~a third of the corpus's odd-16th onsets.
   let voiceShift = 0;
   {
     const odd = voice.filter((n) => Math.round(n.tick / grid16) % 2 !== 0).length / Math.max(1, voice.length);
@@ -344,7 +348,11 @@ function analyze(file) {
   const phraseNotes = phrases.map((p) => p.length);
   const breaths = []; for (let i = 1; i < phrases.length; i++) { const a = phrases[i - 1], b = phrases[i]; breaths.push((b[0].tick - (a[a.length - 1].tick + a[a.length - 1].dur)) / beatTicks); }
   const slotOf = (t) => Math.round(((t % barTicks) / barTicks) * 16) % 16;
-  const startPos = hist(phrases, (p) => { const s = slotOf(p[0].tick); return s === 0 ? 'downbeat' : s >= 12 ? 'pickup(beat4)' : s === 8 ? 'beat3' : s % 4 === 0 ? 'beat2/other' : s % 2 === 0 ? 'off8th' : 'off16th'; });
+  // (r35 verify catch: a first cut lumped the & of 4 — slot 14 — into the
+  // beat-4 pickup, doubling it and halving the off-8th share; the classes are
+  // now beat 4 (slots 12/13), & of 4 (14/15), off-8ths (2/6/10), beat 2 (4),
+  // beat 3 (8), downbeat (0), odd 16ths elsewhere)
+  const startPos = hist(phrases, (p) => { const s = slotOf(p[0].tick); return s === 0 ? 'downbeat' : (s === 12 || s === 13) ? 'beat4' : s >= 14 ? 'and_of_4' : s === 8 ? 'beat3' : s === 4 ? 'beat2' : s % 2 === 0 ? 'off8th' : 'off16th'; });
   const startShare = Object.fromEntries(Object.entries(startPos).map(([k, v]) => [k, share(v, phrases.length)]));
   const finalDurBeats = phrases.map((p) => p[p.length - 1].dur / beatTicks);
   const contour = hist(phrases.filter((p) => p.length >= 4), (p) => { const m = p.map((n) => n.midi); const peak = m.indexOf(Math.max(...m)); const f = m[0], l = m[m.length - 1]; const rel = peak / (m.length - 1); if (rel > 0.25 && rel < 0.75) return 'arch'; if (l - f >= 3) return 'ascend'; if (f - l >= 3) return 'descend'; return 'flat'; });

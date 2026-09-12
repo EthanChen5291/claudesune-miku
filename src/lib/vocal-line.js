@@ -12,8 +12,8 @@
 //   - a scale walk — step 48%, repeat 25%, third 13%, 4th/5th 9%, wider 2% —
 //     inside an 11-semitone home (80% of notes), full range 21;
 //   - phrases of ~6 notes / 3.5 beats separated by an 8th-note breath, starting
-//     OFF the downbeat (pickup on beat 4 26%, off-8th 23%, beat 2 12%, beat 3
-//     10%, downbeat 9%);
+//     OFF the downbeat (off-8ths ~23%, beat 4 ~11%, & of 4 ~10%, beat 2 12%,
+//     beat 3 10%, downbeat 9%);
 //   - a 2-bar hook cell that RETURNS AT PITCH (31% of 2-bar cells are exact
 //     repeats; 42% repeat the rhythm) with its landing re-fit to the chord;
 //   - chord tones on the beat (64% beat 1, 67% beat 3) and diatonic neighbours
@@ -72,8 +72,11 @@ export function vocalDensity(bpm, { rate = 3.9 } = {}) {
   return { notesPerBar: clamp(perBar, 3.5, 8), sixteenths: bpm < 100 ? 0.03 : bpm < 140 ? 0.3 : bpm < 170 ? 0.1 : 0.01 };
 }
 
-/** the corpus's phrase-start table, in 8th slots of the bar */
-const START_TABLE = [[6, 26], [1, 23], [2, 12], [4, 10], [0, 9], [7, 6], [3, 8], [5, 6]];
+/** the corpus's phrase-start table, in 8th slots of the bar (r35 verify: the
+ *  first table read the & of 4 as part of a 26% beat-4 pickup; measured
+ *  finely it is beat 4 ~11%, & of 4 ~10%, the three off-8ths ~23%, beat 2
+ *  12%, beat 3 10%, downbeat 9%) */
+const START_TABLE = [[0, 9], [1, 8], [2, 12], [3, 8], [4, 10], [5, 8], [6, 11], [7, 10]];
 
 /**
  * The rhythm of one 2-bar cell as a CYCLIC list of 8th-slot events:
@@ -110,6 +113,17 @@ function cellRhythm(r, { notesPerBar, sixteenths, startBias = null, breathBias =
     // the breath: one 8th (median 0.5 beat), sometimes two
     const breath = breathBias ?? pick(r, [[1, 7], [2, 3]]);
     cursor += breath; used += breath;
+    // (r35 verify: only the FIRST phrase took the start table; later phrases
+    // began wherever the previous one ended, 52% on off-8ths) — the next
+    // phrase's start is drawn from the table too and reached by lengthening
+    // the breath by up to two 8ths when the drawn slot lies just ahead
+    // (not when the breath is pinned by a lab card — the card's variable is
+    // the breath length, and the snap lengthened it)
+    if (breathBias == null) {
+      const want = startBias ?? pick(r, START_TABLE);
+      const ahead = ((want - (cursor % 8)) % 8 + 8) % 8;
+      if (ahead > 0 && ahead <= 2) { cursor += ahead; used += ahead; }
+    }
   }
   if (events.length) events[events.length - 1].phraseEnd = true;
   // a final's quarter that runs past the cycle end is cut to an 8th
@@ -123,7 +137,7 @@ function cellRhythm(r, { notesPerBar, sixteenths, startBias = null, breathBias =
  * gives the bar's chord tones as scale-degree indices (0..6) of the key.
  * Events are walked in TIME order; a phrase that wrapped keeps its flags.
  */
-function walk(r, events, { centre, span, chordDegsOf, fromDeg = null }) {
+function walk(r, events, { centre, span, chordDegsOf, fromDeg = null, upLean = 0 }) {
   let deg = fromDeg ?? centre + pick(r, [[0, 4], [1, 3], [-1, 3], [2, 1], [-2, 1]]);
   const out = [];
   // phrase lengths in time order (a wrapped phrase counts its tail first)
@@ -144,8 +158,11 @@ function walk(r, events, { centre, span, chordDegsOf, fromDeg = null }) {
     const rel = phraseLen > 1 ? posInPhrase / (phraseLen - 1) : 0;
     // direction: an arch — up in the first half, down in the second; pulled
     // back toward the centre when the line strays past the home span
-    let dirBias = rel < 0.5 ? 0.62 : 0.38;
-    if (deg > centre + span) dirBias = 0.15; else if (deg < centre - span) dirBias = 0.85;
+    // (r35 verify: a pull that fired only BEYOND the span let the line park at
+    // the clamp and swallowed the chorus lift on 10 of 36 songs — the pull is
+    // now proportional to the distance from the centre)
+    let dirBias = (rel < 0.5 ? 0.6 : 0.4) - 0.09 * (deg - centre) + (upLean ?? 0);
+    dirBias = clamp(dirBias, 0.12, 0.88);
     const cls = e.phraseStart && i > 0
       ? pick(r, [[0, 2], [1, 5], [2, 3], [3, 2], [4, 1]])            // a new phrase may enter by a leap
       : pick(r, [[0, 20], [1, 50], [2, 14], [3, 6], [4, 3], [5, 1]]); // the corpus interval table (degrees: 1 = step, 2 = third, 3/4 = 4th–5th)
@@ -181,23 +198,38 @@ function walk(r, events, { centre, span, chordDegsOf, fromDeg = null }) {
  *     targetMidi (the home centre, default 66), span (degrees each side of
  *     the centre, default 3 = an 11-semitone home), rate (syllables/s, default
  *     3.9), stmt (statement number — >= 2 re-rolls the answer only),
- *     startBias / breathBias (lab knobs) }
+ *     hookVary ('answer' | 'none' | 'all'), startBias / breathBias (lab knobs) }
  */
 export function composeVocalLine(params) {
   const {
     seed, keyIntervals, rootMidi, bpm, harmony, chordTonesOf,
     role = 'verse', stmt = 0, rate = 3.9, startBias = null, breathBias = null,
   } = params;
-  const lift = params.lift ?? (role === 'chorus' ? 4 : role === 'bridge' ? 2 : 0);
+  // (r35 verify: at +4 the walk's own wander hid the lift on 4 of 14 suite
+  // songs — the chorus default is +5 and the chorus walk leans upward)
+  const lift = params.lift ?? (role === 'chorus' ? 5 : role === 'bridge' ? 2 : 0);
   const targetMidi = (params.targetMidi ?? 66) + lift;
   const span = params.span ?? 3;
-  const r = rng(fnv(`${seed}|vocal|${role}`));
-  const rA = rng(fnv(`${seed}|vocal|${role}|answer|${stmt >= 2 ? stmt : 0}`));
+  // hookVary: 'answer' (default — the hook returns AT PITCH on every statement
+  // and the answer re-rolls from the third statement, r24's restate-then-
+  // depart), 'none' (nothing re-rolls: the 4 bars loop verbatim), 'all' (the
+  // hook re-rolls from the third statement too — every return is new)
+  // 'answer1' re-rolls the answer from the SECOND statement (a lab variant —
+  // every return varies its second half); 'all' re-rolls hook and answer from
+  // the second statement (every return is new)
+  const hookVary = params.hookVary ?? 'answer';
+  const from = hookVary === 'answer' ? 2 : hookVary === 'none' ? Infinity : 1;
+  const salt = stmt >= from ? stmt : 0;
+  const r = rng(fnv(`${seed}|vocal|${role}${hookVary === 'all' && salt ? `|h${salt}` : ''}`));
+  const rA = rng(fnv(`${seed}|vocal|${role}|answer|${salt}`));
   const { notesPerBar, sixteenths } = vocalDensity(bpm, { rate });
   // the home centre as a scale degree (0 = key root at rootMidi)
   const semis = targetMidi - rootMidi;
   let centre = 0, bd = Infinity;
-  for (let d = -7; d <= 21; d++) { const m = keyIntervals[((d % 7) + 7) % 7] + 12 * Math.floor(d / 7); if (Math.abs(m - semis) < bd) { bd = Math.abs(m - semis); centre = d; } }
+  // (r35 verify: a [-7, 21] search parked a leadOctave-6 song's centre at A5
+  // and made the octave parameter a no-op — the search now spans four octaves
+  // either side; a rider that wants ANOTHER octave shifts degrees by 7)
+  for (let d = -28; d <= 28; d++) { const m = keyIntervals[((d % 7) + 7) % 7] + 12 * Math.floor(d / 7); if (Math.abs(m - semis) < bd) { bd = Math.abs(m - semis); centre = d; } }
   // chord tones per bar as scale degrees (altered tones fall to the nearest)
   const chordDegsOf = (bar) => {
     const sym = harmony[((bar % harmony.length) + harmony.length) % harmony.length];
@@ -206,11 +238,17 @@ export function composeVocalLine(params) {
     for (let d = 0; d < 7; d++) { const pc = (((rootMidi + keyIntervals[d]) % 12) + 12) % 12; if (pcs.has(pc)) out.push(d); }
     return out;
   };
-  const rhythm = cellRhythm(r, { notesPerBar, sixteenths, startBias, breathBias });
+  // a syllable budget past what 8ths can hold in 16 slots (~11 with breaths
+  // and quarter finals) is met with 16th PAIRS — the corpus's 100–139 bpm
+  // band sings 34% 16ths for exactly this reason (7.2 notes a bar)
+  const budget = notesPerBar * 2;
+  const sixteenthsEff = Math.max(sixteenths, clamp((budget - 10) / 8, 0, 0.6));
+  const rhythm = cellRhythm(r, { notesPerBar, sixteenths: sixteenthsEff, startBias, breathBias });
   // the hook walks the cell; the answer keeps the RHYTHM (42% of 2-bar cells
   // repeat the rhythm) and re-rolls the walk from where the hook ended
-  const hook = walk(r, rhythm.map((e) => ({ ...e })), { centre, span, chordDegsOf: (b) => chordDegsOf(b) });
-  const answer = walk(rA, rhythm.map((e) => ({ ...e })), { centre, span, chordDegsOf: (b) => chordDegsOf(b + 2), fromDeg: hook[hook.length - 1]?.deg ?? centre });
+  const upLean = role === 'chorus' ? 0.06 : 0;
+  const hook = walk(r, rhythm.map((e) => ({ ...e })), { centre, span, chordDegsOf: (b) => chordDegsOf(b), upLean });
+  const answer = walk(rA, rhythm.map((e) => ({ ...e })), { centre, span, chordDegsOf: (b) => chordDegsOf(b + 2), fromDeg: hook[hook.length - 1]?.deg ?? centre, upLean });
   // emit the 4 spec bars: onsets as 16ths of the bar, degrees (int scale
   // degrees relative to the key root at `octave`), accents (beat 1 > beat 3 >
   // phrase final > syllable), and explicit RESTS (null degree) after each

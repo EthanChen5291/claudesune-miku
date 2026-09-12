@@ -40,6 +40,11 @@ const { values, positionals } = parseArgs({
     lyrics: { type: 'string', default: 'ja' },
     'phrase-bars': { type: 'string', default: '2' },
     quiet: { type: 'boolean', default: false },
+    // r35 (his "by chorus I meant like the harmony for voice — instead of
+    // voices just singing one note they're singing multiple voices"): the solo
+    // key to sing — `_lead_mix` (the tune) or `_vocal_harmony` (the writer's
+    // line a third below, chorus bars), rendered as a SECOND vocal stem
+    line: { type: 'string', default: '_lead_mix' },
   },
 });
 const NAME = positionals[0];
@@ -76,7 +81,7 @@ const bars = song.totalBars;
 // letters: measured on vx_tense_fight, matching the solo against the mix kept
 // 42 of 96 notes and went silent for 18 of 32 bars. Songs without it (the
 // judged page) keep the matching path.
-const leadMix = song.solos?._lead_mix ?? null;
+const leadMix = song.solos?.[values.line] ?? (values.line === '_lead_mix' ? null : (() => { console.error(`${NAME} has no ${values.line} solo`); process.exit(1); })());
 const soloEv = await evaluateSong(`setcpm(${song.bpm}/${beats})\np: ${leadMix ?? lead}`);
 const soloHaps = hapsByLabel(soloEv, 0, bars).get('p').haps.filter((h) => h.whole && midiOf(h.value) != null);
 const mixHaps = leadMix ? soloHaps : await (async () => {

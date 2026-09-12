@@ -1,0 +1,264 @@
+{
+ "name": "vo_goodbye",
+ "page": "audition/vocaloid.html",
+ "bpm": 84,
+ "beats": 4,
+ "totalBars": 16,
+ "key": "A:minor",
+ "source": "_lead_mix",
+ "secondsPerBar": 2.857142857142857,
+ "totalSeconds": 45.714285714285715,
+ "shift": 0,
+ "range": [
+  57,
+  76
+ ],
+ "medianBefore": 72,
+ "room": 0.3,
+ "leadGain": 0.101,
+ "notes": [
+  {
+   "bar": 8,
+   "phrase": 0,
+   "start": 22.85714,
+   "dur": 0.17857,
+   "midi": 67,
+   "gain": 0.126,
+   "syl": "ki",
+   "ph": [
+    "kx",
+    "iy"
+   ],
+   "melisma": false
+  },
+  {
+   "bar": 8,
+   "phrase": 0,
+   "start": 23.03571,
+   "dur": 0.17858,
+   "midi": 72,
+   "gain": 0.095,
+   "syl": "no",
+   "ph": [
+    "n",
+    "oo"
+   ],
+   "melisma": false
+  },
+  {
+   "bar": 8,
+   "phrase": 0,
+   "start": 23.21429,
+   "dur": 0.17857,
+   "midi": 74,
+   "gain": 0.095,
+   "syl": "u",
+   "ph": [
+    "ux"
+   ],
+   "melisma": false
+  },
+  {
+   "bar": 8,
+   "phrase": 0,
+   "start": 23.39286,
+   "dur": 0.17857,
+   "midi": 74,
+   "gain": 0.095,
+   "syl": "u",
+   "ph": [
+    "ux"
+   ],
+   "melisma": false
+  },
+  {
+   "bar": 8,
+   "phrase": 0,
+   "start": 23.57143,
+   "dur": 0.17857,
+   "midi": 74,
+   "gain": 0.095,
+   "syl": "u",
+   "ph": [
+    "ux"
+   ],
+   "melisma": false
+  },
+  {
+   "bar": 8,
+   "phrase": 0,
+   "start": 23.75,
+   "dur": 0.17857,
+   "midi": 76,
+   "gain": 0.095,
+   "syl": "ne",
+   "ph": [
+    "n",
+    "ee"
+   ],
+   "melisma": false
+  },
+  {
+   "bar": 8,
+   "phrase": 0,
+   "start": 23.92857,
+   "dur": 0.17857,
+   "midi": 74,
+   "gain": 0.095,
+   "syl": "ga",
+   "ph": [
+    "g",
+    "a"
+   ],
+   "melisma": false
+  },
+  {
+   "bar": 8,
+   "phrase": 0,
+   "start": 24.10714,
+   "dur": 0.17857,
+   "midi": 72,
+   "gain": 0.095,
+   "syl": "i",
+   "ph": [
+    "iy"
+   ],
+   "melisma": false
+  },
+  {
+   "bar": 8,
+   "phrase": 0,
+   "start": 24.28571,
+   "dur": 0.35715,
+   "midi": 72,
+   "gain": 0.117,
+   "syl": "ni",
+   "ph": [
+    "n",
+    "iy"
+   ],
+   "melisma": false
+  },
+  {
+   "bar": 8,
+   "phrase": 0,
+   "start": 24.64286,
+   "dur": 0.71428,
+   "midi": 69,
+   "gain": 0.105,
+   "syl": "ji",
+   "ph": [
+    "jh",
+    "iy"
+   ],
+   "melisma": false
+  },
+  {
+   "bar": 9,
+   "phrase": 1,
+   "start": 26.42857,
+   "dur": 0.17857,
+   "midi": 72,
+   "gain": 0.095,
+   "syl": "fu",
+   "ph": [
+    "fp",
+    "ux"
+   ],
+   "melisma": false
+  },
+  {
+   "bar": 9,
+   "phrase": 1,
+   "start": 26.60714,
+   "dur": 0.17857,
+   "midi": 71,
+   "gain": 0.095,
+   "syl": "ta",
+   "ph": [
+    "tx",
+    "a"
+   ],
+   "melisma": false
+  },
+  {
+   "bar": 9,
+   "phrase": 1,
+   "start": 26.78571,
+   "dur": 0.17858,
+   "midi": 69,
+   "gain": 0.095,
+   "syl": "ri",
+   "ph": [
+    "rj",
+    "iy"
+   ],
+   "melisma": false
+  },
+  {
+   "bar": 9,
+   "phrase": 1,
+   "start": 26.96429,
+   "dur": 0.17857,
+   "midi": 67,
+   "gain": 0.095,
+   "syl": "sa",
+   "ph": [
+    "s",
+    "a"
+   ],
+   "melisma": false
+  },
+  {
+   "bar": 9,
+   "phrase": 1,
+   "start": 27.14286,
+   "dur": 0.35714,
+   "midi": 67,
+   "gain": 0.117,
+   "syl": "mo",
+   "ph": [
+    "m",
+    "oo"
+   ],
+   "melisma": false
+  },
+  {
+   "bar": 9,
+   "phrase": 1,
+   "start": 27.5,
+   "dur": 0.71429,
+   "midi": 69,
+   "gain": 0.105,
+   "syl": "to",
+   "ph": [
+    "tx",
+    "oo"
+   ],
+   "melisma": false
+  }
+ ],
+ "phraseBars": 2,
+ "phrasesFolded": 0,
+ "phraseCount": 2,
+ "stats": {
+  "soloNotes": 16,
+  "keptNotes": 16,
+  "barsSounding": 2,
+  "barsWithTune": 2,
+  "silentBars": []
+ },
+ "lyrics": [
+  {
+   "start": 22.85714,
+   "notes": 10,
+   "text": "ki no u u u ne ga i ni ji"
+  },
+  {
+   "start": 26.42857,
+   "notes": 6,
+   "text": "fu ta ri sa mo to"
+  }
+ ],
+ "lyricMode": "ja"
+}

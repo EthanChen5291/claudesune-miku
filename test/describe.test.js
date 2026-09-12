@@ -142,7 +142,7 @@ test('every returned emotion/environment is a valid vibes.js key', () => {
   }
 });
 
-test('vocabulary scoring reaches the entries own moods/envMoods (weight 1)', () => {
+test('vocabulary scoring reaches the entries own moods (weight 2) and envMoods (weight 1)', () => {
   // "sneaking" is only in stealth's envMoods; "sly" is a mysterious mood and a
   // stealth/casino envMood. Whole-word matching: "sneakingly" must NOT match.
   const r = describePrompt('sneaking around');
@@ -154,11 +154,100 @@ test('vocabulary scoring reaches the entries own moods/envMoods (weight 1)', () 
 });
 
 test('ties are broken by vibes.js key order and say so in the notes', () => {
-  // "epic" is a triumphant synonym (2) and an excited MOOD (1): triumphant wins
-  // outright. "driving" alone is a mood of both excited and tense (1 each) —
+  // "epic" is a triumphant synonym (3) and an excited MOOD (2): triumphant wins
+  // outright. "driving" alone is a mood of both excited and tense (2 each) —
   // excited comes first in key order.
   assert.equal(describePrompt('epic').emotion, 'triumphant');
   const r = describePrompt('driving');
   assert.equal(r.emotion, 'excited');
   assert.ok(r.notes.some((n) => n.includes('tie with tense broken by key order')));
+});
+
+// --- second batch: five real prompts that first parsed wrong ---------------
+
+test('R1 boss fight / breakneck rock → tense × boss, high, rock', () => {
+  // Before: no emotion word matched at all (default happy). Now tense = fight 2
+  // + breakneck 3 + shouting 2 + "no room to breathe" 2 = 9; boss = "boss" 4
+  // (key word) + "boss fight" 3 = 7 vs fight = 4 (key word only).
+  const r = describePrompt('a boss fight against your own reflection, breakneck rock, the melody shouting short phrases, no room to breathe');
+  assert.equal(r.emotion, 'tense');
+  assert.equal(r.environment, 'boss');
+  assert.equal(r.energy, 'high');
+  assert.equal(r.genre, 'rock');
+  assert.equal(r.hints.noDrums, undefined); // "no room" is not "no drums"
+});
+
+test('R2 rooftop confession at sunrise → romantic × festival, high, major, rock', () => {
+  // romantic = confession 2 + rooftop 1 + sunrise 1 = 4; happy = hopeful 2
+  // (own mood, weight 2) + sunrise 1 = 3; calm = quiet 2; triumphant = soaring 2.
+  // festival (open-air town material, 100-140 major — a pop-rock build's tempo)
+  // = rooftop 2 + sunrise 1 = 3 vs rest (cutscene, 50-80) = sunrise 1 + confession 1.
+  // Energy: "quiet verse" is a part-word (1) vs soaring 2 + builds 1 → high.
+  const r = describePrompt('a rooftop confession at sunrise, hopeful pop-rock, builds from a quiet verse to a soaring chorus with strings');
+  assert.equal(r.emotion, 'romantic');
+  assert.equal(r.environment, 'festival');
+  assert.equal(r.energy, 'high');
+  assert.equal(r.family, 'major');
+  assert.equal(r.genre, 'rock'); // "pop-rock": pop 4 vs rock 4, key order → rock
+});
+
+test('R3 marching anthem, somber but defiant → somber × citadel, mid, minor, orchestral', () => {
+  // "somber" IS an emotion key → weight 4, beating anthem (triumphant 2).
+  // citadel = army 2 + marching 2 + choir 2 + losing 1 = 7 vs boss 3.
+  // Energy: anthem 1 vs somber 1 → mid (a somber march is not a banger).
+  const r = describePrompt('a marching anthem for a losing army, somber but defiant, drums like footsteps, a choir under the last chorus');
+  assert.equal(r.emotion, 'somber');
+  assert.equal(r.environment, 'citadel');
+  assert.equal(r.energy, 'mid');
+  assert.equal(r.family, 'minor');
+  assert.equal(r.genre, 'orchestral');
+});
+
+test('R4 tender lullaby for a robot → calm × lab, low, noDrums, quiet voice', () => {
+  // calm = lullaby 3 vs sad = tender 2 (a sad MOOD) / romantic = tender 2.
+  const r = describePrompt('a tender lullaby for a robot, music box and pads, slow, the voice barely above a hum, no drums');
+  assert.equal(r.emotion, 'calm');
+  assert.equal(r.environment, 'lab');
+  assert.equal(r.energy, 'low');
+  assert.equal(r.hints.noDrums, true);
+  assert.equal(r.hints.vocalDb, -1.5); // "voice barely above a hum"
+});
+
+test('R5 haunted school corridor, whispered verses + belted chorus → scary × manor, MID', () => {
+  // whispered 1 vs belted 1 cancel → mid; "desperate" is a tense word, not an
+  // energy word. scary = haunted 2 + eerie 2; manor = haunted 2 + corridor 2 + eerie 1.
+  const r = describePrompt('a haunted school corridor at midnight, eerie minor pop, whispered verses and a desperate belted chorus');
+  assert.equal(r.emotion, 'scary');
+  assert.equal(r.environment, 'manor');
+  assert.equal(r.energy, 'mid');
+  assert.equal(r.family, 'minor');
+  assert.equal(r.genre, 'pop');
+});
+
+test('key words score 4: naming an emotion or environment outright wins', () => {
+  assert.equal(describePrompt('a somber victory').emotion, 'somber'); // 4 vs triumphant 2
+  assert.equal(describePrompt('calm but frantic').emotion, 'calm');     // 4 vs tense 2
+  assert.equal(describePrompt('a rainy day in the shop').environment, 'shop'); // 4 vs water 2
+  assert.equal(describePrompt('a casino floor under the stars').environment, 'casino'); // 4 vs space 2
+  assert.equal(describePrompt('in space').environment, 'space');
+});
+
+test('additions: anime opening, sugar rush / hyper, villain', () => {
+  const ao = describePrompt('an anime opening');
+  assert.equal(ao.emotion, 'excited');
+  assert.equal(ao.environment, 'training');
+  assert.equal(describePrompt('a sugar rush').emotion, 'excited');
+  assert.equal(describePrompt('a sugar rush').energy, 'high');
+  assert.equal(describePrompt('hyper').emotion, 'excited');
+  const v = describePrompt('the villain appears');
+  assert.equal(v.emotion, 'scary');
+  assert.equal(v.environment, 'boss');
+  assert.equal(describePrompt('the villain in the mansion').environment, 'manor');
+});
+
+test('energy: part-of-song words weigh 1, whole-song words 2+', () => {
+  assert.equal(describePrompt('quiet').energy, 'low');
+  assert.equal(describePrompt('a quiet verse then a soaring chorus').energy, 'high');
+  assert.equal(describePrompt('whispered verses, belted chorus').energy, 'mid');
+  assert.equal(describePrompt('slow and whispered, then belted').energy, 'low');
 });

@@ -711,7 +711,7 @@ export function planForm(plan, opts = {}) {
   const near = options.filter((o) => o.score >= options[0].score - NEAR);
   const talks = (o) => o.secs.some((x) => x.dialogue);
   if (near.some(talks) && near.some((o) => !talks(o))) {
-    const converse = fnv(`${plan.name}|converses`) % 3 === 0;
+    const converse = !opts.noDialogue && fnv(`${plan.name}|converses`) % 3 === 0;
     pool = near.filter((o) => talks(o) === converse);
     if (!converse) notes.push('this song does not converse — dialogue shapes stood aside (a third of eligible songs take them)');
   }

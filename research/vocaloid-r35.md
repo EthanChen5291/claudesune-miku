@@ -25,7 +25,7 @@ analysis-only, nothing here is counted into `src/lib`). Of the 41:
 
 - **36 analyzed** — 33 Vocaloid originals (DECO*27, wowaka, ryo, kemu, MARETU,
   Neru, Kikuo, Giga, mikitoP, sasakure.UK, Kanzaki Iori, Kurousa-P, Kairiki
-  Bear, chouchou-P, surii, Hachioji P …), three J-pop songs sung by humans in
+  Bear, chouchou-P, surii, Hachioji P …), four J-pop songs sung by humans in
   the identical arrangement style (YOASOBI's Monster and Yoru ni Kakeru, Ado's
   Usseewa and New Genesis — four files, one lane), and Coldplay's Yellow, kept
   as a **western control**;
@@ -36,8 +36,8 @@ analysis-only, nothing here is counted into `src/lib`). Of the 41:
 
 **Every file is the same three-track reduction:** `NOTE` (the accompaniment's
 right hand — chords, counter-figures, the instrumental hooks), `VOCAL` / `MIKU`
-/ `SING` / `RIN` (the sung line, one note at a time — 100% monophonic in every
-file), `BASS` (the left hand), and in two files a `VOCAL 2`. Roles were assigned
+/ `SING` / `RIN` (the sung line, one note at a time — 100% monophonic in 33 files, 96–99% in
+two, and 50% in Mind Brand whose VOCAL track carries stacked effects), `BASS` (the left hand), and in two files a `VOCAL 2`. Roles were assigned
 by NAME where the track is named (86%) and by BEHAVIOUR otherwise (the most
 monophonic mid-register part is the voice; the lowest part is the bass) — never
 by GM program, because most files declare none.
@@ -62,10 +62,17 @@ verse/chorus tables use the 36 songs whose sung 4-bar windows number ≥ 4 (all
 36). The second-voice table is the two files that carry one.
 
 **Caveats found while measuring (each fixed or bounded):**
-- Velocity is a flat 127 in every file — the transcriptions carry NO dynamics;
-  nothing below says anything about loudness.
-- Three files (Monster, Senbonzakura, Tondemo Wonders) were laid down a 16th
-  off the bar line; the analyzer measures the rotation that puts the most
+- Velocity is a flat 127 on the voice in 35 of 36 files (Binomi carries 19
+  values) — the transcriptions carry NO dynamics; nothing below says anything
+  about loudness.
+- Three files (Monster, Senbonzakura, Tondemo Wonders) were laid down off the
+  bar line — Monster and Senbonzakura by a 16th; Tondemo by a 32nd for bars
+  0–95 and a 16th+32nd from bar 96 (one rotation per file leaves its last 48
+  bars a 16th off — its odd-16th and phrase-start figures are unreliable);
+  and four files (Gimme×Gimme, Iya Iya Yo, Love Me×3, Mind Brand) sit on
+  TRIPLET grids, so their "odd 16ths" are triplet subdivisions snapped to
+  16ths (they supply about a third of the corpus's odd-16th onsets; the odd16
+  p90 falls from 56% to 28% without them); the analyzer measures the rotation that puts the most
   bass+acc onsets on the 8th grid and shifts the file (`gridShift16ths`). Before
   the fix Monster read 100% odd-16th onsets and 0% chord tones on beat 1.
 - Two MARETU files carry non-vocal material on the VOCAL track (Jigsaw Puzzle
@@ -89,14 +96,14 @@ verse/chorus tables use the 36 songs whose sung 4-bar windows number ≥ 4 (all
 | 2 | **Speed is tempo-invariant.** Faster songs sing FEWER notes per bar (7.2 at 100–139 bpm → 4.9 at 170+) so the syllable rate holds at ~3.7–4.0/s | 3.7–4.0 syl/s in every band ≥100 bpm | 0.8–2.0 syl/s |
 | 3 | **Steps and repeats, not thirds.** Within-phrase intervals: step 48%, repeat 25%, third 13%, 4th–5th 9%, 6th+ 2%; mean \|interval\| 2.0 semis | leaps ≥P4 recovered by a step 24% | **step 18%, third 36%, 4th–5th 26%, 6th+ 10%; mean 4.4** |
 | 4 | **Short phrases, 8th-note breaths.** A phrase is 3.5 beats / 6 notes; the breath between phrases is one 8th (0.5 beat); 71 phrases a song | p90 phrase 8.5 beats | **7 phrases of 15.5 beats / 11 notes; breath 0.75** |
-| 5 | **Phrases start off the downbeat.** Downbeat 9%; pickup on beat 4 26%, off-8th 23%, beat 2 12%, beat 3 10% | | **100% downbeat** |
+| 5 | **Phrases start off the downbeat.** Downbeat 9%; the three off-8ths 23%, beat 4 11%, the & of 4 10%, beat 2 12%, beat 3 10% (a first cut lumped the & of 4 into a 26% "beat-4 pickup" — the verify pass split it) | | **100% downbeat** |
 | 6 | **The tune repeats — exactly.** 32% of 2-bar cells repeat an earlier cell's shape and 31% repeat its PITCHES too (the hook returns verbatim); 42% repeat the rhythm; 52% of 1-bar cells | 35 distinct 2-bar shapes a song | **0% (p90 25%)** |
 | 7 | **Range: a 21-semitone span, an 11-semitone home.** Lowest 58 (A#3), highest 80 (G#5), median 68 (G#4); 80% of notes inside 11 semitones | lanes agree within 2 semis | 55–78, median 67, tessitura 13 — the range is already right |
-| 8 | **Chord tones on the beat, tissue between — a small gradient.** Chord-tone rate beat 1 64%, beat 3 67%, off-8th 59%, off-16th 54%; 62% of sung TIME on chord tones; non-chord tones 39% of onsets, 57% resolved by step, 58% approached by step | out of key 4% (0% p10, 22% p90); pentatonic 83% | CT beat 1 63% / beat 3 83% / off-8th 87% (flat, inverted); NCT 29% resolved **34%**; **out of key 15%** |
-| 9 | **The chorus lifts the voice ~3–5 semitones and the accompaniment doubles it an octave UP.** Chorus − verse voice median +5.2 (register in the selector) / **+3.1 with the chorus chosen by the accompaniment alone**; 23 of 36 lift ≥ 3 | acc doubles the voice's pitch class at its onsets **9% in verses → 92% in choruses**; 83% of doublings above, 89% are the acc's top note, 89% inside a chord | the guide + `_octave` double 95% of notes everywhere (by construction), 97% above |
+| 8 | **Chord tones on the beat, tissue between — a small gradient.** Chord-tone rate beat 1 64%, beat 3 67%, off-8th 59%, off-16th 54% under the author's labeller (an independent template labeller gives 66 / 64 / 61 / 60 — the beat-3-over-beat-1 ordering does not survive it; a 5–6 point strong-to-weak gradient does); 62% of sung TIME on chord tones; non-chord tones 39% of onsets, 57% resolved by step, 58% approached by step | out of key 4% (0% p10, 22% p90); pentatonic 83% | CT beat 1 63% / beat 3 83% / off-8th 87% (flat, inverted); NCT 29% resolved **34%**; **out of key 15%** |
+| 9 | **The chorus lifts the voice ~3–5 semitones and the accompaniment doubles it an octave UP.** Chorus − verse voice median +5.2 (register in the selector) / **+3.1 with the chorus chosen by the accompaniment alone**; 19 of 36 lift ≥ 3 under the accompaniment-only selector (31 under the register-inclusive one) | acc doubles the voice's pitch class at its onsets **9% in verses → 92% in choruses**; 83% of doublings above, 89% are the acc's top note, 89% inside a chord | the guide + `_octave` double 95% of notes everywhere (by construction), 97% above |
 | 10 | **Verse thin, chorus thick — by count and by strike.** Acc onsets/bar 2.6 → 6.4 (×2.5), notes per strike 1.06 → 2.08 (×2), acc top +11 semis, voice notes/bar ×1.00, chords/bar ×1.00 | the harmony does not change rate; the TEXTURE does | acc thickness is a per-letter travel choice, unrelated to verse/chorus |
 | 11 | **The second voice TRADES, it never stacks.** Both files with a VOCAL 2 (Gimme×Gimme, Roki): 0% of its onsets strike with the voice, 0% sound while it sounds; Gimme's answers fall in the voice's silent bars (76%), Roki's inside the same bars (91%) | the "harmony under the voice" is the ACCOMPANIMENT's doubling (law 9), not a harmony singer | no second voice exists |
-| 12 | **Minor, fast, plain-ish.** 67% minor keys; bpm median 162 (77–210), 16 of 36 at 170+; 1.53 chords/bar; colour 35% (sus 16%, m7 12%, ^7 10%); diatonic 85%; loops 4 or 8 bars, 21 of 35 start OFF the tonic | quality shares below | the vocal page is 68–176 bpm, 4 of 16 minor |
+| 12 | **Minor, fast, plain-ish.** 67% minor keys; bpm median 162 (77–210), 16 of 36 at 170+; 1.53 chords/bar; colour 35% (sus 13% of half-bar TIME — 16% of labelled segments; m7 13%, ^7 10%); 47% of half-bars are THIRDLESS in acc+bass, so the "plain triad" labels are mostly key-completed; diatonic 85%; loops 4 or 8 bars, 21 of 35 start OFF the tonic | quality shares below | the vocal page is 68–176 bpm, 4 of 16 minor |
 
 The three laws that reach the engine's voice hardest are 1, 3 and 5–6 together:
 the engine's sung line is a quarter-note instrumental lead with leaps, starting
@@ -172,8 +179,8 @@ Gaps between consecutive voice notes, pooled: 17% under a 16th, 56% a 16th to an
 breath is an 8th rest, and a rest of a beat or more is a LINE boundary (the
 1-beat split gives 19.5 lines of 9.5 beats a song).
 
-**Where a phrase starts** (median share): downbeat 9%, pickup on beat 4 26%,
-off-8th 23%, beat 2 12%, beat 3 10%, off-16th 0%. Songs are consistent
+**Where a phrase starts** (median share): downbeat 9%, the three off-8ths
+23%, beat 4 11%, the & of 4 10%, beat 2 12%, beat 3 10%, off-16th 0%. Songs are consistent
 internally and differ from each other — Ghost Rule 49% beat-4 pickups, Love is
 War 48%, Senbonzakura 65%; Hibikase 70% off-8th, Android Girl 65%; Toosenbo
 60% beat 3, Super Superhero 54%; Melt 40% downbeats, Iya Iya Yo 42%. The
@@ -295,14 +302,14 @@ ACCOMPANIMENT ALONE (acc onsets + notes per strike + bass onsets).
 | bass median | 42.7 | 44.0 | +1.3 | 43.0 | 44.1 | +1.1 |
 | chords / bar | 1.58 | 1.65 | ×1.04 | 1.61 | 1.61 | ×1.00 |
 
-Register lift under selector (b): ≤0 in 3 songs, 1–2 in 9, 3–4 in 12, 5–7 in 7,
-8+ in 5. **The chorus is a register and a texture, not a speed and not a
+Register lift under selector (b): ≤0 in 3 songs, 0–2 in 14, 3–4 in 10, 5–7 in 7,
+8+ in 2 (a first print of this line had mislabeled bins; 19 songs lift ≥ 3). **The chorus is a register and a texture, not a speed and not a
 harmonic rate.** The voice sings the same number of syllables; the accompaniment
 doubles its count, doubles its strike, and takes the tune on top.
 
 **Intro / interludes / outro** (bars): intro before the voice median 6 (0–18;
 11 s, 0–30 s); 2 instrumental interludes of ≥ 2 bars a song (0–4), 7 bars long
-(2–9); outro 8.5 (1–28). Twelve of 36 have no intro at all (the voice at bar 0).
+(2–9); outro 8.5 (1–28). Eleven of 36 have no intro at all (the voice at bar 0).
 The pop pack's "tunes start at bar 0" holds for a third of these; the rest give
 the hook to an instrument first (Rolling Girl 24 bars, Senbonzakura 20).
 
@@ -314,7 +321,7 @@ the hook to an instrument first (Rolling Girl 24 bars, Senbonzakura 20).
 | colour share (7ths / 9ths / sus / 6) | 35% | 17–49% |
 | diatonic share | 85% | 59–100% |
 
-Quality shares (pooled half-bars): plain major 26%, minor 25%, **sus 16%**,
+Quality shares (pooled labelled SEGMENTS; by half-bar time: sus 13%, minor 29%, triad 26%, m7 13%): plain major 26%, minor 25%, **sus 16%**,
 m7 12%, ^7 10%, 6 6%, 7 3%, dim 1%. The sus share is the Vocaloid signature —
 Vsus and bVIIsus as the loop's turnaround (Iya Iya Yo `Vsus bVI^7 Vsus i`, Monster
 `Vsus i bVI^7 v i`, Ghost Rule `IV^7 Vsus Isus …`). Borrowed devices carried in
@@ -325,8 +332,8 @@ bVII in major (8), bVI (6).
 Keys: 67% minor (E minor 5, F minor 4, C# minor 3, B minor 3 …); tempo median
 162 (77–210): <100 → 2, 100–139 → 9, 140–169 → 9, 170+ → 16.
 
-**Loops** (top loop per song by coverage, repaired extractor): 4 bars in 18
-songs, 8 bars in 13, 6 in 2; 21 of 35 start OFF the tonic (iv-, bVI-, V-,
+**Loops** (top loop per song by coverage, repaired extractor; 35 songs — Tondemo
+Wonders yields none): 4 bars in 18 songs, 8 bars in 13, 6 in 2, 1 and 2 in one each; 21 of 35 start OFF the tonic (iv-, bVI-, V-,
 bVII-starts); cadence class: ends on the tonic 12, authentic V–I 3, the rest
 open. The skeletons that recur:
 
@@ -368,32 +375,128 @@ The full per-song table is in the report (`--songs`).
 The engine has the RANGE and roughly the chord-tone rate; it has none of the
 motion, the phrasing, the repetition, the chorus, or the key discipline.
 
-## What this round builds from it
+## What this round built from it (measured on the built pages)
 
-Each of the twelve laws is either a lab hypothesis (tested on
-`audition/vocalab.html`, sung), an engine capability (opt-in, page-only,
-`ruleFresh(35)`-gated so no judged song moves), or both:
+Each law is either a lab hypothesis (`audition/vocalab.html`, sung), an engine
+capability (opt-in, page-only, `ruleFresh(35)`-gated — `audition/songs.html`
+and `audition/vocal.html` re-built under the new code move 0 of 47 and 0 of 16
+songs by DATA compare), or both.
 
 - **`src/lib/vocal-line.js` — a rule-composed sung line** (laws 1, 3, 4, 5, 6,
-  7, 8): per letter, a spec for `bindMelodySpec` (the D38 guard: accented notes
-  snap to chord cores, weak out-of-supply notes must resolve or are snapped)
-  written from the corpus rules — 8th-grid syllables at a tempo-invariant rate,
-  a stepwise/repeat random walk inside an 11-semitone home, 2–4-beat phrases
-  with 8th breaths starting on pickups, the 2-bar hook cell returning at pitch
-  with a re-fit landing, strong-beat chord tones and diatonic tissue, phrase
-  finals on root/3rd/5th. `opts.vocalWriter` on the song; the lead retrieval
-  (MEL_CELLS + bindMelody) is untouched for every other song.
-- **`opts.chorusLift` + `opts.chorusDouble`** (laws 9, 10): the B letter's
-  line sits +3..+5 semitones (inside the singer's ceiling) and an instrument
-  doubles it an octave up at a real level in chorus bars only, over the acc's
-  chorus figure; verse bars keep the thin bass + counter-note texture.
-- **The lab** (`VOCALAB=1 node scripts/audition-songs.mjs` →
-  `audition/vocalab.html`): A/B pairs built under ONE name (D120) with the sung
-  render, one variable per card — speed ladder, step-vs-leap, phrase starts,
-  hook repetition, chorus lift dose, chorus doubling on/off, voice at 16ths at
-  120 vs 8ths at 180, breath length, key discipline.
-- **The suite** (`VOCALOID=1` → `audition/vocaloid.html`): `vo_*` songs from
-  DESCRIPTION prompts parsed by `src/lib/describe.js` (a keyword → emotion /
-  environment / energy / genre mapper, no retrieval pool), all sung.
+  7, 8). Per letter (A = verse, B = chorus at +4 semitones, others = bridge
+  +2) it authors a 4-bar spec — a cyclic 2-bar HOOK cell + an ANSWER cell on
+  the same rhythm — for `bindMelodySpec` (the D38 guard: accented notes snap
+  to chord cores, weak out-of-supply notes must resolve or are snapped), from
+  rule tables only: the syllable budget `3.9 × 240/bpm` notes a bar (16th
+  pairs when the budget exceeds what 8ths hold), the corpus's phrase-start
+  table, phrases of 3–8 syllables with an 8th (sometimes quarter) breath
+  written as an EXPLICIT REST (a null degree — `bindMelodySpec`'s r35
+  extension, because export-vocal reads hap gaps and legato emission fills
+  every onset to the next), a mean-reverting scale walk with the corpus's
+  interval table (repeat 20 / step 50 / third 14 / 4th–5th 9 / wider 4, in
+  degrees), strong beats and phrase finals on the nearest chord tone, a
+  three-repeat cap, and the hook returning at pitch with the answer re-rolled
+  from the third statement (r24's restate-then-depart). `opts.vocalWriter`
+  (`true` or `{ rate, lift: {chorus, bridge}, targetMidi, span, startBias,
+  breathBias, hookVary, roles }`). Every line that RIDES the lead — the
+  companion (now the writer's line a diatonic THIRD below, the corpus's verse
+  counter-note), the melody double, the octave partner — takes the same spec,
+  so they stay rhythm-locked. A cast `melody_takeover` layer is excluded from
+  the sung line under the writer (measured: it put a calliope at midi 99 into
+  `_lead_mix`).
+- **`opts.chorusDouble`** (law 9): the writer's B line an octave above the
+  lead on a voice from another family (epiano / vibraphone / flute / square,
+  synth pool under `fullSynth`), masked to the B letter's bars, at 0.7 × lead
+  (`{ gainMul, sound, octave }`). Measured on vl_double: sounds in bars 4–7 and
+  12–15 of 16 (the B bars), mean gain 0.51 vs 0.73 at gainMul 1.0.
+- **`opts.vocalHarmony` — a second SUNG voice** (his clarification via the
+  poplab export: "by chorus I meant like the harmony for voice — instead of
+  voices just singing one note they're singing multiple voices"): the writer's
+  line a diatonic third below in the B bars (or the whole song), a guide on
+  the page, sung as a second stem by `render-vocal.mjs --line _vocal_harmony
+  --tag .harmony` and mixed 4 dB under the lead voice. The corpus's own second
+  voice trades (law 11); the stack is his ask, and the lab asks where it
+  belongs (`vl_harmony`: none / chorus / all).
+- **Measured on the built lines AFTER the engine verify pass** (D139 addendum;
+  `_lead_mix`, 41 songs): chorus double +12 on 100% of shared onsets (a first
+  build sang it in UNISON — the writer's absolute re-centring made the octave
+  parameter a no-op); companion −3/−4 on 87%; suite chorus lift median +6, none
+  ≤ 0 (first build: 10 of 36 ≤ 0 — the walk parked at its clamp); no voice
+  collisions (first build: 17); phrase starts downbeat 11% / beat 2 14% / beat
+  3 14% / beat 4 4% / & of 4 11% / off-8ths 45% (the off-8th share stays double
+  the corpus's — a quarter final plus an 8th breath lands on an odd slot);
+  syllables/s 3.75 median (the 8-a-bar cap holds slow songs at 2.0–2.8, as the
+  corpus's own <100 band does); out of key 1% median / 8% max; chord tones beat
+  1 91% / beat 3 94% / off-8th 50%.
+- **Measured on the first build** (`_lead_mix`, 38 songs): notes per bar track
+  the law — 7.5 at 120 bpm, 5.5 at 168, 5.0 at 180, 4.9 at 190 (3.3–4.0
+  syllables/s); phrase starts are pickups / off-8ths (downbeat 0–2 of ~16
+  phrases a song); rests present (vl_breath: 6 → 15 → 9 phrases as the breath
+  goes none → 8th → quarter); steps 42–67%, repeats 9–35%, leaps ≥5 semis
+  4–20% (higher than the corpus's 2–9% — phrase entries and the guard's snaps);
+  range 57–79, medians 63–73. The r34 lead sung as-is on the same prompt:
+  2.76 notes/bar, 1.9 syl/s, step 14%, leap 37% (vl_writer_lead).
+- **What a first build measured and I changed:** (a) the cell filled to 4
+  notes a bar whatever the target because a pickup start ate the cell — the
+  rhythm is now CYCLIC over the 2-bar cell; (b) rate 5.2 and tempo 120 could
+  not exceed ~5.5 notes a bar on an 8th grid — the 16th-pair share now rises
+  with the budget; (c) a `span` card (walk home width 2/3/5) moved NOTHING
+  (all three 60–77): the tessitura is set by the walk's dynamics and the
+  letter lifts, not by the clamp — dropped, replaced by the hook card; (d) a
+  hook card whose variants differed only from the THIRD statement was
+  identical on a 16-bar ABAB form — `hookVary: 'answer1' | 'all'` re-roll from
+  the second.
+- **`src/lib/describe.js`** — a deterministic FREE-TEXT prompt parser
+  (`describePrompt(text) → { emotion, environment, energy, bpm, family, genre,
+  hints, notes }`; synonym tables + each vibe's own mood words; an emotion /
+  environment / genre KEY WORD scores 4; energy is a weighted tally so
+  "whispered verses … belted chorus" reads mid). No retrieval pool, no
+  randomness. Tested on 19 cases.
+- **The suite** (`VOCALOID=1 node scripts/audition-songs.mjs` →
+  `audition/vocaloid.html`, page id `r35-vocaloid`): 14 `vo_*` songs, each from
+  a one-sentence DESCRIPTION shown on the card with its parse, at a stated
+  tempo in the corpus's bands (76–195), the family from the description (9 of
+  14 minor), writer + chorus double + companion + `noteBlind` + the r35 vocal
+  balance law, all sung (`render-vocal.mjs <name> --page audition/vocaloid.html`).
+- **The lab** (`VOCALAB=1` → `audition/vocalab.html`, `r35-vocalab`): 10 cards
+  × 2–3 variants = 27 `vl_*` songs, each card's variants built under ONE name
+  (D120) and renamed, all sung: writer vs the r34 lead · syllable rate 2.4 /
+  3.9 / 5.2 · phrase starts downbeat / pickup / mixed · breath none / 8th /
+  quarter · chorus lift 0 / +4 / +8 · chorus double off / 0.7 / 1.0 ·
+  companion none / third · the same prompt at 120 vs 180 (the syllable law) ·
+  the hook corpus / answer-varies / everything-fresh · the harmony voice none /
+  chorus / all. A test pins that every card's variants share a key and realize
+  distinct mixes (no fake A/B). Honest caveat: rate / starts / breath also move
+  the drum level by ≤7% (the r33 kit cap reads the lead's realized mean), the
+  writer card's control plans 28 bars vs 16, and the tempo card moves bass /
+  counterline / drums with the bpm.
 
-The remaining sections of this doc are filled by the round's D-entry.
+## Open questions for his ear (the lab's, in one place)
+
+1. Is 3.9 syllables/s the sweet spot for an energetic song, or does he want
+   fewer (his r34 songs sang 1.4 and he called the melody "good")?
+2. Do off-downbeat phrase starts read as "sung", or as "off"?
+3. Which breath — none / 8th / quarter?
+4. Chorus lift +4 (the corpus) or +8 (drama) — and does the octave double
+   make the chorus, or crowd the voice?
+5. Does the third-below companion support or muddy?
+6. Hook fixed + answer varied (the corpus) vs every return new?
+7. A second sung voice a third below — in the chorus, everywhere, or not at all?
+
+## Caveats
+
+- The corpus is piano-roll REDUCTIONS: no dynamics (velocity 127 throughout),
+  no articulation, no lyrics; every "phrase" is inferred from rests the
+  transcriber wrote. The syllable rate is onsets per second — melisma is
+  invisible.
+- Chord labels are the half-bar labeller over NOTE+BASS; 36 songs is a small
+  population for the borrowed-chord table; the loops table trusts the
+  repaired extractor.
+- The verse/chorus split is a WINDOW classifier, not the songs' form; both
+  selectors agree on the direction of every contrast and disagree on the size
+  of the lift (+5.2 vs +3.1), so the doc reports both.
+- The labels (lane / emotion) are inferred from titles by someone who knows
+  these songs, not measured and not his.
+- Populations: every table above is the 36 analyzed files unless it says
+  otherwise; the engine side is 17 sung scores (baseline) and 16 mixes (the
+  harmony probe) from `audition/vocal.html` + one songs.html render.

@@ -100,7 +100,7 @@ row('notes per phrase (median)', med([V(s)['phraseNotesMedian'] for s in data]),
 row('breath between phrases (beats, median)', med([V(s)['breathBeatsMedian'] for s in data]), f"{q([V(s)['breathBeatsMedian'] for s in data], .1)}–{q([V(s)['breathBeatsMedian'] for s in data], .9)}")
 row('phrase-final note (beats)', med([V(s)['phraseFinalDurBeats'] for s in data]), f"{q([V(s)['phraseFinalDurBeats'] for s in data], .1)}–{q([V(s)['phraseFinalDurBeats'] for s in data], .9)}")
 print()
-print('phrase START position (median share): ' + ', '.join(f"{k}: {pc(med([V(s)['phraseStart'].get(k) or 0 for s in data]))}" for k in ['downbeat', 'pickup(beat4)', 'beat3', 'beat2/other', 'off8th', 'off16th']))
+print('phrase START position (median share): ' + ', '.join(f"{k}: {pc(med([V(s)['phraseStart'].get(k) or 0 for s in data]))}" for k in ['downbeat', 'beat4', 'and_of_4', 'off8th', 'beat2', 'beat3', 'off16th']))
 print('phrase CONTOUR (phrases >=4 notes, median share): ' + ', '.join(f"{k}: {pc(med([V(s)['contour'].get(k) or 0 for s in data]))}" for k in ['arch', 'descend', 'ascend', 'flat']))
 print('phrase-final LANDING vs the chord (median share): ' + ', '.join(f"{k}: {pc(med([V(s)['landing'].get(k) or 0 for s in data]))}" for k in ['root', '3rd', '5th', '7th', '9th', 'other']) + f"; lands on the KEY tonic {pc(med([V(s)['landingOnTonic'] for s in data]))}")
 print()
@@ -148,8 +148,8 @@ for k, name, kind in [('vMed', 'voice median pitch', 'd'), ('vHi', 'voice top', 
     a, b = ct(k, 0), ct(k, 1)
     row(name, a, b, (f'{b - a:+.1f}' if kind == 'd' else f'x{b / a:.2f}') if a and b is not None else '—')
 lifts = [s['form']['contrast']['vMed'][1] - s['form']['contrast']['vMed'][0] for s in C]
-print(f"\n{len(C)} songs split. Register lift distribution (chorus median − verse median, semis): " + ', '.join(f'{k}: {v}' for k, v in sorted(Counter(('<=0' if l <= 0 else '1–2' if l <= 2 else '3–4' if l <= 4 else '5–7' if l <= 7 else '8+') for l in lifts).items())))
-print(f"chorus TOP over verse TOP: " + ', '.join(f'{k}: {v}' for k, v in sorted(Counter(('<=0' if l <= 0 else '1–2' if l <= 2 else '3–4' if l <= 4 else '5–7' if l <= 7 else '8+') for l in [s['form']['contrast']['vHi'][1] - s['form']['contrast']['vHi'][0] for s in C]).items())))
+print(f"\n{len(C)} songs split. Register lift distribution (chorus median − verse median, semis): " + ', '.join(f'{k}: {v}' for k, v in sorted(Counter(('<=0' if l <= 0 else '0–2' if l < 3 else '3–4' if l < 5 else '5–7' if l < 8 else '8+') for l in lifts).items())))
+print(f"chorus TOP over verse TOP: " + ', '.join(f'{k}: {v}' for k, v in sorted(Counter(('<=0' if l <= 0 else '0–2' if l < 3 else '3–4' if l < 5 else '5–7' if l < 8 else '8+') for l in [s['form']['contrast']['vHi'][1] - s['form']['contrast']['vHi'][0] for s in C]).items())))
 print()
 # an INDEPENDENT split: chorus/verse chosen by the ACCOMPANIMENT alone (acc
 # onsets + notes per strike + bass onsets), so the voice's lift is not selected on
@@ -172,7 +172,7 @@ for k, name, kind in [('vMed', 'voice median pitch', 'd'), ('vHi', 'voice top', 
     a = med([avg2(v, k) for s, (v, c) in A]); b = med([avg2(c, k) for s, (v, c) in A])
     row(name, a if kind != 'd%' else pc(a), b if kind != 'd%' else pc(b), (f'{b - a:+.1f}' if kind == 'd' else f'{100*(b-a):+.0f} pts' if kind == 'd%' else f'x{b / a:.2f}') if a and b is not None else '—')
 lifts2 = [avg2(c, 'vMed') - avg2(v, 'vMed') for s, (v, c) in A]
-print(f"\n{len(A)} songs. Register lift (chorus − verse voice median, semis): " + ', '.join(f'{k}: {v}' for k, v in sorted(Counter(('<=0' if l <= 0 else '1–2' if l <= 2 else '3–4' if l <= 4 else '5–7' if l <= 7 else '8+') for l in lifts2).items())))
+print(f"\n{len(A)} songs. Register lift (chorus − verse voice median, semis): " + ', '.join(f'{k}: {v}' for k, v in sorted(Counter(('<=0' if l <= 0 else '0–2' if l < 3 else '3–4' if l < 5 else '5–7' if l < 8 else '8+') for l in lifts2).items())))
 print()
 print('### Intro / interludes / outro (population: all; bars)\n')
 hdr('metric', 'median', 'p10–p90', 'note')
@@ -225,7 +225,7 @@ qh = Counter()
 for s in data:
     for k, v in H(s)['qualityHist'].items(): qh[k or 'triad'] += v
 tot = sum(qh.values())
-print('quality shares (pooled segments): ' + ', '.join(f'{k}: {100*v/tot:.0f}%' for k, v in qh.most_common(9)))
+print('quality shares (pooled SEGMENTS — the r35 verify pass re-weighted by half-bar: sus 13.2%, minor 28.7%, triad 25.6%, m7 13.0%; 46.7% of half-bars are THIRDLESS in acc+bass and the plain-triad labels are mostly key-completed): ' + ', '.join(f'{k}: {100*v/tot:.0f}%' for k, v in qh.most_common(9)))
 bh = Counter()
 for s in data:
     for k in H(s)['borrowed']: bh[k] += 1

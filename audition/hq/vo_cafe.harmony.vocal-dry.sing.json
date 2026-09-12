@@ -1,0 +1,42 @@
+{
+ "phrases": [
+  {
+   "start": 35.83333,
+   "notes": 16,
+   "frames": 395,
+   "breath": 45.83333,
+   "pitch_dev_median_st": 0.29686737060546875,
+   "pitch_dev_max_st": 68.10245513916016
+  },
+  {
+   "start": 40.27778,
+   "notes": 16,
+   "frames": 395,
+   "breath": 0.2777799999999999,
+   "pitch_dev_median_st": 0.3023223876953125,
+   "pitch_dev_max_st": 70.71314239501953
+  },
+  {
+   "start": 44.72222,
+   "notes": 16,
+   "frames": 395,
+   "breath": 0.2777799999999999,
+   "pitch_dev_median_st": 0.2758331298828125,
+   "pitch_dev_max_st": 71.65369415283203
+  },
+  {
+   "start": 49.16667,
+   "notes": 16,
+   "frames": 395,
+   "breath": 0.277780000000007,
+   "pitch_dev_median_st": 0.24000167846679688,
+   "pitch_dev_max_st": 73.19943237304688
+  }
+ ],
+ "pitch_model": true,
+ "seconds": 74.11111111111111,
+ "peak": 0.07208612561225891,
+ "render_s": 15.35436487197876,
+ "speaker": "tiger_fresh",
+ "syllable": "la"
+}

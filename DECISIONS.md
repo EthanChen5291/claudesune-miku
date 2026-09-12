@@ -12393,3 +12393,293 @@ Two defects, fixed and re-rendered:
 Third pass + a two-song fourth pass: every guitar stem re-amped through
 the gate, every folded stem re-rendered, all other stems reused; every
 vocal re-mixed. No engine file changed after the 403/403 run.
+
+## D139 — r35: the Vocaloid set (37 transcriptions) read out, the rule-composed vocal writer, description prompts, and two sung pages (his "analyze the new files i added. they're specifically vocaloid … our voices are good and the melody is good but it's relatively uniform … learn from vocaloid patterns and agreements with harmony and ranges and speeds that can be done (and the choruses to support) … test variations that you're unsure about … generate a suite of songs with these vibes, with a more diverse range of prompts that are actual descriptions")
+
+**THE FILES.** 41 MIDIs dropped into ~/Downloads (and copied into the Top MIDI
+Tracks Pack folder) 01:50–02:29 on 2026-09-12, staged at `audios/vocaloid-r35/`
+(gitignored, D95 analysis-only). 36 analyzed (33 Vocaloid originals, YOASOBI ×2,
+Ado ×2, Coldplay's Yellow as a western control), 1 skipped (a piano-only
+Senbonzakura), 4 excluded (his own `get_proto-3..6` reels). Every file is
+NOTE / VOCAL / BASS piano tracks — the voice is monophonic (33 of 36 at 100%),
+so "the vocaloid part is its own instrument, one note at a time" held.
+
+**THE READ-OUT** is `research/vocaloid-r35.md` (twelve laws, each with the
+engine's own number beside it, measured on the 17 sung scores the engine had
+exported and 16 mixes in the mix with the same chord labeller). The engine's
+voice had the RANGE right (55–78 vs 58–80) and nothing else:
+
+| law | corpus | engine before |
+|---|---|---|
+| syllables / s (tempo-invariant) | 3.9 | 1.4 |
+| notes per sung bar · IOI median | 5.5 · 0.5 beat | 2.8 · 1 beat |
+| step / third / 4th–5th / repeat | 48 / 13 / 9 / 25% | 18 / 36 / 26 / 3% |
+| phrases · length · breath | 71 · 3.5 beats · one 8th | 7 · 15.5 beats · 0.75 |
+| phrase starts on the downbeat | 9% | 100% |
+| 2-bar cell returns at pitch | 31% | 0% |
+| out of key | 4% | 15% |
+| chorus lift (acc-selected) · acc doubles the tune 8ve up, verse → chorus | +3 · 9% → 92% | none · 95% everywhere by construction |
+| second voice | TRADES (0% overlap in both files) | none |
+
+"Harmony directly supporting the voice" is the accompaniment's octave-UP
+doubling of the tune in the chorus (83% above, 89% as the chord's top note),
+not a harmony singer: the two files with a VOCAL 2 never stack it.
+
+**WHAT WAS BUILT** (all opt-in, page-only, `ruleFresh(35)`-gated; `audition/songs.html`
+and `audition/vocal.html` rebuilt under the new code move 0 of 47 and 0 of 16
+songs by DATA compare, the latter also against the other session's r35 final
+snapshot):
+
+1. **`src/lib/vocal-line.js` — the vocal writer** (`opts.vocalWriter`). Per letter
+   (A verse, B chorus +4, others bridge +2) it authors a 4-bar spec — a CYCLIC
+   2-bar hook cell + an answer cell on the same rhythm — from rule tables only
+   (syllable budget `3.9 × 240/bpm` a bar with 16th pairs when 8ths cannot hold
+   it; the corpus phrase-start table; 3–8-syllable phrases with an 8th breath
+   written as an EXPLICIT REST; the corpus interval table as a mean-reverting
+   scale walk; strong beats and finals on the nearest chord tone; a three-
+   repeat cap; the hook at pitch, the answer re-rolled from the third statement
+   — r24's restate-then-depart) and `bindMelodySpec` (the D38 guard) binds it.
+   `bindMelodySpec` now accepts a null degree as a rest (export-vocal reads hap
+   gaps; legato emission fills every onset). Every line that RIDES the lead —
+   companion (now a diatonic THIRD below, the corpus's verse counter-note),
+   melody double, octave partner, chorus double — takes the same spec; a cast
+   `melody_takeover` leaves the sung line (measured: it put a calliope at midi
+   99 into `_lead_mix`).
+2. **`opts.chorusDouble`** — the B line an octave up on another family's voice
+   in B bars only, 0.7 × lead (measured: bars 4–7 / 12–15 of 16, gain 0.51; 0.73
+   at gainMul 1.0).
+3. **`src/lib/describe.js`** — a deterministic free-text prompt parser (synonym
+   tables + each vibe's own mood words; an emotion / environment / genre KEY
+   word scores 4; energy is a weighted tally). 19 tests. First pass misparsed
+   5 of 14 prompts ("boss fight … breakneck" → happy; "somber … losing army"
+   → triumphant × shop); tuned by rule, not by per-prompt patches.
+4. **`VOCALOID=1` → `audition/vocaloid.html`** (page `r35-vocaloid`): 14 `vo_*`
+   songs from one-sentence descriptions shown with their parse, tempos in the
+   corpus bands (76–195), family from the description, writer + chorus double
+   + companion + `noteBlind` + the r35 balance law, all sung.
+5. **`VOCALAB=1` → `audition/vocalab.html`** (`r35-vocalab`): 9 cards × 2–3 =
+   24 `vl_*` variants, each card under ONE name (D120) renamed for display, one
+   variable each, all sung: writer vs the r34 lead · rate 2.4/3.9/5.2 · starts
+   downbeat/pickup/mixed · breath none/8th/quarter · lift 0/+4/+8 · double
+   off/0.7/1.0 · companion none/third · 120 vs 180 bpm · hook corpus/answer-
+   varies/fresh. `test/vocaloid.test.js` pins that every card's variants share
+   a key and realize DISTINCT mixes.
+
+**MEASURED ON THE BUILT LINES** (38 songs, `_lead_mix`): notes per bar follow
+the law (7.5 at 120, 5.5 at 168, 5.0 at 180, 4.9 at 190 → 3.3–4.0 syl/s);
+downbeat starts 0–2 of ~16 phrases; rests real (vl_breath 6 → 15 → 9 phrases);
+steps 42–67%, repeats 9–35%; leaps ≥5 semis 4–20% (above the corpus's 2–9% —
+phrase entries and the guard's snaps); range 57–79. The r34 lead sung as-is on
+the same prompt (vl_writer_lead): 2.76 notes/bar, 1.9 syl/s, step 14%, leap 37%.
+First renders (DiffSinger → RVC): pitch within 50 cents on 71–81% of voiced
+frames, 0 octave errors, rests at −55 to −69 dB — the breaths are real gaps.
+
+**FIRST-BUILD DEFECTS, MEASURED AND FIXED.** (a) 4 notes a bar whatever the
+target — a pickup start ate the cell; the rhythm is cyclic now. (b) rate 5.2 /
+120 bpm capped at ~5.5 a bar on an 8th grid — the 16th share rises with the
+budget. (c) A `span` card (2/3/5) moved NOTHING (all 60–77): the tessitura is
+the walk's dynamics + the letter lifts, not the clamp — dropped. (d) A hook
+card differing only from the THIRD statement was identical on a 16-bar ABAB —
+`hookVary: 'answer1' | 'all'` re-roll from the second. (e) A "does the
+accompaniment sound the voice's pc" agreement measure read 0% on every engine
+downbeat (in a dense mix every chord tone the voice sings is doubled by some
+layer) and collapsed the corpus population (a reduction's verse acc is a bass
+note + one counter-note) — abandoned for chord-LABEL agreement on both sides.
+
+**THE VERIFY PASS (corpus + originality; the engine-side pass is the addendum).**
+- Corpus, re-measured from the raw MIDIs with independent code: speed,
+  intervals, phrase length/breath, repetition (31.0 / 32.1%), range, the
+  second-voice trade, minor 67% / bpm 162, the doubling contrast (5% → 96%
+  under a notes-per-strike-only selector, +3.3 lift; the per-window doubling
+  histogram is bimodal 391/64/77/49/352) — CONFIRMED. DRIFTS, all corrected
+  in the doc and scripts: the phrase-start class lumped the & of 4 into a 26%
+  "beat-4 pickup" (finely: beat 4 11%, & of 4 10%, off-8ths 23%) — the
+  WRITER'S START TABLE inherited that and was corrected (pages rebuilt,
+  renders restarted); "23 of 36 lift ≥ 3" was 19 (mislabeled report bins);
+  sus is 13% by half-bar time, not 16% (segment count), and 47% of half-bars
+  are thirdless; the beat-3 > beat-1 chord-tone ordering does not survive a
+  second labeller (a 5–6 point gradient does); "velocity flat 127 in every
+  file" is 35 of 36; "100% monophonic in every file" is 33 of 36 (Mind Brand
+  50%); "twelve" intro-less songs are 11; Tondemo Wonders is off by a 32nd
+  with a mid-song jump, and FOUR files sit on triplet grids the analyzer does
+  not detect (their odd-16th shares are triplet subdivisions — documented as a
+  limit, not fixed).
+- Originality ("patterns yes, tunes no", measured): every engine sung line's
+  longest shared (interval, gap-in-16ths) run with any corpus voice is ≤ 5
+  (median 4); two unrelated corpus songs share median 6–7, p90 9–11, max 23.
+  Interval-only runs ≥ 8: engine median 7 vs null 9 (the one 11-run is a
+  neighbour-rocking figure with a shared rhythm run of 3). Hamming near-miss
+  search finds no engine window within 2 of any corpus window. The writer
+  file holds rule tables only. NOT a corpus tune.
+
+**NOT BUILT (measured, left):** the chorus's accompaniment THICKENING (verse
+1.06 notes per strike / chorus 2.08, ×2.5 strikes) — a per-letter figure
+change in the travel machinery, a round of its own.
+
+**PROCESS NOTES.** Ethan committed mid-round (1aa001b, 03:12) and swept
+in-progress files of this round; later edits are uncommitted. The other
+session's D138 stands; its r35 final vocal snapshot was used for the compare.
+The `vl_` prefix also names four old scratch renders in audition/hq (from an
+earlier page) — unrelated.
+
+### D138 ADDENDUM 5 — his first poplab export (2026-09-12 07:35): 16 experiments "good", 14 cards marked, 6 labels, 19 unseen
+
+Imported with `node scripts/import-poplab.mjs` → `src/lib/pop-lab-labels.js`
+(25 entries; nothing feeds the engine, D95). The other session owns the
+page and its D139; his readings are recorded here so nothing is lost
+between rounds. What his ear said, and what it settles:
+
+- **"Chorus" means VOCAL HARMONY to him.** "by chorus I meant like the
+  harmony for voice so like instead of voices just singing one note
+  they're singing multiple voices"; the chorus-lift cards "just sound like
+  transitions". Vocabulary law for every future card and for the vocal
+  tier: a second sung voice in 3rds/6ths is the ask, not a section.
+- **"Human" includes TEMPO.** "human isn't just a constant static tempo
+  but a bit more fluid / with subtle variance" — the accent cards (bass-
+  loud decay most human, flat most robotic, the engine default "a bit
+  less than 2,3") are only half of it; rubato/micro-tempo is a new ask.
+- **Genre is layers, not chords** (twice): "game/rock doesn't really
+  depend on specific chords but the instruments and voices and layers and
+  melodies/harmonies within those chords"; the LH classes "can be used
+  for many different genres depending on layering and voicing". Consistent
+  with D120's labelling ruling; lane rules should key on cast and layers.
+- **Colour dose = sadness dose**: plain "could be sad, could be warm";
+  one ^7 "a bit more sad"; three coloured / ninths / V7 "same level of
+  sad", ninths "stronger and more painful" and usable as a variation.
+  Colour is an EMOTION dial to him, not a genre boundary.
+- **Harmonic rhythm**: 2-2-4 "more energetic", 4-4-8 "moodier", 6-2
+  "moody … could be dramatic", 2-2-2-2 "typical casual", 2-6 "ambient
+  and calm".
+- **Minor family**: aeolian i iv bVI bVII = "pop minor"; the major V
+  (Andalusian, V7) and the bare i iv = "majority film"; bVI bIII bVII =
+  pop. Borrowed: bVII "adds colour", iv "more moody", bVI+bVII
+  "heroic/epic".
+- **Pedal point**: all variants "roughly the same vibe"; moving roots
+  "more happy/warm/wholesome"; the dominant pedal's low note "should be a
+  bit softer".
+- **Walkdown / cadence**: all good; root position "slightly more
+  vanilla"; the chromatic lament "moodier"; cadence closes "agreed".
+- **Hook repeat**: the TRANSPOSED variant "sounds strange" (his
+  standing law: transposition is not variation); no-repeat "more
+  expressive but for songs it should be more structured unless it's
+  vocal — 2/3 are great" (re-fit landing / full re-fit).
+- **Anticipation ladder**: the pushes "work, but not for this calm
+  peaceful flute vibe"; restriking the current chord "works! more
+  energetic" — energy device, not a calm one.
+- **Layer entry**: the pickup one bar early AND the entry one bar late
+  both "sound better! I like the anticipation" — the r17 "not section-
+  locked" ask confirmed by ear on both sides of the grid.
+- **Register**: C1 "low and crunchy, should be softer"; a deep synth bass
+  under a peaceful flute "doesn't fit". Swap-per-bar "should retain more
+  energy in the transition". The D118 tail "doesn't sound natural when
+  it's changing measures and as the last note" (again).
+- **Rules-off**: "the really quick high note in the flute doesn't sound
+  very good" — the r33 grammar's absence heard directly.
+- **HQ**: on pl_prog_axis_rotation "with HQ on though the hi hat or
+  whatever's way too loud" — see the measurement below.
+- Every variant he marked was "works" (14 cards, 0 "off"); every card
+  verdict "good". 19 unseen, 15 of them in the answered-by-default tail.
+
+**The "hi hat … way too loud with HQ on" measurement (pl_prog_axis_rotation).**
+The card has no hat: its kit is md_kick / md_snare (with a 16th snare
+fill) under piano and acoustic bass. Re-rendered with stems: the mix stage
+levels every stem to `−20 + 20·log10(meanGain)` GATED INTEGRATED loudness
+(D80/D83), so the kick (gain 0.50) and the piano (0.45) are set to the same
+integrated level — but a one-shot's integrated loudness is measured over
+its short sounding windows only, which puts its HITS above a sustained
+voice at the same target: after leveling the kick's loudest 100 ms sits at
+**−18.9 dB RMS against the piano's −23.5** (4.6 dB over the piano's loudest
+moment; peaks −15.7 vs −12.9 dBFS), while the snare (−26.0) sits under
+it. That is the mechanism behind a "too loud" percussion in HQ that the
+DATA gains do not show, and it reaches every HQ render with one-shots.
+The fix — level PERCUSSION stems by their momentary maximum (or a
+per-hit peak) rather than integrated loudness — changes every drum song's
+HQ mix and needs his ear on a page, so it is proposed on the todo, not
+shipped inside this addendum; the browser tier's own kick-to-piano
+relation is still unmeasured.
+
+### D139 ADDENDUM — the engine-side verify pass, what it refuted, and the sung HARMONY voice (his poplab note, relayed: "by chorus I meant like the harmony for voice — instead of voices just singing one note they're singing multiple voices")
+
+**REFUTED / DRIFTED by the verifier (measured on the built pages), each fixed and re-measured:**
+
+1. **The chorus double sang in UNISON on 34 of 36 songs** ("+12 on 0% of shared
+   onsets"). Cause: `composeVocalLine` re-centres on an ABSOLUTE target midi
+   with a degree search over [−7, 21], so the `octave` parameter was a no-op;
+   the same search floor parked vo_kitchen's singer at A5 (median 83, 76% of
+   notes above 80) because its leadOctave is 6. Fix: the search spans ±28
+   degrees; `writerBind` composes and binds at the LEAD's octave and expresses
+   a rider's octave as a degree shift (+7 per octave). A second pass caught
+   the double's range cap (by the octave PARAMETER) pulling it back to unison
+   or an octave DOWN: the pool is now filtered by the double's REALIZED
+   register (octave 5) and the parameter is uncapped. Re-measured: +12 on
+   **100%** of shared onsets, both pages; kitchen's singer 61–77.
+2. **Voice collisions.** The double landed on the B-letter lead voice (3 songs)
+   and on the companion's voice (12); the companion on the B-letter lead (2);
+   under `fullSynth` the companion's pick was mapped to a synth AFTER the
+   exclusion (vo_android: lead, double and companion all on the square). Fix:
+   both pools exclude `letterSound('B')` and each other, and the exclusion is
+   asked of the voice that will SOUND. The `fullSynth` pool was also EMPTY on
+   synth songs (every member excluded — D119, count the pool) and every piano
+   song got the square: one wide pool, register- and family-filtered, with a
+   fallback. Re-measured: collisions none; doubles on flute / celesta /
+   marimba / music box / vibraphone / clarinet / sawtooth across the 14.
+   **THE FIRST CUT OF THIS FIX MOVED SIX JUDGED SONGS** (snow, happy_desert,
+   three catacombs, citadel, and vx_happy_shop): the B-voice exclusion was
+   not gated and re-picked judged companions. Gated to `vocalWriterOn`;
+   0 of 47 / 0 of 16 by DATA compare (vocal.html also against the other
+   session's r35 final snapshot).
+3. **The chorus lift vanished on 10 of 36** (≤0; vo_chase −10): the walk's pull
+   back to the centre fired only BEYOND the span, so lines parked at the
+   clamp and the +4 sat inside the walk's noise. Fix: the pull is proportional
+   to the distance from the centre, the chorus default is +5 with a small
+   upward lean. Re-measured: suite lift median +6, ≤0 on 0 of 14; lab +5, ≤0
+   only on the three `lift_flat` variants (by design).
+4. **Phrase starts: only the first phrase took the table** (52% off-8th, beat
+   2/3 0%; `vl_starts_pickup` was half off-8ths). Fix: every phrase draws its
+   start from the table, reached by lengthening the breath by ≤ two 8ths
+   (not when a lab card pins the breath — that snap collapsed the breath
+   card's variants, caught by the distinct-mix test). Re-measured (suite):
+   downbeat 11%, beat 2 14%, beat 3 14%, beat 4 4%, & of 4 11%, off-8ths 45%
+   — the off-8th share is still double the corpus's 23%; a quarter final +
+   an 8th breath lands on an odd slot by arithmetic. Documented, not solved.
+5. **The singer went silent in dialogue sections** (2 of 4 B bars on
+   vo_goodbye): the answer voice's line is the OLD retrieved tune, excluded
+   from `_lead_mix` under the writer. Fix: `planForm(plan, { noDialogue })`
+   under the writer.
+6. **Companion register**: −3/−4 on <50% of shared onsets on 12 songs (median
+   −15 on 10: the companion's range-capped octave, applied as a degree shift,
+   put it an octave and a third down). Fix: under the writer the companion
+   binds at the lead's octave (its realized line sits near midi 63, inside
+   every companion voice). Re-measured: −3/−4 on 86–87% (median), never above.
+7. **The syllable law reads 3.75/s median, not 3.9**, with slow songs at 2.0–2.8
+   (the 8-notes-a-bar cap; the corpus's own <100 band sings 2.2/s) — a
+   documented clamp, not a bug. Out-of-key 1% median / 8% max (borrowed-chord
+   tones of the B letter's mixture treat) vs the 15% of the r34 voice.
+   Chord-tone gradient now beat 1 91% / beat 3 94% / off-8th 50% — steeper
+   than the corpus (64/67/59), the right way round.
+8. **One-variable cards, honestly**: rate / starts / breath also move `_drums`
+   by ≤7% (the r33 kit cap reads the lead's realized mean); the writer card's
+   `lead` variant plans 28 bars vs 16 (the r34 lead's period shapes the form);
+   the tempo card moves bass / counterline / drums with the bpm — it is the
+   syllable-law card, not a one-variable one. Stated on the page.
+9. Parses the verifier questioned: "drums like footsteps" gave vo_march NO
+   drums (somber's percMul 0) — `describe.js` now emits `hints.drums` for
+   drum words and the suite honours it; "clap along / big backbeat" now count
+   as high energy. "city chase → space" and "rooftop → festival, high" stand.
+
+**THE HARMONY VOICE (built after his clarification).** The corpus's own second
+voice trades (D139 law 11), but his words are explicit: a second SUNG voice.
+`opts.vocalHarmony` = the writer's line a diatonic third below in the B
+bars (`{ all: true }` for the whole song; `degrees: 5` for a sixth), a 0.3 ×
+lead guide on the page and the solo `_vocal_harmony`; `export-vocal.mjs
+--line` and `render-vocal.mjs --line/--tag/--harmony-db` (additive; defaults
+unchanged) sing it as a second stem (`<song>.harmony.vocal.wav`) which the
+plain run mixes 4 dB under the lead voice. On every suite song (chorus) and
+on a new lab card `vl_harmony` (none / chorus / all). The lab is now 10 cards
+× 2–3 = 27 variants.
+
+**RENDERS.** The loop was restarted three times as the pages changed (start
+table, the fixes above); every `vl_*`/`vo_*` render was deleted before the
+final loop so no stale HQ mix sits under a new voice. Final pages: vocaloid
+14 songs (14 writer, 14 harmony), vocalab 27 variants (26 writer — the
+`writer_lead` control is the r34 path — 2 harmony).

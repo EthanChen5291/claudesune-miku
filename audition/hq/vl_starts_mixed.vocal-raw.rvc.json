@@ -1,0 +1,11 @@
+{
+ "model": "infamous_miku_v2.pth",
+ "index": "added_IVF2983_Flat_nprobe_1_infamous_miku_v2_v2.index",
+ "pitch": 0,
+ "f0": "rmvpe+",
+ "index_rate": 0.66,
+ "protect": 0.33,
+ "sr": 40000,
+ "seconds": 48.68,
+ "convert_s": 39.78469491004944
+}

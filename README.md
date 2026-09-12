@@ -20,6 +20,7 @@ npm install                          # Strudel 1.1.0, exact-pinned (see below)
 npm test                             # 39 files, 394 tests (~45 s; rebuilds songs.html)
 node scripts/audition-songs.mjs      # rebuilds audition/songs.html (47 judged songs)
 open audition/songs.html             # listen; export verdicts JSON from the page
+npm run listen                       # or serve audition/ at http://localhost:8765 so the per-card wav download links work
 ```
 
 Node 22+ (developed on 26). The HQ render tier has extra native dependencies,

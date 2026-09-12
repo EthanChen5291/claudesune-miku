@@ -217,6 +217,43 @@ ambiguous). Read the LAST few D-entries before starting any round.
   (interval, gap) pairs against every source RH caught one card that had
   reproduced Shape of You's cell transposed. Run that comparison before a
   page built on copyrighted material ships.
+- **THE ENGINE'S VOICE HAD THE RANGE AND NOTHING ELSE (r35/D139).** 36
+  Vocaloid transcriptions measured against the 17 sung scores the engine had
+  exported: syllables/s 3.9 vs 1.4, step 48% vs 18%, phrase starts on the
+  downbeat 9% vs 100%, 2-bar cells returning at pitch 31% vs 0%, out of key
+  4% vs 15% — while the range (58–80 / 55–78) already matched. "Good but
+  uniform" was ONE shape: the instrumental lead sung as-is. The sung line is
+  now a RULE-COMPOSED spec per letter (`src/lib/vocal-line.js`,
+  `opts.vocalWriter`) through `bindMelodySpec`'s guard; every rider
+  (companion, double, octave, chorus double) takes the same spec. The chorus
+  in that corpus is a REGISTER (+3..+5) and a TEXTURE (the accompaniment
+  doubling the tune an octave UP in 92% of choruses vs 9% of verses, ×2.5
+  strikes, ×2 notes per strike) — never a speed and never a harmonic rate.
+- **A LAB CARD THAT MOVES NOTHING IS A FAKE A/B — MEASURE EVERY VARIANT
+  BEFORE IT SHIPS (r35/D139).** Two of nine cards were dead on first build: a
+  walk-width card whose three variants all realized 60–77 (the tessitura is
+  set by the walk's dynamics, not the clamp), and a hook card whose variants
+  differed only from the THIRD statement on a 16-bar ABAB form (no letter
+  reaches a third statement). A test now pins that a card's variants realize
+  DISTINCT mixes. Also: a "does the accompaniment sound the voice's pc"
+  agreement measure read 0% on every engine downbeat — in a dense mix every
+  chord tone the voice sings is doubled by some layer, so excluding the
+  doubling excludes exactly the agreements. Label the chord; do not count the
+  set.
+- **A DOUBLER IS VERIFIED BY ITS INTERVAL AT SHARED ONSETS, NEVER BY ITS OCTAVE
+  PARAMETER (r35/D139).** The chorus double was requested at `leadOctave + 1`
+  and sang in UNISON on 34 of 36 songs: the writer re-centres on an absolute
+  target, so the parameter was a no-op, and a range cap on the PARAMETER then
+  pulled it to unison or an octave DOWN. A rider's octave is a degree shift
+  from ONE bound octave, its pool is filtered by the REALIZED register, and the
+  verify pass measures the interval histogram at shared onsets (+12 on 100%
+  after the fix). Same round: an un-gated pool exclusion moved six judged
+  songs — every pool change is `vocalWriterOn`/rule-gated and byte-compared.
+- **A NEW MELODY WRITER MUST OWN EVERY LINE THAT RIDES THE LEAD (r35/D139).**
+  The first build's sung line reached midi 99: a cast `melody_takeover` layer
+  still carried the OLD retrieved tune into `_lead_mix`, and the companion /
+  octave / double bound their own cells. Under the writer they all take the
+  writer's spec (shifted, re-octaved) and the takeover leaves the score.
 - **"ABSTRACT THIS TO ANY X" MEANS A LABEL, NOT A REDESIGN (r30/D120).** His four
   "could be abstracted to any dark/calm/epic environment" notes were read as an
   engine-redesign ask and planned as `core(mood,energy) x tint(environment)`. His
