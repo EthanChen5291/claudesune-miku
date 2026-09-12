@@ -109,3 +109,45 @@ test('r35: the Vocaloid suite and the vocal lab pages are built from description
     assert.equal(lines.size, cards.get(c), `card ${c}: variants collapse to ${lines.size} distinct mixes`);
   }
 });
+
+// ---- r36 — his first export on the Vocaloid page (D140) ---------------------
+import { assignLyrics, copyLyricsFrom } from '../src/lib/lyrics-ja.js';
+
+test('r36 melisma law: every sung note takes its own mora at melismaUnder 0; the r34 rule still exists', () => {
+  // a 16th pair at 128 bpm (0.117 s) — the exact shape of his four "Indian fluctuation" cards
+  const mk = () => ({ name: 'vo_test', notes: Array.from({ length: 16 }, (_, i) => ({ start: i * 0.117, dur: 0.117, midi: 64 + (i % 3), phrase: Math.floor(i / 8) })) });
+  const a = mk(); assignLyrics(a, { seed: 'x', melismaUnder: 0 });
+  assert.equal(a.notes.filter((n) => n.melisma).length, 0, 'no vowel continues onto a new pitch');
+  const b = mk(); assignLyrics(b, { seed: 'x', melismaUnder: 0.14 });
+  assert.ok(b.notes.filter((n) => n.melisma).length > 0, 'the r34 rule is still reachable');
+});
+
+test('r36 the harmony voice sings the lead\'s words at shared onsets (copyLyricsFrom)', () => {
+  const lead = { name: 'lead', notes: Array.from({ length: 8 }, (_, i) => ({ start: i * 0.25, dur: 0.25, midi: 64 + i, phrase: 0 })) };
+  assignLyrics(lead, { seed: 'lead', melismaUnder: 0 });
+  // the harmony strikes with the lead on even onsets and rests on the odd ones, plus one onset the lead never strikes
+  const harm = { name: 'harm', notes: [0, 2, 4, 6].map((i) => ({ start: i * 0.25, dur: 0.5, midi: 60 + i, phrase: 0 })).concat([{ start: 1.62, dur: 0.1, midi: 60, phrase: 0 }]) };
+  assignLyrics(harm, { seed: 'harm', melismaUnder: 0 });
+  const matched = copyLyricsFrom(harm, lead);
+  assert.equal(matched, 4);
+  for (const i of [0, 1, 2, 3]) assert.equal(harm.notes[i].syl, lead.notes[i * 2].syl, `onset ${i * 2}`);
+  assert.equal(harm.notes[4].syl, lead.notes[6].syl, 'an unshared onset carries the lead\'s current syllable');
+  assert.ok(harm.notes.every((n) => !n.melisma));
+  assert.equal(harm.lyrics.length, 1);
+});
+
+test('r36 the Vocaloid page: the chorus double sits on a keyboard on every fresh song; his three keeps are pinned', () => {
+  const h = readFileSync(new URL('../audition/vocaloid.html', import.meta.url), 'utf8');
+  const i = h.indexOf('const DATA = '); const data = JSON.parse(h.slice(i + 13, h.indexOf(';\n', i)));
+  const gen = readFileSync(new URL('../scripts/audition-songs.mjs', import.meta.url), 'utf8');
+  const KEEPS = ['vo_reflection', 'vo_lullaby', 'vo_march'];
+  for (const k of KEEPS) assert.ok(new RegExp(`id: '${k.slice(3)}',[^\\n]*keepFresh: true, pinFrom: 'r36'`).test(gen), `${k} carries keepFresh + pinFrom r36`);
+  for (const s of data.songs) {
+    const dbl = (s.cast ?? []).find((c) => /^chorus double/.test(c));
+    if (!dbl || KEEPS.includes(s.name)) continue;
+    const snd = /: (\S+) plays/.exec(dbl)?.[1];
+    assert.ok(/^(piano|gm_epiano1|gm_vibraphone|gm_marimba|gm_celesta|gm_music_box)$/.test(snd), `${s.name}: double on ${snd} — a wind or a lead reads "off key" against the voice`);
+  }
+  // the pins on the page: vocalStyle only where a row asks; vocalDb numeric
+  for (const s of data.songs) { assert.equal(typeof s.vocalDb, 'number'); if (s.vocalStyle) assert.equal(s.vocalStyle, 'layer'); }
+});

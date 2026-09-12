@@ -1,3 +1,45 @@
+## NEW — your first Vocaloid-page export is in (14 cards, 3 keeps, 13 notes) — D140 (r36, 2026-09-12)
+
+Every note measured and fixed; the three keeps (reflection, lullaby, march)
+are pinned and byte-identical on their music. **Open `audition/vocaloid.html`
+with HQ ON + Vocal ON** once the re-render finishes (every card now has
+⬇ wav / ⬇ vocal wav download links; `npm run listen` serves the pages at
+http://localhost:8765 if your browser opens the wav instead of saving it).
+
+What your ear found, and what it was:
+- **"Indian fluctuation … held and different notes" (villain, cafe, sugar,
+  march)** = MELISMA. Short notes after another note continued the previous
+  vowel on a new pitch (an r34 rule for instrumental ornaments); the writer's
+  16th pairs triggered it on 46–66% of those songs' notes, 0% on the ones you
+  liked. Now every note takes its own mora (a 16th pair is two syllables).
+  March is re-sung under the law with its music untouched.
+- **"multiple voices should say the same lyrics" (chase)** — the harmony voice
+  now copies the lead's syllable at every shared onset (168/168 on villain).
+- **"flute/woodwind off key" (android, cafe, sugar) and "violin too loud"
+  (corridor)** were all the CHORUS DOUBLE: a clarinet/flute an octave over the
+  voice, in key but exposing the converted singer's pitch drift. It now plays
+  on the accompaniment's own piano/e-piano at half the lead, as the corpus
+  does; string support under a sung lead is ×0.6.
+- **"too loud" voice (rooftop, corridor, kitchen)** — per-song levels −5/−3/−4
+  dB; festival lane −4 by default ("for energy like festivals … much softer").
+- **"vocals as a layer/whisper for scary"** — `vocalStyle: 'layer'` on villain
+  and corridor: low-passed, wetter room, quieter. A true whisper timbre is not
+  in this voicebank.
+- **"excited but in minor" (fireworks) / "doesn't fit excited" (opening)** —
+  both had hashed onto the same ii-m9 city-pop loop. A bright-pool rule
+  (major tonic, no foreign roots, ≤⅓ minor) exists now, but only TWO clicked
+  major exemplars pass it, so these two are pinned on I V vi IV and IV I V vi
+  served raw. **Clicking keeps on bright major progressions grows that pool.**
+- **"Alberti too quick at 176 … too fast" (chase)** — 152 bpm, acc pool runs
+  the metronome test (now broken tenths).
+- A keep click on this page CRASHED the build (an r34 index under the old
+  gate) — fixed and guarded.
+
+Still open: kitchen "more serious than goofy" (only the voice level was asked
+for; the block-chord acc is the other half), the lab page re-render, the
+fluid tempo, chorus acc thickening. A peer session is replacing the random
+moras with real lyrics; the re-sing of both pages waits for it.
+
 ## NEW — the Vocaloid read-out, the vocal writer, `audition/vocalab.html` + `audition/vocaloid.html` (r35, 2026-09-12)
 
 Your 37 Vocaloid MIDIs (staged at `audios/vocaloid-r35/`, gitignored) are read
@@ -153,6 +195,23 @@ vs 16th vs the old final-slot 16th; is one landing-note change audible at
 all; which breakdown grade is "the piano disappears"; does a class change at
 constant loudness read as a chorus.
 
+
+## Real Japanese lyrics (r36, your "it should actually produce real japanese lyrics, of course with parts bound to the melody")
+
+The random-syllable pool is gone. Every sung line is now a Japanese SENTENCE
+written from grammar (23 clause shapes over ~200 words, verbs conjugated) and
+bound to the tune: a word never crosses a rest, a long note gets a word
+boundary or a held vowel, every note keeps exactly one mora, the chorus sings
+the same words on every return, verse 2 gets new words over verse 1's tune,
+and the vocabulary follows the prompt (a rainy goodbye sings ame / eki /
+namida, the cafe sings koohii / asa / mado, the corridor sings gakkou /
+ashioto / kage). Each vocal card gets a **lyrics** fold-out (kana / romaji /
+English gloss per line, ↻ marks the chorus returning) once the songs are
+re-rendered — the other session's render loop re-sings all of them with the
+new words; until then the old wavs still sing the old syllables. Nothing
+stored is a line from any song (a test enforces "words, not lines"); the
+lines are J-pop fragments, not a story across verses — say if you want that.
+`--lyrics pool` on export-vocal reproduces the old lines for any song.
 
 ## The vocal suite — `audition/vocal.html` (your "suite ... mostly energetic" + "vary the lyrics")
 

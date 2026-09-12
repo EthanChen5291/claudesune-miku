@@ -45,6 +45,19 @@ const { values, positionals } = parseArgs({
     // key to sing — `_lead_mix` (the tune) or `_vocal_harmony` (the writer's
     // line a third below, chorus bars), rendered as a SECOND vocal stem
     line: { type: 'string', default: '_lead_mix' },
+    // r36 — HIS FOUR "INDIAN FLUCTUATION" CARDS (villain, cafe, sugar, march):
+    // "during the same lyric, it's held and different notes". Measured: those
+    // four had 46-66% of their sung notes as MELISMA (a note under 0.14 s
+    // continuing the previous vowel on a new pitch — r34's rule for the
+    // instrumental lead's ornaments); the songs he liked had 0-13%. A Vocaloid
+    // line puts a mora on every note (the corpus's 16th pairs are two
+    // syllables). Default 0 = every note takes its own mora; `--melisma 0.14`
+    // restores the r34 behaviour.
+    melisma: { type: 'string', default: '0' },
+    // r36 — "if there are multiple voices, even if notes are different they
+    // should be saying the same lyrics": a lead score whose moras this line
+    // copies at shared onsets (the harmony voice sings the lead's words)
+    'lyrics-from': { type: 'string' },
   },
 });
 const NAME = positionals[0];
@@ -202,10 +215,20 @@ const score = {
     silentBars: [...perBar].filter(([b]) => !sounding.has(b)).map(([b]) => b),
   },
 };
-if (values.lyrics === 'ja') {
-  const { assignLyrics } = await import('../src/lib/lyrics-ja.js');
-  score.lyrics = assignLyrics(score, { seed: NAME });
-  score.lyricMode = 'ja';
+if (values.lyrics === 'ja' || values.lyrics === 'pool') {
+  const { assignLyrics, copyLyricsFrom } = await import('../src/lib/lyrics-ja.js');
+  // r36 — real lyrics (src/lib/lyrics-ja-writer.js): the writer reads the
+  // song's prompt + description for its vocabulary and the page's `sections`
+  // (vocal pages only) for verse/chorus keying; `--lyrics pool` = the r34 lines
+  score.theme = { emotion: song.prompt?.emotion ?? null, environment: song.prompt?.environment ?? null, description: song.description ?? null };
+  if (Array.isArray(song.sections)) score.sections = song.sections;
+  score.lyrics = assignLyrics(score, { seed: NAME, melismaUnder: Number(values.melisma), mode: values.lyrics === 'pool' ? 'pool' : 'writer' });
+  score.lyricMode = values.lyrics;
+  if (values['lyrics-from']) {
+    const lead = JSON.parse(readFileSync(values['lyrics-from'], 'utf8'));
+    score.lyricsFrom = values['lyrics-from'];
+    score.lyricsMatched = copyLyricsFrom(score, lead);
+  }
 }
 const out = values.out ?? join(ROOT, 'audition', 'hq', `${NAME}.vocal-score.json`);
 writeFileSync(out, JSON.stringify(score, null, 1));
@@ -215,8 +238,9 @@ if (!values.quiet) {
   console.log(`  register: median ${median} -> shift ${shift >= 0 ? '+' : ''}${shift}; ${phrases.length} phrases (${folded} re-octaved); sung range ${Math.min(...mids)}-${Math.max(...mids)} (target ${lo}-${hi})`);
   if (score.lyrics) {
     const distinct = new Set(score.lyrics.map((l) => l.text)).size;
-    console.log(`  lyrics (ja): ${score.lyrics.length} phrases, ${distinct} distinct lines, ${score.notes.filter((n) => n.melisma).length} melisma notes`);
-    for (const l of score.lyrics.slice(0, 4)) console.log(`    @${l.start.toFixed(1)}s  ${l.text}`);
+    console.log(`  lyrics (ja): ${score.lyrics.length} phrases, ${distinct} distinct lines, ${score.notes.filter((n) => n.melisma).length} melisma notes${score.lyricsFrom ? ` — words copied from the lead (${score.lyricsMatched}/${score.notes.length} at shared onsets)` : ''}`);
+    if (score.lyricStats) { const st = score.lyricStats; console.log(`  lines: ${score.lyrics.filter((l) => !l.refrain).length} written, ${st.refrainReused + st.refrainRebound} refrain returns (${st.refrainRebound} re-bound), ${st.variants} variants, ${st.exts} held vowels, ${st.fallbacks} fallbacks`); }
+    for (const l of score.lyrics.slice(0, 4)) console.log(`    @${l.start.toFixed(1)}s ${l.section ? `[${l.section}] ` : ''}${l.romaji ?? l.text}${l.gloss ? `  — ${l.gloss}` : ''}`);
   }
   console.log(`  wrote ${out}`);
 }

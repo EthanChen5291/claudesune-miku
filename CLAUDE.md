@@ -254,6 +254,27 @@ ambiguous). Read the LAST few D-entries before starting any round.
   still carried the OLD retrieved tune into `_lead_mix`, and the companion /
   octave / double bound their own cells. Under the writer they all take the
   writer's spec (shifted, re-octaved) and the takeover leaves the score.
+- **A VOWEL CONTINUED ONTO A NEW PITCH IS "INDIAN FLUCTUATION" TO HIS EAR
+  (r36/D140).** r34's melisma rule (a note under 0.14 s with no gap takes no
+  mora) met the r35 writer's 16th pairs and 46–66% of the sung notes on his
+  four "held and different notes … sounds Indian" cards were melisma, 0% on
+  the songs he liked. A Vocaloid line is one mora per note; `--melisma` is 0.
+  And every sung voice says the SAME words: the harmony copies the lead's
+  syllable at shared onsets (`copyLyricsFrom`), never rolls its own.
+- **A SOLO WIND DOUBLING A CONVERTED VOICE AT THE OCTAVE READS "OFF KEY"
+  (r36/D140).** Three "woodwind off key" cards and one "violin too loud" were
+  all the chorus double — in key on 98% of notes, drawn from a wide pool onto
+  gm_clarinet/gm_flute at midi 81–84 — exposing the singer's pitch drift. The
+  corpus doubles on the accompaniment's own piano; so does the engine now
+  (keyboards/mallets only, 0.5 × lead). And with a 0.45 guide lead, every D77
+  support band was set against the wrong reference: ×0.6 under a voice.
+- **A BUG FIX GATED `ruleFresh(N)` RUNS THE BUG ON THE KEEP CLICK (r36/D140).**
+  The D138 index fix was gated r35; his keep on vo_lullaby flipped priorKeep,
+  the r34 constant index ran, pointed past `mixParts`, and the PAGE COULD NOT
+  BUILD. A gated fix needs a fallback that is correct on both paths (an
+  out-of-range index falls back to the true one). Same round: the clicked
+  bright-major exemplar pool is TWO Undertale loops (D119) — both excited
+  major songs hashed onto one; pinned with basePin + rawBase.
 - **"ABSTRACT THIS TO ANY X" MEANS A LABEL, NOT A REDESIGN (r30/D120).** His four
   "could be abstracted to any dark/calm/epic environment" notes were read as an
   engine-redesign ask and planned as `core(mood,energy) x tint(environment)`. His
@@ -982,6 +1003,18 @@ Surge patches must come from the release tag matching the vendored build.
   vocal songs; `guitar: 'main'` (D137) is the separate, louder, genre-
   gated mode with the intro riff and the final-chorus melody double, for
   J-rock / anime-opening / power-pop / Vocaloid-rock / city-pop lanes only.
+- **REAL LYRICS ARE GRAMMAR + A MELODY BINDER, NEVER A LINE TABLE (r36/D141).**
+  His "currently, our vocaloid produces random japanese syllables. it should
+  actually produce real japanese lyrics, of course with parts bound to the
+  melody". `src/lib/lyrics-ja-writer.js`: templates x tagged lexicon x verb
+  conjugation write one clause per 2-bar phrase; a bunsetsu never crosses a
+  rest (segments cut at 0.4 beat), a long note gets a word end or a held 'ー',
+  the chorus is keyed by ordinal (same words every statement), the verse by
+  statement, the prompt/description picks the words. Vocal-page songs carry
+  `sections` (spread-gated on `opts.vocalLead`; songs.html 47/47 identical).
+  D137 on the text side: a test fails on any lexicon entry longer than a word.
+  NEVER pre-export a score into audition/hq before a render — render-vocal's
+  re-sing check reads the on-disk syllables and would keep the OLD dry wav.
 - **r35 — HIS FIRST VOCAL-PAGE EXPORT (D138), the laws it wrote:**
   - **THE SINGER'S CEILING IS G#5 AND IT IS DURATION-AWARE.** Both "sounds
     like screaming" notes were A5 held 0.70-0.74 s; A#5/B5 at 0.2-0.4 s, G5

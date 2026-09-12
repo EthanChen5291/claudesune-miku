@@ -5,22 +5,22 @@
    "notes": 10,
    "frames": 248,
    "breath": 32.85714,
-   "pitch_dev_median_st": 0.27881622314453125,
-   "pitch_dev_max_st": 74.48583984375
+   "pitch_dev_median_st": 0.3330841064453125,
+   "pitch_dev_max_st": 68.6871337890625
   },
   {
    "start": 26.42857,
    "notes": 6,
    "frames": 188,
    "breath": 1.071430000000003,
-   "pitch_dev_median_st": 0.32171630859375,
-   "pitch_dev_max_st": 72.03031158447266
+   "pitch_dev_median_st": 0.2632942199707031,
+   "pitch_dev_max_st": 72.2786865234375
   }
  ],
  "pitch_model": true,
  "seconds": 48.714285714285715,
- "peak": 0.06214704364538193,
- "render_s": 4.4118568897247314,
+ "peak": 0.06411941349506378,
+ "render_s": 4.776147127151489,
  "speaker": "tiger_fresh",
  "syllable": "la"
 }

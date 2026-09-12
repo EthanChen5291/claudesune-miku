@@ -24,7 +24,7 @@
 // Articulation rides the vibe: staccato/legato/damper per emotion (or the
 // environment's default), composed over each pattern's own authored legato.
 
-import { writeFileSync, mkdirSync, existsSync } from 'node:fs';
+import { writeFileSync, readFileSync, mkdirSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { compileVibe } from '../src/lib/vibes.js';
@@ -687,6 +687,35 @@ function buildSong(prompt, name, opts = {}) {
   // computed after trope selection below.
   let desertScale = null;
   let famPool = EX.entries.filter(([n, e]) => clicked(n) && e.family === v.family);
+  // r36 — HIS vo_fireworks CARD: "it's excited but the entire thing is in
+  // minor and the chord progression sounds a bit too minor -> this also
+  // reflects in the vocals" (and vo_opening's "doesn't fit the excited vibe"):
+  // both excited MAJOR songs had hashed onto vid_citypop_c_a, a ii-m9 city-pop
+  // loop with two foreign roots and four minor-quality chords in seven. A
+  // major key is not a bright song. `opts.brightPool` keeps only exemplars
+  // with a major-quality TONIC chord, no foreign roots and at most half their
+  // chords minor — idol-pop harmony — before the hash picks. Vocal-writer
+  // songs only (a pool filter is a retrieval re-roll, D95).
+  if (opts.brightPool && opts.vocalWriter && ruleFresh(35)) {
+    const DIATONIC = new Set([0, 2, 4, 5, 7, 9, 11]);
+    const bright = famPool.filter(([, e]) => {
+      const toks = String(e.degrees ?? '').split(/\s+/).filter(Boolean);
+      if (!toks.length) return false;
+      let minor = 0, tonicMajor = false;
+      for (const t of toks) {
+        const [d, q = ''] = t.split(':');
+        const semi = ((parseInt(d, 10) || 0) % 12 + 12) % 12;
+        if (/^(m|o)/.test(q)) minor++;
+        if (!DIATONIC.has(semi)) return false;
+        // a dominant-7th/9th/13th anywhere but on V is a secondary dominant or a
+        // blues tonic (vid_citypop_c_b's `0:7 9:7`) — jazz colour, not bright pop
+        if (/^(7|9|13)/.test(q) && semi !== 7) return false;
+        if (semi === 0 && /^(\^7|sus|6|add9|9)?$/.test(q)) tonicMajor = true;
+      }
+      return tonicMajor && minor / toks.length <= 0.34;
+    });
+    if (bright.length) famPool = bright;
+  }
   // D65 (his second calm-water kill): a killed song's base is EXCLUDED from
   // its next retrieval — "chord progression isn't good" twice is a verdict on
   // the ingredient, and re-serving it is re-asking a settled question.
@@ -2601,6 +2630,11 @@ function buildSong(prompt, name, opts = {}) {
   // double) takes the same spec so it stays rhythm-locked. Opt-in, page-only,
   // r35-gated: no judged song carries it.
   const vocalWriterOn = !!opts.vocalWriter && ruleFresh(35);
+  // r36 — his vo_corridor card "violin too loud": with a SUNG lead the
+  // instrumental lead is a x0.45 guide, so every string support band (set
+  // under a full-gain lead, D77) sits over it. Support under a voice: x0.6.
+  const supportMul = vocalWriterOn && ruleFresh(36) ? 0.6 : 1;
+  const supportBand = (a, b) => [Math.round(a * supportMul * 1000) / 1000, Math.round(b * supportMul * 1000) / 1000];
   const vocalWriterCfg = typeof opts.vocalWriter === 'object' ? opts.vocalWriter : {};
   const writerRole = (L) => (vocalWriterCfg.roles?.[L]) ?? (L === 'A' ? 'verse' : L === 'B' ? 'chorus' : 'bridge');
   const writerBind = (L, ctxL, stmt = 0, { octave = leadOctave, sound = LEAD_SOUND, fx = leadFx, shift = 0, role = null, gainRange = null } = {}) => {
@@ -4269,7 +4303,7 @@ function buildSong(prompt, name, opts = {}) {
     // steps to 3 — support tops stay UNDER the lead (D77). Keyed on the
     // cap itself, never on the octave value (two kept songs' vibes sit at
     // leadOctave 4 natively and must not move).
-    const clOpts = { octave: leadRangeCapped ? 3 : 4, sound: clSound, loopRoots: true, gainRange: [0.12, 0.24], fx: '.room(0.45)', rhythmName: 'counterline' };
+    const clOpts = { octave: leadRangeCapped ? 3 : 4, sound: clSound, loopRoots: true, gainRange: supportBand(0.12, 0.24), fx: '.room(0.45)', rhythmName: 'counterline' };
     const bindCl = (ctx) => snapSupport(bindFigure(clHold, ctx, v.meter, clOpts).expr, barSyms);
     const bindClimb = (ctx) => snapSupport(bindFigure(clClimb, ctx, v.meter, clOpts).expr, barSyms);
     const clBars = form.sections.flatMap((sec) => Array(sec.bars).fill(sec.lead !== 'none' ? 1 : 0));
@@ -4463,7 +4497,7 @@ function buildSong(prompt, name, opts = {}) {
     // 60% of its haps above midi 76, topping F6)
     const bindMc = (ctx) => snapSupport(bindFigure(mcFig, ctx, v.meter, {
       octave: tonicPc >= 5 ? 3 : 4, sound: mcSound, loopRoots: true,
-      gainRange: [0.22, 0.42], fx: '.clip(0.4).room(0.25)', rhythmName: 'marcato',
+      gainRange: supportBand(0.22, 0.42), fx: '.clip(0.4).room(0.25)', rhythmName: 'marcato',
     }).expr, barSyms);
     const mcBars = form.sections.flatMap((sec) => Array(sec.bars).fill((ENERGY[sec.archetype] ?? 3) >= 4 ? 1 : 0));
     if (mcBars.some(Boolean)) {
@@ -4739,7 +4773,7 @@ function buildSong(prompt, name, opts = {}) {
       ? { name: 'descant-tension', bars: 2, onsets: ['0', ...dWalk], figure: ['9.5', '5', '6', '5'], accents: [0.6, 0.55, 0.62, 0.55], legato: true }
       : { name: 'descant', bars: 2, onsets: ['0', ...dWalk], figure: ['3.5', '5', '6', '5'], accents: [0.6, 0.55, 0.62, 0.55], legato: true };
     const dSound = (opts.fullSynth || synthAcc) ? 'gm_synth_strings_1' : 'gm_string_ensemble_1';
-    const bindD = (ctx) => snapSupport(bindFigure(dFig, ctx, v.meter, { octave: dOct, sound: dSound, loopRoots: true, gainRange: [0.15, 0.28], fx: '.room(0.5)', rhythmName: 'descant' }).expr, barSyms);
+    const bindD = (ctx) => snapSupport(bindFigure(dFig, ctx, v.meter, { octave: dOct, sound: dSound, loopRoots: true, gainRange: supportBand(0.15, 0.28), fx: '.room(0.5)', rhythmName: 'descant' }).expr, barSyms);
     const dBars = form.sections.flatMap((sec) => Array(sec.bars).fill(sec.lead !== 'none' ? 1 : 0));
     if (dBars.some(Boolean)) {
       extraParts.push(...varySplit(bindD, dBars));
@@ -5572,8 +5606,15 @@ function buildSong(prompt, name, opts = {}) {
       // (gated to the writer's songs: on a judged fullSynth song the mapped
       // exclusion would re-pick a companion he has heard)
       const sounds = (s) => (opts.fullSynth && vocalWriterOn ? SYNTH_OF(s) : s);
-      const strict = POOL.filter((s) => !hard.has(s) && !hard.has(sounds(s)) && !castSounds.has(s) && famOK(s));
-      const loose = POOL.filter((s) => !hard.has(s) && !hard.has(sounds(s)) && famOK(s));
+      // r36 verify catch (D140): the chorus double's "off key" woodwind law
+      // reaches the companion too — gm_clarinet a third under the converted
+      // voice on sugar (0.43, louder than the piano), fireworks, rooftop and
+      // villain. Under a SUNG lead the companion is no wind or brass (by the
+      // DECLARED family, never a name list) and sits under the guide lead.
+      const r36Comp = vocalWriterOn && ruleFresh(36);
+      const sungOK = (s) => !r36Comp || !/^(wind|brass)$/.test(INSTRUMENTS[sounds(s)]?.family ?? '');
+      const strict = POOL.filter((s) => !hard.has(s) && !hard.has(sounds(s)) && !castSounds.has(s) && famOK(s) && sungOK(s));
+      const loose = POOL.filter((s) => !hard.has(s) && !hard.has(sounds(s)) && famOK(s) && sungOK(s));
       const free = strict.length ? strict : loose.length ? loose : POOL.filter((s) => !hard.has(s) && !hard.has(sounds(s)));
       const pick = cfg.sound ?? (free.length ? free[fnv(`${name}|companion`) % free.length] : null);
       if (pick) {
@@ -5583,7 +5624,7 @@ function buildSong(prompt, name, opts = {}) {
         // loud melody - big separation ... this is too much"). A companion is a
         // MELODY, not support, so it does not sit in the counterline's whisper
         // band — but it stays clearly under the lead, which is what D77 asks.
-        const cGain = Math.round(leadGain * (cfg.gainMul ?? 0.6) * 100) / 100;
+        const cGain = Math.round(leadGain * (cfg.gainMul ?? (r36Comp ? 0.4 : 0.6)) * 100) / 100;
         // r18 verify catch, second pass: curating the POOL by instrument was the
         // wrong lever — swapping the flute out for a cello moved the problem
         // rather than fixing it (goofy_casino's cello companion put 98 notes
@@ -6656,7 +6697,6 @@ function buildSong(prompt, name, opts = {}) {
     ? layerMixExprs.map((x, i) => {
       const l = shaped.layers[i];
       if (!l || l.derives === 'chords' || /bass|pad/i.test(l.part ?? '')) return x;
-      if (x == null && process.env.VO_DUMP) console.error(`NULL layerMix ${i} of ${layerMixOut.length} on ${name}: layer ${JSON.stringify(shaped.layers[i] && { id: shaped.layers[i].id, part: shaped.layers[i].part, sound: shaped.layers[i].sound })}`);
       return `(${x}).mul(gain("<${breathEnvFor(i)}>"))`;
     })
     : layerMixExprs;
@@ -6678,7 +6718,7 @@ function buildSong(prompt, name, opts = {}) {
     // EMPTY pool and every piano song on the square), filtered by the realized
     // register of the double (octave 5, midi 72–83) and by family against the
     // lead, the B-letter lead, the acc hand and the companion
-    const CD_POOL = ['gm_epiano1', 'gm_vibraphone', 'gm_flute', 'gm_lead_1_square', 'gm_lead_2_sawtooth', 'gm_music_box', 'gm_celesta', 'gm_marimba', 'gm_clarinet'];
+    // (r35's wide CD_POOL of winds, leads and mallets is gone — see r36 below)
     // r35 verify: the double landed on the B-letter lead voice (3 songs) and on
     // the companion's voice (12) — both excluded now
     // (r35 verify, second pass: capping the octave PARAMETER by the instrument's
@@ -6686,14 +6726,34 @@ function buildSong(prompt, name, opts = {}) {
     // realized line sits near midi 66 whatever leadOctave says, so the double
     // sits near 78: the pool is filtered by that REALIZED register instead)
     const fits = (snd) => { const r = INSTRUMENTS[snd]?.range; return !r || (r[0] <= 5 && r[1] >= 5); };
-    const avoid = [LEAD_SOUND, letterSound('B'), accVoiceFor(accFig), companionSoundUsed].filter(Boolean);
-    const pool0 = otherFamily(CD_POOL.filter(fits), avoid).filter((x) => !avoid.includes(x));
-    const pool1 = pool0.length ? pool0 : CD_POOL.filter((x) => fits(x) && !avoid.includes(x));
-    const pool = pool1.length ? pool1 : ['gm_vibraphone'];
-    const cdSound = cfg.sound ?? pool[fnv(`${name}|chorusdouble`) % pool.length];
+    // r36 — HIS EAR ON THE FIRST SUITE: "the flute or whatever is completely
+    // off key" (vo_android), "the woodwind that starts playing is off key"
+    // (vo_cafe, vo_sugar), "violin too loud" (vo_corridor). Measured: the
+    // complained layer was THIS double every time — gm_clarinet at midi 81/82
+    // on android and cafe, gm_flute at 84 on corridor — the sung tune an
+    // octave up on a solo woodwind from the wide pool. Its notes are in key
+    // (2%); what reads "off key" is a sustained solo wind doubling a
+    // CONVERTED VOICE at the octave, which exposes every cent the singer
+    // drifts. The corpus doubles on the accompaniment's OWN piano (law 9:
+    // 89% as the top note of a chord strike), so the double now takes the
+    // acc hand's voice — a keyboard/mallet, never a wind or a lead — and sits
+    // at 0.5 x lead. A pool of one BY DESIGN (D119 asks that this be said):
+    // the acc's voice is the corpus's instrument for this part, not a variety
+    // axis. `chorusDouble: { sound }` still overrides.
+    const accSnd = accVoiceFor(accFig);
+    const KEYBOARDS = ['piano', 'gm_epiano1', 'gm_vibraphone', 'gm_marimba', 'gm_celesta', 'gm_music_box'];
+    const cdPref = [accSnd, ...KEYBOARDS].filter((x, i, a) => x && a.indexOf(x) === i && fits(x) && (KEYBOARDS.includes(x) || /piano|epiano|vibra|marimba|celesta|music_box|kalimba|harp/.test(x)));
+    // the r35 path (his three keeps were judged with it — pinFrom 'r36')
+    const CD_POOL_R35 = ['gm_epiano1', 'gm_vibraphone', 'gm_flute', 'gm_lead_1_square', 'gm_lead_2_sawtooth', 'gm_music_box', 'gm_celesta', 'gm_marimba', 'gm_clarinet'];
+    const avoid = [LEAD_SOUND, letterSound('B'), accSnd, companionSoundUsed].filter(Boolean);
+    const pool0 = otherFamily(CD_POOL_R35.filter(fits), avoid).filter((x) => !avoid.includes(x));
+    const pool1 = pool0.length ? pool0 : CD_POOL_R35.filter((x) => fits(x) && !avoid.includes(x));
+    const poolR35 = pool1.length ? pool1 : ['gm_vibraphone'];
+    const r36Double = ruleFresh(36);
+    const cdSound = cfg.sound ?? (r36Double ? (cdPref[0] ?? 'gm_epiano1') : poolR35[fnv(`${name}|chorusdouble`) % poolR35.length]);
     const cdOct = cfg.octave ?? leadOctave + 1;
-    if (process.env.VO_DEBUG) console.error(`CD ${name}: lead ${LEAD_SOUND} B ${letterSound('B')} comp ${companionSoundUsed} avoid ${avoid.join(',')} pool ${pool.join(',')} -> ${cdSound}`);
-    const cdGain = Math.round(leadGain * (cfg.gainMul ?? 0.7) * 100) / 100;
+    if (process.env.VO_DEBUG) console.error(`CD ${name}: lead ${LEAD_SOUND} B ${letterSound('B')} acc ${accSnd} r36 ${r36Double} -> ${cdSound}`);
+    const cdGain = Math.round(leadGain * (cfg.gainMul ?? (r36Double ? 0.5 : 0.7)) * 100) / 100;
     const chorusBars = barLetter.map((L) => (/^B/.test(L ?? '') ? 1 : 0));
     if (chorusBars.some(Boolean)) {
       const raw = renderLetterLead(form, mfx, (L, stmt) => {
@@ -6737,7 +6797,7 @@ function buildSong(prompt, name, opts = {}) {
     }
   }
   const extraOut = opts.layerRest
-    ? extraParts.map((x, i) => { if (x == null && process.env.VO_DUMP) console.error(`NULL extraPart ${i} of ${extraParts.length} on ${name}; info: ${extraInfo.slice(-6).join(' || ')}`); return `(${x}).mul(gain("<${breathEnvFor(i + layerMixExprs.length)}>"))`; })
+    ? extraParts.map((x, i) => `(${x}).mul(gain("<${breathEnvFor(i + layerMixExprs.length)}>"))`)
     : extraParts;
   if (opts.layerRest) extraInfo.push(`layer breathing: each CAST layer rests 1 bar in 8, staggered, and FADES back over two bars instead of cutting in (NOT the lead, companion, octave partner or echo — those are assembled outside the breathing envelope, measured r27) (r22 — 57.5% of reference parts rest inside a steady section; his \u201cstrings should always FADE in ... not just cut in and spawn in\u201d)`);
 
@@ -7078,7 +7138,16 @@ function buildSong(prompt, name, opts = {}) {
       // (measured: jungle's kalimba melody_takeover at 0.89 in the mix, bars
       // 14-19, with the guide on some other part). `k` is the true first-layer
       // index. r35-gated: the judged suite keeps the part it was judged with.
-      if (/melody_backup|melody_takeover/.test(`${L?.part ?? ''} ${L?.id ?? ''}`)) { ix.push((ruleFresh(35) ? k : nFixed) + i); doubled.push(String(L?.part ?? L?.id).replace(/^.*::/, '')); }
+      if (/melody_backup|melody_takeover/.test(`${L?.part ?? ''} ${L?.id ?? ''}`)) {
+        // r36 (the keep-click crash): under priorKeep ruleFresh(35) is FALSE, so
+        // the r34 constant index runs, and on vo_lullaby (a 2-entry head) it
+        // pointed PAST mixParts and wrapped `undefined` in the guide — the page
+        // could not build the moment his keep landed. The judged index stays
+        // where it was valid; an out-of-range one falls back to the true index.
+        const old = nFixed + i;
+        ix.push(ruleFresh(35) || old >= mixParts.length ? k + i : old);
+        doubled.push(String(L?.part ?? L?.id).replace(/^.*::/, ''));
+      }
     }
     for (const i of ix) mixParts[i] = `(${mixParts[i]}).mul(gain(${guide}))`;
     extraInfo.push(`vocal lead: the tune is sung (vocal tier, r34); the instrumental lead${ix.length > 1 ? ` and its doublers (${['octave/backup', ...doubled].slice(ix.length > 1 + doubled.length ? 0 : 1).join(', ')})` : ''} play as a x${guide} guide under the voice`);
@@ -7329,6 +7398,17 @@ function buildSong(prompt, name, opts = {}) {
     salience: v.salience,
     articulation: `${ART.style}${ART.pedal ? ' + damper pedal' : ''}${LEAD.hold ? ' \u00b7 held lead' : ''}`,
     drop: dropInfo,
+    // r36 — the lyric writer keys verse/chorus lines by SECTION (a chorus
+    // statement repeats its words; a verse statement gets new ones), so a
+    // vocal-lead song exposes its form as bars. Spread-gated on vocalLead: the
+    // key is ABSENT (not undefined) on every other song, so judged pages'
+    // DATA stays byte-identical.
+    ...(opts.vocalLead ? {
+      sections: form.sections.map((sec) => {
+        const L = String(mfx.sections.find((x) => x.index === sec.index)?.letter ?? '');
+        return { letter: L || null, role: sec.lead === 'none' || !L ? null : writerRole(L.replace('*', '')), startBar: sec.startBar, bars: sec.bars, lead: sec.lead !== 'none' };
+      }),
+    } : {}),
     mix, solos,
   });
   CHECKS.push([name, 'mix', mix, v.bpm, beats, totalBarsOut]);
@@ -9033,20 +9113,41 @@ if (VOCAL_PAGE) {
 const VOCALOID_PAGE = process.env.VOCALOID === '1';
 const VOCALAB_PAGE = process.env.VOCALAB === '1';
 const VO_PROMPTS = [
-  { id: 'chase',      bpm: 176, text: 'a frantic late-night city chase, synths everywhere, the singer breathless and furious' },
+  // r36 — his first export on this page (D140). `extra` = per-song pins from
+  // his notes; `vocalDb` = the vocal over the band in the sung spans; the three
+  // keeps carry keepFresh + pinFrom (D138's law: a keep click on a noteBlind
+  // page retracts every rule the song was judged with unless it is told not to).
+  // "sounds good but the Alberti may be too quick at 176. overall song sounds
+  // good but too fast" -> 152 and the metronome test on the acc pool
+  { id: 'chase',      bpm: 152, text: 'a frantic late-night city chase, synths everywhere, the singer breathless and furious', extra: { metronomeAcc: true } },
   { id: 'goodbye',    bpm: 84,  text: 'a soft bittersweet goodbye at a train station in the rain, piano and strings, sung gently' },
-  { id: 'fireworks',  bpm: 168, text: 'summer festival at dusk, fireworks, a bright idol-pop chorus everyone can clap along to, guitar and a big backbeat' },
+  // "excited but the entire thing is in minor and the chord progression sounds
+  // a bit too minor -> this also reflects in the vocals" -> the bright pool
+  // (the CLICKED bright major pool is TWO Undertale loops — D119, a pool of
+  // two — so both excited songs hashed onto ut_tem_shop_p1; these two are
+  // pinned outright on the idol-pop axes, brightPool stays as the rule)
+  { id: 'fireworks',  bpm: 168, text: 'summer festival at dusk, fireworks, a bright idol-pop chorus everyone can clap along to, guitar and a big backbeat', extra: { brightPool: true, basePin: 'maj_I_V_vi_IV', rawBase: true } },
   { id: 'android',    bpm: 150, text: 'a lonely android wandering an empty mall after closing, cold synths, a wistful voice that keeps repeating one line' },
-  { id: 'villain',    bpm: 132, text: 'a villain\'s theme sung with a smirk, sinister minor pop, harpsichord stabs, the voice low and teasing' },
-  { id: 'opening',    bpm: 180, text: 'a sports-anime opening, driving guitars at 180 bpm, huge triumphant chorus, the voice high and clear' },
+  // "for scary and just different vibes in general you can also make vocals
+  // like just another layer or whisper or something" -> the layer style
+  { id: 'villain',    bpm: 132, text: 'a villain\'s theme sung with a smirk, sinister minor pop, harpsichord stabs, the voice low and teasing', vocalStyle: 'layer', vocalDb: -5 },
+  // "the vocal here doesn't really fit the vibe and the melody is alright but
+  // doesnt fit the excited vibe" -> the same city-pop loop as fireworks; bright pool
+  { id: 'opening',    bpm: 180, text: 'a sports-anime opening, driving guitars at 180 bpm, huge triumphant chorus, the voice high and clear', extra: { brightPool: true, basePin: 'maj_IV_I_V_vi', rawBase: true } },
   { id: 'cafe',       bpm: 108, text: 'rainy-day cafe pop, relaxed and warm, brushed drums, the singer half-whispering over an electric piano' },
-  { id: 'reflection', bpm: 195, text: 'a boss fight against your own reflection, breakneck rock, the melody shouting short phrases, no room to breathe' },
-  { id: 'lullaby',    bpm: 76,  text: 'a tender lullaby for a robot, music box and pads, slow, the voice barely above a hum, no drums' },
-  { id: 'rooftop',    bpm: 140, text: 'a rooftop confession at sunrise, hopeful pop-rock, builds from a quiet verse to a soaring chorus with strings' },
+  // KEEP: "I like this! sounds energetic and the vocals fit! best energetic one so far"
+  { id: 'reflection', bpm: 195, text: 'a boss fight against your own reflection, breakneck rock, the melody shouting short phrases, no room to breathe', extra: { keepFresh: true, pinFrom: 'r36', voicedColor: true }, vocalDb: 0 },
+  // KEEP: "love the melody and the instrumental ... the vocals and the support vocals and the melody and spacing fits really good"
+  { id: 'lullaby',    bpm: 76,  text: 'a tender lullaby for a robot, music box and pads, slow, the voice barely above a hum, no drums', extra: { keepFresh: true, pinFrom: 'r36', voicedColor: true }, vocalDb: -1.5 },
+  // "vocals too loud, it's drowning everything else. for energy like festivals it should be much softer"
+  { id: 'rooftop',    bpm: 140, text: 'a rooftop confession at sunrise, hopeful pop-rock, builds from a quiet verse to a soaring chorus with strings', vocalDb: -5 },
   { id: 'sugar',      bpm: 128, text: 'a glitchy hyper-pop sugar rush, ridiculous and playful, 16th-note syllables over a bouncing bass at 128 bpm' },
-  { id: 'corridor',   bpm: 150, text: 'a haunted school corridor at midnight, eerie minor pop, whispered verses and a desperate belted chorus' },
-  { id: 'march',      bpm: 120, text: 'a marching anthem for a losing army, somber but defiant, drums like footsteps, a choir under the last chorus' },
-  { id: 'kitchen',    bpm: 165, text: 'a ridiculous kitchen cooking-show jingle, goofy and fast, the singer tripping over tongue-twisters' },
+  // "violin too loud, and vocals a bit too loud" (+ the scary-lane layer style)
+  { id: 'corridor',   bpm: 150, text: 'a haunted school corridor at midnight, eerie minor pop, whispered verses and a desperate belted chorus', vocalStyle: 'layer', vocalDb: -3 },
+  // KEEP: "I like this setup and the overall layering and progression ... later in the song there's another Indian fluctuating thing though" (the melisma law re-sings it; the music is pinned)
+  { id: 'march',      bpm: 120, text: 'a marching anthem for a losing army, somber but defiant, drums like footsteps, a choir under the last chorus', extra: { keepFresh: true, pinFrom: 'r36', voicedColor: true }, vocalDb: 1.5 },
+  // "sounds a bit more serious than goofy (make vocals softer)"
+  { id: 'kitchen',    bpm: 165, text: 'a ridiculous kitchen cooking-show jingle, goofy and fast, the singer tripping over tongue-twisters', vocalDb: -4 },
 ];
 /** the shared r35 vocal-song options from a description parse */
 function vocaloidOpts(d, row) {
@@ -9066,7 +9167,9 @@ function vocaloidOpts(d, row) {
       ...(row.extra ?? {}),
     },
     energetic, bpm,
-    vocalDb: row.vocalDb ?? d.hints.vocalDb ?? (energetic ? 0 : 1.5),
+    // r36: "for energy like festivals it should be much softer" (vo_rooftop)
+    vocalDb: row.vocalDb ?? d.hints.vocalDb ?? (d.environment === 'festival' ? -4 : energetic ? 0 : 1.5),
+    vocalStyle: row.vocalStyle ?? 'lead',
   };
 }
 let VO_FIRST = 0;
@@ -9074,7 +9177,7 @@ if (VOCALOID_PAGE) {
   VO_FIRST = songs.length;
   for (const row of VO_PROMPTS) {
     const d = describePrompt(row.text);
-    const { opts: o, bpm, vocalDb } = vocaloidOpts(d, row);
+    const { opts: o, bpm, vocalDb, vocalStyle } = vocaloidOpts(d, row);
     const name = `vo_${row.id}`;
     buildSong({ emotion: d.emotion, environment: d.environment, meter: '4/4' }, name, o);
     const S = songs[songs.length - 1];
@@ -9083,6 +9186,7 @@ if (VOCALOID_PAGE) {
     S.why = `"${row.text}" → ${explainPrompt(d)} · ${bpm} bpm${d.hints && Object.values(d.hints).some((x) => x !== undefined) ? ' · hints ' + JSON.stringify(Object.fromEntries(Object.entries(d.hints).filter(([, x]) => x !== undefined))) : ''}`;
     S.vocalSuite = true;
     S.vocalDb = vocalDb;
+    if (vocalStyle !== 'lead') S.vocalStyle = vocalStyle;
   }
 }
 // THE LAB: A/B cards built under ONE name (D120 — the key and every retrieval
@@ -9576,6 +9680,21 @@ for (const s of songs) s.hq = existsSync(join(OUT, 'hq', `${s.name}.wav`));
 // toggle swaps it in when HQ mode is on. The field is only SET when the file
 // exists, so songs without a vocal render keep their DATA byte-identical.
 for (const s of songs) if (existsSync(join(OUT, 'hq', `${s.name}.withvocal.wav`))) s.vocal = true;
+// r36 — the LYRIC SHEET: a vocal-suite song whose exported score carries the
+// writer's lines (src/lib/lyrics-ja-writer.js: kana / romaji / gloss per
+// 2-bar phrase, keyed by section) shows them on its card. Read from the score
+// file only, set only when it exists and only on vocal-suite songs — the
+// judged pages' DATA stays byte-identical.
+for (const s of songs) {
+  if (!s.vocalSuite) continue;
+  const p = join(OUT, 'hq', `${s.name}.vocal-score.json`);
+  if (!existsSync(p)) continue;
+  try {
+    const sc = JSON.parse(readFileSync(p, 'utf8'));
+    if (sc.lyricMode !== 'ja' || !Array.isArray(sc.lyrics) || !sc.lyrics.some((l) => l.kana)) continue;
+    s.lyricSheet = sc.lyrics.map((l) => ({ t: +l.start.toFixed(1), s: l.section ?? '', k: l.kana ?? '', r: l.romaji ?? l.text, g: l.gloss ?? '', f: l.refrain ? 'r' : l.variant ? 'v' : '' }));
+  } catch { /* a half-written score mid-render: no sheet this build */ }
+}
 const DATA = { songs: songs.map(({ solos, ...rest }) => ({ ...rest, solos })) };
 const html = page(DATA);
 const inline = html.slice(html.lastIndexOf('<script>') + 8, html.lastIndexOf('</script>'));
@@ -9770,6 +9889,7 @@ function page(DATA) {
   .card.kill { border-left:3px solid var(--kill); opacity:.7; }
   .vibe { font-size:16px; font-weight:700; }
   .meta { font-size:12px; color:var(--dim); margin:3px 0; }
+  .lyrl { font-size:12px; margin:2px 0 2px 8px; } .lyrl b { font-weight:500; font-size:13px; } .lyrr { color:#9fb4dc; }
   .sym { font-family: ui-monospace, Menlo, monospace; font-size:12.5px; margin:4px 0; }
   select { background:#1e1e28; color:var(--fg); border:1px solid #3a3a4a; border-radius:6px; padding:3px 7px; font:inherit; }
   .acts { display:flex; gap:6px; margin-top:8px; align-items:center; }
@@ -9900,6 +10020,8 @@ function render() {
       '<div class="sym">' + esc(s.symbols.join(' ')) + (s.treat ? '  \\u2192 treat(' + esc(s.treat.op) + '): ' + esc(s.treat.symbols.join(' ')) : '') + '</div>' +
       '<div class="meta">acc: ' + esc(s.accompaniment) + ' (' + esc(s.accClass) + ')' + (s.travel.length ? ' \\u00b7 travel: ' + esc(s.travel.join(' \\u00b7 ')) : '') + '</div>' +
       '<div class="meta">voices ' + s.ensemble.count + ' of cast ' + s.ensemble.fullCast + ': ' + esc(s.cast.join(', ') || 'piano only') + (s.drums.length ? ' \\u00b7 drums: ' + esc(s.drums.join(' + ')) : ' \\u00b7 no drums') + '</div>' +
+      (s.lyricSheet ? '<details class="lyr"><summary>lyrics (' + s.lyricSheet.length + ' lines \\u00b7 kana / romaji / gloss; \\u21bb = the chorus returning its words)</summary>' +
+        s.lyricSheet.map(function (l) { return '<div class="lyrl"><span class="dim">' + esc(l.s) + ' @' + l.t + 's</span> <b>' + esc(l.k) + '</b> <span class="lyrr">' + esc(l.r) + '</span> <span class="dim">\\u2014 ' + esc(l.g) + (l.f === 'r' ? ' \\u21bb' : l.f === 'v' ? ' \\u2248' : '') + '</span></div>'; }).join('') + '</details>' : '') +
       '<details><summary>why (compile trace + harmony lineage)</summary>' +
       esc('exemplar ' + s.exemplar + (s.ops.length ? ' \\u2192 ' + s.ops.join(', ') : ' (unvaried)')) + '<br>' +
       s.vibeNotes.map(esc).join('<br>') + '</details>' +

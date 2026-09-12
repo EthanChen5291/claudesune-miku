@@ -24,12 +24,13 @@
    "dur": 0.17857,
    "midi": 67,
    "gain": 0.126,
-   "syl": "ki",
+   "syl": "so",
    "ph": [
-    "kx",
-    "iy"
+    "s",
+    "oo"
    ],
-   "melisma": false
+   "melisma": false,
+   "w": 0
   },
   {
    "bar": 8,
@@ -38,12 +39,13 @@
    "dur": 0.17858,
    "midi": 72,
    "gain": 0.095,
-   "syl": "no",
+   "syl": "ra",
    "ph": [
-    "n",
-    "oo"
+    "rj",
+    "a"
    ],
-   "melisma": false
+   "melisma": false,
+   "w": 0
   },
   {
    "bar": 8,
@@ -52,11 +54,12 @@
    "dur": 0.17857,
    "midi": 74,
    "gain": 0.095,
-   "syl": "u",
+   "syl": "e_",
    "ph": [
-    "ux"
+    "ee"
    ],
-   "melisma": false
+   "melisma": false,
+   "w": 0
   },
   {
    "bar": 8,
@@ -65,11 +68,13 @@
    "dur": 0.17857,
    "midi": 74,
    "gain": 0.095,
-   "syl": "u",
+   "syl": "to",
    "ph": [
-    "ux"
+    "tx",
+    "oo"
    ],
-   "melisma": false
+   "melisma": false,
+   "w": 1
   },
   {
    "bar": 8,
@@ -78,11 +83,13 @@
    "dur": 0.17857,
    "midi": 74,
    "gain": 0.095,
-   "syl": "u",
+   "syl": "bo",
    "ph": [
-    "ux"
+    "b",
+    "oo"
    ],
-   "melisma": false
+   "melisma": false,
+   "w": 1
   },
   {
    "bar": 8,
@@ -91,12 +98,12 @@
    "dur": 0.17857,
    "midi": 76,
    "gain": 0.095,
-   "syl": "ne",
+   "syl": "u",
    "ph": [
-    "n",
-    "ee"
+    "ux"
    ],
-   "melisma": false
+   "melisma": false,
+   "w": 1
   },
   {
    "bar": 8,
@@ -105,12 +112,13 @@
    "dur": 0.17857,
    "midi": 74,
    "gain": 0.095,
-   "syl": "ga",
+   "syl": "na",
    "ph": [
-    "g",
+    "n",
     "a"
    ],
-   "melisma": false
+   "melisma": false,
+   "w": 2
   },
   {
    "bar": 8,
@@ -119,11 +127,13 @@
    "dur": 0.17857,
    "midi": 72,
    "gain": 0.095,
-   "syl": "i",
+   "syl": "ko",
    "ph": [
-    "iy"
+    "kx",
+    "oo"
    ],
-   "melisma": false
+   "melisma": false,
+   "w": 2
   },
   {
    "bar": 8,
@@ -132,12 +142,12 @@
    "dur": 0.35715,
    "midi": 72,
    "gain": 0.117,
-   "syl": "ni",
+   "syl": "u",
    "ph": [
-    "n",
-    "iy"
+    "ux"
    ],
-   "melisma": false
+   "melisma": false,
+   "w": 2
   },
   {
    "bar": 8,
@@ -146,12 +156,13 @@
    "dur": 0.71428,
    "midi": 69,
    "gain": 0.105,
-   "syl": "ji",
+   "syl": "na",
    "ph": [
-    "jh",
-    "iy"
+    "n",
+    "a"
    ],
-   "melisma": false
+   "melisma": false,
+   "w": 3
   },
   {
    "bar": 9,
@@ -160,12 +171,13 @@
    "dur": 0.17857,
    "midi": 72,
    "gain": 0.095,
-   "syl": "fu",
+   "syl": "ki",
    "ph": [
-    "fp",
-    "ux"
+    "kx",
+    "iy"
    ],
-   "melisma": false
+   "melisma": false,
+   "w": 0
   },
   {
    "bar": 9,
@@ -174,12 +186,13 @@
    "dur": 0.17857,
    "midi": 71,
    "gain": 0.095,
-   "syl": "ta",
+   "syl": "mi",
    "ph": [
-    "tx",
-    "a"
+    "m",
+    "iy"
    ],
-   "melisma": false
+   "melisma": false,
+   "w": 0
   },
   {
    "bar": 9,
@@ -188,12 +201,13 @@
    "dur": 0.17858,
    "midi": 69,
    "gain": 0.095,
-   "syl": "ri",
+   "syl": "to",
    "ph": [
-    "rj",
-    "iy"
+    "tx",
+    "oo"
    ],
-   "melisma": false
+   "melisma": false,
+   "w": 0
   },
   {
    "bar": 9,
@@ -202,12 +216,12 @@
    "dur": 0.17857,
    "midi": 67,
    "gain": 0.095,
-   "syl": "sa",
+   "syl": "i",
    "ph": [
-    "s",
-    "a"
+    "iy"
    ],
-   "melisma": false
+   "melisma": false,
+   "w": 1
   },
   {
    "bar": 9,
@@ -216,12 +230,14 @@
    "dur": 0.35714,
    "midi": 67,
    "gain": 0.117,
-   "syl": "mo",
+   "syl": "qte",
    "ph": [
-    "m",
-    "oo"
+    "q",
+    "tx",
+    "ee"
    ],
-   "melisma": false
+   "melisma": false,
+   "w": 1
   },
   {
    "bar": 9,
@@ -230,12 +246,13 @@
    "dur": 0.71429,
    "midi": 69,
    "gain": 0.105,
-   "syl": "to",
+   "syl": "ー",
    "ph": [
-    "tx",
-    "oo"
+    "ee"
    ],
-   "melisma": false
+   "melisma": false,
+   "w": 1,
+   "ext": true
   }
  ],
  "phraseBars": 2,
@@ -248,17 +265,66 @@
   "barsWithTune": 2,
   "silentBars": []
  },
+ "theme": {
+  "emotion": "sad",
+  "environment": "water",
+  "description": "a soft bittersweet goodbye at a train station in the rain, piano and strings, sung gently"
+ },
+ "sections": [
+  {
+   "letter": null,
+   "role": null,
+   "startBar": 0,
+   "bars": 4,
+   "lead": false
+  },
+  {
+   "letter": "A",
+   "role": "verse",
+   "startBar": 4,
+   "bars": 4,
+   "lead": true
+  },
+  {
+   "letter": "B*",
+   "role": "chorus",
+   "startBar": 8,
+   "bars": 4,
+   "lead": true
+  },
+  {
+   "letter": "A",
+   "role": "verse",
+   "startBar": 12,
+   "bars": 4,
+   "lead": true
+  }
+ ],
+ "lyricStats": {
+  "phrases": 2,
+  "refrainReused": 0,
+  "refrainRebound": 0,
+  "variants": 0,
+  "fallbacks": 0,
+  "exts": 1,
+  "templates": {
+   "E-V+V-END": 1,
+   "TO-V": 1
+  }
+ },
  "lyrics": [
   {
    "start": 22.85714,
    "notes": 10,
-   "text": "ki no u u u ne ga i ni ji"
+   "text": "so ra e_ to bo u na ko u na"
   },
   {
    "start": 26.42857,
    "notes": 6,
-   "text": "fu ta ri sa mo to"
+   "text": "ki mi to i qte ー"
   }
  ],
- "lyricMode": "ja"
+ "lyricMode": "ja",
+ "lyricsFrom": "/Users/ethanchen/Documents/GitHub/motif-engine/vendor/vocal/vo_goodbye.lead-words.vocal-score.json",
+ "lyricsMatched": 16
 }

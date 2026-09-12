@@ -55,8 +55,10 @@ test('r28: `noteBlind` — the keep-transition law, and it is ONE flag', () => {
     'the historyLess helper is gone or has changed shape');
   assert.match(SRC, /const priorKeep = judged\?\.verdict === 'keep' && opts\.keepFresh !== true;/,
     'keepFresh must suspend priorKeep for the rule gates (the keep-transition law on a noteBlind page)');
-  assert.strictEqual((SRC.match(/keepFresh: true/g) ?? []).length, 1,
-    'keepFresh is a per-row pin for a clicked keep on a noteBlind page — exactly one row carries it (vx_nostalgic_snow)');
+  // r36 (D140): his first Vocaloid-page export clicked three keeps
+  // (vo_reflection, vo_lullaby, vo_march) — four rows now, each a clicked keep
+  assert.strictEqual((SRC.match(/keepFresh: true/g) ?? []).length, 4,
+    'keepFresh is a per-row pin for a clicked keep on a noteBlind page — exactly four rows carry it (vx_nostalgic_snow + the three r36 Vocaloid keeps)');
   // every history-less gate must route through it — a raw one would re-open the bug
   assert.doesNotMatch(SRC, /!DERIVED_VERDICTS\?\.\[name\] && !CARD_NOTES\?\.\[name\]/,
     'a gate is testing CARD_NOTES directly again instead of going through historyLess()');

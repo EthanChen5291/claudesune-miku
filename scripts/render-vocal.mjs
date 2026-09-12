@@ -64,6 +64,13 @@ const { values, positionals } = parseArgs({
     line: { type: 'string', default: '_lead_mix' },
     tag: { type: 'string', default: '' },
     'harmony-db': { type: 'string', default: '-4' }, // the harmony voice under the lead voice, dB
+    // r36 — his villain/cafe/sugar note: "for scary and just different vibes in
+    // general you can also make vocals like just another layer or whisper or
+    // something". `layer` = the voice as a texture: low-passed at 4.5 kHz, the
+    // room 1.6x wetter, and (on the page) a lower `vocalDb`. Default: the
+    // song's own `vocalStyle` on the page, else `lead`.
+    'vocal-style': { type: 'string' },
+    melisma: { type: 'string', default: '0' }, // r36: see export-vocal.mjs
   },
 });
 const NAME = positionals[0];
@@ -87,7 +94,18 @@ const run = (cmd, args, opts = {}) => execFileSync(cmd, args, { stdio: ['ignore'
 // a handoff removed) forces stages 1-2 by itself — the kept .dry/.raw would
 // otherwise be a recording of the old line under the new mix
 const prevNotes = existsSync(score) ? JSON.stringify(JSON.parse(readFileSync(score, 'utf8')).notes.map((n) => [n.start, n.dur, n.midi, n.syl ?? null])) : null;
-run('node', [join(ROOT, 'scripts', 'export-vocal.mjs'), NAME, '--page', values.page, '--out', score, '--octave', values.octave, '--lyrics', values.lyrics, '--line', values.line]);
+// r36 — a second voice sings the LEAD's words ("if there are multiple voices,
+// even if notes are different they should be saying the same lyrics"): the
+// harmony pass exports the lead's score to a scratch path (never the lead's
+// own score file — that would defeat the lead pass's changed-score check) and
+// copies its moras at shared onsets
+const exportArgs = ['--page', values.page, '--octave', values.octave, '--lyrics', values.lyrics, '--melisma', values.melisma];
+if (values.line !== '_lead_mix') {
+  const leadScore = join(VOCAL_DIR, `${NAME}.lead-words.vocal-score.json`);
+  run('node', [join(ROOT, 'scripts', 'export-vocal.mjs'), NAME, ...exportArgs, '--out', leadScore, '--line', '_lead_mix', '--quiet']);
+  exportArgs.push('--lyrics-from', leadScore);
+}
+run('node', [join(ROOT, 'scripts', 'export-vocal.mjs'), NAME, ...exportArgs, '--out', score, '--line', values.line]);
 const sc = JSON.parse(readFileSync(score, 'utf8'));
 if (!sc.notes.length) { console.error(`${NAME}: no sung notes (the mix never plays the tune?)`); process.exit(1); }
 const nowNotes = JSON.stringify(sc.notes.map((n) => [n.start, n.dur, n.midi, n.syl ?? null]));
@@ -124,12 +142,22 @@ if (values.force || !existsSync(raw)) {
   console.log(`  stage 2 converted (${secs()})`);
 } else console.log(`  stage 2 kept ${raw} (pass --force to re-convert)`);
 
+// per-song pins (his notes on a card become data on the page: `vocalDb`, `vocalStyle`)
+const pageSong = (() => {
+  const html = readFileSync(join(ROOT, values.page), 'utf8');
+  const di = html.indexOf('const DATA = ');
+  return (JSON.parse(html.slice(di + 13, html.indexOf(';\n', di))).songs ?? []).find((s) => s.name === NAME) ?? {};
+})();
+const style = values['vocal-style'] ?? pageSong.vocalStyle ?? 'lead';
+const layer = style === 'layer';
+if (layer) console.log('  vocal style: layer (low-passed 4.5 kHz, room x1.6) — r36');
 // resample to 44.1k + the lead's room (the same IR and wet law as render-hq's applyRoom)
 const room = sc.room ?? 0;
-if (room >= 0.15 && existsSync(IR_PATH)) {
-  const wet = Math.min(1.2, room * 1.1);
+const tone = layer ? 'lowpass=f=4500,' : '';
+if ((room >= 0.15 || layer) && existsSync(IR_PATH)) {
+  const wet = Math.min(1.2, Math.max(room, layer ? 0.3 : 0) * 1.1) * (layer ? 1.6 : 1);
   run('ffmpeg', ['-v', 'error', '-y', '-i', raw, '-i', IR_PATH, '-filter_complex',
-    `[0:a]aresample=44100,aformat=channel_layouts=stereo[v];[v]asplit[d][w];[w][1:a]afir=dry=10:wet=10[rv];[d][rv]amix=inputs=2:weights=1 ${wet.toFixed(3)}:duration=longest:normalize=0`,
+    `[0:a]aresample=44100,aformat=channel_layouts=stereo,${tone}asetnsamples=1024[v];[v]asplit[d][w];[w][1:a]afir=dry=10:wet=10[rv];[d][rv]amix=inputs=2:weights=1 ${wet.toFixed(3)}:duration=longest:normalize=0`,
     '-ar', '44100', vocal]);
 } else {
   run('ffmpeg', ['-v', 'error', '-y', '-i', raw, '-ar', '44100', '-ac', '2', vocal]);
@@ -182,12 +210,6 @@ const sungRmsDb = (p) => {
   return n ? 10 * Math.log10(sum / n + 1e-12) : -99;
 };
 const bandDb = sungRmsDb(mixIn), vocDb = sungRmsDb(vocal);
-// per-song pin (his notes on a card become data on the page: `vocalDb`)
-const pageSong = (() => {
-  const html = readFileSync(join(ROOT, values.page), 'utf8');
-  const di = html.indexOf('const DATA = ');
-  return (JSON.parse(html.slice(di + 13, html.indexOf(';\n', di))).songs ?? []).find((s) => s.name === NAME) ?? {};
-})();
 const vocalDbUsed = values['vocal-db'] != null ? Number(values['vocal-db']) : (pageSong.vocalDb ?? 3);
 values['vocal-db'] = String(vocalDbUsed);
 const target = bandDb + vocalDbUsed;

@@ -100,3 +100,84 @@ test('vocal score r35: no note over G#5 is held half a second or longer', () => 
   assert.equal(eighth.midi, 69, `the judged score's 8th note was A5 (81) held 0.74 s; expected it folded to 69, got ${eighth.midi}`);
   assert.ok(sc.notes.some((n) => n.midi > 80), 'short passes above G#5 are still allowed');
 });
+
+// r36 — REAL lyrics (src/lib/lyrics-ja-writer.js): grammatical lines bound to
+// the melody. His "currently, our vocaloid produces random japanese
+// syllables. it should actually produce real japanese lyrics, of course with
+// parts bound to the melody".
+test('lyrics writer r36: sentences from grammar, bound to segments, refrain by section, deterministic', async () => {
+  const w = await import('../src/lib/lyrics-ja-writer.js');
+  // tokeniser + conjugation are the grammar's floor
+  assert.deepEqual(w.moras('arigato-'), ['a', 'ri', 'ga', 'to', 'ー']);
+  assert.deepEqual(w.moras('matte'), ['ma', 'qte']);
+  assert.deepEqual(w.moras("kon'ya"), ['ko', 'n', 'ya']);
+  assert.equal(w.conjugate({ r: 'utau', cls: 'g' }, 'nai'), 'utawanai');
+  assert.equal(w.conjugate({ r: 'iku', cls: 'g' }, 'te'), 'itte');
+  assert.equal(w.conjugate({ r: 'miageru', cls: 'i' }, 'tai'), 'miagetai');
+  assert.equal(w.conjugate({ r: 'au', cls: 'au' }, 'tai'), 'aitai');
+  // every writer mora spells into the Tiger set (incl. っ as q, を as oo, ー as the held vowel)
+  for (const m of ['qte', 'wo', 'ー', 'wa_', 'e_', 'kya', 'n', 'fa'])
+    for (const p of w.moraPh(m, 'oo')) assert.ok(TIGER_PHONEMES.has(p), `${m} -> ${p}`);
+  assert.equal(w.moraKana('wa_'), 'は');
+  // a vocal-page song with sections: the exported score carries real lines
+  const out = join(dir, 'w.json');
+  execFileSync('node', ['scripts/export-vocal.mjs', 'vo_villain', '--page', 'audition/vocaloid.html', '--out', out, '--quiet'], { stdio: 'pipe' });
+  const sc = JSON.parse(readFileSync(out, 'utf8'));
+  assert.equal(sc.lyricMode, 'ja');
+  assert.ok(Array.isArray(sc.sections) && sc.sections.length, 'the vocaloid page exposes sections');
+  assert.ok(sc.lyrics.length >= 8);
+  const st = sc.lyricStats;
+  assert.ok(st.fallbacks <= Math.ceil(st.phrases * 0.1), `too many vocalise fallbacks: ${st.fallbacks}/${st.phrases}`);
+  for (const l of sc.lyrics) {
+    // one mora per taker note; kana per mora; a romaji line of real words
+    const ph = sc.notes.filter((n) => n.start >= l.start).slice(0, l.notes);
+    assert.equal(l.text.split(' ').length, ph.filter((n) => !n.melisma).length);
+    if (l.template !== 'vocalise') { assert.ok(/[a-z]/.test(l.romaji) && l.gloss.length > 0, `line without words: ${JSON.stringify(l)}`); assert.ok(l.kana.length >= 2); }
+    // BOUND: no word straddles a rest — two notes of one word (same owner
+    // chunk `w`) are never separated by a gap of 0.4 beat or more
+    const beat = sc.secondsPerBar / sc.beats;
+    for (let i = 1; i < ph.length; i++) {
+      if (ph[i].w == null || ph[i].w < 0 || ph[i].w !== ph[i - 1].w) continue;
+      const gap = ph[i].start - (ph[i - 1].start + ph[i - 1].dur);
+      assert.ok(gap < 0.4 * beat, `word ${ph[i].w} crosses a rest of ${gap.toFixed(3)} s in ${l.romaji}`);
+    }
+  }
+  // THE REFRAIN: a chorus ordinal returns with its words on every statement
+  const chorus = sc.lyrics.filter((l) => l.role === 'chorus');
+  const byKey = new Map();
+  for (const l of chorus) { if (!byKey.has(l.key)) byKey.set(l.key, []); byKey.get(l.key).push(l); }
+  const returning = [...byKey.values()].filter((ls) => ls.length > 1);
+  assert.ok(returning.length >= 1, 'the chorus returns at least once');
+  assert.ok(returning.some((ls) => ls.slice(1).some((l) => l.refrain)), 'a returning chorus line is re-bound with the same words');
+  for (const ls of returning) for (const l of ls.slice(1)) if (l.refrain) assert.equal(l.romaji.replace(/ (yo|ne|sa|na)$/, ''), ls[0].romaji.replace(/ (yo|ne|sa|na)$/, ''));
+  // verse statements differ (verse 2 has new words over verse 1's tune)
+  const verses = sc.lyrics.filter((l) => l.role === 'verse');
+  assert.ok(new Set(verses.map((l) => l.romaji)).size > 1);
+  // deterministic
+  const out2 = join(dir, 'w2.json');
+  execFileSync('node', ['scripts/export-vocal.mjs', 'vo_villain', '--page', 'audition/vocaloid.html', '--out', out2, '--quiet'], { stdio: 'pipe' });
+  assert.deepEqual(JSON.parse(readFileSync(out2, 'utf8')).lyrics, sc.lyrics);
+  // the r34 pool lines are still reachable for a judged line
+  const out3 = join(dir, 'w3.json');
+  execFileSync('node', ['scripts/export-vocal.mjs', 'vo_villain', '--page', 'audition/vocaloid.html', '--out', out3, '--quiet', '--lyrics', 'pool'], { stdio: 'pipe' });
+  const pool = JSON.parse(readFileSync(out3, 'utf8'));
+  assert.equal(pool.lyricMode, 'pool');
+  assert.notDeepEqual(pool.lyrics.map((l) => l.text), sc.lyrics.map((l) => l.text));
+});
+
+test('lyrics writer r36: the lexicon stores words, never lines (D137 on the text side)', async () => {
+  const src = readFileSync('src/lib/lyrics-ja-writer.js', 'utf8');
+  // every lexicon romaji is short: a word or an ordinary set phrase, never a lyric line
+  const entries = [...src.matchAll(/\b(?:N|V|A|ADV)\('([^']+)'/g)].map((m) => m[1]);
+  assert.ok(entries.length > 150);
+  for (const e of entries) assert.ok(e.replace(/[-' ]/g, '').length <= 12 && e.split(' ').length <= 2, `lexicon entry too long to be a word: ${e}`);
+  const sets = [...src.matchAll(/\{ r: '([^']+)', g:/g)].map((m) => m[1]);
+  for (const e of sets) assert.ok(e.split(' ').length <= 2, `set phrase too long: ${e}`);
+});
+
+test('lyrics writer r36: the sections field is absent from every songs.html song', () => {
+  const html = readFileSync('audition/songs.html', 'utf8');
+  const di = html.indexOf('const DATA = ');
+  const data = JSON.parse(html.slice(di + 13, html.indexOf(';\n', di)));
+  assert.ok(data.songs.every((s) => !('sections' in s)));
+});

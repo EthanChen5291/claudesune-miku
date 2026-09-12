@@ -27,6 +27,8 @@
 // adding a word re-rolls lines on unpinned songs — the same D95 law as any
 // retrieval pool. Nothing here reaches the judged pages.
 
+import { writeLyrics } from './lyrics-ja-writer.js';
+
 const V = { a: 'a', i: 'iy', u: 'ux', e: 'ee', o: 'oo' };
 const C = { k: 'kx', g: 'g', s: 's', z: 'dz', t: 'tx', d: 'd', n: 'n', h: 'hh', b: 'b', p: 'px', m: 'm', y: 'y', r: 'rj', w: 'w' };
 const SPECIAL = {
@@ -122,7 +124,11 @@ function signature(ph) {
  * (romaji), `ph` (phoneme list), `melisma` (true = vowel continuation of the
  * previous note, no new mora). Returns [{ start, text }] per phrase.
  */
-export function assignLyrics(score, { seed = score.name ?? 'song', phraseGap = 0.5, melismaUnder = 0.14, longNote = 1.2, vocalise = true } = {}) {
+// r36 — the POOL writer (words by hash until the count is met). Superseded as
+// the default by src/lib/lyrics-ja-writer.js (real sentences bound to the
+// melody); kept as `mode: 'pool'` / `--lyrics pool` so a judged line can be
+// reproduced byte-for-byte.
+export function assignLyricsPool(score, { seed = score.name ?? 'song', phraseGap = 0.5, melismaUnder = 0.14, longNote = 1.2, vocalise = true } = {}) {
   const notes = score.notes;
   const phrases = [];
   let cur = [];
@@ -162,4 +168,48 @@ export function assignLyrics(score, { seed = score.name ?? 'song', phraseGap = 0
     out.push({ start: ph[0].start, notes: ph.length, text: line.join(' ') });
   }
   return out;
+}
+
+/**
+ * r36 — REAL lyrics (his "currently, our vocaloid produces random japanese
+ * syllables. it should actually produce real japanese lyrics, of course with
+ * parts bound to the melody"). Same contract as before: mutates notes (syl /
+ * ph / melisma), returns [{ start, notes, text, … }] per phrase — plus kana,
+ * romaji (bunsetsu-spaced), gloss, section/role/key and the refrain flags.
+ * `score.theme` ({ emotion, environment, description }) and `score.sections`
+ * ([{ letter, role, startBar, bars }]) steer it when the exporter sets them.
+ * `mode: 'pool'` reproduces the r34 lines.
+ */
+export function assignLyrics(score, opts = {}) {
+  if (opts.mode === 'pool') return assignLyricsPool(score, opts);
+  return writeLyrics(score, { melismaUnder: 0, ...opts });
+}
+
+/**
+ * r36 — his vo_chase note: "if there are multiple voices, even if notes are
+ * different they should be saying the same lyrics". A second sung voice
+ * (the harmony line) takes the LEAD's mora at every shared onset; a note the
+ * lead does not strike (the harmony rests differently) carries the lead's
+ * current syllable rather than a word of its own. Mutates `score.notes`
+ * (syl / ph / melisma) and rewrites `score.lyrics`; returns the match count.
+ */
+export function copyLyricsFrom(score, lead, { tol = 0.03 } = {}) {
+  const ln = (lead.notes ?? []).filter((n) => n.syl && n.syl !== '-');
+  if (!ln.length) return 0;
+  let matched = 0;
+  for (const n of score.notes) {
+    let hit = ln.find((l) => Math.abs(l.start - n.start) <= tol);
+    if (hit) matched++;
+    else {
+      // the lead's syllable sounding at this onset (last lead onset at or before it)
+      let best = null;
+      for (const l of ln) { if (l.start <= n.start + tol) best = l; else break; }
+      hit = best ?? ln[0];
+    }
+    n.syl = hit.syl; n.ph = hit.ph.slice(); n.melisma = false;
+  }
+  const phrases = new Map();
+  for (const n of score.notes) { const k = n.phrase ?? 0; if (!phrases.has(k)) phrases.set(k, []); phrases.get(k).push(n); }
+  score.lyrics = [...phrases.values()].map((ph) => ({ start: ph[0].start, notes: ph.length, text: ph.map((n) => n.syl).join(' ') }));
+  return matched;
 }

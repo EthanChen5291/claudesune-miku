@@ -12683,3 +12683,323 @@ table, the fixes above); every `vl_*`/`vo_*` render was deleted before the
 final loop so no stale HQ mix sits under a new voice. Final pages: vocaloid
 14 songs (14 writer, 14 harmony), vocalab 27 variants (26 writer — the
 `writer_lead` control is the r34 path — 2 harmony).
+
+## D140 — r36: his first Vocaloid-page export (14 cards, 3 keeps, 13 notes) — the melisma law, the chorus double on a woodwind, one set of words for every voice, the too-loud voice, the too-minor excited songs, the keep-click crash, and wav download links
+
+**Context.** His export on `r35-vocaloid` (2026-09-12 18:39): keeps on
+vo_reflection ("best energetic one so far"), vo_lullaby ("love the melody and
+the instrumental … the vocals and the support vocals and the melody and
+spacing fits really good"), vo_march ("I like this setup and the overall
+layering and progression … how the piano changes"); notes on 13 of 14 (only
+vo_goodbye silent). Saved at the scratchpad, imported with
+`import-verdicts.mjs`; the page was snapshotted before the import and every
+song's DATA compared after each rebuild. Earlier the same session, his ask
+for a download button on every card (HQ mix and HQ mix + vocal) was built
+into the shared card template: `<a class="dl">` links that fetch the wav and
+hand the browser a blob (a bare `<a download>` on a file:// page opens the
+wav in a tab — his report), plus `scripts/serve.mjs` / `npm run listen` so the
+pages can be opened over http where every browser saves. DATA on all four
+pages was byte-identical after that change (47/14/27/16 songs, 0 moved).
+
+**THE IMPORT BROKE THE BUILD (D138's law, sixth bite — and a crash this
+time).** The three keep clicks flipped `priorKeep`, and the page could not be
+built at all: `Cannot read properties of undefined (reading 'mul')` on
+vo_lullaby. Bisected: `(undefined).mul(gain(0.45))` — the r34 vocal-guide
+wraps `mixParts[i]` for the melody_takeover index, and the D138 fix for that
+index ("index from the running count") is gated `ruleFresh(35)`, so under a
+keep the OLD constant index runs and on a song whose head is two entries it
+points past the array. Fix: the judged index stays where it was valid; an
+out-of-range one falls back to the true index (no judged song can have been
+built with an out-of-range index, so this moves nothing). The three keeps
+carry `keepFresh: true, pinFrom: 'r36', voicedColor: true` and every r36 rule
+below is gated `ruleFresh(36)` in addition to `vocalWriterOn`, so the keeps
+are byte-identical on mix/solos/degrees/bpm/key/drums/cast (verified against
+the pre-import snapshot; `ops` — card text — moved).
+
+**THE "INDIAN FLUCTUATION" IS MELISMA, AND IT IS MEASURED (four cards:
+villain, cafe, sugar, march — "the thing that you do with the vocal notes
+where it like fluctuates during the same vocal (like during the same lyric,
+it's held and different notes). hold makes it sound Indian").** r34's
+`assignLyrics` gives a note shorter than 0.14 s that follows another note
+with no gap NO mora — it continues the previous vowel on the new pitch. That
+rule was written for the instrumental lead's ornaments; the r35 writer writes
+16th PAIRS under 140 bpm by law (the corpus does), and a 16th is under 0.14 s
+at every tempo above ~107. Share of sung notes that were melisma, per song:
+march 66%, villain 54%, sugar 53%, rooftop 50%, cafe 46%, corridor 33%,
+android 26%, fireworks 21%, kitchen 14%, chase 13%, opening 7%,
+reflection/lullaby/goodbye 0%. His four "Indian" cards are four of the top
+five (rooftop's card is about level — the voice was drowning the band, so the
+fluctuation was buried). The songs he liked without reservation sit at 0%.
+`export-vocal.mjs --melisma` (default 0: every note takes its own mora, the
+Vocaloid convention — a 16th pair is two syllables) and `render-vocal.mjs`
+passes it through; `--melisma 0.14` restores r34. vo_march is a KEEP whose
+music is pinned; its vocal is re-sung under the new law because his note on
+the card asks for exactly that, and the score's notes (start/dur/midi) are
+unchanged — only the syllables.
+
+**"IF THERE ARE MULTIPLE VOICES, EVEN IF NOTES ARE DIFFERENT THEY SHOULD BE
+SAYING THE SAME LYRICS" (vo_chase).** The harmony voice's score ran through
+`assignLyrics` with its own contour signature, so it sang different words at
+the same onsets. `copyLyricsFrom(score, leadScore)` (lyrics-ja.js): every
+harmony note takes the lead's mora at a shared onset (±30 ms); a note the
+lead does not strike carries the lead's CURRENT syllable. `export-vocal.mjs
+--lyrics-from <lead score>`; the harmony pass in render-vocal.mjs exports the
+lead's score to a SCRATCH path first (vendor/vocal/<song>.lead-words…) —
+never the lead's own score file, which would defeat the lead pass's
+changed-score check — and copies from it. Measured on vo_villain: 168 of 168
+harmony onsets shared, 168 same syllable, 0 melisma.
+
+**THE "OFF-KEY WOODWIND" AND THE "LOUD VIOLIN" WERE THE CHORUS DOUBLE (android
+"the flute or whatever is completely off key"; cafe and sugar "the woodwind
+that starts playing is off key"; corridor "violin too loud").** Per-layer
+probe in the mix: the complained layer on android and cafe is `gm_clarinet`
+at midi 81/82 (66 and 64 notes, B bars only — "starts playing"); on corridor
+`gm_flute` at 84 at 0.347, the loudest pitched layer after the piano. Both
+are r35's chorus double from its wide pool (winds, leads, mallets), and its
+notes ARE in key (2%). What reads "off key" is a sustained solo wind
+doubling a CONVERTED VOICE at the octave: the singer's f0 sits within 50
+cents on ~80–90% of frames, and a clarinet holding the exact pitch an octave
+up exposes the rest. The corpus doubles on the accompaniment's OWN PIANO (law
+9, 89% as the top note of a chord strike), so the double now takes the acc
+hand's voice — keyboards and mallets only, never a wind or a lead — at 0.5 ×
+lead (was 0.7). A pool of ONE by design, and D119 asks that this be said: the
+acc's voice is the corpus's instrument for this part, not a variety axis;
+`chorusDouble: { sound }` overrides. Rebuilt: 11 fresh songs on piano or
+gm_epiano1; the clarinet/flute layers are gone from android, cafe, corridor;
+the three keeps keep their r35 double (music_box, flute, celesta) as judged.
+Support under a sung lead: the counterline, descant and marcato bands are
+× 0.6 on r36 writer songs (corridor's string ensemble 0.288 → 0.173 mean) —
+with the instrumental lead a 0.45 guide, D77's bands were set against the
+wrong reference.
+
+**THE VOICE IS TOO LOUD ON THREE CARDS, AND HIS LANE RULE (rooftop "vocals
+too loud, it's drowning everything else. for energy like festivals it should
+be much softer"; corridor "vocals a bit too loud"; kitchen "make vocals
+softer").** Per-song pins on the VO_PROMPTS rows: rooftop −5 dB, corridor
+−3, kitchen −4, and a lane default: festival −4 (fireworks inherits it).
+Energetic stays 0 (chase "sounds good", reflection a keep at 0). The three
+keeps' levels are pinned as rendered (0 / −1.5 / +1.5).
+
+**"VOCALS LIKE JUST ANOTHER LAYER OR WHISPER" FOR SCARY (villain, repeated
+on cafe and sugar).** `vocalStyle: 'layer'` on a row → the page's DATA →
+`render-vocal.mjs --vocal-style layer`: low-passed at 4.5 kHz, the room 1.6×
+wetter (a floor of 0.3 where the lead has none), and a lower `vocalDb` (−5
+villain, −3 corridor). The harmony stem takes the same treatment. A whisper
+TIMBRE is not in this voicebank (DiffSinger Tiger sings; there is no breath
+model) — stated as a limit, not built.
+
+**"EXCITED BUT THE ENTIRE THING IS IN MINOR" (fireworks) + "doesn't fit the
+excited vibe" (opening).** Both excited MAJOR songs had hashed onto
+`vid_citypop_c_a` (`2:m9 7:13 0:^7 6:9 5:^9 10:13 9:m9` — a ii-m9 city-pop
+loop, two foreign roots, four minor-quality chords in seven; measured 15–19%
+out-of-key on guitar/piano/bass). A major key is not a bright song.
+`opts.brightPool` (writer songs only — a pool filter is a retrieval re-roll):
+keep exemplars with a major-quality TONIC, no foreign roots, dominants only
+on V, at most a third minor. Of 61 major entries 24 pass — and of the CLICKED
+ones, TWO (ut_once_upon_a_time_p3, ut_tem_shop_p1; D119: a pool of two), so
+both songs hashed onto the same Undertale loop. They are pinned outright on
+the idol-pop axes with `basePin` + `rawBase` (the variation pass had turned
+I V vi IV into `0 7 0 5:^7`): fireworks I V vi IV (B F# G#m E), opening
+IV I V vi (G D A Bm). Rebuilt: 0–1% out-of-key on every layer. brightPool
+stays as the rule for the next description prompt; the clicked-bright pool
+needs entries (his click, D95).
+
+**"THE ALBERTI MAY BE TOO QUICK AT 176. OVERALL … TOO FAST" (chase).** 152
+bpm and `metronomeAcc: true` (D102's test on the acc pool — fnd_alberti_16ths
+is 16 onsets/bar, 11.7 attacks/s at 176); the acc is now fnd_broken_tenths.
+Also gm_epiano1 double, harmony words as above.
+
+**Kept as judged, carried to next round:** the three keeps; vo_goodbye
+(no note — moved only by the engine-wide double/support rules, which is
+absorption on an unkept song); kitchen "more serious than goofy" (only the
+voice level was asked for — the four-on-the-floor block acc at 165 is the
+serious half and is a lane question for later). The lab page
+(`vocalab.html`) is unjudged and takes the r36 double/support rules: 26 of 27
+variants moved (`vl_writer_lead`, the r34 control, did not).
+
+**Tests.** 431 → 434: melisma 0 / r34 reachable; `copyLyricsFrom` at shared
+and unshared onsets; the page's double on a keyboard for every fresh song and
+the three keep rows pinned; the r28 test's `keepFresh` row count 1 → 4.
+
+**Renders and the verify pass:** see the addendum below (a peer session is
+replacing the random-mora lyrics with a real lyric writer; the re-sing of
+both pages waits for it so every song is sung once).
+
+### D140 ADDENDUM — the verify pass, and what it refuted
+
+An adversarial verifier re-measured all eight claims (scripts under the
+scratchpad `r36/verify/`). CONFIRMED: the three keeps identical on all ten
+music fields against the pre-import snapshot (songs.html 0/47 and vocal.html
+0/16 moved); the chorus double on piano/gm_epiano1 at +12 on 100% of shared
+onsets on all 11 fresh songs and no clarinet/flute layer left in the
+android/cafe/corridor mixes; corridor's string ensemble 0.288 → 0.173 (×0.601);
+villain's scores 0 melisma of 336 + 168 and 168/168 shared onsets on the same
+syllable, `--melisma 0.14` still yielding 92 melisma notes on sugar; the
+bright pool 24 of 61 major and exactly 2 clicked; fireworks/opening 0.0%
+out-of-key on every layer; the crash guard cannot change any song that built
+before (an out-of-range index never built); the download links, the server's
+206/404/traversal behaviour; the layer style 11.8 dB less energy above 6 kHz
+and the −5 dB balance line.
+
+**PARTLY — the double's realized ratio.** Nominal 0.5 × leadGain, but the
+lead carries the r33 accent envelope (20–27 distinct gains) and the double
+does not (3–4), so the REALIZED median ratio is 0.50–0.585 (chase, android,
+villain at 0.58). Under the claimed ≤0.55 on eight of eleven; left as is
+(the lead is a 0.45 guide under the voice either way).
+
+**REFUTED BY OMISSION — the companion was on the same clarinet.** The verify
+pass found gm_clarinet still in vo_sugar's mix as the COMPANION (172 notes,
+mean 0.428 — louder than the piano's 0.39, from bar 0), and clarinet
+companions on fireworks (0.37), rooftop, villain. His sugar card ("the
+woodwind that starts playing is off key") was attributed to the double
+alone. Fixed the same way, by DECLARED family: under a sung lead
+(`vocalWriterOn && ruleFresh(36)`) the companion pool excludes `wind` and
+`brass`, and its gain multiplier is 0.4 (was 0.6 — above the guide lead).
+Rebuilt: companions now music_box / vibraphone / epiano / viola on the fresh
+songs; the three keeps keep theirs (reflection's clarinet, lullaby's epiano,
+march's cello).
+
+**Noted, not fixed.** (a) vo_corridor's `_lead_mix` realizes ONE distinct
+gain across 96 notes — the D123 clobbered-envelope signature, on a fresh
+song; the other suite leads realize 3–4. The lead is a 0.45 guide under the
+voice, so it is inaudible here, but the writer's spec path is not carrying
+the accent envelope through — a next-round item. (b) The `sections` field
+the peer session added to every vocal-page song (verse/chorus keying for its
+lyric writer) is non-music DATA and moved every card's JSON; keeps are
+compared on music fields.
+
+**Renders.** The batch (`r36/render-r36.sh`) re-renders every vocaloid song
+except reflection/lullaby (music and score unchanged) and every lab variant
+except `vl_writer_lead`; march re-sings only (no HQ change). Until it
+finishes the page serves the r35 renders — sugar's shipped vocal is the
+92-melisma "Indian" version.
+
+## D141 — r36: REAL Japanese lyrics, written from grammar and bound to the melody (his "currently, our vocaloid produces random japanese syllables. it should actually produce real japanese lyrics, of course with parts bound to the melody")
+
+(D140 is the r36 vocaloid-page export round in another session — the melisma
+law, the layer vocal style, the bright pool, the harmony voice copying the
+lead's words. This entry is the lyric writer only; the two were built in
+parallel and merged around each other on disk.)
+
+WHAT WAS WRONG. D135's `lyrics-ja.js` picked WORDS by hash until a phrase's
+mora count was met: "ka ze ga a sa wa ta shi" — vocabulary with no grammar,
+word boundaries wherever the count ran out (across rests, off the held
+notes), and the same word pool for a rainy goodbye and a cooking-show jingle.
+His verdict is the one above; the r35 keeps praised the MELODY and the voice,
+never the words.
+
+THE WRITER (src/lib/lyrics-ja-writer.js, `assignLyrics` now delegates to it;
+the pool survives as `assignLyricsPool` / `--lyrics pool` so any r34 line can
+be reproduced byte-for-byte). Four laws:
+
+1. A SENTENCE PER LINE, FROM GRAMMAR. 23 templates (subject-が verb /
+   object-を verb-て / noun-に verb-たい / topic-は predicate / adverb verb /
+   fragments …) over a tagged lexicon: 107 nouns by kind (person / place /
+   thing / abstract / time), 66 verbs with a conjugation class (godan,
+   ichidan, kuru, au) and an argument frame (which particle, which noun
+   kinds), 22 i-adjectives, 15 adverbs, 9 ordinary set phrases. Verbs are
+   CONJUGATED (dict / て / た / たい / ない / volitional / てる): "kimi no koe ga
+   hibiku", "sora o koete ikou", "kaze ni naritai" are the grammar's output.
+   D137's law on the text side: NOTHING STORED IS A LINE FROM A SONG — a test
+   fails on any lexicon entry longer than a word or a two-word set phrase.
+   Glosses are generated with the line so he can read what it says.
+2. BOUND TO THE MELODY. A 2-bar phrase is cut into SEGMENTS at its rests
+   (tempo-relative: 0.4 of a beat — an 8th rest ends a word, a 16th rest
+   inside a word is sung through) and a bunsetsu (word + particle) may never
+   straddle a rest. A LONG note (>= 1.5x the phrase median, >= 0.3 s) asks
+   for a word boundary after it (scored). A segment's mora count is met
+   EXACTLY, or one short with the final vowel HELD over the last note (a
+   chōon 'ー' — what a singer does with a long note; 88 of 3577 notes on the
+   30-song sweep), never with a stray syllable. Particles drop as lyrics do
+   ("kimi omou"), a lone one-note segment takes a vowel, a line the grammar
+   cannot fill in one clause takes two (129 of 460). The search places
+   chunks incrementally with a candidate cache: 207 phrases in 8 s (the
+   first cut re-generated candidates per slot: 76 s, and 31 fallbacks).
+3. THE FORM WRITES THE REFRAIN. Vocal-page songs now expose `sections`
+   ({ letter, role, startBar, bars }, spread-gated on `opts.vocalLead` so the
+   key is ABSENT elsewhere — songs.html byte-compared 47/47 identical). A
+   CHORUS phrase is keyed by its ordinal in the letter, so every statement of
+   B sings the same words re-bound to that statement's rhythm (27 verbatim
+   returns on the sweep; a fresh variant only when the sentence cannot be
+   re-bound: 9); a VERSE is keyed by statement, so verse 2 has new words over
+   verse 1's tune; with no sections (songs.html) the D135 contour key stands.
+4. THE PROMPT PICKS THE WORDS. environment + emotion + the description's own
+   nouns (rain, station, fireworks, robot, mirror, coffee, school corridor …)
+   map to lexicon tags; tagged words sort first in every slot, words that
+   belong to another world (sweets in a rainy goodbye) sort last and cost a
+   point. The chorus leans on the wish forms (-たい / -おう / -て + よ), the
+   verse on scene forms (が + verb, は + noun, adjective + noun).
+
+Phonemes: っ is the `q` closure carried as the leading consonant of the next
+mora (the singer already places consonants before the beat, which is where a
+closure sits), を sings [oo], ー is the previous vowel on a new note, は/へ as
+particles carry their kana but sing wa / e. Every mora still spells into the
+Tiger set (test). Kana is derived from the moras.
+
+MEASURED (30 songs, vocaloid + vocal pages, scores exported to scratch — NOT
+to audition/hq, because render-vocal's re-sing check reads the on-disk score's
+syllables and a pre-exported score would have kept the OLD dry wav):
+  460 phrases, 17 vocalise fallbacks (3.7%; concentrated on vo_android's
+  2-note segments and the r34-lead songs' one-note phrases), 376 distinct
+  words over 1210 tokens, long-note word-end rate 40.7% (a random boundary
+  would be ~30%), no word crosses a rest (test on vo_villain; the `w` owner
+  field per note lets any verifier check it).
+  Byte compares: songs.html 47/47 identical, no `sections` key anywhere;
+  vocal.html moved ONLY `sections` on its 16 songs (against both my pre-snapshot
+  and the r35 final page); vocaloid.html moved `sections` from this work — the
+  cast/mix/solos movement on 11 non-keep songs between my two rebuilds is the
+  other session's r36 support-trim rule landing (the three keeps did not move).
+  Tests: test/vocal.test.js 8/8 (+3: grammar/binding/refrain/determinism/pool
+  fallback, lexicon-stores-words-not-lines, sections absent from songs.html).
+
+WHAT THE LINES READ LIKE (vo_corridor, "haunted school corridor at midnight"):
+  [A]  gakkoーno ashiotoga kieru — school's footsteps vanish
+  [A]  kowai kagi nagai himitsu — scary key, long secret
+  [B*] hoshizorano usowo sagasu — starry sky's lie look for
+  [B*] sotto kagiwo kakushitai — softly key want to hide
+  and vo_cafe: "shizukana asa atatakai koーhiー sa" / "machie ikitai anatato
+  okitai". They are J-pop fragments, not prose: short clauses, no honorifics,
+  the same handful of images a Vocaloid lyric leans on. What they are NOT
+  yet: a story across verses (each line is composed alone, only the refrain
+  is shared) and rhyme (Japanese lyrics rarely rhyme; none attempted).
+
+THE LYRIC SHEET. A vocal-suite card shows its lines (kana / romaji / gloss,
+section-labelled, ↻ = the chorus returning its words) read from the score
+file at page build — only when the file exists and carries kana, so the
+sheet appears after the render loop plus a page rebuild.
+
+OPEN (his ear decides): whether the two-clause lines read as one line or two;
+whether verse 2 should share verse 1's first line (a common J-pop shape —
+one flag away, key the first ordinal by letter only); the render — the other
+session's queue re-sings every vocal-page song with these words.
+
+### D141 ADDENDUM — the sweep's own catch, the template review, and the freeze
+
+- **THE VERIFIER FIELD WAS LYING (found by re-measuring, not by the test).** A
+  30-song sweep of "does any word cross a rest" read **45 hits** while the
+  unit test (vo_villain) passed. Every hit was on a line with a FILLER vowel
+  (a stranded one-note segment): the filler was written into the slot's
+  `fills[si]` and then OVERWRITTEN by the slot's real word, so the chunk list
+  lost it while the mora list kept it, and every owner index after it shifted
+  by one — the binding was right, the bookkeeping was off by one. The filler
+  now lives in the search STATE (`fillAt` positions), the chunk list carries
+  only words. Re-measured: **0 crossings, 58 filler vowels, 0 syllables
+  changed on any of the 30 songs** (the fix moved no line), long-note
+  word-end rate corrected 39.5% → **46.7%** (a random boundary ≈ 30%). The
+  test only had a song without fillers; the sweep is the check.
+- **TEMPLATES REVIEWED AS A SET (motif-engine-09's point: the per-entry cap
+  bounds the words, not what a skeleton assembles from them).** The 23
+  templates are generic Japanese clause skeletons — N-が V, N-の N-が V, N-を
+  V-て/たい/おう, N-に V, N-へ V, N-と V, N-は N / N-は A, ADV V, V-て V, N-も N-も
+  V, A N, N-の N-の中へ, fragments — not the word order of any remembered line;
+  none carries fixed content beyond a particle and "no naka e". There is no
+  lyric text in the repo to n-gram against, so this review is the D137 check
+  on the text side; re-do it whenever a template is added.
+- **Coordination record.** Four sessions were live in one checkout. The r36
+  vocaloid round (D140) belongs to motif-engine-c6, which merged around this
+  work, started its render batch at 15:16 and asked for a writer freeze; the
+  writer is frozen as of 15:23 (the two line-changing edits after 15:16 —
+  particle-less nouns + off-theme penalty, the one-mora-noun penalty — mean
+  early-queue songs carry slightly earlier lines; c6 runs a second pass so
+  every song sings one version). motif-engine-b0 queried the `sections` gate
+  (a truncated grep) and retracted. Full suite: `npm test` 434/434.
