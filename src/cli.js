@@ -15,7 +15,6 @@ import { verifySong, checkEdit } from './harness/index.js';
 import { renderListenHtml } from './emit/listen.js';
 import { songToMidi } from './emit/midi.js';
 import { songHaps } from './harness/evaluate.js';
-import { renderWav } from '../scripts/render-wav.mjs';
 import { renderReport, listenForHints } from './emit/reportmd.js';
 import { fmtMetricsTable, fmtAssertions, fmtContainment } from './harness/report.js';
 
@@ -262,6 +261,19 @@ async function exportCmd(argv) {
 
   if (values.wav) {
     const wavPath = midPath.replace(/\.midi?$/i, '') + '.wav';
+    // r38 packaging: LAZY. render-wav.mjs lives in scripts/, which the published
+    // package does not ship (`files: [src, README.md]`) — and it needs fluidsynth
+    // plus a soundfont besides, i.e. the render tier, not the engine. A static
+    // import here would break `motif-engine generate|edit|verify|export` for every
+    // consumer of the npm package, not just the --wav path. Import it on use.
+    let renderWav;
+    try {
+      ({ renderWav } = await import('../scripts/render-wav.mjs'));
+    } catch {
+      console.error('--wav needs the render tier (scripts/render-wav.mjs + fluidsynth + a soundfont),'
+        + ' which is not part of the published package. Run it from a repo checkout.');
+      process.exit(1);
+    }
     const out = renderWav(midPath, wavPath, { soundfont: values.soundfont ?? null, gain: values.gain ? Number(values.gain) : 0.7 });
     console.log(`wrote ${out.wavPath} (${(out.bytes / 1e6).toFixed(1)} MB, soundfont: ${basename(out.soundfont)})`);
   }

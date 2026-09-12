@@ -3,7 +3,28 @@
   "version": "0.1.0",
   "description": "Strudel Song Engine: iterative, verified AI music generation",
   "type": "module",
-  "private": true,
+  "license": "UNLICENSED",
+  "private": false,
+  "engines": {
+    "node": ">=20"
+  },
+  "files": [
+    "src",
+    "README.md"
+  ],
+  "main": "./src/index.js",
+  "exports": {
+    ".": "./src/index.js",
+    "./harness": "./src/harness/index.js",
+    "./evaluate": "./src/harness/evaluate.js",
+    "./binder": "./src/binder/adapter.js",
+    "./compiler": "./src/compiler/compile.js",
+    "./vibes": "./src/lib/vibes.js",
+    "./package.json": "./package.json"
+  },
+  "bin": {
+    "motif-engine": "./src/cli.js"
+  },
   "scripts": {
     "test": "node --test \"test/**/*.test.js\"",
     "listen": "node scripts/serve.mjs",

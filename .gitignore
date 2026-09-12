@@ -128,3 +128,18 @@ audios/toppack-r34/
 
 # r35 — the Vocaloid MIDI set (analysis-only, copyrighted transcriptions, never committed; D95)
 audios/vocaloid-r35/
+
+# r38 PACKAGING — the eval tier's AUDIO. `eval/` is the §5 acceptance record
+# (three arms x replicates) and it stays tracked: 306 files, 4.2MB of .strudel
+# sources, .json metrics and .md reports, all of which are the reproducible
+# evidence. What is gone is 679MB of RENDERED audio — 39 wav + 9 mp3, every one
+# regenerable from the .strudel beside it via `node src/cli.js export --wav`,
+# and 300KB of stray .pyc. That was 679 of the repo's ~1.5GB of tracked bytes.
+# scripts/acceptance.mjs only existsSync's the three arm DIRECTORIES; each keeps
+# its non-audio files (5 / 4 / 158), so the gate still passes on a fresh clone.
+# NOTE: untracking does not shrink the existing pack — the blobs remain in
+# history. Actually reclaiming the space needs a history rewrite, which is
+# destructive and is Ethan's call, not a side effect of packaging.
+eval/**/*.wav
+eval/**/*.mp3
+eval/**/*.pyc
