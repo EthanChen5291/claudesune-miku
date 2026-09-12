@@ -10829,3 +10829,510 @@ to the pre-import snapshot; first 188 queue positions unchanged (batch 5 at
 189-192); only the 13 named `again` fields moved on existing candidates;
 probe 192/192 syntax sweep with transposition/no-repitch/keyless invariants
 green; catalog tests 3/3. Nothing committed.
+
+## D130 — variation crafting (batch 6): 13 labs, the fixes his fourth export names, two mining lanes
+
+His go-ahead, verbatim: "proceed with variation crafting... this variation
+does NOT mean randomly changing some notes, it means like actually creating
+another flow bound within the sample that works... ensure that with each
+experimentation, you ask targeted questions when im verifying so u can prove
+your hypothesis... make lots of variations and be very indepth." Catalog
+192 -> 232 (batch 6 = 40 at positions 193-232; append-only verified; 66 cards
+now carry a "Q for you:").
+
+1. THIRTEEN VARIATION LABS (cand_b6_vl_*), every one built from a sample HIS
+   notes asked to vary, every one a flow inside the sample's identity with a
+   hypothesis question: the pendulum 3+3+2 regroup + 16th-pair (his 321232123
+   example made literal) and the bright-third A/B (hypothesis: the darkness
+   was the E-natural #11, not the act of varying); hexarp arch/zigzag/dotted
+   flows under UNTOUCHED strings (his "strings should stay the same"); snowy
+   bell rhythm-frozen re-flows incl. a contour inversion + diatonic tail (his
+   two complaints, one card); horn-echo repaired tail vs new in-key flow;
+   lattice breathing top voice (9th vs 3rd lift); negrocity three walks (b5
+   vs natural-6 vs descend-first — does the b5 make the playful?); harpsi
+   third-up transplant (tests the line-fits-key law AS the variation
+   mechanism); dq-pizz flattened vamp vs reversed arc (the climb is the
+   clash hypothesis); pkmn dyads his-lift vs push-removed (two competing
+   fixes side by side); offbeat-pizz third-note-up at the every-other-bar
+   dose; steel double retrograde call/answer; premonition SAFE second swell
+   (same chord re-rolled higher — his per-host notes localized every clash
+   to swell 2's new pitch set; the variant can only clash where swell 1
+   already would).
+
+2. THE "CANT HEAR" ROOT CAUSE, NAMED: five of six inaudible cards are
+   gm_synth_bass_1 at octave 2 under busy hosts, and the growth cards'
+   "silence for like the first half bruh" is the SAME bug (their early bars
+   are octave-2 bass alone). Fixed in place (his notes name the cards):
+   topgear + ctr_credits + ctr_boss respec'd to sound from bar 1 with bass
+   gains 0.55->0.75 (+addon 1.3 on ctr_credits); hgss addon 1.6. LAW FOR
+   CARD AUTHORS: a card must SOUND from bar 1 — staged-entry demos audition
+   as broken silence; and octave-2 synth bass NEVER carries a card's first
+   bars alone. NINE SPLITS per his separation asks: soncha base + rise
+   (the rise scoped "transition/pickup ONLY" — auditioning a seam device as
+   loop material is what made it read off-key); bkmansion's three LH
+   textures (trill / stab-triads with the source's own g->g#->plane
+   variation curve / up-down arp); raining-jazz LEFT HAND alone (his "dont
+   use the melody"); ctr chord-stabs + saw-theme; topgear riff-only ("they
+   match but shouldn't always be together").
+
+3. EXPORT 4 MECHANICS: he UNTICKED three lp_r5 pairs — the builder correctly
+   drops their pins from the page while CATALOG_PAIR_PINS keeps them dormant
+   (a re-tick restores judged values). Two new ticks frozen at import time by
+   the new importer path (lp_r5|topgear, premonition|soncha) — the stored-pin
+   machinery's first live import worked. An editing lesson for the ledger: my
+   spec-replacement regex ate the backslash of escaped quotes and corrupted
+   three entries (caught by module parse, repaired with a real string
+   scanner, verified by re-parse + rebuild); string surgery on the candidates
+   file now uses the scanner, never [^"]* regexes.
+
+4. TWO MINING LANES (18 cards): DEV PATTERNS (950 files): 62.5% of
+   well-segmented songs RETURN to opening material after contrast; returns
+   transform in 93.7% of songs and +LAYER is the #1 nameable mechanism (24%)
+   while support REWRITES are 2.1% (the corpus freezes parts and
+   re-orchestrates — r22 R2 validated from form analysis) and octave-lift
+   returns 1.2% (D97's rejection again); 43% of seams carry NO device
+   (seasoning, not law; turnaround_alt 29.2% leads the rest); staircase arcs
+   are a TITLE-TRACK thing (25% there vs 8.1% overall); files end by
+   THINNING (11.7%), not filling. Cards incl. the Faxanadu
+   companion-enters-on-repeat scheme (20 bars, note-for-note) and the Goron
+   selective drop (answers the six r32 breakdown cards: floor survives,
+   chatter enters mid-drop). PERCEPTION CATEGORIES (his own vocabulary from
+   the exports): 7 mechanism hypotheses formed from his rated b2 exemplars,
+   each tested by a NEW source card whose question states the recipe —
+   incl. a name-ALIGNED probe vs name-OPPOSED control pair (his shadowrun
+   note proves he reads source names; the pair separates recipe from name),
+   a minigame cell-reversal, and a determination A/B splitting rhythm-half
+   from harmony-half. Dialect gap recorded: no 9sus quality (a real fairy
+   harmony could not be spelled).
+
+VERIFIED: 232/232 build-verified; first 192 positions byte-stable except the
+four note-named fixes; probe 232/232; page pins 75/75 == frozen values,
+every tick pinned; tests 3/3. Nothing committed, nothing in retrieval (D95).
+
+## D131 — export 5 in; the variation labs become their own page (his ruling)
+
+HIS MESSAGE: "no like variation labs should be a different page. moreover
+there should be many many more variations. experiment as much as you can with
+not just the samples and changing intervals/notes/order in the samples but
+also combos of instruments and also trying to compose in speicifc ways with
+respect to the samples and how mixing samples mixes their genres/vibes and
+composing with respect to that. there's so many." Plus export 5 (23:00, one
+hour after export 4 — his page still the 192-card build: the unseen list
+carries no b6 id, so batch 6 remains unheard).
+
+1. EXPORT 5 DIFFED AGAINST STORED STATE (the re-exports-look-identical law):
+   genuinely new = FOUR notes on the b5 cards — daydreamer guitar "sounds
+   bright and casual... I like this vibe", garden horn "should [be] used as a
+   reference to inspire our composition... not hardcoded", gijoe rhythm
+   "sounds happy. I like it!", daydreamer bass "happy bass. should also
+   explore variations for bass" — and ONE tick swap on lp_r5: topgear
+   UNTICKED (his note asked for the split; its pin stays dormant per D129),
+   daydreamer_bass TICKED. Everything else (7 labels, ~200 notes, 9 tick
+   lists) was already imported from export 4, byte-identical. Import: 78
+   prior pins carried verbatim, 1 new pin frozen ({d:4, g:0.7} — continuous
+   layer, cont-0.7 base; computed identically on the judged snapshot and the
+   current page, verified before running). His four b5 reactions RATIFY the
+   b5 fixes: every separation/template ask from export 3 came back positive.
+
+2. THE LABS LEAVE THE CATALOG. The 13 cand_b6_vl_* cards removed
+   (string-scanner surgery per D130's lesson, dangling-reference check);
+   catalog rebuilt at 219. Verified: first 192 positions byte-identical to
+   the prelabels5 snapshot, tail = the 27 remaining b6 cards in order, page
+   pins 75/75 == stored values including the new tick. He has never seen
+   positions 193+, so the renumbered tail moves nothing he has judged.
+
+3. audition/variations.html — THE LAB PAGE. scripts/audition-variations.mjs
+   + src/lib/variation-labs.js (48 experiments, 170 variants; export page id
+   variations-r33; importer scripts/import-variations.mjs →
+   variation-labels.js ready for his first export). A card = one EXPERIMENT:
+   lane (flow 17 / perc 5 / combo 5 / align 6 / mix 8 / compose 7), his
+   verbatim words, a falsifiable hypothesis, a targeted question, and
+   SEPARATE playable variants (his "evaluate this in its parts not a whole"),
+   each with works/off marks + a note box; card-level verdict/label on the
+   experiment. Every variant is evaluated at build time and a failing variant
+   rejects its whole card (a lab with a missing arm is a broken experiment).
+   The lab_stack render kind pulls CATALOG cards by id as bed/partner
+   material with the exact {d, g, t} the judged page played (stored pin when
+   ticked, judged-page computeLivePin otherwise) — "as you heard it" variants
+   are bit-faithful reproductions of the combos behind his notes. D95
+   boundary test-pinned: nothing in src/ imports the labs.
+
+4. THE ALIGNMENT FINDING (align lane, measured BEFORE authoring): his five
+   "wrong key / align to the key" complaints decompose into TWO mechanisms —
+   layerstack_rise and shop_bounce land 100% IN-SCALE after best-seat
+   transposition (the clash is chord-level: their own loops against the
+   host's changes), while combo_r8 (2 planing cells), gijoe (3 cells) and
+   airwolf (ONE pitch class — the seated a#, exactly matching "the first
+   part fits but the second variation sounds a bit off key") carry countable
+   chromatic cells. The catalog's key mapping is NOT the gap; chord tracking
+   is. Each align card plays as-heard / conformed / minimal-repair so his
+   verdicts choose the repair grade the predict stage implements. Plus
+   lab_align_host_pulse for his three host-rhythm notes ("tempo should be a
+   bit more constant"): bare uneven chordBeats vs +root pulse vs evened
+   spans — faithful-pulse or literal-evening, his pick governs every
+   unevenly-transcribed progression. Related trap found on the way: the
+   degrees renderer reads `tonic`, not the specs' documentary `key` field,
+   so rl_r2/rl_r3/rl_r6/grief all RENDER in the C frame — self-consistent,
+   everything he judged was that frame (stored pin deltas confirm), but any
+   lab material must be authored against the RENDERED chords, not the
+   documented symbols (one agent draft keyed grief to its symbols and the
+   probe caught it).
+
+5. HIS ANALYZE-WHY ASKS → RULES → FALSIFIABLE CARDS (compose lane,
+   research/variation-labs-r33.md): harpsi = common-tone anchor + stepwise
+   pickup + one register (predicts a #9 rub on rl_r6's G7 that the
+   andalusian control legitimizes — rule AND phrygian exception tested);
+   hexarp = major scale MINUS degree 4 (restore the f → predicted break;
+   fresh no-4th minor run over the nightfall loop → predicted carry);
+   nocturne calm = wide empty-middle frames + FALLING stepwise answers +
+   neighbor rocking (new E-minor material from the rules alone + a
+   rising-answer falsification); raining-jazz relax = sparse
+   chord/root/fifth LH + rocking RH (which half carries it?); allstar
+   resolver = V→v(add9) mixture softener grafted onto royalroad and the
+   sus-pedal loop; scale climb staged before a drop vs before nothing (his
+   "transition not a repeat"); echo cascade = unison canon needing an
+   ARPEGGIO-shaped line (stepwise through the same cascade = predicted mud).
+
+6. VIBE ALGEBRA COMPOSED (mix lane): his own recipe rendered literally
+   ("for more energy, add like the air-pirate bass and energetic
+   pizzicato"); mysterious-desert testing that the second swell's clash
+   tones ARE the desert bII pincer over a drone (reframe vs repair as a
+   generator choice); playful+playful (add or saturate?); determination +
+   the too-loud pad at half gain; tech-mystery with the chord-conform rule;
+   the timelapse DIAL (his "any layer can be on or off" as four positions of
+   one core); royalroad stakes-vs-relaxed (opposing deltas); his
+   texture-budget law on his own named example (hexarp × panflute stacked
+   control / time-separated / role-spread from his actual ticks).
+
+7. FLOW/PERC LANES (two drafting agents, briefed with the source specs and
+   his verbatim recipes, adversarially re-verified): every note-named
+   variation ask has a card — the pendulum with his literal 3213232123232
+   plus the 3+3+2 regroup and enters-later demo; hexarp (strings untouched,
+   d-free verified in all five variants); lattice, snowy (rhythm frozen),
+   horn echo (tail repaired before developing — developing the flagged tail
+   would reproduce the complaint), offbeat pizz "up a note on the third note
+   occasionally", walkbass, harpsi, dq pizz (incl. the non-incrementing
+   LEVEL variant answering his rl_r6 note), pkmn dyads (transcribed
+   anticipation vs barline-aligned vs his up-ending), steel reversed/rotated,
+   swell rhythm/structure variants, rush rebuilt to his exact recipe ("same
+   speed and a different note... and softer" — the agent measured the real
+   defect as register-drop + parking, not thinning, and said so), lb3
+   rotations, daydreamer bass with a tamed bar 4, bkmansion's LH section
+   studies + recombination, grief at 100/72/60 (tempo the only variable),
+   congas/shaker flows, lofi+indie combined (collision-groomed variant with
+   the resolution policy in the note), the tutorial-cluster staged over time
+   vs all-at-once, and the percussion ENERGY LADDER from his tier labels.
+   Agents' own deviations were musically argued and kept (e.g. the literal
+   third-lower lattice answer vetoed for a minor-9th against the held cog —
+   stated on the card). Originals verified byte-equal to their source specs.
+
+8. NEW LAWS RECORDED (memory + research doc): tick lists are OPTION MENUS,
+   never a stack ("im listing all applicable... if you play them all at once
+   they're not gonna resonate too well due to being too textured"); melody
+   samples are reference-only, never hardcoded (said three times: panflute
+   lead, garden horn, airvoyage melody); harmonic layers make a scary device
+   LESS scary and strengthen its other vibes (the premonition label — vibe
+   algebra with a sign flip).
+
+VERIFIED: labs 48/48 cards, 170/170 variants build-verified; pitch probe
+over all 152 pitched variants — every out-of-scale tone decomposed to (a)
+host chords' own chromatics (rl_r2's D6/D#o7/E7, rl_r6's G7), (b) the
+clash-subjects under test, or (c) marked source color, with 20 residual
+strict lines all in categories (a)/(b); catalog 219 with first-192
+byte-identical and pins 75/75; suite 394/394 (three new variations tests:
+well-formedness incl. the question law, D95 boundary, page integrity). The
+transient build crash mid-round was caught ONLY because the rerun captured
+the exit code — the D128 tail-masking lesson re-fired and held. Nothing
+committed; nothing feeds retrieval (D95).
+
+## D132 — first labs export in (34 good / 0 no); batch 2: bold flows, the rhythm axis, melody generation
+
+HIS EXPORT (variations-r33, 2026-09-05 06:50): 34 experiments "good", none
+rejected; 150 variant marks works, 4 off; 15 labels, 69 variant notes; one
+card unseen (rush — though he left a variant note on it). Imported with
+scripts/import-variations.mjs → src/lib/variation-labels.js (48 entries).
+The judged page was snapshotted first; the 48 judged cards are byte-identical
+on the rebuilt page (positions 1-48), batch 2 appended after them.
+
+1. WHAT THE VERDICTS SETTLED (research/variation-labs-r33.md §10):
+   - BOLD FLOWS WIN. Walkbass and dq-pizz: "I like this! these variations are
+     nice. definitely make more of these... could also vary rhythm too to test
+     hypothesis". Bkmansion's section studies, horn-echo own-melody and
+     continuation, hexarp arch/answer, every steel and daydreamer-bass flow,
+     every grief tempo: works.
+   - SURGICAL REPAIRS ARE INAUDIBLE TO HIM. Seven cards (every align card and
+     the lattice card): "very minimal changes, I can barely tell a difference
+     so these aren't really changes". He marked the as-heard variants works
+     too, airwolf's included — the catalog-era "wrong key" complaints were
+     mild and one-tone repair sits below his threshold. The align lane's
+     MECHANISM analysis stands (D131 §4); its repair-grade question is
+     answered: not worth an engine mechanism at that granularity. His
+     prescription: "explore more intentional variations over time", "more
+     changes in the rhythm and intervals", "try more diverse changes", "the
+     changes aren't too intentional and novel".
+   - TRANSPOSITION IS NOT VARIATION: snowy's third-lower flow "still the same
+     melody" (off; the snowy original also off); inversion, tail rewrite and
+     arch work ("works because its not too similar to the original").
+     "Inverted pickup or to rise will almost always work!"
+   - FALSIFICATIONS THAT FIRED: scale climb with no arrival → off (placement
+     rule holds); stepwise echo cascade → "just sounds like a scale";
+     safe-swell solo → "sounds off because its chord is much more harmonic
+     than the first" (repair kills the device) while the desert drone floor →
+     "I like the tonic drone floor a lot actually! could be expanded to many
+     ambient songs" (reframe > repair, confirmed).
+   - THE ONE THAT DID NOT FIRE: nocturne rules_inverted (rising answers) also
+     passed — "I like it! learn how to make melodies like these. very nice,
+     very good!!! ... sounds human" on both. Direction is not load-bearing;
+     batch 2 isolates rocking / sparseness / frame.
+   - HIS OWN PREDICTION REFUTED: hexarp × panflute stacked "sounds like a
+     lively song but fits"; the risk he re-stated is reuse WITHOUT variation
+     across songs ("infirm"). Time-separation was no rescue ("feels like it's
+     being cut off").
+   - LOOPING LAW (said twice): "dont loop the buildup each time. loop the
+     main bar that'll be used unless there's a change later in the song".
+   - PRESENTATION LAW: evened chord spans "if you plan to layer. if it's not
+     many layers do the uneven spans since it's more flow".
+   - His literal digit recipe (3213232123232) was OFF while the regroup it
+     pointed at works: his verbal recipes name directions, not specs.
+   - Percussion: lofi+indie groomed "very nice!", stacking "more powerful and
+     thus more energetic"; offbeat role instrument-agnostic (nylon
+     "relaxing", koto "asian-y"); bkmansion trill = fast+loud, "make it
+     intentional and layer", piano read "solo-y".
+
+2. BATCH 2: 23 cards / 85 variants, appended (page 71 / 255).
+   - MELODY GENERATION (his strongest signal): rule isolation on the human
+     melody (remove rocking / fill the gestures / fill the empty middle —
+     which one stops sounding human?); the grammar as a LEAD over the
+     nightfall loop on piano/flute/strings; the grammar at 128 bpm over a
+     driving bed with a hammered-repeat machine control.
+   - OVER TIME ("intentional variations over time", "4 bars since most
+     sections are 4 bars"): walkbass evolve in three pacings (every 2 / every
+     4 / late turnaround), dq with the falling cell PRIMARY (his ask), the
+     gijoe template developed by addition (octave top → octave bass → fill)
+     vs static control vs late-only fill.
+   - RHYTHM AXIS (agent-drafted, adversarially re-verified — slot sums,
+     realized-scale membership, byte-equal originals, a same-instrument
+     collision sweep): walkbass pushed/rest-punctuated/half-time/tresillo;
+     dq fall-primary/tresillo/breathe; lattice BOLD (rolled cogs, a real
+     2-bar answer, sparse+bass-cog answer); pkmn arpeggiated/triads/3+3+2
+     pulse/ending lift; the rise with intervals widened + 3+3+2 motor +
+     an actual step-up rise; harpsi rising 4-note pickup / rocking anchor /
+     descending answer run / combo; hexarp triplets/dotted/anticipation
+     (d-free); offbeat double-time/"a"-of-beat/octave answer; steel
+     squeezed/stretched/call-echo/doubled-16th tresillo. Agent deviations
+     kept, all measured: my steel "tresillo" recipe was the source's own
+     rhythm (a no-op — replaced by the Undertale doubled-16th form the
+     catalog note records), the lattice answer's d5 fused into the frozen d5
+     cog on the same marimba (event count 32→31 — re-noted bb-a-g-f), and
+     the offbeat "e of the beat" recipe was self-contradictory (written as
+     the "a"). Boldness measured: most variants change 40-100% of events;
+     the few under a third are stated on their cards.
+   - EVERY FIX HE NAMED: royalroad pendulum → bright third / regroup bar
+     (measured: the "darker second chord" is the seated f#; both fixes probe
+     clean); the dial's pizz → level / re-seat (the "one note in the middle"
+     is the seated e-natural; both clean); raining-jazz RH recomposed a
+     register up with the second half re-landed + a flute split; the minor
+     hexarp run without its b6 / with the dorian 6th; chaotix strings legato
+     / staccato + trumpet at half gain; airwolf pedal-only / melody-only /
+     second bar re-noted as a G-major gallop (a bold fix where one-tone
+     repair was inaudible); rush block-transposed repetition (felt speed =
+     same-pitch re-attack density, not onset count) / pad-carries-the-change;
+     the looping law as a percussion FORM (buildup once → main loop → late
+     one-bar event, plus a main-only control).
+
+3. LAWS RECORDED (memory: variation-boldness-laws): bold beats surgical;
+   rhythm is an axis; transposition ≠ variation; chord-check per song;
+   buildups loop once; harmonic-rhythm presentation depends on layer count;
+   tonic drone floor generalizes to ambient; reuse-without-variation reads
+   "infirm"; rule-composed melody passed as human. Open, recorded not carded:
+   grief "same durations feels robotic" (solo progressions need rhythm/roll
+   variety), pluck "a bit too loud" on the premonition mixes, tech-mystery's
+   "second bar" rub.
+
+VERIFIED: 71/71 cards, 255/255 variants build-verified; judged-48
+byte-identical; probe over 237 pitched variants — no new strict lines from
+batch 2 (the 20 residual lines are the D131 host-chord/clash-subject set);
+variations + catalog tests 6/6; full suite 394/394 with the exit code
+captured. Nothing committed; nothing feeds retrieval (D95).
+
+## D133 — second labs export (17/17 good); the sad-shop strings measured; batch 3: the melody grammar as an algorithm
+
+HIS EXPORT (variations-r33, 2026-09-06 03:18): all 17 batch-2 experiments
+"good", 0 rejected; page totals 51 experiments judged, 225 variant marks
+works / 5 off, 21 labels, 112 variant notes; unseen: both rush cards
+(notes left on them regardless). Imported → src/lib/variation-labels.js
+(71 entries). The judged page (71 cards) was snapshotted first and is
+byte-identical on the rebuilt page (positions 1-71). Batch-1 note text is
+unchanged between the two exports (0 diffs), so its labels are leftovers
+except where a ruling makes them live (grief "same durations" is live: he
+repeated the complaint on the strings card).
+
+His two asks: "the melody variations and generations have been really good.
+experiment more to test more hypothesis and learn more for what sounds
+human, and try to create more variations and experimenting." and "tell me
+about the sad shop strings - they sound so smoooth and natural, different
+from the robotic ones".
+
+1. WHAT BATCH 2 SETTLED (research/variation-labs-r33.md §11): bold flows
+   keep winning (pkmn "pretty good variartions!", rise "good variations!",
+   walkbass/dq rhythm flows groovier, dq tresillo "there could also be
+   variations of this"); DEVELOPMENT BY ADDING OCTAVES IS INAUDIBLE (gijoe
+   "barely different I feel like"); GROOVE REGROUPINGS ARE WRONG FOR NATURE
+   MATERIAL (hexarp dotted "really groovy for a relatively serious/natural
+   vibe"; triplets and anticipation passed); DENSITY IS NOT A MAIN BEAT (loop
+   form: "the high tier looping is the buildup and bars1-2 and 3-4 are like
+   the main beat" — a main beat is a kick/snare identity with space); rush
+   "third and fourth ones are still slower" survived an IDENTICAL bass, so
+   the pad's fall (c4 → a#3 → g3) is the suspect; removing rocking /
+   sparseness / frame from the human melody did NOT break it ("good!" ×3),
+   the grammar over the loop on piano and flute "sounds good!", at 128 bpm
+   "energetic! I like it", hammered only "a bit more off (but very
+   slightly)"; minor hexarp = minor pentatonic + 9 (no_b6 good, dorian 6
+   off); dial level "better!" / reseat "more personality"; raining-jazz new RH
+   "sounds really good!"; royalroad regroup "a style direction".
+
+2. THE SAD-SHOP STRINGS (§12, measured with evaluateSong on both pages):
+   the SAME SAMPLE — gm_string_ensemble_1 on the same Strudel 1.1.0 soundfont.
+   Sad shop: mean gain 0.21 (= 30% of its piano lead at 0.71), room
+   0.45-0.5, every note ≥ a beat (0.92-3.69 s), 2 attacks a bar, 8 distinct
+   velocities, five interlocking string layers (held top voice + beat-2
+   climb + dyad walk) under a piano lead, never alone. The robotic ones:
+   gain 0.40-0.45, dry, 4-5 equal attacks a bar (chaotix quarters; the
+   nightfall lead's 8th-note rocks at 0.38 s), one velocity, the only
+   sustained voice or the lead. Strudel's soundfont ADSR default is
+   [0.001, 0.001, 1, 0.01] — a 10 ms hard cut on every note end — which
+   legato holds + room + whisper level hide and an isochronous dry grid
+   exposes. The nocturne bed's strings (0.16, whole-bar holds, dry) were
+   never called robotic: level + hold length suffice for a PAD role. HQ
+   caveat recorded (songs.html "HQ: off" toggle; with it on, sad shop plays
+   the VSCO section library, a different sample). STRINGS LAW for authored
+   material: support strings gain ≤ 0.25, room ≥ 0.45, notes ≥ a beat,
+   release ≥ 0.3; a string lead is an experiment, not a default. Memory:
+   strings-smooth-is-treatment.
+
+3. RENDERER: scripts/audition-variations.mjs parts accept optional
+   add / gainPattern / room / clip / attack / release / mask (emitted in that
+   order after .s()); absent on every judged card → judged 71 byte-identical
+   after the change (verified before any new card was added). The merge
+   validator rejects unknown part fields and non-numeric gain patterns, and
+   has a VALIDATE_ONLY mode so drafting agents cannot rewrite the module.
+
+4. BATCH 3: 33 cards / 127 variants appended (page 104 / 382); lanes flow
+   12, perc 1, combo 4, mix 2, compose 14.
+   - MELODY (14 cards / 45 variants — the gesture grammar as an ALGORITHM,
+     scratchpad/melody-gen.mjs, §13; scratchpad only per D95, every card
+     carries seed + switches + measured stats): reproducibility (three seeds
+     vs the hand-composed reference); rule isolation (iso durations / no
+     breath / all-tonic / no arch); density 1-2-4; velocity via gainPattern
+     (flat / landings-loud / rocks-loud); tail types; anticipation by an 8th
+     and by a 16th (the D123 shape on purpose); 8-bar form free / return /
+     exact; and the grammar over seven more hosts — MAJOR for the first
+     time (allstar resolver, royalroad, lb3, pendulum), blues at 150, jazz
+     at 110, mystery at 78 — on piano, flute, ocarina, clarinet, vibraphone,
+     square, saw, muted trumpet and treated strings. Generated stats:
+     landings 100% chord tones, 0 out-of-scale, stepwise 49-90%, ≤ 2 leaps
+     per 4 bars, 3-4 duration values. Generator defects caught before
+     authoring: three seeds converged (bars near-identical) until gesture
+     types (rock vs run) and a seeded top-3 landing pick were added; the
+     Q/A and tail switches were no-ops for seed 1 (Q/A replaced by an
+     all-tonic control that outranks voice-leading; tails made room by
+     shortening the breath); a passing tone on every k=3 gesture was eating
+     the tails' room; the final landing was not the longest hold.
+   - STRINGS (4 cards): level / reverb / envelope / all three on the judged
+     chaotix line; the strings lead treated / re-attacks removed / strings
+     as the shadow under a piano lead; durations at fixed treatment (equal /
+     long-short / interlocked / velocity); his "different notes" at fixed
+     treatment (contrary / dominant pedal / low fifths).
+   - MINE (3): rush pad hypothesis (pad flat / rises / falls with the bass
+     lifting); the loop form with the roles as he heard them (dense tier
+     once → groove loops; groove only; groove + one dense bar); hexarp
+     nature rhythm (breath / written rit / peak echo vs dotted).
+   - AGENT FIXES (7 cards / 30 variants): harpsi pickup NOTES (triadic /
+     wide-from-the-5th / falling 4-note / new anchor on the 9th), gijoe
+     BOLD arc (3+3+2 regroup → G-C re-harmonisation → flute line + fill,
+     with rhythm-only and harmony-only controls), dq tresillo variations
+     (displaced / fall pitches / alternating / rest-punctuated), walkbass
+     over a STATED C7-F7-G7-C7 (development with vs against the change,
+     all-pushed control), lattice bass 0.5 → 0.35 (+ vibraphone 0.18),
+     pluck 0.85 → 0.55 (+ bass 0.7), grief re-authored from its rendered
+     voicings (long-short / rolled / top-voice line / both). One correction:
+     the pluck card's v1 spec was semantically identical but not
+     byte-identical to the judged spec (gain 1 vs 1.0) — replaced verbatim.
+   - AGENT DEVELOP (5 cards / 21 variants): pkmn arc / layered / layered-8va,
+     rise arc / half / late, steel doubled-16th as a one-bar EVENT (plus
+     alternating control, stretched breath, event+breath form), lattice
+     layered by accumulation with the bass at 0.35 (+ static035 control and
+     the reverse), harpsi layered by voices with a whisper string hold or
+     climb (gainPattern peak 0.22, room 0.5, release 0.4). Agent deviations
+     kept: static controls folded into the looping reference; D4 block 4 is
+     the judged rolled timing rather than "both"; the rise card keeps the
+     judged synth-strings pedal (0.3, dry) verbatim because it is the
+     reference's own frozen part.
+
+5. VERIFY PASS (measured): every variant 1 across all five lanes is
+   byte-identical to a judged spec (after the pluck fix); bar weights sum to
+   the grid in every authored part (the steel 2-bar [...]@2 element sums 32
+   over two bars, correct); string parts obey the law except the judged rise
+   pedal; boldness sweep over 94 batch-3 variants (realized (onset, sound,
+   midi) symmetric difference / union vs variant 1): 84 change ≥ a third of
+   events or change treatment; the 10 under a third are by design — single-
+   axis controls (gijoe rhythm_only 21%), pad-only changes (rush 6-16%),
+   placed nature devices (hexarp rit 11%, peak echo 14%), duration-only
+   changes the metric cannot see (grief long-short 16%, iso durations 10%),
+   the return form's restated bars (19%), and two pendulum seeds converging
+   over a static pedal (28% — the card's own question). Pitch probe over
+   364 pitched variants: no strict line from batch 3 (the 20 residual lines
+   are the D131 host-chord/clash-subject set); every batch-3 (ok?) line is
+   an inherited source tone (blues scale, A7's c#, the resolver's f
+   natural, lb3's Eb bars, chaotix's chromatic line, grief's G and Dm).
+
+6. RECORDED: memory strings-smooth-is-treatment (new), variation-boldness-
+   laws extended (octave addition inaudible; density ≠ main beat; groove
+   regroupings vs nature; falling pad = felt slowdown hypothesis; every
+   single-rule removal survived). research/variation-labs-r33.md §11-13.
+   Addendum: the FIXES agent's own change-share report arrived after the
+   sweep and agrees with it to within a point on every variant (harpsi
+   47.6/47.6/74.1/66.7, gijoe 54.6/35.3/20.9, grief long-short 15.8% by
+   pitch@time but 67.9% duration-aware — the metric blind spot named above).
+   Its judgement calls, kept: two pickup ideas merged into fifth_wide; the
+   gijoe re-harmonisation is G → C (natural minor, no g#) rather than the
+   brief's Dm → E; "against the change" = the same two anticipations
+   straddling the bar-2/3 line; grief's top line uses the [...]/8 slow
+   operator so a 4-beat tone holds across the barline (realized as one
+   16-slot hap); the dq rest-punctuation never places a bar-final 16th
+   (D118). Its grief stack_mini voicings reproduce the judged degrees render
+   hap-for-hap (64 haps).
+
+VERIFIED: 104/104 cards, 382/382 variants build-verified; judged-71
+byte-identical; probe no new strict lines; full suite 394/394 (exit 0
+captured). Nothing committed; nothing feeds retrieval (D95) — the generator
+lives in the scratchpad.
+
+ADDENDUM (his reply the same day: "wait i listed with HQ on"). The sad-shop
+strings he compared against were the HQ TIER, not the browser voice, so
+item 2 above is half the story. With HQ on, songs.html plays the rendered
+wav, where gm_string_ensemble_1 is vendor/sfz/gen/strings-sections.sfz — the
+VSCO-2 CE cello and viola sections (sustain-vibrato) through sfizz:
+ampeg_release=0.7 (700 ms on every note end vs the soundfont's 10 ms cut),
+amp_veltrack=50, two velocity layers split at 64 (gains export as absolute
+velocity, so sad shop's 0.21 selects the SOFT layer while 0.4-0.45 sits at
+the top of the same layer), and .room() rendered as a convolution reverb per
+stem (applyRoom, wet ≈ 1.1 × room). Four tier differences on top of the
+writing differences, which hold on either tier. Consequences, all built:
+(a) the labs page now has the same "HQ: off/on" toggle as songs.html
+(localStorage motif-engine:variations-hq; a variant with
+audition/hq/lab.<card>.<variant>.wav plays that file, everything else stays
+on the browser voice and says so); (b) every batch-3 variant was rendered
+through render-hq.mjs from its exact page code (scratchpad
+render-labs-hq.mjs: 127 renders, 0 failures, 639 s; ≤4-bar cards as 8
+cycles so the loop seams less; wavs gitignored like all of audition/hq);
+(c) the builder flags `hq: true` only when the file exists, so the judged 71
+stay byte-identical (verified: 0 issues, 0 hq flags on judged cards);
+(d) research §12 corrected; memory strings-smooth-is-treatment rewritten
+("ask which tier before diagnosing timbre"). Caveat measured: the HQ
+balance stage caps stem boost at +21.6 dB and 16 of the 127 renders hit it
+on a soft, sparse stem (listed in research §12), so the LEVEL axis is
+compressed in HQ — the browser tier is the cleaner test of level, the HQ
+tier of timbre and envelope. variations + catalog tests 6/6 after the
+rebuild; the full 394-test suite ran green before the HQ-toggle edit, and
+the only tests that read the page are those six.

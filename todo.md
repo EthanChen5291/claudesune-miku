@@ -1,5 +1,172 @@
 # where things stand — r33
 
+## Batch-2 verdicts in (17/17 good) — batch 3 is on the page: 33 new experiments, positions 72–104
+
+Your second export: every batch-2 experiment good, none rejected. What it
+settled: development by adding octaves is inaudible (gijoe "barely
+different"), groove regroupings are wrong for nature material (hexarp
+dotted "really groovy for a relatively serious/natural vibe"), density is
+not a main beat (you heard the dense tier as the buildup and the kick-snare
+groove as the main beat), rush's "third and fourth still slower" survives an
+identical bass so the falling pad is the suspect, and removing rocking /
+sparseness / frame from the human melody broke nothing — so batch 3 hunts
+the load-bearing property with an ALGORITHM instead of my hand.
+
+**The sad-shop strings (your question, corrected for "I listened with HQ
+on"):** with HQ on, sad shop's strings are the VSCO cello/viola sections
+rendered through sfizz — real bowed recordings with a 0.7 s release on
+every note, the SOFT velocity layer selected by the whisper gain (0.21), and
+the room rendered as convolution reverb. The labs page played the browser
+soundfont, which cuts every note 10 ms after it ends. On top of the tier,
+the writing differs: sad shop holds every note at least a beat, two attacks
+a bar, eight velocities, five interlocking string layers under the piano;
+the robotic ones were dry, 0.40–0.45, four or five equal attacks a bar,
+alone or as the lead. So the labs page now has the same **HQ: off/on**
+toggle as songs.html, and every batch-3 variant has an HQ render — judge
+the strings cards with HQ on to hear the tier you compared against, and
+with HQ off to hear the level/reverb/envelope variables cleanly (the HQ mix
+levels stems by loudness, so level differences are compressed there). Full
+numbers in research/variation-labs-r33.md §12.
+
+Batch 3 (positions 72–104), judged 71 byte-frozen:
+- **melody generation (14 cards)** — the gesture grammar as a program
+  (seed + rule switches on every card): three seeds vs the melody you
+  called human; one switch off at a time (equal durations / no breath /
+  every bar on the tonic / no arch); density 1-2-4; velocity shapes; tail
+  types; anticipation by an 8th and by a 16th; 8-bar form (free / return /
+  exact); and the grammar over seven more hosts — major keys for the first
+  time (allstar, royalroad, lb3, pendulum), blues at 150, jazz at 110,
+  mystery at 78 — on piano, flute, ocarina, clarinet, vibraphone, square,
+  saw, muted trumpet, treated strings. If the seeds pass, this becomes an
+  engine rule; if one fails, your note on it names the missing rule.
+- **strings (4)** — the chaotix line with level only / reverb only /
+  attack-release only / all three; the strings lead treated / re-attacks
+  removed / strings under a piano lead (the sad-shop role); durations at
+  fixed treatment; your "different notes".
+- **your fixes** — harpsi pickup NOTES (triadic / from the 5th / falling /
+  new anchor), gijoe bolder (rhythm → harmony → added voice, with controls),
+  dq tresillo variations, walkbass over a stated C7-F7-G7-C7, lattice bass
+  and pluck levels, grief re-authored (long-short / rolled / top line), rush
+  pad hypothesis, the loop form with the roles as you heard them, hexarp
+  nature-compatible rhythm (breath / rit / peak echo vs dotted).
+- **development (5)** — pkmn / rise / steel-event / lattice-layered /
+  harpsi-layered arcs with static controls.
+
+Page 104 experiments / 382 variants; suite 394/394. D133. Nothing committed.
+
+## Your first labs verdicts are in — and batch 2 is on the page (23 new experiments, positions 49–71)
+
+34 good, 0 rejected, 150 variant marks work, 4 off. What you settled: the
+bold flows are the model ("definitely make more of these"), the surgical
+align repairs are below your ear ("can barely tell a difference" ×7 — the
+mechanism analysis stands, the repair grade is not worth building),
+transposition is not variation ("still the same melody"), the climb needs its
+drop (no-arrival marked off), safe-swell "too harmonic" while the desert drone
+floor "could be expanded to many ambient songs", your hexarp×panflute clash
+prediction refuted ("lively song but fits" — the real risk is reuse without
+variation), and the rule-composed melody passed as human on BOTH the falling
+and rising versions ("learn how to make melodies like these").
+
+Batch 2 answers every note, appended after the judged 48 (byte-frozen):
+- **melody generation** — the human melody with one rule removed at a time
+  (rocking / sparseness / empty middle: which one kills it?), the grammar as
+  a lead over the nightfall loop on piano/flute/strings, and at 128 bpm over a
+  driving bed with a hammered "machine" control.
+- **over time** — walkbass in three pacings (every 2 / every 4 / late turn),
+  dq with the falling cell as PRIMARY (your ask), gijoe developed by addition
+  vs static vs late-fill.
+- **rhythm axis** ("could also vary rhythm too") — 9 cards: walkbass, dq,
+  lattice (bold this time), pkmn (diverse this time), the rise (rhythm AND
+  intervals), harpsi (rhythm AND notes), hexarp, offbeat, steel.
+- **your fixes** — royalroad's dark pendulum chord (= the seated f♯: bright
+  third or regroup bar), the dial's misfit pizz note (= the seated e♮: level
+  or re-seat), raining-jazz RH recomposed + flute split, the minor hexarp run
+  without b6 / with dorian 6, chaotix legato/staccato + softer trumpet,
+  airwolf separated with the second chord re-noted, rush's "still slower"
+  (felt speed is same-pitch re-attack density — fixed by block transposition),
+  and your looping law as a percussion form (buildup once → main loop → late
+  event).
+
+Recorded, not yet carded: grief's "same durations feels robotic" (solo
+progressions need roll/rhythm variety), the pluck "a bit too loud" on the
+mysterious mixes, tech-mystery's second-bar rub. D132.
+
+## audition/variations.html — the variation labs (batch 1: 48 experiments, 170 variants)
+
+Per your ruling the labs left the catalog and got their own page. Every card
+is one EXPERIMENT: your words that motivated it, a falsifiable hypothesis, a
+targeted question, and SEPARATE play buttons per variant (your "evaluate this
+in its parts not a whole") — mark each ✓ works / ✗ off, note anything, then
+give the experiment a verdict. Export button is the same flow as the catalog.
+
+Six lanes, in page order:
+- **flow (17)** — every sample your notes asked to vary, with real alternate
+  flows: the pendulum incl. your literal 3213232123232 and an enters-later
+  demo; hexarp (strings untouched); lattice "go up a note"; snowy with its
+  rhythm frozen + the tail fixed; horn echo repaired then developed into an
+  own melody; offbeat pizz third-note-up occasionally; the walkbass/harpsi/
+  lb3/steel/daydreamer-bass interval-order asks; dq pizz incl. a NON-rising
+  version (your rl_r6 note); pkmn dyads as-transcribed vs barline-aligned vs
+  your up-ending; the swell in new rhythms; rush rebuilt to your exact
+  recipe (same speed, different notes, softer); bkmansion's four left-hand
+  behaviors as separate studies; grief at 100/72/60 (tempo only).
+- **perc (5)** — congas/shaker flows, lofi+indie combined (incl. a groomed
+  version that resolves their colliding hits), your "layered over time"
+  tutorial cluster staged vs all-at-once, and an energy ladder built from
+  your own tier labels — does percussion alone carry the arc?
+- **combo (5)** — bkmansion pixel vs saw-stack vs piano ("serum-like"
+  direction), airwolf's timbre over the piano host, soncha's vibraphone
+  flat vs rising, chaotix determination across four instruments, the
+  offbeat role on four voices.
+- **align (6)** — your five "wrong key" notes, MEASURED first: rise and
+  shop-bounce are already 100% in-key after seating (the clash is
+  chord-level); airwolf's "second variation off key" is literally ONE
+  pitch; gijoe/attack-hold have 2–3 chromatic cells. Each card: exactly
+  what you heard vs conformed vs minimal repair — your pick decides the
+  pairing fix the engine builds. Plus the host-rhythm card ("tempo should
+  be a bit more constant"): bare uneven changes vs +root pulse vs evened.
+- **mix (8)** — your vibe algebra composed: YOUR energy recipe verbatim
+  (air-pirate bass + energetic pizzicato over the calm core), mysterious
+  desert (hypothesis: the second swell's clash tones are the desert bII
+  pincer over a drone — reframe instead of repair), playful+playful,
+  determination + the pad at half the "too loud" gain, the timelapse DIAL
+  (your "any layer can be on or off" as four positions), stakes vs
+  relaxed, and your hexarp×panflute clash prediction as a control with two
+  rescue attempts (time-separation, role-spread).
+- **compose (7)** — your analyze-why asks turned into rules and tested on
+  NEW material with falsification arms: the harpsi common-tone-anchor rule
+  (+ why the same rub passes on the andalusian), hexarp = scale minus
+  degree 4 (the f restored should break it), nocturne's falling-answer calm
+  (rising-answer control), raining-jazz left hand transferred, the allstar
+  V→v(add9) resolver grafted twice, scale-climb placed before a real drop
+  vs before nothing, and the echo-cascade canon rule (stepwise line =
+  predicted mud).
+
+All 170 variants build-verified; every "as you heard it" variant reproduces
+the exact combo the catalog played (stored pins / judged-page values). The
+analyses live in research/variation-labs-r33.md. D131.
+
+## Catalog: 219 cards now (labs moved out), batch 6 tail = 27
+
+Your queue and numbering through 192 are untouched, byte-verified. The b6
+tail keeps: the "can't hear"/silence fixes (topgear, ctr-credits, ctr-boss
+respec'd to sound from bar 1; hgss boosted), the 9 splits you asked for, and
+the two mining lanes — dev patterns (return-after-contrast 62.5%, +layer =
+#1 return transform, support rewrites almost never) and your perception
+categories with recipe-hypothesis questions. D130.
+
+## Your fifth export is in — and it ratified batch 5
+
+New in it: four b5 reactions, all positive — daydreamer guitar ("I like this
+vibe") and bass ("happy bass", now ticked + frozen at what you heard),
+garden horn ("a reference to inspire, not hardcoded"), gijoe rhythm ("sounds
+happy. I like it!"). Topgear unticked pending its split — its judged pin
+stays stored for a re-tick. 78 prior pins carried byte-verbatim. Three new
+laws recorded: tick lists are OPTION MENUS (your "listing all applicable...
+all at once won't resonate"), melody samples are reference-only (you said it
+three times), and harmonic layers make a scary device less scary (your
+premonition label). D131.
+
 ## Your third labels export is in (8 cards, 76 ticks, ~150 pair notes)
 
 **Every ticked pair is now FROZEN at exactly what you heard** — a stored pin

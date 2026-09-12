@@ -4,9 +4,8 @@ scratch/
 
 # Source audio for extraction (A6.6: the library stores ABSTRACTIONS, never audio).
 # The 92MB of Unison .wav one-shots/FX are licensed commercial samples and nothing
-# in src/ reads them — keep them locally, out of git history. The .mid files (336KB)
-# ARE tracked: they are what src/lib/*-unison.js was extracted from, and test/
-# re-reads them, so a clone must be able to reproduce the import.
+# in src/ reads them — keep them locally, out of git history. (The .mid files used
+# to be tracked; as of r34 they are local-only too — see the block at the end.)
 audios/**/*.wav
 
 # Render assets/outputs: soundfonts are fetched (see scripts/render-wav.mjs),
@@ -98,3 +97,23 @@ audios/omn-extract/
 
 # r22b: his ANNOTATED midi (notes in the filenames). Analysis only.
 audios/manual-r22b/
+
+# r34 (Ethan's ask, 2026-09-08: "git ignore all the .mid and reel stuff that's
+# not the engine"). The engine is src/ + scripts/ + test/ + the audition pages;
+# the source material they were EXTRACTED from stays local. Everything below is
+# already an abstraction in src/lib/* (unison/undertale/videos packs,
+# layer-patterns.js, progressions-videos.js name the file they came from as
+# provenance only and never open it).
+#   .mid  — Unison packs, Undertale MIDI, eval/before-default, HQ stem exports.
+#           NOTE: test/unison.test.js and test/undertale.test.js still read a
+#           handful of these by path, so a fresh clone fails those two files
+#           until the packs are dropped back into audios/.
+#   reels — the Instagram exports (igexport-*.mp4) and screen recordings at the
+#           repo root, ~400MB. They were transcribed by hand into
+#           src/lib/layer-patterns.js + research/reel-*.md, which stay tracked.
+*.mid
+*.midi
+*.mp4
+*.MP4
+*.mov
+*.MOV

@@ -3720,7 +3720,7 @@ export const CATALOG_CANDIDATES = {
     "question": "When the theme enters (bar 9 here), the stabs vanish and the bass leaves its riff to double the theme — the layer count DROPS at the arrival. Does that read as impact or as the mix thinning out?",
     "render": {
       "kind": "stack_mini",
-      "spec": "{\"parts\":[{\"mini\":\"<[b2@3 ~@1 b2 ~@1 b2@3 ~@1 b2@3 ~@1 b2 ~@1] [b2 ~@1 b2@3 ~@1 b2@2 g2@3 ~@1 f#2@4] [g2 ~@1 g2@2 ~@2 g2@3 ~@1 g2 ~@1 g2@2 a2@2] [~@2 g2@2 a2@2 g2@2 e2@4 g2@4] [b2@3 ~@1 b2 ~@1 b2@3 ~@1 b2@3 ~@1 b2 ~@1] [b2 ~@1 b2@3 ~@1 b2@2 g2@3 ~@1 f#2@4] [g2@4 g2 ~@1 g2@3 ~@1 g2 ~@1 g2@2 a2@2] [~@2 e2@2 g2@2 a2@2 d3@4 c#3@4] [e3@6 ~@2 e3@5 ~@1 b2@2] [a2@2 b2@2 a2@2 b2@7 ~@3] [d3@6 ~@2 d3@5 ~@1 a2@2] [g2@2 a2@2 g2@2 a2@6 g2@4] [e2@4 g2@4 g#2@4 b2@4] [a2@4 c3@4 c#3@4 e3@4] [e2@4 g2@4 g#2@4 b2@4] [d3@4 c#3@4 b2@4 c#3@4]>\",\"sound\":\"gm_synth_bass_1\",\"gain\":0.55},{\"mini\":\"<~ ~ ~ ~ [~@4 [b2,f#3,b3]@2 ~@6 [b2,f#3,b3]@3 ~@1] ~ [~@4 [g2,d3,g3]@3 ~@5 [g2,d3,g3]@4] [[a2,e3,a3]@2 ~@4 [a2,e3,a3]@3 ~@3 [a2,e3,a3]@3 ~@1] ~ ~ ~ ~ ~ ~ ~ ~>\",\"sound\":\"gm_epiano1\",\"gain\":0.4},{\"mini\":\"<~ ~ ~ ~ ~ ~ ~ ~ [e4@6 ~@2 e4@5 ~@1 b3@2] [a3@2 b3@2 a3@2 b3@7 ~@3] [d4@6 ~@2 d4@5 ~@1 a3@2] [g3@2 a3@2 g3@2 a3@6 g3@4] ~ ~ ~ ~>\",\"sound\":\"gm_lead_2_sawtooth\",\"gain\":0.5},{\"mini\":\"<~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ [e3@4 g3@4 g#3@4 b3@4] [a3@4 c4@4 c#4@4 e4@4] [e3@4 g3@4 g#3@4 b3@4] [d4@4 c#4@4 b3@4 c#4@4]>\",\"sound\":\"gm_french_horn\",\"gain\":0.42}],\"bpm\":250,\"bars\":16}"
+      "spec": "{\"parts\":[{\"mini\":\"<[b2@3 ~@1 b2 ~@1 b2@3 ~@1 b2@3 ~@1 b2 ~@1] [b2 ~@1 b2@3 ~@1 b2@2 g2@3 ~@1 f#2@4] [e3@6 ~@2 e3@5 ~@1 b2@2] [a2@2 b2@2 a2@2 b2@7 ~@3]>\",\"sound\":\"gm_synth_bass_1\",\"gain\":0.75},{\"mini\":\"<[~@4 [b2,f#3,b3]@2 ~@6 [b2,f#3,b3]@3 ~@1] [~@4 [g2,d3,g3]@3 ~@5 [g2,d3,g3]@4] ~ ~>\",\"sound\":\"gm_epiano1\",\"gain\":0.45},{\"mini\":\"<~ ~ [e4@6 ~@2 e4@5 ~@1 b3@2] [a3@2 b3@2 a3@2 b3@7 ~@3]>\",\"sound\":\"gm_lead_2_sawtooth\",\"gain\":0.5}],\"bpm\":140,\"bars\":4}"
     },
     "key_tonic": "E",
     "key_mode": "minor",
@@ -3744,7 +3744,7 @@ export const CATALOG_CANDIDATES = {
     "question": "Is the exact +12 copy alone enough of an event at bar 5, or does it need the pad entering with it to register?",
     "render": {
       "kind": "stack_mini",
-      "spec": "{\"parts\":[{\"mini\":\"<[e2@2 ~@1 e2 e2@2 e2@4 e2@2 e2@2 g2@2] [e2@2 e2@2 e2@2 e2@2 g2@2 a2@2 a2@2 a2@2] [d2@3 d2 d2@2 d2@4 d2@2 d2@2 c2@2] [d2@2 d2@2 d2@2 d2@2 g2@2 a2@2 g2@2 a2@2] [e2@2 ~@1 e2 e2@2 e2@4 e2@2 e2@2 g2@2] [e2@2 e2@2 e2@2 e2@2 g2@2 a2@2 a2@2 a2@2] [d2@3 d2 d2@2 d2@4 d2@2 d2@2 c2@2] [d2@2 d2@2 d2@2 d2@2 g2@2 a2@2 g2@2 a2@2] [e2@2 ~@1 e2 e2@2 e2@4 e2@2 e2@2 g2@2] [e2@2 e2@2 e2@2 e2@2 g2@2 a2@2 a2@2 a2@2] [d2@3 d2 d2@2 d2@4 d2@2 d2@2 c2@2] [d2@2 d2@2 d2@2 d2@2 g2@2 a2@2 g2@2 a2@2]>\",\"sound\":\"gm_synth_bass_1\",\"gain\":0.55},{\"mini\":\"<~ ~ ~ ~ [e3@2 ~@1 e3 e3@2 e3@4 e3@2 e3@2 g3@2] [e3@2 e3@2 e3@2 e3@2 g3@2 a3@2 a3@2 a3@2] [d3@3 d3 d3@2 d3@4 d3@2 d3@2 c3@2] [d3@2 d3@2 d3@2 d3@2 g3@2 a3@2 g3@2 a3@2] [e3@2 ~@1 e3 e3@2 e3@4 e3@2 e3@2 g3@2] [e3@2 e3@2 e3@2 e3@2 g3@2 a3@2 a3@2 a3@2] [d3@3 d3 d3@2 d3@4 d3@2 d3@2 c3@2] [d3@2 d3@2 d3@2 d3@2 g3@2 a3@2 g3@2 a3@2]>\",\"sound\":\"gm_lead_2_sawtooth\",\"gain\":0.42},{\"mini\":\"<~ ~ ~ ~ [e3@16] [e3@16] [d3@16] [e3@16] [e3@16] [e3@16] [d3@16] [e3@16]>\",\"sound\":\"gm_pad_warm\",\"gain\":0.3},{\"mini\":\"<~ ~ ~ ~ ~ ~ ~ ~ [~@2 d4@2 e4@2 ~@2 d4@2 e4@2 ~@2 d4@2] [~@2 d4@2 e4@2 ~@2 d4@2 e4@2 ~@4] [~@2 d4@2 e4@2 ~@2 d4@2 e4@2 ~@2 d4@2] [~@2 d4@2 e4@2 ~@2 d4@2 e4@2 ~@2 d4@2]>\",\"sound\":\"gm_epiano1\",\"gain\":0.38}],\"bpm\":140,\"bars\":12}"
+      "spec": "{\"parts\":[{\"mini\":\"<[e2@2 ~@1 e2 e2@2 e2@4 e2@2 e2@2 g2@2] [e2@2 e2@2 e2@2 e2@2 g2@2 a2@2 a2@2 a2@2] [d2@3 d2 d2@2 d2@4 d2@2 d2@2 c2@2] [d2@2 d2@2 d2@2 d2@2 g2@2 a2@2 g2@2 a2@2]>\",\"sound\":\"gm_synth_bass_1\",\"gain\":0.75},{\"mini\":\"<~ ~ [d3@3 d3 d3@2 d3@4 d3@2 d3@2 c3@2] [d3@2 d3@2 d3@2 d3@2 g3@2 a3@2 g3@2 a3@2]>\",\"sound\":\"gm_lead_2_sawtooth\",\"gain\":0.42}],\"bpm\":132,\"bars\":4}"
     },
     "key_tonic": "E",
     "key_mode": "minor",
@@ -3756,6 +3756,7 @@ export const CATALOG_CANDIDATES = {
   },
   "cand_b4_gr_ctr_credits_octave_pillar": {
     "id": "cand_b4_gr_ctr_credits_octave_pillar",
+    "addon_gain": 1.3,
     "type": "device",
     "source": "audios/vgmusic-full/ps1/CTR_Credits.mid bars 0-7; whole card +12 (source riff on g1, below the floor). Source registers g1/g2/g3 -> g2/g3/g4 here, relations preserved",
     "why": "The other way octaves get added: not a staircase but a PILLAR. A funky minor riff (g-a-bb-d with a c#-d chromatic snap) plays 4 bars alone in the bass, then +12 AND +24 copies land TOGETHER on the downbeat of bar 5 — a three-octave unison wall, all at once, note-for-note (measured 100% at both offsets in the source). Zero new pitch classes; the event is pure register. Contrast card to the Top Gear staircase: same riff-growth idea, opposite dosing.",
@@ -3768,7 +3769,7 @@ export const CATALOG_CANDIDATES = {
     "question": "",
     "render": {
       "kind": "stack_mini",
-      "spec": "{\"parts\":[{\"mini\":\"<[g2@4 ~@2 a2@4 a#2@4 d3@2] [g2@4 ~@2 a2@4 d2@2 c#3@2 d3@2] [g2@4 ~@2 a2@4 a#2@4 d3@2] [g2@4 ~@2 a2@4 d2@2 e2@2 f2@2] [g2@4 ~@2 a2@4 a#2@4 d3@2] [g2@4 ~@2 a2@4 d2@2 c#3@2 d3@2] [g2@4 ~@2 a2@4 a#2@4 d3@2] [g2@4 ~@2 a2@4 d2@2 e2@2 f2@2]>\",\"sound\":\"gm_synth_bass_1\",\"gain\":0.55},{\"mini\":\"<~ ~ ~ ~ [g3@4 ~@2 a3@4 a#3@4 d4@2] [g3@4 ~@2 a3@4 d3@2 c#4@2 d4@2] [g3@4 ~@2 a3@4 a#3@4 d4@2] [g3@4 ~@2 a3@4 d3@2 e3@2 f3@2]>\",\"sound\":\"gm_lead_2_sawtooth\",\"gain\":0.4},{\"mini\":\"<~ ~ ~ ~ [g4@4 ~@2 a4@4 a#4@4 d5@2] [g4@4 ~@2 a4@4 d4@2 c#5@2 d5@2] [g4@4 ~@2 a4@4 a#4@4 d5@2] [g4@4 ~@2 a4@4 d4@2 e4@2 f4@2]>\",\"sound\":\"gm_lead_1_square\",\"gain\":0.3}],\"bpm\":165,\"bars\":8}"
+      "spec": "{\"parts\":[{\"mini\":\"<[g2@4 ~@2 a2@4 a#2@4 d3@2] [g2@4 ~@2 a2@4 d2@2 c#3@2 d3@2]>\",\"sound\":\"gm_synth_bass_1\",\"gain\":0.75},{\"mini\":\"<[g3@4 ~@2 a3@4 a#3@4 d4@2] [g3@4 ~@2 a3@4 d3@2 c#4@2 d4@2]>\",\"sound\":\"gm_lead_2_sawtooth\",\"gain\":0.45},{\"mini\":\"<[g4@4 ~@2 a4@4 a#4@4 d5@2] [g4@4 ~@2 a4@4 d4@2 c#5@2 d5@2]>\",\"sound\":\"gm_lead_1_square\",\"gain\":0.32}],\"bpm\":165,\"bars\":2}"
     },
     "key_tonic": "G",
     "key_mode": "minor",
@@ -4145,6 +4146,7 @@ export const CATALOG_CANDIDATES = {
   },
   "cand_b4_vr_hgss_bass_drumfill": {
     "id": "cand_b4_vr_hgss_bass_drumfill",
+    "addon_gain": 1.6,
     "type": "accomp_pattern",
     "source": "audios/vgmusic-full/ds/hgss_pokemon_wild_battle_kanto.mid (Kanto Wild Battle) t7 synth bass, bars 0-7 — fills recur at bars 1/5/9, period 4, transcribed verbatim",
     "why": "The exception that proves the pitch-side rule: same-slot corpus variation is 85% pitch-only, and when a bass DOES vary rhythm it does THIS — a staccato quarter-note pulse whose 4th beat bursts into 16ths every 4th bar, exactly a drummer's fill vocabulary on a pitched voice (the fill grows: seven 16ths first time, three the next). Bass-role rhythm-side variation is only 7% of variants corpus-wide, which is why one bar of it per 4 reads as an event. Zero pitch movement in 8 bars; the C pedal is the harmony's job (Cm -> Ab^7 -> G7 moves above it).",
@@ -4269,6 +4271,597 @@ export const CATALOG_CANDIDATES = {
     "batch": 5,
     "pairs_with": [
       "cand_b2_pk_garden_horn_answer"
+    ],
+    "confidence": "high"
+  },
+"cand_b6_sp_soncha_base": {
+    "id": "cand_b6_sp_soncha_base",
+    "his_prior_words": "sounds very playful, but the vibraphone high part is very niche style when it goes up and off key and doesn't fit. these should be separated. whenever the vibraphone isn't increasing though it sounds good, just playful and casual",
+    "vibes": [],
+    "batch": 6,
+    "pairs_with": [],
+    "confidence": "high",
+    "type": "instrument_combo",
+    "key_tonic": "E",
+    "key_mode": "minor",
+    "source": "split of cand_b4_vr_soncha_rise_pickup — the pendulum arps + muted-trumpet comp WITHOUT the chromatic rise bar (\"whenever the vibraphone isn't increasing though it sounds good\")",
+    "why": "The playful half by itself: the celesta pendulum arpeggios (D pedal then the Em answer) over the muted-trumpet comp, the chromatic rise removed entirely.",
+    "render": {
+      "kind": "stack_mini",
+      "spec": "{\"parts\":[{\"mini\":\"<[a5 f#5 d5 a4 f#5 d5 a4 f#4 a5 f#5 d5 a4 f#5 d5 a4 f#4] [b5 g5 e5 b4 b5 g5 e5 b4 b5 g5 e5 b4 b5 g5 e5 b4]>\",\"sound\":\"gm_celesta\",\"gain\":0.5},{\"mini\":\"<[d3@2 d3@2 a3@2 f#3 d3@3 d3@2 f#3@2 a3@2] [e3@2 e3@2 b3@2 g3 e3@3 e3@2 g3@2 b3@2]>\",\"sound\":\"gm_muted_trumpet\",\"gain\":0.35}],\"bpm\":132,\"bars\":2}"
+    }
+  },
+  "cand_b6_sp_soncha_rise_transition": {
+    "id": "cand_b6_sp_soncha_rise_transition",
+    "his_prior_words": "the vibraphone high part is very niche style when it goes up and off key and doesn't fit. these should be separated.",
+    "vibes": [],
+    "batch": 6,
+    "pairs_with": [],
+    "confidence": "high",
+    "type": "device",
+    "key_tonic": "E",
+    "key_mode": "minor",
+    "source": "split of cand_b4_vr_soncha_rise_pickup — the chromatic rise bar ALONE, framed as what it is in the source: a one-bar transition into a new section",
+    "why": "The rise isolated and scoped: one bar of climbing 16ths landing on the Em downbeat. In the source it happens ONCE, as a seam pickup — auditioning it inside a loop is what made it read off-key.",
+    "scope": "transition/pickup use ONLY — the last bar before a section change, never looped material",
+    "question": "Heard as a once-per-section seam pickup (bar 3 of 4 here, then the arrival), does the rise earn a place — or is the chromatic climb wrong for you even as a transition?",
+    "render": {
+      "kind": "stack_mini",
+      "spec": "{\"parts\":[{\"mini\":\"<[a5 f#5 d5 a4 f#5 d5 a4 f#4 a5 f#5 d5 a4 f#5 d5 a4 f#4] [a5 f#5 d5 a4 f#5 d5 a4 f#4 a5 f#5 d5 a4 f#5 d5 a4 f#4] [b5 c6 d6 f6 g6 ab6 bb6 c7 b5 c6 d6 f6 g6 ab6 bb6 b6] [b5 g5 e5 b4 b5 g5 e5 b4 b5 g5 e5 b4 b5 g5 e5 b4]>\",\"sound\":\"gm_celesta\",\"gain\":0.5},{\"mini\":\"<[d3@2 d3@2 a3@2 f#3 d3@3 d3@2 f#3@2 a3@2] [d3@2 d3@2 a3@2 f#3 d3@3 d3@2 f#3@2 a3@2] [d3@2 d3@2 a3@2 f#3 d3@3 d3@2 f#3@2 a3@2] [e3@2 e3@2 b3@2 g3 e3@3 e3@2 g3@2 b3@2]>\",\"sound\":\"gm_muted_trumpet\",\"gain\":0.35}],\"bpm\":132,\"bars\":4}"
+    }
+  },
+  "cand_b6_sp_bkmansion_trill": {
+    "id": "cand_b6_sp_bkmansion_trill",
+    "his_prior_words": "this is a spooky vibe, and I like it... can be separated into the 4 different sections because the left hand is trying a bunch of different things as you can see which you can study and vary and build variations of",
+    "vibes": [],
+    "batch": 6,
+    "pairs_with": [],
+    "confidence": "high",
+    "type": "accomp_pattern",
+    "key_tonic": "C",
+    "key_mode": "minor",
+    "source": "split 1 of cand_b4_gr_bkmansion_trill_build's left hand (\"can be separated into the 4 different sections because the left hand is trying a bunch of different things... study and vary and build variations of\")",
+    "why": "LH texture 1: the semitone TRILL (g-f# 16ths) — bar 2 escapes up chromatically (g#-a-a#-b) into the next section. The spook is D118's law in miniature: the semitone lives INSIDE the repeated cell.",
+    "scope": "spooky non-ambient (his words: \"very good spooky non-ambient music\") — use serum-like synths, not chip voices, to leave the pixel-VGM feel",
+    "render": {
+      "kind": "note_mini",
+      "spec": "{\"mini\":\"<[g5 f#5 g5 f#5 g5 f#5 g5 f#5 g5 f#5 g5 f#5 g5 f#5 g5 f#5] [g5 f#5 g5 f#5 g5 f#5 g5 f#5 g5 f#5 g5 f#5 g#5 a5 a#5 b5]>\",\"sound\":\"gm_epiano1\",\"bpm\":130,\"bars\":2}"
+    }
+  },
+  "cand_b6_sp_bkmansion_stab_triads": {
+    "id": "cand_b6_sp_bkmansion_stab_triads",
+    "his_prior_words": "the left hand is trying a bunch of different things as you can see which you can study and vary and build variations of",
+    "vibes": [],
+    "batch": 6,
+    "pairs_with": [],
+    "confidence": "high",
+    "type": "accomp_pattern",
+    "key_tonic": "C",
+    "key_mode": "minor",
+    "source": "split 2 of cand_b4_gr_bkmansion_trill_build's left hand — the staccato triad 8ths, with the source's own variation curve (g -> g# -> g -> the F# planed triad)",
+    "why": "LH texture 2: Cm triad stabbed on every 8th, and the source varies it EXACTLY the way your variation law asks — same rhythm, one voice moves (g to g#), then the whole triad planes down a semitone (F#-side) for the fourth bar.",
+    "question": "This is the source's own variation scheme: one-voice move (bar 2), return (bar 3), whole-shape plane (bar 4). Is the semitone plane the spooky bar, or does the g# alone already do it?",
+    "render": {
+      "kind": "note_mini",
+      "spec": "{\"mini\":\"<[[c4,d#4,g4] ~@1 [c4,d#4,g4] ~@1 [c4,d#4,g4] ~@1 [c4,d#4,g4] ~@1 [c4,d#4,g4] ~@1 [c4,d#4,g4] ~@1 [c4,d#4,g4] ~@1 [c4,d#4,g4] ~@1] [[c4,d#4,g#4] ~@1 [c4,d#4,g#4] ~@1 [c4,d#4,g#4] ~@1 [c4,d#4,g#4] ~@1 [c4,d#4,g#4] ~@1 [c4,d#4,g#4] ~@1 [c4,d#4,g#4] ~@1 [c4,d#4,g#4] ~@1] [[c4,d#4,g4] ~@1 [c4,d#4,g4] ~@1 [c4,d#4,g4] ~@1 [c4,d#4,g4] ~@1 [c4,d#4,g4] ~@1 [c4,d#4,g4] ~@1 [c4,d#4,g4] ~@1 [c4,d#4,g4] ~@1] [[a#3,c#4,f#4] ~@1 [a#3,c#4,f#4] ~@1 [a#3,c#4,f#4] ~@1 [a#3,c#4,f#4] ~@1 [a#3,c#4,f#4] ~@1 [a#3,c#4,f#4] ~@1 [a#3,c#4,f#4] ~@1 [a#3,c#4,f#4] ~@1]>\",\"sound\":\"gm_epiano1\",\"bpm\":130,\"bars\":4}"
+    }
+  },
+  "cand_b6_sp_bkmansion_updown_arp": {
+    "id": "cand_b6_sp_bkmansion_updown_arp",
+    "his_prior_words": "the left hand is trying a bunch of different things as you can see which you can study and vary and build variations of",
+    "vibes": [],
+    "batch": 6,
+    "pairs_with": [],
+    "confidence": "high",
+    "type": "accomp_pattern",
+    "key_tonic": "C",
+    "key_mode": "minor",
+    "source": "split 3 of cand_b4_gr_bkmansion_trill_build's left hand — the up-down 16th arpeggio, with the source's g/g# color swap and the F#-plane bar",
+    "why": "LH texture 3: the Cm arp climbing to d#5 and folding back, twice per bar. Same variation curve as the stabs: the g lifts to g# (bar 2), returns (bar 3), then the whole cell planes to F# (bar 4).",
+    "render": {
+      "kind": "note_mini",
+      "spec": "{\"mini\":\"<[c4 d#4 g4 c5 d#5 c5 g4 d#4 c4 d#4 g4 c5 d#5 c5 g4 d#4] [c4 d#4 g#4 c5 d#5 c5 g#4 d#4 c4 d#4 g#4 c5 d#5 c5 g#4 d#4] [c4 d#4 g4 c5 d#5 c5 g4 d#4 c4 d#4 g4 c5 d#5 c5 g4 d#4] [a#3 c#4 f#4 a#4 c#5 a#4 f#4 c#4 a#3 c#4 f#4 a#4 c#5 a#4 f#4 c#4]>\",\"sound\":\"gm_epiano1\",\"bpm\":130,\"bars\":4}"
+    }
+  },
+  "cand_b6_sp_raining_lefthand": {
+    "id": "cand_b6_sp_raining_lefthand",
+    "his_prior_words": "this is literally an entire section of the piano from undertake. separate this, and dont use the melody but analyze why its relaxing and works for its rhythm and intervals and orders of intervals. left hand could be learn structurally and rhythm wise thats fine",
+    "vibes": [],
+    "batch": 6,
+    "pairs_with": [],
+    "confidence": "high",
+    "type": "accomp_pattern",
+    "key_tonic": "F",
+    "key_mode": "minor",
+    "source": "split of cand_ut_raining_jazz_walk — the LEFT HAND alone (\"separate this, and dont use the melody... left hand could be learn structurally and rhythm wise thats fine\")",
+    "why": "The rain LH by itself, structurally: a rootless voicing ON the downbeat only once per two bars, everything else single low notes in wide dotted arcs (c2-c3 octave leaps, g1-g2), each bar's last notes walking into the next chord. Why it relaxes, measured: 3-4 attacks/bar, no two consecutive strikes in the same octave, and every phrase ends approaching — never landing hard.",
+    "render": {
+      "kind": "note_mini",
+      "spec": "{\"mini\":\"<[[eb3,g3,bb3] ~@5 c3@6 g2@4] [c2@6 c3@6 f2@2 ~ g2] [[bb2,d3,f3]@6 g2@6 d2@4] [g1@6 g2@6 d2@2 eb2 bb2]>\",\"sound\":\"piano\",\"bpm\":110,\"bars\":4,\"gain\":0.7}"
+    }
+  },
+  "cand_b6_sp_ctr_chord_stabs": {
+    "id": "cand_b6_sp_ctr_chord_stabs",
+    "his_prior_words": "the chords themselves sounds fine but should be separated into multiple sections... they sound good though as layers.",
+    "vibes": [],
+    "batch": 6,
+    "pairs_with": [],
+    "confidence": "high",
+    "type": "accomp_pattern",
+    "key_tonic": "E",
+    "key_mode": "minor",
+    "source": "split 1 of cand_b4_gr_ctr_boss_staircase (\"should be separated into multiple sections since there's a part with chord, a part with synths, a part with trumpets... they sound good though as layers\") — the epiano chord stabs",
+    "why": "The chord part alone: syncopated triad stabs (B, G, A) landing off the downbeat, with the driving bass riff under them so the stabs' placement is audible.",
+    "render": {
+      "kind": "stack_mini",
+      "spec": "{\"parts\":[{\"mini\":\"<[~@4 [b3,f#4,b4]@2 ~@6 [b3,f#4,b4]@3 ~@1] [~@4 [g3,d4,g4]@3 ~@5 [g3,d4,g4]@4] [[a3,e4,a4]@2 ~@4 [a3,e4,a4]@3 ~@3 [a3,e4,a4]@3 ~@1] [~@4 [g3,d4,g4]@3 ~@5 [g3,d4,g4]@4]>\",\"sound\":\"gm_epiano1\",\"gain\":0.5},{\"mini\":\"<[b2@3 ~@1 b2 ~@1 b2@3 ~@1 b2@3 ~@1 b2 ~@1] [b2 ~@1 b2@3 ~@1 b2@2 g2@3 ~@1 f#2@4] [b2@3 ~@1 b2 ~@1 b2@3 ~@1 b2@3 ~@1 b2 ~@1] [b2 ~@1 b2@3 ~@1 b2@2 g2@3 ~@1 f#2@4]>\",\"sound\":\"gm_synth_bass_1\",\"gain\":0.65}],\"bpm\":140,\"bars\":4}"
+    }
+  },
+  "cand_b6_sp_ctr_saw_theme": {
+    "id": "cand_b6_sp_ctr_saw_theme",
+    "his_prior_words": "there's a part with chord, a part with synths, a part with trumpets. all different. they sound good though as layers.",
+    "vibes": [],
+    "batch": 6,
+    "pairs_with": [],
+    "confidence": "high",
+    "type": "melody_pattern",
+    "key_tonic": "E",
+    "key_mode": "minor",
+    "source": "split 2 of cand_b4_gr_ctr_boss_staircase — the sawtooth theme alone over the bass",
+    "why": "The synth part alone: the held-note theme (e4... b3 / a3-b3 rocking) that the source hands to the saw when the arrangement peaks.",
+    "render": {
+      "kind": "stack_mini",
+      "spec": "{\"parts\":[{\"mini\":\"<[e4@6 ~@2 e4@5 ~@1 b3@2] [a3@2 b3@2 a3@2 b3@7 ~@3] [d4@6 ~@2 d4@5 ~@1 a3@2] [g3@2 a3@2 g3@2 a3@6 g3@4]>\",\"sound\":\"gm_lead_2_sawtooth\",\"gain\":0.5},{\"mini\":\"<[e3@6 ~@2 e3@5 ~@1 b2@2] [a2@2 b2@2 a2@2 b2@7 ~@3] [d3@6 ~@2 d3@5 ~@1 a2@2] [g2@2 a2@2 g2@2 a2@6 g2@4]>\",\"sound\":\"gm_synth_bass_1\",\"gain\":0.6}],\"bpm\":140,\"bars\":4}"
+    }
+  },
+  "cand_b6_sp_topgear_riff_only": {
+    "id": "cand_b6_sp_topgear_riff_only",
+    "his_prior_words": "sounds good, but remove the silence bruh. moreover separate the two (they match but shouldn't always be together).",
+    "vibes": [],
+    "batch": 6,
+    "pairs_with": [],
+    "confidence": "high",
+    "type": "accomp_pattern",
+    "key_tonic": "E",
+    "key_mode": "minor",
+    "source": "split of cand_b4_gr_topgear_riff_octave_copy (\"separate the two (they match but shouldn't always be together)\") — the riff alone; the original card now carries riff + copy with no leading silence",
+    "why": "The Top Gear driving riff by itself, so the +12 copy is a CHOICE (tick both cards) rather than welded on.",
+    "render": {
+      "kind": "note_mini",
+      "spec": "{\"mini\":\"<[e2@2 ~@1 e2 e2@2 e2@4 e2@2 e2@2 g2@2] [e2@2 e2@2 e2@2 e2@2 g2@2 a2@2 a2@2 a2@2] [d2@3 d2 d2@2 d2@4 d2@2 d2@2 c2@2] [d2@2 d2@2 d2@2 d2@2 g2@2 a2@2 g2@2 a2@2]>\",\"sound\":\"gm_synth_bass_1\",\"bpm\":132,\"bars\":4,\"gain\":0.75}"
+    }
+  },
+  "cand_b6_dv_faxanadu_companion_return": {
+    "id": "cand_b6_dv_faxanadu_companion_return",
+    "type": "device",
+    "source": "audios/vgmusic-full/nes/fxn-pwrd.mid (Faxanadu — Password Screen, NES) bars 1-8 + 13-24 verbatim, whole mix -12 semitones for audition register (source melody sits e6-e7); the only cut is bars 9-12, an exact repeat of bars 5-8",
+    "why": "A complete 20-bar development scheme measured off one 3-voice NES song, mechanisms in order: (1) A = melody + broken-octave acc alone; (2) A repeats EXACTLY and a companion line enters in parallel 6ths/3rds below — the corpus way to add 'a layer with its own melody' is on the repeat, not at bar 1 (+layer = 24.0% of 8,192 measured section returns, the #1 active transform); (3) third A: the companion goes double-time (running 8ths) while melody stays frozen and the acc DROPS AN OCTAVE to make room (register reallocation on the busy pass), and the 4th bar becomes a turnaround with a b4-b4 pickup into B (turnaround_alt = 29.2% of loop-repeat seams, the #1 seam device); (4) B contrast: harmony leaves Em for E-major/Am/D/G#^7 descending-fifths, acc switches broken-octaves -> arpeggio 8ths (a bridge with new harmony + changed figure = 36.4% of 717 well-segmented songs), then cadences home on B7. Full form of the source is A A A A B8 twice.",
+    "his_prior_words": "I want more layers with their own melody man thats what ive been saying (r18, five cards)",
+    "vibes": [
+      "nostalgic/rest",
+      "calm/night",
+      "mysterious/manor"
+    ],
+    "scope": "the SCHEME (enter-on-repeat, double-time third pass, turnaround into a figure-changing bridge) is the candidate; the tune itself is demo material",
+    "question": "This is how the corpus adds a companion: NOT from bar 1 — the section plays clean once, then repeats byte-identical with the new line added, then the new line doubles its speed on pass 3. Does the enter-on-repeat rule beat our current companion (which is present from the first bar of the section)? And is the double-time third pass a keeper or already too busy?",
+    "render": {
+      "kind": "stack_mini",
+      "spec": "{\"parts\":[{\"mini\":\"<[e5@2 e5@2 d#5 ~ e5 ~ f#5@2 f#5@2 b5 ~ g5@2] [~@4 f#5 ~ g5 ~ a5@2 a5@2 d6 ~ b5@2] [~@6 g5 ~ c6 ~ b5 ~ a5 ~ g5 ~] [a5@6 f#5 ~ b5 ~ a5 ~ g5 ~ f#5 ~] [e5@2 e5@2 d#5 ~ e5 ~ f#5@2 f#5@2 b5 ~ g5@2] [~@4 f#5 ~ g5 ~ a5@2 a5@2 d6 ~ b5@2] [~@6 g5 ~ c6 ~ b5 ~ a5 ~ g5 ~] [a5@6 f#5 ~ b5 ~ a5 ~ g5 ~ f#5 ~] [e5@2 e5@2 d#5 ~ e5 ~ f#5@2 f#5@2 b5 ~ g5@2] [~@4 f#5 ~ g5 ~ a5@2 a5@2 d6 ~ b5@2] [~@6 g5 ~ c6 ~ b5 ~ a5 ~ g5 ~] [a5 ~ g5 ~ f#5 ~ b5@6 b4@2 b4@2] [b5 ~ b5 ~ b5 ~ b5 ~ b5@2 b5@2 d6@2 c6@2] [~@8 c6 ~ b5 ~ a5 ~ g5 ~] [f#5@2 f#5@2 e6@2 e6@2 d6@2 d6@2 a5@2 a5@2] [c6@6 b5@2 b5@3 ~ c6 ~ d6 ~] [e6@6 g5 ~ g5@8] [d6@2 d6@2 c6@2 c6@2 g5@2 g5@2 a5@2 a5@2] [b5@8 ~@3 a5 ~ g5 ~@2] [f#5@2 f#5@4 ~@10]>\",\"sound\":\"gm_lead_1_square\",\"gain\":0.42},{\"mini\":\"<[~@16] [~@16] [~@16] [~@16] [g4@2 g4@2 f#4 ~ g4 ~ a4@2 a4@2 f#4 ~ b4@2] [~@4 a4 ~ b4 ~ c5@2 c5@2 f#5 ~ d5@2] [~@6 b4 ~ e5 ~ d5 ~ c5 ~ b4 ~] [e5@6 c#5 ~ d#5 ~ c#5 ~ b4 ~ a4 ~] [g4 ~ e4 ~ f#4 ~ g4 ~ a4 ~ f#4 ~ a4 ~ b4 ~] [d4 ~ g4 ~ a4 ~ b4 ~ c5 ~ a4 ~ f#5 ~ d5 ~] [g4 ~ b4 ~ g4 ~ b4 ~ e5 ~ d5 ~ c5 ~ b4 ~] [c#5 ~ e5 ~ c#5 ~ d#5@2 d#5@2 g4 ~ f#4@2 f#4@2] [g#5 ~ g#5 ~ g#5 ~ g#5 ~ g#5@2 g#5@2 b5@2 a5@2] [~@8 a5 ~ g5 ~ f#5 ~ e5 ~] [d5@2 d5@2 c6@2 c6@2 a5@2 a5@2 f#5@2 f#5@2] [g#5@6 g5@2 g5@3 ~ a5 ~ b5 ~] [c6@6 e5 ~ e5@2 e5@2 c5 ~ e5 ~] [a5 ~ d5 ~ a5 ~ c5 ~ e5 ~ g4 ~ e5 ~ a4 ~] [e5@8 ~@3 f#5 ~ e5 ~@2] [d#5@2 d#5@4 ~@10]>\",\"sound\":\"gm_lead_3_calliope\",\"gain\":0.3},{\"mini\":\"<[e3@2 e4@2 b3@2 e3@2 f#3@2 e4@2 d#4@2 b3@2] [g3@2 e4@2 b3@2 e3@2 a3@2 g4@2 e4@2 f#3@2] [g3@2 g4@2 d4@2 g3@2 c3@2 c4@2 g3@2 c3@2] [f#3@2 f#4@2 c#4@2 f#3@2 b3@2 d#4@2 f#4@2 b3@2] [e3@2 e4@2 b3@2 e3@2 f#3@2 e4@2 d#4@2 b3@2] [g3@2 e4@2 b3@2 e3@2 a3@2 g4@2 e4@2 f#3@2] [g3@2 g4@2 d4@2 g3@2 c3@2 c4@2 g3@2 c3@2] [f#3@2 f#4@2 c#4@2 f#3@2 b3@2 d#4@2 f#4@2 b3@2] [e2@2 e3@2 b2@2 e2@2 f#2@2 e3@2 d#3@2 b2@2] [g2@2 e3@2 b2@2 e2@2 a2@2 g3@2 e3@2 f#2@2] [g2@2 g3@2 d3@2 g2@2 c2@2 c3@2 g2@2 c2@2] [f#2@2 c#3@2 e3@2 b2@4 b2@2 c3@2 b2@2] [e3@2 b3@2 e4@2 b3@2 e3@2 g#3@2 b3@2 e3@2] [a2@2 c3@2 a3@2 e3@2 a2@2 c3@2 e3@2 a3@2] [d2@2 a2@2 d3@2 a2@2 d2@2 f#2@2 a2@2 d3@2] [d#3@2 c3@2 g#2@2 g2@4 d3@2 g3@2 d3@2] [c3@2 e3@2 g3@2 c4@2 g3@2 e3@2 c3@2 g2@2] [a2@2 c3@2 e3@2 a3@2 a3@2 e3@2 c3@2 a2@2] [f#2@2 a2@2 c3@2 e3@2 f#3@3 e3@2 c3@3] [b2@2 ~@2 b3 [c4,b3] b3@3 ~ a3@2 g3@2 f#3@2]>\",\"sound\":\"gm_epiano1\",\"gain\":0.5}],\"bpm\":112,\"bars\":20}"
+    },
+    "key_tonic": "E",
+    "key_mode": "minor",
+    "batch": 6,
+    "pairs_with": [
+      "cand_b6_dv_tailcave_sequence_climb"
+    ],
+    "confidence": "high"
+  },
+  "cand_b6_dv_tailcave_sequence_climb": {
+    "id": "cand_b6_dv_tailcave_sequence_climb",
+    "type": "device",
+    "source": "audios/vgmusic-full/gameboy/lalev1.mid (Link's Awakening — Tail Cave, Game Boy) bars 1-12 verbatim, 2 voices, no cuts",
+    "why": "Escalation by transposition instead of layers, measured: 4-bar phrase in Bm; the SAME phrase up a whole step (sequence-return = 11.2% of 8,192 returns); then the phrase LIQUIDATES to 1-bar fragments planed up by SEMITONE (e-f-f#) with the peak note climbing d6-d#6-e6; then a breath bar — melody silent, bass alone on F# (the dominant) — before the loop re-enters (dominant_approach = 12.7% of section-change seams; 'thin' = 5.6%). Three escalation gears in 12 bars with only 2 voices, no drums.",
+    "his_prior_words": "",
+    "vibes": [
+      "mysterious/catacombs",
+      "tense/dungeon",
+      "dark/cave"
+    ],
+    "question": "The tension here is pure TRANSPOSITION: same cell, planed up a step, then chopped to 1-bar fragments rising by semitone into the dominant. The engine currently varies sections by rewriting intervals/rhythm (D97 composite) but never by planing a whole phrase. Is this scheme a better fit for dungeon/tense lanes than interval rewrites — and is the empty breath bar before the return a feature (suspense) or a hole?",
+    "render": {
+      "kind": "stack_mini",
+      "spec": "{\"parts\":[{\"mini\":\"<[b4@2 c#5@2 d5@2 a5@3 ~@7] [b4@2 c#5@2 d5@2 g#5@3 ~@7] [b4@2 c#5@2 d5@2 g5@3 ~@7] [b4@2 c#5@2 d5@2 g#5@3 ~@7] [c#5@2 d#5@2 e5@2 b5@3 ~@7] [c#5@2 d#5@2 e5@2 a#5@3 ~@7] [c#5@2 d#5@2 e5@2 a5@3 ~@7] [c#5@2 d#5@2 e5@2 a#5@3 ~@7] [e5@2 f#5@2 g5@2 d6@3 ~@7] [f5@2 g5@2 g#5@2 d#6@3 ~@7] [f#5@2 g#5@2 a5@2 e6@3 ~@7] [~@16]>\",\"sound\":\"gm_lead_2_sawtooth\",\"gain\":0.38},{\"mini\":\"<[b2 ~ b2 ~@7 b3@3 ~ b2 ~] [b2 ~ b2 ~@7 b3@3 ~ b2 ~] [b2 ~ b2 ~@7 b3@3 ~ b2 ~] [b2 ~ b2 ~@7 b3@3 ~ b2 ~] [c#3 ~ c#3 ~@7 c#4@3 ~ c#3 ~] [c#3 ~ c#3 ~@7 c#4@3 ~ c#3 ~] [c#3 ~ c#3 ~@7 c#4@3 ~ c#3 ~] [c#3 ~ c#3 ~@7 c#4@3 ~ c#3 ~] [e3 ~ e3 ~@7 e4@3 ~ e3 ~] [f3 ~ f3 ~@7 f4@3 ~ f3 ~] [f#3 ~ f#3 ~@7 f#4@3 ~ f#3 ~] [f#3 ~ f#3 ~@11 f#3 ~]>\",\"sound\":\"gm_synth_bass_1\",\"gain\":0.55}],\"bpm\":90,\"bars\":12}"
+    },
+    "key_tonic": "B",
+    "key_mode": "minor",
+    "batch": 6,
+    "pairs_with": [
+      "cand_b6_dv_wily_descent_arrival",
+      "cand_b6_dv_faxanadu_companion_return"
+    ],
+    "confidence": "high"
+  },
+  "cand_b6_dv_wily_descent_arrival": {
+    "id": "cand_b6_dv_wily_descent_arrival",
+    "type": "device",
+    "source": "audios/vgmusic-full/nes/Wily1st1.mid (Mega Man — Wily Stage 1, NES) bars 1,3,5,7 + 9-12, all voices verbatim, -12 semitones; the intro states each descent step twice (identical bars) — the card keeps one bar per step, arrival section untouched",
+    "why": "The mirror of the Tail Cave climb: a frozen 3-note cell (skip-skip-step arch) re-seated DOWN the andalusian ladder f#m - E - D - C# with a parallel line a 3rd below and a pulsing pedal descending with it; then the ARRIVAL — the cell does not stop, it becomes the accompaniment while pulse 1 switches role to long held notes (a5@16) on top. The intro cell re-roles into support instead of being replaced (his synthRise 'repeated intervals' device, but used as an intro that RESOLVES into the theme; 'sequence' transform measured at 11.2% of returns).",
+    "his_prior_words": "some given intervals and it repeats those intervals over and over to convey energy (r30, synthRise ask)",
+    "vibes": [
+      "tense/fight",
+      "excited/fight",
+      "dark/citadel"
+    ],
+    "question": "Two-part hypothesis: (a) a rise-into-the-theme intro reads better when the SAME cell carries through the arrival as accompaniment (role swap) than when the intro material is discarded at the seam; (b) descending i-VII-VI-V under a frozen cell = tension even though everything is diatonic. True on your ear? Should synthRise sections hand their cell down to the acc instead of stopping?",
+    "render": {
+      "kind": "stack_mini",
+      "spec": "{\"parts\":[{\"mini\":\"<[~@2 a4@2 a4 b4@3 c#5@3 b4@2 a4@3] [~@2 g#4@2 g#4 a4@3 b4@3 a4@2 g#4@3] [~@2 f#4@2 f#4 g#4@3 a4@3 g#4@2 f#4@3] [~@2 f4@2 f4 f#4@3 g#4@3 f#4@2 f4@3] [a4@16] [~@10 a4@2 ~@2 g#4@2] [~@16] [~@10 g#4@2 ~@2 f#4@2]>\",\"sound\":\"gm_lead_2_sawtooth\",\"gain\":0.4},{\"mini\":\"<[~@2 f#4@2 f#4 g#4@3 a4@3 g#4@2 f#4@3] [~@2 e4@2 e4 f#4@3 g#4@3 f#4@2 e4@3] [~@2 d4@2 d4 e4@3 f#4@3 e4@2 d4@3] [~@2 c#4@2 c#4 d#4@3 f4@3 d4@2 c#4@3] [~@2 a4@2 a4 b4@3 c#5@3 b4@2 a4@3] [~@2 a4@2 a4 b4@3 c#5@3 b4@2 a4@3] [~@2 g#4@2 g#4 a4@3 b4@3 a4@2 g#4@3] [~@2 g#4@2 g#4 a4@3 b4@3 a4@2 g#4@3]>\",\"sound\":\"gm_lead_1_square\",\"gain\":0.32},{\"mini\":\"<[f#3@2 f#3@2 f#3@2 f#3@2 ~@2 f#3@2 f#3@2 f#3@2] [e3@2 e3@2 e3@2 e3@2 ~@2 e3@2 e3@2 e3@2] [d3@2 d3@2 d3@2 d3@2 ~@2 d3@2 d3@2 d3@2] [c#3@2 c#3@2 c#3@2 c#3@2 ~@2 c#3@2 c#3@2 c#3@2] [f#3@2 f#3@2 f#3@2 f#3@2 f#3@2 f#3@2 f#3@2 f#3@2] [f#3@2 f#3@2 f#3@2 f#3@2 f#3@2 f#3@2 f#3@2 f#3@2] [e3@2 e3@2 e3@2 e3@2 e3@2 e3@2 e3@2 e3@2] [e3@2 e3@2 e3@2 e3@2 e3@2 e3@2 e3@2 e3@2]>\",\"sound\":\"gm_synth_bass_1\",\"gain\":0.5},{\"mini\":\"<[~@4 md_snare ~@7 md_snare ~@3] [~@4 md_snare ~@7 md_snare ~@3] [~@4 md_snare ~@7 md_snare ~@3] [~@4 md_snare ~@7 md_snare ~@3] [~@4 md_snare ~@7 md_snare ~@3] [~@4 md_snare ~@7 md_snare ~ md_snare ~] [~@4 md_snare ~@7 md_snare ~@3] [~@4 md_snare ~@7 md_snare ~ md_snare ~]>\",\"sound\":\"md_snare\",\"gain\":0.55,\"kind\":\"s\"}],\"bpm\":150,\"bars\":8}"
+    },
+    "key_tonic": "F#",
+    "key_mode": "minor",
+    "batch": 6,
+    "pairs_with": [
+      "cand_b6_dv_tailcave_sequence_climb"
+    ],
+    "confidence": "high"
+  },
+  "cand_b6_dv_chemplant_seam_kit": {
+    "id": "cand_b6_dv_chemplant_seam_kit",
+    "type": "device",
+    "source": "audios/vgmusic-full/genesis/duo_chplantdynamic.mid (Sonic 2 — Chemical Plant Zone Remix 2) bars 3-6 verbatim; drum transcription drops the sample-doubling layers (clap doubling every snare, rimstick doubling every kick) and the fill bar's claves/shaker/whistle extras — every onset SLOT is verbatim",
+    "why": "One bar carrying four seam devices at once, each independently common in 8,447 measured section-change seams: the stabs go TACET for the whole fill bar (thin = 5.6%), the kit erupts into a every-16th tom cascade descending hi->lo with a snare wall at the end (drumfill = 5.9%), the bass enters mid-fill walking chromatically c#-d-d#-e up into the downbeat (pickup run; 10.2% run up), and the landing bar restarts the groove with an open-hat crash stack on beat 1 (crash_landing = 14.6%, the #2 device). The engine writes NONE of these — its sections butt-splice.",
+    "his_prior_words": "changes not just in strict section bar, and also changes an a unique way (r17, not yet built)",
+    "vibes": [
+      "excited/fight",
+      "energetic/stage",
+      "tense/lab"
+    ],
+    "question": "Four seam devices stacked: stabs cut + tom fill + chromatic bass walkup + crash on the landing. Is the full stack the right dose for energetic lanes, or should the engine roll 1-2 of the four per seam? Which single device does the most work for your ear when you A/B the fill bar against a plain bar?",
+    "render": {
+      "kind": "stack_mini",
+      "spec": "{\"parts\":[{\"mini\":\"<[[b4,e5,g5] ~@3 [b4,e5,g5] [b4,e5,g5] [b4,e5,g5] [b4,e5,g5] ~@8] [~@16] [[b4,e5,g5] ~@3 [b4,e5,g5] [b4,e5,g5] [b4,e5,g5] [b4,e5,g5] ~@6 [b4,e5,g5] [b4,e5,g5]] [~@2 [b4,e5,g5] [b4,e5,g5] ~@2 [b4,e5,g5] [a4,d5,f#5,a5]@8 ~]>\",\"sound\":\"gm_epiano1\",\"gain\":0.45},{\"mini\":\"<[~@16] [e3 e3 c#3@6 d2 d2 d3 d3 d#2 d#2 d#3 d#3] [e2 e2 e3 e3 e2 e2 e3 e3 e2 e2 e3 e3 e2 e2 e3 e3] [e2 e2 e3 e3 e2 e2 e3 e3 e2 e3 c#2 c#3 d2 d3 d#2 d#3]>\",\"sound\":\"gm_synth_bass_1\",\"gain\":0.55},{\"mini\":\"<[[md_kick,md_hat] md_hat [md_hat,md_ohat] [md_kick,md_hat] [md_snare,md_hat] md_hat [md_hat,md_ohat] md_hat md_hat [md_kick,md_hat] [md_hat,md_ohat] [md_kick,md_hat] [md_snare,md_hat] md_hat [md_hat,md_ohat] [md_hat,vc_tom_hi]] [[md_kick,md_hat,vc_tom_hi] [md_kick,md_hat,vc_tom_hi] [md_snare,md_hat,md_ohat] [md_snare,md_hat,vc_tom_hi] [md_kick,md_hat] [md_kick,md_hat,vc_tom_hi] [md_snare,md_hat,md_ohat,vc_tom_hi] [md_snare,md_hat] [md_hat,vc_tom_hi] [md_kick,md_hat,vc_tom_hi] [md_hat,md_ohat] [md_kick,md_snare,md_hat,vc_tom_lo] [md_snare,md_hat,vc_tom_lo] [md_snare,md_hat,vc_tom_lo] [md_snare,md_hat,vc_tom_lo,md_ohat] [md_snare,md_hat,vc_tom_lo]] [[md_kick,md_hat,md_ohat] md_hat [md_hat,md_ohat] [md_kick,md_hat] [md_snare,md_hat] md_hat [md_hat,md_ohat] md_hat md_hat [md_kick,md_hat] [md_hat,md_ohat] [md_kick,md_hat] [md_snare,md_hat] md_hat [md_hat,md_ohat] md_hat] [[md_kick,md_hat] md_hat [md_hat,md_ohat] [md_kick,md_hat] [md_snare,md_hat] md_hat [md_hat,md_ohat] md_hat md_hat [md_kick,md_hat] [md_hat,md_ohat] [md_kick,md_hat] [md_snare,md_hat] [md_snare,md_hat] [md_hat,md_ohat] [md_snare,md_hat]]>\",\"sound\":\"md_kick\",\"gain\":0.5,\"kind\":\"s\"}],\"bpm\":150,\"bars\":4}"
+    },
+    "key_tonic": "E",
+    "key_mode": "minor",
+    "batch": 6,
+    "pairs_with": [
+      "cand_b6_dv_vectorman_stagger_strip"
+    ],
+    "confidence": "high"
+  },
+  "cand_b6_dv_goron_selective_drop": {
+    "id": "cand_b6_dv_goron_selective_drop",
+    "type": "device",
+    "source": "audios/vgmusic-full/n64/goron.mid (Ocarina of Time — Goron City) bars 31-34 + 38-39 + 42-43 verbatim (the drop runs 9 bars in source; card keeps its entry, its middle with the log-drum chatter entry, and the melody return; GM cuica 78/79 -> vc_log_lo/vc_log_hi)",
+    "why": "How a real drop works, against the engine's own defect (r32: breakdown cut the WHOLE base mix with a 0/1 mask, 12 of 16 songs): Goron City strips ONLY the melody and the answer dyads; the marimba vamp, the offbeat d6 ping and the conga pulse all keep running (drop_rebuild = 16.1% of 950 energy arcs, and the drop window keeps 3 of 5 layers), then NEW percussion — cuica chatter — enters DURING the drop so the ear has something fresh to follow before the melody returns. The drop is a texture rotation, not silence.",
+    "his_prior_words": "there doesn't have to be a beat drop in every song ffs; the piano disappears ... abrupt (r32, six cards)",
+    "vibes": [
+      "happy/festival",
+      "jungle/village",
+      "excited/training"
+    ],
+    "scope": "the selective-strip rule (keep the groove floor + inject one new element mid-drop), not the Goron vamp itself",
+    "question": "Your r32 cards said the engine's breakdowns are abrupt and overused. This is the reference version: melody out, floor STAYS, and a new percussion voice enters halfway through the drop. If breakdowns keep the vamp+pulse and add one fresh element like this, do they earn their place back — or do you want drops rarer regardless of how they're built?",
+    "render": {
+      "kind": "stack_mini",
+      "spec": "{\"parts\":[{\"mini\":\"<[b4@6 bb4@10] [b4@6 bb4@10] [~@16] [~@16] [~@16] [~@16] [b4@6 bb4@10] [b4@6 bb4@10]>\",\"sound\":\"gm_ocarina\",\"gain\":0.45},{\"mini\":\"<[~@12 d6@2 d6@2] [~@12 d6@2 d6@2] [~@12 d6@2 d6@2] [~@12 d6@2 d6@2] [~@12 d6@2 d6@2] [~@12 d6@2 d6@2] [~@12 d6@2 d6@2] [~@12 d6@2 d6@2]>\",\"sound\":\"gm_celesta\",\"gain\":0.3},{\"mini\":\"<[e4@2 g3@2 ~@2 g3@2 c4@2 g3@2 ~@2 g3@2] [e4@2 g3@2 ~@2 g3@2 c4@2 ~@2 bb3@2 c4@2] [e4@2 c4@2 ~@2 g3@2 bb3@2 c4@2 ~@4] [e4@2 g3@2 ~@2 g3@2 c4@2 g3@2 ~@2 g3 g3] [e4@2 c4 g3@3 g3@2 bb3@2 c4@2 ~@4] [e4@2 c4 g3@3 c4@2 bb3@2 c4@2 ~@3 bb3] [e4@2 c4 g3@3 g3@2 bb3@2 c4@2 ~@4] [e4@2 c4 g3@3 c4@2 bb3@2 c4@2 ~@3 bb3]>\",\"sound\":\"gm_marimba\",\"gain\":0.5},{\"mini\":\"<[~@4 vc_conga_mute ~@5 vc_conga_mute ~@5] [~@4 vc_conga_mute ~@5 vc_conga_mute ~@5] [~@4 vc_conga_mute ~@5 vc_conga_mute ~@5] [~@4 vc_conga_mute ~@5 vc_conga_mute ~@5] [~@4 vc_conga_mute ~@5 vc_conga_mute ~@5] [~@4 vc_conga_mute ~@5 vc_conga_mute ~@5] [~@4 vc_conga_mute ~@5 vc_conga_mute ~@5] [~@4 vc_conga_mute ~@5 vc_conga_mute ~@5]>\",\"sound\":\"vc_conga_mute\",\"gain\":0.55,\"kind\":\"s\"},{\"mini\":\"<[~@16] [~@16] [~@16] [~@16] [vc_log_hi ~ vc_log_lo ~@3 vc_log_lo ~ vc_log_hi ~ vc_log_hi ~@5] [~@2 vc_log_lo ~ vc_log_hi ~ vc_log_lo ~ vc_log_hi ~ vc_log_hi ~@5] [~@2 vc_log_hi ~ vc_log_lo ~ vc_log_lo ~ vc_log_lo ~ vc_log_hi ~@5] [vc_log_hi ~ vc_log_lo ~@3 vc_log_lo ~ vc_log_lo ~ vc_log_hi ~@5]>\",\"sound\":\"vc_log_hi\",\"gain\":0.45,\"kind\":\"s\"}],\"bpm\":114,\"bars\":8}"
+    },
+    "key_tonic": "G",
+    "key_mode": "minor",
+    "batch": 6,
+    "pairs_with": [
+      "cand_b6_dv_chemplant_seam_kit"
+    ],
+    "confidence": "high"
+  },
+  "cand_b6_dv_vectorman_stagger_strip": {
+    "id": "cand_b6_dv_vectorman_stagger_strip",
+    "type": "device",
+    "source": "audios/vgmusic-full/genesis/Disco.mid (Vectorman — Disco) bars 1-12 verbatim, all voices",
+    "why": "The staircase build done as pure scheduling, one layer per 2 bars, measured: octave-bounce bass ALONE (sounding from beat 1 — no silent intro); four-on-floor kick joins at bar 3; at bar 4 a 4x16th shaker pre-roll ANNOUNCES the next entry; bar 5 doubles the bass in 16ths (double-time doubling, not a new line) + shaker backbeats; bars 9-10 the whole stack planes down to Db (bVI) and back — variation by transposing the LOOP, zero new material; bar 12 strips everything to solo 16th shaker for one bar as the gate into the next section (staircase = 8.1% of arcs; drumcut = 2.0% of seams). Every entry lands on a 2-bar boundary and each is announced by percussion.",
+    "his_prior_words": "its silence for like the first half bruh (batch-5 audition note); the second section randomly got louder (r1)",
+    "vibes": [
+      "energetic/stage",
+      "excited/fight",
+      "happy/menu"
+    ],
+    "question": "Two rules to verify: (a) a new layer every 2 bars with a 1-beat shaker pre-roll announcing it — does the pre-roll make the entries feel intentional instead of random? (b) the bar of SOLO shaker as the section gate: is one stripped timekeeper bar an acceptable seam in an energetic song, or does it read as the mix breaking?",
+    "render": {
+      "kind": "stack_mini",
+      "spec": "{\"parts\":[{\"mini\":\"<[f2@2 f3@2 f2@2 f3@2 f2@2 f3@2 f2@2 f3@2] [f2@2 f3@2 f2@2 f3@2 f2@2 f3@2 ab2@2 ab3@2] [f2@2 f3@2 f2@2 f3@2 f2@2 f3@2 f2@2 f3@2] [f2@2 f3@2 f2@2 f3@2 f2@2 f3@2 ab2@2 ab3@2] [f2@2 f3@2 f2@2 f3@2 f2@2 f3@2 f2@2 f3@2] [f2@2 f3@2 f2@2 f3@2 f2@2 f3@2 ab2@2 ab3@2] [f2@2 f3@2 f2@2 f3@2 f2@2 f3@2 f2@2 f3@2] [f2@2 f3@2 f2@2 f3@2 f2@2 f3@2 ab2@2 ab3@2] [db2@2 db3@2 db2@2 db3@2 db2@2 db3@2 db2@2 db3@2] [db2@2 db3@2 db2@2 db3@2 db2@2 db3@2 eb2@2 eb3@2] [f2@2 f3@2 f2@2 f3@2 f2@2 f3@2 f2@2 f3@2] [~@16]>\",\"sound\":\"gm_acoustic_bass\",\"gain\":0.55},{\"mini\":\"<[~@16] [~@16] [~@16] [~@16] [f2 f2 f3 f3 f2 f2 f3 f3 f2 f2 f3 f3 f2 f2 f3 f3] [f2 f2 f3 f3 f2 f2 f3 f3 f2 f2 f3 f3 ab2 ab2 ab3 ab3] [f2 f2 f3 f3 f2 f2 f3 f3 f2 f2 f3 f3 f2 f2 f3 f3] [f2 f2 f3 f3 f2 f2 f3 f3 f2 f2 f3 f3 ab2 ab2 ab3 ab3] [db2 db2 db3 db3 db2 db2 db3 db3 db2 db2 db3 db3 db2 db2 db3 db3] [db2 db2 db3 db3 db2 db2 db3 db3 db2 db2 db3 db3 eb2 eb2 eb3 eb3] [f2 f2 f3 f3 f2 f2 f3 f3 f2 f2 f3 f3 f2 f2 f3 f3] [~@16]>\",\"sound\":\"gm_synth_bass_1\",\"gain\":0.4},{\"mini\":\"<[~@16] [~@16] [md_kick ~@3 md_kick ~@3 md_kick ~@3 md_kick ~@3] [md_kick ~@3 md_kick ~@3 md_kick ~@3 [md_kick,vc_shaker] vc_shaker vc_shaker vc_shaker] [md_kick ~@3 [md_kick,vc_shaker] ~@3 md_kick ~@3 [md_kick,vc_shaker] ~@3] [md_kick ~@3 [md_kick,vc_shaker] ~@3 md_kick ~@3 [md_kick,vc_shaker] ~@3] [md_kick ~@3 [md_kick,vc_shaker] ~@3 md_kick ~@3 [md_kick,vc_shaker] ~@3] [md_kick ~@3 [md_kick,vc_shaker] ~@3 md_kick ~@3 [md_kick,vc_shaker] ~@3] [md_kick ~@3 [md_kick,vc_shaker] ~@3 md_kick ~@3 [md_kick,vc_shaker] ~@3] [md_kick ~@3 [md_kick,vc_shaker] ~@3 md_kick ~@3 [md_kick,vc_shaker] ~@3] [md_kick ~@3 [md_kick,vc_shaker] ~@3 md_kick ~@3 [md_kick,vc_shaker] ~@3] [vc_shaker vc_shaker vc_shaker vc_shaker vc_shaker vc_shaker vc_shaker vc_shaker vc_shaker vc_shaker vc_shaker vc_shaker vc_shaker vc_shaker vc_shaker vc_shaker]>\",\"sound\":\"md_kick\",\"gain\":0.55,\"kind\":\"s\"}],\"bpm\":140,\"bars\":12}"
+    },
+    "key_tonic": "F",
+    "key_mode": "minor",
+    "batch": 6,
+    "pairs_with": [
+      "cand_b6_dv_chemplant_seam_kit",
+      "cand_b6_dv_goron_selective_drop"
+    ],
+    "confidence": "high"
+  },
+  "cand_b6_dv_alien3_echo_holdmove": {
+    "id": "cand_b6_dv_alien3_echo_holdmove",
+    "type": "device",
+    "source": "audios/vgmusic-full/master/Alien3-Level4.mid (Alien 3, Master System — Matt Furniss) bars 3-8 verbatim; bass -12 (source FM voices share one register); second voice is the SAME ostinato delayed one 16th, exactly as sequenced",
+    "why": "Development with zero new material, 6 bars: a 16th ostinato holds two pitches (a#-b, a semitone rub) and MOVES only its third pitch per bar d-e-d-d#-d-e (the r22 holdMove rule arriving from an independent source); the entire second voice is the same ostinato ONE 16TH BEHIND (a written echo — Bucky O'Hare's credits does the same at one 8th, two independent sightings); the bass enters only at bar 3 stating the pump. Tension comes from the held semitone + the moving top note, not from any vertical stab.",
+    "his_prior_words": "repetition is not the spook; the semitone inside the repeated cell is (D93 boiler-mushi law, engine-side)",
+    "vibes": [
+      "tense/lab",
+      "industrial/construction",
+      "mysterious/manor"
+    ],
+    "question": "The second voice here is literally the first voice delayed one 16th note — a written echo, no reverb. Does the echo read as depth/space to you (worth a standing device: clone a busy ostinato onto a quieter voice one 16th late), or does it just read as flamming? And does the top-note-only motion (d-e-d-d#) carry enough 'development' for a 6-8 bar tense section on its own?",
+    "render": {
+      "kind": "stack_mini",
+      "spec": "{\"parts\":[{\"mini\":\"<[a#3 b3 d4 a#3 b3 d4 a#3 b3 d4 a#3 b3 d4@2 a#3 b3 d4] [a#3 b3 e4 a#3 b3 e4 a#3 b3 e4 a#3 b3 e4@2 a#3 b3 e4] [a#3 b3 d4 a#3 b3 d4 a#3 b3 d4 a#3 b3 d4@2 a#3 b3 d4] [a#3 b3 d#4 a#3 b3 d#4 a#3 b3 d#4 a#3 b3 d#4@2 a#3 b3 d#4] [a#3 b3 d4 a#3 b3 d4 a#3 b3 d4 a#3 b3 d4@2 a#3 b3 d4] [a#3 b3 e4 a#3 b3 e4 a#3 b3 e4 a#3 b3 e4@2 a#3 b3 e4]>\",\"sound\":\"gm_harpsichord\",\"gain\":0.42},{\"mini\":\"<[d#4 a#3 b3 d4 a#3 b3 d4 a#3 b3 d4 a#3 b3 d4@2 a#3 b3] [d4 a#3 b3 e4 a#3 b3 e4 a#3 b3 e4 a#3 b3 e4@2 a#3 b3] [e4 a#3 b3 d4 a#3 b3 d4 a#3 b3 d4 a#3 b3 d4@2 a#3 b3] [d4 a#3 b3 d#4 a#3 b3 d#4 a#3 b3 d#4 a#3 b3 d#4@2 a#3 b3] [d#4 a#3 b3 d4 a#3 b3 d4 a#3 b3 d4 a#3 b3 d4@2 a#3 b3] [d4 a#3 b3 e4 a#3 b3 e4 a#3 b3 e4 a#3 b3 e4@2 a#3 b3]>\",\"sound\":\"gm_pizzicato_strings\",\"gain\":0.3},{\"mini\":\"<[~@16] [~@16] [a#2@2 a#2 a#2 ~@2 g#2 a#2@2 a#2 a#2 a#2 ~@2 g#2@2] [b2@2 b2 b2 ~@2 g#2 b2@2 b2 b2 b2 ~@2 f#2@2] [g#2@2 g#2 g#2 ~@2 f#2 g#2@2 g#2 g#2 g#2 ~@2 f#2@2] [d3@2 d3 d3 ~@2 f#2 d3@2 d3 d3 d3 ~@2 g#2 ~]>\",\"sound\":\"gm_synth_bass_1\",\"gain\":0.5}],\"bpm\":128,\"bars\":6}"
+    },
+    "key_tonic": "Bb",
+    "key_mode": "minor",
+    "batch": 6,
+    "pairs_with": [
+      "cand_b6_dv_wily_descent_arrival"
+    ],
+    "confidence": "medium"
+  },
+  "cand_b6_dv_mariogolf_push_arrival": {
+    "id": "cand_b6_dv_mariogolf_push_arrival",
+    "type": "device",
+    "source": "audios/vgmusic-full/n64/mg64Trainingv2_0.mid (Mario Golf 64 — Training) bars 17-24 verbatim; melody -12 (source doubles it in two channels an octave apart; the card keeps the octave dyads of one channel)",
+    "why": "The pre-chorus riser scheme: four bars of a 3+3+2+3+3+2 chord pulse (his tresillo, doubled) planing chromatically upward Dm - Eb - Gb/F - Ebm/Db while the bass octave-bounces each root, then the ARRIVAL: harmony settles onto a C pedal with an Em/F planing vamp (a C^7-family wash), the pulse relaxes, and the melody enters for the first time — octave-doubled, long notes. Energy rises by harmony+rhythm, then the arrival trades tension for the tune (arch/staircase family, 14.2% of arcs combined; 'pitchburst' push = 6.1% of change seams).",
+    "his_prior_words": "notice how melody is chord too not just one note, and the melody is held not very jittery (r17/D98)",
+    "vibes": [
+      "calm/menu",
+      "happy/task",
+      "nostalgic/rest"
+    ],
+    "question": "The riser here is HARMONIC (chords plane up by step under one rhythm) and the payoff is the melody's FIRST entry, held notes, octave-doubled. When a song delays its melody, does 4 bars of rising chord-pulse make the entry land for you — or is 4 bars of no-melody already too long at 94bpm (the corpus caps pre-melody intros ~8 bars)?",
+    "render": {
+      "kind": "stack_mini",
+      "spec": "{\"parts\":[{\"mini\":\"<[[f5,a5,c6]@3 [f5,a5,b5]@3 [f5,a5,c6]@2 [f5,a5,d6]@3 [f5,a5,c6]@3 [f5,a5,b5]@2] [[g5,bb5,d6]@3 [g5,bb5,c6]@3 [g5,bb5,d6]@2 [g5,bb5,eb6]@3 [g5,bb5,d6]@3 [g5,bb5,c6]@2] [[bb5,db6,f6]@2 [bb5,db6,f6]@3 [bb5,db6,f6]@2 [ab5,c6,g6]@5 [ab5,c6,eb6]@2 [ab5,c6,g6]@2] [[g5,bb5,f6]@2 [g5,bb5,f6]@3 [g5,bb5,f6]@2 [f5,ab5,eb6]@9] [[e5,g5,b5]@3 [e5,g5,a5]@3 [e5,g5,b5]@6 [e5,g5,a5]@2 [e5,g5,b5]@2] [[f5,a5,c6]@3 [f5,a5,b5]@3 [f5,a5,c6]@6 [f5,a5,b5]@2 [f5,a5,c6]@2] [[e5,g5,b5]@3 [e5,g5,a5]@3 [e5,g5,b5]@6 [e5,g5,a5]@2 [e5,g5,b5]@2] [[f5,a5,c6]@8 [f5,b5,d6]@8]>\",\"sound\":\"gm_epiano1\",\"gain\":0.42},{\"mini\":\"<[d2@4 d3@3 d3@2 d2 d2@2 d3@4] [eb2@4 eb3@3 eb3@2 eb2 eb2@2 eb3@4] [gb2@4 gb3@3 f3@2 f3 f2@2 f3@4] [eb2@4 eb3@3 db3@2 db3 ab2@2 db3@4] [c3@4 g3@3 c3@2 c3 c3@2 g3@4] [c3@4 g3@3 c3@2 c3 c3@2 g3@4] [c3@4 g3@3 c3@2 c3 c3@2 g3@4] [c3@4 g3@3 c3@2 c3 c3@2 g3@4]>\",\"sound\":\"gm_acoustic_bass\",\"gain\":0.55},{\"mini\":\"<[~@16] [~@16] [~@16] [~@16] [[b4,b5]@16] [[c5,c6]@8 [e5,e6]@8] [[g5,g6]@3 [e5,e6]@3 [c5,c6]@2 [b4,b5]@4 [a4,a5]@2 [b4,b5]@2] [[c5,c6]@8 [d5,d6]@8]>\",\"sound\":\"gm_celesta\",\"gain\":0.38}],\"bpm\":94,\"bars\":8}"
+    },
+    "key_tonic": "C",
+    "key_mode": "major",
+    "batch": 6,
+    "pairs_with": [
+      "cand_b6_dv_faxanadu_companion_return"
+    ],
+    "confidence": "medium"
+  },
+  "cand_b6_px_wiztest_guild_answer": {
+    "id": "cand_b6_px_wiztest_guild_answer",
+    "type": "rhythm",
+    "source": "/Users/ethanchen/Documents/GitHub/motif-engine/audios/vgmusic-full/nes/Wiztest.mid (Wizards & Warriors 3 — vgmusic title 'Wizard's Guild Test'), dominant 2-bar loop with identical halves collapsed to 1 bar (97% of 32 drummed bars), ch9, 136bpm, all velocities a flat 100.",
+    "why": "The same recipe as the three beats you called \"here's whats going on / tutorial / activity\" (ffmq/wily/skiphat), from a fourth game — and this one is literally a guild TEST theme. Kick states beats 1 and 3 plus ONE extra kick on the last 8th-triplet of beat 3 (the 'let' — the same displaced-triplet trick as the skiphat card, but on the kick); snare answers alone on 2 and 4; 5 onsets/bar; the biggest hole is a full beat. Nothing else — no hat, no cymbals, no carpet.",
+    "his_prior_words": "",
+    "vibes": [
+      "happy/menu",
+      "excited/training",
+      "calm/shop"
+    ],
+    "scope": "activity/tutorial — 'here's whats going on / tutorial / activity' beats",
+    "question": "Hypothesis: the 'tutorial/activity' feel = a kick STATEMENT on 1/3 + a snare ANSWER on 2/4 + real holes in the bar, at 5-8 onsets/bar with kit voices only — a conversation sparse enough to talk over. This groove matches that recipe from a different game (and its source is literally a 'guild test' theme). Does it land in the same 'here's what's going on / tutorial / activity' bucket for you, or does something else drive that category?",
+    "render": {
+      "kind": "rhythm_onsets",
+      "spec": "{\"bpm\":136,\"bars\":1,\"onsets\":[\"0\",\"1/2\",\"2/3\",\"1/4\",\"3/4\"],\"sounds\":[\"md_kick\",\"md_kick\",\"md_kick\",\"md_snare\",\"md_snare\"]}"
+    },
+    "batch": 6,
+    "pairs_with": [
+      "cand_cw_evening_royalroad"
+    ],
+    "confidence": "high"
+  },
+  "cand_b6_px_bof_underworld_kickrun": {
+    "id": "cand_b6_px_bof_underworld_kickrun",
+    "type": "rhythm",
+    "source": "/Users/ethanchen/Documents/GitHub/motif-engine/audios/vgmusic-full/snes/BoF-_Underworld_Theme.mid (Breath of Fire — 'Underworld'), dominant 2-bar loop with identical halves collapsed to 1 bar (97% of 36 drummed bars), ch9, 100bpm, flat v108.",
+    "why": "A deliberate CONTROL for the activity recipe: the drum bar fits your 'tutorial/activity' recipe exactly — 6 onsets/bar, kit voices only, snare steady on 2 and 4, a beat-long hole — but with the ROLES swapped (the wily card keeps the kick stable and displaces the snare; here the snare is the stable half and the kick makes the move: beat 1, then a three-kick 16th run leaning into beat 3 at 7/16, 9/16, 5/8). And the source is an UNDERWORLD theme, i.e. the name predicts the opposite category.",
+    "his_prior_words": "",
+    "vibes": [
+      "happy/menu",
+      "mysterious/cave",
+      "calm/shop"
+    ],
+    "scope": "activity/tutorial — name-opposed control (recipe says activity, source name says dungeon)",
+    "question": "Hypothesis test with the name working AGAINST me: this bar follows the same Q&A-with-holes recipe as your 'here's whats going on / tutorial / activity' beats (roles swapped: stable snare, moving kick), but it comes from a dungeon theme. If the recipe is what drives the category, this should still read 'activity'. Does it — or does the kick run into beat 3 tip it somewhere else (tension/creep)?",
+    "render": {
+      "kind": "rhythm_onsets",
+      "spec": "{\"bpm\":100,\"bars\":1,\"onsets\":[\"0\",\"7/16\",\"9/16\",\"5/8\",\"1/4\",\"3/4\"],\"sounds\":[\"md_kick\",\"md_kick\",\"md_kick\",\"md_kick\",\"md_snare\",\"md_snare\"]}"
+    },
+    "batch": 6,
+    "pairs_with": [],
+    "confidence": "high"
+  },
+  "cand_b6_px_boulderdash_sand_gallop": {
+    "id": "cand_b6_px_boulderdash_sand_gallop",
+    "type": "rhythm",
+    "source": "/Users/ethanchen/Documents/GitHub/motif-engine/audios/vgmusic-full/nes/Sand_World.mid (Boulder Dash — 'Sand World'), dominant 2-bar loop with identical halves collapsed to 1 bar (99% of 88 drummed bars), ch9, 150bpm, flat v75.",
+    "why": "Your 'minigame, high energy' reading on the camel-trot card measured as: all TOP end (zero kick), ~12 onsets/bar, one identical little cell stamped on every beat. This is the same species from a digging game with the cell turned around: snare ON each beat, hat double-tap answering on the 'and-a' — DUM-ka-ka four times a bar — where the trot was ka-ka-DUM (hat pair into a snare answer). No low voice anywhere, so it stays light however fast it runs.",
+    "his_prior_words": "",
+    "vibes": [
+      "excited/training",
+      "happy/menu",
+      "desert"
+    ],
+    "scope": "minigame (high energy) — uniform top-end gallop cell, no low anchor",
+    "question": "Hypothesis: 'minigame, high energy' = a uniform per-beat gallop cell in top-end voices ONLY (no kick, no weight) at ~12 onsets/bar — busy but light. Same ingredients as the camel trot, cell reversed (DUM-ka-ka vs ka-ka-DUM). Does it land 'minigame / high energy' too — i.e. is it the uniform light lattice that makes minigame, regardless of which voice leads the cell?",
+    "render": {
+      "kind": "rhythm_onsets",
+      "spec": "{\"bpm\":150,\"bars\":1,\"onsets\":[\"0\",\"1/4\",\"1/2\",\"3/4\",\"1/8\",\"3/16\",\"3/8\",\"7/16\",\"5/8\",\"11/16\",\"7/8\",\"15/16\"],\"sounds\":[\"md_snare\",\"md_snare\",\"md_snare\",\"md_snare\",\"md_hat\",\"md_hat\",\"md_hat\",\"md_hat\",\"md_hat\",\"md_hat\",\"md_hat\",\"md_hat\"]}"
+    },
+    "batch": 6,
+    "pairs_with": [],
+    "confidence": "high"
+  },
+  "cand_b6_px_sonic2_vs_boombap": {
+    "id": "cand_b6_px_sonic2_vs_boombap",
+    "type": "rhythm",
+    "source": "/Users/ethanchen/Documents/GitHub/motif-engine/audios/vgmusic-full/genesis/Sonic2re.mid (Sonic the Hedgehog 2 — the 'Vs. Results' screen of VERSUS mode), dominant 2-bar loop with identical halves collapsed to 1 bar (90% of 42 drummed bars), ch9, 120bpm, flat v100.",
+    "why": "Your 'showdown / calm showdown of a rap battle' reading on the shadowrun card measured as: the KICK does the syncopated work in 16th pairs off the beat while the snare stays minimal on the backbeat. This bar has the same signature from a screen that is literally the results of a VERSUS match: kick pumps 8ths and doubles into 16th pairs on the 'and-a' of beats 1 and 3 (1/8+3/16, 5/8+11/16), each pair rolling into the snare crack on 2 and 4 — and the snare plays NOTHING else. 12 onsets/bar, 120bpm head-nod tempo.",
+    "his_prior_words": "",
+    "vibes": [
+      "battle",
+      "excited/training",
+      "tense/lab"
+    ],
+    "scope": "showdown — syncopated kick 16th-pairs + bare backbeat = the rap-battle head-nod",
+    "question": "Hypothesis: 'showdown' = the low end carrying the syncopation (kick 16th-pairs off the beat) while the snare stays bare on 2/4 — the boom-bap shape. This one adds a straight-8th kick pump under the same pairs. Does it still read 'showdown / rap battle', or does the extra kick drive push it toward plain 'fight/run' energy? (Locates whether the category needs the pairs, or the pairs plus space.)",
+    "render": {
+      "kind": "rhythm_onsets",
+      "spec": "{\"bpm\":120,\"bars\":1,\"onsets\":[\"0\",\"1/8\",\"3/16\",\"1/4\",\"3/8\",\"1/2\",\"5/8\",\"11/16\",\"3/4\",\"7/8\",\"1/4\",\"3/4\"],\"sounds\":[\"md_kick\",\"md_kick\",\"md_kick\",\"md_kick\",\"md_kick\",\"md_kick\",\"md_kick\",\"md_kick\",\"md_kick\",\"md_kick\",\"md_snare\",\"md_snare\"]}"
+    },
+    "batch": 6,
+    "pairs_with": [],
+    "confidence": "medium"
+  },
+  "cand_b6_px_smrpg_booster_stream": {
+    "id": "cand_b6_px_smrpg_booster_stream",
+    "type": "rhythm",
+    "source": "/Users/ethanchen/Documents/GitHub/motif-engine/audios/vgmusic-full/snes/SMRPG_Booster_Tower-KMv1-1.mid (Super Mario RPG — 'Booster's Tower'), 2-bar loop (100% of 48 drummed bars), ch9, 116bpm. Source snare alternates v102/v76 on/off the beat; rendered flat, which makes the stream MORE uniform — uniformity is the mechanism under test.",
+    "why": "Your 'mission received / clean / relaxing minigame' reading on the gradius card measured as: one voice runs an UNBROKEN even stream (no holes, no syncopation) while the kick just anchors — regularity at saturation reads mid-energy, not high. Same recipe here from a completely different game: snare marches every single 8th for the whole loop, kick anchors 1 / and-2 / 3, a stick answers on three offbeats, and a soft tambourine adds one two-tap turn at the bar 1 end that grows a third tap in bar 2 (the loop's only variation). ~16 onsets/bar yet nothing ever surprises.",
+    "his_prior_words": "",
+    "vibes": [
+      "excited/training",
+      "happy/menu",
+      "battle"
+    ],
+    "scope": "mission-clean — unbroken even stream + plain anchor = 'clean' mid energy",
+    "question": "Hypothesis: 'mission received / clean' = an unbroken even-8th stream (snare) over a plain kick anchor — total regularity, zero syncopation, so it saturates the bar without raising the stakes. The gradius card had this recipe; here it is from a playful tower theme, busier but just as regular. Does it read 'mission/clean/relaxing-minigame, mid energy, supports both directions' like the gradius one — confirming that regular saturation, not density, sets that category?",
+    "render": {
+      "kind": "rhythm_onsets",
+      "spec": "{\"bpm\":116,\"bars\":2,\"onsets\":[\"0\",\"3/8\",\"1/2\",\"1\",\"11/8\",\"3/2\",\"0\",\"1/8\",\"1/4\",\"3/8\",\"1/2\",\"5/8\",\"3/4\",\"7/8\",\"1\",\"9/8\",\"5/4\",\"11/8\",\"3/2\",\"13/8\",\"7/4\",\"15/8\",\"1/4\",\"5/8\",\"7/8\",\"5/4\",\"13/8\",\"15/8\",\"3/4\",\"13/16\",\"13/8\",\"7/4\",\"29/16\"],\"sounds\":[\"md_kick\",\"md_kick\",\"md_kick\",\"md_kick\",\"md_kick\",\"md_kick\",\"md_snare\",\"md_snare\",\"md_snare\",\"md_snare\",\"md_snare\",\"md_snare\",\"md_snare\",\"md_snare\",\"md_snare\",\"md_snare\",\"md_snare\",\"md_snare\",\"md_snare\",\"md_snare\",\"md_snare\",\"md_snare\",\"md_stick\",\"md_stick\",\"md_stick\",\"md_stick\",\"md_stick\",\"md_stick\",\"vc_riq\",\"vc_riq\",\"vc_riq\",\"vc_riq\",\"vc_riq\"]}"
+    },
+    "batch": 6,
+    "pairs_with": [
+      "cand_rl_r3_circle_dotted"
+    ],
+    "confidence": "high"
+  },
+  "cand_b6_px_outrun_breeze_shuttle": {
+    "id": "cand_b6_px_outrun_breeze_shuttle",
+    "type": "harmony",
+    "key_tonic": "A",
+    "key_mode": "major",
+    "source": "/Users/ethanchen/Documents/GitHub/motif-engine/audios/vgmusic-full/master/Passing_Breeze.mid (Out Run — 'Passing Breeze', the cruising BGM), bars 30-33 measured note-by-note; the loop labeler reads the same A^7/D alternation across bars 26-41. 120bpm.",
+    "why": "A becalmed two-chord shuttle from music written for literally driving past scenery: I^7 one bar, IV6 seven beats, then I^7 returns EARLY — anticipated on beat 4 of bar 3 (chordBeats 4/7/5, a sub-bar change per the r32 law). Measured voicings: the comp never plays the roots — it planes minor-triad upper structures (C#m over A = A^7's 3-5-7; F#m over D = D6/9) — and the bass closes the loop with a chromatic g#->a pickup. No V, no leading-tone cadence, so it can circle forever.",
+    "his_prior_words": "",
+    "vibes": [
+      "calm/night",
+      "happy/menu",
+      "adventure"
+    ],
+    "scope": "timelapse / passive running mini game — the CALM-HARMONY half of the pair (per your shenightfall note: just piano = refreshing/calm; all layers on = timelapse)",
+    "question": "Hypothesis from your shenightfall note: 'timelapse / passive running' is not a harmony — it is calm, circling harmony PLUS a complete groove stack; the same chords with layers off read refreshing/calm. Solo, does this anticipated I^7-IV6 shuttle read refreshing/calm? Then tick it with the Out Run stab groove (its sibling card) + your lofi/indie backbeat: does the combination flip it to 'timelapse / passive running minigame' the way shenightfall's full stack did?",
+    "render": {
+      "kind": "degrees",
+      "spec": "{\"degrees\":\"0:^7 5:6 0:^7\",\"family\":\"major\",\"tonic\":\"A\",\"bpm\":120,\"chordBeats\":[4,7,5]}"
+    },
+    "batch": 6,
+    "pairs_with": [
+      "cand_b6_px_outrun_breeze_stabs",
+      "cand_un_lofi_backbeat",
+      "cand_un_indie_backbeat"
+    ],
+    "confidence": "high"
+  },
+  "cand_b6_px_outrun_breeze_stabs": {
+    "id": "cand_b6_px_outrun_breeze_stabs",
+    "type": "accomp_pattern",
+    "key_tonic": "A",
+    "key_mode": "major",
+    "source": "/Users/ethanchen/Documents/GitHub/motif-engine/audios/vgmusic-full/master/Passing_Breeze.mid — ch0 FM bass + ch1 comp, bars 30-33 transcribed onset-for-onset (bass lifted +12 from source e1/a1/d2 for audibility, the chaotix-card precedent). The source holds the anticipated chord ~5 beats; here it rings only its cell — noted, the ONSET is the device.",
+    "why": "The actual 'running' texture under the shuttle, and it is NOT a carpet: bass and comp lock the same syncopated stab rhythm — a dotted pair on beat 1 and beat 4 of the IV bar, the pair displaced to beat 3 in the next bar, then a near-silent breath bar where only the bass walks g#->a, then a bar that is one four-16th pickup RUN into the loop's top. Two voices, zero collisions with a backbeat's 2/4. If 'passive running' needs a steady 16th carpet, this stack should fail to produce it; if it needs a complete calm groove of any shape, this should work.",
+    "his_prior_words": "",
+    "vibes": [
+      "calm/night",
+      "happy/menu",
+      "adventure"
+    ],
+    "scope": "timelapse / passive running mini game — the GROOVE-STACK half of the pair; discriminates carpet-vs-completeness",
+    "question": "Hypothesis discriminator: shenightfall flipped to 'timelapse' under a straight 16th-shaker carpet; Out Run runs on syncopated STABS with a breath bar instead. Layered on its shuttle sibling + one of your backbeats: does stab-groove + calm harmony still read 'timelapse / passive running', or does that category specifically need the unbroken carpet? Either answer pins which half of the stack does it.",
+    "render": {
+      "kind": "stack_mini",
+      "spec": "{\"parts\":[{\"mini\":\"<[~ ~ a2 a2 a2 a2 ~ ~ a2@3 a2 ~ ~ ~ ~] [d3@3 d3 ~@8 d3@3 d3] [~@8 d3@3 d3 ~@2 a2@2] [~@14 g#2 a2]>\",\"sound\":\"gm_synth_bass_1\",\"gain\":0.5},{\"mini\":\"<[~ ~ [g#3,c#4,e4] [g#3,c#4,e4] [g#3,c#4,e4] [g#3,c#4,e4] ~ ~ [g#3,c#4,e4]@3 [g#3,c#4,e4] ~ ~ ~ ~] [[f#3,a3,c#4]@3 [f#3,a3,c#4] ~@8 [f#3,a3,c#4]@3 [f#3,a3,c#4]] [~@8 [f#3,a3,c#4]@3 [f#3,a3,c#4] ~@2 [g#3,c#4,e4]@2] [~]>\",\"sound\":\"gm_epiano1\",\"gain\":0.4}],\"bpm\":120,\"bars\":4}"
+    },
+    "batch": 6,
+    "pairs_with": [
+      "cand_b6_px_outrun_breeze_shuttle",
+      "cand_un_lofi_backbeat",
+      "cand_un_indie_backbeat"
+    ],
+    "confidence": "medium"
+  },
+  "cand_b6_px_ff6_troops_lockstep": {
+    "id": "cand_b6_px_ff6_troops_lockstep",
+    "type": "accomp_pattern",
+    "key_tonic": "C",
+    "key_mode": "minor",
+    "source": "/Users/ethanchen/Documents/GitHub/motif-engine/audios/vgmusic-full/snes/FFVI_-_Troops_March_On.mid ('Troops March On'; the file declares 16/16, which is metrically the same 16-sixteenth bar as 4/4), ch2 low brass + ch8 horn + ch9 snare, bars 6-11 measured. 139bpm. Source snare roll fades v96->31; rendered flat. No melody is taken.",
+    "why": "Your 'determination/marching' words have always landed on pitched material with an unwavering repeated pulse (the skybattle repeated-16th bass and tremolo, the castle-stamp brass, the chaotix stamps). This is that mechanism in its purest measured form: low brass, a horn an octave up and the military snare all strike the IDENTICAL stamp rhythm (1, 2, and-2, 3, 4, and-4) in lockstep, on the TONIC ONLY — the sole pitch events are a c#2 semitone LEAN on beat 4 of every second bar and a six-stroke snare roll under it, both pointing the march forward. Harmony is a static Cm pedal for 15 of every 16 half-bars.",
+    "his_prior_words": "",
+    "vibes": [
+      "battle",
+      "adventure",
+      "tense/lab"
+    ],
+    "scope": "determination / marching — the RHYTHM half: lockstep tonic stamps, zero progression",
+    "question": "Hypothesis: 'determination/marching' is made by an unwavering repeated-note stamp machine — same rhythm in every voice, tonic-only, with one semitone lean as the only motion — and needs NO chord progression at all. Does this read 'determination/marching' by itself? Its sibling card (the DQ4 wagon quarters) carries a real marching PROGRESSION with no stamps; between the two, which half is the category?",
+    "render": {
+      "kind": "stack_mini",
+      "spec": "{\"parts\":[{\"mini\":\"<[c2 ~ ~ ~ c2 ~ c2 ~ c2 ~ ~ ~ c2 ~ c2 ~] [c2 ~ ~ ~ c2 ~ c2 ~ c2 ~ ~ ~ c#2@4]>\",\"sound\":\"gm_trombone\",\"gain\":0.5},{\"mini\":\"<[c3@4 c3@2 c3@2 c3@6 ~@2] [~@8 c3@4 c#3@4]>\",\"sound\":\"gm_french_horn\",\"gain\":0.35},{\"mini\":\"<[vc_snare_mil ~ ~ ~ vc_snare_mil ~ vc_snare_mil ~ vc_snare_mil ~ ~ ~ vc_snare_mil ~ vc_snare_mil ~] [vc_snare_mil ~ ~ ~ vc_snare_mil ~ vc_snare_mil ~ vc_snare_mil ~ ~ ~ [vc_snare_mil!6]@4]>\",\"sound\":\"vc_snare_mil\",\"gain\":0.45}],\"bpm\":139,\"bars\":2}"
+    },
+    "batch": 6,
+    "pairs_with": [
+      "cand_b6_px_dq4_wagon_quarters"
+    ],
+    "confidence": "high"
+  },
+  "cand_b6_px_dq4_wagon_quarters": {
+    "id": "cand_b6_px_dq4_wagon_quarters",
+    "type": "harmony",
+    "key_tonic": "A",
+    "key_mode": "minor",
+    "source": "/Users/ethanchen/Documents/GitHub/motif-engine/audios/vgmusic-full/nes/Dw4wagonwheelmarch.mid (Dragon Quest IV — 'Wagon Wheel March'), bars 8-10 measured note-by-note: the two NES voices walk it in parallel 10ths (f2-a3, g2-b3, a2-c4) in flat-v127 quarters. 121bpm.",
+    "why": "The other half of the determination question: a real MARCHING PROGRESSION with no stamp machine. Chords change at QUARTER level (the r32 chordBeats law — a chord does not have to last a bar): bVI-bVII-i-bVII stepwise walk in bar 1, then bVI leaning onto a half-bar V in bar 2 — the wagon-wheel 'turn'. In the source there are no block chords at all: the whole harmony is two voices in parallel 10ths pulsing quarters, which is why it marches instead of sits.",
+    "his_prior_words": "",
+    "vibes": [
+      "adventure",
+      "battle",
+      "happy/menu"
+    ],
+    "scope": "determination / marching — the HARMONY half: quarter-level walking progression, no stamps",
+    "question": "Hypothesis: a stepwise quarter-note walking progression (bVI-bVII-i-bVII, then bVI->V) supplies the 'marching' half of determination even played as plain chords. Solo, does this read 'march'? Then tick it with the FF6 lockstep sibling: stamps+walk together should be unmistakably 'determination/marching' if the category = stamp rhythm x walking harmony. Which of the three (rhythm alone / harmony alone / both) is the real trigger?",
+    "render": {
+      "kind": "degrees",
+      "spec": "{\"degrees\":\"8b 10b 0:m 10b 8b 7\",\"family\":\"minor\",\"tonic\":\"A\",\"bpm\":121,\"chordBeats\":[1,1,1,1,2,2]}"
+    },
+    "batch": 6,
+    "pairs_with": [
+      "cand_b6_px_ff6_troops_lockstep"
+    ],
+    "confidence": "medium"
+  },
+  "cand_b6_px_swfairy_rotation_lattice": {
+    "id": "cand_b6_px_swfairy_rotation_lattice",
+    "type": "melody_pattern",
+    "key_tonic": "D",
+    "key_mode": "major",
+    "source": "/Users/ethanchen/Documents/GitHub/motif-engine/audios/vgmusic-full/saturn/SW-FileMenu-Fairytheme.mid (Shining Wisdom — the file-select 'Fairy theme'), ch0 celesta bars 20-23 (shifted -12 from source octave 6 for browser register) + ch3 bass, 124bpm. Figuration only — a rotating broken triad is a pattern, not a tune (D30).",
+    "why": "Your 'fairy-tale' label on the DQ pizz measured as: a plucked/bell lattice that increments and de-increments over gently oscillating harmony. Here is the same species from a file literally titled 'Fairy theme', with a different rotation mechanism: falling broken-triad 8ths on celesta where each bar starts the SAME triad one rotation later (top voice drifts g-c-f#-b), planed down a whole step every two bars (C triad -> B minor triad); under it the bass rises in bare FIFTHS (d-a-e, then e-b-f#, a quintal R-5-9 stack — no third anywhere) and drifts OFF the beat on alternate bars. No leading tone, nothing resolves; the two sonorities just alternate a whole step apart.",
+    "his_prior_words": "",
+    "vibes": [
+      "calm/night",
+      "happy/menu",
+      "mysterious/space"
+    ],
+    "scope": "fairy-tale — bell lattice whose rotation drifts + whole-step planed harmony with no resolution",
+    "question": "Hypothesis: 'fairy-tale' = a high plucked/bell lattice whose contour drifts by ROTATION (rise-and-fall without a destination) over two chords a whole step apart that never resolve — the DQ pizz had the pedal version, this is the rotation version from a second source. Does it land 'fairy-tale' for you? If yes, the mechanism generalizes past the pedal; if it reads 'mysterious/floaty' instead, the pedal anchor is what made DQ's feel like a story.",
+    "render": {
+      "kind": "stack_mini",
+      "spec": "{\"parts\":[{\"mini\":\"<[g5 e5 c5 g5 e5 c5 g5 e5] [c5 g5 e5 c5 g5 e5 c5 g5] [f#5 d5 b4 f#5 d5 b4 f#5 d5] [b4 f#5 d5 b4 f#5 d5 b4 f#5]>\",\"sound\":\"gm_celesta\",\"gain\":0.5},{\"mini\":\"<[d2@6 a2@6 e3@4] [~@2 d2@4 a2@4 e3@6] [e2@6 b2@6 f#3@4] [~@2 e2@4 b2@4 f#3@6]>\",\"sound\":\"gm_acoustic_bass\",\"gain\":0.5}],\"bpm\":124,\"bars\":4}"
+    },
+    "batch": 6,
+    "pairs_with": [
+      "cand_vg_dq_pizz_only"
     ],
     "confidence": "high"
   }

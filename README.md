@@ -1,103 +1,189 @@
-# motif-engine — Strudel Song Engine
+# motif-engine
 
-Iterative, verified AI music generation for [Strudel](https://strudel.cc). An LLM
-generates and — critically — **edits** full songs, where every edit is mechanically
-gated: touch only what you were asked to touch, or the edit is rejected with the
-leak named. Built from the handoff in [doc.md](doc.md); every judgment call is
-logged in [DECISIONS.md](DECISIONS.md).
+A [Strudel](https://strudel.cc)-based game-music generation engine. A prompt
+(an **emotion** plus an **environment**, e.g. `somber space` or `excited jungle`)
+compiles to a full song: harmony, accompaniment, melody with letter form,
+companion lines, drums, section-by-section arrangement, and an HQ sampled
+render. Nothing is composed by hand. Every rule in the engine was learned from
+one listener's ear verdicts, round by round, and the full ledger of those
+decisions is [DECISIONS.md](DECISIONS.md).
 
-**If you just want to make and edit music: read [SESSIONS.md](SESSIONS.md) (3 commands).**
+The project started as an LLM song *editor* with mechanically gated edits (the
+handoff in [doc.md](doc.md), the CLI in [SESSIONS.md](SESSIONS.md)). That layer
+still works and is still tested, but the centre of gravity is now the
+prompt-to-song generator and the audition loop around it.
 
 ## Setup
 
 ```
-npm install     # versions are exact-pinned; see below
-npm test        # 38 tests, all green
+npm install                          # Strudel 1.1.0, exact-pinned (see below)
+npm test                             # 39 files, 394 tests (~45 s; rebuilds songs.html)
+node scripts/audition-songs.mjs      # rebuilds audition/songs.html (47 judged songs)
+open audition/songs.html             # listen; export verdicts JSON from the page
 ```
 
-### The version pin (do not "upgrade")
+Node 22+ (developed on 26). The HQ render tier has extra native dependencies,
+described under "Render tier" below. Everything else is pure Node.
+
+### The version pin (do not upgrade)
 
 Everything is pinned to **Strudel 1.1.0** (`@strudel/core`, `mini`, `tonal`,
-`transpiler`, `reference`, and the unpkg REPL bundle in every `listen.html`).
-Latest `@strudel/core` imports `@kabelsalat/web`, which is browser-only and crashes
-under Node — headless verification (the entire point of this engine) dies with it.
-1.1.0 is the verified-good version (doc.md §2). Also pinned-around: `.mode('root:g2')
-.voicing()` is broken at 1.1.0 (we emit `rootNotes()` instead — DECISIONS D3), and
-the transpiler mini-fies double-quoted object keys (D12).
+`transpiler`, `reference`, and the REPL bundle embedded in every audition
+page). Newer `@strudel/core` imports a browser-only module and dies under Node,
+which kills headless evaluation, and headless evaluation is how every song is
+measured. Two 1.1.0 quirks are worked around rather than fixed: `.voicing()` in
+root mode is broken (we emit `rootNotes()`, D3) and the transpiler mini-fies
+double-quoted object keys (D12).
 
-## How it works
+## How a song is made
 
 ```
-spec.json ──compile──> labeled .strudel + meta.json
-              │
-              ├── binder: rhythm entry × contour × harmony → resolved notes
-              │           (chord-tone snapping on accents, accents→gain, swing,
-              │            cadence targets, interlock complement scoring)
-              │
-verify: evaluate headlessly (same transpiler as the REPL) → per-label haps
-        → metrics, relational musts, harmonic/motif/structural assertions
-              │
-edit:   old vs new hap signatures per label → containment gate
-        (allowed labels/bindings/aspects/sections; leak ⇒ REJECT)
-              │
-every accepted version ──> vN.strudel (paste-ready) + listen.html (mutes, A/B)
-                           + report.md (what changed, what to listen for)
+prompt "somber space"
+   │  src/lib/prompt-parse.js  → emotion + environment
+   │  src/lib/vibes.js         → compileVibe(): EMOTION is a transform
+   │                             (mode, tempo ×, register, percussion, chroma)
+   │                             ENVIRONMENT is the material (timbre bias,
+   │                             figuration classes, ensemble dial, perc profile)
+   ▼
+harmony      D50 exemplar variation from the ratified progression pool
+             (src/lib/harmony-vary.js, progressions-*.js, harmony-model.js)
+accompaniment ratified foundation figure by figuration class, varied per
+             4-bar block by CLASS (rhythm / intervals / turnaround, D97) and
+             travelling along FND_TRAVEL edges as letters change
+melody       letter form (A B A' …), retrieved cells bound through the melody
+             walker: cadence grammar, chord spelling, leap folding, grid snap,
+             connective tissue (src/binder/bind.js)
+layers       companion (lead's own cell rebound to chord tones below it),
+             counterline, descant, pad top voice, marcato, textures, drums
+arrangement  planArrangement (src/binder/arrange.js): roles, handoffs between
+             instruments at letter boundaries, section curves, breakdowns
+   ▼
+audition/songs.html   one card per song: mix string, solos, harmony, notes,
+                      keep / kill buttons, HQ toggle, "copy verdicts JSON"
 ```
 
-- **Source format** (§3.1): labeled layers, every cross-cutting concern hoisted to a
-  named `let`. Every likely edit request maps to one contiguous region — one
-  binding per (label × section material).
-- **Song spec** (§3.2): a section *graph* — `recalls`/`vary`, `contrasts_with`,
-  `sets_up` + `withhold` (the withheld bass returning IS the payoff), `must`
-  constraints measured relationally (`"density": "> 1.3x A"`).
-- **Libraries** (§3.5) are abstract only: onset fractions + real accent profiles,
-  scale-degree contours, voicing shapes, declared interlock pairs, and transitions
-  indexed by role boundary. No literal note strings, no mini-notation. Each entry
-  documents the taste it encodes (`character`).
-- **Transitions are first-class**: risers/fills/impacts live on their own labels
-  with per-occurrence bindings ("make the LAST riser bigger" is one edit).
+All of this lives in `scripts/audition-songs.mjs` (the generator, with every
+engine rule inline next to its D-number and the quote that caused it) on top of
+`src/binder/` and `src/lib/`. Per-song pins and asks are `SONG_OPTS` at the
+bottom of that file.
 
-## The edit workflow
+Song identity is hashed from the song's **name**: key, tempo, voice count and
+every pool pick rotate with it. An A/B pair must be built under one name.
 
-See [SESSIONS.md](SESSIONS.md) for commands and
-[songs/neon-undertow/EDIT_SESSION.md](songs/neon-undertow/EDIT_SESSION.md) for a
-real 6-edit session — including a rejected leaky edit and a musical regression
-(verse edit silently killing the chorus lift) caught by the relational assertions.
+## The round loop
 
-## Adding library entries
+Every session is one round:
 
-Edit `src/lib/*.js`. Rules the tests enforce:
-- rhythms: exact-fraction onsets (strings like `'3/16'`) or `euclid: [k,n,rot]`;
-  an accent per onset; accents must NOT be uniform; a `character` line ≥ 20 chars.
-- contours: integer scale degrees + `shape` + `character`.
-- voicing shapes: per-quality semitone-offset strings, **array-valued** when
-  registered (D-empirical: string values silently fail at 1.1.0).
-- interlock pairs: declare co-designed rhythm pairs so intended coincidences
-  aren't flagged.
-- transitions: `from`/`to` roles, `placement: 'before'|'at'`, a `make(bars)` that
-  emits 1.1.0-safe source using ubiquitous sample names only.
-- **progressions are NOT hand-edited**: `src/lib/progressions.js` is generated from
-  `vendor/ldrolez/chords.py` by `node scripts/import-ldrolez.mjs` (D28). It is a
-  ratified:false *candidate pool*, queried with `findProgressions()`; entries are
-  promoted by ear, and that is when a `character` line gets written.
-- chord qualities everywhere use the **ireal dialect** (`sus` not `sus4`, `o`/`o7`
-  not `dim`) — one symbol has to be valid on the harmony timeline AND in a `me_*`
-  voicing shape. Lint fails a symbol that resolves in neither (D28).
+1. Ethan listens to an audition page and exports a verdicts JSON.
+2. `node scripts/import-verdicts.mjs <file>` regenerates
+   `src/lib/verdicts.js` (keeps, kills, derived pins, card notes). Never edit
+   that file by hand.
+3. Snapshot the judged page, make fixes, rebuild, and byte-compare every
+   song's DATA against the snapshot. **Judged material is frozen**: a kept song
+   pins its harmony and its exemplar, and every new engine rule is gated so
+   kept songs stay byte-identical.
+4. `npm test`, re-render changed songs' HQ wavs, run the adversarial verify
+   workflow (`.claude/workflows/verify-round.js`: stability, per-claim
+   refutation, support-vs-lead gain ratios, melody-grammar bands).
+5. Append a numbered D-entry to [DECISIONS.md](DECISIONS.md) and update
+   [todo.md](todo.md).
 
-Then `npm test` — library invariants are asserted.
+[CLAUDE.md](CLAUDE.md) is the working doctrine for that loop: the laws his ear
+has established, the traps that have bitten before, and how to measure a song
+headlessly (`evaluateSong` + `hapsByLabel` in `src/harness/evaluate.js`).
+
+## Audition pages
+
+All under `audition/`, all self-contained HTML with the Strudel REPL embedded.
+Each has keep/kill buttons and a verdicts export.
+
+| Page | Built by | What it is |
+|---|---|---|
+| `songs.html` | `scripts/audition-songs.mjs` | The judged suite: 47 prompt-generated songs |
+| `vanriver.html` | `VANRIVER=1 …audition-songs.mjs` | 23 songs on the progressions transcribed from @vanrivermusic's reels |
+| `reels.html` | `REELS=1 …audition-songs.mjs` | His 8 layer-stacking reels transcribed as data (`src/lib/layer-patterns.js`): faithful, crossed, device A/B |
+| `layerstack.html` | `LAYERSTACK=1 …audition-songs.mjs` | The Serum producer's genre with the seven reel-layer rules wired |
+| `energy.html` | `ENERGY=1 …audition-songs.mjs` | Song labels (which prompts a finished song also serves) and the energy A/B |
+| `variations.html` | `scripts/audition-variations.mjs` | Variation labs: 104 byte-frozen experiment cards, melody grammar as a program |
+| `catalog.html` | `scripts/audition-catalog.mjs` | Mined candidates from the curated corpus tier, awaiting labels |
+| `foundations.html`, `drums.html`, `progressions.html`, `facets.html`, `judge.html` | their `audition-*.mjs` | Library-level auditions: accompaniment figures, drum patterns, progressions, per-song facets |
+| `triage.html` | `scripts/audition-triage.mjs` | Ear-test questions an analysis cannot settle, with A/B demos |
+| `videolab.html`, `undertale.html`, `unison.html` | their `audition-*.mjs` | Material extracted from the video corpus, Undertale MIDI and the Unison packs |
+
+The `HQ: off/on` toggle on the song pages switches between the browser
+soundfont and the rendered wavs in `audition/hq/` (gitignored, rebuilt locally).
+
+## Render tier (HQ)
+
+`scripts/render-hq.mjs <song>` and `scripts/render-hq-pages.mjs` (batch):
+haps are split into per-sound stems, gains become MIDI velocity, and each stem
+renders through **sfizz** (Salamander piano, VSCO strings and winds, the SSO
+choir, generated `vendor/sfz/gen/*.sfz`), **DawDreamer + Surge XT** for synths
+(`vendor/patches/*.fxp`), or fluidsynth as fallback, then ffmpeg mixes to
+-16 LUFS. Sample libraries, plugins and the Python env live under `vendor/`
+and are gitignored; the generated sfz maps and patches are committed. Only
+songs whose mixes changed get re-rendered.
+
+## Libraries and corpora
+
+`src/lib/` holds the engine's material as **abstractions only**: onset
+fractions and accent profiles (`rhythms*.js`), scale-degree contours, voicing
+shapes, figuration figures (`figurations-*.js`), progressions in the ireal
+chord dialect (`progressions-*.js`), instruments and their ranges, the vibe
+tables, and the transcribed reel layers. Only entries Ethan has clicked
+(`ratified`) enter retrieval pools, so adding an entry cannot re-roll a judged
+song; ratifying one can, and gets checked for blast radius.
+
+Two libraries are deliberately addressed by name and never iterated:
+`src/lib/techniques.js` (craft extracted from references, with status `wired`
+or `recorded`) and `src/lib/layer-patterns.js` (the reel rows). A test
+enforces this so recording an analysis is free.
+
+`audios/` and `research/` are **analysis-only** and never feed `src/lib/` by
+counting. The 400-file `audios/vgmusic/` manifest that built
+`harmony-model.js` is pinned; every larger corpus (the 31k-file VGMusic sweep,
+hsmusic, smwcentral, the hand-imported MIDI, the Unison and Undertale packs,
+his reel videos) stays local and gitignored. Promoting corpus material means
+authoring a canon entry by hand. `research/` holds the write-ups those corpora
+produced, from the environment and key censuses through the melody-grammar
+study that set the current reference bands.
+
+## Grammar quick reference
+
+- Chord symbols use the ireal dialect: `Ab^7` not `Abmaj7`, `o`/`o7` not
+  `dim`, `sus` not `sus4`. An unknown quality silently renders a plain triad;
+  a test fails on `maj7` anywhere in the reel progressions.
+- Degrees: `0:m 3 5:m 8b 1b:^7` (semitone offsets from tonic, `b` for flat
+  roots, `:quality` suffixes).
+- Figure tokens: `R/3/5/6/9`, `+` per octave, dots join chords (`3.5.7`),
+  `s2/s4/s6/s7` resolve against the chord's scale and are in-key by
+  construction, `>` looks ahead to the next chord. Bare `4`/`7` fall back to
+  fixed intervals and can spell foreign pitches.
+- Onsets are bar-relative fractions (`'3/16'`). Sections are 4- or 8-bar
+  multiples. Meter is 4/4 only (D92).
 
 ## Layout
 
 ```
-src/harness/    evaluate (transpiler+registry), signatures+containment, metrics,
-                assertions, lint (names validated against installed exports), chords
-src/compiler/   spec → labeled file + meta (form masks, harmony, materials)
-src/binder/     bind (snapping/accents/swing/cadence), theory, interlock, adapter
-src/lib/        rhythms, contours, voicings, interlocks, transitions
-src/emit/       listen.html + report.md emitters
-src/cli.js      generate / edit / verify
-songs/          demo songs (4/4 house + 7/8 dorian) + the edit session
-eval/           before/after evaluation: B0 (default-Claude), B1 (freehand Strudel),
-                AFTER (engine), scorer, REPORT.md
-test/           38-test suite incl. the §5 acceptance cases
+scripts/audition-songs.mjs   the song generator + SONG_OPTS (per-song pins)
+scripts/audition-*.mjs       the other audition pages
+scripts/import-*.mjs         verdict / corpus importers (verdicts.js is generated)
+scripts/render-hq*.mjs       HQ render tier
+scripts/corpus-*.mjs         corpus analysis (research/, never src/lib)
+src/binder/      bind.js (figure + melody binding, cadence grammar), arrange.js
+                 (planner), harmony.js, theory.js, interlock.js
+src/lib/         all material as data; vibes.js; verdicts.js (generated)
+src/harness/     headless evaluate, hap signatures, containment gate, metrics,
+                 assertions, lint
+src/compiler/    spec → labeled .strudel (the original editor flow)
+src/ingest/      MIDI readers and corpus manifests
+src/emit/        listen.html, report.md, MIDI export
+src/cli.js       generate / edit / verify / export (see SESSIONS.md)
+audition/        the pages above; hq/ holds local renders
+research/        analysis write-ups behind the engine's rules
+test/            39 files, 394 tests: song counts, harmony pins, page
+                 determinism, grammar, library invariants, the original
+                 acceptance cases
+DECISIONS.md     the numbered ledger (D1–D133); CLAUDE.md the working doctrine;
+                 todo.md where things stand
 ```
