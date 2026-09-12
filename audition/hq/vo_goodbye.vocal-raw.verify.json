@@ -3,82 +3,82 @@
  "seconds": 48.7,
  "sr": 40000,
  "notes": 80,
- "note_hit_rate_mean": 0.7612497211949398,
- "notes_hit_ge_50pct": 0.925,
+ "note_hit_rate_mean": 0.7556404316263803,
+ "notes_hit_ge_50pct": 0.9125,
  "octave_error_rate_mean": 0.0,
  "notes_octave_wrong": 0,
- "voiced_coverage_mean": 0.9999038461538461,
+ "voiced_coverage_mean": 1.0,
  "notes_unvoiced": 0,
- "sung_rms_db": -24.83216484400582,
- "rest_rms_db": -65.8045658626645,
- "rest_leak_db": -40.97240101865869,
- "onset_lag_median_ms": -21.429999999998728,
- "onset_lag_p90_ms": 16.14000000000147,
+ "sung_rms_db": -24.855070067518884,
+ "rest_rms_db": -66.81311230056197,
+ "rest_leak_db": -41.95804223304309,
+ "onset_lag_median_ms": -13.569999999999638,
+ "onset_lag_p90_ms": 18.429999999999332,
  "onset_lag_notes": 69,
  "worst_notes": [
   {
    "start": 14.10714,
    "midi": 62,
-   "hit": 0.25,
+   "hit": 0.3333333333333333,
    "oct": 0.0,
    "voiced": 1.0,
-   "median_dev_cents": -183.79730156209638
+   "median_dev_cents": -150.8610880364806
   },
   {
-   "start": 13.92857,
-   "midi": 65,
-   "hit": 0.375,
+   "start": 39.28571,
+   "midi": 59,
+   "hit": 0.38613861386138615,
    "oct": 0.0,
    "voiced": 1.0,
-   "median_dev_cents": -68.4293104827546
+   "median_dev_cents": 36.2989523969631
   },
   {
    "start": 18.39286,
    "midi": 65,
-   "hit": 0.375,
+   "hit": 0.4166666666666667,
    "oct": 0.0,
    "voiced": 1.0,
-   "median_dev_cents": -66.73497873406475
+   "median_dev_cents": -81.72162440989723
   },
   {
-   "start": 13.03571,
+   "start": 21.78571,
    "midi": 69,
    "hit": 0.43478260869565216,
    "oct": 0.0,
    "voiced": 1.0,
-   "median_dev_cents": -72.53066514939093
+   "median_dev_cents": -58.477366472034475
   },
   {
-   "start": 15,
-   "midi": 60,
-   "hit": 0.4573643410852713,
+   "start": 11.42857,
+   "midi": 67,
+   "hit": 0.46564885496183206,
    "oct": 0.0,
-   "voiced": 0.9923076923076923,
-   "median_dev_cents": -13.420920591003238
+   "voiced": 1.0,
+   "median_dev_cents": -16.37882554815633
   },
   {
-   "start": 41.78571,
-   "midi": 62,
+   "start": 16.25,
+   "midi": 60,
    "hit": 0.4782608695652174,
    "oct": 0.0,
    "voiced": 1.0,
-   "median_dev_cents": -7.333173644609303
+   "median_dev_cents": -69.22712442938561
   },
   {
-   "start": 26.96429,
-   "midi": 71,
-   "hit": 0.5,
+   "start": 23.75,
+   "midi": 67,
+   "hit": 0.4782608695652174,
    "oct": 0.0,
    "voiced": 1.0,
-   "median_dev_cents": -45.55458854074246
+   "median_dev_cents": -51.270331461633134
   },
   {
-   "start": 42.67857,
+   "start": 19.82143,
    "midi": 64,
    "hit": 0.5,
    "oct": 0.0,
    "voiced": 1.0,
-   "median_dev_cents": -25.099599704320497
+   "median_dev_cents": 50.000160528446
   }
  ]
 }

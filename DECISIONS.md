@@ -13060,3 +13060,78 @@ render (D140's batch). Told immediately with the per-song impact; its second
 pass picks up the 14. Its three keeps (vo_reflection, vo_lullaby, vo_march)
 are not to be re-pinned by me. Pinning two rows so his ear gets the extremes
 (vo_kitchen all-babble, one all-la) waits for its "pages done".
+
+**Renders, closed (17:30).** Pass 1 re-rendered every vocaloid song and 20
+lab cards before his overrule (relayed by the r37 session from his vocalab
+export: "i dont want the same excited festival crap i want a diversity of
+other vibes") retired `vocalab.html` — the remaining lab renders were killed
+and none are re-run; the lab's DATA stays for the r37 session's woodwind
+evidence. Pass 2 (`r36/render-r36-pass2.sh`) gave every vocaloid song ONE
+lyric-writer version (the peer's writer, D141, changed twice during pass 1):
+a fresh export matches the on-disk score on all 14 (start/midi/syllable),
+0 melisma on 14 of 14, the harmony voice on the lead's words at 100% of
+shared onsets on 14 of 14 (16 … 168 onsets), fireworks and android re-mixed
+on the 16:16 page (the r37 session's sustain-role wind law moved their
+casts; the three keeps stayed byte-identical through it). reflection and
+lullaby: music unchanged, re-sung on the real words only (their scores'
+notes are identical; his keep is on the music, and the words are what he
+asked the peer for). **One render-tier trap found and fixed:** vo_reflection's
+sing failed transiently in pass 2, the score had already been rewritten at
+stage 0, and the re-run KEPT the failed run's dry wav over a conversion from
+05:07 — a failed stage 1 now deletes its dry file and rethrows, and a
+conversion older than its dry input re-runs. Sweep after the fix: 0 stale or
+missing conversions across all 28 vo_ stems. Page rebuilt: 14 hq, 14 vocal,
+lyric sheets on 14; tests 435/435.
+
+### D141 ADDENDUM 3 — the two pinned vocalise songs, and a render-tier defect the queue log called a success
+
+HIS EAR GETS THE ENDPOINTS. `vo_sugar` is pinned `lyrics: 'la'` (hyper-pop,
+16th-note syllables — where a la-la line is idiomatic) and `vo_kitchen`
+`lyrics: 'babble'` (his own prompt says "tripping over tongue-twisters"). Both
+rows were chosen because neither carries a live complaint of its own, so a
+verdict on them is about the WORDS and not about a harmony fix landing at the
+same time. With the page's 10 mixed-hook songs and the rest words-only, the
+page now spans the whole range. Byte compare: vocaloid.html moved only
+`lyricStyle` on the two rows, then only `lyricSheet`/`lyricVoc` on the rebuild
+— 0 music fields, 14/14 cards carry a lyric sheet; songs.html 0 moved.
+
+THE DEFECT (found by measuring, not by reading the log). The render queue
+printed `wrote …withvocal.wav` for both songs and exited clean. Listing every
+stage file's mtime showed `vo_sugar.harmony.vocal.wav` was **two hours older
+than the lead it had just been mixed under**: its harmony sing had died with
+`libc++abi: recursive_mutex lock failed: Invalid argument` AFTER writing its
+dry wav, D140's new guard deleted the dry and aborted that pass, and the lead
+pass that followed mixed the previous batch's stem. The lead sang "la la la"
+and the harmony sang the WORDS it had replaced — the exact thing his vo_chase
+card ruled out ("if there are multiple voices ... they should be saying the
+same lyrics"). Re-ran the pass, exit 0, both voices verified identical.
+
+TWO STRUCTURAL FIXES, one of which was WRONG FIRST:
+- **Stage 1 now spawns with `KMP_DUPLICATE_LIB_OK=TRUE OMP_NUM_THREADS=1`**,
+  the two vars stage 2 has carried since r34. CLAUDE.md documented them for
+  RVC only because RMVPE is where the double OpenMP runtime first segfaulted,
+  but the cause is not RVC's — onnxruntime and torch each load their own
+  libomp, and under render contention stage 1 hits the same family of crash.
+- **The mix now compares the two stems' SCORES**: the syllable at every shared
+  onset, printed as `two voices, same words: N/N (100%)`, warning under 90%.
+  My first version of this check compared MTIMES — and it fired on both
+  healthy songs, because the documented order renders the harmony pass FIRST,
+  so its stem is always older than the lead's dry. A timestamp cannot express
+  this invariant; the words themselves can. (Caught by exercising the check on
+  a song known to be good — a check that has never been seen to pass is not a
+  check.)
+
+The 16 vx_/vg_ songs on vocal.html were still singing the r34 pool syllables —
+that page was never re-rendered under the writer — so they are re-singing now
+(lead pass only; that page has no `_vocal_harmony`).
+
+A THIRD SELF-INFLICTED ONE, worth the line because it is the cheapest kind to
+avoid: the vocalise test's AUTO leg asserted `mode: 'mixed'` on vo_kitchen —
+and then I PINNED that row to `lyrics: 'babble'`, which forces mode `all`. The
+suite had been green before the pin and I did not re-run it after; another
+session found the failure. **A pin and a test that both name the same song are
+a contradiction waiting for someone else to hit.** The description→set mapping
+now asserts on `vocalisePlan()` directly (a pure function no page row can
+reach), the end-to-end auto leg moved to an unpinned song (vo_goodbye), and
+vo_kitchen tests the PIN PATH instead — row `lyrics:` → `lyricStyle` in DATA →
+`mode: 'all'` — which is the wiring that actually needed pinning. 9/9.

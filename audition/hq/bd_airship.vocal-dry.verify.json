@@ -1,0 +1,83 @@
+{
+ "wav": "/Users/ethanchen/Documents/GitHub/motif-engine/audition/hq/bd_airship.vocal-dry.wav",
+ "seconds": 61.18181405895692,
+ "sr": 44100,
+ "notes": 140,
+ "note_hit_rate_mean": 0.7062373425108441,
+ "notes_hit_ge_50pct": 0.7928571428571428,
+ "octave_error_rate_mean": 0.0,
+ "notes_octave_wrong": 0,
+ "voiced_coverage_mean": 0.9845148968678379,
+ "notes_unvoiced": 1,
+ "sung_rms_db": -23.891627267006463,
+ "rest_rms_db": -58.63991719190581,
+ "rest_leak_db": -34.748289924899346,
+ "onset_lag_median_ms": 1.360000000005357,
+ "onset_lag_p90_ms": 59.54500000000208,
+ "onset_lag_notes": 118,
+ "worst_notes": [
+  {
+   "start": 16.81818,
+   "midi": 62,
+   "hit": 0.0,
+   "oct": 0.0,
+   "voiced": 0.0
+  },
+  {
+   "start": 20.45455,
+   "midi": 71,
+   "hit": 0.0,
+   "oct": 0.0,
+   "voiced": 1.0,
+   "median_dev_cents": -318.4040305098179
+  },
+  {
+   "start": 25.90909,
+   "midi": 72,
+   "hit": 0.0,
+   "oct": 0.0,
+   "voiced": 1.0,
+   "median_dev_cents": -279.5289606706078
+  },
+  {
+   "start": 47.84091,
+   "midi": 72,
+   "hit": 0.0,
+   "oct": 0.0,
+   "voiced": 1.0,
+   "median_dev_cents": -87.04277392908466
+  },
+  {
+   "start": 48.40909,
+   "midi": 69,
+   "hit": 0.0,
+   "oct": 0.0,
+   "voiced": 1.0,
+   "median_dev_cents": -123.01167943659976
+  },
+  {
+   "start": 49.54545,
+   "midi": 72,
+   "hit": 0.0,
+   "oct": 0.0,
+   "voiced": 0.8,
+   "median_dev_cents": -863.6704649265444
+  },
+  {
+   "start": 55,
+   "midi": 69,
+   "hit": 0.0,
+   "oct": 0.0,
+   "voiced": 1.0,
+   "median_dev_cents": -483.5867067131744
+  },
+  {
+   "start": 47.72727,
+   "midi": 72,
+   "hit": 0.09090909090909091,
+   "oct": 0.0,
+   "voiced": 1.0,
+   "median_dev_cents": -71.44994387323607
+  }
+ ]
+}

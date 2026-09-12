@@ -14,7 +14,9 @@
 //   <song>.withvocal.wav      HQ mix + vocal, -16 LUFS (only if <song>.wav exists)
 //   *.verify.json             pitch-vs-score measurements for both wavs
 //
-// Stage 2 runs with KMP_DUPLICATE_LIB_OK=TRUE and OMP_NUM_THREADS=1: faiss and
+// Stages 1 AND 2 run with KMP_DUPLICATE_LIB_OK=TRUE and OMP_NUM_THREADS=1 (r36;
+// stage 1 was added after a `recursive_mutex lock failed` crash under render
+// contention — same double-OpenMP cause, different stage): faiss and
 // torch each bundle an OpenMP runtime on macOS and the RMVPE constructor
 // segfaults (exit 139) when both are live. CPU by default — MPS works with
 // the same env but is not faster on this pipeline; --gpu opts in.
@@ -26,7 +28,7 @@
 // mix's level rather than on top of it.
 
 import { execFileSync, spawnSync } from 'node:child_process';
-import { existsSync, readFileSync, writeFileSync } from 'node:fs';
+import { existsSync, readFileSync, writeFileSync, statSync, unlinkSync } from 'node:fs';
 import { join, resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { parseArgs } from 'node:util';
@@ -125,15 +127,35 @@ if ((values.rehq || !existsSync(mixIn)) && values['render-hq'] && !values['no-mi
 }
 
 // stage 1: sing
+// r36 — A FAILED SING MUST NOT LEAVE A "KEPT" STATE. The score is written at
+// stage 0, so after a transient vocal-sing failure the next run's changed-
+// score check saw no change and KEPT whatever dry wav the failed run left
+// (vo_reflection: a dry file from the failed run over a conversion from
+// twelve hours earlier). On failure the dry wav is removed and the error
+// rethrown; a conversion older than its dry input is re-run.
+const mtime = (p) => (existsSync(p) ? statSync(p).mtimeMs : 0);
+const OMP_ENV = { ...process.env, KMP_DUPLICATE_LIB_OK: 'TRUE', OMP_NUM_THREADS: '1' };
 if (values.force || !existsSync(dry)) {
-  run(PY, [join(ROOT, 'scripts', 'vocal-sing.py'), score, dry, '--syllable', values.syllable, '--speaker', values.speaker]);
+  try {
+    // r36 — the same two OpenMP vars stage 2 has carried since r34. They were
+    // documented for RVC only because RMVPE is where the double runtime first
+    // segfaulted, but the cause (onnxruntime + torch each loading their own
+    // libomp) is not RVC's: measured 17:24, a stage-1 sing died with
+    // `libc++abi: recursive_mutex lock failed` while a second render batch was
+    // running, AFTER writing its dry wav — so the guard above deleted the dry,
+    // the pass aborted, and the run that followed mixed a two-hour-stale
+    // harmony stem under a fresh lead (two voices, different lyrics). Setting
+    // them here makes it structural instead of something a caller remembers.
+    run(PY, [join(ROOT, 'scripts', 'vocal-sing.py'), score, dry, '--syllable', values.syllable, '--speaker', values.speaker], { env: OMP_ENV });
+  } catch (e) { try { unlinkSync(dry); } catch {} throw e; }
   console.log(`  stage 1 sung (${secs()})`);
 } else console.log(`  stage 1 kept ${dry} (pass --force to re-sing)`);
 
 // stage 2: convert (kept, like stage 1, unless --force — so a song whose HQ
 // mix changed can be re-mixed without re-singing or re-converting)
+if (existsSync(raw) && mtime(raw) < mtime(dry)) { values.force = true; console.log('  conversion older than the sung dry — stage 2 re-runs'); }
 if (values.force || !existsSync(raw)) {
-  const env = { ...process.env, KMP_DUPLICATE_LIB_OK: 'TRUE', OMP_NUM_THREADS: '1' };
+  const env = OMP_ENV;
   const convArgs = [join(ROOT, 'scripts', 'vocal-convert.py'), dry, raw,
     '--pitch', values.pitch, '--index-rate', values['index-rate'], '--protect', values.protect];
   if (values.model) convArgs.push('--model', values.model);
@@ -219,6 +241,32 @@ const gain = Math.pow(10, (target - vocDb) / 20);
 const withHarmony = !TAG && existsSync(harmonyStem);
 const hGain = withHarmony ? gain * Math.pow(10, Number(values['harmony-db']) / 20) * Math.pow(10, (vocDb - sungRmsDb(harmonyStem)) / 20) : 0;
 if (withHarmony) console.log(`  harmony voice: ${harmonyStem} mixed ${values['harmony-db']} dB under the lead voice (x${hGain.toFixed(2)})`);
+// r36 — THE STALE-SIBLING TRAP, MADE LOUD. The two sung voices must say the
+// same words (his vo_chase card). Measured 17:24: vo_sugar's harmony sing
+// crashed and aborted its pass, and the lead run that followed mixed a
+// harmony stem two hours older than the lead it sat under — the lead singing
+// "la la la", the harmony singing the words it had replaced. Nothing in the
+// output said so; the log's "wrote …withvocal.wav" looked identical to a
+// clean run. The stems' own SCORES settle it, so compare them rather than
+// trusting either timestamp alone: the words at shared onsets must match.
+if (withHarmony) {
+  const hScore = join(HQ, `${NAME}.harmony.vocal-score.json`);
+  // NOT a timestamp check: the documented order renders the harmony pass FIRST,
+  // so its stem is always older than the lead's dry and an mtime rule fires on
+  // every healthy song (tried it — false on both correct songs).
+  if (existsSync(hScore) && existsSync(score)) {
+    try {
+      const L = JSON.parse(readFileSync(score, 'utf8')).notes ?? [];
+      const H = JSON.parse(readFileSync(hScore, 'utf8')).notes ?? [];
+      const at = new Map(L.map((n) => [n.start.toFixed(3), n.syl]));
+      let shared = 0, same = 0;
+      for (const n of H) { const l = at.get(n.start.toFixed(3)); if (l == null) continue; shared++; if (l === n.syl) same++; }
+      const pct = shared ? (100 * same / shared) : 100;
+      console.log(`  two voices, same words: ${same}/${shared} at shared onsets (${pct.toFixed(0)}%)`);
+      if (shared && pct < 90) console.error(`  WARNING: the harmony sings DIFFERENT words from the lead (${pct.toFixed(0)}% agreement) — a stem is stale. Re-run: node scripts/render-vocal.mjs ${NAME} --page <page> --line _vocal_harmony --tag .harmony --no-mix --force`);
+    } catch { /* an unreadable score is not a reason to fail a mix */ }
+  }
+}
 run('ffmpeg', ['-v', 'error', '-y', '-i', mixIn, '-i', vocal, ...(withHarmony ? ['-i', harmonyStem] : []), '-filter_complex',
   // r35: a 20 ms fade-in on the head. His vx_romantic_rest card: "at the very
   // beginning, there's a bit of a glitch" — the mix opens on a piano chord at

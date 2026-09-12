@@ -391,6 +391,13 @@
    "lead": true
   }
  ],
+ "vocalise": {
+  "mode": "mixed",
+  "set": "oh",
+  "rate": 0.35,
+  "why": "emotion excited pool",
+  "hook": "none (rate)"
+ },
  "lyricStats": {
   "phrases": 2,
   "refrainReused": 0,
@@ -398,6 +405,7 @@
   "variants": 0,
   "fallbacks": 0,
   "exts": 0,
+  "vocalise": 0,
   "templates": {
    "ADV-V+ADV-O-V": 1,
    "TO-V+E-V": 1

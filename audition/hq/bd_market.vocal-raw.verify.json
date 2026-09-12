@@ -1,0 +1,84 @@
+{
+ "wav": "/Users/ethanchen/Documents/GitHub/motif-engine/audition/hq/bd_market.vocal-raw.wav",
+ "seconds": 51.6,
+ "sr": 40000,
+ "notes": 140,
+ "note_hit_rate_mean": 0.6910817798273156,
+ "notes_hit_ge_50pct": 0.7642857142857142,
+ "octave_error_rate_mean": 0.0,
+ "notes_octave_wrong": 0,
+ "voiced_coverage_mean": 1.0,
+ "notes_unvoiced": 0,
+ "sung_rms_db": -21.132719315019365,
+ "rest_rms_db": -69.14871134076355,
+ "rest_leak_db": -48.01599202574419,
+ "onset_lag_median_ms": -28.445000000000498,
+ "onset_lag_p90_ms": 8.420000000003835,
+ "onset_lag_notes": 122,
+ "worst_notes": [
+  {
+   "start": 17.18354,
+   "midi": 67,
+   "hit": 0.0,
+   "oct": 0.0,
+   "voiced": 1.0,
+   "median_dev_cents": 127.5284799438154
+  },
+  {
+   "start": 18.41772,
+   "midi": 73,
+   "hit": 0.0,
+   "oct": 0.0,
+   "voiced": 1.0,
+   "median_dev_cents": -215.40170730666972
+  },
+  {
+   "start": 23.16456,
+   "midi": 69,
+   "hit": 0.0,
+   "oct": 0.0,
+   "voiced": 1.0,
+   "median_dev_cents": -109.70514596709933
+  },
+  {
+   "start": 23.25949,
+   "midi": 67,
+   "hit": 0.0,
+   "oct": 0.0,
+   "voiced": 1.0,
+   "median_dev_cents": 151.33091011606723
+  },
+  {
+   "start": 38.44937,
+   "midi": 67,
+   "hit": 0.0,
+   "oct": 0.0,
+   "voiced": 1.0,
+   "median_dev_cents": 498.97568498596456
+  },
+  {
+   "start": 41.48734,
+   "midi": 74,
+   "hit": 0.14285714285714285,
+   "oct": 0.0,
+   "voiced": 1.0,
+   "median_dev_cents": -66.51616246818861
+  },
+  {
+   "start": 44.52532,
+   "midi": 67,
+   "hit": 0.14285714285714285,
+   "oct": 0.0,
+   "voiced": 1.0,
+   "median_dev_cents": 161.16866727617776
+  },
+  {
+   "start": 41.58228,
+   "midi": 74,
+   "hit": 0.15384615384615385,
+   "oct": 0.0,
+   "voiced": 1.0,
+   "median_dev_cents": -202.1771864750228
+  }
+ ]
+}

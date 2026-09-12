@@ -171,13 +171,13 @@
    "dur": 0.17857,
    "midi": 72,
    "gain": 0.095,
-   "syl": "ki",
+   "syl": "la",
    "ph": [
-    "kx",
-    "iy"
+    "l",
+    "aa"
    ],
    "melisma": false,
-   "w": 0
+   "w": -1
   },
   {
    "bar": 9,
@@ -186,13 +186,13 @@
    "dur": 0.17857,
    "midi": 71,
    "gain": 0.095,
-   "syl": "mi",
+   "syl": "la",
    "ph": [
-    "m",
-    "iy"
+    "l",
+    "aa"
    ],
    "melisma": false,
-   "w": 0
+   "w": -1
   },
   {
    "bar": 9,
@@ -201,13 +201,13 @@
    "dur": 0.17858,
    "midi": 69,
    "gain": 0.095,
-   "syl": "to",
+   "syl": "la",
    "ph": [
-    "tx",
-    "oo"
+    "l",
+    "aa"
    ],
    "melisma": false,
-   "w": 0
+   "w": -1
   },
   {
    "bar": 9,
@@ -216,12 +216,13 @@
    "dur": 0.17857,
    "midi": 67,
    "gain": 0.095,
-   "syl": "i",
+   "syl": "ー",
    "ph": [
-    "iy"
+    "aa"
    ],
    "melisma": false,
-   "w": 1
+   "w": -1,
+   "ext": true
   },
   {
    "bar": 9,
@@ -230,14 +231,13 @@
    "dur": 0.35714,
    "midi": 67,
    "gain": 0.117,
-   "syl": "qte",
+   "syl": "la",
    "ph": [
-    "q",
-    "tx",
-    "ee"
+    "l",
+    "aa"
    ],
    "melisma": false,
-   "w": 1
+   "w": -1
   },
   {
    "bar": 9,
@@ -248,10 +248,10 @@
    "gain": 0.105,
    "syl": "ー",
    "ph": [
-    "ee"
+    "aa"
    ],
    "melisma": false,
-   "w": 1,
+   "w": -1,
    "ext": true
   }
  ],
@@ -300,6 +300,13 @@
    "lead": true
   }
  ],
+ "vocalise": {
+  "mode": "mixed",
+  "set": "la",
+  "rate": 0.2,
+  "why": "emotion sad pool",
+  "hook": "1 tag line(s), chorus/bridge finals"
+ },
  "lyricStats": {
   "phrases": 2,
   "refrainReused": 0,
@@ -307,9 +314,9 @@
   "variants": 0,
   "fallbacks": 0,
   "exts": 1,
+  "vocalise": 1,
   "templates": {
-   "E-V+V-END": 1,
-   "TO-V": 1
+   "E-V+V-END": 1
   }
  },
  "lyrics": [
@@ -321,7 +328,7 @@
   {
    "start": 26.42857,
    "notes": 6,
-   "text": "ki mi to i qte ー"
+   "text": "la la la ー la ー"
   }
  ],
  "lyricMode": "ja",

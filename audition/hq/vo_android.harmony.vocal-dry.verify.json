@@ -3,58 +3,42 @@
  "seconds": 79.8,
  "sr": 44100,
  "notes": 66,
- "note_hit_rate_mean": 0.6729128159391556,
- "notes_hit_ge_50pct": 0.7878787878787878,
- "octave_error_rate_mean": 0.0,
+ "note_hit_rate_mean": 0.7008731963296917,
+ "notes_hit_ge_50pct": 0.8333333333333334,
+ "octave_error_rate_mean": 0.0002228163992869875,
  "notes_octave_wrong": 0,
- "voiced_coverage_mean": 0.9987870996431137,
+ "voiced_coverage_mean": 0.9958984045902396,
  "notes_unvoiced": 0,
- "sung_rms_db": -38.457600301040856,
- "rest_rms_db": -80.54975526277828,
- "rest_leak_db": -42.09215496173742,
- "onset_lag_median_ms": -19.99999999999602,
- "onset_lag_p90_ms": 46.99999999999988,
+ "sung_rms_db": -38.728262174951425,
+ "rest_rms_db": -80.1278533517037,
+ "rest_leak_db": -41.39959117675228,
+ "onset_lag_median_ms": -10.000000000005116,
+ "onset_lag_p90_ms": 69.99999999999741,
  "onset_lag_notes": 47,
  "worst_notes": [
+  {
+   "start": 42.9,
+   "midi": 67,
+   "hit": 0.0,
+   "oct": 0.0,
+   "voiced": 1.0,
+   "median_dev_cents": -213.3011825803493
+  },
   {
    "start": 46.1,
    "midi": 63,
    "hit": 0.0,
    "oct": 0.0,
    "voiced": 1.0,
-   "median_dev_cents": -143.60422396435624
+   "median_dev_cents": -119.5560916561842
   },
   {
-   "start": 54.2,
-   "midi": 60,
-   "hit": 0.0,
-   "oct": 0.0,
-   "voiced": 1.0,
-   "median_dev_cents": -174.52157816814696
-  },
-  {
-   "start": 39.6,
-   "midi": 63,
+   "start": 49.2,
+   "midi": 65,
    "hit": 0.125,
    "oct": 0.0,
    "voiced": 1.0,
-   "median_dev_cents": -220.03356267073428
-  },
-  {
-   "start": 42.9,
-   "midi": 67,
-   "hit": 0.125,
-   "oct": 0.0,
-   "voiced": 1.0,
-   "median_dev_cents": -166.77485445508395
-  },
-  {
-   "start": 55.6,
-   "midi": 63,
-   "hit": 0.125,
-   "oct": 0.0,
-   "voiced": 1.0,
-   "median_dev_cents": -172.46334846467732
+   "median_dev_cents": 63.28462083805135
   },
   {
    "start": 46,
@@ -62,23 +46,39 @@
    "hit": 0.25,
    "oct": 0.0,
    "voiced": 1.0,
-   "median_dev_cents": -129.18350580816806
+   "median_dev_cents": -156.9780243446811
   },
   {
-   "start": 46.2,
-   "midi": 63,
-   "hit": 0.25,
-   "oct": 0.0,
-   "voiced": 1.0,
-   "median_dev_cents": 27.646825466579728
-  },
-  {
-   "start": 55.8,
-   "midi": 69,
+   "start": 49.4,
+   "midi": 67,
    "hit": 0.36363636363636365,
    "oct": 0.0,
    "voiced": 1.0,
-   "median_dev_cents": -69.19627160099253
+   "median_dev_cents": -115.13244665803484
+  },
+  {
+   "start": 49.3,
+   "midi": 67,
+   "hit": 0.375,
+   "oct": 0.0,
+   "voiced": 1.0,
+   "median_dev_cents": -57.99853137259703
+  },
+  {
+   "start": 42.2,
+   "midi": 63,
+   "hit": 0.39285714285714285,
+   "oct": 0.0,
+   "voiced": 1.0,
+   "median_dev_cents": -261.08681788895433
+  },
+  {
+   "start": 43,
+   "midi": 67,
+   "hit": 0.4,
+   "oct": 0.0,
+   "voiced": 0.8333333333333334,
+   "median_dev_cents": 20.747685365928703
   }
  ]
 }

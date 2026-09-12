@@ -1377,10 +1377,10 @@
    "dur": 0.4,
    "midi": 69,
    "gain": 0.343,
-   "syl": "ra",
+   "syl": "la",
    "ph": [
-    "rj",
-    "a"
+    "l",
+    "aa"
    ],
    "melisma": false,
    "w": -1
@@ -1392,9 +1392,10 @@
    "dur": 0.4,
    "midi": 69,
    "gain": 0.286,
-   "syl": "a",
+   "syl": "la",
    "ph": [
-    "a"
+    "l",
+    "aa"
    ],
    "melisma": false,
    "w": -1
@@ -1537,10 +1538,10 @@
    "dur": 0.4,
    "midi": 67,
    "gain": 0.424,
-   "syl": "ra",
+   "syl": "la",
    "ph": [
-    "rj",
-    "a"
+    "l",
+    "aa"
    ],
    "melisma": false,
    "w": -1
@@ -1552,9 +1553,10 @@
    "dur": 0.4,
    "midi": 63,
    "gain": 0.354,
-   "syl": "a",
+   "syl": "la",
    "ph": [
-    "a"
+    "l",
+    "aa"
    ],
    "melisma": false,
    "w": -1
@@ -1699,10 +1701,10 @@
    "dur": 0.4,
    "midi": 70,
    "gain": 0.334,
-   "syl": "ra",
+   "syl": "la",
    "ph": [
-    "rj",
-    "a"
+    "l",
+    "aa"
    ],
    "melisma": false,
    "w": -1
@@ -1714,9 +1716,10 @@
    "dur": 0.4,
    "midi": 69,
    "gain": 0.279,
-   "syl": "a",
+   "syl": "la",
    "ph": [
-    "a"
+    "l",
+    "aa"
    ],
    "melisma": false,
    "w": -1
@@ -1860,10 +1863,10 @@
    "dur": 0.4,
    "midi": 67,
    "gain": 0.361,
-   "syl": "ra",
+   "syl": "la",
    "ph": [
-    "rj",
-    "a"
+    "l",
+    "aa"
    ],
    "melisma": false,
    "w": -1
@@ -1875,9 +1878,10 @@
    "dur": 0.4,
    "midi": 63,
    "gain": 0.301,
-   "syl": "a",
+   "syl": "la",
    "ph": [
-    "a"
+    "l",
+    "aa"
    ],
    "melisma": false,
    "w": -1
@@ -2024,10 +2028,10 @@
    "dur": 0.4,
    "midi": 72,
    "gain": 0.343,
-   "syl": "ra",
+   "syl": "la",
    "ph": [
-    "rj",
-    "a"
+    "l",
+    "aa"
    ],
    "melisma": false,
    "w": -1
@@ -2039,9 +2043,10 @@
    "dur": 0.4,
    "midi": 72,
    "gain": 0.286,
-   "syl": "a",
+   "syl": "la",
    "ph": [
-    "a"
+    "l",
+    "aa"
    ],
    "melisma": false,
    "w": -1
@@ -3173,6 +3178,13 @@
    "lead": true
   }
  ],
+ "vocalise": {
+  "mode": "mixed",
+  "set": "la",
+  "rate": 0.2,
+  "why": "emotion sad pool",
+  "hook": "none (rate)"
+ },
  "lyricStats": {
   "phrases": 24,
   "refrainReused": 0,
@@ -3180,6 +3192,7 @@
   "variants": 0,
   "fallbacks": 5,
   "exts": 2,
+  "vocalise": 0,
   "templates": {
    "T-A+S-V": 2,
    "T-N+T-N": 1,
@@ -3314,16 +3327,17 @@
   {
    "start": 43.2,
    "notes": 2,
-   "text": "ra a",
+   "text": "la la",
    "romaji": "",
-   "kana": "らあ",
-   "gloss": "(vocalise)",
+   "kana": "ララ",
+   "gloss": "(la la la)",
    "section": "B*",
    "role": "chorus",
    "key": "B|2",
    "refrain": false,
    "variant": false,
-   "template": "vocalise"
+   "template": "fallback:la",
+   "vocalise": "la"
   },
   {
    "start": 44.6,
@@ -3342,16 +3356,17 @@
   {
    "start": 46.4,
    "notes": 2,
-   "text": "ra a",
+   "text": "la la",
    "romaji": "",
-   "kana": "らあ",
-   "gloss": "(vocalise)",
+   "kana": "ララ",
+   "gloss": "(la la la)",
    "section": "B*",
    "role": "chorus",
    "key": "B|4",
    "refrain": false,
    "variant": false,
-   "template": "vocalise"
+   "template": "fallback:la",
+   "vocalise": "la"
   },
   {
    "start": 47.8,
@@ -3370,16 +3385,17 @@
   {
    "start": 49.6,
    "notes": 2,
-   "text": "ra a",
+   "text": "la la",
    "romaji": "",
-   "kana": "らあ",
-   "gloss": "(vocalise)",
+   "kana": "ララ",
+   "gloss": "(la la la)",
    "section": "B*",
    "role": "chorus",
    "key": "B|6",
    "refrain": false,
    "variant": false,
-   "template": "vocalise"
+   "template": "fallback:la",
+   "vocalise": "la"
   },
   {
    "start": 51,
@@ -3398,16 +3414,17 @@
   {
    "start": 52.8,
    "notes": 2,
-   "text": "ra a",
+   "text": "la la",
    "romaji": "",
-   "kana": "らあ",
-   "gloss": "(vocalise)",
+   "kana": "ララ",
+   "gloss": "(la la la)",
    "section": "B*",
    "role": "chorus",
    "key": "B|8",
    "refrain": false,
    "variant": false,
-   "template": "vocalise"
+   "template": "fallback:la",
+   "vocalise": "la"
   },
   {
    "start": 54.2,
@@ -3426,16 +3443,17 @@
   {
    "start": 56,
    "notes": 2,
-   "text": "ra a",
+   "text": "la la",
    "romaji": "",
-   "kana": "らあ",
-   "gloss": "(vocalise)",
+   "kana": "ララ",
+   "gloss": "(la la la)",
    "section": "B*",
    "role": "chorus",
    "key": "B|10",
    "refrain": false,
    "variant": false,
-   "template": "vocalise"
+   "template": "fallback:la",
+   "vocalise": "la"
   },
   {
    "start": 57.4,
@@ -3470,7 +3488,7 @@
    "notes": 12,
    "text": "a me wa to ー i so ra sa bi shi i",
    "romaji": "amewa toーi sora sabishii",
-   "kana": "あめはとーいそらさびしい",
+   "kana": "あめはとーいそらさビしい",
    "gloss": "rain is far, sky is lonely",
    "section": "A(2)",
    "role": "verse",

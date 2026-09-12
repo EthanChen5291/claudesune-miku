@@ -5040,7 +5040,8 @@
   "mode": "mixed",
   "set": "hum",
   "rate": 0.1,
-  "why": "emotion scary pool"
+  "why": "emotion scary pool",
+  "hook": "none (rate)"
  },
  "lyricStats": {
   "phrases": 24,

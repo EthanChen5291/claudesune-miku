@@ -1,0 +1,90 @@
+{
+ "phrases": [
+  {
+   "start": 15,
+   "notes": 14,
+   "frames": 254,
+   "breath": 25.0,
+   "pitch_dev_median_st": 0.4260826110839844,
+   "pitch_dev_max_st": 70.9699478149414
+  },
+  {
+   "start": 18.63636,
+   "notes": 14,
+   "frames": 254,
+   "breath": 1.1363599999999998,
+   "pitch_dev_median_st": 0.5989418029785156,
+   "pitch_dev_max_st": 73.91719818115234
+  },
+  {
+   "start": 22.27273,
+   "notes": 14,
+   "frames": 254,
+   "breath": 1.1363699999999994,
+   "pitch_dev_median_st": 0.495330810546875,
+   "pitch_dev_max_st": 70.83657836914062
+  },
+  {
+   "start": 25.90909,
+   "notes": 14,
+   "frames": 254,
+   "breath": 1.1363599999999998,
+   "pitch_dev_median_st": 0.6171188354492188,
+   "pitch_dev_max_st": 78.0538101196289
+  },
+  {
+   "start": 29.09091,
+   "notes": 14,
+   "frames": 351,
+   "breath": 0.6818200000000019,
+   "pitch_dev_median_st": 0.22827911376953125,
+   "pitch_dev_max_st": 73.85956573486328
+  },
+  {
+   "start": 36.36364,
+   "notes": 14,
+   "frames": 351,
+   "breath": 3.6363699999999923,
+   "pitch_dev_median_st": 0.22522735595703125,
+   "pitch_dev_max_st": 73.58287811279297
+  },
+  {
+   "start": 44.09091,
+   "notes": 14,
+   "frames": 254,
+   "breath": 4.090910000000001,
+   "pitch_dev_median_st": 0.5101165771484375,
+   "pitch_dev_max_st": 71.41129302978516
+  },
+  {
+   "start": 47.72727,
+   "notes": 14,
+   "frames": 254,
+   "breath": 1.1363600000000034,
+   "pitch_dev_median_st": 0.6707954406738281,
+   "pitch_dev_max_st": 78.59822845458984
+  },
+  {
+   "start": 51.36364,
+   "notes": 14,
+   "frames": 254,
+   "breath": 1.1363699999999994,
+   "pitch_dev_median_st": 0.4037666320800781,
+   "pitch_dev_max_st": 71.24897766113281
+  },
+  {
+   "start": 55,
+   "notes": 14,
+   "frames": 254,
+   "breath": 1.1363600000000034,
+   "pitch_dev_median_st": 0.4594383239746094,
+   "pitch_dev_max_st": 75.59688568115234
+  }
+ ],
+ "pitch_model": true,
+ "seconds": 61.18181405895692,
+ "peak": 0.4053630828857422,
+ "render_s": 62.388570070266724,
+ "speaker": "tiger_fresh",
+ "syllable": "la"
+}

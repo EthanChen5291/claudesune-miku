@@ -798,7 +798,11 @@ export function writeLyrics(score, { seed = score.name ?? 'song', melismaUnder =
     }
     for (const c of line.chunks) if (c.word?.r) recentWords.push(c.word.r);
     if (!refrain) recentTemplates.push(...String(line.template).split('+'));
-    const words = line.chunks.filter((c) => !c.filler).map((c) => c.m.join('').replace(/_/g, '').replace(/q/g, (x, i, str) => str[i + 1] ?? '')).join(' ');
+    // a word line reads as its bunsetsu; a VOCALISE line has no chunks, so its
+    // romaji is what is actually sung ("la la la -", "meow meow") — the sheet's
+    // romaji column and the export log both read this field
+    const words = line.chunks.filter((c) => !c.filler).map((c) => c.m.join('').replace(/_/g, '').replace(/q/g, (x, i, str) => str[i + 1] ?? '')).join(' ')
+      || bound.moras.map((m) => (m === 'ー' ? '-' : m)).join(' ');
     out.push({
       start: ph[0].start, notes: ph.length, text: bound.moras.map((m) => m.replace(/_$/, '')).join(' '),
       romaji: words, kana: bound.moras.map(moraKana).join(''), gloss: line.gloss,

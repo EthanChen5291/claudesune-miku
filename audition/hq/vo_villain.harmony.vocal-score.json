@@ -2551,6 +2551,13 @@
    "lead": true
   }
  ],
+ "vocalise": {
+  "mode": "mixed",
+  "set": "hum",
+  "rate": 0.1,
+  "why": "emotion scary pool",
+  "hook": "none (rate)"
+ },
  "lyricStats": {
   "phrases": 12,
   "refrainReused": 6,
@@ -2558,6 +2565,7 @@
   "variants": 0,
   "fallbacks": 0,
   "exts": 0,
+  "vocalise": 0,
   "templates": {
    "O-V+O-V": 1,
    "MOD-O-V+T-N": 1,

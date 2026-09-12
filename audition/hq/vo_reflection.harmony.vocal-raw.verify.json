@@ -3,82 +3,82 @@
  "seconds": 43.4,
  "sr": 40000,
  "notes": 72,
- "note_hit_rate_mean": 0.8173588508727828,
+ "note_hit_rate_mean": 0.8404933273354326,
  "notes_hit_ge_50pct": 0.9305555555555556,
  "octave_error_rate_mean": 0.0,
  "notes_octave_wrong": 0,
  "voiced_coverage_mean": 1.0,
  "notes_unvoiced": 0,
- "sung_rms_db": -28.64491435683641,
- "rest_rms_db": -65.47739087570879,
- "rest_leak_db": -36.83247651887238,
- "onset_lag_median_ms": 11.050000000000892,
- "onset_lag_p90_ms": 56.791999999997955,
- "onset_lag_notes": 47,
+ "sung_rms_db": -29.094271735014466,
+ "rest_rms_db": -67.38197960100689,
+ "rest_leak_db": -38.287707865992424,
+ "onset_lag_median_ms": 4.210000000000491,
+ "onset_lag_p90_ms": 47.92000000000104,
+ "onset_lag_notes": 48,
  "worst_notes": [
   {
    "start": 39,
    "midi": 74,
-   "hit": 0.0,
+   "hit": 0.42105263157894735,
    "oct": 0.0,
    "voiced": 1.0,
-   "median_dev_cents": -336.30140331971035
+   "median_dev_cents": -65.72952703816668
   },
   {
-   "start": 14.05263,
-   "midi": 67,
-   "hit": 0.3,
+   "start": 10.89474,
+   "midi": 68,
+   "hit": 0.45,
    "oct": 0.0,
    "voiced": 1.0,
-   "median_dev_cents": -56.182974886442594
+   "median_dev_cents": -51.98673445959727
   },
   {
-   "start": 13.42105,
-   "midi": 60,
-   "hit": 0.47368421052631576,
+   "start": 19.73684,
+   "midi": 74,
+   "hit": 0.45098039215686275,
    "oct": 0.0,
    "voiced": 1.0,
-   "median_dev_cents": -64.21461997048397
-  },
-  {
-   "start": 33.63158,
-   "midi": 63,
-   "hit": 0.47368421052631576,
-   "oct": 0.0,
-   "voiced": 1.0,
-   "median_dev_cents": -50.5498470794862
-  },
-  {
-   "start": 18.15789,
-   "midi": 60,
-   "hit": 0.49019607843137253,
-   "oct": 0.0,
-   "voiced": 1.0,
-   "median_dev_cents": -51.89404440513812
+   "median_dev_cents": -59.24812849833501
   },
   {
    "start": 33.31579,
    "midi": 65,
-   "hit": 0.5294117647058824,
+   "hit": 0.47058823529411764,
    "oct": 0.0,
    "voiced": 1.0,
-   "median_dev_cents": -36.938315159908086
+   "median_dev_cents": -52.235092888089696
   },
   {
-   "start": 35.84211,
-   "midi": 68,
-   "hit": 0.5686274509803921,
+   "start": 38.36842,
+   "midi": 65,
+   "hit": 0.47058823529411764,
    "oct": 0.0,
    "voiced": 1.0,
-   "median_dev_cents": -33.60704132029184
+   "median_dev_cents": -25.225981687341914
   },
   {
-   "start": 13.73684,
-   "midi": 61,
-   "hit": 0.5789473684210527,
+   "start": 16.42105,
+   "midi": 65,
+   "hit": 0.5263157894736842,
    "oct": 0.0,
    "voiced": 1.0,
-   "median_dev_cents": -8.915680525477399
+   "median_dev_cents": -8.641978390932081
+  },
+  {
+   "start": 13.10526,
+   "midi": 60,
+   "hit": 0.5882352941176471,
+   "oct": 0.0,
+   "voiced": 1.0,
+   "median_dev_cents": -20.12612848777522
+  },
+  {
+   "start": 36.47368,
+   "midi": 70,
+   "hit": 0.6,
+   "oct": 0.0,
+   "voiced": 1.0,
+   "median_dev_cents": -28.423004055608914
   }
  ]
 }

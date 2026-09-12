@@ -49,6 +49,7 @@ import { composeVocalLine } from '../src/lib/vocal-line.js';
 import { describePrompt, explain as explainPrompt } from '../src/lib/describe.js';
 import { FIGURATIONS_FOUNDATION } from '../src/lib/figurations-foundation.js';
 import { FND_TRAVEL } from '../src/lib/figuration-graph.js';
+import { writeKit, kitStyleFor } from '../src/lib/drum-kit.js';
 import { RHYTHMS } from '../src/lib/rhythms.js';
 import { INSTRUMENTS } from '../src/lib/instruments.js';
 import { chordCoreTones, parseKey, keyUsesFlats, pcToNoteName } from '../src/binder/theory.js';
@@ -230,7 +231,10 @@ const PRESENCE_GAIN = { light: 0.5, driving: 0.7, foreground: 0.85 };
 // rewrites the drums of every judged song and invalidates their HQ renders.
 const DEEP_BAND_SOUND = { low: 'md_kick', mid: 'md_snare', high: 'md_hat' };
 function drumExpr(name, presence, deep = false, stackSlots = false) {
-  const entry = RHYTHMS[name];
+  // r37: `name` may be a WRITTEN lane row (the kit writer) rather than a key
+  // into RHYTHMS. Everything below already works off the entry, so the only
+  // change is where the entry comes from — no judged song's path differs.
+  const entry = typeof name === 'string' ? RHYTHMS[name] : name;
   const r = normalizeRhythm({ ...entry, accents: entry.accents ?? entry.onsets?.map(() => 0.8) ?? [1] });
   // grid = lcm of onset denominators, capped
   const gcd = (a, b) => (b ? gcd(b, a % b) : a);
@@ -2637,7 +2641,7 @@ function buildSong(prompt, name, opts = {}) {
   const supportBand = (a, b) => [Math.round(a * supportMul * 1000) / 1000, Math.round(b * supportMul * 1000) / 1000];
   const vocalWriterCfg = typeof opts.vocalWriter === 'object' ? opts.vocalWriter : {};
   const writerRole = (L) => (vocalWriterCfg.roles?.[L]) ?? (L === 'A' ? 'verse' : L === 'B' ? 'chorus' : 'bridge');
-  const writerBind = (L, ctxL, stmt = 0, { octave = leadOctave, sound = LEAD_SOUND, fx = leadFx, shift = 0, role = null, gainRange = null } = {}) => {
+  const writerBind = (L, ctxL, stmt = 0, { octave = leadOctave, sound = LEAD_SOUND, fx = leadFx, shift = 0, role = null, gainRange = null, thin = false } = {}) => {
     const kp = parseKey(ctxL.key ?? key);
     // the spec is always composed and bound at the LEAD's octave; a rider that
     // asks for another octave gets it as a degree shift (+7 per octave) —
@@ -2652,7 +2656,57 @@ function buildSong(prompt, name, opts = {}) {
       role: roleOf, stmt, rate: vocalWriterCfg.rate, lift: vocalWriterCfg.lift?.[roleOf], targetMidi: vocalWriterCfg.targetMidi,
       span: vocalWriterCfg.span, startBias: vocalWriterCfg.startBias, breathBias: vocalWriterCfg.breathBias, hookVary: vocalWriterCfg.hookVary,
     });
-    const shifted = degShift ? { ...spec, bars: spec.bars.map((b) => ({ ...b, degrees: b.degrees.map((d) => (d == null ? null : d + degShift)) })) } : spec;
+    let shifted = degShift ? { ...spec, bars: spec.bars.map((b) => ({ ...b, degrees: b.degrees.map((d) => (d == null ? null : d + degShift)) })) } : spec;
+    // ---- r37/D142 · THE COMPANION IS A SHADOW, NOT A LINE -------------------
+    // Five of his twelve band cards: "the glockenspiel durations should be
+    // longer and more legato rather than be staccato" (lighthouse), "the rhythm
+    // of the glockenspiel is too sporadic and quick" (tavern), "the high
+    // pitched percussion is so staccato" (victory), "should have longer
+    // durations" (airship).
+    //
+    // MEASURED, AND IT CORRECTED MY OWN READING OF THE COMPLAINT. The companion
+    // is ALREADY fully legato — realized duration / onset gap is exactly 1.00
+    // on ten of eleven songs, so every note already rings to the next. What it
+    // is not is SPARSE: its note count equals the lead's EXACTLY on every song
+    // (140/140, 216/216, 67/67 …), i.e. it is a note-for-note shadow of a sung
+    // line running at a median onset gap of 0.109-0.238 s.
+    //
+    // D99 defined this layer with a sparsity law — "a note with no tone
+    // available under it becomes a REST so the line is sparser than the lead
+    // rather than its shadow" — and the r35 writer path reimplemented the
+    // companion without it. That is D139's law from the other side: a new
+    // melody writer must own every line that rides the lead, and owning it
+    // means carrying its rules across, not just its pitches.
+    //
+    // The thinning keeps a note on a STRONG position (bar beats) and on each
+    // bar's first onset, and rests the rest; legato then extends the survivors,
+    // which is literally the "longer durations" he asked for. Gated on the
+    // writer + r37 so no judged song's companion moves.
+    // NULLING A DEGREE WRITES A REST; REMOVING THE ONSET LENGTHENS THE NOTE
+    // BEFORE IT. The first build of this thinning nulled degrees, and measured
+    // WORSE than what it replaced: the companion fell from 216 notes to 32 and
+    // its duration/gap ratio went 1.00 -> 0.06, i.e. short notes separated by
+    // 3.4-second holes — the definition of staccato, the exact thing he asked
+    // to be rid of. `bindMelodySpec` requires onsets/degrees/accents to be the
+    // same length and treats a null degree as a REST, so the surviving notes
+    // kept their old lengths. Dropping the whole triple instead lets the
+    // binder's legato ring each survivor to the next one.
+    if (thin && ruleFresh(37)) {
+      // A GRID FILTER IS THE WRONG INSTRUMENT HERE, measured: keeping only the
+      // 8th grid cut 216 notes to 32 and stretched them to 2.6-3.4 SECONDS —
+      // a pad, not a companion — because the writer's line is mostly 16ths and
+      // barely touches the 8th grid at these tempos. Thinning by RATIO keeps
+      // the line's contour and is predictable: every second onset survives, so
+      // density halves and each surviving note rings roughly twice as long
+      // (legato). That lands the companion near D102's measured 0.88 density
+      // ratio against a continuously-running lead, from the sparse side.
+      shifted = { ...shifted, bars: shifted.bars.map((b) => {
+        if (b.onsets.length < 3) return b;                // already sparse
+        const keep = b.onsets.map((_, i) => i % 2 === 0); // the bar always speaks
+        const take = (arr) => arr.filter((_, i) => keep[i]);
+        return { ...b, onsets: take(b.onsets), degrees: take(b.degrees), accents: take(b.accents) };
+      }) };
+    }
     const bound = bindMelodySpec(shifted, ctxL, v.meter, { octave: leadOctave, sound, fx, ...(gainRange ? { gainRange } : {}) });
     return { ...bound, writerMeta: meta };
   };
@@ -2682,6 +2736,10 @@ function buildSong(prompt, name, opts = {}) {
     bpm: v.bpm, meter: v.meter, loopBars,
     leadPeriod: planPeriod,
     accDensity, accOctave: accOct, leadDensity: planCell.density, palette: INSTRUMENTS,
+    // r37/D142: under a sung lead the SUSTAINING cast roles take no solo wind
+    // or brass — D140's law reaching the arranger's own cast, which is where
+    // his four "the woodwind is completely off tune" cards actually came from.
+    noSoloWind: vocalWriterOn && ruleFresh(37),
   });
   // D62 ensemble dial: the vibe's voice count CAPS the cast before the form
   const fullCast = plan.layers.length;
@@ -3549,7 +3607,16 @@ function buildSong(prompt, name, opts = {}) {
       drums = /^1(@\d+)?$/.test(dm) ? expr : `${expr}.mask("<${dm}>")`;
       drumInfo.push(`${dpPick.pattern} (harvested — his note: \u201c${dpPick.note}\u201d)${d < probe.bars ? `, first ${d}/${probe.bars} bars` : ''}`);
     }
-  } else if (!opts.dropIntro && (opts.percPresence ?? v.percussion.presence) !== 'none' && (opts.percPatterns ?? v.percussion.patterns).length) {
+  } else if (!opts.dropIntro && (opts.percPresence ?? v.percussion.presence) !== 'none'
+    // r37: the kit WRITER needs no library patterns — it composes its lanes. The
+    // clause after this one (`patterns.length`) was the real reason four band
+    // songs came out with `drums: []` even after their presence was raised:
+    // water / snow / aftermath declare an EMPTY pattern list, so the whole drum
+    // block was skipped and the prompt's own "a big backbeat" / "toms and a
+    // whispered count" never played. Raising presence alone was not enough, and
+    // the first fix for this looked correct and changed nothing — measure the
+    // output, not the option (D85).
+    && ((opts.kitWriter === true && ruleFresh(37)) || (opts.percPatterns ?? v.percussion.patterns).length)) {
     // genre-expansion: opts.percPatterns pins a song's iqa'/groove outright
     // (somber desert wants masmoudi, the caravan wants ayyub) and
     // opts.percPresence resurrects percussion an emotion zeroed out —
@@ -3840,13 +3907,50 @@ function buildSong(prompt, name, opts = {}) {
     // letter or lifts energy and carries drums — the "drop", his word.
     const seamCrash = opts.crashSeams ?? (r35() && historyLess() && picks.includes('battle_crash'));
     if (seamCrash) picks = picks.filter((p) => p !== 'battle_crash');
+    // ---- r37/D142 · THE KIT WRITER ----------------------------------------
+    // His "drums can totally be better and more complex/immersive". Measured
+    // against 718,475 drum MIDI files (research/drums-r37.md): our 68 songs
+    // carrying drums ran ONE piece class (corpus median 4), simultaneity 0.000
+    // (0.447), a snare on 7.4% of songs (85.8%), and 66.2% of loops repeated
+    // one identical bar where 89.4% of real loops repeat none.
+    //
+    // The cause is this selector's shape, for the fifth time: up to three
+    // UNRELATED library rows chosen by band. Rows written apart cannot strike
+    // together and a one-bar row cannot develop. `kitWriter` composes
+    // COORDINATED lanes from one seed instead — kick / snare+ghosts /
+    // hat+open-hat / a tom fill in the phrase's last bar — and the existing
+    // compiler stacks them, so simultaneity and bar-to-bar variation come for
+    // free with no change to drumExpr's grid.
+    //
+    // OPT-IN AND r37-GATED. It rewrites the mix string, so switching it on by
+    // default would move every judged song's drums and invalidate their HQ
+    // renders — the same reason `deepDrums` and `percBackbeat` are opt-in.
+    const kitWriterOn = opts.kitWriter === true && ruleFresh(37) && !opts.percPatterns;
+    let kitLanes = null;
+    if (kitWriterOn) {
+      const style = opts.kitStyle ?? kitStyleFor({
+        bpm: v.bpm, energy: v.energy ?? 0.5, moods: v.moods, lane: null,
+      });
+      kitLanes = writeKit({
+        seed: `${name}|kit`, style, bars: 4, fill: opts.kitFill !== false, deep: deepDrums,
+      });
+    }
     if (drumBars.some(Boolean)) {
-      const parts = picks.map((p) => drumExpr(p, presence, deepDrums, r33()));
+      const parts = kitLanes
+        ? kitLanes.map((L) => drumExpr(L, presence, deepDrums, r33()))
+        : picks.map((p) => drumExpr(p, presence, deepDrums, r33()));
       const dm = maskString(drumBars);
       drumBarsShared = drumBars;
       const stackd = parts.length === 1 ? parts[0] : `stack(${parts.join(', ')})`;
       drums = /^1(@\d+)?$/.test(dm) ? stackd : `${stackd}.mask("<${dm}>")`;
-      drumInfo.push(...picks.map((p) => `${p} (${RHYTHMS[p].band}) at ${presence}`));
+      if (kitLanes) {
+        drumInfo.push(...kitLanes.map((L) => `${L.tags[1]} lane (${L.band}) at ${presence}`));
+        drumInfo.push(`kit writer (r37): ${kitLanes.length} coordinated lanes, 4-bar phrase`
+          + `${opts.kitFill !== false ? ' with a tom fill in the last bar' : ''} — composed from the`
+          + ` drum-archive medians (718,475 grooves). The band selector it replaces picked up to three`
+          + ` UNRELATED rows, which is why the suite measured 1 piece class and 0.000 simultaneity`
+          + ` against a corpus median of 4 and 0.447.`);
+      } else drumInfo.push(...picks.map((p) => `${p} (${RHYTHMS[p].band}) at ${presence}`));
       if (seamCrash) {
         const CRASH_PEAK_S = 1.44; // measured: susCymb1-cresc-Short_v1.wav peak RMS at 1.44 s
         const secPerBar = (60 / v.bpm) * beats;
@@ -5645,7 +5749,7 @@ function buildSong(prompt, name, opts = {}) {
         // diatonic THIRD below (the corpus's verse texture: one counter-note a
         // 3rd/4th under the voice, rhythm-locked; strong beats snap to chord
         // tones through the guard)
-        const bindComp = (L, ctxL, stmt = 0) => vocalWriterOn ? writerBind(L, ctxL, stmt, { octave: leadOctave, sound: cSound, fx: `${gainFx(cGain)}.room(0.4)`, shift: -2 }) : bindMelody(letterCell(L), ctxL, v.meter, {
+        const bindComp = (L, ctxL, stmt = 0) => vocalWriterOn ? writerBind(L, ctxL, stmt, { octave: leadOctave, sound: cSound, fx: `${gainFx(cGain)}.room(0.4)`, shift: -2, thin: true }) : bindMelody(letterCell(L), ctxL, v.meter, {
           style: 'toby-fox', seed: letterSeed(L, stmt), octave: cOct, sound: cSound,
           fx: `${gainFx(cGain)}.room(0.4)`,
           // `hold` MUST be the lead's own value for this letter, not the song
@@ -7113,6 +7217,20 @@ function buildSong(prompt, name, opts = {}) {
   // the companion stays (it is harmony, not a double), the octave partner and
   // the melody_backup doubler ride the same guide. `vocalLead: <number>` sets
   // the guide multiplier; `true` = 0.45.
+  // r37 · THE INSTRUMENTAL TWIN (his ruling: "two mixes per song"). A sung song
+  // ducks its melody instrument to a 0.45 guide because the VOICE carries the
+  // tune — so with the vocal muted you get a karaoke backing track with a hole
+  // where the melody goes, not an instrumental. He had assumed the opposite
+  // ("all sung because i can just turn vocals off to hear instrumental"), and
+  // eleven of his twelve band cards were written against that hole: "the piano
+  // melody too sounds off and too quiet", "the synth is way too loud and drowns
+  // out everything else", "volume levels aren't balanced".
+  //
+  // The twin is the SAME mix with the guide never applied, captured here before
+  // the duck. One card, two renders, two balances — a level judged against a
+  // 0.45 lead is not the level to ship against a 1.0 one, which is the mistake
+  // D140 already made once by setting every support band under a guide lead.
+  const mixPartsInstrumental = opts.vocalLead ? [...mixParts] : null;
   if (opts.vocalLead) {
     const guide = typeof opts.vocalLead === 'number' ? opts.vocalLead : 0.45;
     const ix = [];
@@ -7242,6 +7360,13 @@ function buildSong(prompt, name, opts = {}) {
     extraInfo.push(`piano trim: x${pianoTrim} — ${pitchedVoices} pitched voices against the ${KEPT_VOICES} his kept songs carry (r25, his "piano too loud" x7)${r33() && LEAD_SOUND === 'piano' ? ' — and the kit rides the same trim so the drum cap’s ratio survives (r33)' : ''}`);
   }
   let mix = mixParts.length > 1 ? `stack(${mixParts.join(', ')})` : mixParts[0];
+  // the twin rides every later transformation of `mix` by construction: it is
+  // built from the same parts array, so anything that edits a PART is shared and
+  // only the guide differs. A transformation applied to the mix STRING would not
+  // be — a test pins that the two differ in exactly the guide factor.
+  let mixInstrumental = mixPartsInstrumental
+    ? (mixPartsInstrumental.length > 1 ? `stack(${mixPartsInstrumental.join(', ')})` : mixPartsInstrumental[0])
+    : null;
 
   // r34: a vocal-lead song also exposes the lead AS THE MIX PLAYS IT (masked,
   // per letter and statement, handoffs applied) — export-vocal.mjs sings from
@@ -7348,6 +7473,11 @@ function buildSong(prompt, name, opts = {}) {
     });
     const mainParts = [...basePieces2, ...leadPieces, ...layerPieces, ...extraPieces, `${dBody}.mask(${gateMain})`];
     mix = `stack(${introParts.join(', ')}, ${mainParts.join(', ')})`;
+    // the buildup/drop path re-assembles the mix from a DIFFERENT part list, so
+    // the twin captured before the guide no longer describes this song. Emit no
+    // twin rather than a wrong one — a silently divergent second mix is worse
+    // than none, and no sung song currently takes this path.
+    mixInstrumental = null;
     solos._intro = `stack(${introParts.join(', ')})`;
     solos._dropdrums = dBody;
     totalBarsOut = T + 4;
@@ -7373,6 +7503,7 @@ function buildSong(prompt, name, opts = {}) {
     const amt = Math.round((ratio - 0.5) * 2 * 1000) / 1000;
     const sub = opts.swingSubdiv ?? beats * 2;
     mix = `${mix}.swingBy(${amt}, ${sub})`;
+    if (mixInstrumental) mixInstrumental = `${mixInstrumental}.swingBy(${amt}, ${sub})`;
     for (const k of Object.keys(solos)) solos[k] = `${solos[k]}.swingBy(${amt}, ${sub})`;
     extraInfo.push(`swing: ${ratio} ratio on offbeat 16ths (swingBy ${amt}, subdiv ${sub}) — onsets shift, durations hold`);
   }
@@ -7410,6 +7541,9 @@ function buildSong(prompt, name, opts = {}) {
       }),
     } : {}),
     mix, solos,
+    // r37: the instrumental twin (his "two mixes per song"). Absent on every
+    // song that is not sung, so no judged song's DATA gains a field.
+    ...(mixInstrumental ? { mixInstrumental } : {}),
   });
   CHECKS.push([name, 'mix', mix, v.bpm, beats, totalBarsOut]);
   CHECKS.push([name, '_acc', base, v.bpm, beats, totalBarsOut]);
@@ -9133,7 +9267,14 @@ const VO_PROMPTS = [
   { id: 'villain',    bpm: 132, text: 'a villain\'s theme sung with a smirk, sinister minor pop, harpsichord stabs, the voice low and teasing', vocalStyle: 'layer', vocalDb: -5 },
   // "the vocal here doesn't really fit the vibe and the melody is alright but
   // doesnt fit the excited vibe" -> the same city-pop loop as fireworks; bright pool
-  { id: 'opening',    bpm: 180, text: 'a sports-anime opening, driving guitars at 180 bpm, huge triumphant chorus, the voice high and clear', extra: { brightPool: true, basePin: 'maj_IV_I_V_vi', rawBase: true } },
+  // r37: `percPatterns` pins the MARCHING kit this song was judged with. The
+  // r37 brass rule (no solo brass on a sustain role under a sung lead) takes
+  // its french horn, and dropping a cast voice re-rolls `castSounds` — which
+  // measured as this song losing bass drum / march snare / timpani / roll swell
+  // for a generic four_floor + backbeat + shaker. D100: "dropping a cast layer
+  // RE-ROLLS castSounds". The kit is pinned here rather than the rule being
+  // weakened, because his ear rejected the horn on four separate cards.
+  { id: 'opening',    bpm: 180, text: 'a sports-anime opening, driving guitars at 180 bpm, huge triumphant chorus, the voice high and clear', extra: { brightPool: true, basePin: 'maj_IV_I_V_vi', rawBase: true, percPatterns: ['band_bass_drum', 'band_march_snare', 'band_timpani', 'band_roll_swell'] } },
   { id: 'cafe',       bpm: 108, text: 'rainy-day cafe pop, relaxed and warm, brushed drums, the singer half-whispering over an electric piano' },
   // KEEP: "I like this! sounds energetic and the vocals fit! best energetic one so far"
   { id: 'reflection', bpm: 195, text: 'a boss fight against your own reflection, breakneck rock, the melody shouting short phrases, no room to breathe', extra: { keepFresh: true, pinFrom: 'r36', voicedColor: true }, vocalDb: 0 },
@@ -9141,13 +9282,19 @@ const VO_PROMPTS = [
   { id: 'lullaby',    bpm: 76,  text: 'a tender lullaby for a robot, music box and pads, slow, the voice barely above a hum, no drums', extra: { keepFresh: true, pinFrom: 'r36', voicedColor: true }, vocalDb: -1.5 },
   // "vocals too loud, it's drowning everything else. for energy like festivals it should be much softer"
   { id: 'rooftop',    bpm: 140, text: 'a rooftop confession at sunrise, hopeful pop-rock, builds from a quiet verse to a soaring chorus with strings', vocalDb: -5 },
-  { id: 'sugar',      bpm: 128, text: 'a glitchy hyper-pop sugar rush, ridiculous and playful, 16th-note syllables over a bouncing bass at 128 bpm' },
+  // r36/D141 add.2 — his "sometimes it could be la la la or meow meow meow etc":
+  // the two ENDPOINTS on this page, so his ear gets words-only (most songs),
+  // the mixed chorus tag (10 of 30) and a fully wordless song. Pinned on rows
+  // with no live complaint of their own, so a verdict here is about the words.
+  { id: 'sugar',      bpm: 128, text: 'a glitchy hyper-pop sugar rush, ridiculous and playful, 16th-note syllables over a bouncing bass at 128 bpm', lyrics: 'la' },
   // "violin too loud, and vocals a bit too loud" (+ the scary-lane layer style)
   { id: 'corridor',   bpm: 150, text: 'a haunted school corridor at midnight, eerie minor pop, whispered verses and a desperate belted chorus', vocalStyle: 'layer', vocalDb: -3 },
   // KEEP: "I like this setup and the overall layering and progression ... later in the song there's another Indian fluctuating thing though" (the melisma law re-sings it; the music is pinned)
   { id: 'march',      bpm: 120, text: 'a marching anthem for a losing army, somber but defiant, drums like footsteps, a choir under the last chorus', extra: { keepFresh: true, pinFrom: 'r36', voicedColor: true }, vocalDb: 1.5 },
   // "sounds a bit more serious than goofy (make vocals softer)"
-  { id: 'kitchen',    bpm: 165, text: 'a ridiculous kitchen cooking-show jingle, goofy and fast, the singer tripping over tongue-twisters', vocalDb: -4 },
+  // "tripping over tongue-twisters" is a nonsense-syllable prompt in his own
+  // words; his level note (-4) is kept
+  { id: 'kitchen',    bpm: 165, text: 'a ridiculous kitchen cooking-show jingle, goofy and fast, the singer tripping over tongue-twisters', vocalDb: -4, lyrics: 'babble' },
 ];
 /** the shared r35 vocal-song options from a description parse */
 function vocaloidOpts(d, row) {
@@ -9190,6 +9337,96 @@ if (VOCALOID_PAGE) {
     // r36 — a row may pin the LYRIC style (his "sometimes it could be la la la
     // or meow meow meow"): `lyrics: 'meow' | 'la:mixed' | 'none' | …`, read by
     // export-vocal.mjs as `lyricStyle`; absent = the writer's own plan
+    if (row.lyrics) S.lyricStyle = row.lyrics;
+  }
+}
+// ===========================================================================
+// r37 — THE BAND PAGE (BAND=1 -> audition/band.html). HIS ASK, verbatim:
+//
+//   "i want to regenerate songs that are meant to be actual songs, like played
+//    by a band in a game or something, with a diversity of prompts. moreover,
+//    bear in mind that we shouldn't take their ideas completely, we should
+//    change it up, just using them as reference"
+//
+// WHY IT EXISTS. His vocalab export said the same thing on ~15 of 27 cards —
+// "it doesn't really fit excited festival, more like a mission or a level or a
+// story or a actual song", "more like a mission or adventure or theme". Every
+// card on that page was the SAME prompt (`excited festival`), because a lab
+// holds the prompt fixed to isolate one variable. That is correct for a lab and
+// wrong for a listen: the framing itself was what he kept rejecting. So this
+// page holds nothing fixed. Twelve scenes, 70-185 bpm, a different band idiom
+// each, every one sung.
+//
+// PROMPTS ARE SCENES, NOT emotion x environment. His own words for what he
+// wanted are the design: a mission, a level, a story, an adventure, a theme.
+// A scene also feeds the r36 lyric writer, which draws its vocabulary from the
+// description's concrete nouns — "rain, station, rooftop" writes better lines
+// than "sad" + "shop".
+//
+// "WE SHOULDN'T TAKE THEIR IDEAS COMPLETELY." The Vocaloid and pop-pack
+// read-outs stay RULES, never material: the syllable law, the chorus register
+// lift, the accompaniment doubling, the corpus drum medians. No row names a
+// source song and no hook is retrieved from one — D137's law, and the reason
+// the lab carried a (interval, gap) verifier against every source RH.
+const BAND_PAGE = process.env.BAND === '1';
+const BAND_PROMPTS = [
+  { id: 'tavern',     bpm: 118, kit: 'shuffle', text: 'the house band plays the tavern the night before the raid, fiddle and stomping boots, the whole room singing along between rounds' },
+  { id: 'market',     bpm: 158, kit: 'funk',    text: 'a chase on foot through a neon night market, scooters and steam and upturned fruit carts, breathless and a little bit funny' },
+  { id: 'credits',    bpm: 82,  kit: 'ballad',  text: 'the credits roll on the long walk home, warm and unhurried, the whole band playing quietly for themselves' },
+  { id: 'garage',     bpm: 168, kit: 'rock',    text: 'four kids in a garage playing their first real song, sloppy and far too loud and completely sincere' },
+  { id: 'airship',    bpm: 132, kit: 'rock',    text: 'an airship crossing the cloud sea at dawn, wide and hopeful, brass over a big backbeat' },
+  { id: 'undercity',  bpm: 92,  kit: 'shuffle', text: 'the undercity blues club at two in the morning, smoke and a slow shuffle, someone singing about a bad deal' },
+  { id: 'rival',      bpm: 144, kit: 'funk',    text: "your rival's theme, cocky and tight, funk bass and horn stabs, the singer taunting you the whole way through" },
+  // `kit: null` = no kit, and it is the PROMPT's instruction ("and nothing
+  // else"), not the environment's default — the distinction the bug below
+  // turned out to hinge on.
+  { id: 'lighthouse', bpm: 70,  kit: null,      text: "a lighthouse keeper's song over slow winter waves, accordion and one voice and nothing else" },
+  { id: 'parade',     bpm: 126, kit: 'pop',     text: 'the parade that closes the harvest festival, drums leading down the main road, the crowd joining in on the chorus' },
+  { id: 'lasttrain',  bpm: 104, kit: 'pop',     text: 'riding the last train out of the capital, city pop, electric piano and a soft brushed snare and the window going dark' },
+  { id: 'ruins',      bpm: 138, kit: 'linear',  text: 'an expedition down into the ruins, tense and rhythmic, toms and a whispered count, nobody wanting to speak first' },
+  { id: 'victory',    bpm: 185, kit: 'dance',   text: 'the victory theme the band plays slightly too fast on purpose, brass and cymbals, over in under a minute' },
+];
+let BAND_FIRST = 0;
+if (BAND_PAGE) {
+  BAND_FIRST = songs.length;
+  for (const row of BAND_PROMPTS) {
+    const d = describePrompt(row.text);
+    const { opts: o, bpm, vocalDb, vocalStyle } = vocaloidOpts(d, row);
+    const name = `bd_${row.id}`;
+    // The kit writer is the page's reason for existing on the drum side, and it
+    // is r37-gated + opt-in, so it reaches these songs and nothing else.
+    // `percPresence: 'none'` rows (the lyric writer's "no drums" hint) keep
+    // their silence — a kit writer that overrides a deliberate absence would be
+    // the same mistake as the texture selector's pool of one.
+    // ---- THE ENVIRONMENT WAS SILENCING PROMPTS THAT ASKED FOR DRUMS -------
+    // First build of this page: FOUR of twelve songs came out with `drums: []`,
+    // including `airship` ("brass over a BIG BACKBEAT"), `ruins` ("TOMS and a
+    // whispered count") and `undercity` ("a slow SHUFFLE"). Cause: the vibe row
+    // for water / snow / aftermath / this casino reading declares
+    // `percussion: { presence: 'none' }`, and the environment's default outranks
+    // what the description actually says — so the one thing the prompt named
+    // out loud was the one thing that did not play.
+    //
+    // This is D93's shape exactly (`opts.percPresence` exists precisely to
+    // "resurrect an emotion-zeroed floor" for desert) and the fix is the same
+    // lever: a row that DECLARES a kit gets one, at a presence set by its own
+    // energy. A row that declares `kit: null` keeps the silence, because there
+    // the silence is the prompt's instruction and not the environment's guess.
+    if (row.kit) {
+      o.percPresence = d.energy === 'high' ? 'foreground' : d.energy === 'low' ? 'light' : 'driving';
+      o.kitWriter = true;
+      o.kitStyle = row.kit;
+    } else {
+      o.percPresence = 'none';
+    }
+    buildSong({ emotion: d.emotion, environment: d.environment, meter: '4/4' }, name, o);
+    const S = songs[songs.length - 1];
+    S.description = row.text;
+    S.parsed = explainPrompt(d);
+    S.why = `"${row.text}" -> ${explainPrompt(d)} · ${bpm} bpm · kit ${row.kit}`;
+    S.vocalSuite = true;
+    S.vocalDb = vocalDb;
+    if (vocalStyle !== 'lead') S.vocalStyle = vocalStyle;
     if (row.lyrics) S.lyricStyle = row.lyrics;
   }
 }
@@ -9789,6 +10026,20 @@ if (SUITE) {
   const built = songs.slice(VO_FIRST);
   console.log(`wrote audition/vocaloid.html — ${built.length} songs (${built.filter((s) => s.vocal).length} with a vocal render), page script parses clean, ${(inlvo.length / 1024).toFixed(0)} KB`);
   for (const b of built) console.log(`   ${b.name.padEnd(18)} ${String(b.bpm).padStart(3)}bpm ${b.key.padEnd(9)} ${b.hq ? 'HQ' : '--'} ${b.vocal ? 'VOCAL' : '--'}  ${b.parsed}`);
+} else if (BAND_PAGE) {
+  const bdHtml = page({ songs: songs.slice(BAND_FIRST).map(({ solos, ...rest }) => ({ ...rest, solos })) })
+    .replace(/motif-engine:song-verdicts/g, 'motif-engine:band-verdicts')
+    .replace(/motif-engine:song-notes/g, 'motif-engine:band-notes')
+    .replace(/motif-engine:song-cards/g, 'motif-engine:band-cards')
+    .replace(/motif-engine:songs-vocal/g, 'motif-engine:band-vocal')
+    .replace("page: 'songs'", "page: 'r37-band'")
+    .replace('<title>vibe songs — audition</title>', '<title>r37 — the band page (scene prompts, sung, written kits)</title>');
+  writeFileSync(join(OUT, 'band.html'), bdHtml);
+  const inlbd = bdHtml.slice(bdHtml.lastIndexOf('<script>') + 8, bdHtml.lastIndexOf('</script>'));
+  acorn.parse(inlbd, { ecmaVersion: 'latest' });
+  const built = songs.slice(BAND_FIRST);
+  console.log(`wrote audition/band.html — ${built.length} scene songs, page script parses clean, ${(inlbd.length / 1024).toFixed(0)} KB`);
+  for (const b of built) console.log(`   ${b.name.padEnd(16)} ${String(b.bpm).padStart(3)}bpm ${String(b.key).padEnd(9)} ${b.parsed}`);
 } else if (VOCALAB_PAGE) {
   const vlHtml = page({ songs: songs.slice(VL_FIRST).map(({ solos, ...rest }) => ({ ...rest, solos })) })
     .replace(/motif-engine:song-verdicts/g, 'motif-engine:vocalab-verdicts')
@@ -10013,7 +10264,21 @@ function render() {
       return '<option' + ((solo[s.name] || 'mix') === k ? ' selected' : '') + '>' + k + '</option>';
     }).join('');
     return '<div class="card' + (playing === s.name ? ' playing' : '') + (v ? ' ' + v : '') + '">' +
-      '<div class="row"><span class="vibe">' + esc((s.prompt.emotion ? s.prompt.emotion + ' ' : '') + s.prompt.environment) + '</span>' +
+      // r37 — THE CARD SHOWED THE PARSED LABEL, NOT THE PROMPT. On the band
+      // page every row is a SCENE ("four kids in a garage playing their first
+      // real song"), which describePrompt compiles down to an emotion x
+      // environment pair for the engine — and the card printed only the pair.
+      // So he judged that song against the words "happy shop" and wrote "this
+      // sounds like a tense mission rather than a happy shop"; three of his
+      // twelve cards are that mismatch. The scene is what he wrote, so the
+      // scene is what the card leads with; the compiled pair stays beside it,
+      // dimmed, because it is what the engine actually built from and he
+      // should be able to see when the parse is the thing that went wrong.
+      '<div class="row">' +
+      (s.description
+        ? '<span class="vibe" title="the prompt as written">' + esc(s.description) + '</span>'
+          + '<span class="dim" title="what the engine compiled it to">' + esc((s.prompt.emotion ? s.prompt.emotion + ' \u00d7 ' : '') + s.prompt.environment) + '</span>'
+        : '<span class="vibe">' + esc((s.prompt.emotion ? s.prompt.emotion + ' ' : '') + s.prompt.environment) + '</span>') +
       '<span class="dim">' + esc(s.name) + '</span>' +
       (s.hq ? '<span class="dim" style="background:#1d3a2a;color:#9fdcb0;padding:0 6px;border-radius:3px" title="has an HQ render">HQ</span>' : '') +
       (s.vocal ? '<span class="dim" style="background:#3a1d3a;color:#dc9fdc;padding:0 6px;border-radius:3px" title="has a sung vocal render (HQ on + Vocal on)">VOCAL</span>' : '') +

@@ -67,9 +67,16 @@ const pick = (r, table) => { // table: [[value, weight], ...]
  * notes per bar FALL as the tempo rises. Corpus medians by band: <100 → 6.5,
  * 100–139 → 7.2, 140–169 → 6.0, 170+ → 4.9 (and 16ths only under 140).
  */
-export function vocalDensity(bpm, { rate = 3.9 } = {}) {
+export function vocalDensity(bpm, { rate = 3.9, slowFloor = false } = {}) {
   const perBar = rate * (240 / bpm);
-  return { notesPerBar: clamp(perBar, 3.5, 8), sixteenths: bpm < 100 ? 0.03 : bpm < 140 ? 0.3 : bpm < 170 ? 0.1 : 0.01 };
+  // r38 (research/vocaloid-r38.md §8): below ~100 bpm the corpus HALVES the
+  // count rather than holding the rate — its <100 band sings 6.5 notes a bar
+  // at 2.2 syllables/s with 3% 16ths. The rate law at 70–84 bpm wrote 61–67%
+  // 16th-note runs on bd_lighthouse / bd_credits, which is not what a singer
+  // does at a ballad tempo. Opt-in (`vocalWriter.slowFloor`) so no judged
+  // sung line moves.
+  const cap = slowFloor && bpm < 100 ? 6.5 : 8;
+  return { notesPerBar: clamp(perBar, 3.5, cap), sixteenths: bpm < 100 ? 0.03 : bpm < 140 ? 0.3 : bpm < 170 ? 0.1 : 0.01 };
 }
 
 /** the corpus's phrase-start table, in 8th slots of the bar (r35 verify: the
@@ -203,7 +210,7 @@ function walk(r, events, { centre, span, chordDegsOf, fromDeg = null, upLean = 0
 export function composeVocalLine(params) {
   const {
     seed, keyIntervals, rootMidi, bpm, harmony, chordTonesOf,
-    role = 'verse', stmt = 0, rate = 3.9, startBias = null, breathBias = null,
+    role = 'verse', stmt = 0, rate = 3.9, startBias = null, breathBias = null, slowFloor = false,
   } = params;
   // (r35 verify: at +4 the walk's own wander hid the lift on 4 of 14 suite
   // songs — the chorus default is +5 and the chorus walk leans upward)
@@ -222,7 +229,7 @@ export function composeVocalLine(params) {
   const salt = stmt >= from ? stmt : 0;
   const r = rng(fnv(`${seed}|vocal|${role}${hookVary === 'all' && salt ? `|h${salt}` : ''}`));
   const rA = rng(fnv(`${seed}|vocal|${role}|answer|${salt}`));
-  const { notesPerBar, sixteenths } = vocalDensity(bpm, { rate });
+  const { notesPerBar, sixteenths } = vocalDensity(bpm, { rate, slowFloor });
   // the home centre as a scale degree (0 = key root at rootMidi)
   const semis = targetMidi - rootMidi;
   let centre = 0, bd = Infinity;

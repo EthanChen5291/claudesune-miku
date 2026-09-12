@@ -308,13 +308,49 @@ export function planArrangement(s) {
       return tempoFit(inst);
     };
 
+    // r37/D142 · THE OFF-KEY WOODWIND, THIRD PATH. D140 took the solo wind off
+    // the chorus double and the companion by DECLARED FAMILY, and left the
+    // ARRANGER's cast alone — so gm_clarinet came straight back as
+    // `harmony_support` on 11 of the 27 vocalab cards, entering at bar 0 (his
+    // "in the beginning that woodwind thing just sounds completely off tune",
+    // four cards, plus "off key woodwinds do not sound good"). Measured: it
+    // realises midi 81–83 while the sung line's median is 64–69, and on the
+    // very cards he calls off tune its notes are 0% out of key — which is
+    // D140's mechanism exactly, a sustained solo wind holding a pitch an
+    // octave above a pitch-CONVERTED voice, exposing the voice's drift.
+    //
+    // The cause is in the scoring, not the pool: a `wants: 'sustain'` part
+    // scores `sustain: 'long'` at 1.0 and every flute/clarinet/oboe in the
+    // palette declares exactly that, so the sustain roles are structurally a
+    // woodwind's to win. Under a sung lead the SUSTAINING roles take no WIND —
+    // by the declared family, never a name list (D100: a list of forbidden
+    // names has now failed five times).
+    //
+    // BRASS IS IN TOO, AND HIS EAR SETTLED IT THE SAME DAY. The first r37 build
+    // scoped this to `wind` only, because excluding brass re-rolled
+    // vo_opening's cast and cost it a marching kit — a real cost, and the wrong
+    // trade. His band-page export names the horn on FOUR of twelve cards, in
+    // the same words each time: "again, the French horns just dont fit …
+    // trumpets/horns way too loud, dont fit, there's dissonance" (rival), "why
+    // are you always adding these horns everywhere … horn doesn't fit and is
+    // too loud" (victory), "this loud trumpet synth doesn't really fit 'calm'"
+    // (credits), "dissonance between the synth/trumpet/horn" (tavern).
+    // Measured: all four are `harmony_support` on gm_french_horn, 100-208 notes
+    // a song, median note length 1.30-2.93 SECONDS. That last number is why
+    // "too loud" reads true at a gain ratio of only 0.38-0.40x the lead — a
+    // sustained brass pad puts out energy for two seconds where a struck voice
+    // puts out a transient, so D77's ratio law under-reads a HELD part. The
+    // marching-kit ripple is handled where it belongs, by pinning that song's
+    // percussion, not by leaving a voice his ear has rejected four times.
+    const sungNoWind = s.noSoloWind && spec.wants === 'sustain';
     const candidates = Object.entries(palette)
       // envOnly (genre-expansion round): an instrument may declare the ONLY
       // environments it casts in. New voices (sitar, choir, ghost pad …)
       // carry it so their addition cannot re-roll any existing song's cast —
       // the library-growth law applied to the palette itself.
       .filter(([name, inst]) => inst.parts.includes(part) && !usedInstruments.has(name)
-        && (!inst.envOnly || (s.environment && inst.envOnly.includes(s.environment))))
+        && (!inst.envOnly || (s.environment && inst.envOnly.includes(s.environment)))
+        && !(sungNoWind && /^(wind|brass)$/.test(inst.family ?? '')))
       .map(([name, inst]) => {
         const moodHit = inst.moods.filter((m) => moods.includes(m)).length;
         const cutFit = inst.cuts >= needCut ? 1 : 1 - (needCut - inst.cuts) * 2;

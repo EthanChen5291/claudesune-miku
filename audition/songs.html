@@ -102,7 +102,7 @@ const SOUNDFONT2_URLS = ["https://unpkg.com/soundfont2@0.4.0/lib/SoundFont2.js",
 const SOUNDFONT2_EXPORTS = ["DEFAULT_GENERATOR_VALUES","SoundFont2"];
 const SHIM_EXPORTS = {"@strudel/core":["freqToMidi","noteToMidi","getSoundIndex","Pattern","getPlayableNoteValue"],"@strudel/webaudio":["registerSound","getADSRValues","getAudioContext","getParamADSR","getVibratoOscillator","getPitchEnvelope"]};
 const GM_FALLBACK = 'triangle';
-const BUILD = '2026-09-12 19:37';
+const BUILD = '2026-09-12 22:40';
 const RT = { ready: false, booting: null, note: '', soundfonts: false, gmVoices: 0, gen: 0, maps: {}, problems: [],
   // D56: set once the scheduler tick is running off a Web Worker, so a hidden
   // tab cannot clamp it to 1s. workerTicks is how a probe proves it is live.
@@ -600,7 +600,21 @@ function render() {
       return '<option' + ((solo[s.name] || 'mix') === k ? ' selected' : '') + '>' + k + '</option>';
     }).join('');
     return '<div class="card' + (playing === s.name ? ' playing' : '') + (v ? ' ' + v : '') + '">' +
-      '<div class="row"><span class="vibe">' + esc((s.prompt.emotion ? s.prompt.emotion + ' ' : '') + s.prompt.environment) + '</span>' +
+      // r37 — THE CARD SHOWED THE PARSED LABEL, NOT THE PROMPT. On the band
+      // page every row is a SCENE ("four kids in a garage playing their first
+      // real song"), which describePrompt compiles down to an emotion x
+      // environment pair for the engine — and the card printed only the pair.
+      // So he judged that song against the words "happy shop" and wrote "this
+      // sounds like a tense mission rather than a happy shop"; three of his
+      // twelve cards are that mismatch. The scene is what he wrote, so the
+      // scene is what the card leads with; the compiled pair stays beside it,
+      // dimmed, because it is what the engine actually built from and he
+      // should be able to see when the parse is the thing that went wrong.
+      '<div class="row">' +
+      (s.description
+        ? '<span class="vibe" title="the prompt as written">' + esc(s.description) + '</span>'
+          + '<span class="dim" title="what the engine compiled it to">' + esc((s.prompt.emotion ? s.prompt.emotion + ' × ' : '') + s.prompt.environment) + '</span>'
+        : '<span class="vibe">' + esc((s.prompt.emotion ? s.prompt.emotion + ' ' : '') + s.prompt.environment) + '</span>') +
       '<span class="dim">' + esc(s.name) + '</span>' +
       (s.hq ? '<span class="dim" style="background:#1d3a2a;color:#9fdcb0;padding:0 6px;border-radius:3px" title="has an HQ render">HQ</span>' : '') +
       (s.vocal ? '<span class="dim" style="background:#3a1d3a;color:#dc9fdc;padding:0 6px;border-radius:3px" title="has a sung vocal render (HQ on + Vocal on)">VOCAL</span>' : '') +

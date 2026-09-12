@@ -35,6 +35,12 @@ What your ear found, and what it was:
 - A keep click on this page CRASHED the build (an r34 index under the old
   gate) — fixed and guarded.
 
+Renders are DONE (every vo_ song sung once with the real lyrics from the
+parallel session's writer — D141; the harmony voice sings the same words).
+`audition/vocalab.html` is retired on your overrule ("i want a diversity of
+other vibes") — its remaining renders were stopped; listen to vocaloid.html
+and the r37 session's `audition/band.html` instead.
+
 Still open: kitchen "more serious than goofy" (only the voice level was asked
 for; the block-chord acc is the other half), the lab page re-render, the
 fluid tempo, chorus acc thickening. A peer session is replacing the random

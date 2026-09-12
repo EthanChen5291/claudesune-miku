@@ -1,0 +1,84 @@
+{
+ "wav": "/Users/ethanchen/Documents/GitHub/motif-engine/audition/hq/bd_tavern.vocal-dry.wav",
+ "seconds": 35.54235827664399,
+ "sr": 44100,
+ "notes": 82,
+ "note_hit_rate_mean": 0.7812795312092162,
+ "notes_hit_ge_50pct": 0.8902439024390244,
+ "octave_error_rate_mean": 0.0,
+ "notes_octave_wrong": 0,
+ "voiced_coverage_mean": 0.9944608237291165,
+ "notes_unvoiced": 0,
+ "sung_rms_db": -22.12948200661089,
+ "rest_rms_db": -66.20763045537653,
+ "rest_leak_db": -44.078148448765646,
+ "onset_lag_median_ms": 0.6750000000010914,
+ "onset_lag_p90_ms": 53.960000000000925,
+ "onset_lag_notes": 64,
+ "worst_notes": [
+  {
+   "start": 20.08475,
+   "midi": 74,
+   "hit": 0.0,
+   "oct": 0.0,
+   "voiced": 1.0,
+   "median_dev_cents": -543.4933287394983
+  },
+  {
+   "start": 21.22881,
+   "midi": 77,
+   "hit": 0.2857142857142857,
+   "oct": 0.0,
+   "voiced": 1.0,
+   "median_dev_cents": -103.49405404862608
+  },
+  {
+   "start": 14.87288,
+   "midi": 63,
+   "hit": 0.35714285714285715,
+   "oct": 0.0,
+   "voiced": 1.0,
+   "median_dev_cents": -125.40430240259361
+  },
+  {
+   "start": 27.07627,
+   "midi": 66,
+   "hit": 0.38461538461538464,
+   "oct": 0.0,
+   "voiced": 1.0,
+   "median_dev_cents": -66.57951740121746
+  },
+  {
+   "start": 10.80508,
+   "midi": 66,
+   "hit": 0.46153846153846156,
+   "oct": 0.0,
+   "voiced": 1.0,
+   "median_dev_cents": -71.62728797755449
+  },
+  {
+   "start": 17.54237,
+   "midi": 71,
+   "hit": 0.46153846153846156,
+   "oct": 0.0,
+   "voiced": 1.0,
+   "median_dev_cents": -50.33068170655781
+  },
+  {
+   "start": 19.32203,
+   "midi": 76,
+   "hit": 0.46153846153846156,
+   "oct": 0.0,
+   "voiced": 1.0,
+   "median_dev_cents": -36.739228294203485
+  },
+  {
+   "start": 26.44068,
+   "midi": 59,
+   "hit": 0.46153846153846156,
+   "oct": 0.0,
+   "voiced": 1.0,
+   "median_dev_cents": -70.96065357414076
+  }
+ ]
+}

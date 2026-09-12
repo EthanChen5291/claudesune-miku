@@ -211,12 +211,31 @@ test('lyrics writer r36: vocalise sets — pinned all / none / the planned mixed
   const sn = JSON.parse(readFileSync(none, 'utf8'));
   assert.equal(sn.vocalise.mode, 'off');
   assert.ok(sn.lyrics.every((l) => !String(l.template).startsWith('vocalise')));
-  // auto on the tongue-twister jingle: the description picks babble, mixed, and the plan is recorded
+  // THE ROW PIN, end to end: `lyrics: 'babble'` on the VO_PROMPTS row ->
+  // `lyricStyle` in the page DATA -> mode ALL in the export. (This leg used to
+  // test AUTO on vo_kitchen; pinning that row made the assertion unholdable —
+  // a bare set name pins mode 'all'. The auto leg moved to an unpinned song
+  // below, and the description->set mapping is asserted on `vocalisePlan`
+  // above, where no page row can reach it.)
+  const pageSong = (() => {
+    const html = readFileSync('audition/vocaloid.html', 'utf8');
+    const di = html.indexOf('const DATA = ');
+    return JSON.parse(html.slice(di + 13, html.indexOf(';\n', di))).songs.find((x) => x.name === 'vo_kitchen');
+  })();
+  assert.equal(pageSong.lyricStyle, 'babble', 'the row pin reaches the page DATA');
   const auto = join(dir, 'v3.json');
   execFileSync('node', ['scripts/export-vocal.mjs', 'vo_kitchen', '--page', 'audition/vocaloid.html', '--out', auto, '--quiet'], { stdio: 'pipe' });
   const sa = JSON.parse(readFileSync(auto, 'utf8'));
-  assert.equal(sa.vocalise.mode, 'mixed');
+  assert.equal(sa.vocalise.mode, 'all');
   assert.equal(sa.vocalise.set, 'babble');
+  assert.match(sa.vocalise.why, /pinned/);
+  // AUTO on a song with no pin: the plan comes from the description/emotion
+  const un = join(dir, 'v3b.json');
+  execFileSync('node', ['scripts/export-vocal.mjs', 'vo_goodbye', '--page', 'audition/vocaloid.html', '--out', un, '--quiet'], { stdio: 'pipe' });
+  const su = JSON.parse(readFileSync(un, 'utf8'));
+  assert.equal(su.vocalise.mode, 'mixed', 'an unpinned song plans its own vocalise');
+  assert.ok(Object.keys(w.VOCALISE_SETS).includes(su.vocalise.set));
+  assert.doesNotMatch(su.vocalise.why, /pinned/);
   // MIXED on a song whose hook fires: the tag sits on a chorus/bridge FINAL
   // line, returns with the refrain, and never takes more than a third of the
   // song (tagging every bridge line put 8 of 16 lines wordless — measured)

@@ -309,10 +309,10 @@
    "dur": 0.4,
    "midi": 65,
    "gain": 0.126,
-   "syl": "ra",
+   "syl": "la",
    "ph": [
-    "rj",
-    "a"
+    "l",
+    "aa"
    ],
    "melisma": false,
    "w": -1
@@ -324,9 +324,10 @@
    "dur": 0.4,
    "midi": 65,
    "gain": 0.105,
-   "syl": "a",
+   "syl": "la",
    "ph": [
-    "a"
+    "l",
+    "aa"
    ],
    "melisma": false,
    "w": -1
@@ -469,10 +470,10 @@
    "dur": 0.4,
    "midi": 62,
    "gain": 0.126,
-   "syl": "ra",
+   "syl": "la",
    "ph": [
-    "rj",
-    "a"
+    "l",
+    "aa"
    ],
    "melisma": false,
    "w": -1
@@ -484,9 +485,10 @@
    "dur": 0.4,
    "midi": 60,
    "gain": 0.105,
-   "syl": "a",
+   "syl": "la",
    "ph": [
-    "a"
+    "l",
+    "aa"
    ],
    "melisma": false,
    "w": -1
@@ -631,10 +633,10 @@
    "dur": 0.4,
    "midi": 65,
    "gain": 0.126,
-   "syl": "ra",
+   "syl": "la",
    "ph": [
-    "rj",
-    "a"
+    "l",
+    "aa"
    ],
    "melisma": false,
    "w": -1
@@ -646,9 +648,10 @@
    "dur": 0.4,
    "midi": 65,
    "gain": 0.105,
-   "syl": "a",
+   "syl": "la",
    "ph": [
-    "a"
+    "l",
+    "aa"
    ],
    "melisma": false,
    "w": -1
@@ -792,10 +795,10 @@
    "dur": 0.4,
    "midi": 63,
    "gain": 0.126,
-   "syl": "ra",
+   "syl": "la",
    "ph": [
-    "rj",
-    "a"
+    "l",
+    "aa"
    ],
    "melisma": false,
    "w": -1
@@ -807,9 +810,10 @@
    "dur": 0.4,
    "midi": 60,
    "gain": 0.105,
-   "syl": "a",
+   "syl": "la",
    "ph": [
-    "a"
+    "l",
+    "aa"
    ],
    "melisma": false,
    "w": -1
@@ -956,10 +960,10 @@
    "dur": 0.4,
    "midi": 67,
    "gain": 0.126,
-   "syl": "ra",
+   "syl": "la",
    "ph": [
-    "rj",
-    "a"
+    "l",
+    "aa"
    ],
    "melisma": false,
    "w": -1
@@ -971,9 +975,10 @@
    "dur": 0.4,
    "midi": 69,
    "gain": 0.105,
-   "syl": "a",
+   "syl": "la",
    "ph": [
-    "a"
+    "l",
+    "aa"
    ],
    "melisma": false,
    "w": -1
@@ -1038,6 +1043,13 @@
    "lead": true
   }
  ],
+ "vocalise": {
+  "mode": "mixed",
+  "set": "la",
+  "rate": 0.2,
+  "why": "emotion sad pool",
+  "hook": "none (rate)"
+ },
  "lyricStats": {
   "phrases": 12,
   "refrainReused": 0,
@@ -1045,6 +1057,7 @@
   "variants": 0,
   "fallbacks": 6,
   "exts": 1,
+  "vocalise": 0,
   "templates": {
    "O-Vte-V": 2,
    "NI-V+ADV-V": 1,
@@ -1067,7 +1080,7 @@
   {
    "start": 43.2,
    "notes": 2,
-   "text": "ra a"
+   "text": "la la"
   },
   {
    "start": 44.6,
@@ -1077,7 +1090,7 @@
   {
    "start": 46.4,
    "notes": 2,
-   "text": "ra a"
+   "text": "la la"
   },
   {
    "start": 47.8,
@@ -1087,7 +1100,7 @@
   {
    "start": 49.6,
    "notes": 2,
-   "text": "ra a"
+   "text": "la la"
   },
   {
    "start": 51,
@@ -1097,7 +1110,7 @@
   {
    "start": 52.8,
    "notes": 2,
-   "text": "ra a"
+   "text": "la la"
   },
   {
    "start": 54.2,
@@ -1107,7 +1120,7 @@
   {
    "start": 56,
    "notes": 2,
-   "text": "ra a"
+   "text": "la la"
   },
   {
    "start": 57.4,

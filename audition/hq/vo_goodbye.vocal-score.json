@@ -29,7 +29,7 @@
     "a"
    ],
    "melisma": false,
-   "w": 0
+   "w": -1
   },
   {
    "bar": 4,
@@ -88,7 +88,7 @@
     "iy"
    ],
    "melisma": false,
-   "w": 1
+   "w": 0
   },
   {
    "bar": 4,
@@ -266,7 +266,7 @@
     "a"
    ],
    "melisma": false,
-   "w": 0
+   "w": -1
   },
   {
    "bar": 6,
@@ -325,7 +325,7 @@
     "iy"
    ],
    "melisma": false,
-   "w": 1
+   "w": 0
   },
   {
    "bar": 6,
@@ -369,7 +369,7 @@
     "iy"
    ],
    "melisma": false,
-   "w": 2
+   "w": 1
   },
   {
    "bar": 6,
@@ -427,7 +427,7 @@
     "iy"
    ],
    "melisma": false,
-   "w": 3
+   "w": 2
   },
   {
    "bar": 7,
@@ -441,7 +441,7 @@
     "iy"
    ],
    "melisma": false,
-   "w": 3,
+   "w": 2,
    "ext": true
   },
   {
@@ -471,7 +471,7 @@
     "a"
    ],
    "melisma": false,
-   "w": -1
+   "w": 3
   },
   {
    "bar": 7,
@@ -486,7 +486,7 @@
     "iy"
    ],
    "melisma": false,
-   "w": -1
+   "w": 3
   },
   {
    "bar": 8,
@@ -642,13 +642,13 @@
    "dur": 0.17857,
    "midi": 76,
    "gain": 0.317,
-   "syl": "ki",
+   "syl": "la",
    "ph": [
-    "kx",
-    "iy"
+    "l",
+    "aa"
    ],
    "melisma": false,
-   "w": 0
+   "w": -1
   },
   {
    "bar": 9,
@@ -657,13 +657,13 @@
    "dur": 0.17857,
    "midi": 74,
    "gain": 0.317,
-   "syl": "mi",
+   "syl": "la",
    "ph": [
-    "m",
-    "iy"
+    "l",
+    "aa"
    ],
    "melisma": false,
-   "w": 0
+   "w": -1
   },
   {
    "bar": 9,
@@ -672,13 +672,13 @@
    "dur": 0.17858,
    "midi": 72,
    "gain": 0.317,
-   "syl": "to",
+   "syl": "la",
    "ph": [
-    "tx",
-    "oo"
+    "l",
+    "aa"
    ],
    "melisma": false,
-   "w": 0
+   "w": -1
   },
   {
    "bar": 9,
@@ -687,12 +687,13 @@
    "dur": 0.17857,
    "midi": 71,
    "gain": 0.317,
-   "syl": "i",
+   "syl": "ー",
    "ph": [
-    "iy"
+    "aa"
    ],
    "melisma": false,
-   "w": 1
+   "w": -1,
+   "ext": true
   },
   {
    "bar": 9,
@@ -701,14 +702,13 @@
    "dur": 0.35714,
    "midi": 72,
    "gain": 0.394,
-   "syl": "qte",
+   "syl": "la",
    "ph": [
-    "q",
-    "tx",
-    "ee"
+    "l",
+    "aa"
    ],
    "melisma": false,
-   "w": 1
+   "w": -1
   },
   {
    "bar": 9,
@@ -719,10 +719,10 @@
    "gain": 0.354,
    "syl": "ー",
    "ph": [
-    "ee"
+    "aa"
    ],
    "melisma": false,
-   "w": 1,
+   "w": -1,
    "ext": true
   },
   {
@@ -737,7 +737,7 @@
     "a"
    ],
    "melisma": false,
-   "w": 0
+   "w": -1
   },
   {
    "bar": 12,
@@ -782,7 +782,7 @@
     "oo"
    ],
    "melisma": false,
-   "w": 1
+   "w": 0
   },
   {
    "bar": 12,
@@ -841,7 +841,7 @@
     "a"
    ],
    "melisma": false,
-   "w": 2
+   "w": 1
   },
   {
    "bar": 12,
@@ -885,7 +885,7 @@
     "ux"
    ],
    "melisma": false,
-   "w": 3
+   "w": 2
   },
   {
    "bar": 13,
@@ -900,7 +900,7 @@
     "ee"
    ],
    "melisma": false,
-   "w": 4
+   "w": 3
   },
   {
    "bar": 13,
@@ -914,7 +914,7 @@
     "ee"
    ],
    "melisma": false,
-   "w": 4,
+   "w": 3,
    "ext": true
   },
   {
@@ -959,7 +959,7 @@
     "iy"
    ],
    "melisma": false,
-   "w": -1
+   "w": 4
   },
   {
    "bar": 14,
@@ -973,7 +973,7 @@
     "a"
    ],
    "melisma": false,
-   "w": 0
+   "w": -1
   },
   {
    "bar": 14,
@@ -1017,7 +1017,7 @@
     "iy"
    ],
    "melisma": false,
-   "w": 1
+   "w": 0
   },
   {
    "bar": 14,
@@ -1061,7 +1061,7 @@
     "a"
    ],
    "melisma": false,
-   "w": 2
+   "w": 1
   },
   {
    "bar": 14,
@@ -1134,7 +1134,7 @@
     "iy"
    ],
    "melisma": false,
-   "w": 3
+   "w": 2
   },
   {
    "bar": 15,
@@ -1148,7 +1148,7 @@
     "iy"
    ],
    "melisma": false,
-   "w": 3,
+   "w": 2,
    "ext": true
   },
   {
@@ -1179,7 +1179,7 @@
     "oo"
    ],
    "melisma": false,
-   "w": -1
+   "w": 3
   },
   {
    "bar": 15,
@@ -1193,7 +1193,7 @@
     "oo"
    ],
    "melisma": false,
-   "w": -1,
+   "w": 3,
    "ext": true
   }
  ],
@@ -1242,6 +1242,13 @@
    "lead": true
   }
  ],
+ "vocalise": {
+  "mode": "mixed",
+  "set": "la",
+  "rate": 0.2,
+  "why": "emotion sad pool",
+  "hook": "1 tag line(s), chorus/bridge finals"
+ },
  "lyricStats": {
   "phrases": 6,
   "refrainReused": 0,
@@ -1249,10 +1256,10 @@
   "variants": 0,
   "fallbacks": 0,
   "exts": 5,
+  "vocalise": 1,
   "templates": {
    "A-N+A-N": 3,
    "E-V+V-END": 1,
-   "TO-V": 1,
    "MOD-S-V+T-A": 1
   }
  },
@@ -1262,7 +1269,7 @@
    "notes": 16,
    "text": "a ka na shi i sa to ー sa bi shi i ー na mi da",
    "romaji": "kanashii satoー sabishii namida",
-   "kana": "あかなしいさとーさびしいーなみだ",
+   "kana": "あかなしいさとーさビしいーなみだ",
    "gloss": "sad sugar, lonely tears",
    "section": "A",
    "role": "verse",
@@ -1276,7 +1283,7 @@
    "notes": 16,
    "text": "a sa bi shi i o wa ri a ka ru i ー o ka shi",
    "romaji": "sabishii owari akarui okashi",
-   "kana": "あさびしいおわりあかるいーおかし",
+   "kana": "あさビしいおわりあかるいーおかし",
    "gloss": "lonely end, bright sweets",
    "section": "A",
    "role": "verse",
@@ -1302,16 +1309,17 @@
   {
    "start": 26.42857,
    "notes": 6,
-   "text": "ki mi to i qte ー",
-   "romaji": "kimito itte",
-   "kana": "きみといってー",
-   "gloss": "with you, go, and",
+   "text": "la la la ー la ー",
+   "romaji": "",
+   "kana": "ラララーラー",
+   "gloss": "(la la la)",
    "section": "B*",
    "role": "chorus",
    "key": "B|1",
    "refrain": false,
    "variant": false,
-   "template": "TO-V"
+   "template": "vocalise:la",
+   "vocalise": "la"
   },
   {
    "start": 34.28571,

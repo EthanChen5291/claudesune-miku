@@ -3,26 +3,33 @@
  "seconds": 48.714285714285715,
  "sr": 44100,
  "notes": 168,
- "note_hit_rate_mean": 0.8023611351320189,
- "notes_hit_ge_50pct": 0.9107142857142857,
+ "note_hit_rate_mean": 0.702988090794702,
+ "notes_hit_ge_50pct": 0.8035714285714286,
  "octave_error_rate_mean": 0.0,
  "notes_octave_wrong": 0,
- "voiced_coverage_mean": 0.9816252587991718,
- "notes_unvoiced": 3,
- "sung_rms_db": -22.86581839833319,
- "rest_rms_db": -50.320305247302066,
- "rest_leak_db": -27.454486848968877,
- "onset_lag_median_ms": 5.710000000000104,
- "onset_lag_p90_ms": 34.28999999999984,
- "onset_lag_notes": 134,
+ "voiced_coverage_mean": 0.9652777777777779,
+ "notes_unvoiced": 5,
+ "sung_rms_db": -23.082797248972675,
+ "rest_rms_db": -48.388803605781725,
+ "rest_leak_db": -25.30600635680905,
+ "onset_lag_median_ms": -0.7100000000015427,
+ "onset_lag_p90_ms": 30.99800000000013,
+ "onset_lag_notes": 127,
  "worst_notes": [
+  {
+   "start": 2.67857,
+   "midi": 62,
+   "hit": 0.0,
+   "oct": 0.0,
+   "voiced": 0.0
+  },
   {
    "start": 3.21429,
    "midi": 64,
    "hit": 0.0,
    "oct": 0.0,
    "voiced": 1.0,
-   "median_dev_cents": -140.19285024879446
+   "median_dev_cents": -265.22843860763066
   },
   {
    "start": 5.53571,
@@ -32,50 +39,44 @@
    "voiced": 0.0
   },
   {
+   "start": 6.07143,
+   "midi": 64,
+   "hit": 0.0,
+   "oct": 0.0,
+   "voiced": 1.0,
+   "median_dev_cents": -153.10742129146604
+  },
+  {
    "start": 8.92857,
    "midi": 64,
    "hit": 0.0,
    "oct": 0.0,
    "voiced": 1.0,
-   "median_dev_cents": -158.47293871944217
+   "median_dev_cents": -157.67768987453542
   },
   {
-   "start": 9.73214,
+   "start": 9.64286,
    "midi": 62,
    "hit": 0.0,
    "oct": 0.0,
    "voiced": 1.0,
-   "median_dev_cents": -64.05531832630835
+   "median_dev_cents": 403.4822007046365
   },
   {
-   "start": 11.25,
-   "midi": 64,
-   "hit": 0.0,
-   "oct": 0.0,
-   "voiced": 0.0
-  },
-  {
-   "start": 28.39286,
-   "midi": 62,
-   "hit": 0.0,
-   "oct": 0.0,
-   "voiced": 0.0
-  },
-  {
-   "start": 34.46429,
-   "midi": 74,
+   "start": 14.46429,
+   "midi": 78,
    "hit": 0.0,
    "oct": 0.0,
    "voiced": 1.0,
-   "median_dev_cents": -105.52629686231398
+   "median_dev_cents": -172.4732574123749
   },
   {
-   "start": 11.60714,
-   "midi": 74,
-   "hit": 0.16666666666666666,
+   "start": 20.17857,
+   "midi": 78,
+   "hit": 0.0,
    "oct": 0.0,
    "voiced": 1.0,
-   "median_dev_cents": -37.92285555314123
+   "median_dev_cents": -158.37018815850286
   }
  ]
 }

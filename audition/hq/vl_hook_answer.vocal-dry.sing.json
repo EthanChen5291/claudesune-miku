@@ -5,78 +5,78 @@
    "notes": 11,
    "frames": 273,
    "breath": 10.0,
-   "pitch_dev_median_st": 0.30564117431640625,
-   "pitch_dev_max_st": 64.4337158203125
+   "pitch_dev_median_st": 0.20808792114257812,
+   "pitch_dev_max_st": 65.26160430908203
   },
   {
    "start": 2.85714,
    "notes": 11,
    "frames": 263,
    "breath": 0.0,
-   "pitch_dev_median_st": 0.19564056396484375,
-   "pitch_dev_max_st": 62.19502639770508
+   "pitch_dev_median_st": 0.2745399475097656,
+   "pitch_dev_max_st": 63.91469192504883
   },
   {
    "start": 5.89286,
    "notes": 6,
    "frames": 139,
    "breath": 0.17856999999999967,
-   "pitch_dev_median_st": 0.4342498779296875,
-   "pitch_dev_max_st": 72.35973358154297
+   "pitch_dev_median_st": 0.36141204833984375,
+   "pitch_dev_max_st": 72.07804107666016
   },
   {
    "start": 7.85714,
    "notes": 9,
    "frames": 217,
    "breath": 0.7142800000000005,
-   "pitch_dev_median_st": 0.25772857666015625,
-   "pitch_dev_max_st": 73.63513946533203
+   "pitch_dev_median_st": 0.20276641845703125,
+   "pitch_dev_max_st": 71.70599365234375
   },
   {
    "start": 10.71429,
    "notes": 8,
    "frames": 213,
    "breath": 0.7142900000000001,
-   "pitch_dev_median_st": 0.27086639404296875,
-   "pitch_dev_max_st": 82.72721099853516
+   "pitch_dev_median_st": 0.21195220947265625,
+   "pitch_dev_max_st": 73.5281753540039
   },
   {
    "start": 12.85714,
    "notes": 11,
    "frames": 257,
    "breath": 0.0,
-   "pitch_dev_median_st": 0.23234176635742188,
-   "pitch_dev_max_st": 67.76591491699219
+   "pitch_dev_median_st": 0.2467193603515625,
+   "pitch_dev_max_st": 65.48248291015625
   },
   {
    "start": 15.71429,
    "notes": 12,
    "frames": 261,
    "breath": 0.0,
-   "pitch_dev_median_st": 0.26993560791015625,
-   "pitch_dev_max_st": 73.16299438476562
+   "pitch_dev_median_st": 0.28710174560546875,
+   "pitch_dev_max_st": 76.0194320678711
   },
   {
    "start": 19.28571,
    "notes": 9,
    "frames": 217,
    "breath": 0.7142800000000022,
-   "pitch_dev_median_st": 0.32178497314453125,
-   "pitch_dev_max_st": 72.46778869628906
+   "pitch_dev_median_st": 0.40985107421875,
+   "pitch_dev_max_st": 72.5684814453125
   },
   {
    "start": 22.14286,
    "notes": 3,
    "frames": 96,
    "breath": 0.7142899999999983,
-   "pitch_dev_median_st": 1.0775489807128906,
-   "pitch_dev_max_st": 67.97505950927734
+   "pitch_dev_median_st": 1.475341796875,
+   "pitch_dev_max_st": 67.27598571777344
   }
  ],
  "pitch_model": true,
  "seconds": 25.857142857142858,
- "peak": 0.5123557448387146,
- "render_s": 17.686057806015015,
+ "peak": 0.550093412399292,
+ "render_s": 20.085857152938843,
  "speaker": "tiger_fresh",
  "syllable": "la"
 }

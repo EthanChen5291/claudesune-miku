@@ -782,6 +782,13 @@
    "lead": true
   }
  ],
+ "vocalise": {
+  "mode": "mixed",
+  "set": "hum",
+  "rate": 0.1,
+  "why": "emotion tense pool",
+  "hook": "none (rate)"
+ },
  "lyricStats": {
   "phrases": 4,
   "refrainReused": 2,
@@ -789,6 +796,7 @@
   "variants": 0,
   "fallbacks": 0,
   "exts": 2,
+  "vocalise": 0,
   "templates": {
    "O-V+E-V": 1,
    "TO-V+NI-V": 1

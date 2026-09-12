@@ -40,6 +40,15 @@ p.add_argument('--midi', required=True)
 p.add_argument('--out', required=True)
 p.add_argument('--duration', type=float, required=True)
 p.add_argument('--preset', default=None)
+# r37: a SAMPLER whose kit is not a parameter. SSD5 exposes 2081 parameters of
+# which exactly ONE is not a MIDI CC, so the loaded kit lives in opaque plugin
+# state and a fresh instance renders pure silence — measured, peak 0.0 across
+# all 48 of its output channels even after a 3 s warmup. `--state` loads a blob
+# frozen once by scripts/plugin-handshake.py. Note that load_state returns None,
+# not a success flag: D85 again, so the caller must verify with AUDIO.
+p.add_argument('--state', default=None)
+# a sampler streams its kit in; notes fired before it is ready are silent
+p.add_argument('--warmup', type=float, default=0.0)
 p.add_argument('--sample-rate', type=int, default=44100)
 args = p.parse_args()
 
@@ -58,6 +67,8 @@ def fxp_to_vstpreset(fxp_path, out_path, cid=SURGE_CID):
 
 engine = daw.RenderEngine(args.sample_rate, 512)
 synth = engine.make_plugin_processor('synth', args.plugin)
+if args.state:
+    synth.load_state(args.state)   # returns None — verified by audio below, never by this
 if args.preset:
     preset = args.preset
     if preset.endswith('.fxp'):
@@ -68,9 +79,19 @@ if args.preset:
 engine.load_graph([(synth, [])])
 if args.preset:
     engine.render(0.3)  # consume the enqueued patch load before real MIDI
+if args.warmup:
+    engine.render(args.warmup)  # let a streaming sampler finish loading its kit
 synth.load_midi(args.midi, clear_previous=True, beats=False, all_events=True)
 engine.render(args.duration)
 audio = engine.get_audio()  # float32, shape (2, N)
+# D85, made structural: a plugin that loaded and rendered nothing is the failure
+# mode this whole file exists to stop. A silent render is an ERROR, not a file.
+if float(np.abs(audio).max()) < 1e-6:
+    raise SystemExit(f'SILENT render from {args.plugin}'
+                     + (f' with state {args.state}' if args.state else '')
+                     + ' — the plugin loaded and produced nothing.')
+if audio.shape[0] > 2:
+    audio = audio[:2]  # multi-out samplers (SSD5 has 48) mix down to the main pair
 
 audio = np.clip(audio, -1.0, 1.0)
 pcm = (audio.T * 32767.0).astype(np.int16)
