@@ -125,3 +125,6 @@ vendor/vocal/
 # from it; nothing counts it into src/lib. Third-party transcriptions of
 # copyrighted songs stay local.
 audios/toppack-r34/
+
+# r35 — the Vocaloid MIDI set (analysis-only, copyrighted transcriptions, never committed; D95)
+audios/vocaloid-r35/

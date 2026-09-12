@@ -37,15 +37,17 @@ export const HQ_INSTRUMENTS = {
   gm_electric_guitar_clean: {
     // velScale 1.6: the clean arpeggio is written soft (0.29-0.38) and the
     // library's velocity curve + fil_veltrack close down hard below ~45/127
-    backend: 'sfz', sfz: UI_GUITAR, keyswitch: 26, velScale: 1.6, trimDb: -2,
+    backend: 'sfz', sfz: UI_GUITAR, keyswitch: 26, velScale: 1.6, trimDb: -2, keyRange: [35, 86],
     fx: { nam: 'vendor/nam-models/Phillipe_P_Bug333-Clean-Cab-ESR0.007.nam', inGainDb: 6 },
   },
   gm_electric_guitar_muted: {
-    backend: 'sfz', sfz: UI_GUITAR, keyswitch: 27, velScale: 1, trimDb: -1,
+    // r35: the Mute articulation is sampled B1-E5 (35-76) — measured, a note
+    // outside it is silence; render-hq folds by octaves into this range
+    backend: 'sfz', sfz: UI_GUITAR, keyswitch: 27, velScale: 1, trimDb: -1, keyRange: [35, 76],
     fx: { nam: 'vendor/nam-models/Phillipe_P_Bug6262-Crunch-NoDrive-Cab-ESR0.004.nam', inGainDb: 12 },
   },
   gm_overdriven_guitar: {
-    backend: 'sfz', sfz: UI_GUITAR, keyswitch: 26, velScale: 1, trimDb: -1,
+    backend: 'sfz', sfz: UI_GUITAR, keyswitch: 26, velScale: 1, trimDb: -1, keyRange: [35, 86],
     fx: { nam: 'vendor/nam-models/Phillipe_P_Bug6262-Crunch-NoDrive-Cab-ESR0.004.nam', inGainDb: 12 },
   },
   // --- sampled (tier 1: sfizz + SFZ libraries) ---

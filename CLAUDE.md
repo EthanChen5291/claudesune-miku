@@ -946,9 +946,10 @@ Surge patches must come from the release tag matching the vendored build.
   gated mode with the intro riff and the final-chorus melody double, for
   J-rock / anime-opening / power-pop / Vocaloid-rock / city-pop lanes only.
 - **r35 — HIS FIRST VOCAL-PAGE EXPORT (D138), the laws it wrote:**
-  - **THE SINGER'S CEILING IS G5 AND IT IS DURATION-AWARE.** Both "sounds
-    like screaming" notes were A5 held 0.70-0.74 s; A#5/B5 at 0.2-0.4 s and
-    G5 held 1.8 s passed. export-vocal folds `midi > hi+3 && dur >= 0.5 s`.
+  - **THE SINGER'S CEILING IS G#5 AND IT IS DURATION-AWARE.** Both "sounds
+    like screaming" notes were A5 held 0.70-0.74 s; A#5/B5 at 0.2-0.4 s, G5
+    held 1.8 s and G#5 held 1.2 s passed. export-vocal folds
+    `midi > hi+4 && dur >= 0.5 s` (A5 and up, held).
   - **A CRESCENDO SAMPLE PEAKS AFTER ITS ONSET — PLACE THE PEAK, NOT THE
     START.** vc_cym_cresc's three files peak 1.44 / 3.57 / 7.06 s in; the
     wav backend round-robins them, so a beat-4 "lead-in" peaked bars into

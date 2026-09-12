@@ -164,7 +164,7 @@ muted octave chug (B letters) or a 3+3+2 push (bridge letters), the main-mode
 riff and double are muted too, and `guitar: false` / `guitarGainMul` sit on
 the rows where his card asked. The battle crash is a **stamp placed by its
 measured peak time** (the crescendo file peaks 1.44 s in) before each drop's
-downbeat instead of an 8-bar cell. The singer's ceiling is G5, duration-aware
+downbeat instead of an 8-bar cell. The singer's ceiling is G#5, duration-aware
 (`export-vocal.mjs`). The per-row `vocalDb` follows his law — energetic 0 dB
 over the band, calm +1.5 — with pins where he judged. Two render-tier fixes
 reach every page's next HQ render: `scripts/build-sfz.mjs` now writes a

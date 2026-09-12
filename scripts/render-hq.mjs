@@ -128,12 +128,30 @@ if (!existsSync(IR_PATH)) makeIR();
 // fallback region and no error. festival_drop's trumpet played keys 79-98
 // against a patch that stops at 78: all 172 notes vanished from the mix. Notes
 // outside the range are folded back by octaves instead of disappearing.
+// r35 verify catch: the scan read only the TOP-LEVEL file, and the Unreal
+// guitar's 12,427 regions all live behind `#include` lines — so the range came
+// back [0,127], the fold never fired, and every palm-muted root under B1
+// (138 of vg_triumphant_training's 520 muted hits) rendered as SILENCE
+// (measured: midi 31 -> -90 dBFS, 36 -> -27). Includes are followed now, and
+// an instrument may declare its own `keyRange` when one keyswitch
+// articulation covers less than the whole file (the Mute layer tops at E5).
 const keyRanges = new Map();
+function sfzSource(absPath, seen = new Set()) {
+  if (seen.has(absPath) || !existsSync(absPath)) return '';
+  seen.add(absPath);
+  const src = readFileSync(absPath, 'utf8');
+  return src.replace(/^\s*#include\s+"([^"]+)"/gm, (_, rel) => sfzSource(join(dirname(absPath), rel), seen));
+}
 function sfzKeyRange(sfzRel) {
   if (!keyRanges.has(sfzRel)) {
-    const src = readFileSync(join(ROOT, sfzRel), 'utf8');
-    const los = [...src.matchAll(/\blokey=(\d+)/g)].map((m) => Number(m[1]));
-    const his = [...src.matchAll(/\bhikey=(\d+)/g)].map((m) => Number(m[1]));
+    const src = sfzSource(join(ROOT, sfzRel));
+    // SFZ key values are numbers OR note names (the Unreal library writes
+    // `lokey=g4`); `key=` sets both ends at once
+    const PCN = { c: 0, d: 2, e: 4, f: 5, g: 7, a: 9, b: 11 };
+    const keyNum = (v) => { if (/^\d+$/.test(v)) return Number(v); const m = /^([a-gA-G])([#b]?)(-?\d+)$/.exec(v); return m ? PCN[m[1].toLowerCase()] + (m[2] === '#' ? 1 : m[2] === 'b' ? -1 : 0) + (Number(m[3]) + 1) * 12 : null; };
+    const vals = (re) => [...src.matchAll(re)].map((m) => keyNum(m[1])).filter((x) => x != null);
+    const los = [...vals(/\blokey=([#\w-]+)/g), ...vals(/(?<![_a-z])key=([#\w-]+)/g)];
+    const his = [...vals(/\bhikey=([#\w-]+)/g), ...vals(/(?<![_a-z])key=([#\w-]+)/g)];
     keyRanges.set(sfzRel, los.length && his.length ? [Math.min(...los), Math.max(...his)] : [0, 127]);
   }
   return keyRanges.get(sfzRel);
@@ -234,8 +252,20 @@ for (const [key, stem] of stems) {
   const meanGain = gainsAll.reduce((a, x) => a + x, 0) / gainsAll.length;
   // r35: the stem's identity — every input that shapes the wav
   const fileSig = (rel) => { try { const st = statSync(join(ROOT, rel)); return `${rel}:${st.size}:${Math.floor(st.mtimeMs)}`; } catch { return `${rel}:missing`; } };
+  // r35 verify catch: the key signed only the top-level patch file — a library
+  // whose regions live behind #include, or an amp-script change, reused a stale
+  // stem. Included files and the amp script are signed too, and the fold law
+  // carries a version wherever a note actually folds.
+  const sfzIncludes = (rel) => { if (!rel) return []; const seen = new Set(); sfzSource(join(ROOT, rel), seen); return [...seen].filter((abs) => abs !== join(ROOT, rel)).map((abs) => fileSig(abs.startsWith(ROOT + '/') ? abs.slice(ROOT.length + 1) : abs)); };
+  const keyRangeEarly = stem.inst ? (stem.inst.keyRange ?? (stem.inst.backend === 'sfz' ? sfzKeyRange(stem.inst.sfz) : [0, 127])) : [0, 127];
+  // note values are usually STRINGS ("c5", "eb4") — parse, never typeof-check
+  const midiEarly = (v) => { const n = v?.note ?? v?.n; if (typeof n === 'number') return n; const m = /^([a-gA-G])([#bsf]*)(-?\d+)$/.exec(String(n ?? '')); if (!m) return null; let pc = { c: 0, d: 2, e: 4, f: 5, g: 7, a: 9, b: 11 }[m[1].toLowerCase()]; for (const ch of m[2]) pc += (ch === '#' || ch === 's') ? 1 : -1; return pc + (Number(m[3]) + 1) * 12; };
+  const anyFold = stem.inst?.backend === 'sfz' && allHaps.some((h) => { const n = midiEarly(h.value); return n != null && (n < keyRangeEarly[0] || n > keyRangeEarly[1]); });
   const stemKey = createHash('sha1').update(JSON.stringify({
     from, to, cpm, meter, inst: stem.inst ?? null,
+    ...(anyFold ? { foldLaw: 2 } : {}),
+    ...(stem.inst?.fx?.nam ? { amp: fileSig('scripts/guitar-amp.py') } : {}),
+    ...(stem.inst?.backend === 'sfz' && sfzIncludes(stem.inst.sfz).length ? { includes: sfzIncludes(stem.inst.sfz) } : {}),
     patch: stem.inst ? [stem.inst.sfz, stem.inst.preset, stem.inst.fx?.nam, ...(stem.inst.samples ?? [])].filter(Boolean).map(fileSig) : ['fluid'],
     haps: allHaps.map((h) => [Number(h.whole.begin), Number(h.whole.end), h.value?.note ?? h.value?.n ?? null, h.value?.gain ?? null, h.value?.room ?? null, h.value?.s ?? null]),
   })).digest('hex');
@@ -282,7 +312,7 @@ for (const [key, stem] of stems) {
     };
     // fold out-of-range pitches by octaves (D83); highSoft then reads the
     // pitch the sampler will actually play
-    const [kLo, kHi] = stem.inst.backend === 'sfz' ? sfzKeyRange(stem.inst.sfz) : [0, 127];
+    const [kLo, kHi] = stem.inst.keyRange ?? (stem.inst.backend === 'sfz' ? sfzKeyRange(stem.inst.sfz) : [0, 127]);
     let folded = 0, unfoldable = 0;
     const fold = (m) => {
       if (m == null || m >= kLo && m <= kHi) return m;
@@ -293,10 +323,34 @@ for (const [key, stem] of stems) {
       folded++;
       return out;
     };
+    // r35 verify catch: folding NOTE BY NOTE collapsed voicings — the horn's
+    // harmony_support dyads (an octave doubler written 5+2+12 over a patch that
+    // stops at B4) folded onto themselves: 40/40 events on training-vx became
+    // unisons (+6 dB), 20 of boss's 48, and 22 inverted. Every note struck at
+    // the same instant in a label now shifts by the SAME octave count — the one
+    // that brings the group's highest note under the ceiling while its lowest
+    // stays above the floor; if both cannot hold, the per-note fold remains.
+    const gkey = (label, h) => label + '|' + Number(h.whole.begin).toFixed(6);
+    const groupShift = new Map();
+    for (const [label, hls] of stem.labelMap) {
+      const groups = new Map();
+      for (const h of hls) { const k = gkey(label, h); if (!groups.has(k)) groups.set(k, []); groups.get(k).push(midiOfV(h.value)); }
+      for (const [k, ms] of groups) {
+        const real = ms.filter((m) => m != null);
+        if (!real.length || real.every((m) => m >= kLo && m <= kHi)) continue;
+        let sh = 0;
+        while (Math.max(...real) + sh > kHi) sh -= 12;
+        while (Math.min(...real) + sh < kLo) sh += 12;
+        if (Math.max(...real) + sh <= kHi && Math.min(...real) + sh >= kLo) groupShift.set(k, sh);
+      }
+    }
     stemMap = new Map([...stem.labelMap].map(([label, hls]) => [
       `${label}/${name}`,
       { muted: false, haps: hls.map((h) => {
-        const m = fold(midiOfV(h.value));
+        const m0 = midiOfV(h.value);
+        const gs = groupShift.get(gkey(label, h));
+        let m;
+        if (gs != null && m0 != null) { m = m0 + gs; if (gs) folded++; } else m = fold(m0);
         return { ...h, value: {
           ...h.value,
           ...(m == null ? {} : { note: m }),

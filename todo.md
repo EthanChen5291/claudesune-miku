@@ -3,13 +3,14 @@
 ## NEW — your first vocal-page export is in (16 cards, 1 keep, 15 notes) — D138
 
 Everything your cards named is measured and fixed; **open `audition/vocal.html`
-with HQ ON + Vocal ON** once the renders finish (a queue is re-rendering all
-16 mixes; the page's ✓ badges come from the files on disk).
+with HQ ON + Vocal ON** — all 16 mixes and vocals are re-rendered (the
+"too loud" voices now sit 0.3–3.0 dB over the band where they sat 3.5–5.2;
+the six you praised are untouched at their judged level).
 
 What your ear found, and what it was:
 - **"screaming" notes** (boss #8, space-vg #5) — both were A5 held 0.7 s.
-  The singer now folds any note over G5 that is held ≥ 0.5 s (short A#5/B5
-  passes in romantic_rest were fine and stay).
+  The singer now folds any note from A5 up that is held ≥ 0.5 s (short A#5/B5
+  passes in romantic_rest and shop-vg's held G#5 were fine and stay).
 - **"random cymbal in the middle of the section"** — two bugs: the crash was
   an 8-bar cell that ignored the form, AND the crescendo sample peaks 1.4 /
   3.6 / 7.1 s after it starts (three lengths, picked at random by the render)
@@ -49,12 +50,30 @@ What your ear found, and what it was:
 - **rest "glitch at the very beginning"** — nothing measurable in the first
   1.5 s; a 20 ms head fade is on every vocal mix. If it persists, tell me
   which tier (HQ off / on).
+- **guitar "white noise", second cause** — the amp was lifting the guitar's
+  silent gaps to about −35 dB (hiss between notes); a gate keyed on the dry
+  guitar now shuts them (−59 → −68 dB on training-vg, notes untouched).
+- **horn chords in HQ** — the VSCO horn stops at B4 and the octave fold was
+  collapsing its dyads into unisons; chords now fold as a whole (boss 22 → 10
+  unison events, training-vx 40 → 20). A write-side ceiling is next.
 - **festival-vx "can't hear the accordion in HQ"** — OPEN. Measured: the HQ
   mix levels each stem to its written gain (accordion ≈ 4 dB under the
   piano, as written). The guitar is gone from it; the browser tier's own
   per-patch loudness is what differs and I have no measurement of it yet.
 
 Nothing on `audition/songs.html` moved (0 of 47). Nothing committed.
+
+## NEW — `audition/poplab.html` trimmed to what needs your ear (your "filter the problems after question 9")
+
+18 cards ask for your ear (1–9 as before, plus 13 breakdown grades, 14 intro
+length, 17 layer entry pickup, 24 axis rotation, 25 colour dose, 35 hook
+repeat, 38 anticipation, 41 melody thickness, 44 frozen tresillo). The other
+26 now sit LAST on the page under an "answered by default — skip unless you
+disagree" banner, the expected answer behind a click so it cannot anchor you — they are
+music knowledge the engine already acts on (LH class = genre, terrace =
+build, backbeat = pop, borrowed chords by parent mode, cadence closes, …)
+or near-duplicates of an earlier card. All 44 stay playable and markable, so
+a disagreement is still one click.
 
 
 

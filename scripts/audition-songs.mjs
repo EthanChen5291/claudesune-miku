@@ -44,7 +44,9 @@ import { SONG_LABELS, servesLine } from '../src/lib/song-labels.js';
 import { LAYER_PATTERNS, VIBE_CLASSES, REEL_PROGRESSIONS, layersFor, comboScore } from '../src/lib/layer-patterns.js';
 import { PROGRESSIONS_CITYPOP, citypopFor } from '../src/lib/progressions-citypop.js';
 import { dpStack } from './drum-render.js';
-import { bindFigure, bindMelody, normalizeRhythm } from '../src/binder/bind.js';
+import { bindFigure, bindMelody, bindMelodySpec, normalizeRhythm } from '../src/binder/bind.js';
+import { composeVocalLine } from '../src/lib/vocal-line.js';
+import { describePrompt, explain as explainPrompt } from '../src/lib/describe.js';
 import { FIGURATIONS_FOUNDATION } from '../src/lib/figurations-foundation.js';
 import { FND_TRAVEL } from '../src/lib/figuration-graph.js';
 import { RHYTHMS } from '../src/lib/rhythms.js';
@@ -898,7 +900,10 @@ function buildSong(prompt, name, opts = {}) {
     && (EX.entries.some(([n]) => n === opts.basePin) || PROG_ANY(opts.basePin))
     ? opts.basePin : null;
   const [exName] = basePinned ? [basePinned]
-    : (priorKeep || opts.keepBase) && judged?.base && EX.entries.some(([n]) => n === judged.base)
+    // r35 verify catch: keepFresh suspends priorKeep, so the clicked keep's BASE
+    // pin (D64/65) must be read here too — without it snow's exemplar matched
+    // only because the hash retrieval had not moved
+    : (priorKeep || opts.keepBase || opts.keepFresh === true) && judged?.base && EX.entries.some(([n]) => n === judged.base)
     ? [judged.base]
     : pool[fnv(`${name}|exemplar`) % pool.length];
   // r19/D100 — opts.rawBase generalises D93's desert law ("Serve trope
@@ -2578,10 +2583,44 @@ function buildSong(prompt, name, opts = {}) {
   // pinned on the row; the key is still hashed from the song's name (D120).
   const melodyName = opts.leadSeedSalt != null ? `${name}|salt${opts.leadSeedSalt}` : name;
   const leadSeed = fnv(melodyName);
-  const leadBound = bindMelody(leadCell, ctxBar, v.meter, {
+  let leadBound = bindMelody(leadCell, ctxBar, v.meter, {
     style: 'toby-fox', seed: leadSeed, octave: leadOctave, sound: LEAD_SOUND, fx: leadFx,
     hold: LEAD.hold, mergeRepeats: LEAD.merge, articFloor: artFloor, cadenceNo7, chromCore, tailOff: grammarFresh, leapFold: grammarFresh, chordTop: chordTopOn, minNote: grammarFresh ? (opts.leadMinNote ?? 1) : 0, minNoteLast: noJitter, gridSnap: gridSnapOn, subBarChords: r33(), tissue: r33(), ...(opts.leadRangeSteps ? { rangeSteps: opts.leadRangeSteps } : {}),
   });
+  // ---- r35 · THE VOCAL WRITER (opts.vocalWriter; research/vocaloid-r35.md) ---
+  // His ask: "our voices are good and the melody is good but it's relatively
+  // uniform … learn from vocaloid patterns and agreements with harmony and
+  // ranges and speeds that can be done (and the choruses to support)".
+  // MEASURED against 36 Vocaloid transcriptions, the sung line the engine
+  // exports is a quarter-note instrumental lead (1.4 syllables/s vs 3.9; step
+  // 18% vs 48%; every phrase on the downbeat vs 9%; 0% cell repeats vs 31%).
+  // The writer authors a spec from the corpus's RULES per letter — A = verse,
+  // B = chorus (+4 semitones, the corpus's +3..+5 lift), others = bridge — and
+  // bindMelodySpec (the D38 guard) binds it over the letter's harmony. Every
+  // line that RIDES the lead (companion, double, octave partner, chorus
+  // double) takes the same spec so it stays rhythm-locked. Opt-in, page-only,
+  // r35-gated: no judged song carries it.
+  const vocalWriterOn = !!opts.vocalWriter && ruleFresh(35);
+  const vocalWriterCfg = typeof opts.vocalWriter === 'object' ? opts.vocalWriter : {};
+  const writerRole = (L) => (vocalWriterCfg.roles?.[L]) ?? (L === 'A' ? 'verse' : L === 'B' ? 'chorus' : 'bridge');
+  const writerBind = (L, ctxL, stmt = 0, { octave = leadOctave, sound = LEAD_SOUND, fx = leadFx, shift = 0, role = null, gainRange = null } = {}) => {
+    const kp = parseKey(ctxL.key ?? key);
+    const rootMidi = 12 * (octave + 1) + kp.rootPc;
+    const roleOf = role ?? writerRole(L);
+    const { spec, meta } = composeVocalLine({
+      seed: `${melodyName}|${L}`, keyIntervals: kp.intervals, rootMidi, bpm: v.bpm, harmony: ctxL.harmony,
+      chordTonesOf: (sym) => new Set([...chordCoreTones(sym)].map((pc) => ((pc % 12) + 12) % 12)),
+      role: roleOf, stmt, rate: vocalWriterCfg.rate, lift: vocalWriterCfg.lift?.[roleOf], targetMidi: vocalWriterCfg.targetMidi,
+      span: vocalWriterCfg.span, startBias: vocalWriterCfg.startBias, breathBias: vocalWriterCfg.breathBias,
+    });
+    const shifted = shift ? { ...spec, bars: spec.bars.map((b) => ({ ...b, degrees: b.degrees.map((d) => (d == null ? null : d + shift)) })) } : spec;
+    const bound = bindMelodySpec(shifted, ctxL, v.meter, { octave, sound, fx, ...(gainRange ? { gainRange } : {}) });
+    return { ...bound, writerMeta: meta };
+  };
+  if (vocalWriterOn) {
+    leadBound = writerBind('A', ctxBar, 0);
+    extraInfo.push(`vocal writer (r35): the sung line is rule-composed — ${leadBound.writerMeta.notesPerBar} notes/bar at ${v.bpm} (syllable law), step ${leadBound.writerMeta.steps}% / repeat ${leadBound.writerMeta.repeats}%, phrases start at 8th-slots ${leadBound.writerMeta.phraseStarts.join('/')}, chorus lift +${vocalWriterCfg.lift?.chorus ?? 4}`);
+  }
   // D73: half-time thinning changes only the SOUNDING piano — the planner
   // still sees the pre-thinning lead (the 0.55 fast-song cap), or the cast
   // re-rolls under the new numbers (measured twice on kitchen: first a
@@ -3086,6 +3125,7 @@ function buildSong(prompt, name, opts = {}) {
   { const m0 = midiMedianOfBound(leadBound); if (m0 != null) stmtRegAnchor.set('A', m0); }
   const bindLetter = (L, ctxL, stmt = 0) => {
     const snd = letterSound(L);
+    if (vocalWriterOn) return writerBind(L, ctxL, stmt, { sound: snd });
     const bound = bindMelody(letterCell(L), ctxL, v.meter, {
       style: 'toby-fox', seed: letterSeed(L, stmt), octave: leadOctave, sound: snd, fx: leadFx,
       hold: /flute|cello|violin|oboe|shanai|organ|choir/.test(snd) ? true : LEAD.hold, mergeRepeats: LEAD.merge, articFloor: artFloor, cadenceNo7, chromCore, tailOff: grammarFresh, leapFold: grammarFresh, chordTop: chordTopOn, minNote: grammarFresh ? (opts.leadMinNote ?? 1) : 0, minNoteLast: noJitter, gridSnap: gridSnapOn, subBarChords: r33(), tissue: r33(), ...(opts.leadRangeSteps ? { rangeSteps: opts.leadRangeSteps } : {}),
@@ -5431,7 +5471,7 @@ function buildSong(prompt, name, opts = {}) {
   if (opts.melodyDouble) {
     const md = opts.melodyDouble;
     const mdGain = Math.round(leadGain * (md.gainMul ?? 0.45) * 100) / 100;
-    const bindLetterDbl = (L, ctxL, stmt = 0) => bindMelody(letterCell(L), ctxL, v.meter, {
+    const bindLetterDbl = (L, ctxL, stmt = 0) => vocalWriterOn ? writerBind(L, ctxL, stmt, { octave: md.octave ?? leadOctave, sound: md.sound, fx: `${gainFx(mdGain)}.room(0.4)` }) : bindMelody(letterCell(L), ctxL, v.meter, {
       style: 'toby-fox', seed: letterSeed(L, stmt), octave: md.octave ?? leadOctave, sound: md.sound, fx: `${gainFx(mdGain)}.room(0.4)`,
       hold: LEAD.hold, mergeRepeats: LEAD.merge, articFloor: artFloor, cadenceNo7, chromCore, tailOff: grammarFresh, leapFold: grammarFresh, chordTop: chordTopOn, minNote: grammarFresh ? (opts.leadMinNote ?? 1) : 0, minNoteLast: noJitter, gridSnap: gridSnapOn, subBarChords: r33(), tissue: r33(), ...(opts.leadRangeSteps ? { rangeSteps: opts.leadRangeSteps } : {}),
     });
@@ -5540,7 +5580,11 @@ function buildSong(prompt, name, opts = {}) {
         const cOct = cfg.octave
           ?? (cRange ? Math.max(cRange[0], Math.min(leadOctave, cRange[1] - 1))
             : leadOctave);
-        const bindComp = (L, ctxL, stmt = 0) => bindMelody(letterCell(L), ctxL, v.meter, {
+        // r35: under the vocal writer the companion is the writer's own line a
+        // diatonic THIRD below (the corpus's verse texture: one counter-note a
+        // 3rd/4th under the voice, rhythm-locked; strong beats snap to chord
+        // tones through the guard)
+        const bindComp = (L, ctxL, stmt = 0) => vocalWriterOn ? writerBind(L, ctxL, stmt, { octave: cOct, sound: cSound, fx: `${gainFx(cGain)}.room(0.4)`, shift: -2 }) : bindMelody(letterCell(L), ctxL, v.meter, {
           style: 'toby-fox', seed: letterSeed(L, stmt), octave: cOct, sound: cSound,
           fx: `${gainFx(cGain)}.room(0.4)`,
           // `hold` MUST be the lead's own value for this letter, not the song
@@ -5740,7 +5784,7 @@ function buildSong(prompt, name, opts = {}) {
     const want = leadOctave - 1;
     const oOct = cfg.octave ?? (oRange ? Math.max(oRange[0], Math.min(want, oRange[1] - 1)) : want);
     const oGain = Math.round(leadGain * (cfg.gainMul ?? 0.4) * 100) / 100;
-    const bindOct = (L, ctxL, stmt = 0) => bindMelody(letterCell(L), ctxL, v.meter, {
+    const bindOct = (L, ctxL, stmt = 0) => vocalWriterOn ? writerBind(L, ctxL, stmt, { octave: leadOctave, sound: oSound, fx: gainFx(oGain) }) : bindMelody(letterCell(L), ctxL, v.meter, {
       // the LEAD's octave, deliberately: same seed + same cell + same context =
       // the same pitches. The transposition happens on the pattern below, so
       // the interval is an exact octave by construction rather than by luck.
@@ -6599,6 +6643,37 @@ function buildSong(prompt, name, opts = {}) {
   // marcato, sparkle) are extraParts, and they are where the density that reads
   // as a wall actually sits. Breathing only the cast moved 3 of 16 songs.
   // Phase continues past the cast indices so nothing rests in unison.
+  // ---- r35 · THE CHORUS DOUBLE (opts.chorusDouble; research/vocaloid-r35.md
+  // law 9): in the corpus the accompaniment doubles the sung tune at its
+  // onsets 9% of the time in verses and 92% in choruses — 83% an octave UP,
+  // and 89% as the top note of a chord strike. That octave-up tune IS "the
+  // harmony directly supporting the voice" he heard. Here: the writer's B
+  // (chorus) line an octave above the lead on a voice from another family,
+  // masked to the B letter's bars, at a real level (0.7 x lead by default).
+  let chorusDoubleExpr = null;
+  if (vocalWriterOn && opts.chorusDouble) {
+    const cfg = typeof opts.chorusDouble === 'object' ? opts.chorusDouble : {};
+    const CD_POOL = opts.fullSynth ? ['gm_lead_1_square', 'gm_lead_2_sawtooth', 'gm_epiano1'] : ['gm_epiano1', 'gm_vibraphone', 'gm_flute', 'gm_lead_1_square'];
+    const pool = otherFamily(CD_POOL, [LEAD_SOUND, accVoiceFor(accFig)].filter(Boolean));
+    const cdSound = cfg.sound ?? pool[fnv(`${name}|chorusdouble`) % pool.length];
+    const cdRange = INSTRUMENTS[cdSound]?.range;
+    const want = leadOctave + 1;
+    const cdOct = cfg.octave ?? (cdRange ? Math.max(cdRange[0], Math.min(want, cdRange[1] - 1)) : want);
+    const cdGain = Math.round(leadGain * (cfg.gainMul ?? 0.7) * 100) / 100;
+    const chorusBars = barLetter.map((L) => (/^B/.test(L ?? '') ? 1 : 0));
+    if (chorusBars.some(Boolean)) {
+      const raw = renderLetterLead(form, mfx, (L, stmt) => {
+        const base0 = L.endsWith('*') ? L.slice(0, -1) : L;
+        return writerBind(base0, L.endsWith('*') ? ctxBarV : ctxBar, stmt, { octave: cdOct, sound: cdSound, fx: `${gainFx(cdGain)}.room(0.3)` }).expr;
+      }, { perStatement: leadStmtVary, phraseBars: leadPhraseBars }).lead;
+      if (raw) {
+        chorusDoubleExpr = `(${raw}).mask("<${maskString(chorusBars)}>")`;
+        extraParts.push(chorusDoubleExpr);
+        extraSolos._chorus_double = chorusDoubleExpr;
+        extraInfo.push(`chorus double (r35): ${cdSound} plays the sung tune an octave up in the chorus (B) bars at ${cdGain} — the corpus's 92% chorus doubling, 9% in verses`);
+      }
+    }
+  }
   const extraOut = opts.layerRest
     ? extraParts.map((x, i) => `(${x}).mul(gain("<${breathEnvFor(i + layerMixExprs.length)}>"))`)
     : extraParts;
@@ -8872,6 +8947,123 @@ if (VOCAL_PAGE) {
   }
 }
 
+// ============================================================================
+// r35 — THE VOCALOID SUITE (VOCALOID=1 -> audition/vocaloid.html) and THE
+// VOCAL LAB (VOCALAB=1 -> audition/vocalab.html). research/vocaloid-r35.md.
+//
+// His ask: "generate a suite of songs with these vibes, with a more diverse
+// range of prompts that are actual descriptions (like mock-ups of user
+// descriptions, not just two words), with vocaloids". Each row is a DESCRIPTION;
+// src/lib/describe.js parses it into the engine's (emotion, environment) plus
+// energy / family / genre / explicit hints, and the card shows the parse so a
+// wrong reading is visible. Every song: the r35 vocal writer (the sung line
+// composed from the corpus rules), the chorus double (the tune an octave up in
+// B bars), the companion a third below, `noteBlind` (his first export is its
+// first judgement), and the r35 vocal balance law (energetic 0 dB, calm +1.5).
+// The tempo is stated per row — the corpus's bands (77–210, median 162) are
+// not what the vibe table would compile — and the voice's key family follows
+// the description (67% of the set is minor).
+// ============================================================================
+const VOCALOID_PAGE = process.env.VOCALOID === '1';
+const VOCALAB_PAGE = process.env.VOCALAB === '1';
+const VO_PROMPTS = [
+  { id: 'chase',      bpm: 176, text: 'a frantic late-night city chase, synths everywhere, the singer breathless and furious' },
+  { id: 'goodbye',    bpm: 84,  text: 'a soft bittersweet goodbye at a train station in the rain, piano and strings, sung gently' },
+  { id: 'fireworks',  bpm: 168, text: 'summer festival at dusk, fireworks, a bright idol-pop chorus everyone can clap along to, guitar and a big backbeat' },
+  { id: 'android',    bpm: 150, text: 'a lonely android wandering an empty mall after closing, cold synths, a wistful voice that keeps repeating one line' },
+  { id: 'villain',    bpm: 132, text: 'a villain\'s theme sung with a smirk, sinister minor pop, harpsichord stabs, the voice low and teasing' },
+  { id: 'opening',    bpm: 180, text: 'a sports-anime opening, driving guitars at 180 bpm, huge triumphant chorus, the voice high and clear' },
+  { id: 'cafe',       bpm: 108, text: 'rainy-day cafe pop, relaxed and warm, brushed drums, the singer half-whispering over an electric piano' },
+  { id: 'reflection', bpm: 195, text: 'a boss fight against your own reflection, breakneck rock, the melody shouting short phrases, no room to breathe' },
+  { id: 'lullaby',    bpm: 76,  text: 'a tender lullaby for a robot, music box and pads, slow, the voice barely above a hum, no drums' },
+  { id: 'rooftop',    bpm: 140, text: 'a rooftop confession at sunrise, hopeful pop-rock, builds from a quiet verse to a soaring chorus with strings' },
+  { id: 'sugar',      bpm: 128, text: 'a glitchy hyper-pop sugar rush, ridiculous and playful, 16th-note syllables over a bouncing bass at 128 bpm' },
+  { id: 'corridor',   bpm: 150, text: 'a haunted school corridor at midnight, eerie minor pop, whispered verses and a desperate belted chorus' },
+  { id: 'march',      bpm: 120, text: 'a marching anthem for a losing army, somber but defiant, drums like footsteps, a choir under the last chorus' },
+  { id: 'kitchen',    bpm: 165, text: 'a ridiculous kitchen cooking-show jingle, goofy and fast, the singer tripping over tongue-twisters' },
+];
+/** the shared r35 vocal-song options from a description parse */
+function vocaloidOpts(d, row) {
+  const energetic = d.energy === 'high' || (d.energy === 'mid' && !/sad|calm|romantic|somber|nostalgic/.test(d.emotion));
+  const bpm = row.bpm ?? d.bpm ?? (d.energy === 'high' ? 172 : d.energy === 'low' ? 84 : 132);
+  return {
+    opts: {
+      vocalLead: true, vocalWriter: true, chorusDouble: true, companion: true, noteBlind: true,
+      scheme: 'ABABCB', bpm,
+      ...(d.family ? { family: d.family } : {}),
+      ...(d.genre === 'electro' || d.hints.fullSynth ? { fullSynth: true } : {}),
+      ...(d.hints.guitar === false ? { guitar: false } : d.genre === 'rock' || d.hints.guitar ? { guitar: 'rock' } : d.genre === 'ballad' ? { guitar: 'arp' } : {}),
+      ...(d.hints.marcato ? { marcato: true } : {}),
+      ...(d.hints.swing ? { swing: d.hints.swing } : {}),
+      ...(d.hints.noDrums ? { percPresence: 'none' } : energetic ? { percBackbeat: true, deepDrums: true } : {}),
+      ...(row.extra ?? {}),
+    },
+    energetic, bpm,
+    vocalDb: row.vocalDb ?? d.hints.vocalDb ?? (energetic ? 0 : 1.5),
+  };
+}
+let VO_FIRST = 0;
+if (VOCALOID_PAGE) {
+  VO_FIRST = songs.length;
+  for (const row of VO_PROMPTS) {
+    const d = describePrompt(row.text);
+    const { opts: o, bpm, vocalDb } = vocaloidOpts(d, row);
+    const name = `vo_${row.id}`;
+    buildSong({ emotion: d.emotion, environment: d.environment, meter: '4/4' }, name, o);
+    const S = songs[songs.length - 1];
+    S.description = row.text;
+    S.parsed = explainPrompt(d);
+    S.why = `"${row.text}" → ${explainPrompt(d)} · ${bpm} bpm${d.hints && Object.values(d.hints).some((x) => x !== undefined) ? ' · hints ' + JSON.stringify(Object.fromEntries(Object.entries(d.hints).filter(([, x]) => x !== undefined))) : ''}`;
+    S.vocalSuite = true;
+    S.vocalDb = vocalDb;
+  }
+}
+// THE LAB: A/B cards built under ONE name (D120 — the key and every retrieval
+// hash on the name) and renamed for display; one variable per card. The base
+// is one prompt at one tempo; each card lists its hypothesis + question.
+const VL_BASE = { emotion: 'excited', environment: 'festival', bpm: 168, family: 'minor',
+  opts: { vocalLead: true, vocalWriter: true, chorusDouble: true, companion: true, noteBlind: true, scheme: 'ABABCB', percBackbeat: true, deepDrums: true, guitar: 'rock' } };
+const VL_CARDS = [
+  { id: 'writer', hypothesis: 'A line written at the corpus\'s syllable rate with steps, pickups and a returning hook reads as a SUNG tune; the instrumental lead sung as-is reads as an instrument.', question: 'Which one sounds like a singer wrote it — and is the written one still "good", not just different?',
+    variants: [['lead', { vocalWriter: false, chorusDouble: false }, 'the r34 path: the instrumental lead sung as exported'], ['writer', {}, 'the r35 writer: 8th-note syllables, step/repeat walk, 8th breaths, hook + answer, chorus +4 with the octave double']] },
+  { id: 'rate', hypothesis: 'The corpus sings ~3.9 syllables/s at any tempo. Slower reads as a ballad singer on a fast band; faster reads as rap.', question: 'Which syllable rate fits an energetic song at 168 — is 3.9 the sweet spot, or does his ear want fewer?',
+    variants: [['slow', { vocalWriter: { rate: 2.4 } }, '2.4 syllables/s (3.4 notes/bar)'], ['corpus', { vocalWriter: { rate: 3.9 } }, '3.9 syllables/s (5.6 notes/bar) — the corpus median'], ['fast', { vocalWriter: { rate: 5.2 } }, '5.2 syllables/s (7.4 notes/bar)']] },
+  { id: 'starts', hypothesis: 'Phrases that start on a pickup or an off-8th (91% of the corpus) sound sung; phrases that all start on the downbeat sound like a lead instrument.', question: 'Does the downbeat-start version sound stiffer, or does his ear not hear the difference?',
+    variants: [['downbeat', { vocalWriter: { startBias: 0 } }, 'every phrase starts on beat 1'], ['pickup', { vocalWriter: { startBias: 6 } }, 'every phrase starts on the beat-4 pickup'], ['mixed', {}, 'the corpus table: pickup 26% / off-8th 23% / beat 2 / beat 3 / downbeat 9%']] },
+  { id: 'breath', hypothesis: 'An 8th-note rest between phrases (the corpus median) is what makes the line phrase; no rest reads as one endless line, a quarter rest reads as hesitant.', question: 'Which breath length sounds like a singer breathing?',
+    variants: [['none', { vocalWriter: { breathBias: 0 } }, 'no rest between phrases (legato)'], ['eighth', { vocalWriter: { breathBias: 1 } }, 'an 8th rest — the corpus median'], ['quarter', { vocalWriter: { breathBias: 2 } }, 'a quarter rest']] },
+  { id: 'lift', hypothesis: 'The chorus sits 3–5 semitones above the verse in the corpus. No lift makes the chorus a second verse; a big lift (8) pushes the voice toward its ceiling.', question: 'How much chorus lift does his ear want — none, the corpus +4, or the dramatic +8?',
+    variants: [['flat', { vocalWriter: { lift: { chorus: 0, bridge: 0 } } }, 'chorus at the verse register'], ['plus4', { vocalWriter: { lift: { chorus: 4, bridge: 2 } } }, 'chorus +4 semitones (the corpus)'], ['plus8', { vocalWriter: { lift: { chorus: 8, bridge: 3 } } }, 'chorus +8 semitones']] },
+  { id: 'double', hypothesis: 'The chorus\'s octave-up instrumental double (92% of corpus choruses, 9% of verses) is what makes the chorus a chorus; without it the voice alone carries the lift.', question: 'Does the octave double in the chorus support the voice, and at what level — 0.7 x lead or full?',
+    variants: [['off', { chorusDouble: false }, 'no chorus double'], ['on', { chorusDouble: true }, 'the tune an octave up in B bars at 0.7 x lead'], ['loud', { chorusDouble: { gainMul: 1.0 } }, 'the tune an octave up at 1.0 x lead']] },
+  { id: 'span', hypothesis: 'The corpus keeps 80% of a song\'s notes inside 11 semitones (span 3 degrees each side of the home); a narrow line reads as a chant, a wide one as an instrumental.', question: 'Which home width sounds like a singer\'s range?',
+    variants: [['narrow', { vocalWriter: { span: 2 } }, 'span 2 degrees (a 7-semitone home)'], ['corpus', { vocalWriter: { span: 3 } }, 'span 3 (an 11-semitone home) — the corpus'], ['wide', { vocalWriter: { span: 5 } }, 'span 5 (a 17-semitone home)']] },
+  { id: 'companion', hypothesis: 'The corpus verse is a bass plus ONE counter-note a 3rd/4th under the voice; the companion a diatonic third below, rhythm-locked to the writer, is that texture.', question: 'Does the third-below companion support the voice or muddy it?',
+    variants: [['none', { companion: false }, 'no companion'], ['third', { companion: true }, 'the companion a diatonic third below, same rhythm']] },
+  { id: 'tempo', hypothesis: 'The syllable law: at 120 the same singer sings 16ths and 8 notes a bar; at 180, 8ths and 5 a bar — the same rate in seconds.', question: 'Do both tempos sound like the same singer, or does the 120 version sound rushed?',
+    variants: [['bpm120', { bpm: 120 }, 'the base prompt at 120 bpm (16th pairs, ~8 notes/bar)'], ['bpm180', { bpm: 180 }, 'the base prompt at 180 bpm (8ths, ~5 notes/bar)']] },
+];
+let VL_FIRST = 0;
+if (VOCALAB_PAGE) {
+  VL_FIRST = songs.length;
+  for (const card of VL_CARDS) {
+    for (const [vid, delta, what] of card.variants) {
+      const name = `vl_${card.id}`;
+      const base = { ...VL_BASE.opts, bpm: VL_BASE.bpm, family: VL_BASE.family };
+      const merged = { ...base, ...delta };
+      // an object-valued vocalWriter delta merges with the base object form
+      if (delta.vocalWriter && typeof delta.vocalWriter === 'object') merged.vocalWriter = { ...(typeof base.vocalWriter === 'object' ? base.vocalWriter : {}), ...delta.vocalWriter };
+      buildSong({ emotion: VL_BASE.emotion, environment: VL_BASE.environment, meter: '4/4' }, name, merged);
+      const S = songs[songs.length - 1];
+      S.name = `${name}_${vid}`;
+      S.labCard = card.id; S.labVariant = vid;
+      S.why = `CARD ${card.id} · ${card.hypothesis} · Q: ${card.question} · THIS VARIANT: ${what}`;
+      S.vocalSuite = true;
+      S.vocalDb = 0;
+    }
+  }
+}
+
 let LS_FIRST = 0;
 if (LAYERSTACK) {
   LS_FIRST = songs.length;
@@ -9383,6 +9575,34 @@ if (SUITE) {
   const built = songs.slice(VX_FIRST);
   console.log(`wrote audition/vocal.html — ${built.length} songs (${built.filter((s) => s.vocal).length} with a vocal render), page script parses clean, ${(inlv.length / 1024).toFixed(0)} KB`);
   for (const b of built) console.log(`   ${b.name.padEnd(24)} ${b.bpm}bpm ${b.key}  ${b.hq ? 'HQ' : '--'} ${b.vocal ? 'VOCAL' : '--'}`);
+} else if (VOCALOID_PAGE) {
+  const voHtml = page({ songs: songs.slice(VO_FIRST).map(({ solos, ...rest }) => ({ ...rest, solos })) })
+    .replace(/motif-engine:song-verdicts/g, 'motif-engine:vocaloid-verdicts')
+    .replace(/motif-engine:song-notes/g, 'motif-engine:vocaloid-notes')
+    .replace(/motif-engine:song-cards/g, 'motif-engine:vocaloid-cards')
+    .replace(/motif-engine:songs-vocal/g, 'motif-engine:vocaloid-vocal')
+    .replace("page: 'songs'", "page: 'r35-vocaloid'")
+    .replace('<title>vibe songs — audition</title>', '<title>r35 — the Vocaloid suite (description prompts)</title>');
+  writeFileSync(join(OUT, 'vocaloid.html'), voHtml);
+  const inlvo = voHtml.slice(voHtml.lastIndexOf('<script>') + 8, voHtml.lastIndexOf('</script>'));
+  acorn.parse(inlvo, { ecmaVersion: 'latest' });
+  const built = songs.slice(VO_FIRST);
+  console.log(`wrote audition/vocaloid.html — ${built.length} songs (${built.filter((s) => s.vocal).length} with a vocal render), page script parses clean, ${(inlvo.length / 1024).toFixed(0)} KB`);
+  for (const b of built) console.log(`   ${b.name.padEnd(18)} ${String(b.bpm).padStart(3)}bpm ${b.key.padEnd(9)} ${b.hq ? 'HQ' : '--'} ${b.vocal ? 'VOCAL' : '--'}  ${b.parsed}`);
+} else if (VOCALAB_PAGE) {
+  const vlHtml = page({ songs: songs.slice(VL_FIRST).map(({ solos, ...rest }) => ({ ...rest, solos })) })
+    .replace(/motif-engine:song-verdicts/g, 'motif-engine:vocalab-verdicts')
+    .replace(/motif-engine:song-notes/g, 'motif-engine:vocalab-notes')
+    .replace(/motif-engine:song-cards/g, 'motif-engine:vocalab-cards')
+    .replace(/motif-engine:songs-vocal/g, 'motif-engine:vocalab-vocal')
+    .replace("page: 'songs'", "page: 'r35-vocalab'")
+    .replace('<title>vibe songs — audition</title>', '<title>r35 — the vocal lab (one variable per card, sung)</title>');
+  writeFileSync(join(OUT, 'vocalab.html'), vlHtml);
+  const inlvl = vlHtml.slice(vlHtml.lastIndexOf('<script>') + 8, vlHtml.lastIndexOf('</script>'));
+  acorn.parse(inlvl, { ecmaVersion: 'latest' });
+  const built = songs.slice(VL_FIRST);
+  console.log(`wrote audition/vocalab.html — ${built.length} variants on ${VL_CARDS.length} cards (${built.filter((s) => s.vocal).length} with a vocal render), page script parses clean, ${(inlvl.length / 1024).toFixed(0)} KB`);
+  for (const b of built) console.log(`   ${b.name.padEnd(22)} ${String(b.bpm).padStart(3)}bpm ${b.key.padEnd(9)} ${b.hq ? 'HQ' : '--'} ${b.vocal ? 'VOCAL' : '--'}`);
 } else if (ENERGY_PAGE) {
   const enHtml = page({ songs: songs.slice(EN_FIRST).map(({ solos, ...rest }) => ({ ...rest, solos })) })
     .replace(/motif-engine:song-verdicts/g, 'motif-engine:energy-verdicts')

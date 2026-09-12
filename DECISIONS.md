@@ -12100,11 +12100,13 @@ the guide wrap in `mix`. The full per-song list is in the r35 scratch log.
    fifth vocal note sounds like screaming" (space-vg).** Both notes are
    **A5 (midi 81) held 0.70–0.74 s**. The notes he did not flag above the
    band: A#5/B5 at 0.22–0.44 s (romantic_rest #1/#12/#35, "very good"),
-   B5 0.37 s (boss #157), G5 held 1.3–1.8 s (rest #2/#13). So the singer's
-   ceiling is a minor third over the E5 target top, and it is
-   DURATION-AWARE: export-vocal.mjs now folds a note an octave when
-   `midi > hi+3 && dur >= 0.5 s` (the old "a fifth over" fold stays for
-   anything). Pinned songs keep their sung files (stages 1–2 are kept, and
+   B5 0.37 s (boss #157), G5 held 1.3–1.8 s (rest #2/#13), and G#5 held
+   1.18 s twice (shop-vg #53/#64, "the melody is good" — the render queue
+   caught the first draft of this rule, a minor third, folding those two
+   on a pinned song). So the singer's ceiling is a MAJOR third over the E5
+   target top, and it is DURATION-AWARE: export-vocal.mjs folds a note an
+   octave when `midi > hi+4 && dur >= 0.5 s` — A5 and up, held (the old
+   "a fifth over" fold stays for anything). Pinned songs keep their sung files (stages 1–2 are kept, and
    the score-change guard below only re-sings when notes moved).
 
 2. **"random cymbal is in the middle of the section, not before a drop"
@@ -12240,3 +12242,154 @@ and the remix is byte-identical to the first). `render-vocal.mjs --rehq`
 re-renders an existing HQ mix through that cache, and a score whose sung
 notes changed forces stages 1–2 by itself (the kept dry/raw would otherwise
 be the old line under the new mix).
+
+### D138 ADDENDUM — the adversarial verify pass (page level), what it refuted, and the render-tier defect it found
+
+Confirmed by measurement: songs.html 47/47 byte-identical; rest identical
+in every field; snow's `_acc` the same 455 (time, midi, sound) haps with
+every gain x0.800 (0.7995–0.8004) and its degrees/exemplar unchanged; every
+seam crash is `n: 0` and peaks within 0.0000 bars of its downbeat; jungle's
+kalimba 0.891 → 0.401; festival-vg has no epiano and a clarinet at 48–72;
+no r35 rule can reach the vanriver/layerstack/reels/energy pages (none of
+their songs carries battle_crash, a guitar cast or vocalLead).
+
+Refuted or qualified, and what was done:
+
+- **THE KEEP'S BASE PIN DID NOT APPLY UNDER keepFresh.** The degrees pin
+  reads `judged.degrees` directly, but the exemplar pin read
+  `(priorKeep || opts.keepBase) && judged.base` — snow's
+  `vid_eballad_planing` matched only because the hash retrieval had not
+  moved. Fixed: `keepFresh` is read there too (page rebuilt, 0 of 16 moved).
+- **THE HQ KEY-RANGE SCAN NEVER SAW THE GUITAR'S REGIONS.** `sfzKeyRange`
+  regex-scanned the top-level file; the Unreal library's 12,427 regions live
+  behind `#include`, so the range came back [0,127] and D83's fold was dead
+  for it. Measured through sfizz with the Mute keyswitch: midi 31 → −90 dBFS
+  (silence), 36 → −27, 90 → −86. vg_triumphant_training writes 138 of its
+  520 palm-muted hits under B1 (F1/G1/A1 roots at octave 2) — three of its
+  four chords lost the low R.5 hit and only the R+.5+ answered, i.e. the
+  "octave alternation" he praised was half-missing in HQ (since r34, not
+  caused by r35). Fixed: the scan follows includes (35..86 measured), and
+  an instrument may declare `keyRange` (the Mute articulation is sampled
+  35–76; declared on gm_electric_guitar_muted). The guitar stems of every
+  guitar song are re-rendered through the stem cache.
+- **The guide fix has an audible side-effect beyond the takeover:** the part
+  the old index had WRONGLY halved is now at its arranged gain — jungle's
+  vibraphone harmony_support 0.229 → 0.510, space-vg's warm pad 0.181 →
+  0.402. And the pinned songs keep the wrong wrap as judged: casino's
+  square takeover at 0.60, tense_fight's trumpet backup 0.249 with the
+  tremolo strings halved instead, snow's flute backup 0.600, water's
+  calliope backup 0.434 — four full-gain doublers under the voice, which
+  is what he heard and praised; recorded here, not touched.
+- **Two seam qualifications.** Boss's second crash (bar 47.02 → 48) rises
+  ALONE: bars 32–47 are kit-silent, so the stamp is a riser out of a
+  drumless section into the drop — the gate checks the DESTINATION bar's
+  drums, by design; whether a lone riser reads right is his call.
+  tense_fight's bar-8 stamp is an energy-lift seam (A→A, marcato and
+  sparkle enter), not a letter change; bar 16 is the letter change.
+- training-vx's companion moved to the vibraphone at 0.60 when the acc took
+  the epiano (the hard exclusion) — above the 0.32 piano guide, under the
+  voice.
+
+### D138 ADDENDUM 2 — the poplab page trimmed to what needs his ear (his "filter the problems after question 9 to be problems worth answering because a lot of these questions aren't too different or uncertain and are very safe and knowledgeable to you already")
+
+The other session's `audition/poplab.html` (44 cards) is a queue of
+questions; his ruling is that a question whose answer is settled music
+knowledge, or a near-duplicate of an earlier card, costs him time for no
+information. Applied as DATA, additively: 26 cards carry
+`worth: "skip"` + `expected: "<the answer, one line>"` in
+`src/lib/pop-labs.js`; the page sorts them LAST under an "answered by
+default — skip unless you disagree" banner; the expected answer sits
+BEHIND a click (a peer session's caution, taken: a prediction read before
+the verdict anchors it, and his ear is the only quality signal), so a
+disagreement is still one click and the answer is unseen until he wants it. Kept for his ear after #9:
+13 (breakdown grades — six of his cards were that device), 14 (how long
+he will wait for the tune), 17 (a pickup entry off the grid — his r17
+ask), 24 (which rotation is "home" to him), 25 (colour dose — his canon
+says colour is the norm, the pack says pop is plain: a genuine conflict),
+35 (which repeat grade is a hook — the engine's melody never repeats),
+38 (8th push vs 16th push — his live "shifted by a sixteenth" complaint),
+41 (which thickening — D98's open decision), 44 (a held 6th/4th over
+moving chords: hook or clash — his dissonance tolerance). Cut: 10, 11,
+12, 15, 16, 18, 19, 20, 21, 22, 23, 26–34, 36, 37, 39, 40, 42, 43. The
+page rebuilt (44 experiments, 208 variants, all build-verified; header
+"18 for your ear · 26 answered by default"); test/poplab.test.js green;
+the peer sessions were messaged (the files are tracked — commit 09e21cd — and modified in the working tree by the poplab session).
+
+### D138 ADDENDUM 3 — measured after the renders (all 16 songs, two passes through the stem cache)
+
+| song | vocalDb pin | realized K-weighted vocal over band | sung range | on-pitch (notes ≥50% frames) | octave errors |
+|---|---|---|---|---|---|
+| vx_triumphant_boss | 0 | 2.3 dB (was 5.2) | 51–82 (the held A5 folded; the 82 is a 0.37 s pass) | 0.96 | 0 |
+| vg_excited_fight | −1.5 | 0.9 (was 5.2) | 60–79 | 0.97 | 0 |
+| vg_excited_space | 0 | 2.5 (was 5.2) | 55–74 (the A5 folded) | 0.93 | 0 |
+| vg_nostalgic_shop | −1 | 0.3 (was 4.1) | 57–80 (judged line restored) | 0.97 | 0 |
+| vg_romantic_water | 0 | 0.6 (was 3.5) | 54–76 | 0.99 | 0 |
+| vg_triumphant_training | 0 | 2.7 | 60–79 (salt 1) | 0.99 | 0 |
+| vx_happy_jungle / vx_excited_space / vx_excited_training | 0 | 2.4 / 1.8 / 3.0 | — | 0.86 / 0.98 / 0.96 | 0 |
+| the six pinned at +3 / +1.5 | 3 / 1.5 | 3.6–5.7 / 2.6 (as judged) | unchanged | 0.94–1.00 | 0 |
+
+The seam crashes in the RENDERED cymbal stems: boss bar 16 peaks +2 ms
+from the downbeat, fight-vg bars 8 and 16 at +6 / +1 ms, tense_fight bar
+8 at +2 ms; the other two (boss 48, tense 16) read −285 ms because the
+short file's swell is a ~0.3 s plateau (90% of peak 0.19 bars before the
+downbeat, maximum anywhere on it) — every crash reaches 90% of its peak
+within the last beat before the seam and none peaks inside the next
+section, which was the complaint. Head fade: every vocal mix now opens on
+exact zeros (first 5 ms −31 to −71 dB RMS across the 16; was −18 dB at
+sample 0; on the two songs that open at full band level the 20 ms fade is
+13–14 dB, not 15). The realized balance band for the pin-0 songs is
+0.6–3.0 dB (water 0.6, the ballad's sparse band), not a tidy 1.5–3.2. The
+guitar fold fired where the verifier said it would: vg_triumphant_training
+138 palm-muted notes and vg_excited_space 1 folded into 35–76 instead of
+rendering silent. The string patch's own fold now reports 18–80 (violins
+present) on snow / festival-vg / training-vx / water, and the horn on VSCO
+folds its harmony_support above B4 (15–71) on boss / training-vg /
+training-vx. Full suite after everything: **403 tests, 403 pass** (the
+r28 historyLess shape test updated for keepFresh; a new r35 ceiling test);
+one earlier 401/402 was two suite runs overlapping on audition/songs.html,
+reproduced green alone. audition/songs.html 0 of 47 moved; audition/vocal.html
+byte-identical to its final snapshot after the base-pin fix. Nothing committed.
+
+### D138 ADDENDUM 4 — the render-tier verify pass, and the two defects it found fixed
+
+Confirmed: the string swell in-song (shop-vg strings: 84 held events, time
+to half-peak median 0 ms / p90 50 ms; water 112 events, 0 / 79 ms; a
+like-for-like re-render of shop's own string MIDI through the old patch
+vs the new: rise median 350 → 50 ms, level at 100 ms −17.0 → −5.3 dB re
+peak); the guitar silence (training-vg 520/520 and fight-vg 523/523 muted
+onsets now sound above −50 dBFS); the vocal balance (recomputed to 0.1 dB
+on all 16; `withvocal = a·mix + b·vocal` fits at R² 1.000 with b/a equal to
+the derived gain); the ceiling (0 notes over G#5 held ≥ 0.5 s; rest's and
+shop-vg's short/held passes intact); the stem cache (casino: 12/12 reused,
+byte-identical). Caveat kept on the record: soft short B4/D5 violin notes
+still rise ~310 ms (30 of 84 events) because the `offset` for that region
+stops 0.9 s before its peak; the long notes are all 40–50 ms.
+
+Two defects, fixed and re-rendered:
+
+- **PER-NOTE FOLDING COLLAPSED VOICINGS.** The horn harmony_support is
+  written to 84 over a patch that stops at B4; folding each note by itself
+  turned 40 of 40 dyad events on training-vx and 22 of 48 on boss into
+  UNISONS (+6 dB) and inverted 22. render-hq now folds every note struck
+  at the same instant in a label by ONE octave count (the highest note
+  under the ceiling, the lowest above the floor; per-note only when both
+  cannot hold). Measured on the stem MIDI: boss 22 → 10 unison events,
+  training-vx 40 → 20, training-vg 0. (The remaining unisons are dyads the
+  writer already doubled at the octave where only the whole pair fits
+  below B4 — a write-side ceiling for gm_french_horn is the next fix.)
+- **THE AMP LIFTED THE DI'S SILENCE.** The crunch capture with +12 dB in
+  put the guitar's between-note floor at about −35 dBFS (the DI is under
+  −70 there) — a hiss bed, and a plausible part of "sounds a bit like
+  white noise". scripts/guitar-amp.py now gates on the DI's own 10 ms
+  envelope (open −55, closed −65 dBFS, 10 ms attack / 120 ms release,
+  `--no-gate` to disable). Measured on training-vg's muted stem: DI-dead
+  windows −59.0 → −67.6 dB median, DI-live windows unchanged to 0.00 dB.
+- The stem-cache key now also signs the `#include`d sfz files and the amp
+  script, and carries a fold-law version wherever a note folds — the
+  first pass of this fix reused a stale horn stem because the fold
+  detector typeof-checked a note that is a STRING ("c5"); parse, never
+  typeof (CLAUDE.md's own probe warning, relearned in the render tier).
+
+Third pass + a two-song fourth pass: every guitar stem re-amped through
+the gate, every folded stem re-rendered, all other stems reused; every
+vocal re-mixed. No engine file changed after the 403/403 run.

@@ -327,6 +327,12 @@ for (const lab of Object.values(POP_LABS)) {
     his: lab.his_words ?? '',
     hypothesis: lab.hypothesis ?? '',
     question: lab.question ?? '',
+    // r35, his ask: "filter the problems after question 9 to be problems worth
+    // answering ... a lot of these questions aren't too different or uncertain
+    // and are very safe and knowledgeable to you already" — a card marked
+    // worth:'skip' carries its EXPECTED answer and sits in the page's tail
+    worth: lab.worth === 'skip' ? 'skip' : 'ask',
+    expected: lab.expected ?? '',
     variants,
   });
 }
@@ -339,7 +345,9 @@ if (rejected.length) {
 // never shifts), then lane, then authored order within the lane
 const laneIdx = (l) => { const i = LANE_ORDER.indexOf(l); return i < 0 ? LANE_ORDER.length : i; };
 const authored = Object.keys(POP_LABS);
-cards.sort((a, b) => (a.batch - b.batch) || (laneIdx(a.lane) - laneIdx(b.lane)) || (authored.indexOf(a.id) - authored.indexOf(b.id)));
+// r35: the answered-by-default cards go LAST, after every card his ear is asked for
+const worthIdx = (c) => (c.worth === 'skip' ? 1 : 0);
+cards.sort((a, b) => (worthIdx(a) - worthIdx(b)) || (a.batch - b.batch) || (laneIdx(a.lane) - laneIdx(b.lane)) || (authored.indexOf(a.id) - authored.indexOf(b.id)));
 
 const DATA = {
   built: new Date().toISOString().slice(0, 16).replace('T', ' '),
@@ -412,6 +420,7 @@ const html = `<!doctype html>
 <header>
   <div class="row">
     <h1>r34 pop-pack labs — experiments, one hypothesis each</h1>
+    <span class="dim" title="r35: cards whose answer is safe music knowledge are marked answered-by-default and sit last, each with the answer stated — skip them unless you disagree">${cards.filter((c) => c.worth !== 'skip').length} for your ear · ${cards.filter((c) => c.worth === 'skip').length} answered by default (last)</span>
     <span class="dim" id="now">— press play —</span>
     <button id="stop">■ stop</button>
     <button id="hqmode" title="play the pre-rendered HQ wav where one exists (VSCO strings, Salamander piano — the same tier as songs.html HQ)">HQ: off</button>
@@ -532,6 +541,7 @@ function cardHTML(c, i) {
     + '<span class="typ">' + esc(c.lane) + '</span>'
     + ' <span class="dim">' + (i + 1) + ' / ' + DATA.cards.length + '</span>'
     + '<div class="t">' + esc(c.id) + '</div>'
+    + (c.worth === 'skip' ? '<details class="his" style="background:#2a2a1d;color:#e8dc9a"><summary><b>answered by default \u2014 skip unless you disagree</b> <span class="dim">(click to see the expected answer after you have decided)</span></summary>' + esc(c.expected) + '</details>' : '')
     + '<div class="src">' + esc(c.source) + '</div>'
     + (c.finding ? '<div class="his"><b>measured in the pack:</b> ' + esc(c.finding) + '</div>' : '')
     + (c.his ? '<div class="his"><b>you said:</b> ' + esc(c.his) + '</div>' : '')

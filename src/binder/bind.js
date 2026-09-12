@@ -1956,7 +1956,10 @@ export function bindMelodySpec(spec, harmonyContext, meter = '4/4', opts = {}) {
     const steps = onsets.map(([n, d]) => (n * G) / d);
     for (let i = 1; i < steps.length; i++) if (steps[i] <= steps[i - 1]) throw new Error(`spec bar ${bi}: onsets must be strictly increasing`);
     if (b.artic && b.artic.length !== b.onsets.length) throw new Error(`spec bar ${bi}: artic[] must match onsets[]`);
-    return { G, steps, accents: b.accents.slice(), degrees: b.degrees.map(parseDegree), breath: !!b.breath, artic: b.artic ?? null };
+    // r35: a null degree is an explicit REST at that onset (the vocal writer's
+    // breath — export-vocal must see a gap, and legato emission fills every
+    // onset to the next, so a rest has to be a value of its own)
+    return { G, steps, accents: b.accents.slice(), degrees: b.degrees.map((d) => (d == null ? null : parseDegree(d))), breath: !!b.breath, artic: b.artic ?? null };
   });
   const specBars = bars.length;
   const harmonyBars = Math.max(1, Math.round(harmony.length * barsPerChord));
@@ -1972,6 +1975,7 @@ export function bindMelodySpec(spec, harmonyContext, meter = '4/4', opts = {}) {
     const scale = scaleOf(sym);
     for (let i = 0; i < bar.steps.length; i++) {
       const deg = bar.degrees[i];
+      if (deg == null) { flat.push({ cycle: c, i, step: bar.steps[i], G: bar.G, accented: false, midi: null, category: 'rest', chord: sym }); continue; }
       const accented = bar.accents[i] >= ACCENT_THRESHOLD;
       let midi = degreeToMidi(deg.d, rootMidi, key.intervals, deg.alt);
       let category;
@@ -1999,8 +2003,8 @@ export function bindMelodySpec(spec, harmonyContext, meter = '4/4', opts = {}) {
       cur.category = scale.core.has(pc) ? 'chord' : 'scale';
       continue;
     }
-    const next = flat[n + 1];
-    if (next && next.midi !== cur.midi && Math.abs(next.midi - cur.midi) <= 2) {
+    const next = flat[n + 1]?.category === 'rest' ? flat[n + 2] : flat[n + 1];
+    if (next && next.midi != null && next.midi !== cur.midi && Math.abs(next.midi - cur.midi) <= 2) {
       cur.category = 'approach';
       cur.resolvesTo = next.midi;
       continue;
@@ -2019,8 +2023,10 @@ export function bindMelodySpec(spec, harmonyContext, meter = '4/4', opts = {}) {
   for (let c = 0; c < period; c++) {
     const bar = bars[c % specBars];
     const notes = flat.filter((n) => n.cycle === c);
-    const ratios = articRatios(bar.steps, bar.accents, bar.G, bar.breath, profile, bar.artic, notes.map((n) => n.midi));
+    let lastMidi = notes.find((n) => n.midi != null)?.midi ?? rootMidi;
+    const ratios = articRatios(bar.steps, bar.accents, bar.G, bar.breath, profile, bar.artic, notes.map((n) => { if (n.midi != null) lastMidi = n.midi; return lastMidi; }));
     const values = notes.map((n, i) => {
+      if (n.category === 'rest') return '~';
       const name = midiToNoteName(n.midi, { flats });
       boundNotes.push({
         cycle: c, step: n.step, t: fracStr(n.step, n.G), note: name, midi: n.midi,

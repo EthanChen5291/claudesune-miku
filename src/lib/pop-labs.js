@@ -600,6 +600,8 @@ export const POP_LABS = {
   },
   "pl_lh_zelda_pedal_vs_pulse": {
     "id": "pl_lh_zelda_pedal_vs_pulse",
+    "worth": "skip",
+    "expected": "Known: a whole-note octave pedal reads place/mystery, straight 8ths read a motor, a 16th octave bounce reads an action stage; the half-note R/R+ alternation still reads as a pedal with motion. The engine already binds the pedal for the mystery lanes.",
     "lane": "lh",
     "source_songs": [
       "oot_potion_shop",
@@ -656,6 +658,8 @@ export const POP_LABS = {
   },
   "pl_lh_ballad_emotion_density": {
     "id": "pl_lh_ballad_emotion_density",
+    "worth": "skip",
+    "expected": "Known: held blocks read sad, the 8th wave reads romantic, the pivot alberti / 16th two-register arp read calm-flowing; a 16th block-chord variant reads as an exercise. Density is the emotion dial and the engine already maps it that way.",
     "lane": "lh",
     "source_songs": [
       "young_and_beautiful",
@@ -722,6 +726,8 @@ export const POP_LABS = {
   },
   "pl_form_pop_build_verse_chorus": {
     "id": "pl_form_pop_build_verse_chorus",
+    "worth": "skip",
+    "expected": "Known, and already your verdict: a chorus is a class change plus a register lift; a build made only by gain or only by an added octave does not read as a change (\"adding octaves is inaudible\"). The as-measured variant is the one the engine keeps.",
     "lane": "form",
     "source_songs": [
       "call_me_maybe",
@@ -907,6 +913,8 @@ export const POP_LABS = {
   },
   "pl_form_drum_groove_ladder": {
     "id": "pl_form_drum_groove_ladder",
+    "worth": "skip",
+    "expected": "Known: the backbeat snare is what makes it pop; kick+hat alone reads as a click track (the drum-default bug in CLAUDE.md); four-on-the-floor flips the same loop to EDM; 16th hats read busier, not more pop. The open decision (mid band replaces high, or a third pick) is mine to make and measure, not yours to hear here.",
     "lane": "form",
     "source_songs": [
       "every_breath_you_take",
@@ -982,6 +990,8 @@ export const POP_LABS = {
   },
   "pl_form_velocity_arc_terrace": {
     "id": "pl_form_velocity_arc_terrace",
+    "worth": "skip",
+    "expected": "Known: the section terrace is what reads as a build; per-bar crescendo ramps and within-bar accents read as human but not as a section change; a falling arc reads as an outro. Both are used where they belong.",
     "lane": "form",
     "source_songs": [
       "someone_like_you",
@@ -1103,6 +1113,8 @@ export const POP_LABS = {
   },
   "pl_mix_lh_class_flips_lane": {
     "id": "pl_mix_lh_class_flips_lane",
+    "worth": "skip",
+    "expected": "Near-duplicate of #2 (the LH class alone names the genre): held R+5 = game, quarter octaves = rock ballad, 8th octaves = EDM, frozen cell = film, comp = pop. Your answer on #2 covers it.",
     "lane": "mix",
     "source_songs": [
       "call_me_maybe",
@@ -1169,6 +1181,8 @@ export const POP_LABS = {
   },
   "pl_mix_film_ostinato_under_sad_ballad": {
     "id": "pl_mix_film_ostinato_under_sad_ballad",
+    "worth": "skip",
+    "expected": "Known: a frozen 8th cell over a moving loop reads film (the R2 device you already judged on the layerstack page); the same cell re-pitched per chord is an ordinary ballad arpeggio. Nothing here changes the engine.",
     "lane": "mix",
     "source_songs": [
       "someone_like_you",
@@ -1234,6 +1248,8 @@ export const POP_LABS = {
   },
   "pl_mix_edm_pulse_under_ballad": {
     "id": "pl_mix_edm_pulse_under_ballad",
+    "worth": "skip",
+    "expected": "Known: octave 8ths at 88 read as a rock ballad; the EDM flip needs 120 AND the four-on-the-floor kick; block 8ths at 88 read as a chorus. The engine already gates the lane on tempo + kit, not the LH alone.",
     "lane": "mix",
     "source_songs": [
       "alone_pt2",
@@ -1299,6 +1315,8 @@ export const POP_LABS = {
   },
   "pl_combo_pop_pattern_voice_swap": {
     "id": "pl_combo_pop_pattern_voice_swap",
+    "worth": "skip",
+    "expected": "Known: piano, epiano and nylon guitar keep the pop label; marimba turns the same pattern into game/jungle (the D94 jungle voice); a pad+bass split loses the comp rhythm. The label is the pattern plus its acc family, which is already how the planner casts.",
     "lane": "combo",
     "source_songs": [
       "call_me_maybe",
@@ -1363,6 +1381,8 @@ export const POP_LABS = {
   },
   "pl_combo_band_split_bass_epiano": {
     "id": "pl_combo_band_split_bass_epiano",
+    "worth": "skip",
+    "expected": "Known arranging practice: a band bass plays the simplified line (root on 1, 5th on the and-of-2, root on 3) and the chords move to the acc voice; a bass that plays the piano LH literally reads as the wrong player. The engine writes the simplified bass (the D94 tumbao / the funk bounce) and never hands it the LH.",
     "lane": "combo",
     "source_songs": [
       "love_song_bareilles",
@@ -1428,6 +1448,8 @@ export const POP_LABS = {
   },
   "pl_combo_strings_pad_levels": {
     "id": "pl_combo_strings_pad_levels",
+    "worth": "skip",
+    "expected": "Already your findings: a pad at the D77 level in the pack register entering at bar 5 reads as the song opening up; from bar 1 it is a wash; loud and dry (0.45, no room) is the r33 \"robotic\" sad-shop finding; an octave higher collides with the tune.",
     "lane": "combo",
     "source_songs": [
       "just_give_me_a_reason",
@@ -1627,6 +1649,8 @@ export const POP_LABS = {
   },
   "pl_prog_harmonic_rhythm": {
     "id": "pl_prog_harmonic_rhythm",
+    "worth": "skip",
+    "expected": "Known: 2-2-4 reads as forward motion landing on I, 6-2 as an anticipation pulling into the next bar, 2-2-2-2 as busier, 2-6 as a shape nobody writes. The engine already resolves chords per beat (D122 chordBeats), so any of these is expressible; none needs your ear to pick.",
     "lane": "prog",
     "source_songs": [
       "happier",
@@ -1696,6 +1720,8 @@ export const POP_LABS = {
   },
   "pl_prog_walkdown": {
     "id": "pl_prog_walkdown",
+    "worth": "skip",
+    "expected": "Known: a stepwise bass walkdown turns the loop into a song where root position reads generic; the chromatic lament reads older and sadder; the line only in the right hand loses the device. The engine has the > look-ahead walk (D101) for exactly this.",
     "lane": "prog",
     "source_songs": [
       "piano_man",
@@ -1763,6 +1789,8 @@ export const POP_LABS = {
   },
   "pl_prog_minor_family": {
     "id": "pl_prog_minor_family",
+    "worth": "skip",
+    "expected": "Known: the major V is the lane switch — i iv bVI bVII reads pop/rock, i bVII bVI V (Andalusian) reads film/Spanish, bare i iv reads a game/hip-hop bed. The desert and horror lanes already pin the family for this reason (D93/D94).",
     "lane": "prog",
     "source_songs": [
       "shape_of_you",
@@ -1831,6 +1859,8 @@ export const POP_LABS = {
   },
   "pl_prog_game_shuttles": {
     "id": "pl_prog_game_shuttles",
+    "worth": "skip",
+    "expected": "Known: a two-chord shuttle with no dominant reads as place — I bVII overworld (mixolydian), I IV pastoral, IV V open/hopeful; I V resolves and stops being a loop; bVII IV I reads both game and rock. Your lane labels (song-labels.js) already say which places you use these for.",
     "lane": "prog",
     "source_songs": [
       "oot_kokiri",
@@ -1903,6 +1933,8 @@ export const POP_LABS = {
   },
   "pl_prog_borrowed_ladder": {
     "id": "pl_prog_borrowed_ladder",
+    "worth": "skip",
+    "expected": "Known: bVII imports rock/game, bVI+bVII epic/anthem, iv classical/gospel rather than sad pop (the pack never writes it there). The engine already treats borrowed chords by parent mode (D35).",
     "lane": "prog",
     "source_songs": [
       "paradise_coldplay",
@@ -1974,6 +2006,8 @@ export const POP_LABS = {
   },
   "pl_prog_pedal_point": {
     "id": "pl_prog_pedal_point",
+    "worth": "skip",
+    "expected": "Known: a held tonic under IV and V reads static/dreamy, a dominant pedal reads tension, and the pedal releasing on bar 4 is the turnaround (D88). No engine decision hangs on hearing it again.",
     "lane": "prog",
     "source_songs": [
       "daylight",
@@ -2039,6 +2073,8 @@ export const POP_LABS = {
   },
   "pl_prog_cadence_close": {
     "id": "pl_prog_cadence_close",
+    "worth": "skip",
+    "expected": "Known: IV->I reads ballad, V->I (triad) pop-anthem, V7->I older/classical, bVII->I rock/game, V->vi deceptive/film. The cadence grammar already picks by lane; the plain V versus V7 is the r16 bare-7 rule in a different coat.",
     "lane": "prog",
     "source_songs": [
       "daybreak",
@@ -2107,6 +2143,8 @@ export const POP_LABS = {
   },
   "pl_prog_sus2_voicing": {
     "id": "pl_prog_sus2_voicing",
+    "worth": "skip",
+    "expected": "Known: R-5-9 is the modern pop-piano open colour; sus4 is a suspension that wants to resolve; plain triads read older. The dialect question (a real add9/sus2 quality) is a code decision I will make with a test, not one to hear.",
     "lane": "prog",
     "source_songs": [
       "payphone",
@@ -2164,6 +2202,8 @@ export const POP_LABS = {
   },
   "pl_prog_inversion_as_change": {
     "id": "pl_prog_inversion_as_change",
+    "worth": "skip",
+    "expected": "Known: the ear names a chord by its bass and outer voices — a bass move to the 3rd reads as a new chord, an inner-voice move over a held bass reads as colour on the same chord. The D98 inversion-by-token-order rule already follows this.",
     "lane": "prog",
     "source_songs": [
       "stay_rihanna",
@@ -2295,6 +2335,8 @@ export const POP_LABS = {
   },
   "pl_melody_cell_period": {
     "id": "pl_melody_cell_period",
+    "worth": "skip",
+    "expected": "Overlaps #35 (hook repeat): a 1-bar cell x8 reads as an ostinato, a 2-bar cell x4 as a hook, a 4-bar phrase twice as a shaped phrase; a re-fit second half reads as development. Your answer on #35 decides the engine's unit.",
     "lane": "melody",
     "source_songs": [
       "counting_stars",
@@ -2351,6 +2393,8 @@ export const POP_LABS = {
   },
   "pl_melody_pent_passing": {
     "id": "pl_melody_pent_passing",
+    "worth": "skip",
+    "expected": "Known and already your law: short passing 4/7 bracketed by steps read smoother than pure pentatonic (D123 tissue); the same degrees held on strong beats read as sus/maj7 colour at best and as the chromCore complaint at worst.",
     "lane": "melody",
     "source_songs": [
       "counting_stars",
@@ -2472,6 +2516,8 @@ export const POP_LABS = {
   },
   "pl_melody_step_leap": {
     "id": "pl_melody_step_leap",
+    "worth": "skip",
+    "expected": "Known: the pop mix (a third steps, a third repeats, small leaps) is the singable one; the stepwise film line is lyrical but less hooky; the repeated-note rap cell is a rhythm, not a tune; the leap-heavy engine line is the D123 gap already being closed.",
     "lane": "melody",
     "source_songs": [
       "shape_of_you",
@@ -2528,6 +2574,8 @@ export const POP_LABS = {
   },
   "pl_melody_phrase_qa": {
     "id": "pl_melody_phrase_qa",
+    "worth": "skip",
+    "expected": "Known: a 4-bar question ending open on a held non-tonic, answered by 4 bars landing on the held tonic, reads as a phrase pair; both on the tonic reads as two statements; removing the holds makes it busier, not less of a melody. The cadence grammar (cadenceNo7, heldFirst) already does this.",
     "lane": "melody",
     "source_songs": [
       "counting_stars",
@@ -2649,6 +2697,8 @@ export const POP_LABS = {
   },
   "pl_melody_chorus_lift": {
     "id": "pl_melody_chorus_lift",
+    "worth": "skip",
+    "expected": "Overlaps #4 and #12: the lift is register + thickness + LH density at the same note lengths; halving the melody onsets reads as a slowdown. The as-measured variant is what the engine keeps.",
     "lane": "melody",
     "source_songs": [
       "how_to_save_a_life",
@@ -2705,6 +2755,8 @@ export const POP_LABS = {
   },
   "pl_melody_transfer_loops": {
     "id": "pl_melody_transfer_loops",
+    "worth": "skip",
+    "expected": "Known: a cell composed by the same rules over a minor loop reads as the same composer's sad hook; the transplanted major hook is wrong over the minor loop (its 3rds clash), not merely different; the rules-off variant is the engine's pre-r33 shape. Self-validation — nothing for your ear to settle.",
     "lane": "melody",
     "source_songs": [
       "someone_like_you",

@@ -154,16 +154,17 @@ phrases.forEach((ph, pi) => {
     // is unsingable where it is, and one folded note costs less than a
     // whole phrase moved off the tune's register
     const m = n.midi + shift + k;
-    // r35 — THE CEILING IS G5, AND IT IS DURATION-AWARE. His two "sounds like
+    // r35 — THE CEILING IS G#5, AND IT IS DURATION-AWARE. His two "sounds like
     // screaming" notes (vx_triumphant_boss #8, vg_excited_space #5) were both
-    // A5 (81) held 0.70-0.74 s; the notes he did NOT flag above the band were
-    // A#5/B5 at 0.22-0.44 s (vx_romantic_rest, "very good") and G5 held 1.3-1.8 s.
-    // So a note more than a minor third over the target top folds down an
+    // A5 (81) held 0.70-0.74 s; the notes he did NOT flag were A#5/B5 at
+    // 0.22-0.44 s (vx_romantic_rest, "very good"), G5 held 1.3-1.8 s, and G#5
+    // held 1.18 s twice (vg_nostalgic_shop, "the melody is good"). So a note
+    // more than a MAJOR third over the target top (A5 and up) folds down an
     // octave when it is held half a second or longer; a short pass-through
     // stays. The old outlier rule (a fifth over the top) still folds anything.
     const durS = (n.end - n.begin) * secPerBar;
     if (m < lo - 7) n.pshift += 12;
-    else if (m > hi + 6 || (m > hi + 3 && durS >= 0.5)) n.pshift -= 12;
+    else if (m > hi + 6 || (m > hi + 4 && durS >= 0.5)) n.pshift -= 12;
   }
   const last = ph[ph.length - 1];
   const next = phrases[pi + 1]?.[0] ?? null;
