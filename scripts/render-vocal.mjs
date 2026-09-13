@@ -66,6 +66,14 @@ const { values, positionals } = parseArgs({
     line: { type: 'string', default: '_lead_mix' },
     tag: { type: 'string', default: '' },
     'harmony-db': { type: 'string', default: '-4' }, // the harmony voice under the lead voice, dB
+    // r39 — his first vocarock export, nine cards of ten: "too loud and too
+    // much reverb". The vocal takes the LEAD LAYER's room unless the page pins
+    // `vocalRoom` (vocarock rows: 0.1) or `--vocal-room` is passed
+    'vocal-room': { type: 'string' },
+    // r39 — "increase autotune if you can": `--tune 0..1` pulls the sung
+    // pitch curve toward the score inside each note (vocal-sing.py); the
+    // page pin is `vocalTune`; 0 = the pitch model as it comes
+    tune: { type: 'string' },
     // r36 — his villain/cafe/sugar note: "for scary and just different vibes in
     // general you can also make vocals like just another layer or whisper or
     // something". `layer` = the voice as a texture: low-passed at 4.5 kHz, the
@@ -135,6 +143,16 @@ if ((values.rehq || !existsSync(mixIn)) && values['render-hq'] && !values['no-mi
 // rethrown; a conversion older than its dry input is re-run.
 const mtime = (p) => (existsSync(p) ? statSync(p).mtimeMs : 0);
 const OMP_ENV = { ...process.env, KMP_DUPLICATE_LIB_OK: 'TRUE', OMP_NUM_THREADS: '1' };
+// per-song pins (his notes on a card become data on the page: `vocalDb`,
+// `vocalStyle`, and from r39 `vocalRoom` / `vocalTune`) — read before stage 1
+// because the tune setting is a SING-time parameter
+const pageSong = (() => {
+  const html = readFileSync(join(ROOT, values.page), 'utf8');
+  const di = html.indexOf('const DATA = ');
+  return (JSON.parse(html.slice(di + 13, html.indexOf(';\n', di))).songs ?? []).find((s) => s.name === NAME) ?? {};
+})();
+const tune = values.tune != null ? Number(values.tune) : (pageSong.vocalTune ?? 0);
+if (tune > 0) console.log(`  pitch tune ${tune} (${values.tune != null ? '--tune' : 'page pin vocalTune'}) — r39`);
 if (values.force || !existsSync(dry)) {
   try {
     // r36 — the same two OpenMP vars stage 2 has carried since r34. They were
@@ -146,7 +164,7 @@ if (values.force || !existsSync(dry)) {
     // the pass aborted, and the run that followed mixed a two-hour-stale
     // harmony stem under a fresh lead (two voices, different lyrics). Setting
     // them here makes it structural instead of something a caller remembers.
-    run(PY, [join(ROOT, 'scripts', 'vocal-sing.py'), score, dry, '--syllable', values.syllable, '--speaker', values.speaker], { env: OMP_ENV });
+    run(PY, [join(ROOT, 'scripts', 'vocal-sing.py'), score, dry, '--syllable', values.syllable, '--speaker', values.speaker, ...(tune > 0 ? ['--tune', String(tune)] : [])], { env: OMP_ENV });
   } catch (e) { try { unlinkSync(dry); } catch {} throw e; }
   console.log(`  stage 1 sung (${secs()})`);
 } else console.log(`  stage 1 kept ${dry} (pass --force to re-sing)`);
@@ -164,19 +182,23 @@ if (values.force || !existsSync(raw)) {
   console.log(`  stage 2 converted (${secs()})`);
 } else console.log(`  stage 2 kept ${raw} (pass --force to re-convert)`);
 
-// per-song pins (his notes on a card become data on the page: `vocalDb`, `vocalStyle`)
-const pageSong = (() => {
-  const html = readFileSync(join(ROOT, values.page), 'utf8');
-  const di = html.indexOf('const DATA = ');
-  return (JSON.parse(html.slice(di + 13, html.indexOf(';\n', di))).songs ?? []).find((s) => s.name === NAME) ?? {};
-})();
 const style = values['vocal-style'] ?? pageSong.vocalStyle ?? 'lead';
 const layer = style === 'layer';
 if (layer) console.log('  vocal style: layer (low-passed 4.5 kHz, room x1.6) — r36');
-// resample to 44.1k + the lead's room (the same IR and wet law as render-hq's applyRoom)
-const room = sc.room ?? 0;
+// resample to 44.1k + the vocal's room (the same IR and wet law as render-hq's applyRoom).
+// r39: the room is the VOCAL's own setting (pin / flag / default 0.1), no longer the
+// lead layer's — measured on the judged vocarock page the 0.25-room voices carried a
+// tail 19–21 dB under the sung level and the 0.7-room ones 10.6 dB under, and he
+// heard "too much reverb" on nine of ten either way; the tail is now ~-27 dB (0.1)
+// The FALLBACK stays the lead layer's room: a sung song he has already judged
+// (vocal.html / vocaloid.html keeps and praises) must re-render as he heard
+// it (D91 through the render tier — both peer sessions' catch). "Lower reverb
+// by default" is therefore a PAGE decision: every vocarock row pins
+// `vocalRoom: 0.1`, and a new sung page should do the same.
+const room = values['vocal-room'] != null ? Number(values['vocal-room']) : (pageSong.vocalRoom ?? sc.room ?? 0);
+console.log(`  vocal room ${room} (${values['vocal-room'] != null ? '--vocal-room' : pageSong.vocalRoom != null ? 'page pin vocalRoom' : "the lead layer's room, as judged"})`);
 const tone = layer ? 'lowpass=f=4500,' : '';
-if ((room >= 0.15 || layer) && existsSync(IR_PATH)) {
+if ((room > 0 || layer) && existsSync(IR_PATH)) {
   const wet = Math.min(1.2, Math.max(room, layer ? 0.3 : 0) * 1.1) * (layer ? 1.6 : 1);
   run('ffmpeg', ['-v', 'error', '-y', '-i', raw, '-i', IR_PATH, '-filter_complex',
     `[0:a]aresample=44100,aformat=channel_layouts=stereo,${tone}asetnsamples=1024[v];[v]asplit[d][w];[w][1:a]afir=dry=10:wet=10[rv];[d][rv]amix=inputs=2:weights=1 ${wet.toFixed(3)}:duration=longest:normalize=0`,

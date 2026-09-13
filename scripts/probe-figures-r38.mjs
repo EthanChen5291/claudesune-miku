@@ -17,7 +17,8 @@ for (const page of process.argv.slice(2)) {
   const html = readFileSync(page, 'utf8'); const i0 = html.indexOf('const DATA = ');
   const data = JSON.parse(html.slice(i0 + 13, html.indexOf(';\n', i0)));
   for (const s of data.songs) {
-    const accExpr = s.solos?._acc; if (!accExpr) { console.log(s.name, 'no _acc solo'); continue; }
+    // prefer the masked acc (r38 `_acc_mix`); the `_acc` solo is the A figure unmasked
+    const accExpr = s.solos?._acc_mix ?? s.solos?._acc; if (!accExpr) { console.log(s.name, 'no _acc solo'); continue; }
     const evA = await evaluateSong(`setcpm(${s.bpm}/${s.beats})\np: ${accExpr}`);
     const acc = toNotes(hapsByLabel(evA, 0, s.totalBars).get('p').haps);
     const evM = await evaluateSong(`setcpm(${s.bpm}/${s.beats})\np: stack(${s.mix})`);
@@ -30,7 +31,7 @@ for (const page of process.argv.slice(2)) {
     const roleAt = (bar) => (s.sections ?? []).find((x) => bar >= x.startBar && bar < x.startBar + x.bars)?.role ?? (s.sections ? 'intro' : '?');
     const rows = [];
     for (let b = 0; b < s.totalBars; b += 4) { const bars = Math.min(4, s.totalBars - b); const inW = (arr) => arr.filter((n) => n.tick >= b * BAR && n.tick < (b + bars) * BAR); const af = accFigure(inW(acc), bars, BAR, BT); const bf = bassFigure(inW(bass), bars, BAR, BT, () => null); const role = roleAt(b); rows.push(`${role[0]}:${af.cls}/${bf.cls}`); (accAll[role] ??= []).push(af.cls); (bassAll[role] ??= []).push(bf.cls); }
-    console.log(`${s.name.padEnd(16)} acc=${s.accompaniment ?? '?'} bass=${bassSound ?? '-'} | ${rows.join(' ')}`);
+    console.log(`${s.name.padEnd(16)} acc=${s.accompaniment ?? '?'}${s.solos?._acc_mix ? '(mix)' : ''} bass=${bassSound ?? '-'} | ${rows.join(' ')}`);
   }
 }
 for (const r of Object.keys(accAll)) console.log(`OUR ACC in ${r.padEnd(8)}: ${pctTable(hist(accAll[r]))}`);

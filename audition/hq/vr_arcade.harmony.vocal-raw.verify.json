@@ -1,0 +1,83 @@
+{
+ "wav": "/Users/ethanchen/Documents/GitHub/motif-engine/audition/hq/vr_arcade.harmony.vocal-raw.wav",
+ "seconds": 75.54,
+ "sr": 40000,
+ "notes": 132,
+ "note_hit_rate_mean": 0.6957455392211099,
+ "notes_hit_ge_50pct": 0.7651515151515151,
+ "octave_error_rate_mean": 0.006313131313131312,
+ "notes_octave_wrong": 0,
+ "voiced_coverage_mean": 0.9924242424242424,
+ "notes_unvoiced": 1,
+ "sung_rms_db": -29.418698784008214,
+ "rest_rms_db": -69.94052202291999,
+ "rest_leak_db": -40.52182323891178,
+ "onset_lag_median_ms": 1.6300000000022408,
+ "onset_lag_p90_ms": 43.67400000000075,
+ "onset_lag_notes": 105,
+ "worst_notes": [
+  {
+   "start": 19.01163,
+   "midi": 69,
+   "hit": 0.0,
+   "oct": 0.0,
+   "voiced": 1.0,
+   "median_dev_cents": 905.7618463714022
+  },
+  {
+   "start": 21.80233,
+   "midi": 65,
+   "hit": 0.0,
+   "oct": 0.0,
+   "voiced": 0.0
+  },
+  {
+   "start": 24.59302,
+   "midi": 69,
+   "hit": 0.0,
+   "oct": 0.0,
+   "voiced": 1.0,
+   "median_dev_cents": -147.51473410019997
+  },
+  {
+   "start": 39.76744,
+   "midi": 67,
+   "hit": 0.0,
+   "oct": 0.0,
+   "voiced": 1.0,
+   "median_dev_cents": -176.41054827461176
+  },
+  {
+   "start": 44.30233,
+   "midi": 69,
+   "hit": 0.0,
+   "oct": 0.0,
+   "voiced": 1.0,
+   "median_dev_cents": -103.31777176408394
+  },
+  {
+   "start": 46.9186,
+   "midi": 69,
+   "hit": 0.0,
+   "oct": 0.0,
+   "voiced": 1.0,
+   "median_dev_cents": 134.98447154171416
+  },
+  {
+   "start": 63.66279,
+   "midi": 69,
+   "hit": 0.0,
+   "oct": 0.3333333333333333,
+   "voiced": 1.0,
+   "median_dev_cents": 946.8047703781928
+  },
+  {
+   "start": 66.45349,
+   "midi": 62,
+   "hit": 0.0,
+   "oct": 0.0,
+   "voiced": 1.0,
+   "median_dev_cents": 549.6098320345744
+  }
+ ]
+}

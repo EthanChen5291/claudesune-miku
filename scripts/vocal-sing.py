@@ -41,6 +41,12 @@ ap.add_argument('--consonant-ms', type=float, default=55.0)
 ap.add_argument('--phrase-gap', type=float, default=0.5)
 ap.add_argument('--breath-gap', type=float, default=0.10)
 ap.add_argument('--quiet', action='store_true')
+# r39 — "increase autotune if you can": 0..1 pulls the predicted pitch curve
+# toward the score INSIDE each note (the first 60 ms of a note — the glide in —
+# and every rest are left to the pitch model), so 1.0 is a hard-tuned Vocaloid
+# line with the model's own note-to-note transitions kept, 0 is the model as it
+# comes. Measured on vr_rooftop (dry, pyworld vs score): see the D-entry.
+ap.add_argument('--tune', type=float, default=0.0)
 args = ap.parse_args()
 
 VB = os.path.abspath(args.voice)
@@ -265,6 +271,16 @@ for pi, ph in enumerate(phrases):
     if np.nanmedian(dev) > 2.0:
         log(f'  phrase {pi}: predicted pitch median-deviates {np.nanmedian(dev):.2f} st from score; using hand curve')
         pmidi, base = hand_pitch(nmidi, nrest, ndur)
+    if args.tune > 0:
+        # r39: inside each sung note, past its first 60 ms, blend the curve toward the score
+        glide = max(1, int(round(0.06 / FRAME)))
+        pos = 0
+        for m, r, d in zip(nmidi, nrest, ndur):
+            if not r and d > glide:
+                a, b = pos + glide, pos + d
+                pmidi[a:b] = base[a:b] + (pmidi[a:b] - base[a:b]) * (1.0 - args.tune)
+            pos += d
+        dev = np.abs(pmidi - base)
     f0 = midi_to_hz(pmidi).astype(np.float32)
     wav = synth_phrase(toks, durs, f0)
     lead_pad = first_vowel_offset * HOP

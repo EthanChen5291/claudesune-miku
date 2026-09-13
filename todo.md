@@ -1,3 +1,82 @@
+## NEW — r39: his first vocarock export answered (2026-09-13; D144)
+
+Your ten cards + your second message ("no song that spews energy yet … more
+layers/instruments … lower reverb by default, increase autotune … more synths
+… harmonies that ARE ALIGNED"). What moved on `audition/vocarock.html` (page id
+`r38-vocarock`, all ten songs re-rendered HQ + lead voice + harmony voice):
+- **"the exact same beginning progression"** — it was: one intro riff figure on
+  the acc voice over a bass on all ten (a pool of one, the D119 trap). Measured
+  19 of 45 song pairs shared 80%+ of their first-four-bar contour. Now every
+  row names its intro figure, intro VOICE and which loop the intro sits on
+  (five sit on the chorus loop, which opens off the tonic); ghost opens on the
+  slap bass + kit alone; lantern's verse loop changed (it shared rooftop's).
+  After: 1 of 45 pairs.
+- **"too loud and too much reverb"** — the voice took the lead LAYER's room
+  (0.25 / 0.7); now a 0.1 room by default (`vocalRoom` pin, `--vocal-room`),
+  every row 3 dB under the r36 level table, and a pitch-tune knob (`vocalTune`
+  0.7 / `--tune`) that pulls the sung pitch toward the score inside each note
+  — see D144 for the measured pitch-hit before/after.
+- **"more layers / spews energy / more synths"** — an energy tier per row,
+  built to your correction ("doesnt mean a bunch of fast notes … good, catchy
+  harmonies with full, energetic, active layers"): high = a phrased synth
+  HOOK line in the chorus (six notes a bar with rests, chord tones + scale
+  steps) + a four-note pad whose voicing rotates every bar + marcato strings
+  (rock) or the r30 synth rise (electro) + a crash on every seam; mid = the
+  lighter hook + held pad + chorus descant; low (snow) = pad + descant. My
+  first cut was a 16th arpeggio and a tempo bump — reverted before render.
+  Voices sounding per bar: verse 4 → 4, chorus 4 → 6, bridge 4 → 6 (thin
+  verse, full chorus — the corpus arc); density at audible gain 3 pcs/8th · 1.56
+  rubs/bar · 92% spells a chord · 0% out of key (corpus 3 · 1.28 · 90%).
+- sugar stays 128 bpm + the high tier; arcade / bike → the tune re-rolled.
+- **your "descriptions are too musical" ruling** — all ten prompts are now
+  plain player scenes ("one coin left at the arcade and the place is about
+  to close"), more energetic on average; guitar / synth / kit choices moved
+  onto the rows so the engine picks them. Every text was parse-checked
+  ("high score" read as ORCHESTRAL, "hot chocolate" as casino — reworded).
+
+Open for your ear: the pitch-tune amount (0.7 — 1.0 is a hard-tuned line);
+marcato strings sit above the voice on boss (median 77); the chorus synth on
+rooftop/arcade shares the sawtooth with the instrumental guide; the RVC model
+in use is still `infamous_miku_v2` (the licensing blocker stands).
+
+## NEW — the Vocaloid ARRANGEMENT read-out + `audition/vocarock.html` (r38, 2026-09-12, your "in band.html it fits but doesnt really sound good or catchy … learn from vocaloid songs … create a thing primarily for vocaloid based songs")
+
+Read-out: `research/vocaloid-r38.md` (36 songs; melody identified reliably in
+all 36 — 32 name the vocal track, the 3 unnamed ones were re-verified). What
+it found, against band.html:
+- **The harmony question ("how it's more harmonious than ours"):** what is
+  LOUD in band.html is as thin and consonant as the corpus — same pitch
+  classes per 8th, same rubs, same out-of-key rate — once the quiet beds
+  (guide lead, strings, pad, sparkle under gain 0.25) are set aside. The real
+  differences are the **vocabulary** (13ths, `Db9`-in-G vs triads/sus/m7/^7,
+  47% thirdless), **one loop per song** vs a chorus with its own loop (35 of
+  36), **no bass** (silent in half our windows; theirs on 8ths always),
+  **one figure all song** (theirs: verse = single-note line or nothing,
+  chorus = 8th block chords with the tune doubled an octave up, 16% → 92%),
+  and **form** (16–48 bars, chorus at bar 4 vs 137 bars, chorus at bar 36,
+  verse 2 thinned in 30 of 36). The intro is a riff of its own — 0 of 23
+  carry the chorus tune.
+- **Instruments:** NOT in the files (3-track piano reductions, no program
+  changes, flat velocity). The doc's §7 table is knowledge of the recordings
+  + VocaDB genre tags (22 of 35 rock-family, 10 electro/chip, 3 pop/ballad);
+  the cast law: ONE chordal hand + bass + kit + unison doublings.
+
+Built: `VOCAROCK=1` → **`audition/vocarock.html`** (page id `r38-vocarock`,
+10 songs, 52–80 bars): `opts.vocaloidForm` names a verse loop, a chorus loop
+(the B letters carry it), verse/chorus/bridge/intro figures, a bass, a form
+(intro riff → A A B A B C B, verse 2 with the piano out), from
+`src/lib/vocaloid-form.js` — by name only, never a pool. Measured in the mix:
+chorus block on 91% of chorus windows, verse line/silent/arp, bass root–fifth
+8ths on 81% of chorus windows, octave doubling 25% verse / 100% chorus,
+out-of-key 0%. Renders: see the D143 note (started after the last build).
+No judged page moved (songs/vocal/band 0 of 47/16/12; vocaloid/vocalab 0 on
+music fields against a build from HEAD's generator). `npm test` 439/439.
+
+Open for your ear: the ten vr_ songs; whether an 8-bar verse (two statements
+of the 4-bar cell) is enough or the corpus's 16; the breath (still 1 beat on
+most songs against the corpus's 8th); slow songs still write 16th pairs
+(vr_snow 56% at 84 bpm — the writer's quarter-note phrase finals force it).
+
 ## NEW — your first Vocaloid-page export is in (14 cards, 3 keeps, 13 notes) — D140 (r36, 2026-09-12)
 
 Every note measured and fixed; the three keeps (reflection, lullaby, march)

@@ -50,6 +50,7 @@ import { describePrompt, explain as explainPrompt } from '../src/lib/describe.js
 import { FIGURATIONS_FOUNDATION } from '../src/lib/figurations-foundation.js';
 import { FND_TRAVEL } from '../src/lib/figuration-graph.js';
 import { writeKit, kitStyleFor } from '../src/lib/drum-kit.js';
+import { VOCALOID_LOOPS, vocaloidFormSpec } from '../src/lib/vocaloid-form.js';
 import { RHYTHMS } from '../src/lib/rhythms.js';
 import { INSTRUMENTS } from '../src/lib/instruments.js';
 import { chordCoreTones, parseKey, keyUsesFlats, pcToNoteName } from '../src/binder/theory.js';
@@ -425,6 +426,49 @@ function buildSong(prompt, name, opts = {}) {
       // letter — neither is wrong in general, and both are wrong on a layer
       // whose whole claim is that it is what someone actually played.
       accVary: false, accTravel: false, subBass: false, accUnderLead: true,
+      ...opts,
+    };
+  }
+  // ==========================================================================
+  // r38 · opts.vocaloidForm — THE VOCALOID FORM (research/vocaloid-r38.md)
+  // ==========================================================================
+  // HIS ASK: "i cloned this branch and want to basically create a thing
+  // primarily for vocaloid based songs and want it to rock those, but in order
+  // to that it has to sound good so learn from vocaloid songs" — after
+  // band.html "fits but doesnt really sound good or catchy".
+  //
+  // MEASURED on the 36-file set vs band.html (the doc's §8): the chorus has its
+  // own loop in 35 of 36 (ours: one loop per song); verse = a single-note line,
+  // chorus = chords on 8ths under the tune doubled an octave up (ours: one
+  // figure for the whole song, same class in verse and chorus on 25 of 26); a
+  // bass on 8ths in every song (ours: silent in half the windows); 137-bar
+  // songs with the first chorus at bar 36 (ours: 16–48 bars, chorus at bar 4);
+  // 30 of 36 thin the verse after the first chorus; the intro is a riff of its
+  // own. And what is LOUD in our mix is as consonant as theirs — the vocabulary
+  // (13ths, tritone subs) and the form are the difference, not the notes.
+  //
+  // ONE PRESET (D101's law) that names its material BY NAME from
+  // src/lib/vocaloid-form.js (never a pool — D95/D119): a verse loop, a chorus
+  // loop that the B letters carry through the existing `ctxBarV` star
+  // machinery (so every rider rebinds to it for free), per-letter acc figures
+  // via `letterFig`, an intro riff over the letter-less bars, the acc hand
+  // dropping out of one verse, a bass layer through `varySplit`, and a form of
+  // 8-bar sections built after the intro caps. The discretionary cast stands
+  // down (one chordal hand — the corpus's cast). Like `reelFaithful` it is an
+  // OPT-IN identity for the song and is not ruleFresh-gated: a keep on such a
+  // song must keep its form (D91 — pin with keepFresh, never let a click strip
+  // the preset).
+  let vf = null;
+  if (opts.vocaloidForm) {
+    vf = vocaloidFormSpec(typeof opts.vocaloidForm === 'object' ? opts.vocaloidForm : {});
+    opts = {
+      sparkle: false, descant: false, counterline: false, marcato: false,
+      echoLayer: false, texture: false, textureOff: true, octaveDouble: false,
+      funkBass: false, subBass: false, breakdown: false, driveBass: false,
+      accVary: false, accTravel: false, voiceCap: 0, noHandoff: true,
+      bridgeHarmony: true, rawBase: true,
+      ...(vf.verse ? { basePin: vf.verse.name } : {}),
+      scheme: vf.form.sections.join(''),
       ...opts,
     };
   }
@@ -928,7 +972,7 @@ function buildSong(prompt, name, opts = {}) {
   const colorFresh = opts.voicedColor === true
     || (opts.voicedColor !== false && !priorKeep && !opts.grammarPin && !opts.pinFrom
         && historyLess());
-  const PROG_ANY = (n) => ALL_PROGRESSIONS[n] ?? PROGRESSIONS_CHORDCAMERA[n] ?? PROGRESSIONS_VANRIVER[n] ?? PROGRESSIONS_CITYPOP[n] ?? PROGRESSIONS_SERUM[n] ?? REEL_PROGRESSIONS[n];
+  const PROG_ANY = (n) => ALL_PROGRESSIONS[n] ?? PROGRESSIONS_CHORDCAMERA[n] ?? PROGRESSIONS_VANRIVER[n] ?? PROGRESSIONS_CITYPOP[n] ?? PROGRESSIONS_SERUM[n] ?? REEL_PROGRESSIONS[n] ?? VOCALOID_LOOPS[n];
   const basePinned = opts.basePin
     && (EX.entries.some(([n]) => n === opts.basePin) || PROG_ANY(opts.basePin))
     ? opts.basePin : null;
@@ -1287,7 +1331,9 @@ function buildSong(prompt, name, opts = {}) {
     onsets: reelAccRow.rhythm.onsets, figure: reelAccRow.intervals,
     accents: reelAccRow.rhythm.accents,
   } : null;
-  const accFig = reelAccFig ?? horrorOstinato ?? jungleVamp ?? { ...accFig0, name: accName, ...(accHalfTime ? { bars: (accFig0.bars ?? 1) * 2 } : {}) };
+  // r38: the vocaloid form's VERSE figure takes the A slot (the corpus's single-note line)
+  const vfVerseFig = vf ? { ...vf.verseFig } : null;
+  const accFig = vfVerseFig ?? reelAccFig ?? horrorOstinato ?? jungleVamp ?? { ...accFig0, name: accName, ...(accHalfTime ? { bars: (accFig0.bars ?? 1) * 2 } : {}) };
   // accDensity feeds the PLANNER and the lead target — computed from the
   // figure as authored, not the half-time stretch, so slowing the piano's
   // pulse cannot re-roll the cast (measured: the halved value handed
@@ -2248,7 +2294,13 @@ function buildSong(prompt, name, opts = {}) {
   const effStmt = (f, stmt) => (stmt && varySig(f, stmt) === varySig(f, 0) ? 0 : stmt);
   // hoisted out of bindAcc verbatim so other layers can ASK what voice the
   // accompaniment hand is on (r19: the companion has to avoid it — see below)
-  const accVoiceFor = (fig0) => opts.accSound ?? (accToBass ? 'gm_synth_bass_1'
+  // r39: a figure may NAME its own voice (the vocaloid form's intro riff on the
+  // row's intro instrument — a synth, a muted guitar — instead of the acc hand)
+  // Gated on the vocaloid form on purpose (b4's r39 review): LAYER_PATTERNS
+  // rows carry `sound`, and reelAccFig only stays clean because its field
+  // whitelist omits it — if `sound` ever joins that whitelist this read must
+  // not re-voice the 16 judged reels cards.
+  const accVoiceFor = (fig0) => (vf ? fig0?.sound : undefined) ?? opts.accSound ?? (accToBass ? 'gm_synth_bass_1'
     : (!priorKeep && env === 'desert') ? (/drone|sustain|pad|held/.test(`${fig0.class ?? ''} ${fig0.name ?? ''}`) ? 'gm_pad_bowed' : 'gm_marimba')
       : (!priorKeep && env === 'jungle') ? 'gm_marimba' // the DKC acc voice
         : synthAcc ? 'gm_epiano1' : 'piano');
@@ -2655,6 +2707,7 @@ function buildSong(prompt, name, opts = {}) {
       chordTonesOf: (sym) => new Set([...chordCoreTones(sym)].map((pc) => ((pc % 12) + 12) % 12)),
       role: roleOf, stmt, rate: vocalWriterCfg.rate, lift: vocalWriterCfg.lift?.[roleOf], targetMidi: vocalWriterCfg.targetMidi,
       span: vocalWriterCfg.span, startBias: vocalWriterCfg.startBias, breathBias: vocalWriterCfg.breathBias, hookVary: vocalWriterCfg.hookVary,
+      slowFloor: vocalWriterCfg.slowFloor === true, // r38: the corpus halves the count under 100 bpm
     });
     let shifted = degShift ? { ...spec, bars: spec.bars.map((b) => ({ ...b, degrees: b.degrees.map((d) => (d == null ? null : d + degShift)) })) } : spec;
     // ---- r37/D142 · THE COMPANION IS A SHADOW, NOT A LINE -------------------
@@ -3051,6 +3104,32 @@ function buildSong(prompt, name, opts = {}) {
     for (const sec of form.sections) { sec.startBar = sb; sb += sec.bars; }
     form.totalBars = sb;
   }
+  // ---- r38 · THE VOCALOID FORM'S SECTIONS ------------------------------------
+  // Built AFTER the intro caps (a riff-with-drums intro is not the bare piano
+  // intro those caps were written for) and BEFORE planMelodyForm, which reads
+  // form.sections. 8-bar sections = two statements of the writer's 4-bar cell;
+  // the intro is letter-less (lead 'none') but carries a 'statement'
+  // archetype so the kit plays under the riff (drums mask on ENERGY >= 3).
+  // Each section clones the planner's own section of that energy so every
+  // downstream reader (active layers, curve, masks) sees a familiar object.
+  if (vf) {
+    const tune = form.sections.filter((s) => s.lead !== 'none');
+    const byEnergy = [...tune].sort((a, b) => (ENERGY[b.archetype] ?? 0) - (ENERGY[a.archetype] ?? 0));
+    const tmplFull = byEnergy[0] ?? form.sections[0];
+    const tmplVerse = tune.find((s) => s.archetype === 'statement') ?? byEnergy[byEnergy.length - 1] ?? tmplFull;
+    const mk = (arch, bars, leadNone) => {
+      const t = arch === 'statement' ? tmplVerse : tmplFull;
+      return { ...t, archetype: arch, bars, energy: ENERGY[arch] ?? 3, lead: leadNone ? 'none' : 'piano', leadLayerId: null, dialogue: null, pianoLead: !leadNone, active: [...(t.active ?? [])], why: `vocaloidForm ${vf.form.name}: ${leadNone ? 'intro riff' : arch}` };
+    };
+    const secs = [];
+    if (vf.form.intro > 0) secs.push(mk('statement', vf.form.intro, true));
+    for (const L of vf.form.sections) secs.push(mk(L === 'B' ? 'full' : L === 'C' ? 'answer' : 'statement', 8, false));
+    let sb = 0;
+    secs.forEach((sec, i) => { sec.index = i; sec.startBar = sb; sb += sec.bars; });
+    form.sections = secs;
+    form.totalBars = sb;
+    form.notes = [...(form.notes ?? []), `r38 vocaloidForm ${vf.form.name}: intro ${vf.form.intro} + ${vf.form.sections.join('')} × 8 bars = ${sb}`];
+  }
   // D82 (teaching the planner, his go-ahead): the SECTION DYNAMIC CURVE is a
   // generator default — every section's energy sets a level (0.85..1.05), a
   // low-energy final section fades further, and the lead rides a gentler
@@ -3261,7 +3340,12 @@ function buildSong(prompt, name, opts = {}) {
   let vary = null;
   const bridgeMode = (opts.bridgeHarmony ?? !priorKeep)
     && mf.sections.some((s) => (s.letter ?? '').replace('*', '') === 'B');
-  if (bridgeMode) {
+  if (bridgeMode && vf?.chorus) {
+    // r38: the B letter carries the vocaloid form's OWN chorus loop (§3: 35 of
+    // 36 songs; it opens off the tonic in 22) — a real second progression, not a
+    // two-op variation of the verse. Same chord count, so the bar plan holds.
+    vary = { ...e, degrees: vf.chorus.degrees, numerals: vf.chorus.numerals, chordUnits: vf.chorus.chordUnits, lineage: { ops: [{ op: `vocaloidForm chorus loop ${vf.chorus.name} (${vf.chorus.numerals})` }], changed: true } };
+  } else if (bridgeMode) {
     const t = varyProgression(e, {
       budget: 2, intensity: 0.55, seed: `${name}|bridge`,
       allow: ['recolour', 'suspend', 'mixture', 'alter_dominant'],
@@ -3283,6 +3367,11 @@ function buildSong(prompt, name, opts = {}) {
   const varySecIdx = new Set();
   if (vary && bridgeOn) {
     for (const s of mf.sections) if ((s.letter ?? '').replace('*', '') === 'B') varySecIdx.add(s.index);
+    // r39: a vocaloid row may sit its INTRO on the chorus loop (`introLoop:
+    // 'chorus'`) — the chorus loop opens off the tonic, so the song's first
+    // chord differs from a verse-loop intro's; part of the answer to "the
+    // exact same beginning progression used for all the songs"
+    if (vf?.introLoop === 'chorus') for (const s of form.sections) if (s.lead === 'none') varySecIdx.add(s.index);
   } else if (vary) {
     varySecIdx.add(mf.varySection);
   }
@@ -3300,7 +3389,11 @@ function buildSong(prompt, name, opts = {}) {
     const starred = [...new Set([...varySecIdx].map((i) => mf.sections.find((s) => s.index === i)?.letter).filter(Boolean))];
     mfx = {
       ...mf,
-      sections: mf.sections.map((s) => (varySecIdx.has(s.index) ? { ...s, letter: `${s.letter}*` } : s)),
+      // r39: a letter-less section (the vocaloid intro on the chorus loop)
+      // stays letter-less — starring null wrote the letter "null*", which
+      // fell through every letter dispatch to the verse figure (measured:
+      // five of ten intros played the verse line instead of their riff)
+      sections: mf.sections.map((s) => (varySecIdx.has(s.index) && s.letter ? { ...s, letter: `${s.letter}*` } : s)),
       letters: [...mf.letters, ...starred.map((L) => `${L}*`)],
     };
   }
@@ -3387,6 +3480,16 @@ function buildSong(prompt, name, opts = {}) {
       letterFig.set(L, accFig);
     }
   });
+  // r38: the vocaloid form names the B (chorus block) and C (bridge) figures
+  if (vf) { letterFig.set('B', { ...vf.chorusFig }); letterFig.set('C', { ...vf.bridgeFig }); }
+  // r38: the acc hand DROPS OUT of one verse (§4: 30 of 36 thin after the first
+  // chorus; 18 of 36 have a bass+voice verse) — bass, kit and voice carry it
+  const vfSilent = new Set();
+  if (vf && vf.silentVerse && vf.form.silentVerse != null) {
+    const tune = form.sections.filter((sec) => sec.lead !== 'none');
+    const sec = tune[vf.form.silentVerse];
+    if (sec) for (let b = sec.startBar; b < sec.startBar + sec.bars; b++) vfSilent.add(b);
+  }
   // per-bar accompaniment: which figuration, over which harmony
   const barLetter = form.sections.flatMap((sec) => {
     const L = mfx.sections.find((x) => x.index === sec.index)?.letter ?? null;
@@ -3439,8 +3542,14 @@ function buildSong(prompt, name, opts = {}) {
   }));
   const comboMask = new Map(); // `${fig.name}|${variant}|${statement}` -> bars 0/1
   barLetter.forEach((L, bar) => {
+    if (vfSilent.has(bar)) return; // r38: the acc hand's silent verse
     const base0 = L && L.endsWith('*') ? L.slice(0, -1) : L;
-    const fig = letterFig.get(base0) ?? accFig;
+    // r38: letter-less bars (the intro) take the form's riff — the intro is
+    // its own hook, never the chorus tune (§4: 0 of 23 intros carry it)
+    // r39: on the row's own intro voice (`introSound`), or no hand at all
+    // (`vf_intro_none` — bass and kit open the song)
+    if (L == null && vf && vf.introFig.class === 'silent') return;
+    const fig = (L == null && vf) ? { ...vf.introFig, ...(vf.introSound ? { sound: vf.introSound } : {}) } : (letterFig.get(base0) ?? accFig);
     const variant = ctxBarV != null && varyBars[bar] === 1;
     // gated on accVaryOn, not just used as a salt: splitting the combo changes
     // the MIX STRING (two masked pieces instead of one) even when the bound
@@ -3461,6 +3570,10 @@ function buildSong(prompt, name, opts = {}) {
     return /^1(@\d+)?$/.test(m) ? expr : `${expr}.mask("<${m}>")`;
   });
   const baseMix = basePieces.length === 1 ? basePieces[0] : `stack(${basePieces.join(', ')})`;
+  // r38: the acc hand AS THE MIX PLAYS IT (per-letter figures, the intro riff,
+  // the silent verse) — the `_acc` solo is the A figure unmasked and cannot show
+  // any of that; probes read this one (D137's solo-vs-mix trap)
+  const accMixSolo = vf ? baseMix : null;
 
   // ---- the letter-formed lead + layers (undertale mix logic) ---------------
   const letterLead = renderLetterLead(form, mfx, (L, stmt) => {
@@ -4878,7 +4991,9 @@ function buildSong(prompt, name, opts = {}) {
       : { name: 'descant', bars: 2, onsets: ['0', ...dWalk], figure: ['3.5', '5', '6', '5'], accents: [0.6, 0.55, 0.62, 0.55], legato: true };
     const dSound = (opts.fullSynth || synthAcc) ? 'gm_synth_strings_1' : 'gm_string_ensemble_1';
     const bindD = (ctx) => snapSupport(bindFigure(dFig, ctx, v.meter, { octave: dOct, sound: dSound, loopRoots: true, gainRange: supportBand(0.15, 0.28), fx: '.room(0.5)', rhythmName: 'descant' }).expr, barSyms);
-    const dBars = form.sections.flatMap((sec) => Array(sec.bars).fill(sec.lead !== 'none' ? 1 : 0));
+    // r39: under the vocaloid form the descant is a CHORUS/BRIDGE layer (the
+    // corpus arc — the verse is thin, the chorus full), never a verse one
+    const dBars = form.sections.flatMap((sec) => Array(sec.bars).fill(sec.lead !== 'none' && (!vf || (ENERGY[sec.archetype] ?? 3) >= 4) ? 1 : 0));
     if (dBars.some(Boolean)) {
       extraParts.push(...varySplit(bindD, dBars));
       extraSolos._descant = bindD(ctxBar);
@@ -4957,6 +5072,82 @@ function buildSong(prompt, name, opts = {}) {
     extraInfo.push('funk bounce: gm_slap_bass_2 R/R+/5/R+ syncopated under the beat');
   }
 
+  // ---- r38 · THE VOCALOID BASS ------------------------------------------------
+  // §2: a bass in EVERY song, strikes an 8th long, midi 39–41: root–fifth 8ths
+  // in the chorus (56% of chorus windows), quarters / octave 8ths in the verse.
+  // Ours had none in half the windows (15 of 26 songs had no layer under midi
+  // 52). Named per row (a pool of one would be D119); gain relative to the lead.
+  if (vf) {
+    const vfAll = Array(form.totalBars).fill(1);
+    const vfBassGain = [Math.round(leadGain * 0.55 * 100) / 100, Math.round(leadGain * 0.8 * 100) / 100];
+    // register: the corpus bass median is midi 39–41 (D#2–F2). Seated at octave
+    // 2 for tonics C–G (36–43) and octave 1 for Ab–B (32–35), so an `R+` token
+    // lands under 48 and a `5` under 50 whatever the key — measured on the
+    // first build, a fixed octave 2 put A minor's bass at median 52 and C
+    // major's (root-folded) at 33.
+    const vfBassOct = tonicPc >= 8 ? 1 : 2;
+    const bindVfBass = (ctx) => bindFigure(ctx === ctxBarV ? vf.chorusBass : vf.verseBass, ctx, v.meter, { octave: vfBassOct, sound: vf.bassSound, loopRoots: true, gainRange: vfBassGain, fx: '.clip(0.8)' }).expr;
+    extraParts.push(...varySplit(bindVfBass, vfAll));
+    extraSolos._vf_bass = bindVfBass(ctxBar);
+    extraInfo.push(`vocaloid bass (r38): ${vf.bassSound}, ${vf.verseBass.name} in the verse / ${vf.chorusBass.name} in the chorus, octave ${vfBassOct}, ${vfBassGain[0]}–${vfBassGain[1]} (0.55–0.8 × lead)`);
+    // ---- r39 · THE ENERGY LAYERS ------------------------------------------
+    // His second message of the round: "none of our songs are actually
+    // 'intense, catchy, energetic' … our songs are either casual or moody or
+    // light, there's no song that spews energy yet … you should add more
+    // layers/instruments to the songs … more synths when you can with energy
+    // and interesting harmonies that ARE ALIGNED and are harmonic". And the
+    // ghost card: "I feel more layers should be added in all the songs".
+    // The r38 preset stood the WHOLE discretionary cast down (one chordal
+    // hand, a bass, the voice riders, a kit) — measured 4 layers in the mix
+    // median. Two named layers come back under the corpus arc (thin verse,
+    // full chorus), both at D77/D140 bands under a voice (× 0.6):
+    //   the SYNTH — a phrased HOOK line (chord tones + scale steps, rests) in
+    //   the chorus (and the bridge on the high tier), 6 notes a bar on the
+    //   high tier / 3–4 on mid / none on low — his correction: "'intense,
+    //   catchy, energetic' doesnt mean a bunch of fast notes. it means good,
+    //   catchy harmonies with full, energetic, active layers" (the first cut
+    //   was a 16th arpeggio and was reverted);
+    //   the PAD — under every tune section except the silent verse and the
+    //   song's FIRST verse (the arc), all tiers; four notes with the voicing
+    //   rotating every bar on the high tier, a held R.5.3+ otherwise.
+    // Every token is a chord member, so the layer is aligned by construction.
+    // The high tier's rows also re-enable marcato (rock) / synthRise (electro)
+    // and the seam crash through row.extra — the preset spreads `...opts` last.
+    {
+      const letterAt = (sec) => String(mfx.sections.find((x) => x.index === sec.index)?.letter ?? '').replace('*', '');
+      const tuneSecs = form.sections.filter((sec) => sec.lead !== 'none');
+      const firstTune = tuneSecs[0] ?? null;
+      const supportMulVf = 0.6; // D140: support under a voice
+      const vfLayers = [];
+      if (vf.synthFig) {
+        const synBars = form.sections.flatMap((sec) => Array(sec.bars).fill(sec.lead !== 'none' && (letterAt(sec) === 'B' || (vf.energy === 'high' && letterAt(sec) === 'C')) ? 1 : 0));
+        if (synBars.some(Boolean)) {
+          const synRange = INSTRUMENTS[vf.synthSound]?.range;
+          const synOct = synRange ? Math.max(synRange[0], Math.min(vf.synthFig.octave ?? 4, synRange[1])) : (vf.synthFig.octave ?? 4);
+          const synGain = [Math.round(leadGain * supportMulVf * 0.5 * 100) / 100, Math.round(leadGain * supportMulVf * 0.72 * 100) / 100];
+          const bindSyn = (ctx) => bindFigure(vf.synthFig, ctx, v.meter, { octave: synOct, sound: vf.synthSound, loopRoots: true, gainRange: synGain, fx: '.room(0.15).clip(0.7)', rhythmName: 'vf-synth' }).expr;
+          extraParts.push(...varySplit(bindSyn, synBars));
+          extraSolos._vf_synth = bindSyn(ctxBarV ?? ctxBar);
+          vfLayers.push(`synth ${vf.synthFig.name} on ${vf.synthSound} (octave ${synOct}, ${synBars.filter(Boolean).length} bars, gain ${synGain[0]}–${synGain[1]})`);
+        }
+      }
+      if (vf.padFig) {
+        const padBars = form.sections.flatMap((sec) => Array(sec.bars).fill(
+          sec.lead !== 'none' && sec !== firstTune && !(vf.energy === 'low' && letterAt(sec) === 'A') ? 1 : 0));
+        for (const b of vfSilent) padBars[b] = 0;
+        if (padBars.some(Boolean)) {
+          const padRange = INSTRUMENTS[vf.padSound]?.range;
+          const padOct = padRange ? Math.max(padRange[0], Math.min(vf.padFig.octave ?? 3, padRange[1])) : (vf.padFig.octave ?? 3);
+          const padGain = [Math.round(leadGain * supportMulVf * 0.38 * 100) / 100, Math.round(leadGain * supportMulVf * 0.5 * 100) / 100];
+          const bindPad = (ctx) => bindFigure(vf.padFig, ctx, v.meter, { octave: padOct, sound: vf.padSound, loopRoots: true, gainRange: padGain, fx: '.room(0.3)', rhythmName: 'vf-pad' }).expr;
+          extraParts.push(...varySplit(bindPad, padBars));
+          extraSolos._vf_pad = bindPad(ctxBar);
+          vfLayers.push(`pad ${vf.padFig.name} on ${vf.padSound} (octave ${padOct}, ${padBars.filter(Boolean).length} bars, gain ${padGain[0]}–${padGain[1]})`);
+        }
+      }
+      if (vfLayers.length) extraInfo.push(`vocaloid energy layers (r39, tier ${vf.energy}): ${vfLayers.join('; ')} — chord-tone tokens only (aligned by construction), 0.6 × the support band under a voice (D140)`);
+    }
+  }
   // D88 (the praised songs' C sections; the suite's base acc NEVER dropped
   // out — a still-open item since the old round 10): unkept/future songs
   // with a low-energy interior section get a real BREAKDOWN there — the
@@ -7385,7 +7576,7 @@ function buildSong(prompt, name, opts = {}) {
   const leadMixExpr = opts.vocalLead && letterLead.lead
     ? (takeoverMix.length ? `stack(${[letterLead.lead, ...takeoverMix].join(', ')})` : letterLead.lead)
     : null;
-  const solos = { _acc: base, _lead: leadBound.expr, ...(leadMixExpr ? { _lead_mix: leadMixExpr } : {}), ...extraSolos, ...(drums ? { _drums: drums } : {}) };
+  const solos = { _acc: base, _lead: leadBound.expr, ...(leadMixExpr ? { _lead_mix: leadMixExpr } : {}), ...(accMixSolo ? { _acc_mix: accMixSolo } : {}), ...extraSolos, ...(drums ? { _drums: drums } : {}) };
   for (const l of rendered.layers) solos[l.id] = l.expr;
   // D67 (verify-pass finding): a pad's SOLO carries its mix-side base wave —
   // without it the solo plays the flat inner gains the mix overrides, and
@@ -9430,6 +9621,137 @@ if (BAND_PAGE) {
     if (row.lyrics) S.lyricStyle = row.lyrics;
   }
 }
+// ===========================================================================
+// r38 — THE VOCAROCK PAGE (VOCAROCK=1 -> audition/vocarock.html). HIS ASK:
+//   "in band.html, it fits but doesnt really sound good or catchy. analyze all
+//    the vocaloid songs i gave you last time and learn from their chord
+//    progressions and patterns and what they play and how they support
+//    vocaloid and the piano patterns and voice patterns and layering, and just
+//    what makes the song 'sound good'. i cloned this branch and want to
+//    basically create a thing primarily for vocaloid based songs and want it
+//    to rock those, but in order to that it has to sound good so learn from
+//    vocaloid songs."
+// r39, his ruling on the prompts: "the descriptions are too 'musical'. make it
+// just regular users - less descriptive/specific than that but also more
+// energetic scenes on average". A row's text is what a player would type — a
+// scene, no instrument names, no chord talk; the instruments the text used to
+// carry (guitar, synths, the kit) are row FIELDS now, so the engine chooses
+// them, not the user's vocabulary.
+// Every row is a scene description (the lyric writer reads its nouns) plus the
+// Vocaloid form's material BY NAME (research/vocaloid-r38.md §3 loops, §2
+// figures, §4 forms): a verse loop, a chorus loop, verse/chorus acc figures,
+// verse/chorus bass figures, the form, the bass voice, the kit style. Ten
+// songs across the corpus's lanes (rock 22 of 35, electro/chip 10, pop/ballad
+// 3 — so six rock-family rows, three electro, one ballad). No row names a
+// source song and no material is retrieved from one (D137).
+const VOCAROCK_PAGE = process.env.VOCAROCK === '1';
+// r39 — HIS FIRST EXPORT ON THIS PAGE (D144). Three themes across ten cards:
+//   "voice a bit too loud and too much reverb" (nine of ten) -> every row's
+//     vocalDb drops 3 dB from the r36 table and the vocal room is 0.1 (was the
+//     lead layer's 0.25 / 0.7); `vocalTune` 0.7 on every row ("increase
+//     autotune if you can");
+//   "the exact same beginning progression used for all the songs???" (seven
+//     of ten) -> every row names its intro figure, intro VOICE and intro loop
+//     (vf_intro_riff was a pool of one, D119) — rooftop and lantern also named
+//     the same verse loop, so lantern takes the descending axis;
+//   "more layers should be added in all the songs" + his second message ("no
+//     song that spews energy yet … more synths") -> the energy tier: `energy:
+//     'high'` rows carry a phrased synth HOOK line, a four-note pad whose
+//     voicing rotates every bar, marcato (rock) or synthRise (electro) and the
+//     seam crash; 'mid' rows the lighter hook, the held pad and a chorus
+//     descant; 'low' the pad and descant only.
+//   sugar "too casual for a rush" -> the high tier (NOT a tempo change: his
+//     correction, "'intense, catchy, energetic' doesnt mean a bunch of fast
+//     notes. it means good, catchy harmonies with full, energetic, active
+//     layers" — the 16th arpeggio and the 156 bpm of the first cut were the
+//     fast-notes reading and were reverted);
+//   arcade / bike "vocals / melody not as good" -> the tune re-rolled
+//     (`leadSeedSalt`, r35's mechanism — a different rule-composed line, not
+//     a measured-better one).
+const VK_PROMPTS = [
+  { id: 'rooftop',  bpm: 176, kit: 'rock',   text: 'shouting from a rooftop at midnight with the whole city lit up below us',
+    vf: { verse: 'vf_min_verse_i_v_bVI_bVII', chorus: 'vf_min_chorus_bVI_v_Isus_bIII6', verseBass: 'vf_bass_octave8', form: 'vf_form_standard',
+      energy: 'high', introFig: 'vf_intro_octaves', introSound: 'gm_electric_guitar_muted', introLoop: 'chorus' },
+    extra: { marcato: true, crashSeams: true, guitar: 'rock' } },
+  { id: 'arcade',   bpm: 172, kit: 'dance',  text: 'one coin left at the arcade and the place is about to close',
+    vf: { verse: 'vf_min_verse_i_bVIIsus', chorus: 'vf_min_chorus_i_bVI_bIII_bVII', verseFig: 'vf_verse_arp8', form: 'vf_form_short',
+      energy: 'high', introFig: 'vf_intro_arp16', introSound: 'gm_lead_1_square', introLoop: 'verse' },
+    extra: { fullSynth: true, synthRise: true, crashSeams: true, leadSeedSalt: 1 } },
+  { id: 'station',  bpm: 130, kit: 'pop',    text: 'sprinting through the station to catch the last train, rain everywhere',
+    vf: { verse: 'vf_maj_verse_vi_IV_vamp', chorus: 'vf_maj_chorus_royal', verseFig: 'vf_verse_arp8', form: 'vf_form_standard',
+      energy: 'mid', introFig: 'vf_intro_hook', introLoop: 'chorus' },
+    extra: { descant: true, guitar: 'rock' } },
+  { id: 'sugar',    bpm: 128, kit: 'dance',  text: 'a sugar rush at the candy shop, bouncing off the walls',
+    vf: { verse: 'vf_maj_verse_I_V_vi_IV', chorus: 'vf_maj_chorus_ii7_IV6_vi7_Vsus', form: 'vf_form_chorus_first',
+      energy: 'high', verseBass: 'vf_bass_root5_8ths' },
+    extra: { fullSynth: true, synthRise: true, crashSeams: true } },
+  { id: 'boss',     bpm: 190, kit: 'rock',   text: 'the final boss fight, everything on the line, no time to breathe',
+    vf: { verse: 'vf_min_verse_bVI7_i_v_i', chorus: 'vf_min_chorus_bIII_bVI_i_v', verseBass: 'vf_bass_root5_8ths', form: 'vf_form_long',
+      energy: 'high', introFig: 'vf_intro_stabs332', introLoop: 'verse' },
+    extra: { marcato: true, crashSeams: true, guitar: 'rock' } },
+  { id: 'bike',     bpm: 168, kit: 'rock',   text: 'racing bikes down the summer hill with friends, screaming the whole way',
+    vf: { verse: 'vf_maj_verse_I_Isus_V_iii', chorus: 'vf_maj_chorus_vi_V_IV_I', verseBass: 'vf_bass_octave8', form: 'vf_form_standard',
+      energy: 'high', introFig: 'vf_chorus_block8', introLoop: 'chorus' },
+    // vocalDb: the r36 table's festival rule (-4, from ONE vo_rooftop card) minus
+    // this page's -3 would put the two festival rows at -7; he said "a bit too
+    // loud" of both, the same words as the -3 rows — pinned at -4 (bike, lantern)
+    extra: { marcato: true, crashSeams: true, leadSeedSalt: 1, guitar: 'rock' }, vocalDb: -4 },
+  { id: 'ghost',    bpm: 150, kit: 'funk',   text: 'crashing the party and refusing to leave, dancing on the table',
+    vf: { verse: 'vf_min_verse_i_bIII7_i_i7', chorus: 'vf_min_chorus_v_bVI_bVII6_i', chorusBass: 'vf_bass_riff8', bassSound: 'gm_slap_bass_2', form: 'vf_form_standard',
+      energy: 'mid', introFig: 'vf_intro_none', introLoop: 'verse', synthSound: 'gm_epiano1', padSound: 'gm_pad_new_age' } },
+  { id: 'snow',     bpm: 84,  kit: 'ballad', text: 'snowed in, a calm winter night with the lights low',
+    vf: { verse: 'vf_min_verse_i_iv_bVI_v', chorus: 'vf_min_chorus_iv7_i_v_bVI7', verseFig: 'vf_verse_arp8', chorusFig: 'vf_chorus_block4', chorusBass: 'vf_bass_quarters', form: 'vf_form_standard',
+      energy: 'low', introFig: 'vf_intro_hook', introLoop: 'verse' },
+    extra: { descant: true, guitar: 'arp' } },
+  { id: 'lantern',  bpm: 154, kit: 'rock',   text: 'the summer festival at night, lanterns everywhere, everyone clapping along',
+    vf: { verse: 'vf_min_verse_i_bVII_bVI_v', chorus: 'vf_min_chorus_i_bVI7_bVIIsus_bIII7', form: 'vf_form_standard',
+      energy: 'high', introFig: 'vf_intro_riff', introSound: 'gm_lead_2_sawtooth', introLoop: 'chorus' },
+    extra: { marcato: true, crashSeams: true, guitar: 'rock' }, vocalDb: -4 },
+  { id: 'citynight', bpm: 104, kit: 'pop',   text: 'driving through the city at 2am with the windows down and the music loud',
+    vf: { verse: 'vf_maj_verse_I_vi_bVII_I', chorus: 'vf_maj_chorus_vi_I6_IV_V', verseFig: 'vf_verse_arp8', form: 'vf_form_short',
+      energy: 'mid', introFig: 'vf_intro_stabs332', introSound: 'gm_epiano1', introLoop: 'chorus', padSound: 'gm_pad_new_age' },
+    extra: { descant: true } },
+];
+let VK_FIRST = 0;
+if (VOCAROCK_PAGE) {
+  VK_FIRST = songs.length;
+  for (const row of VK_PROMPTS) {
+    const d = describePrompt(row.text);
+    const { opts: o, bpm, vocalDb, vocalStyle } = vocaloidOpts(d, row);
+    const name = `vr_${row.id}`;
+    // the loop's family is the song's family (a minor chorus loop over a major
+    // key would be a different song); the row's loop names decide
+    const fam = VOCALOID_LOOPS[row.vf.verse]?.family;
+    if (fam) o.family = fam;
+    o.vocaloidForm = row.vf;
+    delete o.scheme; // the form names the letters; vocaloidOpts's 'ABABCB' must not outrank it
+    // the r35 writer with the r38 additions: an 8th breath (corpus median), the
+    // slow-tempo floor; the chorus double + companion + harmony voice as before
+    o.vocalWriter = { ...(typeof o.vocalWriter === 'object' ? o.vocalWriter : {}), breathBias: 1, slowFloor: true };
+    // the kit writer (r37) at the row's style; rows that name a kit get one
+    // r39: the row's energy tier outranks the prompt's read for the kit's
+    // presence (rooftop / bike / arcade parse 'mid' and are high-tier rows)
+    const tier = row.vf.energy ?? (d.energy === 'high' ? 'high' : d.energy === 'low' ? 'low' : 'mid');
+    o.percPresence = tier === 'high' ? 'foreground' : tier === 'low' ? 'light' : 'driving';
+    o.kitWriter = true;
+    o.kitStyle = row.kit;
+    Object.assign(o, row.extra ?? {});
+    buildSong({ emotion: d.emotion, environment: d.environment, meter: '4/4' }, name, o);
+    const S = songs[songs.length - 1];
+    S.description = row.text;
+    S.parsed = explainPrompt(d);
+    const L = VOCALOID_LOOPS[row.vf.verse], C = VOCALOID_LOOPS[row.vf.chorus];
+    S.why = `"${row.text}" -> ${explainPrompt(d)} · ${bpm} bpm · kit ${row.kit} · verse ${L?.numerals ?? row.vf.verse} / chorus ${C?.numerals ?? row.vf.chorus} · form ${row.vf.form ?? 'vf_form_standard'} · intro ${row.vf.introFig ?? 'vf_intro_riff'}${row.vf.introSound ? ` on ${row.vf.introSound}` : ''} over the ${row.vf.introLoop ?? 'verse'} loop · energy ${tier}`;
+    S.vocalSuite = true;
+    // r39: "voice a bit too loud and too much reverb" on nine of ten cards —
+    // 3 dB under the r36 table, a 0.1 room, the pitch pulled 70% to the score
+    S.vocalDb = row.vocalDb ?? Math.round((vocalDb - 3) * 10) / 10;
+    S.vocalRoom = row.vocalRoom ?? 0.1;
+    S.vocalTune = row.vocalTune ?? 0.7;
+    if (vocalStyle !== 'lead') S.vocalStyle = vocalStyle;
+    if (row.lyrics) S.lyricStyle = row.lyrics;
+  }
+}
 // THE LAB: A/B cards built under ONE name (D120 — the key and every retrieval
 // hash on the name) and renamed for display; one variable per card. The base
 // is one prompt at one tempo; each card lists its hypothesis + question.
@@ -10040,6 +10362,20 @@ if (SUITE) {
   const built = songs.slice(BAND_FIRST);
   console.log(`wrote audition/band.html — ${built.length} scene songs, page script parses clean, ${(inlbd.length / 1024).toFixed(0)} KB`);
   for (const b of built) console.log(`   ${b.name.padEnd(16)} ${String(b.bpm).padStart(3)}bpm ${String(b.key).padEnd(9)} ${b.parsed}`);
+} else if (VOCAROCK_PAGE) {
+  const vrHtml = page({ songs: songs.slice(VK_FIRST).map(({ solos, ...rest }) => ({ ...rest, solos })) })
+    .replace(/motif-engine:song-verdicts/g, 'motif-engine:vocarock-verdicts')
+    .replace(/motif-engine:song-notes/g, 'motif-engine:vocarock-notes')
+    .replace(/motif-engine:song-cards/g, 'motif-engine:vocarock-cards')
+    .replace(/motif-engine:songs-vocal/g, 'motif-engine:vocarock-vocal')
+    .replace("page: 'songs'", "page: 'r38-vocarock'")
+    .replace('<title>vibe songs — audition</title>', '<title>r38 — the Vocaloid form (verse/chorus loops, line/block figures, a bass, an intro riff)</title>');
+  writeFileSync(join(OUT, 'vocarock.html'), vrHtml);
+  const inlvr = vrHtml.slice(vrHtml.lastIndexOf('<script>') + 8, vrHtml.lastIndexOf('</script>'));
+  acorn.parse(inlvr, { ecmaVersion: 'latest' });
+  const built = songs.slice(VK_FIRST);
+  console.log(`wrote audition/vocarock.html — ${built.length} songs, page script parses clean, ${(inlvr.length / 1024).toFixed(0)} KB`);
+  for (const b of built) console.log(`   ${b.name.padEnd(14)} ${String(b.bpm).padStart(3)}bpm ${String(b.key).padEnd(9)} bars ${b.totalBars}  ${b.why.slice(b.why.indexOf('·'))}`);
 } else if (VOCALAB_PAGE) {
   const vlHtml = page({ songs: songs.slice(VL_FIRST).map(({ solos, ...rest }) => ({ ...rest, solos })) })
     .replace(/motif-engine:song-verdicts/g, 'motif-engine:vocalab-verdicts')

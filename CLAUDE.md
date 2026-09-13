@@ -275,6 +275,30 @@ ambiguous). Read the LAST few D-entries before starting any round.
   out-of-range index falls back to the true one). Same round: the clicked
   bright-major exemplar pool is TWO Undertale loops (D119) — both excited
   major songs hashed onto one; pinned with basePin + rawBase.
+- **ENERGY IS HARMONY AND FULL LAYERS, NOT NOTE SPEED (r39/D144, his words
+  verbatim): "'intense, catchy, energetic' doesnt mean a bunch of fast notes.
+  it means good, catchy harmonies with full, energetic, active layers."** The
+  first cut of the vocarock energy tier answered "no song that spews energy
+  yet" with a 16th arpeggio and a tempo bump; he corrected it mid-render.
+  What stands: a phrased synth HOOK line with rests, a four-note pad whose
+  voicing rotates every bar, marcato / synth rise, a crash on the seams —
+  measured as voices per bar verse 4 → 4 / chorus 4 → 6 (thin verse, full
+  chorus). Never read "energetic" as density or bpm.
+- **A VOCAL-TIER DEFAULT IS A PAGE PIN, NEVER A RENDERER DEFAULT (r39/D144,
+  both peers' catch).** "Lower reverb by default" went in as a render-vocal
+  default of 0.1 and would have dried every judged sung song on vocal.html /
+  vocaloid.html at its next re-render — D91 through the RENDER tier. The
+  renderer's fallback stays the lead layer's room (as judged); a page that
+  wants the new default writes `vocalRoom` (and `vocalTune`, `vocalDb`) on
+  its own rows. The render log names which source won.
+- **THE INTRO RIFF WAS A POOL OF ONE (r39/D144, D119's fourth instance).**
+  "The exact same beginning progression used for all the songs???" on seven
+  of ten cards — the verse LOOPS differed on eight; the one intro figure on
+  one voice over one bass did not (19 of 45 song pairs shared 80%+ of their
+  first-four-bar contour). A row names its intro figure, intro VOICE and
+  intro loop; a test pins that no two rows share the tuple. And a
+  letter-less section must never be starred (`null*` fell through every
+  letter dispatch to the verse figure — five intros lost their riff).
 - **"ABSTRACT THIS TO ANY X" MEANS A LABEL, NOT A REDESIGN (r30/D120).** His four
   "could be abstracted to any dark/calm/epic environment" notes were read as an
   engine-redesign ask and planned as `core(mood,energy) x tint(environment)`. His

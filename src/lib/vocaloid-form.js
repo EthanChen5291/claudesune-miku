@@ -34,6 +34,10 @@ export const VOCALOID_LOOPS = {
   vf_min_verse_i_bVIIsus: loop('minor', 'verse', '0:m 10:sus 0:m7 10', 'i bVIIsus i7 bVII', 'Gimme×Gimme / Toosenbo two-chord vamp'),
   vf_min_verse_i_iv_bVI_v: loop('minor', 'verse', '0:m 5:m 8 7:m', 'i iv bVI v', 'New Darling verse'),
   vf_min_verse_i_bIII7_i_i7: loop('minor', 'verse', '0:m 3:^7 0:m 0:m7', 'i bIII^7 i i7', 'Roki verse'),
+  // r39: his "the exact same beginning progression used for all the songs" —
+  // two rows (rooftop, lantern) named the SAME verse loop; the wa-rock row
+  // takes the descending minor axis (i bVII bVI v, the Senbonzakura-family verse)
+  vf_min_verse_i_bVII_bVI_v: loop('minor', 'verse', '0:m 10 8 7:m', 'i bVII bVI v', 'the descending minor axis (Senbonzakura verse family)'),
   // ---- minor, chorus -----------------------------------------------------
   vf_min_chorus_i_bVI7_bVIIsus_bIII7: loop('minor', 'chorus', '0:m 8:^7 10:sus 3:^7', 'i bVI^7 bVIIsus bIII^7', 'Senbonzakura chorus'),
   vf_min_chorus_bIII_bVI_i_v: loop('minor', 'chorus', '3 8 0:m 7:m', 'bIII bVI i v', 'Android Girl chorus (opens on bIII)'),
@@ -60,23 +64,77 @@ export const VOCALOID_LOOPS = {
 // doubled an octave up; intro = a riff of its own (6.5 notes a bar, single
 // notes, stepwise); every strike an 8th long. Bass: root–fifth 8ths (chorus,
 // 56%), quarters or octave 8ths (verse), midi 39–41.
+// REGISTER (measured on the first vocarock build): at octave 4 the hand's
+// median sat at 65–77 against a sung lead at 65–71 — above the voice. The
+// corpus verse line tops at B4 (p90) UNDER a voice whose median is G#4, so
+// the acc figures seat at octave 3; only the intro riff keeps octave 4 (the
+// corpus intro top line p90 is 79).
 const E8 = ['0/1', '1/8', '1/4', '3/8', '1/2', '5/8', '3/4', '7/8'];
 const E8x2 = [...E8, '1/1', '9/8', '5/4', '11/8', '3/2', '13/8', '7/4', '15/8'];
+const S16 = Array.from({ length: 16 }, (_, i) => `${i}/16`);
 const fig = (name, cls, bars, onsets, figure, accents, extra = {}) => ({
   name, class: cls, bars, grid: 8, meter_class: '4/4', onsets, figure, accents,
   legato: false, pack: 'vocaloid-r38', role: extra.role ?? 'accompaniment', ...extra,
 });
 export const VOCALOID_FIGURES = {
   // acc (the one chordal hand)
-  vf_verse_line: fig('vf_verse_line', 'line', 1, ['0/1', '1/2', '3/4'], ['R', '5', '3'], [0.9, 0.7, 0.75], { octave: 4, source: '§2 verse `line`: 3 strikes/bar, one note, top p90 B4' }),
+  vf_verse_line: fig('vf_verse_line', 'line', 1, ['0/1', '1/2', '3/4'], ['R', '5', '3'], [0.9, 0.7, 0.75], { octave: 3, source: '§2 verse `line`: 3 strikes/bar, one note, top p90 B4' }),
   vf_verse_arp8: fig('vf_verse_arp8', 'arp', 1, E8, ['R', '5', '3', '5', 'R+', '5', '3', '5'], [0.85, 0.6, 0.7, 0.6, 0.8, 0.6, 0.7, 0.6], { octave: 3, source: '§2 verse `arp8` (11% of verse windows)' }),
-  vf_chorus_block8: fig('vf_chorus_block8', 'block', 1, E8, ['3.5', '3.5', 'R+.3+', 'R+.3+', '3.5', '3.5', '5.R+', '5.R+'], [0.95, 0.7, 0.85, 0.7, 0.9, 0.7, 0.85, 0.7], { octave: 4, source: '§2 chorus `block8`: 7 strikes/bar, 2 notes a strike, the tune doubled above (chorusDouble)' }),
-  vf_chorus_block4: fig('vf_chorus_block4', 'block', 1, ['0/1', '1/4', '1/2', '3/4'], ['R.3.5', '3.5.R+', 'R.3.5', '3.5.R+'], [0.95, 0.75, 0.9, 0.75], { octave: 4, source: '§2 chorus `block4` (26%)' }),
-  vf_bridge_block4: fig('vf_bridge_block4', 'block', 1, ['0/1', '3/8', '1/2', '7/8'], ['R.5', '3.5', 'R.5', '3.5'], [0.9, 0.7, 0.85, 0.7], { octave: 4, source: '§2 mid/bridge: block4 with a tie-over (syncopated 13%)' }),
+  vf_chorus_block8: fig('vf_chorus_block8', 'block', 1, E8, ['3.5', '3.5', 'R+.3+', 'R+.3+', '3.5', '3.5', '5.R+', '5.R+'], [0.95, 0.7, 0.85, 0.7, 0.9, 0.7, 0.85, 0.7], { octave: 3, source: '§2 chorus `block8`: 7 strikes/bar, 2 notes a strike, the tune doubled above (chorusDouble)' }),
+  vf_chorus_block4: fig('vf_chorus_block4', 'block', 1, ['0/1', '1/4', '1/2', '3/4'], ['R.3.5', '3.5.R+', 'R.3.5', '3.5.R+'], [0.95, 0.75, 0.9, 0.75], { octave: 3, source: '§2 chorus `block4` (26%)' }),
+  vf_bridge_block4: fig('vf_bridge_block4', 'block', 1, ['0/1', '3/8', '1/2', '7/8'], ['R.5', '3.5', 'R.5', '3.5'], [0.9, 0.7, 0.85, 0.7], { octave: 3, source: '§2 mid/bridge: block4 with a tie-over (syncopated 13%)' }),
   vf_intro_riff: fig('vf_intro_riff', 'riff', 2, E8x2,
     ['5', 's6', '5', '3', 'R', 's2', '3', '5', 'R+', 's7', '5', 's6', '5', '3', 's2', 'R'],
     [0.95, 0.7, 0.8, 0.7, 0.9, 0.7, 0.8, 0.7, 0.95, 0.7, 0.8, 0.7, 0.9, 0.7, 0.8, 0.7],
     { octave: 4, source: '§4 the intro is a riff of its own (single notes, stepwise, 6.5/bar) — never the chorus tune' }),
+  // r39 — THE INTRO RIFF WAS A POOL OF ONE (D119, fourth instance). His first
+  // vocarock export, seven cards of ten: "the exact same beginning progression
+  // used for all the songs???". Measured on the judged page: every intro was
+  // `vf_intro_riff` on the acc voice over a bass, 12–16 onsets a bar, TWO
+  // layers, and 19 of 45 song pairs shared 80%+ of their 8th-by-8th contour
+  // over the first four bars (rooftop and lantern were identical — same loop,
+  // same riff). The loops differed; the riff, the rhythm, the register and
+  // the voice did not, and that is what "the same progression" names. Every
+  // row now names its intro figure, its intro VOICE and which loop the intro
+  // sits on (`introLoop: 'chorus'` — the chorus loop opens off the tonic).
+  vf_intro_arp16: fig('vf_intro_arp16', 'arp', 1, S16,
+    ['R', '3', '5', 'R+', '3+', 'R+', '5', '3', 'R', '3', '5', 'R+', '5+', '3+', 'R+', '5'],
+    [0.9, 0.55, 0.65, 0.75, 0.6, 0.7, 0.6, 0.55, 0.85, 0.55, 0.65, 0.75, 0.6, 0.7, 0.6, 0.55],
+    { octave: 4, source: 'r39: the chip/electro intro — a 16th arpeggio through the chord (corpus chorus `arp16` class)' }),
+  vf_intro_hook: fig('vf_intro_hook', 'line', 2, ['0/1', '3/8', '1/2', '3/4', '1/1', '11/8', '3/2', '7/4'],
+    ['5', 'R+', 's7', '5', '3', '5', 's2', 'R'], [0.95, 0.8, 0.85, 0.7, 0.9, 0.75, 0.8, 0.7],
+    { octave: 4, source: 'r39: a WIDE hook — four notes a bar, a pickup onto beat 3, falling home over two bars (the corpus intro p90 top is 79)' }),
+  vf_intro_octaves: fig('vf_intro_octaves', 'pulse', 1, E8, ['R', 'R+', 'R', 'R+', '5', '5+', '5', 'R+'],
+    [0.95, 0.7, 0.9, 0.7, 0.9, 0.7, 0.85, 0.7],
+    { octave: 3, source: 'r39: the rock intro — octave alternation on 8ths (his r35 "octave alternation good")' }),
+  vf_intro_stabs332: fig('vf_intro_stabs332', 'block', 2, ['0/1', '3/8', '3/4', '1/1', '11/8', '3/2', '7/4'],
+    ['R.3.5', 'R.3.5', '3.5.R+', 'R.3.5', '3.5.R+', 'R.3.5', '3.5.R+'], [0.95, 0.8, 0.85, 0.95, 0.8, 0.85, 0.75],
+    { octave: 3, source: 'r39: 3+3+2 chord stabs (the corpus `syncopated` class, 13% of mid windows)' }),
+  vf_intro_none: fig('vf_intro_none', 'silent', 1, [], [], [],
+    { octave: 3, source: 'r39: no accompaniment hand in the intro — bass and kit open the song (ghost: the slap bass he liked, alone)' }),
+  // r39 — ENERGY LAYERS. His second message: "none of our songs are actually
+  // 'intense, catchy, energetic' … no song that spews energy yet … more
+  // synths when you can with energy and interesting harmonies that ARE
+  // ALIGNED and are harmonic". Every token here is a chord member or a scale
+  // token, so the layer cannot spell a foreign pitch (aligned by construction).
+  // His correction, mid-round: "'intense, catchy, energetic' doesnt mean a
+  // bunch of fast notes. it means good, catchy harmonies with full, energetic,
+  // active layers". The first cut of these was a 16th arpeggio (fast notes);
+  // it is now a PHRASED HOOK LINE — a two-bar counter-melody of chord tones
+  // and scale steps with rests, six notes a bar, that answers the voice — and
+  // a pad whose voicing MOVES every bar (the reference device from his reels:
+  // a repeated chord returning with its voicing rotated).
+  vf_syn_hook: fig('vf_syn_hook', 'line', 2, ['0/1', '1/8', '1/4', '1/2', '5/8', '3/4', '1/1', '9/8', '5/4', '3/2', '13/8', '7/4'],
+    ['5', '5', '3+', 'R+', '5', 's6', '3', '3', '5', 's2+', 'R+', '5'],
+    [0.75, 0.55, 0.7, 0.8, 0.55, 0.6, 0.75, 0.55, 0.65, 0.7, 0.8, 0.55],
+    { octave: 3, role: 'synth', source: 'r39: the chorus synth HOOK — a phrased two-bar counter-line (chord tones + s2/s6 steps, rests on beat 2 of each bar)' }),
+  vf_syn_hook_lite: fig('vf_syn_hook_lite', 'line', 2, ['0/1', '1/4', '1/2', '1/1', '5/4', '3/2', '7/4'],
+    ['5', '3+', 'R+', '3', '5', 's2+', 'R+'], [0.75, 0.7, 0.8, 0.75, 0.65, 0.7, 0.8],
+    { octave: 3, role: 'synth', source: 'r39: the mid-tier chorus synth hook — the same line at 3–4 notes a bar' }),
+  vf_pad_sustain: fig('vf_pad_sustain', 'sustain', 1, ['0/1'], ['R.5.3+'], [0.8],
+    { octave: 3, legato: true, role: 'pad', source: 'r39: a held root-fifth-tenth pad under the chorus (corpus `sustain` class; the tenth keeps it aligned to the chord\'s third)' }),
+  vf_pad_move: fig('vf_pad_move', 'sustain', 2, ['0/1', '1/1'], ['R.5.R+.3+', '3.5.R+.5+'], [0.8, 0.75],
+    { octave: 3, legato: true, role: 'pad', source: 'r39: the FULL pad — four notes, the voicing rotating every bar (his reels: "a repeated chord returns with its voicing ROTATED one position")' }),
   // bass (always present, strikes an 8th long)
   vf_bass_root5_8ths: fig('vf_bass_root5_8ths', 'pulse', 1, E8, ['R', 'R', '5', 'R', 'R', '5', 'R', '5'], [1, 0.75, 0.85, 0.75, 0.95, 0.75, 0.85, 0.8], { role: 'bass', octave: 2, source: '§2 chorus bass `root5-8ths` (56%): 7.5 strikes/bar, root 48% / fifth motion 59%' }),
   vf_bass_quarters: fig('vf_bass_quarters', 'pulse', 1, ['0/1', '1/4', '1/2', '3/4'], ['R', 'R', '5', 'R'], [1, 0.8, 0.85, 0.8], { role: 'bass', octave: 2, source: '§2 verse bass `quarters` (27%)' }),
@@ -108,6 +166,10 @@ export const VOCALOID_FORMS = {
     intro: 0, sections: ['B', 'A', 'A', 'B', 'A', 'B', 'C', 'B'], silentVerse: 4,
     source: '§4 four of 36 open on the chorus (Ievan Polkka, Iya Iya Yo, Vampire, Yoru ni Kakeru)',
   },
+  vf_form_standard_4: {
+    intro: 4, sections: ['A', 'A', 'B', 'A', 'B', 'C', 'B'], silentVerse: 3,
+    source: 'r39: the standard form with a 4-bar intro — one loop of the riff, then the voice (intro lengths were 8 on nine of ten rows)',
+  },
 };
 
 /** Resolve a page row's vocaloidForm config by NAME; throws on an unknown name
@@ -126,5 +188,18 @@ export function vocaloidFormSpec(cfg = {}) {
     form: get(VOCALOID_FORMS, cfg.form ?? 'vf_form_standard', 'form'),
     bassSound: cfg.bassSound ?? 'gm_synth_bass_1',
     silentVerse: cfg.silentVerse ?? true,
+    // r39 — the intro is the row's: its loop ('verse' | 'chorus'), and the
+    // voice its figure plays on (null = the song's accompaniment voice)
+    introLoop: cfg.introLoop === 'chorus' ? 'chorus' : 'verse',
+    introSound: cfg.introSound ?? null,
+    // r39 — the ENERGY tier ('low' | 'mid' | 'high') decides the chorus's
+    // synth figure and the pad's reach; a row may name either figure outright
+    // or switch one off with `false`
+    energy: ['low', 'mid', 'high'].includes(cfg.energy) ? cfg.energy : 'mid',
+    synthFig: cfg.synthFig === false ? null
+      : get(VOCALOID_FIGURES, cfg.synthFig ?? (cfg.energy === 'high' ? 'vf_syn_hook' : cfg.energy === 'low' ? null : 'vf_syn_hook_lite'), 'synth figure'),
+    synthSound: cfg.synthSound ?? 'gm_lead_2_sawtooth',
+    padFig: cfg.padFig === false ? null : get(VOCALOID_FIGURES, cfg.padFig ?? (cfg.energy === 'high' ? 'vf_pad_move' : 'vf_pad_sustain'), 'pad figure'),
+    padSound: cfg.padSound ?? 'gm_pad_warm',
   };
 }

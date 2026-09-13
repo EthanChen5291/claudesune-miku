@@ -21,7 +21,8 @@ def q(xs, p):
 def pc(x): return '—' if x is None else f'{100*x:.0f}%'
 
 rows = []
-for f in sorted(glob.glob('audition/hq/*.vocal-score.json')):
+import os
+for f in sorted(glob.glob(os.environ.get('SCORE_GLOB', 'audition/hq/*.vocal-score.json'))):
     d = json.load(open(f)); bpm = d['bpm']; spb = 60 / bpm
     notes = sorted(d['notes'], key=lambda n: n['start'])
     if len(notes) < 10: continue

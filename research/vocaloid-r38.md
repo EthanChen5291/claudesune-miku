@@ -453,3 +453,63 @@ no drums).
   band + 14 vocaloid songs, measured IN THE MIX (D137's trap) except the acc
   figure, which is the `_acc` solo unmasked (the figure class does not depend
   on the mask).
+
+## 11. What this round built from it, and what it measured on the build (D143)
+
+`opts.vocaloidForm` (scripts/audition-songs.mjs) + `src/lib/vocaloid-form.js`
+(20 loops, 10 figures, 4 forms — by name only) + `VOCAROCK=1` →
+`audition/vocarock.html` (10 songs, 52–80 bars). Rules 1–9 of §9 are wired as
+one preset: verse loop (basePin, raw) / chorus loop (the B letters' ctxBarV) /
+verse line–chorus block8–bridge block4 figures per letter / intro riff on the
+letter-less bars / one silent verse / a bass through varySplit (verse and
+chorus figures) / 8-bar sections after the intro caps / the discretionary cast
+stood down. Rule 10's slow-tempo floor is `vocalWriter.slowFloor`.
+
+Measured in the MIX (`_acc_mix` — the `_acc` solo cannot show per-letter
+figures, the D137 trap caught again on this page's first probe):
+
+| | corpus | vocarock (10) |
+|---|---|---|
+| acc verse | line 26 · silent 17 · arp8 11 · block4 11% | line 45 · silent 34 · arp8 21% |
+| acc chorus | block8 43 · block4 26% | block8 91 · block4 9% |
+| acc intro | block8 30 · line 16 · counterline 14% | counterline 100% |
+| bass verse / chorus | quarters 27 · octave 18 / root5-8ths 56% | quarters 66 · octave 21 / root5-8ths 81% |
+| octave doubling verse / chorus | 16% / 92% | 26% / 100% |
+| pcs per 8th · rubs/bar · spells-a-chord (sustain) | 3 · 1.6 · 88% | 3 · 2.4 · 81% (gain ≥ 0.25: 2 · 0.7 · 96%) |
+| out of key (mix) | 7.9% | 0% |
+| voice syl/s · steps · exact 2-bar repeats | 3.9 · 48% · 31% | 3.8 · 38–53% · 21–50% |
+| acc median vs lead median | line top p90 71 under a voice at 68 | 57–65 under 65–71 (first build: 65–77 ABOVE — fixed by seating at octave 3) |
+| bass median | 40 (p10–p90 40–48) | 33–50 (seated by tonic; still wider than the corpus — open) |
+
+Open after the build: breath 1.0 beat on 8 of 10 (the writer's phrase-final
+quarter + 8th rest; corpus 0.5); vr_snow (84 bpm) holds the 6.5-note floor but
+writes 56% 16th pairs for the same reason; the bass register spread; the
+writer-path accent envelope (4 distinct lead gains on 7 of 10, pre-existing).
+
+## 12. His first export on the page, and what r39 changed (D144)
+
+Ten cards (2026-09-13). Three themes, then two per-song notes, then a second
+message: "none of our songs are actually 'intense, catchy, energetic' … no song
+that spews energy yet … add more layers/instruments … lower reverb by default,
+increase autotune if you can … more synths when you can with energy and
+interesting harmonies that ARE ALIGNED and are harmonic".
+
+| his words | measured on the judged page | r39 |
+|---|---|---|
+| "the exact same beginning progression used for all the songs???" (7 of 10; "very similar" on an 8th) | every intro = `vf_intro_riff` on the acc voice over the bass — 2 layers, 12–16 onsets/bar; 19 of 45 song pairs shared ≥80% of their 8th-by-8th contour over the first 4 bars; rooftop and lantern identical (same verse loop, same riff). The loops differed; the riff, voice, rhythm and register did not | six intro figures, each row names figure + VOICE + loop (5 rows sit the intro on the chorus loop, which opens off the tonic); lantern's verse loop → `i bVII bVI v`; ghost opens on bass + kit alone. After: **1 of 45** pairs |
+| "voice a bit too loud and too much reverb" (9 of 10) | vocal took the LEAD LAYER's room: 0.25 on eight songs (tail 19–21 dB under the sung level), 0.7 on station/snow (10.6 dB under); level at the r36 table (+0 / +1.5 / −1.5 / −4) | `vocalRoom` 0.1 on every row (render default 0.1, no longer the lead's room); every row −3 dB from the r36 table (festival rows pinned −4, not −7); `vocalTune` 0.7 (§ A/B below) |
+| "more layers should be added in all the songs"; "no song that spews energy" — then his correction: "doesnt mean a bunch of fast notes. it means good, catchy harmonies with full, energetic, active layers" | the r38 preset stood the whole cast down: 4 layers median in the mix | the energy tier: high = phrased synth HOOK line (B+C, 6 notes/bar with rests) + four-note pad with a rotating voicing + marcato (rock) / synthRise (electro) + seam crash; mid = lighter hook (B) + held pad + chorus descant; low = pad + descant (a 16th-arpeggio first cut was reverted). **7 layers median**; density at gain ≥ 0.25: 3 pcs/8th · 1.56 rubs/bar · fits-a-chord 92% · out-of-key 0% (corpus 3 · 1.28 · 90%) |
+| sugar "too casual for a rush" | 128 bpm, 'high' parse but the thinnest chorus | stays 128; high tier, root-fifth bass in the verse too (energy from layers and loop, not tempo) |
+| arcade / bike "vocals / melody not as good" | — | `leadSeedSalt: 1` (a different rule-composed line; not measured better) |
+
+His third message: "the descriptions are too 'musical'. make it just regular
+users - less descriptive/specific than that but also more energetic scenes on
+average" — the row texts are plain player scenes now, instruments moved to
+row fields; parse-checked each ("high score" → orchestral, "hot chocolate" →
+casino were caught). Six songs moved on mix/cast from the emotion re-parse.
+
+Registers after the build (medians in the mix): synth hook 60–67 under leads
+at 64–71 (the first cut seated it at octave 4 → 72–79 ABOVE the voice on four
+songs — D118 again; now octave 3, saw only, range [3,5]); pad 57–69; marcato
+strings 55–67, **77 on boss** (the r15 rule's `tonicPc >= 5 ? 3 : 4` puts D
+minor at 4 — open); every new layer 0.32–0.67 × the lead solo's gain.

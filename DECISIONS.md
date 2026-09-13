@@ -13135,3 +13135,307 @@ now asserts on `vocalisePlan()` directly (a pure function no page row can
 reach), the end-to-end auto leg moved to an unpinned song (vo_goodbye), and
 vo_kitchen tests the PIN PATH instead — row `lyrics:` → `lyricStyle` in DATA →
 `mode: 'all'` — which is the wiring that actually needed pinning. 9/9.
+
+## D143 — r38: the Vocaloid ARRANGEMENT read out (progressions per section, figures, form, hooks, instruments, "how it's more harmonious than ours") and the vocaloid-first page (his "in band.html, it fits but doesnt really sound good or catchy. analyze all the vocaloid songs i gave you last time and learn from their chord progressions and patterns and what they play and how they support vocaloid and the piano patterns and voice patterns and layering, and just what makes the song 'sound good' … i cloned this branch and want to basically create a thing primarily for vocaloid based songs and want it to rock those … take note of instruments they use too … understand how it's more harmonious than ours and sounds better")
+
+**Context.** His verdict on `audition/band.html` (r37/D142, motif-engine-b4's
+page) was one line; this round answers it with a second read of the 36
+Vocaloid files (r35/D139 read the VOICE) and a page built from what the read
+found. Full doc: `research/vocaloid-r38.md` (every table states its
+population). Scripts: `analyze-vocaloid-r38.mjs`, `figure-classes-r38.mjs`
+(ONE classifier for theirs and ours), `probe-harmony-density-r38.mjs`,
+`probe-figures-r38.mjs`. Corpus stays analysis-only (D95).
+
+**Melody identification (his "are you able to do that reliably?"): yes.** 32
+of 37 files name the vocal track; the 3 unnamed voices (Ievan Polkka, Monster,
+USSEEWA) were picked by behaviour and re-verified: 100% monophonic, midi 61–73
+/ 54–77 / 56–84, against 36–67% monophony on the other tracks. One file is a
+two-hand piano cover with no voice (skipped).
+
+**THE HARMONY QUESTION, AND A VERIFY CATCH THAT REVERSED THE FIRST ANSWER.**
+Both sides collapsed to pitch classes sounding per 8th. First pass
+(sustain-inclusive, all layers): corpus 3 pcs/8th · 1.6 rubs/bar · 88% of
+8ths spell one chord; band.html 5 · 4.1 · 61% — "twice the layers, jazz
+vocabulary". motif-engine-b4 re-measured onset-only and matched my CORPUS
+numbers with their band numbers, so both rules ran on both sides plus a gain
+filter: onset-only, band 3 · 1.7 · 81% vs corpus 2 · 1.1 · 91%;
+sustain-inclusive with haps under gain 0.25 dropped, band **3 · 1.28 · 90%
+= the corpus's own sustain numbers**; held notes going stale against the
+bar's chord: **0 of 1,271**; out-of-key 8–11% on both sides. The corpus
+reduction strikes 8ths and has no pad, so sustain ≈ onset there; ours holds
+beds. **What is loud in band.html is as thin and consonant as the corpus.**
+The harmony difference that survives is VOCABULARY — triads 26% · minor 25% ·
+sus 16% · m7 12% · ^7 10% · 6 6% · 7 3%, no 9ths/13ths, 47% of half-bars
+thirdless — against `Am9 D13 G^7 Db9 C^9 F13 Em9` (a tritone-sub chain on a
+"night market chase" and an "airship at dawn"), `G#13 A^9`, `B7 C^9 F^9 E^9`.
+Per-layer outliers are real: bd_garage's guitar 50% / accordion 36% and
+bd_rival's marimba 43% / cello 31% out of key.
+
+**WHAT ACTUALLY DIFFERS (36 songs, 4-bar windows, one classifier):**
+- **The chorus owns its progression: 35 of 36.** Opens off the tonic in 22
+  (minor: i 33% then bIII / v / bVI 13% each; major: I 33%, vi 25%, IV^7).
+  Chords/bar do not change (1.66 → 1.69). The pre-chorus ends on the TONIC
+  more than the dominant (Vsus 3%). Final-chorus lift of a semitone/tone in
+  8 of 36 (the +5/+7 shifts a pc-histogram test also reports are chord
+  emphasis, discounted). band.html: ONE loop per song, all 12.
+- **Verse = line, chorus = block.** Verse piano: `line` 26% (3 strikes/bar,
+  one note, top p90 B4 UNDER a voice at G#4), SILENT 17% (18 of 36 have a
+  bass+voice verse), arp8 11%, block4 11%. Chorus: `block8` 43% + `block4`
+  26% (7 strikes/bar × 2.1 notes, top p90 D6 = the tune doubled 8va; the
+  doubling re-measured 16% verse → 92% chorus). Every strike an 8th; the
+  figure follows the voice (2-bar rhythm repeat 0%). Ours: one figure all
+  song (`fnd_wide_oompah`, `fnd_stride_4`, `fnd_ballad_8ths_arch` …), same
+  class verse and chorus on 25 of 26, chorus block8 in 13% of windows.
+- **A bass, always, on 8ths:** root–fifth 8ths 56% of chorus windows,
+  quarters 27% / octave 8ths 18% in verses, midi 39–41. Ours: no layer under
+  midi 52 on 15 of 26 songs (the arranger has five special-case bass casters
+  and no default; 96–139 bpm with light drums falls through all of them).
+- **Form:** 137 bars (122–191), intro 8 (0–24; 11 have none), first chorus
+  at bar 36, sections 16, 30 of 36 drop under 40% of peak density after the
+  first chorus, the last chorus not thicker than the first (1.03). Ours:
+  16–48 bars, 4-bar sections, chorus at bar 4–12.
+- **The intro is a riff of its own:** 0 of 23 intro top lines match a sung
+  chorus cell (exact / intervals / contour); interludes 0 of 54. The
+  chorus HOOK: 94% start on a pickup, first interval repeat 39% / step 39%,
+  peak at 43% of the phrase, 6 pitches over 2 bars, half the onsets off the
+  beat, starts on root/5th/6th equally.
+- **Voice on band.html (r35 baseline):** rate, steps, hooks right; breath
+  1.0–2.0 beats (corpus 0.5); under 100 bpm the writer wrote 61–67% 16ths
+  (corpus <100 band: 3%, 6.5 notes/bar).
+- **Instruments cannot be measured from these files:** program changes in 2
+  of 36 (meaningless), velocity flat on 29, the set is aregan.net-style
+  3-track reductions. Sources checked: onlinesequencer (multi-instrument
+  covers, robots.txt disallows Claude and the download path — nothing
+  taken), BitMidi (2 piano files), archive.org (442 MP3s, uncleared), VocaDB
+  API (instrument tags on 11 of 35; genre tags on all — rock-family 22,
+  electro/chip 10, pop/ballad 3). §7 of the doc is a per-song table marked K
+  (knowledge of the recordings) / V (VocaDB). The cast law it yields: ONE
+  chordal hand + bass + kit + unison doublings; ours carry five chordal
+  timbres (music box, vibraphone, string ensemble, marimba, piano, pad).
+
+**BUILT — `opts.vocaloidForm` + `src/lib/vocaloid-form.js` + `VOCAROCK=1` →
+`audition/vocarock.html` (page id `r38-vocarock`, 10 `vr_*` songs).**
+- The tables (20 loops, 10 figures, 4 forms) are addressed BY NAME ONLY — a
+  test fails on any iteration/length-indexing in the generator — so a row
+  can never re-roll a song (D95/D119; b4's caution). Loops are four chords,
+  one bar each, dialect-checked (no `maj7` spelling, no 9/13).
+- The preset (D101, like `reelFaithful`; NOT ruleFresh-gated — it is the
+  song's identity, a keep must keep it via keepFresh): verse loop = basePin
+  + rawBase; chorus loop = `vary` on the existing `ctxBarV` star machinery,
+  so every B* rider rebinds to it with no new dispatch site; per-letter acc
+  figures via `letterFig` (verse line / chorus block8 / bridge block4); the
+  intro riff on letter-less bars; the acc hand SILENT in the A after the
+  first chorus; `_vf_bass` through `varySplit` (verse figure on ctxBar,
+  chorus figure on ctxBarV), 0.55–0.8 × leadGain, seated octave 2 (1 for
+  Ab–B tonics); 8-bar sections cloned from the planner's own after the intro
+  caps (intro 'statement' archetype with lead none so the kit plays under the
+  riff); discretionary cast stood down (voiceCap 0, noHandoff, no sparkle /
+  descant / counterline / marcato / echo / texture / octave double / funk,
+  sub and battle bass / breakdown; accVary + accTravel off). `_acc_mix` is
+  exported as a solo because the `_acc` solo cannot show any of it.
+- `vocalWriter.slowFloor` (opt-in): under 100 bpm the notes-per-bar cap is
+  6.5 (the corpus's <100 band). `vocalWriter.breathBias: 1` on every row.
+- Rows: ten scene descriptions across the corpus's lanes (six rock-family,
+  three electro, one ballad), each naming its verse/chorus loops, figures,
+  form, bass voice and kit style. Two prompt phrasings were changed after
+  the parse read "haunted funk" as the horror lane (organ, cello, stingers)
+  and "no regrets" as sad.
+
+**MEASURED on the final build (the mix, the same probes as the corpus):**
+acc in the mix — intro `counterline` 100%, verse line 45% / silent 34% /
+arp8 21%, chorus **block8 91%** / block4 9%, bridge block4 100%; bass — verse
+quarters 66% / octave 21%, chorus **root5-8ths 81%**; octave doubling of the
+voice **26% verse / 100% chorus** (corpus 16 / 92); chorus double and harmony
+voice in B bars only (24 of 64); the acc silent 8 bars of 64 on every song;
+density sustain 3 pcs/8th · 2.4 rubs · 81% spell-a-chord, onset 3 · 1.5 ·
+88%, gain ≥ 0.25: 2 · 0.67 · 96%; out-of-key 0% on 9 of 10 (4% citynight);
+voice 3.8 syl/s median, steps 38–53%, repeats 16–26%, hook cells 21–50%
+exact, out-of-key 0%, chord tone beat 1 70% / beat 3 98% / off-8th 53%.
+**Register, caught by the first build and fixed:** the acc figures at octave
+4 sat at median 65–77 ABOVE a lead at 65–71 (D77) — seated at octave 3 they
+sit at 57–65; the bass at a fixed octave 2 landed at median 52 on A minor
+and 33 on C major (root folding) — seated by tonic it is 33–50 across the
+ten (corpus 40–48), still wider than the corpus: OPEN. Also open: breath
+still 1.0 beat on 8 of 10 (the writer's phrase-final quarter + 8th rest);
+vr_snow at 84 bpm sings 6.4 notes/bar (the floor) but 56% 16th pairs (the
+same phrase-final rule); `_lead_mix` realizes 4 distinct gains on 7 of 10
+(D140's noted writer-path envelope loss, pre-existing; the lead is a 0.45
+guide under the voice).
+
+**Stability.** Snapshots taken before the first build; after it, songs.html
+0 of 47, vocal.html 0 of 16, band.html 0 of 12 moved; vocaloid.html and
+vocalab.html moved on the disk snapshot (mix/solos on vocalab) — rebuilt
+from HEAD's generator (the peers' committed r37 code, before my edits) they
+are **0 of 14 / 0 of 27 moved on music fields**: the on-disk pages predated
+the committed code, not my change. Those two pages were restored to the
+tree as found. `npm test` 439/439 (+4 vocaloid-form tests).
+
+**Coordination.** Four sessions live; b4 owns band.html / drum-kit.js /
+arrange.js (untouched); an earlier mixed commit (4b2a415 "r37", made before
+either of us checked this session — b4 flagged it to Ethan as mixed) swept
+my then-in-progress `vocal-line.js`, `vocaloid-form.js`, research doc and
+probes into HEAD; verified after b4's correction that HEAD's vocal-line.js
+is the complete edit (opt-in `slowFloor`, default off, 5 lines) and that the
+working tree matches it, so no sung page moved from it (songs/vocal/band 0
+moved). The generator edits are the unstaged part. b4's density
+challenge is recorded above as this round's verify catch; b4 also pointed
+out that the form/loop findings are his r37 band verdict as a number
+("squeezing 'excited festival' … instead of an actual song") and reach the
+band page too — engine-level, for r39.
+
+**Renders (closed 20:20).** `render-vocal.mjs vr_* --page audition/vocarock.html`
+on all ten after the final build; page rebuilt, 10 hq / 10 vocal / 10 lyric
+sheets. Verify per song (converted voice, frames within 50 cents): 78 / 74 /
+73 / **56 (sugar)** / 82 / 68 / 64 / 76 / 67 / 68%; octave-wrong notes 0 on
+all ten; balance at the sung-span law (+0 dB energetic, +1.5 station, −1.5
+snow, −4 on the two festival-lane songs bike and lantern). vr_sugar is the
+outlier: 7.5 notes a bar at 128 bpm with 70% 16th pairs is the fastest line
+on the page and the singer lands 56% of its frames — the r35 rate law at
+120–130 bpm writes the corpus's 16th share (34%) twice over; noted for his
+ear, not changed. The harmony voice's SUNG stem (`--line _vocal_harmony
+--tag .harmony --no-mix`, then the plain remix) ran as a second pass on all
+ten (closed 21:20): two voices, same words 100% at shared onsets on 10 of 10
+(120–240 onsets each), 0 stale-stem warnings, harmony 4 dB under the lead
+voice; page rebuilt, 10 hq / 10 vocal / 10 harmony stems.
+
+## D144 — r39: his first vocarock export (D143's page) — "the exact same beginning progression used for all the songs???", "voice a bit too loud and too much reverb", "more layers should be added in all the songs" — and his second message ("none of our songs are actually 'intense, catchy, energetic' … there's no song that spews energy yet … add more layers/instruments … lower reverb by default, increase autotune if you can … more synths when you can with energy and interesting harmonies that ARE ALIGNED and are harmonic")
+
+**Import.** `r38-vocarock` export, 10 notes, 0 clicks; `import-verdicts.mjs
+--page r38-vocarock` carried 10 new card notes (196 total). The page is
+`noteBlind`, so the notes are its first judgement and retract nothing
+(D118). Snapshot of the judged page taken before any edit; all ten songs are
+named by his notes, so all ten may move — and did. `npm test` 440/440 (+1).
+
+**1. "The exact same beginning progression" (seven cards, "very similar" on
+an eighth) — a POOL OF ONE, D119's fourth instance.** Measured on the judged
+page: every intro was `vf_intro_riff` (the one intro figure the r38 table
+had) on the accompaniment voice over the bass — two layers, 12–16 onsets a
+bar — and 19 of 45 song pairs shared 80%+ of their 8th-by-8th top-line
+contour over the first four bars; rooftop and lantern were IDENTICAL (both
+rows named `vf_min_verse_i_v_bVI_bVII` and the same riff). The verse LOOPS
+differed on eight of ten; what he named "the progression" was the riff, its
+rhythm, its register and its voice. The fix is a row-named intro: six intro
+figures (`vf_intro_riff`, `_arp16`, `_hook`, `_octaves`, `_stabs332`,
+`_none`), an intro VOICE (`introSound` — a muted guitar, a square, a saw, the
+e-piano; `accVoiceFor` reads `fig.sound` only under the vocaloid form, see
+Coordination), and an intro LOOP (`introLoop: 'chorus'` on five rows — the
+chorus loop opens off the tonic in 22 of 36 corpus songs, so the song's
+first chord differs at once); lantern's verse loop is the new
+`vf_min_verse_i_bVII_bVI_v`. After: **1 of 45** pairs (the two 3+3+2 stab
+intros, on different voices over different loops). A test now pins that no
+two vocarock rows share (intro figure, intro voice, intro loop, verse loop).
+  Verify catch: the first build of this fix left five intros on the VERSE
+figure — the mfx starring line wrote `${s.letter}*` on a letter-less intro
+section, i.e. the letter "null*", which fell through every letter dispatch
+to the verse figure. Starring now skips sections without a letter.
+
+**2. "Too loud and too much reverb" (nine cards).** Measured: the vocal took
+the LEAD LAYER's `.room()` — 0.25 on eight songs, 0.7 on station and snow —
+and the roomed stem's tail sat 19–21 dB under the sung level (0.25) and
+10.6 dB under (0.7); levels were the r36 table (+0 energetic, +1.5 calm,
+−1.5 snow, −4 on the two festival-lane rows). Three changes, all PAGE PINS:
+`vocalRoom: 0.1` on every row (wet 0.11), `vocalDb` 3 dB under the r36
+value on every row (the two festival rows pinned −4 rather than the table's
+−7 — he used the same words for them as for the −3 rows), and `vocalTune:
+0.7`. The tune knob is new (`vocal-sing.py --tune 0..1`, render-vocal
+`--tune` / page pin): inside each sung note, past its first 60 ms, the
+predicted pitch curve is blended toward the score — 1.0 is a hard-tuned
+Vocaloid line with the model's own note-to-note glides kept. A/B on
+vr_rooftop's dry sing (292 notes, pyworld vs score): tune 0 → 74.1% of
+voiced frames within 50 cents (85.6% of notes ≥50%); **tune 0.7 → 83.2%
+(91.8%)**; tune 1.0 → 86.2% (91.8%); octave errors 0 in every case. His "if reasonable": 0.7 keeps 30% of the model's vibrato and bends.
+  **The renderer's DEFAULT did not change (both peers' catch, see
+Coordination).** "Lower reverb by default" is enforced where a page is
+BUILT (every vocarock row pins 0.1; a new sung page should do the same), not
+in render-vocal — a global default would have dried every judged sung song
+on vocal.html / vocaloid.html at its next re-render, silently: the
+keep-transition law (D91) arriving through the RENDER tier. The log line now
+names which source won ("page pin vocalRoom" / "the lead layer's room, as
+judged").
+
+**3. "More layers" / "no song that spews energy" / "more synths … aligned".**
+The r38 preset stood the whole discretionary cast down (one chordal hand +
+bass + voice riders + kit): 4 layers median in the mix. Now an ENERGY TIER
+per row (`vf.energy`, high / mid / low). **His correction, mid-round, after
+the first cut of this was already rendering: "'intense, catchy, energetic'
+doesnt mean a bunch of fast notes. it means good, catchy harmonies with full,
+energetic, active layers."** The first cut had read energy as speed — a 16th
+chord-tone arpeggio in the chorus and sugar lifted 128 → 156 bpm. Both
+reverted before anything reached the page he will hear. What stands: high =
+a phrased synth HOOK line (`vf_syn_hook`: a two-bar counter-line of chord
+tones and s2/s6 steps with a rest on beat 2 of each bar, six notes a bar,
+sawtooth, octave 3) in the chorus and bridge + a FULL pad (`vf_pad_move`:
+four notes, the voicing rotating every bar — the reels' "a repeated chord
+returns with its voicing rotated") under every tune section but the first
+verse and the silent one + marcato strings (rock rows) or the r30 synth rise
+(electro rows) + the r35 seam crash; mid = the lighter hook (3–4 notes a
+bar) + a held R.5.3+ pad + a chorus descant (the descant mask is role-gated
+under the form — chorus and bridge only); low (snow) = pad + descant. Every
+synth token is a chord member or a scale token, so the layer cannot spell a
+foreign pitch — "aligned by construction". Measured in the mix: **layers 4 →
+7 median**; distinct voices sounding per bar by section role, judged page →
+r39: verse 4 → 4, chorus 4 → 6, bridge 4 → 6 (the corpus arc: the verse
+stays thin, the chorus fills); notes per bar chorus 57 → 71; at audible gain (≥ 0.25) 3 pcs per 8th · 1.56 rubs per bar · 92%
+of 8ths spell a chord · 0% out of key (corpus 3 · 1.28 · 90%; the judged
+page 2 · 0.97 · 96%). Gains: every new layer 0.32–0.65 × the lead solo's
+median (D77/D140's 0.6 support scale); hook medians 60–67 under leads at
+64–71, pads 57–62 (boss 69: its loop opens on bVI, so `loopRoots` seats
+every root above the Bb — the same reason its bass sits at 50). vr_sugar
+("too casual for a rush"): stays at 128, takes the high tier and a
+root–fifth bass in the verse — the energy is the layers and the loop, not
+the tempo. arcade / bike ("vocals / melody not as good"): `leadSeedSalt: 1`
+— a different rule-composed line, NOT a measured better one; his ear
+decides.
+  Verify catch (D118 again): the first build seated the chorus synth at
+octave 4 and it realised at medians 72–79 ABOVE leads at 64–69 on four
+songs, with the halo pad at 74 on citynight; re-seated at octave 3 on the
+saw (declared range [3,5]) and the new-age pad. The square and calliope
+(declared range [4,6]) cannot sit under a voice at 64–71 and were dropped
+from the chorus slot. Still open: marcato's own register rule (`tonicPc >= 5
+? 3 : 4`) puts boss's strings at median 77 — the r15 rule, untouched this
+round.
+
+**Stability.** Snapshots before the first edit. vocarock: 10 of 10 moved (all
+named). songs.html and band.html rebuilt with the r39 generator: **0 of 47 /
+0 of 12 moved on music fields**, both restored byte-identical to the tree.
+The gated `accVoiceFor` rebuilt vocarock 0 of 10 moved on any field.
+
+**Coordination.** b4 (packaging) and 2b (lyrics) both reviewed the shared
+edits. b4's two catches, both taken: (a) my stated reason for
+`accVoiceFor`'s safety was wrong — FIGURATIONS_FOUNDATION carries no
+`sound`, but LAYER_PATTERNS has 40 rows that do, and only `reelAccFig`'s
+field whitelist kept them out; the read is now gated `vf ? fig0?.sound :
+undefined` so a future `sound` in that whitelist cannot re-voice the 16
+judged reels cards; (b) the render-tier keep-transition point above, which
+2b raised independently with the named songs it would have moved
+(vx_nostalgic_snow, vx_romantic_rest, vx_excited_casino, vg_romantic_water,
+vo_reflection / lullaby / march). b4 also recorded the licensing fact this
+lane depends on (LICENSES.md, committed): the RVC timbre in use,
+`infamous_miku_v2`, is an unofficial clone and cannot be licensed, hosted or
+shipped; the Tiger voicebank sells commercial use separately. Nothing
+committed by this session.
+
+**4. "The descriptions are too 'musical'. make it just regular users - less
+descriptive/specific than that but also more energetic scenes on average"
+(his third message, mid-render).** The ten row texts named instruments and
+chord talk ("chiptune leads and a square bass", "pop-punk power chords",
+"slap bass and clavinet stabs", "side-chained pads and a saw bass"); they
+are now what a player would type — "one coin left at the arcade and the
+place is about to close", "racing bikes down the summer hill with friends,
+screaming the whole way", "the final boss fight, everything on the line, no
+time to breathe" — seven of ten more energetic than before, one calm scene
+(snow) kept. The instruments the words used to carry are row FIELDS now
+(`guitar: 'rock' | 'arp'`, `fullSynth`, the kit), so the engine chooses
+them. Parse checks on every text (the r38 lesson: "haunted funk" had parsed
+scary/manor): "high score" parsed ORCHESTRAL (score), "hot chocolate" parsed
+casino, "sprinting … rain" parses happy/water — reworded until each row's
+emotion/environment read as the scene. Keys unchanged on all ten (the loop
+pins the family); six songs moved on mix/cast from the emotion change (boss
+is now a synth-lead song — "tense" instead of the old text's "speed-rock").
+
+**Renders.** The first batch (the arpeggio build) was stopped at his
+correction after one song, the second at his prompt ruling; restarted 22:28
+on the plain-prompt hook-line build: on all ten, the harmony
+pass (`--line _vocal_harmony --tag .harmony --no-mix --force`) then the lead
+pass (`--force --rehq`), with tune 0.7 and room 0.1 read from the page pins;
+numbers appended below when the batch closes.

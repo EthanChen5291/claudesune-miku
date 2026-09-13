@@ -24,7 +24,7 @@ const QUALITY_PCS = { '': [0, 4, 7], m: [0, 3, 7], 7: [0, 4, 7, 10], m7: [0, 3, 
 const chordPcs = (rootPc, q) => new Set((QUALITY_PCS[q] ?? QUALITY_PCS['']).map((i) => mod12(rootPc + i)));
 const MAJOR = [0, 2, 4, 5, 7, 9, 11], MINOR = [0, 2, 3, 5, 7, 8, 10];
 for (const s of data.songs) {
-  const sf = `audition/hq/${s.name}.vocal-score.json`;
+  const sf = `${process.env.SCORE_DIR ?? 'audition/hq'}/${s.name}.vocal-score.json`;
   if (!existsSync(sf)) continue;
   const score = JSON.parse(readFileSync(sf, 'utf8'));
   const ev = await evaluateSong(`setcpm(${s.bpm}/${s.beats})\np: stack(${s.mix})`);
