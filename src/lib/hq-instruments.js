@@ -317,5 +317,10 @@ for (const [name, e] of Object.entries(SAMPLE_PACK)) {
     backend: 'wav', samples: e.srcs, kind: e.kind,
     ...(e.keyNote ? { keyNote: e.keyNote } : {}),
     velScale: e.velScale ?? 1, trimDb: e.trimDb ?? 0,
+    // r38: trimS caps a sample's PLAYED length (seconds). VCSL is concert
+    // percussion with the full hall tail, and renderSampleStem plays each file
+    // once through — untrimmed that is a median 6.1 simultaneous hi-hats on the
+    // band page. Not to be confused with trimDb, which is gain.
+    ...(e.trimS ? { trimS: e.trimS } : {}),
   };
 }

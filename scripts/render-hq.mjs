@@ -177,12 +177,25 @@ function applyRoom(wavPath, room) {
 // far past what one ffmpeg filtergraph tolerates.
 const SAMPLE_CACHE = join(ROOT, 'vendor', 'build', 'sample-cache');
 const SR = 44100;
-function cachedPcm(rel) {
+// r38: `trimS` caps the PLAYED length. A trigger still plays once through, so
+// an untrimmed concert sample overlaps itself — measured over the twelve band
+// songs, VCSL's raw 1.39 s closed hat gives a median 6.1 simultaneous hats and
+// its kick up to 12, against Miraleste's 0.6x (each hit decays before the
+// next). The trim is baked into the CACHE because the cache is what the mixer
+// reads; the trim length is part of the key, so changing it re-renders rather
+// than silently serving the old tail. A short fade-out keeps the cut from
+// clicking — a hard truncation mid-decay is an audible transient.
+function cachedPcm(rel, trimS = 0) {
   const safe = rel.replace(/[^a-zA-Z0-9._-]+/g, '_');
-  const out = join(SAMPLE_CACHE, `${safe}.wav`);
+  const key = trimS > 0 ? `${safe}.t${trimS.toFixed(3)}` : safe;
+  const out = join(SAMPLE_CACHE, `${key}.wav`);
   if (!existsSync(out)) {
     mkdirSync(SAMPLE_CACHE, { recursive: true });
-    execFileSync('ffmpeg', ['-v', 'error', '-y', '-i', join(ROOT, rel), '-ac', '2', '-ar', String(SR), '-c:a', 'pcm_s16le', out], { stdio: 'pipe' });
+    const fade = Math.min(0.02, trimS * 0.15);
+    const args = ['-v', 'error', '-y', '-i', join(ROOT, rel), '-ac', '2', '-ar', String(SR)];
+    if (trimS > 0) args.push('-t', String(trimS), '-af', `afade=t=out:st=${Math.max(0, trimS - fade).toFixed(4)}:d=${fade.toFixed(4)}`);
+    args.push('-c:a', 'pcm_s16le', out);
+    execFileSync('ffmpeg', args, { stdio: 'pipe' });
   }
   return out;
 }
@@ -195,7 +208,7 @@ function readPcm16(path) {
 }
 const fnv1a = (str) => { let h = 0x811c9dc5; for (let i = 0; i < str.length; i++) { h ^= str.charCodeAt(i); h = Math.imul(h, 0x01000193); } return h >>> 0; };
 function renderSampleStem(stem, allHaps, wavPath) {
-  const variants = (stem.inst.samples ?? []).filter((p) => existsSync(join(ROOT, p))).map((p) => readPcm16(cachedPcm(p)));
+  const variants = (stem.inst.samples ?? []).filter((p) => existsSync(join(ROOT, p))).map((p) => readPcm16(cachedPcm(p, stem.inst.trimS ?? 0)));
   const velScale = stem.inst.velScale ?? 1;
   const totalFrames = Math.ceil((seconds + 5) * SR);
   const mix = new Float64Array(totalFrames * 2);

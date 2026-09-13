@@ -25,7 +25,11 @@ const SM = (f) => `vendor/sfz/VCSL/Membranophones/Struck Membranophones/${f}`;
 const SI = (f) => `vendor/sfz/VCSL/Idiophones/Struck Idiophones/${f}`;
 const VP = (f) => `vendor/sfz/VSCO-2-CE/VSCO 1 Percussion/${f}`;
 const VS = (f) => `vendor/sfz/VSCO-2-CE/${f}`;
-const MD = (f) => `audios/miraleste/${f}`;
+// r38: the CC0 kit. The md_* rows were the Miraleste pack (commercial,
+// un-redistributable); under the open-source decision they are re-sourced onto
+// VCSL, which is CC0. VD/VI reach the same two trees SM/SI already use.
+const VD = (f) => `vendor/sfz/VCSL/Membranophones/Struck Membranophones/${f}`;
+const VI = (f) => `vendor/sfz/VCSL/Idiophones/Struck Idiophones/${f}`;
 
 export const SAMPLE_PACK = {
   // ---- Ethan's horror pack (2026-08-27), sorted per his note ---------------
@@ -130,18 +134,42 @@ export const SAMPLE_PACK = {
   // all (see the band selector in audition-songs.mjs). These give the backbeat
   // something real to hit; the selector fix is what lets it be hit.
   //
-  // COMMERCIAL PACK. Local-only under his r16 licensing ruling, exactly like
-  // the ripped BRR rows: audios/miraleste/ is gitignored and the generated
-  // audition/sample-pack.js is untracked.
+  // WAS A COMMERCIAL PACK (Miraleste, local-only under his r16 ruling). As of
+  // r38 these rows are CC0 VCSL — see the note on the rows themselves.
   //
   // Source files are 44.1k stereo float. Round-robin variants per drum so a
   // repeated hit is not a literal repeat — the machine-gun artefact is a large
   // part of what reads as "not realistic".
-  md_kick: { kind: 'hit', durS: 0.53, srcs: [MD('md_kick_2.wav'), MD('md_kick_3.wav'), MD('md_kick_1.wav')], note: 'kick, 3-way round robin — punchy over sub' },
-  md_snare: { kind: 'hit', durS: 0.41, srcs: [MD('md_snare_2.wav'), MD('md_snare_3.wav'), MD('md_snare_4.wav'), MD('md_snare_1.wav')], note: 'snare, 4-way round robin — THE backbeat voice the default path never had' },
-  md_clap: { kind: 'hit', durS: 0.18, srcs: [MD('md_clap_1.wav'), MD('md_clap_2.wav'), MD('md_clap_3.wav')], note: 'clap, 3-way round robin — layers WITH the snare on 2 and 4, not instead of it' },
-  md_hat: { kind: 'hit', durS: 0.14, srcs: [MD('md_hat_1.wav'), MD('md_hat_2.wav'), MD('md_hat_3.wav'), MD('md_hat_4.wav')], note: 'closed hat, 4-way round robin' },
-  md_ohat: { kind: 'hit', durS: 1.27, srcs: [MD('md_ohat_1.wav'), MD('md_ohat_2.wav')], note: 'open hat — the & lift before a downbeat' },
-  md_metal: { kind: 'hit', durS: 0.36, srcs: [MD('md_metal_1.wav'), MD('md_metal_2.wav'), MD('md_metal_3.wav')], note: 'metal/gear hits — his industrial ask, "metal rod hits"' },
-  md_stick: { kind: 'hit', durS: 0.22, srcs: [MD('md_stick_1.wav'), MD('md_stick_2.wav')], note: 'stick/rim smack — his industrial ask, "stick hits"' },
+  // r38 — RE-SOURCED TO CC0, AND TRIMMED. Two things had to happen together.
+  //
+  // (a) Provenance. These were Miraleste (685floyd), a PURCHASED pack that
+  //     cannot be redistributed, so under the open-source decision they could
+  //     not stay — and a public repo whose DEFAULT kit points at a pack the
+  //     cloner does not own is broken for everyone but Ethan. VCSL is CC0.
+  //
+  // (b) `trimS`, and it is not cosmetic. VCSL is CONCERT percussion recorded
+  //     in a hall with the full decay tail, so the raw files are ~10x the
+  //     kit's: closed hat 1.34-1.44 s against Miraleste's 0.14, kick 2.08-6.26
+  //     against 0.53, open hat 5.8-6.2 against 1.27. render-hq plays each
+  //     sample ONCE THROUGH with no truncation (renderSampleStem: span =
+  //     min(v.frames, ...)), so measured over the twelve band songs a straight
+  //     path swap gives a median of 6.1 SIMULTANEOUS HI-HATS and up to 12
+  //     kicks, where Miraleste sits at 0.6x — under one, i.e. each hit decays
+  //     before the next. That is the difference between a groove and a wash.
+  //     `trimS` is therefore set to the Miraleste durS it replaces: those
+  //     lengths are the envelope his ear already approved, not a guess. Both
+  //     tiers apply it (render-hq cachedPcm, build-sample-pack) with a short
+  //     fade so a hard cut cannot click.
+  //
+  // VARIANT COUNTS ARE PRESERVED EXACTLY (3/4/3/4/2/3/2). Round-robin is
+  // `fnv1a(sound|time) % variants.length`, so keeping the count keeps the
+  // index every hit already lands on — this is a voice-only change in the
+  // D-doctrine sense: same times, same variant choice, different source file.
+  md_kick: { kind: 'hit', durS: 0.53, trimS: 0.53, srcs: [VD('Bass Drum 1/BDrumNew_hit_v3_rr1_Sum.wav'), VD('Bass Drum 1/BDrumNew_hit_v5_rr1_Sum.wav'), VD('Bass Drum 1/BDrumNew_hit_v7_rr1_Sum.wav')], note: 'kick (VCSL Bass Drum 1, CC0), 3-way round robin, trimmed to 0.53s' },
+  md_snare: { kind: 'hit', durS: 0.41, trimS: 0.41, srcs: [VD('Snare Drum, Modern 1/Snare2_HitNS_v4_rr1_Mid.wav'), VD('Snare Drum, Modern 1/Snare2_HitNS_v5_rr1_Mid.wav'), VD('Snare Drum, Modern 1/Snare2_HitNS_v6_rr1_Mid.wav'), VD('Snare Drum, Modern 1/Snare2_HitSN_v5_rr1_Mid.wav')], note: 'snare (VCSL Snare Drum Modern 1, CC0), 4-way round robin — THE backbeat voice the default path never had' },
+  md_clap: { kind: 'hit', durS: 0.18, trimS: 0.18, srcs: [VI('Claps/Clap_rr1.wav'), VI('Claps/Clap_rr3.wav'), VI('Claps/Clap_rr5.wav')], note: 'clap (VCSL Claps, CC0), 3-way round robin — layers WITH the snare on 2 and 4, not instead of it' },
+  md_hat: { kind: 'hit', durS: 0.14, trimS: 0.14, srcs: [VI('Hi-Hat Cymbal/HiHat_Close_rr1_Mid.wav'), VI('Hi-Hat Cymbal/HiHat_Close_rr2_Mid.wav'), VI('Hi-Hat Cymbal/HiHat_HitC_v2_rr1_Mid.wav'), VI('Hi-Hat Cymbal/HiHat_HitC_v2_rr2_Mid.wav')], note: 'closed hat (VCSL Hi-Hat Cymbal, CC0), 4-way round robin, trimmed to 0.14s' },
+  md_ohat: { kind: 'hit', durS: 1.27, trimS: 1.27, srcs: [VI('Hi-Hat Cymbal/HiHat_HitO_rr1_Mid.wav'), VI('Hi-Hat Cymbal/HiHat_HitO_rr2_Mid.wav')], note: 'open hat (VCSL, CC0) — the & lift before a downbeat' },
+  md_metal: { kind: 'hit', durS: 0.36, trimS: 0.36, srcs: [VI('Anvil/Anvil_Hit1_v2_rr1_Mid.wav'), VI('Anvil/Anvil_Hit2_v2_rr1_Mid.wav'), VI('Anvil/Anvil_Hit3_v2_rr1_Mid.wav')], note: 'metal/gear hits (VCSL Anvil, CC0) — his industrial ask, "metal rod hits"' },
+  md_stick: { kind: 'hit', durS: 0.22, trimS: 0.22, srcs: [VI('Slapstick/slapstick_rr1.wav'), VI('Slapstick/slapstick_rr2.wav')], note: 'stick/rim smack (VCSL Slapstick, CC0) — his industrial ask, "stick hits"' },
 };

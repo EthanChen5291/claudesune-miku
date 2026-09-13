@@ -22,8 +22,20 @@ const OUT = join(ROOT, 'audition', 'sample-pack.js');
 // kbps by content: sub-heavy loops need low-end headroom; tiny hits go low.
 const RATE = { oneshot: 96, hit: 64, loop: 80, beat: 96 };
 
-function enc(src, kbps) {
-  const raw = execFileSync('ffmpeg', ['-v', 'error', '-i', src, '-ac', '1', '-codec:a', 'libmp3lame', '-b:a', `${kbps}k`, '-f', 'mp3', 'pipe:1'], { maxBuffer: 64 * 1024 * 1024 });
+// r38: `trimS` caps the encoded length, and the BROWSER tier needs it for the
+// same reason the HQ tier does — the sampler plays each trigger once through,
+// so VCSL's untrimmed concert tails overlap themselves (measured: a median 6.1
+// simultaneous hi-hats over the band page). Both tiers must apply the SAME trim
+// or they stop playing the same audio, which is the one invariant this file and
+// hq-instruments.js exist to hold. Short fade so the cut cannot click.
+function enc(src, kbps, trimS = 0) {
+  const args = ['-v', 'error', '-i', src, '-ac', '1'];
+  if (trimS > 0) {
+    const fade = Math.min(0.02, trimS * 0.15);
+    args.push('-t', String(trimS), '-af', `afade=t=out:st=${Math.max(0, trimS - fade).toFixed(4)}:d=${fade.toFixed(4)}`);
+  }
+  args.push('-codec:a', 'libmp3lame', '-b:a', `${kbps}k`, '-f', 'mp3', 'pipe:1');
+  const raw = execFileSync('ffmpeg', args, { maxBuffer: 64 * 1024 * 1024 });
   return `data:audio/mpeg;base64,${raw.toString('base64')}`;
 }
 
@@ -49,7 +61,7 @@ for (const [name, e] of Object.entries(SAMPLE_PACK)) {
   for (const rel of e.srcs) {
     const src = join(ROOT, rel);
     if (!existsSync(src)) { console.error(`MISSING ${name}: ${rel}`); missing++; continue; }
-    urls.push(enc(src, RATE[e.kind] ?? 80));
+    urls.push(enc(src, RATE[e.kind] ?? 80, e.trimS ?? 0));
   }
   if (!urls.length) continue;
   // keyNote pins the sample to a pitch so .note() repitches around it; plain
