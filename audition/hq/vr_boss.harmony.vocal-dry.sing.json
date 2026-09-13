@@ -5,134 +5,134 @@
    "notes": 10,
    "frames": 229,
    "breath": 40.63158,
-   "pitch_dev_median_st": 0.30818939208984375,
-   "pitch_dev_max_st": 75.62091064453125
+   "pitch_dev_median_st": 0.11193084716796875,
+   "pitch_dev_max_st": 76.12767791748047
   },
   {
    "start": 33.15789,
    "notes": 10,
    "frames": 229,
    "breath": 0.3157800000000037,
-   "pitch_dev_median_st": 0.40045166015625,
-   "pitch_dev_max_st": 74.41291046142578
+   "pitch_dev_median_st": 0.22312164306640625,
+   "pitch_dev_max_st": 74.78083801269531
   },
   {
    "start": 35.68421,
    "notes": 10,
    "frames": 229,
    "breath": 0.3157899999999998,
-   "pitch_dev_median_st": 0.2285919189453125,
-   "pitch_dev_max_st": 76.67958068847656
+   "pitch_dev_median_st": 0.123565673828125,
+   "pitch_dev_max_st": 74.42723083496094
   },
   {
    "start": 38.21053,
    "notes": 10,
    "frames": 229,
    "breath": 0.3157899999999998,
-   "pitch_dev_median_st": 0.3603057861328125,
-   "pitch_dev_max_st": 75.96248626708984
+   "pitch_dev_median_st": 0.20273590087890625,
+   "pitch_dev_max_st": 75.57814025878906
   },
   {
    "start": 60.94737,
    "notes": 10,
    "frames": 229,
    "breath": 20.52632,
-   "pitch_dev_median_st": 0.2524566650390625,
-   "pitch_dev_max_st": 75.6495132446289
+   "pitch_dev_median_st": 0.103790283203125,
+   "pitch_dev_max_st": 76.55011749267578
   },
   {
    "start": 63.47368,
    "notes": 10,
    "frames": 229,
    "breath": 0.3157899999999998,
-   "pitch_dev_median_st": 0.26067352294921875,
-   "pitch_dev_max_st": 72.16452026367188
+   "pitch_dev_median_st": 0.23111724853515625,
+   "pitch_dev_max_st": 75.93045043945312
   },
   {
    "start": 66,
    "notes": 10,
    "frames": 229,
    "breath": 0.3157900000000069,
-   "pitch_dev_median_st": 0.30785369873046875,
-   "pitch_dev_max_st": 75.03739166259766
+   "pitch_dev_median_st": 0.1211090087890625,
+   "pitch_dev_max_st": 74.72077941894531
   },
   {
    "start": 68.52632,
    "notes": 10,
    "frames": 229,
    "breath": 0.3157900000000069,
-   "pitch_dev_median_st": 0.3185882568359375,
-   "pitch_dev_max_st": 71.19229888916016
+   "pitch_dev_median_st": 0.17511367797851562,
+   "pitch_dev_max_st": 70.28019714355469
   },
   {
    "start": 81.15789,
    "notes": 10,
    "frames": 229,
    "breath": 10.421049999999994,
-   "pitch_dev_median_st": 0.2357177734375,
-   "pitch_dev_max_st": 75.26173400878906
+   "pitch_dev_median_st": 0.1602935791015625,
+   "pitch_dev_max_st": 76.5599594116211
   },
   {
    "start": 83.68421,
    "notes": 10,
    "frames": 229,
    "breath": 0.3157899999999927,
-   "pitch_dev_median_st": 0.45478057861328125,
-   "pitch_dev_max_st": 68.68614196777344
+   "pitch_dev_median_st": 0.15920257568359375,
+   "pitch_dev_max_st": 66.97215270996094
   },
   {
    "start": 86.21053,
    "notes": 10,
    "frames": 229,
    "breath": 0.3157900000000069,
-   "pitch_dev_median_st": 0.29174041748046875,
-   "pitch_dev_max_st": 76.36042785644531
+   "pitch_dev_median_st": 0.18727874755859375,
+   "pitch_dev_max_st": 74.86319732666016
   },
   {
    "start": 88.73684,
    "notes": 10,
    "frames": 229,
    "breath": 0.3157900000000069,
-   "pitch_dev_median_st": 0.2684783935546875,
-   "pitch_dev_max_st": 68.86865234375
+   "pitch_dev_median_st": 0.1610870361328125,
+   "pitch_dev_max_st": 69.77525329589844
   },
   {
    "start": 91.26316,
    "notes": 10,
    "frames": 229,
    "breath": 0.3157900000000069,
-   "pitch_dev_median_st": 0.22454833984375,
-   "pitch_dev_max_st": 75.63089752197266
+   "pitch_dev_median_st": 0.11432647705078125,
+   "pitch_dev_max_st": 75.9017562866211
   },
   {
    "start": 93.78947,
    "notes": 10,
    "frames": 229,
    "breath": 0.3157899999999927,
-   "pitch_dev_median_st": 0.32086944580078125,
-   "pitch_dev_max_st": 75.21591186523438
+   "pitch_dev_median_st": 0.1952362060546875,
+   "pitch_dev_max_st": 75.63775634765625
   },
   {
    "start": 96.31579,
    "notes": 10,
    "frames": 229,
    "breath": 0.3157900000000069,
-   "pitch_dev_median_st": 0.27577972412109375,
-   "pitch_dev_max_st": 76.13762664794922
+   "pitch_dev_median_st": 0.13282012939453125,
+   "pitch_dev_max_st": 74.7306137084961
   },
   {
    "start": 98.84211,
    "notes": 10,
    "frames": 229,
    "breath": 0.3157900000000069,
-   "pitch_dev_median_st": 0.3612518310546875,
-   "pitch_dev_max_st": 74.35144805908203
+   "pitch_dev_median_st": 0.22154998779296875,
+   "pitch_dev_max_st": 73.68799591064453
   }
  ],
  "pitch_model": true,
  "seconds": 104.05263038548753,
- "peak": 0.13447703421115875,
- "render_s": 46.58007502555847,
+ "peak": 0.14409483969211578,
+ "render_s": 49.11591696739197,
  "speaker": "tiger_fresh",
  "syllable": "la"
 }

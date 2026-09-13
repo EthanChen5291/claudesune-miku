@@ -1,0 +1,90 @@
+{
+ "phrases": [
+  {
+   "start": 116.75676,
+   "notes": 4,
+   "frames": 315,
+   "breath": 126.75676,
+   "pitch_dev_median_st": 0.0378875732421875,
+   "pitch_dev_max_st": 71.66397857666016
+  },
+  {
+   "start": 121.62162,
+   "notes": 5,
+   "frames": 455,
+   "breath": 1.621619999999993,
+   "pitch_dev_median_st": 0.0415802001953125,
+   "pitch_dev_max_st": 62.675331115722656
+  },
+  {
+   "start": 128.10811,
+   "notes": 5,
+   "frames": 455,
+   "breath": 1.6216200000000072,
+   "pitch_dev_median_st": 0.03673553466796875,
+   "pitch_dev_max_st": 70.9454116821289
+  },
+  {
+   "start": 134.59459,
+   "notes": 5,
+   "frames": 455,
+   "breath": 1.6216200000000072,
+   "pitch_dev_median_st": 0.043792724609375,
+   "pitch_dev_max_st": 61.12019729614258
+  },
+  {
+   "start": 141.08108,
+   "notes": 1,
+   "frames": 175,
+   "breath": 1.6216199999999787,
+   "pitch_dev_median_st": 0.09819793701171875,
+   "pitch_dev_max_st": 61.12619400024414
+  },
+  {
+   "start": 168.64865,
+   "notes": 4,
+   "frames": 315,
+   "breath": 25.94595000000001,
+   "pitch_dev_median_st": 0.074615478515625,
+   "pitch_dev_max_st": 75.44380950927734
+  },
+  {
+   "start": 173.51351,
+   "notes": 5,
+   "frames": 455,
+   "breath": 1.6216200000000072,
+   "pitch_dev_median_st": 0.030277252197265625,
+   "pitch_dev_max_st": 70.83827209472656
+  },
+  {
+   "start": 180,
+   "notes": 5,
+   "frames": 455,
+   "breath": 1.6216200000000072,
+   "pitch_dev_median_st": 0.05071258544921875,
+   "pitch_dev_max_st": 72.51327514648438
+  },
+  {
+   "start": 186.48649,
+   "notes": 5,
+   "frames": 455,
+   "breath": 1.6216300000000103,
+   "pitch_dev_median_st": 0.05017852783203125,
+   "pitch_dev_max_st": 70.16650390625
+  },
+  {
+   "start": 192.97297,
+   "notes": 1,
+   "frames": 175,
+   "breath": 1.6216200000000072,
+   "pitch_dev_median_st": 0.05828857421875,
+   "pitch_dev_max_st": 67.28199768066406
+  }
+ ],
+ "pitch_model": true,
+ "seconds": 197.5945804988662,
+ "peak": 0.07647202908992767,
+ "render_s": 37.36749291419983,
+ "speaker": "tiger_fresh",
+ "syllable": "la"
+}

@@ -143,3 +143,6 @@ audios/vocaloid-r35/
 eval/**/*.wav
 eval/**/*.mp3
 eval/**/*.pyc
+
+# r40 — his "serious" reference set (AoT, Homura, Interstellar, Zoltraak …): analysis-only, copyrighted transcriptions, never committed (D95)
+audios/serious-r40/

@@ -220,6 +220,28 @@ for (const inst of INSTRUMENTS) {
   ];
   let prevTop = -1;
   let total = 0;
+  // r41/D146 — AUTOSPLIT SET EACH ZONE'S FLOOR AND NEVER CAPPED THE ONE BELOW
+  // IT, SO ADJACENT SECTIONS BOTH SOUNDED. `zoneLo = prevTop + 1` bounds the
+  // UPPER zone; the lower zone kept `zoneHi = 127` and its top region still
+  // spread `n + 6` above its last sample. In strings-sections.sfz the cello's
+  // last sample is F4 (65), so its top region claimed 64-71 while the violins
+  // claimed 66 upward — and with no <group> in the file, SFZ sounds EVERY
+  // matching region. Every note from 66 to 71 was a violin section AND a cello
+  // section stretched up into violin register, played together.
+  //
+  // That is five of his eleven serious cards: "this violin/cello (the vst that
+  // plays the melody) vst absolutely sucks and shouldn't be used because it
+  // doesn't sound serious at all" (x2), "a bit too loud and should be more
+  // 'fluid'", "main melody violin/cello too loud". Measured share of that
+  // layer's notes inside the doubled band: hunt 66%, expanse 58%, gate 39%,
+  // resolve 25%, duel 18%. And it explains why he rated ashes' melody voice
+  // "better than the other ones" — gm_viola has no HQ entry at all and falls
+  // through to fluidsynth, so it never touches this patch.
+  //
+  // A zone is now capped at the next autoSplit zone's floor, which makes the
+  // split exclusive in both directions. Boundaries only: no sample, offset,
+  // velocity layer or release changes, so every OTHER pitch renders as before.
+  const planned = [];
   for (const z of zones) {
     const samples = collect(join(libRoot, z.dir), z.filter ?? null);
     if (!samples.length) { console.log(`  warn ${inst.out}: no samples in ${z.dir}`); continue; }
@@ -227,9 +249,16 @@ for (const inst of INSTRUMENTS) {
     const kept = z.autoSplit ? samples.filter((s) => s.midi > prevTop) : samples;
     if (!kept.length) continue;
     prevTop = Math.max(prevTop, ...kept.map((s) => s.midi));
-    const r = regions(kept, libRoot, { zoneLo, skipSwell: inst.skipSwell === true });
+    planned.push({ z, kept, zoneLo });
+  }
+  for (const [i, p] of planned.entries()) {
+    const next = planned[i + 1];
+    p.zoneHi = next && next.z.autoSplit ? next.zoneLo - 1 : 127;
+  }
+  for (const p of planned) {
+    const r = regions(p.kept, libRoot, { zoneLo: p.zoneLo, zoneHi: p.zoneHi, skipSwell: inst.skipSwell === true });
     total += r.length;
-    lines.push(`// zone: ${z.dir} (${kept.length} samples)`);
+    lines.push(`// zone: ${p.z.dir} (${p.kept.length} samples${p.zoneHi < 127 ? `, capped at key ${p.zoneHi}` : ''})`);
     lines.push(...r);
   }
   const outPath = join(OUT_DIR, inst.out);

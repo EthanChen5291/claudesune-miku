@@ -1,3 +1,205 @@
+## NEW — r40: serious songs (2026-09-13; D145)
+
+Your ask: *"i just want more serious prompts to have more serious vibes … in
+attack on titan you can literally see them come in one by one … the main
+theme/voice has a very strong, slow ish theme when it's the main thing, but it
+has a lot of layered support."*
+
+**New page to listen to: `audition/serious.html` — 11 songs, nothing judged yet.**
+Build it with `SERIOUS=1 node scripts/audition-songs.mjs`.
+
+I read all ten files you attached, bar by bar. What came out:
+
+- **The engine was already DENSER than your references.** Simultaneous notes:
+  your files 2.9–5.9, our vocarock page 6.2–9.3. We already play more at once
+  than Attack on Titan. So "more layers" is not more notes — it is a slow theme,
+  layers that enter one at a time, and support locked to the theme's onsets.
+- **The theme.** Yours: 1.6–3.2 notes a bar whatever the tempo, notes lasting
+  0.54–1.99 beats, **15–54% dotted values**, leaps of a fifth or more 9–45%,
+  phrases starting on a beat. Ours: 5–7.5 notes a bar, 0.25–0.5 beats,
+  **0% dotted on every single song**, leaps 2–8%. The melody writer now has a
+  THEME mode and the new page realizes 2.1–2.8 notes a bar, 5–38% dotted,
+  phrases on a beat 76–100%.
+- **Your Attack on Titan left hand, measured exactly.** Bars 9–20, alone, over a
+  twelve-bar pedal: `E2 E2 G2 B2` every beat, then `E2 E2 G2 C3` every beat,
+  alternating — root, root, b3, 5th with **the top note raised one step on
+  alternate bars**. That is now a named figure and it opens three of the songs.
+- **Layers one by one.** Attack on Titan changes texture every ~5 bars;
+  Interstellar's First Step adds five layers in eleven bars without the harmony
+  moving. Each song now names an entry schedule: which layer joins at which
+  section, in what register, at what fraction of the lead. Voices per bar climb
+  1–3 → 6–13 across a song (the old page: 1 → 4–8).
+- **"Even if it's virtually the same notes with an interval or octave tweak."**
+  Measured: 63–100% of theme strikes in your files carry a second note struck
+  with them — an octave below (Muzan: 166 of 177) or a third below (79 in the
+  Sun theme), a fourth in Naruto. So the theme now gets an octave-below double
+  on a different instrument and, in the last chorus, a third-below one. Verified
+  at −12 semitones on 100% of shared onsets.
+- **Vocals are not constant.** Nine of the eleven rows name sections where the
+  voice rests and an instrument states the theme instead (8–24 bars each).
+- **Harmony**: Aeolian, no leading tone (yours: 0–3% of pitch weight), one chord
+  a bar, ten loops each citing the file it came from.
+- I also did the orchestration reading you asked for — the useful part is that
+  the textbooks say the same thing your ear has been saying for four rounds:
+  *"the doubling must be quieter than the main line."*
+
+**Your nyan cat / Ievan Polkka idea is on the page too** — two cards
+(`sr_loopcat`, `sr_scatpolka`) where the voice is an instrument: a fast cell
+that never re-rolls, wordless syllables, doubled an octave down by a synth.
+Two of eleven, as you said — the rest sticks to the current system.
+
+**One more thing I found while checking what you'd actually hear**: a sung page
+plays its melody instrument at a 0.45 guide because the voice is supposed to
+carry the tune — so before the vocals are rendered, the browser mix has a hole
+where the melody goes. The instrumental twin that fixes this has existed since
+r37 and no page could play it. There is now an **`Instrumental: off/ON` button**
+next to HQ and Vocal — turn it on to hear the full arrangement with the melody
+at full level. Use it on this page; the vocals are not rendered yet.
+
+**Nothing else moved**: songs 0 of 47, vocarock 0 of 10, band 0 of 12, vocal
+0 of 16, layerstack 0 of 14, reels 0 of 16 — byte-identical on every field.
+`npm test` 448/448.
+
+**The verification pass found four real problems and I fixed them all.** It
+refuted one of my own claims outright: two of the new layers (the octave bass
+and the octave theme double) were running *louder* than the tune on nine of
+eleven songs — the old "support" multiplier was bigger than the duck the lead
+itself takes under a voice. Worst case was 1.23x the lead; it is now 0.83x and
+nothing is over. It also caught the octave double playing 19% of its notes below
+its instrument's range (which would have folded octaves in an HQ render and
+broken the very octave it exists for), a two-bar hole on one song where neither
+the voice nor the stand-in instrument played, and one song whose layers had
+nowhere to build because it had no intro.
+
+**And it caught a bug in a fix I made this round.** The "Instrumental" button
+above plays a twin mix that was supposed to differ from the real one only by
+un-ducking the melody. It doesn't: it was also missing the piano and drum trims
+that came from your own "piano too loud" notes, so its kit ran 1.1–1.4x louder
+than the judged mix on every song with drums. That has been true since r37 and
+was inaudible until I made the twin playable. Fixed, with a test. One
+consequence: the twelve `bd_*.instrumental.wav` files were rendered from the
+untrimmed twin and are now stale — say the word and I'll re-render them.
+
+**The verifier's final pass said do-not-ship, and it was right about four
+things.** All four are fixed: a second sung voice was still singing through the
+sections where the card says the voice rests; the octave double was playing
+below its instrument's range; on the two calm songs the pad was advertised and
+inaudible; and the piano accompaniment was the loudest thing on the page at up
+to 5.4x the melody. That last one is your "piano too loud" note, seven times
+over, so it now uses the same cap the reels page already got — the accompaniment
+now sits at 0.71-0.95x the melody with the Instrumental button on.
+
+**One thing it said that I did not change, because it is what you asked for.**
+It points out that the octave double, the third double and the harmony voice are
+all the same line at a fixed interval rather than independent parts. True. It is
+also exactly what your ten files do: 63% to 100% of theme strikes there carry a
+second note struck with them, and your words were "even if it's virtually the
+same notes or with just a interval tweak or octave tweak, add it". The
+independent lines on the page are the ostinato, the answering chords, the riff
+and the pad. If it reads as one thick line rather than layers, say so and I will
+push the independence instead.
+
+**One thing I measured and did NOT change.** On a sung page the melody
+instrument plays at 45% (the voice is meant to carry the tune), and against that
+the *older* layers — the piano accompaniment especially — read loud: on the
+quietest song the accompaniment runs 5.4x the melody's level. That is the
+accompaniment-band question already on the list from r32; it reaches all 47
+judged songs, so it is its own round, not something to ride in on this one. The
+new serious layers are all measured under the melody. Two practical notes: turn
+the **Instrumental** button on while you listen (it un-ducks the melody and most
+of that imbalance goes away), and if a song still sounds accompaniment-heavy,
+say so and I will take the acc band as its own round.
+
+**Honest note on my own measurements**: two of my probes were wrong before they
+were right. One scored a bass that plays nothing but roots at "55% out of
+chord"; the other compared solo layers (which are unmasked and bound to the
+verse harmony) against the mix and briefly accused your judged vocarock page of
+a chorus harmony conflict that does not exist. Measured properly in the mix, the
+new page's friction is at or below the page you called good.
+
+### r40 addendum — the renders, and a pin on vg_excited_fight
+
+**"I can't hear the vocals."** Correct, and it was not a mix problem: the page
+had **no renders at all** — `hq: false` and no vocal file on all eleven, so
+HQ-on played the browser synth and Vocal-on had nothing to reach for. What you
+heard was the live mix with the melody ducked to its 0.45 guide and no voice
+over it. All eleven are rendering now (harmony pass then lead pass, tune 0.7 /
+room 0.1 from the page pins), ~7.5 min each. **Why so long:** three quarters of
+it is RVC, which runs twice per song (two sung voices) and is frame-by-frame
+CPU inference — HuBERT features, RMVPE pitch, the net, a faiss lookup. The band
+is the cheap part: 39 s for thirteen stems.
+
+**Done, 12:00–13:28. All eleven have HQ + VOCAL badges and download links now.**
+0 warnings, 0 failed stages, **0 octave-wrong notes on 11 of 11**, and the two
+sung voices say identical words at 100% of shared onsets on all eleven. Frames
+within 50 cents: summit 96, gate 95, ashes 95, expanse 94, oath 94, duel 94,
+vanguard 93, resolve 93, hunt 88, loopcat 86, **scatpolka 70**.
+
+*The files live at `audition/hq/` — open that folder directly if you'd rather
+not use the page buttons.* `<song>.withvocal.wav` is the mix with the voice,
+`<song>.wav` is the band alone.
+
+*The one low number, checked rather than waved through:* scatpolka's median sung
+note is **114 ms** (the nine serious rows are 0.42–1.22 s, loopcat 0.208 s), and
+accuracy tracks note length almost perfectly across the page. It is not leaps —
+scatpolka's leap rate is 5%, lower than most of the page — and the register is
+clean. At 114 ms most of each note is the glide into it, so the voice never
+settles on pitch. That is the scat row asking for 6.5 syllables/s at 158 bpm.
+**Your ear decides:** smeared, or the instrument you asked for. If smeared, the
+fix is one number on that row.
+
+**Your heads-up, recorded:** *"i liked vg_excited_fight's instrumental. not the
+vocals for it, but the instrumental"* — that song is on `audition/vocal.html`
+(the anime-OP / J-rock row, 140 bpm). Taken as a prose keep on the band and
+pinned so nothing re-rolls it before your click lands. **Please click keep +
+export on it** when you're next on that page. Nothing about the sung line was
+touched: you've said you don't like it but not what's wrong, and guessing would
+churn the half you do like.
+
+**`vl_double_loud` — your "the melody is good, and their jumps are good and the
+intervals are good … instrumental wasnt good enough to support it (no appealing
+sub harmonies or instrument selection)".** Two things, measured.
+
+*First, the melody is not specific to that variant.* All three `vl_double`
+variants (off / on / loud) carry a **byte-identical sung score** — same pitches,
+same onsets, same durations, same words. The card only varies an instrumental
+octave double in the chorus. So what you like is the vocalab BASE line, and it
+is available on all three. Its profile, the first vocal line you have called
+good that we have numbers for: F minor, 168 bpm, 16 bars, 84 notes = **5.25
+notes/bar**, median note an 8th (0.50 beats), **0% dotted**, and within phrases
+**18% repeats / 53% steps / 24% thirds-to-tritones / 5% leaps of a fifth or
+more**, range midi 60–77, phrases starting on a beat 50%. Worth noting against
+r40: that is the *energetic Vocaloid* shape, almost the opposite of the serious
+theme (1.6–3.2 notes/bar, 15–54% dotted, 9–45% big leaps). Both are right for
+their own job — "good jumps" here means a mostly stepwise line with a quarter of
+its moves in the third-to-tritone band, not a leapy one.
+
+*Second, your instrumental complaint is exact and it names three known laws.*
+Measured on the mix:
+- **The tune and the accompaniment are the same instrument.** `_lead_mix` is
+  `piano` and `_acc` is `piano`. D102 says timbre and register are what separate
+  a layer — the tune has no identity apart from its own chords.
+- **The descant and the marcato are one layer.** Both on
+  `gm_string_ensemble_1` (119 notes over 66 onsets, mean gain 0.156). That is
+  D100's "two layers that always strike together are one layer", the exact shape
+  CLAUDE.md says to check FIRST whenever you ask about layers.
+- **The two loudest pitched parts are locked to each other** — piano and
+  `gm_electric_guitar_muted` share **87% / 93%** of their onsets.
+- **The rest of the palette is decorative**: marimba 25 notes, music box 16
+  (median midi 101), square lead 7 at gain 0.102, counterline 25 at 0.107.
+
+So "no appealing sub harmonies" is literally true: of the four layers billed as
+sub-harmony, two are one voice, one is nearly inaudible, and the tune shares a
+timbre with the chords. This is the accompaniment/cast round — it reaches the
+judged suite, so it is its own round, not a drive-by. Nothing changed yet.
+
+That pin also caught a live bug worth knowing about: `pinFrom: 'r40'` alone
+**moved the very song it was protecting** (mix, solos, degrees, symbols,
+numerals, cast, treat, ops) because the harmony gate reads a bare
+`!opts.pinFrom` — any pin reads as "this song has history, strip the colour
+upgrade". That is D101/D123's catch-22, fifth instance. `voicedColor: true`
+alongside it is the documented escape; re-measured, 0 songs moved.
+
 ## NEW — r39: his first vocarock export answered (2026-09-13; D144)
 
 Your ten cards + your second message ("no song that spews energy yet … more
@@ -28,6 +230,12 @@ layers/instruments … lower reverb by default, increase autotune … more synth
   verse, full chorus — the corpus arc); density at audible gain 3 pcs/8th · 1.56
   rubs/bar · 92% spells a chord · 0% out of key (corpus 3 · 1.28 · 90%).
 - sugar stays 128 bpm + the high tier; arcade / bike → the tune re-rolled.
+- **your calm references (romantic waters / somber citadel / nostalgic
+  snow)** — measured: none of the three has drums or a bass instrument; all
+  three run a flowing single-note piano arpeggio, a soft four-note pad, strings
+  counterline + descant across the song, sevenths on nearly every chord. The
+  calm tier (vr_snow) is now that setup — kit off, bass off, Am7 Dm7 F^7 Em7,
+  the 16th piano arpeggio all song, pad at a quarter of the lead.
 - **your "descriptions are too musical" ruling** — all ten prompts are now
   plain player scenes ("one coin left at the arcade and the place is about
   to close"), more energetic on average; guitar / synth / kit choices moved

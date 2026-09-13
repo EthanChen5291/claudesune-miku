@@ -13,7 +13,7 @@
   57,
   76
  ],
- "medianBefore": 71,
+ "medianBefore": 69,
  "room": 0.25,
  "leadGain": 0.724,
  "notes": [
@@ -171,7 +171,7 @@
    "phrase": 0,
    "start": 15.19481,
    "dur": 0.38961,
-   "midi": 71,
+   "midi": 69,
    "gain": 0.753,
    "syl": "ru",
    "ph": [
@@ -275,7 +275,7 @@
    "phrase": 1,
    "start": 17.14286,
    "dur": 0.38961,
-   "midi": 74,
+   "midi": 71,
    "gain": 0.903,
    "syl": "ma",
    "ph": [
@@ -290,7 +290,7 @@
    "phrase": 1,
    "start": 17.53247,
    "dur": 0.1948,
-   "midi": 72,
+   "midi": 69,
    "gain": 0.675,
    "syl": "chi",
    "ph": [
@@ -305,7 +305,7 @@
    "phrase": 1,
    "start": 17.72727,
    "dur": 0.38961,
-   "midi": 71,
+   "midi": 67,
    "gain": 0.675,
    "syl": "no",
    "ph": [
@@ -320,7 +320,7 @@
    "phrase": 1,
    "start": 18.11688,
    "dur": 0.19481,
-   "midi": 72,
+   "midi": 69,
    "gain": 0.675,
    "syl": "ko",
    "ph": [
@@ -335,7 +335,7 @@
    "phrase": 1,
    "start": 18.31169,
    "dur": 0.38961,
-   "midi": 74,
+   "midi": 71,
    "gain": 0.753,
    "syl": "e",
    "ph": [
@@ -498,7 +498,7 @@
    "phrase": 2,
    "start": 21.42857,
    "dur": 0.38961,
-   "midi": 71,
+   "midi": 69,
    "gain": 0.753,
    "syl": "ru",
    "ph": [
@@ -602,7 +602,7 @@
    "phrase": 3,
    "start": 23.37662,
    "dur": 0.38961,
-   "midi": 74,
+   "midi": 71,
    "gain": 0.903,
    "syl": "hi",
    "ph": [
@@ -617,7 +617,7 @@
    "phrase": 3,
    "start": 23.76623,
    "dur": 0.19481,
-   "midi": 72,
+   "midi": 69,
    "gain": 0.675,
    "syl": "bi",
    "ph": [
@@ -632,7 +632,7 @@
    "phrase": 3,
    "start": 23.96104,
    "dur": 0.38961,
-   "midi": 71,
+   "midi": 67,
    "gain": 0.675,
    "syl": "i",
    "ph": [
@@ -646,7 +646,7 @@
    "phrase": 3,
    "start": 24.35065,
    "dur": 0.1948,
-   "midi": 72,
+   "midi": 69,
    "gain": 0.675,
    "syl": "te",
    "ph": [
@@ -661,7 +661,7 @@
    "phrase": 3,
    "start": 24.54545,
    "dur": 0.38961,
-   "midi": 74,
+   "midi": 71,
    "gain": 0.753,
    "syl": "ru",
    "ph": [
@@ -826,7 +826,7 @@
    "phrase": 4,
    "start": 27.66234,
    "dur": 0.38961,
-   "midi": 71,
+   "midi": 69,
    "gain": 0.753,
    "syl": "ru",
    "ph": [
@@ -931,7 +931,7 @@
    "phrase": 5,
    "start": 29.61039,
    "dur": 0.38961,
-   "midi": 69,
+   "midi": 71,
    "gain": 0.903,
    "syl": "qta",
    "ph": [
@@ -947,7 +947,7 @@
    "phrase": 5,
    "start": 30,
    "dur": 0.19481,
-   "midi": 69,
+   "midi": 71,
    "gain": 0.675,
    "syl": "u",
    "ph": [
@@ -961,7 +961,7 @@
    "phrase": 5,
    "start": 30.19481,
    "dur": 0.38961,
-   "midi": 67,
+   "midi": 69,
    "gain": 0.675,
    "syl": "ta",
    "ph": [
@@ -976,7 +976,7 @@
    "phrase": 5,
    "start": 30.58442,
    "dur": 0.1948,
-   "midi": 64,
+   "midi": 66,
    "gain": 0.675,
    "syl": "ki",
    "ph": [
@@ -1155,7 +1155,7 @@
    "phrase": 6,
    "start": 33.8961,
    "dur": 0.38961,
-   "midi": 71,
+   "midi": 69,
    "gain": 0.753,
    "syl": "ku",
    "ph": [
@@ -1170,7 +1170,7 @@
    "phrase": 7,
    "start": 34.48052,
    "dur": 0.1948,
-   "midi": 67,
+   "midi": 66,
    "gain": 0.675,
    "syl": "na",
    "ph": [
@@ -1259,7 +1259,7 @@
    "phrase": 7,
    "start": 35.84416,
    "dur": 0.38961,
-   "midi": 74,
+   "midi": 71,
    "gain": 0.903,
    "syl": "ra",
    "ph": [
@@ -1274,7 +1274,7 @@
    "phrase": 7,
    "start": 36.23377,
    "dur": 0.1948,
-   "midi": 69,
+   "midi": 66,
    "gain": 0.675,
    "syl": "yo",
    "ph": [
@@ -1319,7 +1319,7 @@
    "phrase": 7,
    "start": 37.01299,
    "dur": 0.23961,
-   "midi": 69,
+   "midi": 71,
    "gain": 0.753,
    "syl": "shi",
    "ph": [
@@ -2196,7 +2196,7 @@
    "phrase": 16,
    "start": 52.5974,
    "dur": 0.38961,
-   "midi": 71,
+   "midi": 69,
    "gain": 0.753,
    "syl": "shi",
    "ph": [
@@ -2211,7 +2211,7 @@
    "phrase": 17,
    "start": 53.18182,
    "dur": 0.1948,
-   "midi": 72,
+   "midi": 71,
    "gain": 0.675,
    "syl": "a",
    "ph": [
@@ -2225,7 +2225,7 @@
    "phrase": 17,
    "start": 53.37662,
    "dur": 0.38961,
-   "midi": 72,
+   "midi": 67,
    "gain": 0.753,
    "syl": "ka",
    "ph": [
@@ -2240,7 +2240,7 @@
    "phrase": 17,
    "start": 53.76623,
    "dur": 0.38961,
-   "midi": 67,
+   "midi": 60,
    "gain": 0.838,
    "syl": "ru",
    "ph": [
@@ -2255,7 +2255,7 @@
    "phrase": 17,
    "start": 54.15584,
    "dur": 0.19481,
-   "midi": 69,
+   "midi": 62,
    "gain": 0.675,
    "syl": "i",
    "ph": [
@@ -2269,7 +2269,7 @@
    "phrase": 17,
    "start": 54.35065,
    "dur": 0.0974,
-   "midi": 69,
+   "midi": 62,
    "gain": 0.675,
    "syl": "e",
    "ph": [
@@ -2283,7 +2283,7 @@
    "phrase": 17,
    "start": 54.44805,
    "dur": 0.0974,
-   "midi": 64,
+   "midi": 59,
    "gain": 0.675,
    "syl": "ga",
    "ph": [
@@ -2298,7 +2298,7 @@
    "phrase": 17,
    "start": 54.54545,
    "dur": 0.38961,
-   "midi": 62,
+   "midi": 59,
    "gain": 0.903,
    "syl": "o",
    "ph": [
@@ -2312,7 +2312,7 @@
    "phrase": 17,
    "start": 54.93506,
    "dur": 0.19481,
-   "midi": 64,
+   "midi": 60,
    "gain": 0.675,
    "syl": "tsu",
    "ph": [
@@ -2327,7 +2327,7 @@
    "phrase": 17,
    "start": 55.12987,
    "dur": 0.38961,
-   "midi": 64,
+   "midi": 60,
    "gain": 0.675,
    "syl": "ki",
    "ph": [
@@ -2342,7 +2342,7 @@
    "phrase": 17,
    "start": 55.51948,
    "dur": 0.19481,
-   "midi": 66,
+   "midi": 62,
    "gain": 0.675,
    "syl": "mi",
    "ph": [
@@ -2357,7 +2357,7 @@
    "phrase": 17,
    "start": 55.71429,
    "dur": 0.38961,
-   "midi": 69,
+   "midi": 66,
    "gain": 0.753,
    "syl": "te",
    "ph": [
@@ -2517,7 +2517,7 @@
    "phrase": 18,
    "start": 58.83117,
    "dur": 0.38961,
-   "midi": 71,
+   "midi": 69,
    "gain": 0.753,
    "syl": "ta",
    "ph": [
@@ -2532,7 +2532,7 @@
    "phrase": 19,
    "start": 59.41558,
    "dur": 0.19481,
-   "midi": 71,
+   "midi": 69,
    "gain": 0.675,
    "syl": "na",
    "ph": [
@@ -2622,7 +2622,7 @@
    "phrase": 19,
    "start": 60.77922,
    "dur": 0.38961,
-   "midi": 69,
+   "midi": 71,
    "gain": 0.903,
    "syl": "ga",
    "ph": [
@@ -2637,7 +2637,7 @@
    "phrase": 19,
    "start": 61.16883,
    "dur": 0.19481,
-   "midi": 67,
+   "midi": 69,
    "gain": 0.675,
    "syl": "hi",
    "ph": [
@@ -2652,7 +2652,7 @@
    "phrase": 19,
    "start": 61.36364,
    "dur": 0.38961,
-   "midi": 64,
+   "midi": 66,
    "gain": 0.675,
    "syl": "ka",
    "ph": [
@@ -2667,7 +2667,7 @@
    "phrase": 19,
    "start": 61.75325,
    "dur": 0.1948,
-   "midi": 62,
+   "midi": 64,
    "gain": 0.675,
    "syl": "qte",
    "ph": [
@@ -4728,7 +4728,7 @@
  "theme": {
   "emotion": "happy",
   "environment": "festival",
-  "description": "a summer festival with taiko and a wa-rock riff, paper lanterns and a crowd clap on every chorus"
+  "description": "the summer festival at night, lanterns everywhere, everyone clapping along"
  },
  "sections": [
   {

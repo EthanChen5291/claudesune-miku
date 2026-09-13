@@ -299,6 +299,45 @@ ambiguous). Read the LAST few D-entries before starting any round.
   intro loop; a test pins that no two rows share the tuple. And a
   letter-less section must never be starred (`null*` fell through every
   letter dispatch to the verse figure — five intros lost their riff).
+- **SERIOUS IS THREE MEASURED NUMBERS, NOT AN ENERGY (r40/D145).** His "all of
+  our energetic songs sound like 'light energetic' … i just want more serious
+  prompts to have more serious vibes". Ten reference files (AoT, Homura, Muzan,
+  Zoltraak, Naruto, Solo Leveling, Interstellar x2 …) measured against the
+  judged page: the theme runs **1.6–3.2 notes a bar whatever the tempo** (ours
+  5.0–7.5), median note **0.54–1.99 beats** (ours 0.25–0.5), **15–54% DOTTED
+  values — and the engine wrote 0% on every song on the page**, leaps of a fifth
+  or more 9–45% (ours 2–8%), phrases starting ON a beat. `composeVocalLine({
+  theme: true })` is the theme writer; the r35 syllable law stays correct for a
+  Vocaloid VOICE. **AND THE ENGINE WAS ALREADY DENSER THAN THE REFERENCES** —
+  2.89–5.94 simultaneous notes there against our 6.18–9.31 — so "more layers"
+  is D102 again: distinct, individually audible ENTRIES, not more notes.
+- **A LAYER STACK IS AN ENTRY SCHEDULE, AND THE SUPPORT IS THE SAME LINE
+  (r40/D145).** AoT changes texture every ~5 bars; First Step adds five layers
+  in eleven bars with the harmony unchanged. `SERIOUS_STACKS` names which layer
+  enters at which section, in which register, at what FRACTION of the lead
+  (D77, and Belkin says it too: "the doubling must be quieter than the main
+  line"). Support: **63–100% of theme strikes carry a second note struck WITH
+  them** — an octave below (Muzan 166 of 177) or a third below (Sun 79) — which
+  is his "even if it's virtually the same notes or with just a interval tweak or
+  octave tweak or slightly different notes, add it!". Both doubles take the
+  writer's OWN spec shifted by degrees, and are verified by the realized
+  interval at shared onsets, never the parameter (D139).
+- **A SUSPICIOUSLY BAD NUMBER IS A BUG TOO (r40/D145), and the solo trap fired
+  a THIRD time.** One probe scored a bass that plays nothing but roots at "55%
+  out of chord" (it indexed a 9-entry symbol array by `bar % length` on a song
+  whose letters carry different loops). The next compared each layer's SOLO
+  against a mix-accurate reference and reported a chorus harmony conflict on the
+  JUDGED vocarock page — solos are unmasked and bound to the VERSE context by
+  construction (`extraSolos._vf_bass = bindVfBass(ctxBar)`), so they play verse
+  chords in chorus bars and always will. The mix is correct. D85's rule has a
+  second half now: implausible in EITHER direction is a bug until proven.
+- **THE PROMPT PARSER READS SERIOUS SCENES AS LIGHT ONES (r40/D145).** "walking
+  back through what is left of the town the morning after" scored **happy x
+  shop**; "hunting something through the dark forest" landed in the JUNGLE lane,
+  whose supply is MIXOLYDIAN — a major third over an Aeolian loop, D122's "the
+  melody doesn't sound on key" exactly. The text stays a plain player scene
+  (his r39 ruling, it feeds the lyric writer) but the VIBE LANE is a row field,
+  and an Aeolian page pins `keyScale`.
 - **"ABSTRACT THIS TO ANY X" MEANS A LABEL, NOT A REDESIGN (r30/D120).** His four
   "could be abstracted to any dark/calm/epic environment" notes were read as an
   engine-redesign ask and planned as `core(mood,energy) x tint(environment)`. His

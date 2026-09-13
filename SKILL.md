@@ -159,6 +159,44 @@ a seventh on every chord. Write the row's TEXT as a player would ("one coin
 left at the arcade and the place is about to close"), never as an
 instrument list — instruments go on the row's fields.
 
+## Serious music: the slow theme and the layer stack
+
+"Serious" is not "energetic". It is measured, and three numbers separate a
+serious theme from a pop one — read off ten anime-battle, adventure and film
+themes (Attack on Titan, Demon Slayer, Frieren, Naruto, Solo Leveling,
+Interstellar):
+
+| | a pop/Vocaloid line | a serious theme |
+|---|---|---|
+| notes per bar | 4.9–7.5 | **1.6–3.2**, whatever the tempo |
+| median note length | 0.25–0.5 beats | **0.54–1.99 beats** |
+| dotted values | ~0% | **15–54%** |
+| leaps of a 5th or more | 2–8% | **9–45%** |
+| phrases starting on a beat | off-beat by design | **32–98% on a beat** |
+
+The theme is slow because the layers under it need room. Three more rules, all
+measured:
+
+- **Layers enter one at a time and stay.** Attack on Titan changes texture
+  about every five bars; Interstellar's "First Step" adds five layers over
+  eleven bars and never changes the harmony while it does. Plan the entry
+  schedule as data — which layer enters at which section, in which register, at
+  what fraction of the lead's gain.
+- **The support is the SAME LINE at a fixed interval.** 63–100% of theme
+  strikes carry another note struck with them, and it is an octave below or a
+  third below — not a new rhythm. Octave doubling is 100% of one file's theme
+  strikes. The doubling must be quieter than the line it doubles, and an octave
+  pair should be two different colours rather than one instrument doubling
+  itself.
+- **The harmony is Aeolian and slow.** The leading tone carries 0–3% of pitch
+  weight on nine of the ten files; the subtonic carries 4–17%. One chord a bar,
+  and a pedal that holds one chord for twelve bars is normal.
+
+Counter-intuitive result worth keeping: a well-built pop arrangement already
+plays MORE simultaneous notes than these serious themes do (6–9 against 3–6).
+"More layers" means more distinct, individually audible entries — not more
+notes.
+
 ## Craft rules that generalize
 
 These came from ear verdicts but hold as general practice:
@@ -191,6 +229,11 @@ These came from ear verdicts but hold as general practice:
   must be checked on the full mix.
 - **A clean number is a bug until proven otherwise.** A beautiful 0.0% is
   usually a swallowed error, not a result.
+- **A suspiciously BAD number is a bug too.** The same round that measured a
+  layer at "55% out of chord" found the layer plays only chord roots — the
+  probe was reading a solo (unmasked, bound to the verse harmony) against a
+  mix-accurate reference. Both directions of implausible deserve the same
+  suspicion.
 - **Forbidding things by name does not work.** Lists of banned instrument or
   pattern names have failed repeatedly — the set of bad names is open-ended.
   State what is *permitted*, or clamp by declared data (an instrument's range,

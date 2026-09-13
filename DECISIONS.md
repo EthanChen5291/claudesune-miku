@@ -13398,7 +13398,14 @@ round.
 **Stability.** Snapshots before the first edit. vocarock: 10 of 10 moved (all
 named). songs.html and band.html rebuilt with the r39 generator: **0 of 47 /
 0 of 12 moved on music fields**, both restored byte-identical to the tree.
-The gated `accVoiceFor` rebuilt vocarock 0 of 10 moved on any field.
+The gated `accVoiceFor` rebuilt vocarock 0 of 10 moved on any field. The
+songs-page determinism test failed twice in this round with a ~5 KB size
+mismatch between its two builds; two consecutive builds in isolation are
+byte-identical (1,392,848 bytes) and the test passes alone — with five
+sessions live, another session's build or test was writing songs.html
+during the run (2b hit the same thing from my side earlier). Not a drift;
+the page-level determinism test is not safe to trust while any other
+session is building.
 
 **Coordination.** b4 (packaging) and 2b (lyrics) both reviewed the shared
 edits. b4's two catches, both taken: (a) my stated reason for
@@ -13413,7 +13420,31 @@ vo_reflection / lullaby / march). b4 also recorded the licensing fact this
 lane depends on (LICENSES.md, committed): the RVC timbre in use,
 `infamous_miku_v2`, is an unofficial clone and cannot be licensed, hosted or
 shipped; the Tiger voicebank sells commercial use separately. Nothing
-committed by this session.
+committed by this session — but, as in r38 (4b2a415), a broad terminal
+commit swept this session's in-progress files: 6871ae5 "public license
+setup" (22:39, 122 files). b4's correction: BOTH sweeps are Ethan's own
+`commit -a`-style commits from his terminal (the sessions' commits are the
+explicit-path ones), made while two sessions were writing to the tree — not
+attributable to any session and, since the public repo is to be a fresh
+squashed one, not worth untangling. It carries the 22:39 state of audition-songs.mjs,
+vocaloid-form.js, render-vocal.mjs, vocal-sing.py, the r39 test, the
+research doc, todo.md, verdicts.js and CLAUDE.md (the hook-line + plain-prompt
+build; the calm tier, ghost's pin, SKILL.md's r39 paragraph and this entry
+are the working-tree diff on top). HEAD's verdicts.js carries the ten
+vocarock notes exactly as imported (0 lines differ from the tree), so the
+committed baseline is the imported one.
+  **Verify catch, b4 (D137's shape, second round running).** The r39
+paragraph I added to SKILL.md stated this page's vocal levels as the law
+("energetic songs around −3, a calm one around −1.5"). Measured across every
+judged sung page: vocarock −3 / −4 (with a 0.1 room); band, vocaloid,
+vocalab 0 default and +1.5 on calm; vocal.html's energetic songs +3; pins
+down to −5. The shipped sentence was 6 dB from the songs it claimed to
+describe, in the wrong direction. b4 corrected it (a090c88): there is no one
+right `vocalDb` — it is pinned per song by ear, the pins disagree on purpose,
+and the K-weighted measure never separated "too loud" from "love this"
+(D138). The guard: before a number goes into SKILL.md, grep the other pages'
+DATA for the same field. The page just built is the most available
+population and reads as the general case from inside it.
 
 **4. "The descriptions are too 'musical'. make it just regular users - less
 descriptive/specific than that but also more energetic scenes on average"
@@ -13433,9 +13464,561 @@ emotion/environment read as the scene. Keys unchanged on all ten (the loop
 pins the family); six songs moved on mix/cast from the emotion change (boss
 is now a synth-lead song — "tense" instead of the old text's "speed-rock").
 
+**5. "For calm energy, i really like the voicing and setup for songs like
+romantic waters and somber citadel and nostalgic snow (romantic waters
+overall setup is just really good)" (his fourth message).** Measured on the
+three (vg_romantic_water, vs_somber_citadel, vx_nostalgic_snow — the D77
+probe, per voice in the mix): NO drums on any; NO bass instrument on any
+(the pad / organ carries the low end at 45–66); the piano a flowing
+SINGLE-NOTE arpeggio at 14.4 strikes a bar across 55–86 (romantic water,
+nostalgic snow); a four-note pad restruck twice a bar at 0.23–0.30 × the
+lead; strings counterline + descant across the tune at 0.44–0.45 ×; a clean
+guitar arpeggio at 0.64–0.98 ×; a seventh on nearly every chord (G^7 Gm6
+F#m7 B7 Em7 A7sus / Bm9 C#m7 C^7 Bb^7 / Em D C^7 B7). vr_snow as built had
+a ballad kit, a synth bass at 1.12 ×, plain triads (Am Dm F Em), a two-note
+7.7-strike hand and a three-note pad at 0.44 ×. The calm tier is now that
+setup: `vf.energy: 'low'` → no kit, no `_vf_bass`, `vf_pad_calm` (four
+notes, twice a bar, octave 2, 0.62 × the pad band), descant across the tune
+(the role mask lifts on the low tier), `counterline: true`; snow's row takes
+`vf_min_verse_i7_iv7_bVI7_v7` (sevenths on every chord) and
+`vf_acc_arp16_calm` (the flowing 16th arpeggio) in every section. Measured
+after: drums none, bass none, symbols Am7 Dm7 F^7 Em7, piano 13.3
+single-note strikes a bar across 53–83, pad 4 notes at 0.27 ×, strings 0.40
+× over 56 of 64 bars, guitar arp 1.07 ×. Only vr_snow moved. This is the
+first tier shaped by HIS liked songs rather than the corpus; the mid and
+high tiers are still corpus-shaped and await his ear.
+
 **Renders.** The first batch (the arpeggio build) was stopped at his
 correction after one song, the second at his prompt ruling; restarted 22:28
-on the plain-prompt hook-line build: on all ten, the harmony
-pass (`--line _vocal_harmony --tag .harmony --no-mix --force`) then the lead
-pass (`--force --rehq`), with tune 0.7 and room 0.1 read from the page pins;
-numbers appended below when the batch closes.
+on the plain-prompt hook-line build (snow's calm-tier rebuild landed
+before its turn; the final page is 0 of 10 moved on music fields against
+the page the stems were rendered from): on all ten, the harmony pass
+(`--line _vocal_harmony --tag .harmony --no-mix --force`) then the lead pass
+(`--force --rehq`), tune 0.7 and room 0.1 from the page pins. Closed 00:15,
+0 warnings. Converted lead voice, frames within 50 cents (dry → converted):
+rooftop 83 → 85, arcade 83 → 84, station 78 → 79, sugar 71 → 68, boss 87 →
+90, bike 79 → 84, ghost 82 → 76, snow 90 → 89, lantern 76 → 76, citynight
+82 → 83 (the judged page: 56–82, sugar the outlier at 56 — now 68);
+octave-wrong notes 0 on all ten; the harmony voice 63–92. Two voices, same
+words: 100% at shared onsets on 10 of 10 (120–240 each). Reverb tail: the
+roomed vocal sits 26.7–27.6 dB under the sung level on rooftop / station /
+snow (judged page: 19.2 / 10.6 / 10.6). Balance: −3 dB over the band on
+seven, −4 on bike / lantern / ghost (ghost's plain prompt parses as a
+festival scene, so the r36 festival rule put it at −7 on the first pass —
+pinned and remixed, stems kept), −1.5 on snow. Page rebuilt: 10 hq / 10
+vocal / 10 lyric sheets. `npm test` 440/440. Nothing committed.
+
+## D145 — r40: his SERIOUS ask, ten reference files read out, the slow theme, the layer stack that comes in one by one, and the voice-as-an-instrument option
+
+**His message (2026-09-13), the parts that decide things:** "all of our
+energetic songs sound like 'light energetic'. they're good songs though so i
+dont want to change it, i just want more serious prompts to have more serious
+vibes (like romantic waters / nolstalgic snow, or the layerstack song, that was
+serious calm which i really liked, and then there are serious fight or adventure
+themes that have their more epic and serious vibes) … i will attach a few files
+you should analyze for trends in the melody for how it sounds serious, and all
+the different layers (in attack on titan you can literally see them come in one
+by one) … the main theme/voice has a very strong, slow ish theme when it's the
+main thing, but it has a lot of layered support … the left hand chord that plays
+by itself after the main theme plays at the beginning of attack on titan is
+really good you should learn that (like where the top left hand note hits and
+then is raised by a note then repeat) … even if it's virtually the same notes or
+with just a interval tweak or octave tweak or slightly different notes, add it!
+typically the more layers the better but just make sure to balance out dynamics
+… also look online for some orchestration techniques too … for where the voice
+belongs, it's just the melody - bear in mind some parts may just be instrumental
+only though, vocals arent constant … moreover when the vocals arent singing, i
+notice that the songs give other instruments (sometimes) another melody or
+something … overall though the suite is better quality, i just want to explore
+more serious songs." Plus, separately: "with vocaloids there can be more
+creative uses (reference to nyan cat or llevan polka) where it's more of an
+instrument than a singing. of course, stick to the current system for majority
+but just letting you know that's also an option."
+
+**Nothing was judged this round** — no export, no verdict file, no import. This
+is a build round against his written brief.
+
+**The read-out.** Ten MIDI files (`audios/serious-r40/`, gitignored like every
+research corpus, D95): attack on titan, Homura, Muzan vs Hashiras, Zoltraak,
+The Raising Fighting Spirit, Solo Leveling ReawakeR, A world where the sun never
+rises, Detach, and the two Interstellar arrangements from the r34 pack.
+`scripts/analyze-serious-r40.mjs` + `scripts/dump-serious-r40.mjs`;
+`research/serious-r40.md` is the document. They are PIANO TRANSCRIPTIONS, so a
+"layer" is a register band plus an onset stream and no timbre below is a
+measurement (his own "i know you cant see the instrument info").
+  Method correction made during the read: the Krumhansl-Schmuckler solver
+returned the RELATIVE MAJOR on three files (attack on titan as C major, Homura
+as D major, First Step as B minor). The tonic is now the diatonic pitch class
+most often struck as the LOWEST note on a bar downbeat. AoT is E minor.
+
+**1. THE ENGINE WAS ALREADY DENSER THAN HIS REFERENCES; "more layers" is not
+more notes.** Simultaneous sounding notes: his files **2.89–5.94**, the judged
+vocarock page **6.18–9.31**. We already play more at once than Attack on Titan.
+What separates them is (a) a SLOW theme, (b) layers that enter ONE AT A TIME and
+stay, (c) support locked to the theme's own onsets. That is D102's law ("more
+layers with their own melody is not a request for more voices") arriving from
+his own reference material, and it is why this round did not answer the ask by
+casting more voices at the same density.
+
+**2. THE SLOW THEME, and the one number that was ZERO on every song we ship.**
+Measured over theme bars only (bars where the upper hand holds a note ≥ 1 beat
+or plays ≤ 6 onsets — measuring the whole upper hand mixes the tune with the
+16th ostinato that is often in the same hand and reports a melody that is
+neither):
+
+| | his ten files | the engine, vocarock |
+|---|---|---|
+| theme notes/bar | 1.6–3.2 | 5.0–7.5 |
+| median note | 0.54–1.99 beats | 0.25–0.5 |
+| held ≥ 1 beat | 22–96% | 11–35% |
+| **dotted values** | **15–54%** | **0% on every song** |
+| leaps ≥ a 5th | 9–45% | 2–8% |
+| phrase starts on a beat | 32–98% | off-beat by design |
+
+The engine's syllable law (r35) is right for a Vocaloid VOICE and wrong for a
+theme. `composeVocalLine({ theme: true })` swaps the cell writer for a THEME
+writer (`themeRhythm` in src/lib/vocal-line.js): quarters, dotted quarters
+answered by an 8th, halves, a held final, an even breath, and a snap back onto
+the beat after it. The walk takes the reference's own interval table (leaps at
+a phrase opening as often as steps) and peaks EARLY (his files peak 15–43% into
+the phrase; ours arched at the midpoint). Realized on the page: 2.1–2.8
+notes/bar, median 1.0–2.0 beats, 5–38% dotted, phrase starts on a beat 76–100%.
+  Two numbers were out of band on the first build and were fixed: every note was
+≥ 1 beat (the value table had no 8ths — his files run 22–96%), and sr_oath
+started **0%** of its phrases on a beat because a phrase ending on a dotted
+quarter flipped the parity and the even breath preserved it forever.
+
+**3. HIS NAMED FIGURE, measured exactly.** attack on titan bars 9–20, the left
+hand ALONE for twelve bars over a static tonic pedal:
+`E2 E2 G2 B2` four times a bar, then `E2 E2 G2 C3` four times a bar, alternating.
+That is **R R b3 5 in 16ths, the top note raised one scale step to b6 on
+alternate bars** — his "where the top left hand note hits and then is raised by a
+note then repeat", both readings of the sentence at once. The only thing that
+changes across those twelve bars is one 16th slot, and the bass never moves.
+`SERIOUS_FIGURES.sr_pedal_cell`, with `s6` (the scale sixth) so it cannot spell
+a foreign pitch. It is 16 onsets a bar, over D102's 12/bar "gear change" clause
+— cast anyway and the reason recorded in the code: that clause governs TRAVEL
+DESTINATIONS picked by hash for an accompaniment hand, and this is a named,
+opt-in, register-2 layer at 0.42 × the lead with four shapes and a moving top
+note, which his note asks for by name.
+
+**4. THE LAYERS COME IN ONE BY ONE — as data.** attack on titan: 20 texture
+events over 104 bars, one every ~5 bars. Interstellar "First Step": the
+ostinato alone for 4 bars → the theme in OCTAVES as one held note a bar (bar 4)
+→ the ostinato's lower note starts following the chord while its top note never
+moves (bar 5) → the theme moves in quarters over an octave bass (bar 7) → a bass
+two octaves down (bar 11). Five entries in eleven bars, harmony unchanged
+throughout. `SERIOUS_STACKS` is that schedule as data: an ordered list of
+entries, each naming the tune section it enters at, its register, and its gain
+as a FRACTION of the lead's. Four stacks (titan / battle / additive / calm).
+Realized: distinct voices per bar climb 1–3 → 6–13 across a song, against the
+judged page's 1 → 4–8.
+
+**5. THE SUPPORT IS THE SAME LINE AT A FIXED INTERVAL** — his "even if it's
+virtually the same notes or with just a interval tweak or octave tweak … add
+it!". Measured: 63–100% of theme strikes carry another note struck WITH them;
+octave below dominates the loud songs (Muzan 166 of 177 supported strikes at
+exactly −12, AoT 58), thirds the lyrical ones (A world where the sun never rises
+79, Homura 29), a FOURTH below the Naruto theme (55 of 99). `themeOctave` and
+`themeThird` take the writer's OWN spec for the letter — same seed, same rhythm
+— shifted by degrees, so they cannot drift off the theme. **Verified by the
+realized interval at shared onsets, never by the parameter (D139): −12
+semitones on 100% of shared onsets on all eleven songs**; the third double
+realizes −3/−4 on 79–93% with the rest a fourth, which is the Naruto shape.
+
+**6. THE VOICE IS NOT CONSTANT.** His "some parts may just be instrumental only
+… when the vocals arent singing, i notice that the songs give other instruments
+another melody". A row names the tune sections where the voice rests; those bars
+are cut from the lead (so `_lead_mix` has a hole and the vocal tier sings
+nothing there — export-vocal reads bar presence from that solo) and a named
+instrument states the theme instead at 0.8–0.98 × the lead, because nothing is
+covering it. Nine of eleven rows use it; the rest spans measure 8–24 bars.
+
+**7. THE ORCHESTRATION RESEARCH** (his "look online … and do some research"),
+in research/serious-r40.md §3 with URLs. Load-bearing: the additive unit is one
+4-bar cell repeated with layers added per repeat and the harmony never changing
+(Lehman on Zimmer; Tholin's 2024 transcriptions); rhythmic layers subdivide
+progressively as they enter (whole → quarter → 8th → 16th); crescendo order is
+strings/winds → brass → percussion; the "big tune in three octaves" is a climax
+device that "becomes wearing if continued too long"; **"the doubling must be
+quieter than the main line"** (Belkin) — which is D77 arriving from the
+textbook; a sustained line dominates a staccato line at equal dynamics; natural
+minor is "nearly obligatory" for this idiom with emphasis on v and bVII.
+
+**8. THE HARMONY.** The leading tone carries 0–3% of pitch weight on nine of the
+ten files (AoT's 9% is its one V7 section); harmonic rhythm 1.06–1.63 chords a
+bar. `SERIOUS_LOOPS` is ten Aeolian/Dorian four-chord loops, each citing the
+file it came from, and a test fails any loop carrying a major V or a chord on
+the raised 7th. Honest caveat recorded in the doc: the quality histogram reports
+plain minor triads as the most common label on every file, which is partly an
+artefact of auto-labelling a two-hand reduction — it is evidence for pedal and
+open-fifth writing, NOT evidence against the taste canon's "colour is the norm".
+
+**9. THE PROMPT PARSER READ HIS SERIOUS SCENES AS LIGHT ONES.** "walking back
+through what is left of the town the morning after" scored **happy × shop**;
+"standing up one more time when you should not be able to" scored happy × shop;
+"hunting something through the dark forest" landed in the JUNGLE lane, whose
+melody supply is **mixolydian** — a major third over an Aeolian loop, which is
+D122's "the melody doesn't sound on key" exactly. The prompt text stays a plain
+player scene (his r39 ruling) because it feeds the lyric writer and the card,
+but the VIBE LANE is now a row field, and every serious row pins `keyScale:
+'aeolian'` to match its loop.
+
+**10. THE VOICE AS AN INSTRUMENT** (his nyan cat / Ievan Polkka aside). Two
+cards, `sr_loopcat` and `sr_scatpolka`, switch the theme writer OFF, sing a fast
+cell that never re-rolls (`hookVary: 'none'` — the Nyan Cat property) on
+wordless syllables (`nyan`, `doo` — the r36 vocalise sets), and double that line
+an octave below on a chip synth, so the voice reads as one more instrument in
+the riff. Measured: 6.6 and 6.8 notes a bar, 0% dotted, the octave double at
+−12 on 100% of onsets. They are two of eleven cards, which is his "stick to the
+current system for majority".
+
+**11. THE INSTRUMENTAL TWIN WAS UNREACHABLE IN THE BROWSER (found while
+checking what he will actually hear).** A sung song ducks its melody instrument
+to a 0.45 guide because the VOICE carries the tune (D142), so a page with no
+vocal render yet — which every fresh page is — plays a mix with a HOLE where the
+melody goes. That is the defect eleven of his twelve band cards were written
+against, and r37 answered it by capturing `mixInstrumental`, the same mix with
+the duck never applied. **It has been on every sung song's DATA since D142 and
+nothing in the page could play it.** The audition template now carries an
+`Instrumental: off/ON` toggle beside HQ and Vocal; turning it on plays the twin
+(and turns HQ off, because an HQ wav was rendered from the ducked mix).
+Page chrome only — song DATA on all seven judged pages is untouched.
+  Symmetric diff note: my first stability check iterated the SNAPSHOT's keys, so
+a field present only in the NEW build could not show up. Re-run symmetrically,
+the answer is the same everywhere except vocaloid.html's added `mixInstrumental`.
+
+**Stability.** Snapshots taken before the first edit. **songs.html 0 of 47
+moved, vocarock 0 of 10, band 0 of 12, vocal 0 of 16, layerstack 0 of 14, reels
+0 of 16 — every field, not just the music fields.** audition/vocaloid.html
+rebuilds with one ADDED field (`mixInstrumental`, the r37 instrumental twin);
+its music fields are identical on all 14, i.e. the committed page predates that
+field rather than anything this round did. `npm test` **448/448** (+8 new).
+
+**Two of my own measurements were wrong before they were right, both worth
+recording.** (a) A first out-of-chord probe read `symbols[bar % symbols.length]`
+against a 9-entry array on a song whose letters carry different loops, and
+scored sr_gate's BASS — which plays nothing but roots — at 55% out of chord.
+(b) The second probe compared each layer's SOLO against a mix-accurate
+reference, and reported the chorus sections of the JUDGED vocarock page as a
+harmony conflict: the solos are unmasked and bound to the VERSE context by
+construction (`extraSolos._vf_bass = bindVfBass(ctxBar)`), so they play verse
+chords in chorus bars and always will. Printed bar by bar, the MIX is correct on
+that page. CLAUDE.md's "measure in the mix, not the solos" caught it for the
+third time, and its companion rule now has a second half in SKILL.md: **a
+suspiciously BAD number is a bug until proven otherwise too.**
+  Measured properly, in the mix, against the pitch classes the harmony bed
+sounds in the same bar: the serious page's figure layers run **0–11%** out of
+the bed and its melody-family voices 15–40%, against the judged vocarock page's
+**27–46%** on the comparable voices. Friction is at or below the page he called
+good. The highest number on the new page is the third-below double at 39–40% on
+two songs, which is a parallel third by construction and is 0–6% out of KEY.
+
+**Registers and levels (D77/D118).** Every `_sr_*` layer realizes 0.21–0.57 ×
+the lead's realized mean. One register fix during the round: the additive
+stack's oscillating ostinato was seated at the reference's octave 4 and realized
+a median of **73 against sr_expanse's lead at 68** — a sustained layer over the
+tune, which the literature says dominates a staccato one at equal dynamics. Down
+one octave, same call and same reason as the r30 rise (D120).
+  Also fixed: the r39 energy tier and the stack were double-booking roles —
+sr_gate carried **two basses** (realized medians 39 and 37) and two pads. Where
+the stack fills a role the tier's version stands down.
+
+**Files.** `src/lib/serious-layers.js` (loops / figures / stacks / `seriousSpec`,
+all by name, a test enforces it), `src/lib/vocal-line.js` (`theme` mode),
+`scripts/audition-songs.mjs` (`opts.serious` + the SERIOUS page),
+`scripts/analyze-serious-r40.mjs`, `scripts/dump-serious-r40.mjs`,
+`research/serious-r40.md`, `test/serious.test.js`, SKILL.md (a "Serious music"
+section: the theme table, the entry schedule, the doubling rule).
+**The page is `SERIOUS=1 node scripts/audition-songs.mjs` → audition/serious.html,
+11 songs, 74–158 bpm, unjudged and awaiting his ear.**
+
+### D145 ADDENDUM — the verify pass, what it refuted, and the defect it found in this round's own fix
+
+`.claude/workflows/verify-round.js` over the serious page, six claims. **It
+refuted one claim outright, corrected three, confirmed two — and one of the
+corrections was a defect in the fix I wrote during this round.** Every number
+below is the agents', independently re-derived; where I re-measured after
+fixing, my number is given too.
+
+**1. REFUTED — D77 on two of the seven layer kinds.** My claim was that every
+`_sr_*` layer runs under the lead. Measured in the MIX by tagging each layer's
+own substring with `.orbit(K)` so every mask, ramp, curve and the ×0.45 vocal
+guide stayed in force: **18 of 60 layer measurements sat AT OR ABOVE the lead's
+realized mean, on 9 of 11 songs** — `_sr_bass` at 1.069–1.233× and `_sr_theme8`
+at 1.037–1.126×. The mechanism is exactly D119's: a support layer took
+`0.6 × leadGain` while the lead takes `0.45 × leadGain` under `vocalLead`, so
+the multiplier meant to keep support down was LARGER than the duck the lead
+itself got, and the ratio inverted for any stack fraction above ≈0.55. **Fixed
+by scaling support with the same guide the lead takes** (`supportMulSr = the
+guide`, so the ratio survives whatever the guide is) plus a trim on the two
+offending slots. Re-measured the agent's own way: **worst non-instrumental ratio
+1.233 → 0.825**, zero layers at or above the lead on any song.
+
+**2. CORRECTED — the instrumental sections had a two-bar hole.** Confirmed
+stronger than claimed on the main point (`_lead_mix` has **zero** haps in the
+declared bars on 9 of 9 songs, and `_sr_instrumental` is the tune NOTE FOR NOTE
+— 256 of 256 shared onsets, offset histogram `{0: 256}`). But on sr_hunt the
+generic ENTRY RAMP zeroed the instrumental theme's first two bars, because that
+layer's entry coincided with its instrumental window: **4 of 256 theme onsets at
+gain 0, i.e. two bars with neither a voice nor a theme.** The ramp exists to
+fade a NEW TEXTURE in; this layer is the TUNE standing in for the voice. Fixed
+with a `noEntryRamp` set. Re-measured: sr_hunt bars 8–15 now carry the theme at
+0.74–0.76 throughout.
+
+**3. CORRECTED — the octave double had no range clamp, and 19% of its notes fell
+below the instrument's floor.** The `themeOctave` branch set `leadOctave - 1`
+with no range check while its sibling `figure` branch, 28 lines earlier, clamps;
+**274 of 1440 theme8 notes sat below `INSTRUMENTS[sound].range`, 262 of them
+caused by the −12 shift.** In the HQ tier an out-of-range note FOLDS by octaves
+(D83) — which would have silently broken the octave relationship the layer
+exists for. Fixed by giving every row a theme-double voice whose floor covers
+`leadOctave - 1` (trombone / cello / bassoon / saw). Re-measured: **0 of 1920
+notes out of range**, and the octave relationship is intact — **−12 semitones on
+1664 of 1664 shared onsets, all 11 songs** (the agent's independent run: 1232 of
+1232, no other interval, with polyphonic instants = 0 so the nearest-note rule
+could not have manufactured it).
+
+**4. CORRECTED — the additive build failed its magnitude on one row.** Direction
+holds 11 of 11 (every song gains voices), but sr_scatpolka was +2 rather than
+≥3: `vf_form_chorus_first` gave it no intro, so two stack entries were live in
+bar 0 and it had nothing left to add. Given a 4-bar intro it now builds 1 → 6.
+The agent also notes, correctly, that the build is **not monotonic** — it
+alternates by section role (a thin verse against a full chorus), which is the
+corpus arc and not a defect.
+
+**5. CORRECTED — state the population (D137 again).** "1.6–3.4 theme notes a
+bar" is true per ACTIVE bar (1.80–2.50, pooled 2.29 over 400 bars) and false
+over `totalBars` (1.13–2.00, five of nine under 1.6) — because the voice
+deliberately rests in the instrumental sections. And "≥15% dotted" is confirmed
+POOLED (25.8%, 236 of 916) but **refuted per row**: sr_duel 5.3% and sr_resolve
+8.0%. duel now pins a higher rate and realizes 32%; resolve still draws 7%. The
+parameter demonstrably moves the rate (isolated: 0.3 → 28%, 0.6 → 38%), so the
+per-song value is a DRAW, not a broken knob — 8 of 9 rows land 17–54% against
+the reference's 15–54%, and one sits under it.
+
+**6. CONFIRMED, more strongly than claimed — stability.** Three independent
+derivations, including a hap-level fingerprint: **129 songs, 210,147 onset haps,
+0 differ**, with two mutation tests proving the probe was sensitive (a +1 bpm and
+a single D#3→D#4 were both caught). vocaloid.html's one added field is
+`mixInstrumental`, `mix` itself byte-identical.
+
+**7. THE DEFECT IN MY OWN FIX — the instrumental twin was never "the same mix
+with the guide never applied".** Hunting side effects of the new `Instrumental`
+toggle, the stability agent found that `mixPartsInstrumental = [...mixParts]` is
+a shallow copy of an array of STRINGS, taken BEFORE two later loops that
+REASSIGN slots: the r25 piano trim (his "piano too loud" ×7) and the r33 kit
+ride. Reassigning `mixParts[i]` cannot reach a copy of the old string, so **the
+twin kept the untrimmed piano and kit**: 35 of 52 twin songs carry a factor the
+twin lacks, and on all 21 twin songs with a kit the twin's kit peak is
+**1.10–1.39× the judged mix's (+0.8 to +2.9 dB)**. The generator's own comment
+asserted "*a test pins that the two differ in exactly the guide factor*" —
+`grep -rn mixInstrumental test/` returned **zero matches**. The agent's honest
+counter-measurement: the RELATIVE law is not violated (kit ÷ lead goes
+1.35–1.80 → 0.61–0.81, because the lead un-ducks), so what the twin lost is the
+ABSOLUTE ear-driven trims, not the ratio cap.
+  **Fixed**: both trims now write to both arrays, the false comment is gone, and
+the test it claimed exists now exists. **Blast radius: `mixInstrumental` changes
+on 39 songs (vocarock 5, band 10, vocal 10, vocaloid 14); `mix` — everything he
+has judged — is byte-identical on all 129.** Consequence to report: the twelve
+`audition/hq/bd_*.instrumental.wav` renders were made from the untrimmed twin
+and are now stale. They are a re-render, not a re-audition.
+
+**Not fixed, recorded.** The serious page runs 5.2–11.7 simultaneous sounding
+notes against the judged vocarock page's 6.2–9.5 and his references' 2.9–5.9.
+That is deliberate — his "typically the more layers the better" — and every
+added layer is measured under the lead, but it is the number to watch on his
+first listen, and the one to cut first if the page reads busy.
+
+### D145 ADDENDUM 2 — the D77 sweep's real finding: it is the OLD cast that is loud under a ducked lead, not the new layers
+
+The ratio sweep measured every part of every serious song against the lead's
+REALIZED in-mix mean, by splitting `stack(mix)` into its top-level parts (the
+part-hap sums equal the whole-mix hap set exactly on all 11 songs, so the
+decomposition is lossless). Two traps it hit are worth keeping:
+
+- **A key-set attribution over the whole mix conflated `_acc` with `_lead` on
+  the four piano-lead songs** — sr_expanse's lead read 0.2406 instead of 0.1204,
+  2.0× too high. Only the part split separates them.
+- **The `_lead_mix` SOLO carries neither the 0.45 vocal guide nor the r25 piano
+  trim**: sr_gate 0.5630 solo vs 0.2517 in the mix. A D77 sweep taken from the
+  solos map uses a lead reference 2.2–3.1× too high **and declares the page
+  clean**. That is the solo-vs-mix trap a fourth time this round, and the first
+  time it would have produced a FALSE PASS rather than a false alarm.
+
+**The result: 110 rows at ≥ 0.80× the lead, and the r40 stack is not among the
+worst of them.** The `_sr_*` layers are ducked at authoring time
+(`supportMulSr`); the arranger-side cast and the kit are not, so against a lead
+that IS ducked they read loud. Worst on the page: `_acc` at **5.43× on sr_ashes**
+(0.7584 against a piano lead at 0.1204), then `_sr_instrumental` (the exempt
+voice-rest layer), then `_guitar_arp` 2.36×, `_chorus_double` 1.18×,
+`_companion` 1.09×.
+
+Against the UN-DUCKED twin the same layers mostly fall into line (guitar 0.84,
+chorus double 0.53, companion 0.49, counterline 0.37) — so this is a property of
+listening to a sung page with no voice, which is exactly what the new
+`Instrumental` toggle is for, and what to tell him before he listens.
+
+**Not fixed this round, and deliberately.** The accompaniment band's flat 1.0 top
+is D122's recorded open item — "that fix is SCOPED to reel-faithful cards on
+purpose; the acc band reaches all 47 judged songs and widening it is a round of
+its own". Nothing here changes that judgement: the measurement is now on record
+for two more pages, and the number to beat is `_acc` ÷ the lead's realized mean
+under a guide.
+
+### D145 ADDENDUM 3 — the completeness critic's DO-NOT-SHIP, and the four blockers closed
+
+The critic's verdict on the page as it then stood was **DO-NOT-SHIP, four
+blockers, none touching judged material**, and its framing was right: they were
+not stability problems, they were the page **misrepresenting itself to his ear**.
+All four are now closed and re-measured on the shipped build.
+
+**B1 — the card said the voice rests and a second sung voice kept singing.**
+`_vocal_harmony` masks on B-letter bars (`hBars`) and never consulted the
+instrumental windows, which live in another scope — and 9 of 13 declared
+instrumental sections ARE B letters. Measured: **172 of 524 harmony onsets
+(32.8%) sounded inside the bars the card calls silent, on 7 of 9 songs**, and
+`export-vocal.mjs` takes its bars from the named solo, so it would have reached
+the render too. `instrBars` is now hoisted and `hBars` is gated on it.
+Re-measured: **0 of 684**.
+
+**B2 — the octave double below its instrument's floor.** Already fixed earlier
+in the round (the critic's trumpet/square numbers are from a pre-fix build);
+re-verified on the shipped page at **0 of 1920 notes out of range**, octave
+relationship intact at −12 on 1664 of 1664 shared onsets.
+
+**B3 — a declared build event that was inaudible.** On both calm rows the pad's
+whole band landed at **0.075–0.076 and ZERO of its onsets cleared the 0.08 floor
+every probe on this page uses**: the card advertised five entries and delivered
+four, on the two rows where "additive" is the entire thesis. My own supportMulSr
+fix for B-list item 1 had made this worse, not better — the guide scaling is
+right for a layer competing with the tune and wrong for one that was already the
+quietest thing in the mix. A declared layer now floors at 0.085 absolute.
+Re-measured: **0 inaudible layers on 11 of 11 songs**, and the floor is still
+support (0.71× sr_expanse's realized lead, 0.61× sr_ashes's).
+
+**B4 — the loudest thing on the page was the piano accompaniment.** `_acc` ran
+**2.61–5.43× the lead as the browser plays it, on 11 of 11 songs**, and
+1.17–2.44× even against the un-ducked twin. This is D122's flat-1.0 acc band
+arriving on a fresh page where nothing pins it, and "piano too loud" is a card he
+has written **seven times**. Fixed with the lever r32/r33 already built and
+ear-validated for the reels page — `accUnderLead`, the band capped at
+[0.35, 0.72 × 0.85] × leadGain — scoped to serious rows exactly as it is scoped
+there. Re-measured: **1.57–2.11× against the ducked guide lead, 0.71–0.95×
+against the instrumental twin**, i.e. under the tune on every song by the path he
+should actually listen on. The general acc band still reaches all 47 judged
+songs and is still its own round.
+
+**The criticism I am NOT fixing, because it is the ask.** The critic calls the
+tier "parallel doubling, not layering": `_sr_theme8` is the lead at −12 on
+1132/1132, `_chorus_double` at +12 on 100%, `_sr_instrumental` is the lead line
+verbatim, and `_sr_theme3` / `_companion` / `_vocal_harmony` are the lead's
+rhythm a third to a fifth below — 3.0–4.3 lead-derived layers sounding at every
+lead onset. That is D100's "two layers that always strike together are one
+layer", six-fold, and it is a fair description. It is also **exactly what his
+reference files do and exactly what he asked for**: 63–100% of theme strikes in
+those ten files carry a second note struck WITH them, Muzan's at −12 on 166 of
+177, and his words were "even if it's virtually the same notes or with just a
+interval tweak or octave tweak or slightly different notes, add it!". The
+independent lines on the page are the ostinato, the answering stabs, the riff and
+the pad. Recorded here so the distinction is his to judge rather than mine to
+assume: **the doubles are parallel by design; the independence lives in the
+figure layers.** The critic is right that `_sr_riff` was never profiled for
+independence — that is the open measurement.
+
+**Final state, re-measured on the shipped build:** 11 of 11 songs byte-identical
+to a clean rebuild, `npm test` **449/449**, judged `mix` untouched on all 129
+songs across seven pages, worst `_sr_*` ratio 0.825, acc under the tune on the
+twin, no inaudible declared layer, no harmony voice in a declared hole.
+
+### D145 ADDENDUM 4 — the renders, the pin that moved its own song, and a flaky test (r40)
+
+**His first report on the page was "i can't hear the vocals … hq on and vocals
+on and instrumental off", and he was right for a reason no measurement of the
+MIX could have found: the page had no renders at all.** `hq: false` and no
+`.withvocal.wav` on all eleven, so HQ mode played the browser synth (the status
+line's quiet "· no HQ render") and Vocal mode had no file to reach for. What he
+heard was the live Strudel mix with the lead ducked to its 0.45 `vocalLead`
+guide and nothing singing over it. **A page built for the vocal tier is not
+finished when the page builds — it is finished when the renders exist.** The
+generator sets `s.hq`/`s.vocal` from `existsSync` at BUILD time, so a page built
+before its renders also carries no download links and no badges; it must be
+rebuilt afterwards (twice here — once mid-batch so he could use the finished
+songs, once at the end).
+
+**Cost, measured, because he asked why it takes so long.** Per song: DiffSinger
+33 s + RVC 165 s for the harmony voice, HQ mix 39 s (13 stems), then DiffSinger
+~35 s + RVC ~165 s for the lead, ~7.5 min total, ×11 = 88 min (12:00–13:28).
+**Three quarters of it is RVC, run twice per song because each song has two sung
+voices** — HuBERT features, RMVPE pitch, the generator net and a faiss lookup,
+per frame, on CPU (`No supported N-card found`). The band is the cheap part.
+Python held ~512% CPU throughout, so it is compute-bound, not idle; running two
+songs in parallel was rejected because render contention is what caused the
+`recursive_mutex` segfault that forced the single-OpenMP env fix in r36.
+
+**Results: 0 warnings, 0 non-zero exits, 0 octave-wrong notes on 11 of 11, two
+voices singing identical words at 100% of shared onsets on 11 of 11.** Frames
+within 50 cents (converted): summit 96.3, gate 95.0, ashes 94.9, expanse 93.9,
+oath 93.6, duel 93.5, vanguard 93.4, resolve 92.8, hunt 88.3, loopcat 85.6,
+**scatpolka 69.5**.
+
+**THE OUTLIER IS EXPLAINED BY NOTE LENGTH, NOT BY A BUG — and the check was run
+because of this round's own rule that a suspiciously bad number is a bug until
+proven otherwise.** Median sung note: the nine serious rows 0.42–1.22 s → 88–96%;
+loopcat 0.208 s → 85.6%; scatpolka **0.114 s** → 69.5%. It does NOT track leap
+size (scatpolka's leap rate is 5%, below most of the page) and the register is
+clean (median 67, sung 57–76 against a 57–76 target, 0 re-octaved). At 114 ms
+most of every note is the glide into it, so the pitch model never settles.
+**That is the voice-as-an-instrument row asking for `rate: 6.5` at 158 bpm, and
+114 ms is below the 0.14 s threshold that DEFINED a melisma note before r36
+removed the rule.** Open question for his ear: whether the fastest scat row
+reads as smeared, or as the instrument he asked for.
+
+**A PROSE KEEP'S PIN MOVED THE VERY SONG IT WAS PROTECTING — D101/D123's
+catch-22, fifth instance, and the first one caught at the moment the pin was
+written.** His mid-round heads-up: *"i liked vg_excited_fight's instrumental.
+not the vocals for it, but the instrumental"* (that song is on `vocal.html`, the
+anime-OP row). Adding `extra: { pinFrom: 'r40' }` per the standing prose-keep law
+moved it on **mix, solos, degrees, symbols, numerals, cast, treat, ops** —
+because `colorFresh` reads a bare `!opts.pinFrom`, so ANY pin reads as "this song
+has history, strip the colour upgrade" and re-rolls the harmony. `voicedColor:
+true` alongside it is the documented escape; re-measured, **0 songs moved on
+music fields**. The VOICE half of his note was deliberately not acted on: he has
+said he dislikes it but not what is wrong, and guessing would churn the half he
+likes.
+
+**`vl_double_loud`: his praise attaches to the lab BASE, not the variant.** His
+note: *"the melody is good, and their jumps are good and the intervals are good.
+instrumental wasnt good enough to support it (no appealing sub harmonies or
+instrument selection)"*. All three `vl_double` variants carry an IDENTICAL sung
+score — same pitches, onsets, durations and words; the card varies only a chorus
+instrumental double. Profile of the first vocal line he has called good:
+F minor, 168 bpm, 84 notes / 16 bars = **5.25 notes/bar**, median note an 8th,
+**0% dotted**, within phrases **18% repeat / 53% step / 24% third-to-tritone /
+5% leap ≥ a fifth**, range 60–77, phrases on a beat 50%. **"Good jumps" measures
+as a mostly STEPWISE line with a quarter of its motion in the third-to-tritone
+band** — nearly the inverse of the serious theme (1.6–3.2 notes/bar, 15–54%
+dotted, 9–45% big leaps). Two different jobs; do not merge the targets.
+
+**His instrumental complaint on that song is exact and names three standing
+laws.** Measured on the mix: `_lead_mix` is `piano` and `_acc` is `piano` (the
+tune shares a timbre with its own chords — D102 says timbre and register are what
+separate a layer); `_descant` and `_marcato` are BOTH `gm_string_ensemble_1`,
+119 notes over 66 onsets at gain 0.156 (**D100's "two layers that always strike
+together are one layer"**, the shape CLAUDE.md says to check FIRST on any layers
+question); piano and `gm_electric_guitar_muted` share **87% / 93%** of their
+onsets; and the rest of the palette is decorative — marimba 25 notes, music box
+16 (median midi 101), square lead 7 at gain 0.102, counterline 25 at 0.107. So
+of four layers billed as sub-harmony, two are one voice, one is nearly inaudible,
+and the tune has no timbre of its own. **Nothing was changed**: this is D122's
+accompaniment-and-cast item, it reaches the judged suite, and it is its own round.
+
+**A FLAKY TEST IS A REAL DEFECT AND IT BIT TWICE TODAY.** `songs page: 10 prompts
+build…` (test/songs.test.js) failed inside the parallel suite on two of three
+runs and passes **4/4 alone** every time. Cause: several test files each run the
+generator, which WRITES the real `audition/songs.html`, so two of them race on
+one file — and that means a test run MUTATES a judged page as a side effect.
+Final state: `npm test` 449/449 on a clean run, songs.test.js 4/4 in isolation,
+`audition/serious.html` rebuilt with 11/11 HQ + 11/11 VOCAL badges and **0 songs
+moved on music fields** against the page the stems were rendered from. Fixing
+the race (build to a temp path, or serialize) is not done and is worth a round.

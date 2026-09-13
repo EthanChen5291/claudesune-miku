@@ -508,6 +508,12 @@ average" — the row texts are plain player scenes now, instruments moved to
 row fields; parse-checked each ("high score" → orchestral, "hot chocolate" →
 casino were caught). Six songs moved on mix/cast from the emotion re-parse.
 
+His fourth message named the calm references (romantic waters, somber
+citadel, nostalgic snow). Measured: no drums, no bass instrument, single-note
+piano arpeggio 14.4 strikes/bar across 55–86, four-note pad at 0.23–0.30 ×
+lead, strings counterline + descant across the tune at 0.45 ×, sevenths on
+nearly every chord. The calm tier now reproduces that (D144 §5).
+
 Registers after the build (medians in the mix): synth hook 60–67 under leads
 at 64–71 (the first cut seated it at octave 4 → 72–79 ABOVE the voice on four
 songs — D118 again; now octave 3, saw only, range [3,5]); pad 57–69; marcato

@@ -45,6 +45,7 @@
     <span class="now" id="now">— click ▶ on a card —</span>
     <button id="hqmode" title="play pre-rendered HQ wavs (audition/hq/) where available">HQ: off</button>
     <button id="vocalmode" title="with HQ on: play the render with the sung vocal (audition/hq/<song>.withvocal.wav) where one exists">Vocal: off</button>
+    <button id="instmode" title="r40: play the INSTRUMENTAL TWIN — the same mix with the melody instrument never ducked to its 0.45 guide. A sung song ducks its lead because the VOICE carries the tune, so in the browser (no vocal render) the tune is a hole. This plays the twin instead.">Instrumental: off</button>
     <button id="stop">■ stop</button>
     <span class="dim" id="rtstatus">first play loads the instruments</span>
   </div>
@@ -102,7 +103,7 @@ const SOUNDFONT2_URLS = ["https://unpkg.com/soundfont2@0.4.0/lib/SoundFont2.js",
 const SOUNDFONT2_EXPORTS = ["DEFAULT_GENERATOR_VALUES","SoundFont2"];
 const SHIM_EXPORTS = {"@strudel/core":["freqToMidi","noteToMidi","getSoundIndex","Pattern","getPlayableNoteValue"],"@strudel/webaudio":["registerSound","getADSRValues","getAudioContext","getParamADSR","getVibratoOscillator","getPitchEnvelope"]};
 const GM_FALLBACK = 'triangle';
-const BUILD = '2026-09-13 02:27';
+const BUILD = '2026-09-13 17:31';
 const RT = { ready: false, booting: null, note: '', soundfonts: false, gmVoices: 0, gen: 0, maps: {}, problems: [],
   // D56: set once the scheduler tick is running off a Web Worker, so a hidden
   // tab cannot clamp it to 1s. workerTicks is how a probe proves it is live.
@@ -548,13 +549,29 @@ const HQ_AUDIO = new Audio();
 HQ_AUDIO.loop = true;
 function hqButton() { $('hqmode').textContent = 'HQ: ' + (hqMode ? 'ON' : 'off'); $('hqmode').style.fontWeight = hqMode ? 'bold' : ''; }
 const LSVOC = 'motif-engine:songs-vocal';
+const LSINST = 'audition:instrumental';
 let vocalMode = false;
 try { vocalMode = localStorage.getItem(LSVOC) === '1'; } catch {}
 function vocalButton() { $('vocalmode').textContent = 'Vocal: ' + (vocalMode ? 'ON' : 'off'); $('vocalmode').style.fontWeight = vocalMode ? 'bold' : ''; }
+// r40 — THE INSTRUMENTAL TWIN, reachable. mixInstrumental (r37) has been on
+// every sung song's DATA since D142 and nothing in the browser could play it:
+// a sung song ducks its melody instrument to a 0.45 guide because the VOICE
+// carries the tune, so with no vocal render (a fresh page) the browser mix has
+// a HOLE where the melody goes. That is what eleven of his twelve band cards
+// were written against. This toggle plays the twin — the same mix with the
+// duck never applied.
+let instMode = false;
+try { instMode = localStorage.getItem(LSINST) === '1'; } catch {}
+function instButton() {
+  const b = $('instmode');
+  if (!b) return;
+  b.textContent = 'Instrumental: ' + (instMode ? 'ON' : 'off');
+  b.style.fontWeight = instMode ? 'bold' : '';
+}
 
 function codeFor(s) {
   const which = solo[s.name] || 'mix';
-  const expr = which === 'mix' ? s.mix : s.solos[which];
+  const expr = which === 'mix' ? ((instMode && s.mixInstrumental) || s.mix) : s.solos[which];
   if (!expr) return null;
   return 'setcpm(' + s.bpm + '/' + s.beats + ')\np: stack(' + expr + ')';
 }
@@ -700,6 +717,18 @@ $('vocalmode').onclick = function () {
   stop();
 };
 vocalButton();
+if ($('instmode')) {
+  $('instmode').onclick = function () {
+    instMode = !instMode;
+    try { localStorage.setItem(LSINST, instMode ? '1' : '0'); } catch {}
+    // the twin is the BROWSER mix; an HQ wav was rendered from the ducked mix,
+    // so playing the twin means playing the browser synth
+    if (instMode && hqMode) { hqMode = false; try { localStorage.setItem(LSHQ, '0'); } catch {} hqButton(); }
+    instButton();
+    stop();
+  };
+  instButton();
+}
 $('export').onclick = function () {
   // DERIVED format (D60): page-local songs export degrees + exemplar base, so
   // import-verdicts.mjs lands them in DERIVED_VERDICTS unchanged

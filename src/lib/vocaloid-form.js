@@ -38,6 +38,11 @@ export const VOCALOID_LOOPS = {
   // two rows (rooftop, lantern) named the SAME verse loop; the wa-rock row
   // takes the descending minor axis (i bVII bVI v, the Senbonzakura-family verse)
   vf_min_verse_i_bVII_bVI_v: loop('minor', 'verse', '0:m 10 8 7:m', 'i bVII bVI v', 'the descending minor axis (Senbonzakura verse family)'),
+  // r39, his calm references (vg_romantic_water G^7 Gm6 F#m7 B7 Em7 A7sus,
+  // vx_nostalgic_snow Bm9 C#m7 C^7 Bb^7, vs_somber_citadel Em D C^7 B7): every
+  // chord carries a seventh — the calm verse takes the New Darling loop with
+  // sevenths on every chord (m7 / ^7 are corpus vocabulary)
+  vf_min_verse_i7_iv7_bVI7_v7: loop('minor', 'verse', '0:m7 5:m7 8:^7 7:m7', 'i7 iv7 bVI^7 v7', 'New Darling verse with sevenths (r39 calm tier)'),
   // ---- minor, chorus -----------------------------------------------------
   vf_min_chorus_i_bVI7_bVIIsus_bIII7: loop('minor', 'chorus', '0:m 8:^7 10:sus 3:^7', 'i bVI^7 bVIIsus bIII^7', 'Senbonzakura chorus'),
   vf_min_chorus_bIII_bVI_i_v: loop('minor', 'chorus', '3 8 0:m 7:m', 'bIII bVI i v', 'Android Girl chorus (opens on bIII)'),
@@ -133,6 +138,22 @@ export const VOCALOID_FIGURES = {
     { octave: 3, role: 'synth', source: 'r39: the mid-tier chorus synth hook — the same line at 3–4 notes a bar' }),
   vf_pad_sustain: fig('vf_pad_sustain', 'sustain', 1, ['0/1'], ['R.5.3+'], [0.8],
     { octave: 3, legato: true, role: 'pad', source: 'r39: a held root-fifth-tenth pad under the chorus (corpus `sustain` class; the tenth keeps it aligned to the chord\'s third)' }),
+  // r39 — THE CALM SETUP, from his three references ("for calm energy, i
+  // really like the voicing and setup for songs like romantic waters and
+  // somber citadel and nostalgic snow (romantic waters overall setup is just
+  // really good)"). Measured on those three: NO drums, NO bass instrument (the
+  // pad / organ carries the low end at 45–66), a flowing single-note piano
+  // arpeggio at 14.4 strikes a bar across 55–86, a four-note pad restruck
+  // twice a bar at 0.23–0.30 × the lead, strings counterline + descant across
+  // the tune at 0.45 ×, a clean guitar arpeggio at 0.64–0.98 ×, colour
+  // chords throughout. vr_snow as built had a kit, a synth bass at 1.12 ×,
+  // triads, and a 7.7-strike two-note hand.
+  vf_acc_arp16_calm: fig('vf_acc_arp16_calm', 'arp', 1, S16,
+    ['R', '5', 'R+', '3+', '5+', '3+', 'R+', '5', 'R', '5', 'R+', '3+', 'R++', '3+', 'R+', '5'],
+    [0.7, 0.45, 0.55, 0.5, 0.65, 0.45, 0.5, 0.45, 0.7, 0.45, 0.55, 0.5, 0.65, 0.45, 0.5, 0.45],
+    { octave: 3, source: 'r39 calm: the flowing 16th arpeggio (romantic water / nostalgic snow: 14.4 single-note strikes a bar, 55–86)' }),
+  vf_pad_calm: fig('vf_pad_calm', 'sustain', 1, ['0/1', '1/2'], ['R.5.R+.3+', 'R.5.R+.3+'], [0.75, 0.6],
+    { octave: 2, legato: true, role: 'pad', source: 'r39 calm: four notes restruck twice a bar in the low register (the references\' pad at 48–66)' }),
   vf_pad_move: fig('vf_pad_move', 'sustain', 2, ['0/1', '1/1'], ['R.5.R+.3+', '3.5.R+.5+'], [0.8, 0.75],
     { octave: 3, legato: true, role: 'pad', source: 'r39: the FULL pad — four notes, the voicing rotating every bar (his reels: "a repeated chord returns with its voicing ROTATED one position")' }),
   // bass (always present, strikes an 8th long)
@@ -174,11 +195,15 @@ export const VOCALOID_FORMS = {
 
 /** Resolve a page row's vocaloidForm config by NAME; throws on an unknown name
  *  so a typo cannot silently fall back to a pool pick. */
-export function vocaloidFormSpec(cfg = {}) {
+export function vocaloidFormSpec(cfg = {}, { loops = null } = {}) {
   const get = (table, key, what) => { if (key == null) return null; const row = table[key]; if (!row) throw new Error(`vocaloidForm: unknown ${what} "${key}"`); return { name: key, ...row }; };
+  // r40: a page may bring its OWN loop table (the serious pack's Aeolian loops)
+  // alongside this one. Both are still addressed BY NAME — the merge is a
+  // lookup table, never a pool, so adding a row cannot re-roll a song (D95).
+  const LOOPS = loops ? { ...VOCALOID_LOOPS, ...loops } : VOCALOID_LOOPS;
   return {
-    verse: get(VOCALOID_LOOPS, cfg.verse, 'verse loop'),
-    chorus: get(VOCALOID_LOOPS, cfg.chorus, 'chorus loop'),
+    verse: get(LOOPS, cfg.verse, 'verse loop'),
+    chorus: get(LOOPS, cfg.chorus, 'chorus loop'),
     verseFig: get(VOCALOID_FIGURES, cfg.verseFig ?? 'vf_verse_line', 'verse figure'),
     chorusFig: get(VOCALOID_FIGURES, cfg.chorusFig ?? 'vf_chorus_block8', 'chorus figure'),
     bridgeFig: get(VOCALOID_FIGURES, cfg.bridgeFig ?? 'vf_bridge_block4', 'bridge figure'),
@@ -199,7 +224,10 @@ export function vocaloidFormSpec(cfg = {}) {
     synthFig: cfg.synthFig === false ? null
       : get(VOCALOID_FIGURES, cfg.synthFig ?? (cfg.energy === 'high' ? 'vf_syn_hook' : cfg.energy === 'low' ? null : 'vf_syn_hook_lite'), 'synth figure'),
     synthSound: cfg.synthSound ?? 'gm_lead_2_sawtooth',
-    padFig: cfg.padFig === false ? null : get(VOCALOID_FIGURES, cfg.padFig ?? (cfg.energy === 'high' ? 'vf_pad_move' : 'vf_pad_sustain'), 'pad figure'),
+    padFig: cfg.padFig === false ? null : get(VOCALOID_FIGURES, cfg.padFig ?? (cfg.energy === 'high' ? 'vf_pad_move' : cfg.energy === 'low' ? 'vf_pad_calm' : 'vf_pad_sustain'), 'pad figure'),
     padSound: cfg.padSound ?? 'gm_pad_warm',
+    // r39 calm tier (his three references carry no bass instrument and no kit)
+    bass: cfg.bass ?? cfg.energy !== 'low',
+    kit: cfg.kit ?? cfg.energy !== 'low',
   };
 }

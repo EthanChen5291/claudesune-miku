@@ -139,12 +139,69 @@ function cellRhythm(r, { notesPerBar, sixteenths, startBias = null, breathBias =
 }
 
 /**
+ * r40 — THE THEME RHYTHM (his "the main theme/voice has a very strong, slow
+ * ish theme when it's the main thing"). Measured on his serious set
+ * (research/serious-r40.md): the theme runs 1.6–3.2 notes a bar, median
+ * duration 0.66–1.45 beats, 15–54% dotted values, phrases START on a beat
+ * (AoT slot 0/8 on 22 of 24, Muzan 19 of 23 on the downbeat, Zoltraak 18 of
+ * 35), the phrase peak sits early (15–43% of the phrase), and the engine's
+ * own leads ran 5–7.5 a bar with 0% dotted. The r35 cell writes SYLLABLES;
+ * this writes a THEME: quarters, dotted quarters answered by an 8th (the
+ * AoT 3+1), halves, and a held final of at least a half note. One cyclic
+ * 2-bar cell like cellRhythm, so everything downstream (hook/answer, riders,
+ * the lyric binder) is unchanged.
+ */
+function themeRhythm(r, { notesPerBar, startBias = null, dotted = 0.3 }) {
+  const SLOTS = 16;
+  const budget = Math.max(2, Math.round(notesPerBar * 2));
+  const start = startBias ?? pick(r, [[0, 60], [4, 15], [6, 12], [2, 8], [8, 5]]);
+  const events = [];
+  let cursor = start, used = 0, count = 0, guard = 0;
+  // phrase = one bar (8 slots) or two bars; the final is held
+  while (used < SLOTS - 2 && count < budget && guard++ < 40) {
+    const phraseLen = pick(r, [[2, 3], [3, 4], [4, 3]]);
+    let pendingShort = false;
+    for (let n = 0; n < phraseLen && count < budget && cursor < start + SLOTS - 1; n++) {
+      const last = n === phraseLen - 1 || count === budget - 1;
+      let len;
+      if (last) len = pick(r, [[4, 5], [6, 3], [3, 2], [2, 3]]);   // a held final: half / dotted half / dotted quarter / quarter
+      else if (pendingShort) { len = 1; pendingShort = false; }    // the 8th that answers a dotted quarter
+      // the mix of values, measured: attack on titan's theme is 42% notes of a
+      // beat or longer, Homura 59%, Muzan 37% — NOT all of them. A first cut
+      // without the 8ths here realized 100% on two songs.
+      else { len = pick(r, [[2, 40], [3, Math.round(100 * dotted)], [4, 12], [1, 16]]); if (len === 3) pendingShort = true; }
+      const room = start + SLOTS - cursor;
+      if (len > room) len = room;
+      if (len <= 0) break;
+      events.push({ slot: cursor % SLOTS, len, phraseStart: n === 0, phraseEnd: last });
+      cursor += len; used += len; count++;
+      if (last) break;
+    }
+    // the breath after a held final: a quarter, sometimes an 8th
+    // the breath after a held final: a quarter, sometimes a half — an EVEN
+    // number of 8ths, so the next phrase starts on a beat (his set: 22 of 24 AoT
+    // phrases, 19 of 23 Muzan)
+    const breath = pick(r, [[2, 7], [4, 2]]);
+    cursor += breath; used += breath;
+    // …and SNAP to the next beat if an 8th or a dotted value has shifted the
+    // parity. Without this a phrase ending on a dotted quarter puts every
+    // later phrase off the beat and keeps it there: measured on the first
+    // build, sr_oath started 0% of its phrases on a beat against the
+    // reference's 32–98%.
+    if (cursor % 2 === 1) { cursor += 1; used += 1; }
+  }
+  if (events.length) events[events.length - 1].phraseEnd = true;
+  for (const e of events) if (e.slot + e.len > SLOTS) e.len = SLOTS - e.slot;
+  return events.sort((a, b) => a.slot - b.slot);
+}
+
+/**
  * The walk: scale degrees around a home centre, mean-reverting, with the
  * corpus's interval table and an arch inside each phrase. `chordDegsOf(bar)`
  * gives the bar's chord tones as scale-degree indices (0..6) of the key.
  * Events are walked in TIME order; a phrase that wrapped keeps its flags.
  */
-function walk(r, events, { centre, span, chordDegsOf, fromDeg = null, upLean = 0 }) {
+function walk(r, events, { centre, span, chordDegsOf, fromDeg = null, upLean = 0, theme = false }) {
   let deg = fromDeg ?? centre + pick(r, [[0, 4], [1, 3], [-1, 3], [2, 1], [-2, 1]]);
   const out = [];
   // phrase lengths in time order (a wrapped phrase counts its tail first)
@@ -168,11 +225,14 @@ function walk(r, events, { centre, span, chordDegsOf, fromDeg = null, upLean = 0
     // (r35 verify: a pull that fired only BEYOND the span let the line park at
     // the clamp and swallowed the chorus lift on 10 of 36 songs — the pull is
     // now proportional to the distance from the centre)
-    let dirBias = (rel < 0.5 ? 0.6 : 0.4) - 0.09 * (deg - centre) + (upLean ?? 0);
+    // r40 theme: the peak comes EARLY (15–43% of the phrase on his serious set) — up for the first third, then down
+    let dirBias = (theme ? (rel < 0.34 ? 0.7 : 0.35) : (rel < 0.5 ? 0.6 : 0.4)) - 0.09 * (deg - centre) + (upLean ?? 0);
     dirBias = clamp(dirBias, 0.12, 0.88);
     const cls = e.phraseStart && i > 0
-      ? pick(r, [[0, 2], [1, 5], [2, 3], [3, 2], [4, 1]])            // a new phrase may enter by a leap
-      : pick(r, [[0, 20], [1, 50], [2, 14], [3, 6], [4, 3], [5, 1]]); // the corpus interval table (degrees: 1 = step, 2 = third, 3/4 = 4th–5th)
+      ? (theme ? pick(r, [[0, 2], [1, 3], [2, 2], [3, 3], [4, 3], [5, 1]])   // r40 theme: a phrase opens with a 4th/5th leap as often as a step (Muzan opens 14 of 23 phrases with -7/-9)
+        : pick(r, [[0, 2], [1, 5], [2, 3], [3, 2], [4, 1]]))            // a new phrase may enter by a leap
+      : (theme ? pick(r, [[0, 16], [1, 44], [2, 18], [3, 10], [4, 8], [5, 4]]) // r40 theme table: leaps >= a 7th at 9–45% on his set vs the sung corpus's 2–8%
+        : pick(r, [[0, 20], [1, 50], [2, 14], [3, 6], [4, 3], [5, 1]])); // the corpus interval table (degrees: 1 = step, 2 = third, 3/4 = 4th–5th)
     let next = deg;
     if (cls > 0) next = deg + (r() < dirBias ? cls : -cls);
     // a leap of a 4th or more is answered by a step back a third of the time
@@ -211,7 +271,12 @@ export function composeVocalLine(params) {
   const {
     seed, keyIntervals, rootMidi, bpm, harmony, chordTonesOf,
     role = 'verse', stmt = 0, rate = 3.9, startBias = null, breathBias = null, slowFloor = false,
+    theme = false,
   } = params;
+  // r40 — `theme: true | { notesPerBar, dotted }` writes the SERIOUS theme
+  // (themeRhythm above): 2–3 notes a bar whatever the tempo, beat starts, a
+  // held final. Opt-in: no judged sung line moves.
+  const themeCfg = theme ? (typeof theme === 'object' ? theme : {}) : null;
   // (r35 verify: at +4 the walk's own wander hid the lift on 4 of 14 suite
   // songs — the chorus default is +5 and the chorus walk leans upward)
   const lift = params.lift ?? (role === 'chorus' ? 5 : role === 'bridge' ? 2 : 0);
@@ -229,7 +294,9 @@ export function composeVocalLine(params) {
   const salt = stmt >= from ? stmt : 0;
   const r = rng(fnv(`${seed}|vocal|${role}${hookVary === 'all' && salt ? `|h${salt}` : ''}`));
   const rA = rng(fnv(`${seed}|vocal|${role}|answer|${salt}`));
-  const { notesPerBar, sixteenths } = vocalDensity(bpm, { rate, slowFloor });
+  const density = vocalDensity(bpm, { rate, slowFloor });
+  const notesPerBar = themeCfg ? clamp(themeCfg.notesPerBar ?? 2.5, 1.5, 3.5) : density.notesPerBar;
+  const sixteenths = themeCfg ? 0 : density.sixteenths;
   // the home centre as a scale degree (0 = key root at rootMidi)
   const semis = targetMidi - rootMidi;
   let centre = 0, bd = Infinity;
@@ -250,12 +317,15 @@ export function composeVocalLine(params) {
   // band sings 34% 16ths for exactly this reason (7.2 notes a bar)
   const budget = notesPerBar * 2;
   const sixteenthsEff = Math.max(sixteenths, clamp((budget - 10) / 8, 0, 0.6));
-  const rhythm = cellRhythm(r, { notesPerBar, sixteenths: sixteenthsEff, startBias, breathBias });
+  const rhythm = themeCfg
+    ? themeRhythm(r, { notesPerBar, startBias, dotted: themeCfg.dotted ?? 0.3 })
+    : cellRhythm(r, { notesPerBar, sixteenths: sixteenthsEff, startBias, breathBias });
   // the hook walks the cell; the answer keeps the RHYTHM (42% of 2-bar cells
   // repeat the rhythm) and re-rolls the walk from where the hook ended
   const upLean = role === 'chorus' ? 0.06 : 0;
-  const hook = walk(r, rhythm.map((e) => ({ ...e })), { centre, span, chordDegsOf: (b) => chordDegsOf(b), upLean });
-  const answer = walk(rA, rhythm.map((e) => ({ ...e })), { centre, span, chordDegsOf: (b) => chordDegsOf(b + 2), fromDeg: hook[hook.length - 1]?.deg ?? centre, upLean });
+  const themeWalk = !!themeCfg;
+  const hook = walk(r, rhythm.map((e) => ({ ...e })), { centre, span, chordDegsOf: (b) => chordDegsOf(b), upLean, theme: themeWalk });
+  const answer = walk(rA, rhythm.map((e) => ({ ...e })), { centre, span, chordDegsOf: (b) => chordDegsOf(b + 2), fromDeg: hook[hook.length - 1]?.deg ?? centre, upLean, theme: themeWalk });
   // emit the 4 spec bars: onsets as 16ths of the bar, degrees (int scale
   // degrees relative to the key root at `octave`), accents (beat 1 > beat 3 >
   // phrase final > syllable), and explicit RESTS (null degree) after each
@@ -289,7 +359,7 @@ export function composeVocalLine(params) {
   }
   const notes = [...hook, ...answer];
   const meta = {
-    role, lift, centreDeg: centre, targetMidi, notesPerBar: Math.round(notesPerBar * 10) / 10,
+    role, lift, centreDeg: centre, targetMidi, notesPerBar: Math.round(notesPerBar * 10) / 10, theme: !!themeCfg,
     hookNotes: hook.length, answerNotes: answer.length,
     steps: Math.round(100 * notes.slice(1).filter((n, i) => Math.abs(n.deg - notes[i].deg) === 1).length / Math.max(1, notes.length - 1)),
     repeats: Math.round(100 * notes.slice(1).filter((n, i) => n.deg === notes[i].deg).length / Math.max(1, notes.length - 1)),

@@ -1,0 +1,90 @@
+{
+ "phrases": [
+  {
+   "start": 43.63636,
+   "notes": 4,
+   "frames": 192,
+   "breath": 53.63636,
+   "pitch_dev_median_st": 0.06679725646972656,
+   "pitch_dev_max_st": 70.51866149902344
+  },
+  {
+   "start": 46.36364,
+   "notes": 5,
+   "frames": 270,
+   "breath": 0.9090899999999991,
+   "pitch_dev_median_st": 0.1085662841796875,
+   "pitch_dev_max_st": 71.81005859375
+  },
+  {
+   "start": 50,
+   "notes": 5,
+   "frames": 270,
+   "breath": 0.9090899999999991,
+   "pitch_dev_median_st": 0.1253337860107422,
+   "pitch_dev_max_st": 69.67436981201172
+  },
+  {
+   "start": 53.63636,
+   "notes": 5,
+   "frames": 270,
+   "breath": 0.9090899999999991,
+   "pitch_dev_median_st": 0.2994575500488281,
+   "pitch_dev_max_st": 73.28556060791016
+  },
+  {
+   "start": 57.27273,
+   "notes": 1,
+   "frames": 74,
+   "breath": 0.9090900000000062,
+   "pitch_dev_median_st": 0.0,
+   "pitch_dev_max_st": 31.5
+  },
+  {
+   "start": 101.81818,
+   "notes": 4,
+   "frames": 192,
+   "breath": 44.090909999999994,
+   "pitch_dev_median_st": 0.13660621643066406,
+   "pitch_dev_max_st": 69.11791229248047
+  },
+  {
+   "start": 104.54545,
+   "notes": 5,
+   "frames": 270,
+   "breath": 0.9090900000000062,
+   "pitch_dev_median_st": 0.12997055053710938,
+   "pitch_dev_max_st": 70.7490234375
+  },
+  {
+   "start": 108.18182,
+   "notes": 5,
+   "frames": 270,
+   "breath": 0.9090900000000062,
+   "pitch_dev_median_st": 0.20552635192871094,
+   "pitch_dev_max_st": 79.6195068359375
+  },
+  {
+   "start": 111.81818,
+   "notes": 5,
+   "frames": 270,
+   "breath": 0.9090900000000062,
+   "pitch_dev_median_st": 0.17280197143554688,
+   "pitch_dev_max_st": 72.06900024414062
+  },
+  {
+   "start": 115.45455,
+   "notes": 1,
+   "frames": 74,
+   "breath": 0.9091000000000093,
+   "pitch_dev_median_st": 0.0,
+   "pitch_dev_max_st": 33.5
+  }
+ ],
+ "pitch_model": true,
+ "seconds": 119.36362811791383,
+ "peak": 0.14095762372016907,
+ "render_s": 21.457560777664185,
+ "speaker": "tiger_fresh",
+ "syllable": "la"
+}

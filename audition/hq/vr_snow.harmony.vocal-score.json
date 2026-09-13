@@ -100,9 +100,9 @@
    "dur": 0.17857,
    "midi": 72,
    "gain": 0.126,
-   "syl": "ka",
+   "syl": "ma",
    "ph": [
-    "kx",
+    "m",
     "a"
    ],
    "melisma": false,
@@ -115,10 +115,10 @@
    "dur": 0.17857,
    "midi": 74,
    "gain": 0.095,
-   "syl": "ze",
+   "syl": "chi",
    "ph": [
-    "dz",
-    "ee"
+    "ch",
+    "iy"
    ],
    "melisma": false,
    "w": 2
@@ -135,7 +135,7 @@
     "oo"
    ],
    "melisma": false,
-   "w": 3
+   "w": 2
   },
   {
    "bar": 25,
@@ -456,9 +456,10 @@
    "dur": 0.17857,
    "midi": 72,
    "gain": 0.095,
-   "syl": "i",
+   "syl": "ho",
    "ph": [
-    "iy"
+    "hh",
+    "oo"
    ],
    "melisma": false,
    "w": 1
@@ -470,9 +471,9 @@
    "dur": 0.71429,
    "midi": 74,
    "gain": 0.105,
-   "syl": "ki",
+   "syl": "shi",
    "ph": [
-    "kx",
+    "sh",
     "iy"
    ],
    "melisma": false,
@@ -485,10 +486,10 @@
    "dur": 0.17857,
    "midi": 72,
    "gain": 0.126,
-   "syl": "mi",
+   "syl": "ka",
    "ph": [
-    "m",
-    "iy"
+    "kx",
+    "a"
    ],
    "melisma": false,
    "w": 2
@@ -500,10 +501,10 @@
    "dur": 0.17858,
    "midi": 74,
    "gain": 0.095,
-   "syl": "tsu",
+   "syl": "zo",
    "ph": [
-    "ts",
-    "ux"
+    "dz",
+    "oo"
    ],
    "melisma": false,
    "w": 2
@@ -515,9 +516,8 @@
    "dur": 0.17857,
    "midi": 74,
    "gain": 0.095,
-   "syl": "ke",
+   "syl": "e",
    "ph": [
-    "kx",
     "ee"
    ],
    "melisma": false,
@@ -530,10 +530,10 @@
    "dur": 0.17857,
    "midi": 74,
    "gain": 0.095,
-   "syl": "yo",
+   "syl": "na",
    "ph": [
-    "y",
-    "oo"
+    "n",
+    "a"
    ],
    "melisma": false,
    "w": 2
@@ -545,9 +545,9 @@
    "dur": 0.35714,
    "midi": 67,
    "gain": 0.095,
-   "syl": "u",
+   "syl": "i",
    "ph": [
-    "ux"
+    "iy"
    ],
    "melisma": false,
    "w": 2
@@ -874,9 +874,9 @@
    "dur": 0.17857,
    "midi": 72,
    "gain": 0.126,
-   "syl": "ka",
+   "syl": "ma",
    "ph": [
-    "kx",
+    "m",
     "a"
    ],
    "melisma": false,
@@ -889,10 +889,10 @@
    "dur": 0.17857,
    "midi": 74,
    "gain": 0.095,
-   "syl": "ze",
+   "syl": "chi",
    "ph": [
-    "dz",
-    "ee"
+    "ch",
+    "iy"
    ],
    "melisma": false,
    "w": 2
@@ -909,7 +909,7 @@
     "oo"
    ],
    "melisma": false,
-   "w": 3
+   "w": 2
   },
   {
    "bar": 41,
@@ -1230,9 +1230,10 @@
    "dur": 0.17857,
    "midi": 72,
    "gain": 0.095,
-   "syl": "i",
+   "syl": "ho",
    "ph": [
-    "iy"
+    "hh",
+    "oo"
    ],
    "melisma": false,
    "w": 1
@@ -1244,9 +1245,9 @@
    "dur": 0.71429,
    "midi": 74,
    "gain": 0.105,
-   "syl": "ki",
+   "syl": "shi",
    "ph": [
-    "kx",
+    "sh",
     "iy"
    ],
    "melisma": false,
@@ -1259,10 +1260,10 @@
    "dur": 0.17857,
    "midi": 72,
    "gain": 0.126,
-   "syl": "mi",
+   "syl": "ka",
    "ph": [
-    "m",
-    "iy"
+    "kx",
+    "a"
    ],
    "melisma": false,
    "w": 2
@@ -1274,10 +1275,10 @@
    "dur": 0.17857,
    "midi": 74,
    "gain": 0.095,
-   "syl": "tsu",
+   "syl": "zo",
    "ph": [
-    "ts",
-    "ux"
+    "dz",
+    "oo"
    ],
    "melisma": false,
    "w": 2
@@ -1289,9 +1290,8 @@
    "dur": 0.17857,
    "midi": 74,
    "gain": 0.095,
-   "syl": "ke",
+   "syl": "e",
    "ph": [
-    "kx",
     "ee"
    ],
    "melisma": false,
@@ -1304,10 +1304,10 @@
    "dur": 0.17857,
    "midi": 74,
    "gain": 0.095,
-   "syl": "yo",
+   "syl": "na",
    "ph": [
-    "y",
-    "oo"
+    "n",
+    "a"
    ],
    "melisma": false,
    "w": 2
@@ -1319,9 +1319,9 @@
    "dur": 0.35715,
    "midi": 67,
    "gain": 0.095,
-   "syl": "u",
+   "syl": "i",
    "ph": [
-    "ux"
+    "iy"
    ],
    "melisma": false,
    "w": 2
@@ -1648,9 +1648,9 @@
    "dur": 0.17857,
    "midi": 72,
    "gain": 0.126,
-   "syl": "ka",
+   "syl": "ma",
    "ph": [
-    "kx",
+    "m",
     "a"
    ],
    "melisma": false,
@@ -1663,10 +1663,10 @@
    "dur": 0.17858,
    "midi": 74,
    "gain": 0.095,
-   "syl": "ze",
+   "syl": "chi",
    "ph": [
-    "dz",
-    "ee"
+    "ch",
+    "iy"
    ],
    "melisma": false,
    "w": 2
@@ -1683,7 +1683,7 @@
     "oo"
    ],
    "melisma": false,
-   "w": 3
+   "w": 2
   },
   {
    "bar": 57,
@@ -2004,9 +2004,10 @@
    "dur": 0.17858,
    "midi": 72,
    "gain": 0.095,
-   "syl": "i",
+   "syl": "ho",
    "ph": [
-    "iy"
+    "hh",
+    "oo"
    ],
    "melisma": false,
    "w": 1
@@ -2018,9 +2019,9 @@
    "dur": 0.71428,
    "midi": 74,
    "gain": 0.105,
-   "syl": "ki",
+   "syl": "shi",
    "ph": [
-    "kx",
+    "sh",
     "iy"
    ],
    "melisma": false,
@@ -2033,10 +2034,10 @@
    "dur": 0.17858,
    "midi": 72,
    "gain": 0.126,
-   "syl": "mi",
+   "syl": "ka",
    "ph": [
-    "m",
-    "iy"
+    "kx",
+    "a"
    ],
    "melisma": false,
    "w": 2
@@ -2048,10 +2049,10 @@
    "dur": 0.17857,
    "midi": 74,
    "gain": 0.095,
-   "syl": "tsu",
+   "syl": "zo",
    "ph": [
-    "ts",
-    "ux"
+    "dz",
+    "oo"
    ],
    "melisma": false,
    "w": 2
@@ -2063,9 +2064,8 @@
    "dur": 0.17857,
    "midi": 74,
    "gain": 0.095,
-   "syl": "ke",
+   "syl": "e",
    "ph": [
-    "kx",
     "ee"
    ],
    "melisma": false,
@@ -2078,10 +2078,10 @@
    "dur": 0.17857,
    "midi": 74,
    "gain": 0.095,
-   "syl": "yo",
+   "syl": "na",
    "ph": [
-    "y",
-    "oo"
+    "n",
+    "a"
    ],
    "melisma": false,
    "w": 2
@@ -2093,9 +2093,9 @@
    "dur": 0.35714,
    "midi": 67,
    "gain": 0.095,
-   "syl": "u",
+   "syl": "i",
    "ph": [
-    "ux"
+    "iy"
    ],
    "melisma": false,
    "w": 2
@@ -2352,8 +2352,8 @@
  },
  "theme": {
   "emotion": "calm",
-  "environment": "shop",
-  "description": "a snowed-in ballad, piano and a soft brushed kit, one voice and the window fogging over"
+  "environment": "snow",
+  "description": "snowed in, a calm winter night with the lights low"
  },
  "sections": [
   {
@@ -2439,7 +2439,7 @@
   {
    "start": 69.28571,
    "notes": 13,
-   "text": "yu qku ri fu ru ka ze wo mi te ne mu ru"
+   "text": "yu qku ri fu ru ma chi wo mi te ne mu ru"
   },
   {
    "start": 75,
@@ -2449,7 +2449,7 @@
   {
    "start": 80.71429,
    "notes": 13,
-   "text": "fu yu no i ki mi tsu ke yo u ma ta ne"
+   "text": "fu yu no ho shi ka zo e na i ma ta ne"
   },
   {
    "start": 86.42857,
@@ -2459,7 +2459,7 @@
   {
    "start": 115,
    "notes": 13,
-   "text": "yu qku ri fu ru ka ze wo mi te ne mu ru"
+   "text": "yu qku ri fu ru ma chi wo mi te ne mu ru"
   },
   {
    "start": 120.71429,
@@ -2469,7 +2469,7 @@
   {
    "start": 126.42857,
    "notes": 13,
-   "text": "fu yu no i ki mi tsu ke yo u ma ta ne"
+   "text": "fu yu no ho shi ka zo e na i ma ta ne"
   },
   {
    "start": 132.14286,
@@ -2479,7 +2479,7 @@
   {
    "start": 160.71429,
    "notes": 13,
-   "text": "yu qku ri fu ru ka ze wo mi te ne mu ru"
+   "text": "yu qku ri fu ru ma chi wo mi te ne mu ru"
   },
   {
    "start": 166.42857,
@@ -2489,7 +2489,7 @@
   {
    "start": 172.14286,
    "notes": 13,
-   "text": "fu yu no i ki mi tsu ke yo u ma ta ne"
+   "text": "fu yu no ho shi ka zo e na i ma ta ne"
   },
   {
    "start": 177.85714,

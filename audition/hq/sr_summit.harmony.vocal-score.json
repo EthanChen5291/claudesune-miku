@@ -1,0 +1,905 @@
+{
+ "name": "sr_summit",
+ "page": "audition/serious.html",
+ "bpm": 104,
+ "beats": 4,
+ "totalBars": 64,
+ "key": "E:aeolian",
+ "source": "_lead_mix",
+ "secondsPerBar": 2.3076923076923075,
+ "totalSeconds": 147.69230769230768,
+ "shift": 0,
+ "range": [
+  57,
+  76
+ ],
+ "medianBefore": 69,
+ "room": 0.3,
+ "leadGain": 0.217,
+ "notes": [
+  {
+   "bar": 24,
+   "phrase": 0,
+   "start": 55.38462,
+   "dur": 1.15384,
+   "midi": 67,
+   "gain": 0.235,
+   "syl": "so",
+   "ph": [
+    "s",
+    "oo"
+   ],
+   "melisma": false,
+   "w": -1
+  },
+  {
+   "bar": 24,
+   "phrase": 0,
+   "start": 56.53846,
+   "dur": 0.86539,
+   "midi": 67,
+   "gain": 0.218,
+   "syl": "ra",
+   "ph": [
+    "rj",
+    "a"
+   ],
+   "melisma": false,
+   "w": -1
+  },
+  {
+   "bar": 25,
+   "phrase": 1,
+   "start": 58.84615,
+   "dur": 0.57693,
+   "midi": 69,
+   "gain": 0.218,
+   "syl": "i",
+   "ph": [
+    "iy"
+   ],
+   "melisma": false,
+   "w": 0
+  },
+  {
+   "bar": 25,
+   "phrase": 1,
+   "start": 59.42308,
+   "dur": 0.57692,
+   "midi": 71,
+   "gain": 0.196,
+   "syl": "ma",
+   "ph": [
+    "m",
+    "a"
+   ],
+   "melisma": false,
+   "w": 0
+  },
+  {
+   "bar": 26,
+   "phrase": 1,
+   "start": 60,
+   "dur": 1.15385,
+   "midi": 72,
+   "gain": 0.235,
+   "syl": "to",
+   "ph": [
+    "tx",
+    "oo"
+   ],
+   "melisma": false,
+   "w": 1
+  },
+  {
+   "bar": 26,
+   "phrase": 1,
+   "start": 61.15385,
+   "dur": 0.86538,
+   "midi": 67,
+   "gain": 0.218,
+   "syl": "bu",
+   "ph": [
+    "b",
+    "ux"
+   ],
+   "melisma": false,
+   "w": 1
+  },
+  {
+   "bar": 27,
+   "phrase": 2,
+   "start": 63.46154,
+   "dur": 0.57692,
+   "midi": 74,
+   "gain": 0.218,
+   "syl": "ka",
+   "ph": [
+    "kx",
+    "a"
+   ],
+   "melisma": false,
+   "w": 0
+  },
+  {
+   "bar": 27,
+   "phrase": 2,
+   "start": 64.03846,
+   "dur": 0.57692,
+   "midi": 74,
+   "gain": 0.196,
+   "syl": "to",
+   "ph": [
+    "tx",
+    "oo"
+   ],
+   "melisma": false,
+   "w": 0
+  },
+  {
+   "bar": 28,
+   "phrase": 2,
+   "start": 64.61538,
+   "dur": 1.15385,
+   "midi": 67,
+   "gain": 0.235,
+   "syl": "u",
+   "ph": [
+    "ux"
+   ],
+   "melisma": false,
+   "w": 1
+  },
+  {
+   "bar": 28,
+   "phrase": 2,
+   "start": 65.76923,
+   "dur": 0.86539,
+   "midi": 67,
+   "gain": 0.218,
+   "syl": "yo",
+   "ph": [
+    "y",
+    "oo"
+   ],
+   "melisma": false,
+   "w": 1
+  },
+  {
+   "bar": 29,
+   "phrase": 3,
+   "start": 68.07692,
+   "dur": 0.57693,
+   "midi": 69,
+   "gain": 0.218,
+   "syl": "i",
+   "ph": [
+    "iy"
+   ],
+   "melisma": false,
+   "w": 0
+  },
+  {
+   "bar": 29,
+   "phrase": 3,
+   "start": 68.65385,
+   "dur": 0.57692,
+   "midi": 71,
+   "gain": 0.196,
+   "syl": "ku",
+   "ph": [
+    "kx",
+    "ux"
+   ],
+   "melisma": false,
+   "w": 0
+  },
+  {
+   "bar": 30,
+   "phrase": 3,
+   "start": 69.23077,
+   "dur": 1.15385,
+   "midi": 72,
+   "gain": 0.235,
+   "syl": "zo",
+   "ph": [
+    "dz",
+    "oo"
+   ],
+   "melisma": false,
+   "w": 1
+  },
+  {
+   "bar": 30,
+   "phrase": 3,
+   "start": 70.38462,
+   "dur": 0.86538,
+   "midi": 67,
+   "gain": 0.218,
+   "syl": "ne",
+   "ph": [
+    "n",
+    "ee"
+   ],
+   "melisma": false,
+   "w": 1
+  },
+  {
+   "bar": 31,
+   "phrase": 4,
+   "start": 72.69231,
+   "dur": 0.57692,
+   "midi": 74,
+   "gain": 0.218,
+   "syl": "wow",
+   "ph": [
+    "w",
+    "aw"
+   ],
+   "melisma": false,
+   "w": -1
+  },
+  {
+   "bar": 31,
+   "phrase": 4,
+   "start": 73.26923,
+   "dur": 0.57692,
+   "midi": 74,
+   "gain": 0.196,
+   "syl": "wow",
+   "ph": [
+    "w",
+    "aw"
+   ],
+   "melisma": false,
+   "w": -1
+  },
+  {
+   "bar": 40,
+   "phrase": 5,
+   "start": 92.30769,
+   "dur": 1.15385,
+   "midi": 67,
+   "gain": 0.235,
+   "syl": "wow",
+   "ph": [
+    "w",
+    "aw"
+   ],
+   "melisma": false,
+   "w": -1
+  },
+  {
+   "bar": 40,
+   "phrase": 5,
+   "start": 93.46154,
+   "dur": 0.86538,
+   "midi": 67,
+   "gain": 0.218,
+   "syl": "wow",
+   "ph": [
+    "w",
+    "aw"
+   ],
+   "melisma": false,
+   "w": -1
+  },
+  {
+   "bar": 41,
+   "phrase": 6,
+   "start": 95.76923,
+   "dur": 0.57692,
+   "midi": 69,
+   "gain": 0.218,
+   "syl": "ka",
+   "ph": [
+    "kx",
+    "a"
+   ],
+   "melisma": false,
+   "w": 0
+  },
+  {
+   "bar": 41,
+   "phrase": 6,
+   "start": 96.34615,
+   "dur": 0.57693,
+   "midi": 71,
+   "gain": 0.196,
+   "syl": "to",
+   "ph": [
+    "tx",
+    "oo"
+   ],
+   "melisma": false,
+   "w": 0
+  },
+  {
+   "bar": 42,
+   "phrase": 6,
+   "start": 96.92308,
+   "dur": 1.15384,
+   "midi": 72,
+   "gain": 0.235,
+   "syl": "u",
+   "ph": [
+    "ux"
+   ],
+   "melisma": false,
+   "w": 1
+  },
+  {
+   "bar": 42,
+   "phrase": 6,
+   "start": 98.07692,
+   "dur": 0.86539,
+   "midi": 67,
+   "gain": 0.218,
+   "syl": "yo",
+   "ph": [
+    "y",
+    "oo"
+   ],
+   "melisma": false,
+   "w": 1
+  },
+  {
+   "bar": 43,
+   "phrase": 7,
+   "start": 100.38462,
+   "dur": 0.57692,
+   "midi": 62,
+   "gain": 0.218,
+   "syl": "i",
+   "ph": [
+    "iy"
+   ],
+   "melisma": false,
+   "w": 0
+  },
+  {
+   "bar": 43,
+   "phrase": 7,
+   "start": 100.96154,
+   "dur": 0.57692,
+   "midi": 62,
+   "gain": 0.196,
+   "syl": "ku",
+   "ph": [
+    "kx",
+    "ux"
+   ],
+   "melisma": false,
+   "w": 0
+  },
+  {
+   "bar": 44,
+   "phrase": 7,
+   "start": 101.53846,
+   "dur": 1.15385,
+   "midi": 67,
+   "gain": 0.235,
+   "syl": "zo",
+   "ph": [
+    "dz",
+    "oo"
+   ],
+   "melisma": false,
+   "w": 1
+  },
+  {
+   "bar": 44,
+   "phrase": 7,
+   "start": 102.69231,
+   "dur": 0.86538,
+   "midi": 67,
+   "gain": 0.218,
+   "syl": "ne",
+   "ph": [
+    "n",
+    "ee"
+   ],
+   "melisma": false,
+   "w": 1
+  },
+  {
+   "bar": 45,
+   "phrase": 8,
+   "start": 105,
+   "dur": 0.57692,
+   "midi": 69,
+   "gain": 0.218,
+   "syl": "yu",
+   "ph": [
+    "y",
+    "ux"
+   ],
+   "melisma": false,
+   "w": 0
+  },
+  {
+   "bar": 45,
+   "phrase": 8,
+   "start": 105.57692,
+   "dur": 0.57693,
+   "midi": 71,
+   "gain": 0.196,
+   "syl": "ki",
+   "ph": [
+    "kx",
+    "iy"
+   ],
+   "melisma": false,
+   "w": 0
+  },
+  {
+   "bar": 46,
+   "phrase": 8,
+   "start": 106.15385,
+   "dur": 1.15384,
+   "midi": 72,
+   "gain": 0.235,
+   "syl": "fu",
+   "ph": [
+    "fp",
+    "ux"
+   ],
+   "melisma": false,
+   "w": 1
+  },
+  {
+   "bar": 46,
+   "phrase": 8,
+   "start": 107.30769,
+   "dur": 0.86539,
+   "midi": 72,
+   "gain": 0.218,
+   "syl": "qta",
+   "ph": [
+    "q",
+    "tx",
+    "a"
+   ],
+   "melisma": false,
+   "w": 1
+  },
+  {
+   "bar": 47,
+   "phrase": 9,
+   "start": 109.61538,
+   "dur": 0.57693,
+   "midi": 74,
+   "gain": 0.218,
+   "syl": "oh",
+   "ph": [
+    "ow"
+   ],
+   "melisma": false,
+   "w": -1
+  },
+  {
+   "bar": 47,
+   "phrase": 9,
+   "start": 110.19231,
+   "dur": 0.57692,
+   "midi": 74,
+   "gain": 0.196,
+   "syl": "oh",
+   "ph": [
+    "ow"
+   ],
+   "melisma": false,
+   "w": -1
+  },
+  {
+   "bar": 56,
+   "phrase": 10,
+   "start": 129.23077,
+   "dur": 1.15385,
+   "midi": 67,
+   "gain": 0.235,
+   "syl": "mo",
+   "ph": [
+    "m",
+    "oo"
+   ],
+   "melisma": false,
+   "w": -1
+  },
+  {
+   "bar": 56,
+   "phrase": 10,
+   "start": 130.38462,
+   "dur": 0.86538,
+   "midi": 67,
+   "gain": 0.218,
+   "syl": "u",
+   "ph": [
+    "ux"
+   ],
+   "melisma": false,
+   "w": -1
+  },
+  {
+   "bar": 57,
+   "phrase": 11,
+   "start": 132.69231,
+   "dur": 0.57692,
+   "midi": 69,
+   "gain": 0.218,
+   "syl": "i",
+   "ph": [
+    "iy"
+   ],
+   "melisma": false,
+   "w": 0
+  },
+  {
+   "bar": 57,
+   "phrase": 11,
+   "start": 133.26923,
+   "dur": 0.57692,
+   "midi": 71,
+   "gain": 0.196,
+   "syl": "ma",
+   "ph": [
+    "m",
+    "a"
+   ],
+   "melisma": false,
+   "w": 0
+  },
+  {
+   "bar": 58,
+   "phrase": 11,
+   "start": 133.84615,
+   "dur": 1.15385,
+   "midi": 67,
+   "gain": 0.235,
+   "syl": "to",
+   "ph": [
+    "tx",
+    "oo"
+   ],
+   "melisma": false,
+   "w": 1
+  },
+  {
+   "bar": 58,
+   "phrase": 11,
+   "start": 135,
+   "dur": 0.86538,
+   "midi": 67,
+   "gain": 0.218,
+   "syl": "bu",
+   "ph": [
+    "b",
+    "ux"
+   ],
+   "melisma": false,
+   "w": 1
+  },
+  {
+   "bar": 59,
+   "phrase": 12,
+   "start": 137.30769,
+   "dur": 0.57693,
+   "midi": 62,
+   "gain": 0.218,
+   "syl": "ka",
+   "ph": [
+    "kx",
+    "a"
+   ],
+   "melisma": false,
+   "w": 0
+  },
+  {
+   "bar": 59,
+   "phrase": 12,
+   "start": 137.88462,
+   "dur": 0.57692,
+   "midi": 62,
+   "gain": 0.196,
+   "syl": "to",
+   "ph": [
+    "tx",
+    "oo"
+   ],
+   "melisma": false,
+   "w": 0
+  },
+  {
+   "bar": 60,
+   "phrase": 12,
+   "start": 138.46154,
+   "dur": 1.15384,
+   "midi": 67,
+   "gain": 0.235,
+   "syl": "u",
+   "ph": [
+    "ux"
+   ],
+   "melisma": false,
+   "w": 1
+  },
+  {
+   "bar": 60,
+   "phrase": 12,
+   "start": 139.61538,
+   "dur": 0.86539,
+   "midi": 67,
+   "gain": 0.218,
+   "syl": "yo",
+   "ph": [
+    "y",
+    "oo"
+   ],
+   "melisma": false,
+   "w": 1
+  },
+  {
+   "bar": 61,
+   "phrase": 13,
+   "start": 141.92308,
+   "dur": 0.57692,
+   "midi": 69,
+   "gain": 0.218,
+   "syl": "i",
+   "ph": [
+    "iy"
+   ],
+   "melisma": false,
+   "w": 0
+  },
+  {
+   "bar": 61,
+   "phrase": 13,
+   "start": 142.5,
+   "dur": 0.57692,
+   "midi": 71,
+   "gain": 0.196,
+   "syl": "ku",
+   "ph": [
+    "kx",
+    "ux"
+   ],
+   "melisma": false,
+   "w": 0
+  },
+  {
+   "bar": 62,
+   "phrase": 13,
+   "start": 143.07692,
+   "dur": 1.15385,
+   "midi": 67,
+   "gain": 0.235,
+   "syl": "zo",
+   "ph": [
+    "dz",
+    "oo"
+   ],
+   "melisma": false,
+   "w": 1
+  },
+  {
+   "bar": 62,
+   "phrase": 13,
+   "start": 144.23077,
+   "dur": 0.86538,
+   "midi": 67,
+   "gain": 0.218,
+   "syl": "ne",
+   "ph": [
+    "n",
+    "ee"
+   ],
+   "melisma": false,
+   "w": 1
+  },
+  {
+   "bar": 63,
+   "phrase": 14,
+   "start": 146.53846,
+   "dur": 0.57692,
+   "midi": 74,
+   "gain": 0.218,
+   "syl": "wow",
+   "ph": [
+    "w",
+    "aw"
+   ],
+   "melisma": false,
+   "w": -1
+  },
+  {
+   "bar": 63,
+   "phrase": 14,
+   "start": 147.11538,
+   "dur": 0.57693,
+   "midi": 71,
+   "gain": 0.196,
+   "syl": "wow",
+   "ph": [
+    "w",
+    "aw"
+   ],
+   "melisma": false,
+   "w": -1
+  }
+ ],
+ "phraseBars": 2,
+ "phrasesFolded": 0,
+ "phraseCount": 15,
+ "stats": {
+  "soloNotes": 48,
+  "keptNotes": 48,
+  "barsSounding": 24,
+  "barsWithTune": 24,
+  "silentBars": []
+ },
+ "theme": {
+  "emotion": "triumphant",
+  "environment": "snow",
+  "description": "the last climb before the summit with the whole valley behind us"
+ },
+ "sections": [
+  {
+   "letter": null,
+   "role": null,
+   "startBar": 0,
+   "bars": 8,
+   "lead": false
+  },
+  {
+   "letter": "A",
+   "role": "verse",
+   "startBar": 8,
+   "bars": 8,
+   "lead": true
+  },
+  {
+   "letter": "A",
+   "role": "verse",
+   "startBar": 16,
+   "bars": 8,
+   "lead": true
+  },
+  {
+   "letter": "B*",
+   "role": "chorus",
+   "startBar": 24,
+   "bars": 8,
+   "lead": true
+  },
+  {
+   "letter": "A",
+   "role": "verse",
+   "startBar": 32,
+   "bars": 8,
+   "lead": true
+  },
+  {
+   "letter": "B*",
+   "role": "chorus",
+   "startBar": 40,
+   "bars": 8,
+   "lead": true
+  },
+  {
+   "letter": "C",
+   "role": "bridge",
+   "startBar": 48,
+   "bars": 8,
+   "lead": true
+  },
+  {
+   "letter": "B*",
+   "role": "chorus",
+   "startBar": 56,
+   "bars": 8,
+   "lead": true
+  }
+ ],
+ "vocalise": {
+  "mode": "mixed",
+  "set": "oh",
+  "rate": 0.3,
+  "why": "emotion triumphant pool",
+  "hook": "none (rate)"
+ },
+ "lyricStats": {
+  "phrases": 15,
+  "refrainReused": 6,
+  "refrainRebound": 0,
+  "variants": 0,
+  "fallbacks": 6,
+  "exts": 0,
+  "vocalise": 0,
+  "templates": {
+   "E-V": 1,
+   "S-V": 1,
+   "ADV-V": 1
+  }
+ },
+ "lyrics": [
+  {
+   "start": 55.38462,
+   "notes": 2,
+   "text": "so ra"
+  },
+  {
+   "start": 58.84615,
+   "notes": 4,
+   "text": "i ma to bu"
+  },
+  {
+   "start": 63.46154,
+   "notes": 4,
+   "text": "ka to u yo"
+  },
+  {
+   "start": 68.07692,
+   "notes": 4,
+   "text": "i ku zo ne"
+  },
+  {
+   "start": 72.69231,
+   "notes": 2,
+   "text": "wow wow"
+  },
+  {
+   "start": 92.30769,
+   "notes": 2,
+   "text": "wow wow"
+  },
+  {
+   "start": 95.76923,
+   "notes": 4,
+   "text": "ka to u yo"
+  },
+  {
+   "start": 100.38462,
+   "notes": 4,
+   "text": "i ku zo ne"
+  },
+  {
+   "start": 105,
+   "notes": 4,
+   "text": "yu ki fu qta"
+  },
+  {
+   "start": 109.61538,
+   "notes": 2,
+   "text": "oh oh"
+  },
+  {
+   "start": 129.23077,
+   "notes": 2,
+   "text": "mo u"
+  },
+  {
+   "start": 132.69231,
+   "notes": 4,
+   "text": "i ma to bu"
+  },
+  {
+   "start": 137.30769,
+   "notes": 4,
+   "text": "ka to u yo"
+  },
+  {
+   "start": 141.92308,
+   "notes": 4,
+   "text": "i ku zo ne"
+  },
+  {
+   "start": 146.53846,
+   "notes": 2,
+   "text": "wow wow"
+  }
+ ],
+ "lyricMode": "ja",
+ "lyricsFrom": "/Users/ethanchen/Documents/GitHub/motif-engine/vendor/vocal/sr_summit.lead-words.vocal-score.json",
+ "lyricsMatched": 48
+}
