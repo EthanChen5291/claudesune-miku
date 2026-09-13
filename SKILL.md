@@ -130,6 +130,35 @@ Lyrics are real Japanese: templates × a tagged lexicon × verb conjugation, one
 clause per 2-bar phrase, with clause boundaries kept off rests and long notes
 given a word end. The prompt's own words steer the vocabulary.
 
+Three per-song pins decide how the voice sits in the render, and they are
+**page pins, never renderer defaults** — a judged song re-renders as it was
+heard: `vocalDb` (the voice over the band in its sung spans), `vocalRoom` (0.1
+is "a touch of room";
+without a pin the voice takes the lead layer's room), `vocalTune` (0 = the
+pitch model as it comes, 0.7 pulls the sung pitch 70% of the way to the score
+inside each note, 1.0 is a hard-tuned Vocaloid line). The same three exist as
+`--vocal-db`, `--vocal-room`, `--tune` on `scripts/render-vocal.mjs`.
+
+**There is no single right `vocalDb`, and that is the finding, not a gap.** It
+was set by ear per song, and the pins across the judged pages disagree on
+purpose: the common default is **0**, calm songs sit **+1.5**, the energetic
+songs on the older vocal page sit **+3**, the rock-lane songs sit **−3 to −4**
+with the lower room, and individual songs go to −5. A loudness measurement did
+not separate "too loud" from "love this" when it was tried — K-weighted
+vocal-over-band put a complained song at 5.2 dB and a praised one at 5.7. So
+pin it per song from listening, and do not carry one lane's number to another.
+
+**Vocaloid-form songs** (`opts.vocaloidForm`, the vocarock page): a row names
+its verse loop, chorus loop, intro figure + intro voice + intro loop, and an
+energy tier. The tier is not a speed: `high` adds a phrased synth hook line,
+a four-note pad whose voicing rotates every bar, marcato or a synth rise and a
+crash on the seams; `mid` the lighter hook, a held pad and a chorus descant;
+`low` is the calm setup measured off the liked ballads — no kit, no bass, a
+flowing single-note piano arpeggio, a soft low pad, strings across the tune,
+a seventh on every chord. Write the row's TEXT as a player would ("one coin
+left at the arcade and the place is about to close"), never as an
+instrument list — instruments go on the row's fields.
+
 ## Craft rules that generalize
 
 These came from ear verdicts but hold as general practice:
