@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "description": "Strudel Song Engine: iterative, verified AI music generation",
   "type": "module",
-  "license": "UNLICENSED",
+  "license": "AGPL-3.0-or-later",
   "private": false,
   "engines": {
     "node": ">=20"
