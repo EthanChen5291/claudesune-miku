@@ -88,7 +88,7 @@ node scripts/render-vocal.mjs <song>  # sing it and lay the vocal over the HQ mi
 
 ## Limitations
 
-- My ear is the only quality signal. The rules generalise to that ear, not to a population.
+- My ear is the only quality signal. Please be kind.
 - The bundled RVC targets are community models trained on Vocaloid output, and the voicebank is free for non-commercial use.
 
 ## Repository
