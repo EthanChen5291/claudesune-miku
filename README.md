@@ -84,8 +84,6 @@ node scripts/render-vocal.mjs <song>  # sing it and lay the vocal over the HQ mi
 ## Grammar quick reference
 
 - Chord symbols use the ireal dialect: `Ab^7` not `Abmaj7`, `o` and `o7` not `dim`, `sus` not `sus4`. An unknown quality silently renders a plain triad; a test fails on `maj7` anywhere in the reel progressions.
-- Degrees: `0:m 3 5:m 8b 1b:^7`, semitone offsets from the tonic, `b` for flat roots, `:quality` suffixes.
-- Figure tokens: `R/3/5/6/9`, `+` per octave, dots join chords (`3.5.7`), `s2/s4/s6/s7` resolve against the chord's scale, `>` looks ahead to the next chord.
 - Onsets are bar-relative fractions (`'3/16'`). Sections are 4- or 8-bar multiples. Meter is 4/4 only (D92).
 
 ## Limitations
