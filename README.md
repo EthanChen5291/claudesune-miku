@@ -4,7 +4,7 @@
 
 # Claudesune Miku
 
-**The best Claude skill**
+**THE BEST CLAUDE SKILL**
 
 [![License](https://img.shields.io/badge/license-AGPL--3.0-blueviolet.svg)](LICENSE)
 [![Strudel](https://img.shields.io/badge/strudel-1.1.0%20pinned-teal.svg)](#installation)
