@@ -6,10 +6,9 @@
 
 **The best Claude skill**
 
-[![Decisions](https://img.shields.io/badge/decisions-D1%E2%80%93D150-blueviolet.svg)](DECISIONS.md)
+[![License](https://img.shields.io/badge/license-AGPL--3.0-blueviolet.svg)](LICENSE)
 [![Strudel](https://img.shields.io/badge/strudel-1.1.0%20pinned-teal.svg)](#installation)
-[![Tests](https://img.shields.io/badge/tests-49%20files-green.svg)](#quick-start)
-[![Doctrine](https://img.shields.io/badge/doctrine-CLAUDE.md-lightgrey.svg)](CLAUDE.md)
+[![Skill](https://img.shields.io/badge/claude-skill-green.svg)](SKILL.md)
 
 Package name `motif-engine`
 
@@ -17,9 +16,7 @@ Package name `motif-engine`
 
 ## Overview
 
-Claudesune Miku is a [Strudel](https://strudel.cc) game-music engine. An **emotion** plus an **environment** compiles to harmony, accompaniment, a letter-form melody, companion lines, drums, a section-by-section arrangement, an HQ sampled render, and a sung vocal with generated Japanese lyrics. Every rule was learned from my keep/kill verdicts, round by round, and the full ledger with rationale is [DECISIONS.md](DECISIONS.md).
-
-It began as an LLM song *editor* with mechanically gated, containment-verified edits ([doc.md](doc.md), [SESSIONS.md](SESSIONS.md)). That layer still works and is still tested; the centre of gravity is now the generator and the audition loop around it.
+Claudesune Miku is a [Strudel](https://strudel.cc) game-music engine. An **emotion** plus an **environment** compiles to harmony, accompaniment, a letter-form melody, companion lines, drums, a section-by-section arrangement, an HQ sampled render, and a sung vocal with generated Japanese lyrics. Every rule was learned from my keep/kill verdicts, round by round.
 
 ## How a song is made
 
@@ -55,16 +52,6 @@ It began as an LLM song *editor* with mechanically gated, containment-verified e
 
 The same prompt and song name always give the same song, so revisions compare against a fixed baseline instead of a re-roll.
 
-## The round loop
-
-1. Listen to an audition page; export a verdicts JSON.
-2. `node scripts/import-verdicts.mjs <file>` regenerates `src/lib/verdicts.js`. Never edit it by hand.
-3. Snapshot the judged page, make fixes, rebuild, and byte-compare every song's DATA. **Judged material is frozen**: a kept song pins its harmony and exemplar, and every new rule is gated so kept songs stay byte-identical.
-4. `npm test`, re-render changed songs, run the adversarial verify workflow (`.claude/workflows/verify-round.js`: stability, per-claim refutation, support-versus-lead gain ratios, melody-grammar bands).
-5. Append a numbered D-entry and update [todo.md](todo.md).
-
-[CLAUDE.md](CLAUDE.md) is the working doctrine: the laws the ear has established, the traps that have bitten, and how to measure a song headlessly (`evaluateSong` and `hapsByLabel` in `src/harness/evaluate.js`).
-
 ## Installation
 
 ```sh
@@ -78,7 +65,6 @@ The HQ tier needs sfizz, DawDreamer with Surge XT, fluidsynth as fallback, and f
 ## Quick start
 
 ```sh
-npm test                              # rebuilds audition/songs.html as part of the suite
 node scripts/audition-songs.mjs       # 47 judged songs
 npm run listen                        # serve audition/ at http://localhost:8765
 node scripts/render-hq.mjs <song>     # HQ stems for one song (--reuse-stems keeps a cache)
@@ -96,20 +82,17 @@ node scripts/render-vocal.mjs <song>  # sing it and lay the vocal over the HQ mi
 
 - My ear is the only quality signal. The rules generalise to that ear, not to a population.
 - The bundled RVC targets are community models trained on Vocaloid output, and the voicebank is free for non-commercial use.
-- `audios/` and `research/` corpora are analysis-only and gitignored. Promoting material means authoring a canon entry by hand; only ratified entries enter retrieval pools.
 
 ## Repository
 
 | Path | Contents |
 |---|---|
-| `scripts/` | Song generator and audition pages, verdict and corpus importers, HQ and vocal render tiers |
-| `src/binder/` | Figure and melody binding, cadence grammar, arrangement planner |
-| `src/lib/` | All musical material as data, vibe tables, generated verdicts |
-| `src/harness/` | Headless evaluate, hap signatures, containment gate, metrics, lint |
-| `src/compiler/`, `src/cli.js` | The original spec-to-Strudel editor flow: generate, edit, verify, export |
-| `audition/` | Self-contained pages with the Strudel REPL embedded; `hq/` holds local renders |
-| `test/` | 49 files: song counts, harmony pins, page determinism, grammar, library invariants |
-| `DECISIONS.md`, `CLAUDE.md`, `todo.md` | The ledger, the doctrine, and where things stand |
+| `src/` | The engine: binder, libraries as data, harness, compiler, CLI |
+| `scripts/` | The song generator and the HQ and vocal render tiers |
+| `vendor/` | Generated SFZ maps and synth patches for the HQ tier; sample libraries are fetched, not tracked |
+| `SKILL.md` | The Claude skill that drives the engine by ear |
+
+The full working history, audition pages, judged songs, tests and the decision ledger live on the `dev` branch.
 
 ## Acknowledgements
 
