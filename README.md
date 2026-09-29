@@ -83,8 +83,8 @@ node scripts/render-vocal.mjs <song>  # sing it and lay the vocal over the HQ mi
 
 ## Grammar quick reference
 
-- Chord symbols use the ireal dialect: `Ab^7` not `Abmaj7`, `o` and `o7` not `dim`, `sus` not `sus4`. An unknown quality silently renders a plain triad; a test fails on `maj7` anywhere in the reel progressions.
-- Onsets are bar-relative fractions (`'3/16'`). Sections are 4- or 8-bar multiples. Meter is 4/4 only (D92).
+- Chord symbols use the ireal dialect: `Ab^7` not `Abmaj7`, `o` and `o7` not `dim`, `sus` not `sus4`.
+- Onsets are bar-relative fractions (`'3/16'`), and meter is 4/4 only (D92).
 
 ## Limitations
 
