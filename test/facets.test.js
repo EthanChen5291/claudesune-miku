@@ -7,6 +7,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { execFileSync } from 'node:child_process';
+import { acquireVerdictsLock, releaseVerdictsLock } from './_verdicts-lock.mjs';
 import { readFileSync, writeFileSync, existsSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
@@ -271,6 +272,8 @@ test('D59: card notes ride the progressions import and survive a note-less re-im
   // a session where he types nothing must not erase what an earlier one said.
   const name = Object.keys(ALL_PROGRESSIONS)[0];
   const fixture = join(tmpdir(), `prog-fixture-${process.pid}.json`);
+  // r42: this rewrites the GENERATOR'S INPUT — hold the suite-wide lock
+  acquireVerdictsLock();
   const out = join(ROOT, 'src/lib/verdicts.js');
   const had = existsSync(out) ? readFileSync(out, 'utf8') : null;
   try {
@@ -294,5 +297,6 @@ test('D59: card notes ride the progressions import and survive a note-less re-im
   } finally {
     rmSync(fixture, { force: true });
     if (had == null) rmSync(out, { force: true }); else writeFileSync(out, had);
+    releaseVerdictsLock();
   }
 });

@@ -503,6 +503,48 @@ export const KILLED = Object.keys(VERDICTS).filter((n) => VERDICTS[n].verdict ==
 // variation came from; a page tag ending in -implied marks a POSITIONAL
 // inference (Ethan's unmarked-half rule), never a click.
 export const DERIVED_VERDICTS = {
+  "cl_bass_332": { verdict: 'keep', page: 'unknown', at: '2026-09-13', base: "un_famous_ynw_melly_murder_on_my_mind_vimaj7_ivm7_i_v7_vimaj7_ivm7_i_vm7",
+    family: "minor", degrees: "8:^7 5:m7 0:m 7:7 8:^7 5:m7 0:m 7:m7" },
+  "cl_bass_hold": { verdict: 'keep', page: 'unknown', at: '2026-09-13', base: "un_famous_ynw_melly_murder_on_my_mind_vimaj7_ivm7_i_v7_vimaj7_ivm7_i_vm7",
+    family: "minor", degrees: "8:^7 5:m7 0:m 7:7 8:^7 5:m7 0:m 7:m7" },
+  "cl_bass_oct8": { verdict: 'keep', page: 'unknown', at: '2026-09-13', base: "un_famous_ynw_melly_murder_on_my_mind_vimaj7_ivm7_i_v7_vimaj7_ivm7_i_vm7",
+    family: "minor", degrees: "8:^7 5:m7 0:m 7:7 8:^7 5:m7 0:m 7:m7" },
+  "cl_bass_octalt": { verdict: 'keep', page: 'unknown', at: '2026-09-13', base: "un_famous_ynw_melly_murder_on_my_mind_vimaj7_ivm7_i_v7_vimaj7_ivm7_i_vm7",
+    family: "minor", degrees: "8:^7 5:m7 0:m 7:7 8:^7 5:m7 0:m 7:m7" },
+  "cl_bass_offbeat": { verdict: 'keep', page: 'unknown', at: '2026-09-13', base: "un_famous_ynw_melly_murder_on_my_mind_vimaj7_ivm7_i_v7_vimaj7_ivm7_i_vm7",
+    family: "minor", degrees: "8:^7 5:m7 0:m 7:7 8:^7 5:m7 0:m 7:m7" },
+  "cl_bass_pump5": { verdict: 'keep', page: 'unknown', at: '2026-09-13', base: "un_famous_ynw_melly_murder_on_my_mind_vimaj7_ivm7_i_v7_vimaj7_ivm7_i_vm7",
+    family: "minor", degrees: "8:^7 5:m7 0:m 7:7 8:^7 5:m7 0:m 7:m7" },
+  "cl_bass_push": { verdict: 'keep', page: 'unknown', at: '2026-09-13', base: "un_famous_ynw_melly_murder_on_my_mind_vimaj7_ivm7_i_v7_vimaj7_ivm7_i_vm7",
+    family: "minor", degrees: "8:^7 5:m7 0:m 7:7 8:^7 5:m7 0:m 7:m7" },
+  "cl_bass_push5": { verdict: 'keep', page: 'unknown', at: '2026-09-13', base: "un_famous_ynw_melly_murder_on_my_mind_vimaj7_ivm7_i_v7_vimaj7_ivm7_i_vm7",
+    family: "minor", degrees: "8:^7 5:m7 0:m 7:7 8:^7 5:m7 0:m 7:m7" },
+  "cl_bass_walkdown": { verdict: 'keep', page: 'unknown', at: '2026-09-13', base: "un_famous_ynw_melly_murder_on_my_mind_vimaj7_ivm7_i_v7_vimaj7_ivm7_i_vm7",
+    family: "minor", degrees: "8:^7 5:m7 0:m 7:7 8:^7 5:m7 0:m 7:m7" },
+  "cl_bass_wander": { verdict: 'keep', page: 'unknown', at: '2026-09-13', base: "un_famous_ynw_melly_murder_on_my_mind_vimaj7_ivm7_i_v7_vimaj7_ivm7_i_vm7",
+    family: "minor", degrees: "8:^7 5:m7 0:m 7:7 8:^7 5:m7 0:m 7:m7" },
+  "cl_cell_arch": { verdict: 'keep', page: 'unknown', at: '2026-09-13', base: "un_famous_ynw_melly_murder_on_my_mind_vimaj7_ivm7_i_v7_vimaj7_ivm7_i_vm7",
+    family: "minor", degrees: "8:^7 5:m7 0:m 7:7 8:^7 5:m7 0:m 7:m7" },
+  "cl_cell_neighbor": { verdict: 'keep', page: 'unknown', at: '2026-09-13', base: "un_famous_ynw_melly_murder_on_my_mind_vimaj7_ivm7_i_v7_vimaj7_ivm7_i_vm7",
+    family: "minor", degrees: "8:^7 5:m7 0:m 7:7 8:^7 5:m7 0:m 7:m7" },
+  "cl_cell_octleap": { verdict: 'keep', page: 'unknown', at: '2026-09-13', base: "un_famous_ynw_melly_murder_on_my_mind_vimaj7_ivm7_i_v7_vimaj7_ivm7_i_vm7",
+    family: "minor", degrees: "8:^7 5:m7 0:m 7:7 8:^7 5:m7 0:m 7:m7" },
+  "cl_cell_open5": { verdict: 'keep', page: 'unknown', at: '2026-09-13', base: "un_famous_ynw_melly_murder_on_my_mind_vimaj7_ivm7_i_v7_vimaj7_ivm7_i_vm7",
+    family: "minor", degrees: "8:^7 5:m7 0:m 7:7 8:^7 5:m7 0:m 7:m7" },
+  "cl_cell_pairs": { verdict: 'keep', page: 'unknown', at: '2026-09-13', base: "un_famous_ynw_melly_murder_on_my_mind_vimaj7_ivm7_i_v7_vimaj7_ivm7_i_vm7",
+    family: "minor", degrees: "8:^7 5:m7 0:m 7:7 8:^7 5:m7 0:m 7:m7" },
+  "cl_cell_return": { verdict: 'keep', page: 'unknown', at: '2026-09-13', base: "un_famous_ynw_melly_murder_on_my_mind_vimaj7_ivm7_i_v7_vimaj7_ivm7_i_vm7",
+    family: "minor", degrees: "8:^7 5:m7 0:m 7:7 8:^7 5:m7 0:m 7:m7" },
+  "cl_cell_step": { verdict: 'keep', page: 'unknown', at: '2026-09-13', base: "un_famous_ynw_melly_murder_on_my_mind_vimaj7_ivm7_i_v7_vimaj7_ivm7_i_vm7",
+    family: "minor", degrees: "8:^7 5:m7 0:m 7:7 8:^7 5:m7 0:m 7:m7" },
+  "cl_riff_332": { verdict: 'keep', page: 'unknown', at: '2026-09-13', base: "un_famous_ynw_melly_murder_on_my_mind_vimaj7_ivm7_i_v7_vimaj7_ivm7_i_vm7",
+    family: "minor", degrees: "8:^7 5:m7 0:m 7:7 8:^7 5:m7 0:m 7:m7" },
+  "cl_riff_fall": { verdict: 'keep', page: 'unknown', at: '2026-09-13', base: "un_famous_ynw_melly_murder_on_my_mind_vimaj7_ivm7_i_v7_vimaj7_ivm7_i_vm7",
+    family: "minor", degrees: "8:^7 5:m7 0:m 7:7 8:^7 5:m7 0:m 7:m7" },
+  "cl_riff_gallop": { verdict: 'keep', page: 'unknown', at: '2026-09-13', base: "un_famous_ynw_melly_murder_on_my_mind_vimaj7_ivm7_i_v7_vimaj7_ivm7_i_vm7",
+    family: "minor", degrees: "8:^7 5:m7 0:m 7:7 8:^7 5:m7 0:m 7:m7" },
+  "cl_riff_motor16": { verdict: 'keep', page: 'unknown', at: '2026-09-13', base: "un_famous_ynw_melly_murder_on_my_mind_vimaj7_ivm7_i_v7_vimaj7_ivm7_i_vm7",
+    family: "minor", degrees: "8:^7 5:m7 0:m 7:7 8:^7 5:m7 0:m 7:m7" },
   "un_famous_ariana_grande_thank_u_next_vimaj7_v7_im7_iii7__v0": { verdict: 'kill', page: 'progressions-implied', at: '2026-08-26', base: "un_famous_ariana_grande_thank_u_next_vimaj7_v7_im7_iii7",
     family: "minor", degrees: "8:^7 7:sus 10:7 3:7" },
   "un_famous_ariana_grande_thank_u_next_vimaj7_v7_im7_iii7__v1": { verdict: 'keep', page: 'progressions-implied', at: '2026-08-26', base: "un_famous_ariana_grande_thank_u_next_vimaj7_v7_im7_iii7",
@@ -761,6 +803,34 @@ export const CARD_NOTES = {
     judged: "10:sus 9:m 8 10 0:sus 8 10 0:m 11" },
   bd_victory: { note: "why are you always adding these horns everywhere. the left hand chord progression sounds good. the high pitched percussion is so staccato and doesn't sound good and doesn't sound harmonic. horn doesn't fit and is too loud. volume levels aren't balanced and it's not very satisfying to listen to.", at: '2026-09-12',
     judged: "7:m7 0:7 9:7 2:m9 7:13 0:^9" },
+  cl_bass_332: { note: "a bit less rhythmic/energetic", at: '2026-09-13',
+    judged: "8:^7 5:m7 0:m 7:7 8:^7 5:m7 0:m 7:m7" },
+  cl_bass_hold: { note: "of course, can also have its own melody too (think everything you learned from the walking bass stuff). also depends on the chord progression", at: '2026-09-13',
+    judged: "8:^7 5:m7 0:m 7:7 8:^7 5:m7 0:m 7:m7" },
+  cl_bass_oct8: { note: "of course, can also have its own melody too (think everything you learned from the walking bass stuff). also depends on the chord progression", at: '2026-09-13',
+    judged: "8:^7 5:m7 0:m 7:7 8:^7 5:m7 0:m 7:m7" },
+  cl_bass_pump5: { note: "there could also be variations where the third chord is higher instead of just the chord repeating 3 times. like the second repeat it a different", at: '2026-09-13',
+    judged: "8:^7 5:m7 0:m 7:7 8:^7 5:m7 0:m 7:m7" },
+  cl_bass_push: { note: "of course, can also have its own melody too (think everything you learned from the walking bass stuff). also depends on the chord progression", at: '2026-09-13',
+    judged: "8:^7 5:m7 0:m 7:7 8:^7 5:m7 0:m 7:m7" },
+  cl_bass_walkdown: { note: "like this one - this represents like creative basses - learn from this -> more happy of a vibe though", at: '2026-09-13',
+    judged: "8:^7 5:m7 0:m 7:7 8:^7 5:m7 0:m 7:m7" },
+  cl_bass_wander: { note: "of course, can also have its own melody too (think everything you learned from the walking bass stuff). also depends on the chord progression", at: '2026-09-13',
+    judged: "8:^7 5:m7 0:m 7:7 8:^7 5:m7 0:m 7:m7" },
+  cl_cell_fall: { note: "works", at: '2026-09-13',
+    judged: "8:^7 5:m7 0:m 7:7 8:^7 5:m7 0:m 7:m7" },
+  cl_cell_neighbor: { note: "I feel like it's not 4/4  - the next chord is always coming in like an eight note too soon which should happened. this works", at: '2026-09-13',
+    judged: "8:^7 5:m7 0:m 7:7 8:^7 5:m7 0:m 7:m7" },
+  cl_cell_octleap: { note: "the second one sounds kinda weird, which I think is just the note you chose. otherwise sounds good", at: '2026-09-13',
+    judged: "8:^7 5:m7 0:m 7:7 8:^7 5:m7 0:m 7:m7" },
+  cl_cell_orig: { note: "I dont think the vibraphone conveys tense or fight at all", at: '2026-09-13',
+    judged: "8:^7 5:m7 0:m 7:7 8:^7 5:m7 0:m 7:m7" },
+  cl_cell_step: { note: "I think steps work for some of them (like the 2nd and third) but not the first and fourth", at: '2026-09-13',
+    judged: "8:^7 5:m7 0:m 7:7 8:^7 5:m7 0:m 7:m7" },
+  cl_riff_gallop: { note: "depends on the chord progression but works as a layer", at: '2026-09-13',
+    judged: "8:^7 5:m7 0:m 7:7 8:^7 5:m7 0:m 7:m7" },
+  cl_riff_motor16: { note: "should be aligned by measure - the next chord shouldn't come in like a half step early", at: '2026-09-13',
+    judged: "8:^7 5:m7 0:m 7:7 8:^7 5:m7 0:m 7:m7" },
   cp_backdoor_somber: { note: "the piano is just chords once again, boring. the vibe is alright though its just the piano is boring", at: '2026-08-30',
     judged: "0:^7 5:m7 10:7 0:^7" },
   cp_descending_bass_nostalgic: { note: "I think the high vibraphone fits snow, but the chord progression is a bit too dark, the this particular pattern doesn't really fit snow, I also feel like snow is higher on the piano in terms of octaves rather than being so low", at: '2026-08-30',
@@ -1247,3 +1317,88 @@ export const DRUM_NOTES = {
   dp_what_is_happening: { note: "sort of more chill, more clueless", at: '2026-08-26', url: "https://drum-patterns.com/what-is-happening/" },
   dp_working: { note: "relaxed chill beat. first two measures are a bit more energetic than last two", at: '2026-08-26', url: "https://drum-patterns.com/working/" },
 };
+
+// Notes from audition/mixlab.html (r43) — the COMBINATION lab. Each note
+// carries `sel`: the bed, the tempo, the loop and the exact list of layers
+// that were sounding when it was written. Without that a note about "the
+// bass" names one of sixteen basses under one of fifty other layers.
+// LAYER_NOTES / GROUP_NOTES are keyed by the slot and group ids in
+// SERIOUS_STACKS.sr_stack_mixlab; COMBO_NOTES is a flat list.
+export const LAYER_NOTES = {};
+
+export const GROUP_NOTES = {};
+
+export const COMBO_NOTES = [
+  {
+    "text": "you can layer just about anything to achieve the energetic serious vibe, just dont overlay (comes up to be greater than 3) but anything works",
+    "at": "2026-09-14 14:37",
+    "sel": {
+      "bed": "ml_bridge",
+      "bpm": 140,
+      "key": "E:aeolian",
+      "loop": "sr_loop_shuttle_i_bVII",
+      "layers": [
+        "vln_orig",
+        "vln_arch",
+        "vln_octleap",
+        "vln_open5",
+        "vln_step_ct"
+      ],
+      "labels": [
+        "+8ve violin: the one you have",
+        "+8ve violin: arch",
+        "+8ve violin: octave leap (as judged)",
+        "+8ve violin: fifths and the octave",
+        "+8ve violin: steps between chord tones"
+      ]
+    }
+  },
+  {
+    "text": "you can just about layer any of these together, but I found that bass melodies like the zoltraak one sound really good. but each of these serve as good backbone",
+    "at": "2026-09-14 14:39",
+    "sel": {
+      "bed": "ml_bridge",
+      "bpm": 140,
+      "key": "E:aeolian",
+      "loop": "sr_loop_shuttle_i_bVII",
+      "layers": [
+        "bass_push",
+        "bass_hold",
+        "bass_oct8",
+        "bass_332",
+        "bass_push5",
+        "bass_lament",
+        "bass_walkdown"
+      ],
+      "labels": [
+        "the push (AoT x16)",
+        "one hit a bar",
+        "octaves on 8ths",
+        "3+3+2",
+        "push with a fifth",
+        "lament: R b7 b6 5",
+        "walking down (Zoltraak)"
+      ]
+    }
+  },
+  {
+    "text": "you can layer just about anything to achieve the energetic serious vibe, just dont overlay (comes up to be greater than 3) but anything works. this group volume should be reduced",
+    "at": "2026-09-14 14:40",
+    "sel": {
+      "bed": "ml_bridge",
+      "bpm": 140,
+      "key": "E:aeolian",
+      "loop": "sr_loop_shuttle_i_bVII",
+      "layers": [
+        "cell_orig",
+        "cell_fall",
+        "cell_return"
+      ],
+      "labels": [
+        "the one you have (R R b3 5)",
+        "falling",
+        "3 notes, root again"
+      ]
+    }
+  }
+];

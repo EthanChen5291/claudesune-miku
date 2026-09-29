@@ -277,6 +277,97 @@ export const INSTRUMENTS = {
     moods: ['warm', 'sad', 'grave', 'intimate'],
     character: 'a viola: the darker middle voice — it fills the space between a cello and a violin and rarely draws attention to itself.',
   },
+  // r43 — THE BROWSER TIER'S STRINGS, on the renderer's own samples. HIS ASK on
+  // the combination lab: "can you allow HQ on for all of them because otherwise
+  // the strings dont sound good". That page cannot carry HQ renders (51
+  // togglable layers), so these three names play the VSCO section sustains in
+  // the BROWSER, de-swelled by the same measurement sfizz uses
+  // (src/ingest/swell.js, via the local sample pack).
+  //
+  // `envOnly: []` — the planner can never cast them. They exist so a page that
+  // asks for them by name gets them; naming them gm_cello / gm_viola instead
+  // would re-timbre every judged song on every page that loads the pack, which
+  // is D91 arriving through the sample tier.
+  vsco_cello: {
+    gm: 'gm_cello', family: 'string', attack: 'slow', sustain: 'long', envOnly: [],
+    cuts: 0.55, weight: 0.5, range: [2, 4], level: 1.2, lanes: ['low', 'mid'], parts: [],
+    moods: ['grave', 'warm', 'sad', 'noble'],
+    character: 'the VSCO cello section, played in the browser from the same samples the renderer uses — the sampled twin of gm_cello.',
+  },
+  vsco_viola: {
+    gm: 'gm_viola', family: 'string', attack: 'slow', sustain: 'long', envOnly: [],
+    cuts: 0.5, weight: 0.45, range: [3, 5], level: 1.15, lanes: ['mid'], parts: [],
+    moods: ['grave', 'warm', 'sad'],
+    character: 'the VSCO viola section, in the browser — the sampled twin of gm_viola.',
+  },
+  vsco_violin: {
+    gm: 'gm_violin', family: 'string', attack: 'slow', sustain: 'long', envOnly: [],
+    cuts: 0.5, weight: 0.4, range: [3, 5], level: 1.1, lanes: ['mid', 'high'], parts: [],
+    moods: ['grave', 'noble', 'bright'],
+    character: 'the VSCO violin section, in the browser — the octave-up double of the cello ostinato, so the cell reads as a string SECTION rather than one instrument.',
+  },
+  vsco_bass: {
+    gm: 'gm_contrabass', family: 'string', attack: 'slow', sustain: 'long', envOnly: [],
+    cuts: 0.4, weight: 0.6, range: [1, 3], level: 1.3, lanes: ['low'], parts: [],
+    moods: ['dark', 'grave', 'ominous'],
+    character: 'the VSCO solo contrabass, in the browser — the sampled twin of gm_contrabass.',
+  },
+  // r43 SECOND PASS — the SHORT articulations, same `envOnly: []` / `parts: []`
+  // containment as the sustains above. `attack: 'short'` and `sustain: 'short'`
+  // are the honest declarations and they are what a pattern lab's ostinato slot
+  // wants: MEASURED as dB below each note's own peak half a second later, the
+  // sustain banks barely decay (cello -4.8, viola -4.7, violin -8.5, bass -2.7)
+  // while the struck ones fall away (-26.1 / -40.0 / -50.5 / -16.9). A
+  // sixteenth-note cell built on a sustain accumulates instead of layering —
+  // his "it like fills up everything".
+  vsco_cello_spic: {
+    gm: 'gm_cello', family: 'string', attack: 'short', sustain: 'short', envOnly: [],
+    cuts: 0.55, weight: 0.5, range: [2, 4], level: 1.2, lanes: ['low', 'mid'], parts: [],
+    moods: ['grave', 'noble', 'tense'],
+    character: 'the VSCO cello section SPICCATO — a struck bow stroke that decays, which is what a sixteenth-note ostinato needs; the short twin of vsco_cello.',
+  },
+  vsco_viola_spic: {
+    gm: 'gm_viola', family: 'string', attack: 'short', sustain: 'short', envOnly: [],
+    cuts: 0.5, weight: 0.5, range: [3, 5], level: 1.15, lanes: ['mid'], parts: [],
+    moods: ['grave', 'tense'],
+    character: 'the VSCO viola section SPICCATO — the middle of the struck string trio.',
+  },
+  vsco_violin_spic: {
+    gm: 'gm_violin', family: 'string', attack: 'short', sustain: 'short', envOnly: [],
+    cuts: 0.5, weight: 0.5, range: [3, 5], level: 1.1, lanes: ['mid', 'high'], parts: [],
+    moods: ['noble', 'tense', 'bright'],
+    character: 'the VSCO violin section SPICCATO — the octave-up double of the cello cell, struck so the two read as one section articulating together.',
+  },
+  vsco_bass_spic: {
+    gm: 'gm_contrabass', family: 'string', attack: 'short', sustain: 'short', envOnly: [],
+    cuts: 0.4, weight: 0.5, range: [1, 3], level: 1.3, lanes: ['low'], parts: [],
+    moods: ['dark', 'grave', 'tense'],
+    character: 'the VSCO solo contrabass SPICCATO — a struck low end that clears between notes.',
+  },
+  vsco_cello_pizz: {
+    gm: 'gm_cello', family: 'string', attack: 'short', sustain: 'short', envOnly: [],
+    cuts: 0.55, weight: 0.5, range: [2, 4], level: 1.2, lanes: ['low', 'mid'], parts: [],
+    moods: ['grave', 'tense'],
+    character: 'the VSCO cello section PIZZICATO — plucked; the shortest of the three articulations and the driest.',
+  },
+  vsco_viola_pizz: {
+    gm: 'gm_viola', family: 'string', attack: 'short', sustain: 'short', envOnly: [],
+    cuts: 0.5, weight: 0.5, range: [3, 5], level: 1.15, lanes: ['mid'], parts: [],
+    moods: ['grave', 'tense'],
+    character: 'the VSCO viola section PIZZICATO.',
+  },
+  vsco_violin_pizz: {
+    gm: 'gm_violin', family: 'string', attack: 'short', sustain: 'short', envOnly: [],
+    cuts: 0.5, weight: 0.5, range: [3, 5], level: 1.1, lanes: ['mid', 'high'], parts: [],
+    moods: ['noble', 'tense'],
+    character: 'the VSCO violin section PIZZICATO.',
+  },
+  vsco_bass_pizz: {
+    gm: 'gm_contrabass', family: 'string', attack: 'short', sustain: 'short', envOnly: [],
+    cuts: 0.4, weight: 0.5, range: [1, 3], level: 1.3, lanes: ['low'], parts: [],
+    moods: ['dark', 'tense'],
+    character: 'the VSCO solo contrabass PIZZICATO — the walking-bass articulation.',
+  },
   gm_cello: {
     gm: 'gm_cello', family: 'string', attack: 'slow', sustain: 'long',
     cuts: 0.55, weight: 0.5, range: [2, 4], level: 1.2, lanes: ['low', 'mid'],

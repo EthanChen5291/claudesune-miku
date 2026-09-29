@@ -302,3 +302,15 @@ run('ffmpeg', ['-v', 'error', '-y', '-i', mixIn, '-i', vocal, ...(withHarmony ? 
 const outL = lufs(out);
 console.log(`  balance (sung spans): band ${bandDb.toFixed(1)} dB, vocal ${vocDb.toFixed(1)} -> ${target.toFixed(1)} dB (x${gain.toFixed(2)}, ${Number(values['vocal-db']) >= 0 ? '+' : ''}${values['vocal-db']} dB over the band); sum ${outL?.toFixed(1)} LUFS`);
 console.log(`wrote ${out} (${secs()})`);
+// r41/D146 — RECORD WHICH VERSION OF THE MIX THIS RENDER CAME FROM. The page's
+// CHANGED badge tracks the mix; without this it says nothing about whether the
+// WAV matches it, and he judged a mix of two builds for a whole export because
+// of that (HQ on = old audio, HQ off = new mix). The page already publishes
+// `sig` per song, so the renderer records THAT rather than recomputing a hash —
+// one definition, no chance of the two drifting apart.
+if (pageSong.sig) {
+  try {
+    writeFileSync(join(HQ, `${NAME}.mixsig`), String(pageSong.sig));
+    console.log(`  render signature ${pageSong.sig} recorded (the page shows HQ STALE when it stops matching)`);
+  } catch (e) { console.error(`  could not record the render signature: ${e.message}`); }
+}

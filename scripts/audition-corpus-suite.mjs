@@ -279,10 +279,21 @@ const clampOct = (sound, oct) => {
 /** pick a voice whose declared lanes/parts suit the role, by measured family mix */
 function voiceFor(role, seed, { synth = false, lane = null } = {}) {
   const wants = { lead: 'lead', pad: 'pad', acc: 'mid', bass: 'low', companion: 'mid' }[role] ?? 'mid';
-  const cands = Object.entries(INSTRUMENTS).filter(([, e]) => (e.lanes || []).includes(wants));
-  const pool = (cands.length ? cands : Object.entries(INSTRUMENTS))
+  // r43 — PAGE-SCOPED VOICES ARE NOT CASTABLE, and this selector never knew it.
+  // An entry declaring `parts: []` with `envOnly: []` is the contract for "a
+  // page may ask for this by name; the planner may never choose it" (D93/D95) —
+  // the VSCO string banks are all declared that way so that adding one cannot
+  // re-timbre anything. But this filter looked at `lanes` alone, so they entered
+  // the pool the moment they existed: measured, rebuilding this page after the
+  // r43 banks were added cast vsco_cello_spic, vsco_viola and vsco_viola_pizz
+  // and moved 13 of 16 companions. Adding a library entry must never move a
+  // page, and only the byte compare catches it.
+  const castable = Object.entries(INSTRUMENTS)
+    .filter(([, e]) => !(Array.isArray(e.parts) && e.parts.length === 0 && Array.isArray(e.envOnly) && e.envOnly.length === 0));
+  const cands = castable.filter(([, e]) => (e.lanes || []).includes(wants));
+  const pool = (cands.length ? cands : castable)
     .filter(([n]) => (synth ? /synth|lead|saw|square|pad/i.test(n) : true));
-  const use = pool.length ? pool : Object.entries(INSTRUMENTS);
+  const use = pool.length ? pool : castable;
   return use[Math.floor(T.rnd(seed) * use.length)][0];
 }
 

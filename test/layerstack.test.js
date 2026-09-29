@@ -59,9 +59,20 @@ test('r28: `noteBlind` — the keep-transition law, and it is ONE flag', () => {
   // (vo_reflection, vo_lullaby, vo_march) — four rows now, each a clicked keep
   assert.strictEqual((SRC.match(/keepFresh: true/g) ?? []).length, 4,
     'keepFresh is a per-row pin for a clicked keep on a noteBlind page — exactly four rows carry it (vx_nostalgic_snow + the three r36 Vocaloid keeps)');
-  // every history-less gate must route through it — a raw one would re-open the bug
-  assert.doesNotMatch(SRC, /!DERIVED_VERDICTS\?\.\[name\] && !CARD_NOTES\?\.\[name\]/,
+  // every history-less gate must route through it — a raw one would re-open the bug.
+  // r44: ONE declared exception, and it is a different question. `historyLess()`
+  // asks "may a new RULE reach this song" and noteBlind suspends the notes half
+  // on purpose; `neverAuditioned()` asks "has he ever HEARD this song", which is
+  // what a RETRIEVAL re-roll must gate on (D95) — noteBlind cannot be allowed to
+  // license re-rolling the pattern of a song he has notes on. Measured when the
+  // slot rotation first shipped through historyLess(): it moved ten of the eleven
+  // judged serious rows, two of them pinned prose keeps. The exception is allowed
+  // only as that ONE named declaration; an inline gate still fails.
+  const rawGates = SRC.match(/!DERIVED_VERDICTS\?\.\[name\] && !CARD_NOTES\?\.\[name\]/g) ?? [];
+  assert.strictEqual(rawGates.length, 1,
     'a gate is testing CARD_NOTES directly again instead of going through historyLess()');
+  assert.match(SRC, /const neverAuditioned = \(\) => !DERIVED_VERDICTS\?\.\[name\] && !CARD_NOTES\?\.\[name\];/,
+    'the one raw history gate must be the named neverAuditioned() declaration');
   assert.ok((SRC.match(/historyLess\(\)/g) ?? []).length >= 8,
     'historyLess() is no longer used by the gates it was written for');
   // a real VERDICT must still gate everything it gated before — noteBlind only

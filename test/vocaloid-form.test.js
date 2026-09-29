@@ -42,7 +42,18 @@ test('vocaloid-form: forms are 8-bar-grid, name a silent verse inside their tune
   for (const [name, F] of Object.entries(VOCALOID_FORMS)) {
     assert.ok(F.intro % 4 === 0, `${name} intro ${F.intro}`);
     assert.ok(F.sections.every((L) => /^[ABC]$/.test(L)), `${name} letters`);
-    assert.ok(F.sections.includes('B'), `${name} has no chorus`);
+    // r43: vf_form_flat has no B on purpose. A B section binds the CHORUS loop
+    // (the one place a vocaloid form's loops reach the harmony), and the
+    // combination lab needs ONE progression per bed — that is the axis his notes
+    // asked to test ("also depends on the chord progression"). Named, so a form
+    // cannot lose its chorus by accident.
+    if (name !== 'vf_form_flat') assert.ok(F.sections.includes('B'), `${name} has no chorus`);
+    else assert.ok(new Set(F.sections).size === 1 && F.intro === 0, 'vf_form_flat must be one letter with no intro');
+    // r42: `silentVerse: null` is "this form has none" — the generator already
+    // reads it that way (`vf.form.silentVerse != null`), and the pattern lab's
+    // form wants it, because thinning one section under one card and not
+    // another is a second variable on a page whose point is one figure.
+    if (F.silentVerse == null) continue;
     assert.ok(F.silentVerse < F.sections.length && F.sections[F.silentVerse] === 'A', `${name} silentVerse must point at an A section`);
   }
   const spec = vocaloidFormSpec({ verse: 'vf_min_verse_i_v_bVI_bVII', chorus: 'vf_min_chorus_bIII_bVI_i_v' });

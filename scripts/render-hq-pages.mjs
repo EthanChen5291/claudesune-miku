@@ -23,12 +23,23 @@ const TMP = join(tmpdir(), 'motif-hq-render');
 mkdirSync(HQ, { recursive: true });
 mkdirSync(TMP, { recursive: true });
 
-const args = new Set(process.argv.slice(2));
-const doVideolab = args.has('--videolab') || (!args.has('--songs'));
-const doSongs = args.has('--songs') || (!args.has('--videolab'));
+const argv = process.argv.slice(2);
+const args = new Set(argv);
+// r42 — `--page <file.html> [--only <regex>]` renders any built page's songs,
+// so a new lab page does not need a bespoke shell script (the r40/r41 serious
+// batches were one). When a page is named, the videolab/songs defaults stand
+// down: naming a page IS the selection.
+const pageArg = argv[argv.indexOf('--page') + 1];
+const pages = args.has('--page') && pageArg && !pageArg.startsWith('--') ? [pageArg] : [];
+const onlyArg = args.has('--only') ? argv[argv.indexOf('--only') + 1] : null;
+const only = onlyArg ? new RegExp(onlyArg) : null;
+const doVideolab = args.has('--videolab') || (!args.has('--songs') && !pages.length);
+const doSongs = args.has('--songs') || (!args.has('--videolab') && !pages.length);
 const doSolos = args.has('--solos');
 
-const grab = (page) => JSON.parse(readFileSync(join(ROOT, 'audition', page), 'utf8').match(/const DATA = (\{.*?\});\n/s)[1]);
+// a bare page name resolves inside audition/; a path (`--page audition/x.html`)
+// resolves from the repo root, so both spellings work
+const grab = (page) => JSON.parse(readFileSync(page.includes('/') ? resolve(ROOT, page) : join(ROOT, 'audition', page), 'utf8').match(/const DATA = (\{.*?\});\n/s)[1]);
 
 const jobs = []; // { file, cpmExpr, cycles, out, label }
 if (doVideolab) {
@@ -43,7 +54,13 @@ if (doVideolab) {
 }
 if (doSongs) {
   for (const s of grab('songs.html').songs) {
-    jobs.push({ expr: s.mix, cpm: `${s.bpm}/${s.beats}`, cycles: s.totalBars, out: `${s.name}.wav`, label: `${s.name} mix` });
+    jobs.push({ expr: s.mix, cpm: `${s.bpm}/${s.beats}`, cycles: s.totalBars, out: `${s.name}.wav`, label: `${s.name} mix`, sig: s.sig });
+  }
+}
+for (const p of pages) {
+  for (const s of grab(p).songs ?? grab(p).cards) {
+    if (only && !only.test(s.name)) continue;
+    jobs.push({ expr: s.mix, cpm: `${s.bpm}/${s.beats ?? 4}`, cycles: s.totalBars, out: `${s.name}.wav`, label: `${s.name} mix`, sig: s.sig });
   }
 }
 
@@ -60,6 +77,13 @@ for (const j of jobs) {
     for (const line of out.split('\n')) {
       if (/CLAMPED|WARNING|SILENT/.test(line)) console.log(`  ${j.label}: ${line.trim()}`);
     }
+    // r41/D146 — RECORD WHICH MIX THIS WAV CAME FROM. The page computes `sig`
+    // from the mix + instrumental twin + drums and shows a red HQ STALE badge
+    // when the sidecar stops matching. render-vocal.mjs has written it since
+    // r41; the HQ-only path had no sidecar at all, so a lab page's renders
+    // could silently age out from under his ear — which is exactly the trap
+    // that cost him half of his second serious export.
+    if (j.sig) writeFileSync(join(HQ, j.out.replace(/\.wav$/, '.mixsig')), String(j.sig));
     done++;
   } catch (e) {
     failed++;

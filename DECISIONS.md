@@ -14022,3 +14022,1325 @@ Final state: `npm test` 449/449 on a clean run, songs.test.js 4/4 in isolation,
 `audition/serious.html` rebuilt with 11/11 HQ + 11/11 VOCAL badges and **0 songs
 moved on music fields** against the page the stems were rendered from. Fixing
 the race (build to a temp path, or serialize) is not done and is worth a round.
+
+## D146 — r41: his first two serious exports answered (2026-09-13)
+
+Two exports in one afternoon, eleven cards each. The headline, verbatim: *"overall
+better but the songs that require seriousness/energy dont have that yet, and i
+sometimes cant tell that layers are added. bear in mind that bass is also a thing
+because i dont hear much bass - we've done lots of practice with bass remember."*
+Instrumental only, at his instruction.
+
+**THE RENDER WAS STALE AND HE WAS JUDGING A MIX OF TWO BUILDS.** Between the
+exports the page was rebuilt at 14:32 and every wav still dated 12:17–13:28. With
+HQ ON he heard the OLD audio; with HQ OFF the browser played the NEW mix but not
+the render-tier string fix. That is why one card said "percussion is better" on a
+song whose percussion had not changed, and two repeated the vibraphone note
+verbatim on songs where the vibraphone was already gone. **The r41 CHANGED badge
+tracks the MIX and says nothing about whether the render matches it** — a gap I
+introduced in the same round, recorded here as the open item.
+
+**D119'S POOL OF ONE, SIXTH AND SEVENTH INSTANCES, BOTH BUILT BY SUBTRACTION OR
+BY A LITERAL INDEX.** (a) The companion pool has three members; under a sung lead
+the r36 wind/brass rule removes gm_clarinet and castSounds removes gm_epiano1
+(the acc hand on every serious row). One left — gm_vibraphone on 7 of 11, which is
+his "the vibraphone or whatever that pitched percussive instrument still makes it
+a bit less serious (the one in the harmony that does the chord repeats and stuff,
+NOT the one that plays the melody)" on five cards. He located the layer exactly:
+the COMPANION is the line that rebinds the lead's rhythm onto chord tones. A
+serious pool of five (viola / tremolo / pizzicato / harp / organ) fixes it.
+**Count `free`, never POOL — a pool is a pool of one whenever the FILTERS leave
+one standing.** (b) `vc_cym_cresc:0` names one sample by literal index, at every
+letter change, on every song and every page: "the cymbal ... its overused" and
+"that thing where it does the heavy hit at every 2 measures ... you're still
+using it". Now four impacts, capped at three per song.
+
+**A CRESCENDO POOL NEEDS A PER-SAMPLE PEAK OR IT RE-CREATES D138.** Measured in
+50 ms RMS windows: susCymb1-cresc-Short peaks **1.40 s** in, gong_hit_ff 0.35 s,
+Snare2-rollNS_v3 0.55 s, bassdrum_cresc_short **6.00 s**. Rotating those on the
+one hardcoded 1.44 s offset would have put the wardrum's peak four bars past its
+seam — the exact "random cymbal in the middle of the section" bug D138 fixed once
+already. Each entry carries its own measured peak.
+
+**A BROKEN PATCH, NOT A WRITING CHOICE — AND HIS EAR FOUND IT FIVE TIMES.**
+"this violin/cello (the vst that plays the melody) vst absolutely sucks and
+shouldn't be used" (x2), "too loud and should be more 'fluid'", "main melody
+violin/cello too loud", "too forceful and ends very abruptly (like it just cuts
+off and appears)". `autoSplit` in build-sfz set each zone's FLOOR and never
+capped the one below it, so strings-sections.sfz gave the cello a top region
+spanning 64–71 while the violins claimed 66 upward — and with **no `<group>` in
+the file, SFZ sounds EVERY matching region**. Every note from 66 to 71 was a
+violin section AND a cello section stretched up into violin register, together.
+Measured share of that layer's notes inside the doubled band: hunt 66%, expanse
+58%, gate 39%, resolve 25%, duel 18%. Before: keys 66–71 doubled. After: none.
+It also explains why he rated ashes' voice "better than the other ones" —
+gm_viola has NO HQ entry and falls through to fluidsynth, so it never touched
+this patch. **A refuted hypothesis worth keeping: "the samples run out mid-note"
+was wrong — they are 11–13 s long and at most 4 s is skipped.**
+
+**I SCALED THE SUPPORT AGAINST A PLACEHOLDER (my error, r40).** His "I cant
+really tell the new layers" / "can't tell that any new layers were added" / "I
+can't notably hear any other layers", four cards. r40 set `supportMulSr` to the
+0.45 guide because the verify pass measured `_sr_bass` at 1.07–1.23x "the lead" —
+but on a vocalLead page the instrumental lead is ducked to 0.45 PRECISELY because
+the VOICE carries the tune, and the voice is mixed on top at `vocalDb`, not
+ducked. So the flagged ratio was support-vs-placeholder and the correction made
+every declared layer **0.19x the real melody**. D77's own wording is "the lead's
+REALIZED mean"; on a sung page the realized lead is the voice. **The reference
+was wrong, not the number** — the solo-vs-mix trap wearing a different hat.
+Now 0.73 (measured: 1.0 realizes a worst ratio of 1.233, an octave DOUBLING above
+the line it doubles; 0.9/1.233 = 0.73), so layers went 0.15–0.27x → **0.35–0.61x**
+and D77 holds at worst 0.613. Residual, named: `e.gain` is a fraction of NOMINAL
+leadGain while the ratio that matters is against the REALIZED mean — a ~2.5x gap.
+r33's drum trim solves this properly by dividing the curve max out; doing the
+same here is a round of its own.
+
+**A HELD PEDAL IS NOT A BASS PART.** His "i dont hear much bass - we've done lots
+of practice with bass remember". r40 stood the tier's moving bass down whenever
+the stack declared one; on titan/additive/calm the stack's bass is
+`sr_octave_bass_hold`, ONE onset per bar — 7 of 11 songs, every energetic one
+included. Measured on the judged page: the declared bass ran 1.3–1.8 notes/bar at
+0.45–1.08x the lead on a fluidsynth contrabass, while the muted guitar sat in the
+SAME register at 2.16x and the piano's low hand at 2.1–2.98x. The rule is now
+**one MOVING bass**, not one bass; a pedal under a moving line is the
+orchestration default (§2.5). Every energetic song now carries 3.9–6.0 notes/bar.
+
+**THE FIGURE HE ASKED FOR WAS IN THE LIBRARY AND THE STACK NAMED AFTER HIS
+REFERENCE NEVER SELECTED IT.** "need more energetic layer patterns (like the ones
+in attack on titan)" (x3), "analyze the attack on titan songs and what they did
+with all the different layers". Re-measured by COUNTING REPEATS of every one-bar
+cell rather than reading bars by eye: attack on titan's most frequent cell, **x16
+and the top cell of the whole piece**, is the left hand striking an OCTAVE at
+16th-slots 0, 6, 8, 14. That is `sr_bass_push` exactly — encoded in r40, its own
+source note already saying "attack on titan bars 68+" — and `sr_stack_titan` was
+playing the one-onset pedal instead. The source does BOTH sectionally (held bars
+0–7, pushing from bar 68), so it is an ENTRY at section 3, not a swap. Same sweep
+found the cross-file shape: Muzan x14, Raising Fighting Spirit x6 (R+5+octave),
+ReawakeR x5 — the energetic left hand is octaves on syncopated 8th slots, 4–9 a
+bar. **Counting repeats is a different instrument from reading bars, and it found
+what four rounds of reading did not.**
+
+**THE PERCUSSION WAS A POP KIT ON EVERY SERIOUS SONG.** "the percussion isn't
+serious. think the percussion in movie soundtracks, or maybe even the percussion
+of the SAC with an actual complex beat" (x3) + "the drums are too casual (just a
+normal beat)". Every drummed serious song ran `rock` or `ballad`: md_kick,
+md_snare, md_hat. The pack has carried the orchestral battery since D93 and the
+page never reached for it. `KIT_STYLES.cinematic` — vc_wardrum / vc_snare_mil /
+vc_frame / vc_timpani, **no hi-hat**, straight on the grid (syncopation is what
+reads casual) — plus a per-style `voices` override, which leaves every existing
+style untouched.
+
+**TWO PIN LEAKS AND ONE TEST THAT PINNED A RULE I CHANGED.** (a) `vocaloidForm`
+is assembled in the PAGE LOOP, outside buildSong, where `ruleFresh` cannot see
+it — the bass fix silently gave pinned sr_summit a synth bass, caught only by the
+byte compare. (b) `supportMulSr` needed `ruleFresh(41)` for the same reason.
+(c) the r40 test asserted the literal source text `stackIds.has('bass') ? { bass:
+false }`; it now asserts the real invariant (one MOVING bass, a pedal allowed
+under it) from the figure data.
+
+**MY OWN PROBES WERE WRONG TWICE, BOTH REPORTING "D77 VIOLATED".** One pooled
+every layer sharing the lead's instrument into "the lead" (so lowering support
+made the ratio look WORSE); the next matched the same mix text for every layer
+and returned exactly 1.00 for all of them. D85's rule again, and D145's addition:
+implausible in EITHER direction is a bug until proven.
+
+**HIS ASK, BUILT: the CHANGED badge.** "can you add a label if you change a song?
+like a 'changed' if i havent played it after the change". Every song carries a
+signature of what he HEARS (mix + instrumental twin + drum rows); the page
+remembers the signature playing when he last pressed play. NEW = never played,
+CHANGED = the mix moved since. Card text, the `why` trace and the BUILD stamp are
+deliberately excluded — a reworded explanation is not a changed song — and a test
+fails if any of them ever enters the signature. A SOLO does not clear the badge.
+The key is derived from the page's own verdicts key, so it needs no per-page
+wiring and cannot leak one page's history into another.
+
+**Prose keeps pinned:** sr_summit ("I like it! no complaints!", twice) and
+sr_ashes ("love it ... also love the part between the vocals" — its r40 complaint
+about the strings appearing at volume is GONE from the text, answered by the
+six-bar crescendo). Both byte-identical through every change above.
+**vg_excited_fight** (on vocal.html) pinned from his mid-round heads-up; adding
+`pinFrom` ALONE moved it on mix/solos/degrees/symbols/numerals/cast/treat/ops
+because colorFresh reads a bare `!opts.pinFrom` — D101/D123's catch-22, fifth
+instance, first one caught at the moment the pin was written. `voicedColor: true`
+is the documented escape; 0 moved after.
+
+**Still open and NOT addressed:** his sr_gate note that the song "just sounds like
+a nice casual vocal ... whenever there's multiple voices" (a VOCAL change, which
+he has deferred); whether the melody instrument should change on vanguard; the
+theme8/theme3 doublings reading as thickness rather than as layers; and the
+render-staleness badge. `songs.html`: **0 of 47 judged songs moved** — every r41
+change is page-scoped.
+
+## D147 — r42: his "more variations of those" — the cell family, attack on titan's six bass patterns, and a lab that plays each one by itself first
+
+**His ask (2026-09-13), verbatim:**
+
+> "it's better! one thing though - the cello harmony that you added into the high
+> energy songs (like the one where it's rising and repeating) is good but there
+> should be more variations of those. like experiment with more variations, like
+> falling instead of rising, 3 notes instead of 4 where the fourth note is the
+> root again, different intervals, different patterns.
+> MOREOVER, they also do the bass too in the attack on titan, and other patterns
+> besides this - I want to hear them individually and variations of them for the
+> energetic songs"
+
+**THE LAYER HE NAMED, LOCATED BEFORE ANYTHING WAS WRITTEN.** `sr_pedal_cell` on
+`gm_cello` — the `ost` slot of `sr_stack_titan`, a cello on sr_gate / sr_oath /
+sr_hunt (a muted guitar on sr_duel and sr_resolve). Attack on titan bars 9–20:
+R R b3 5 in sixteenths, four times a bar, the top note raised to b6 on the
+alternate bar. "Rising and repeating" is exactly that row and nothing else on
+the page matches the description.
+
+### The read-out (research/cells-r42.md)
+
+Re-measured by REGISTER BAND (bass = below midi 52, ostinato = 52–72) and by
+counting how many bars of a file carry each one-bar signature — onsets
+quantised to sixteenths, pitches as intervals above the bar's lowest note, so
+transposition does not split a count. r41's lesson applied: choose a figure by
+how often the source plays it, never by which bar I happened to open.
+
+**Attack on titan plays SIX bass patterns across its 104 bars and r40 had
+two of them.** Bars 0–7 two octave strikes a bar with the second one MOVING
+(beat 4, 2, 3, 3, 4, 2, 4, 3 — no bar repeats); 9–20 the cell; 21–28 a second,
+sparser cell nobody had transcribed (R b3 2 b3 R, a half-bar REST, then the same
+five landing on the 4th, x4 + x4); 29–36 octave pairs on straight 8ths, eight
+identical bars (x7); 52–67 one octave strike a bar (x10); 68–83 the push (x16,
+**the most repeated bar in the file**, added to the stack in r41).
+
+**A CORRECTION TO r40.** `sr_octave_bass_hold`'s source says "attack on titan
+bars 0–7: the bass held as an octave pair for the whole bar". Measured, bars 0–7
+strike TWICE a bar and the second hit wanders; what that row actually describes
+is bars 52–67. The row is left alone (it is judged material on four songs) and
+the opening is encoded separately as `sr_bass_oct_wander`.
+
+**"Falling instead of rising" is in the source he pointed at.** Bars 68–83
+alternate: the even bars arch in 8th pairs (that is `sr_gallop`, x4) and the odd
+bars play the same pair rhythm DESCENDING (x4) — now `sr_gallop_fall`.
+
+Five more from the other energetic files, each its file's most- or
+second-most-repeated bass bar: Muzan's 3+3+2 dyad tresillo (x8) and its push
+with a fifth on beat 3 (x4); Zoltraak's bass walking DOWN inside the bar (x9)
+and its root-plus-fifth pump (x4); the octave alternation from A world where the
+sun never rises (x7 — his own r28 words for that shape, about a layer he liked:
+"low high high low low repeat"); and ReawakeR's bass that never strikes the
+downbeat (x5).
+
+### What was built
+
+**17 new figure rows** in `src/lib/serious-layers.js` — **9 measured, 8 his ask**
+after the provenance pass below moved two of them across that line. Provenance is machine-checked both ways: a source opens with `§` (the
+read-out section) or with `HIS ASK`, and a test fails if `invented: true` and
+the wording disagree. A variation presented as a measurement is how a lab stops
+being evidence.
+
+The six he asked for by name: `sr_cell_fall` (the control mirrored),
+`sr_cell_root_return` ("3 notes instead of 4 where the fourth note is the root
+again"), `sr_cell_arch`, `sr_cell_step` (scale steps, s2/s4 so no bare 2nd or
+4th can spell a foreign pitch — D101), `sr_cell_open5` (no third at all),
+`sr_cell_oct_leap`. **Every cell variant shares the control's onsets and accents
+byte for byte** (`cellPair()` builds them from two beat patterns), so the only
+thing that moves between those cards is the pitch shape — D139's fake-A/B law,
+pinned by a test.
+
+**`seriousSpec({ figures: { <slot>: <name> } })`** — a per-slot figure override
+resolved BY NAME, throwing on an unknown figure AND on an id that is not a
+figure slot in that stack, so a typo can never fall back to the stack's default
+and ship the wrong card. An overridden figure brings **its own measured
+octave**: these rows were transcribed at particular registers (the fifth pump is
+a root-and-fifth line at octave 2; the octave-pair basses are R.R+ at octave 1)
+and forcing them all to the slot's octave is D118's "an octave parameter is not
+a register" from the other side.
+
+**audition/cells.html (CELLS=1) — 23 cards, one bed, one variable.** Every card
+is the same song under the same NAME (D120: an A/B built under two names is
+testing the names) and is renamed after: same key, same cast, same tempo, same
+loops, same kit, same theme. Nine cell cards, ten bass cards, four riff cards.
+
+**"I want to hear them individually" is the ARRANGEMENT, not a solo button.**
+The layer under test enters ALONE in the 8-bar intro — which is how the source
+introduces its own cell, bars 9–20 being the left hand with nothing under it —
+and the build enters on top of it one layer per 8-bar section (bass, chords, the
+theme an octave below). Two supporting pieces: `vf_form_lab` (intro 8 + A B A =
+32 bars, ~55 s, because twenty-three cards of a 64-bar form is 40 minutes of
+listening to judge one figure), and `opts.introDrums: false`, because r39 gave
+the letter-less intro a `statement` archetype precisely SO the kit would play
+under an intro riff — right for a song, wrong for a card whose whole point is
+one figure by itself. Measured: the intro carries the tested layer and nothing
+else but the one-shot that leads into the first section.
+
+Everything that is not the variable is pinned: `noHandoff`, `varyLeadVoice:
+false` and `leadSound: 'gm_trumpet'` (a handoff or the saw↔square vary would
+swap the tune's voice mid-card), the form's own bass/pad/synth-hook stood down
+so the stack owns every added layer, and the two sung-voice riders dropped since
+no voice is sung here.
+
+### Verified
+
+- **23 of 23 cards realize a DISTINCT mix.** No variant collapses onto another,
+  and no two cards test the same figure.
+- **The intro is one layer.** Measured on `stack(mix)`: bars 0–7 carry
+  gm_cello (or gm_contrabass) and the seam one-shot, nothing else.
+- **0 of 10 judged pages moved** — songs (47), serious (11), band, vocal,
+  vocaloid, vocalab, vocarock, layerstack, reels, energy, compared on music
+  fields against copies taken before the first edit.
+- **Every card realizes the shape its text claims**, measured on the bound notes
+  rather than on the data: inside each beat group the control is 32 rising
+  intervals and 0 falling (+7.8 semitones first-to-last), `sr_cell_fall` is its
+  exact mirror (0 up, 32 down, −7.8), `sr_cell_root_return` ends where it began
+  (0.0 net, which is his "the fourth note is the root again"), `sr_cell_step`
+  narrows the span to 6.3 semitones and widens the pitch set to 8 classes,
+  `sr_cell_open5` and `sr_cell_oct_leap` widen the span to 11.0 and 12.0, and
+  `sr_cell_pairs` halves the number of moving groups because every tone is
+  struck twice.
+- **23 renders, 0 failed**, each with a `.mixsig` sidecar; the page reports
+  23/23 HQ and 0 stale. The cello's realized band is midi 33–48 against
+  `strings-sections.sfz`'s 18–80, so nothing folds (D83).
+- **458 tests, 458 pass**, six of them new.
+
+### THE PROVENANCE PASS REFUTED TWO OF MY ELEVEN "MEASURED" ROWS AND CORRECTED SEVEN
+
+This is the check the round was designed around — an agent re-opening each cited
+MIDI and reproducing the claim — and it was worth every minute. **He judges the
+CARD, and the card says where the shape came from**; a variation dressed as a
+transcription contaminates the verdict it is there to collect. All ten are fixed,
+in the row AND in the card text, and the five whose notes moved were re-rendered.
+
+**REFUTED (2).**
+
+- **`sr_gallop_fall` was not a descent, and the file plays something more
+  interesting than the one I wrote.** Attack on titan bars 69/71/73/75 sound
+  Eb4 Eb4, C4 C4, D4 D4, Bb3 Bb3 — **identical in all four bars over a bass that
+  MOVES** (C2, then G#1), i.e. a FROZEN cell, which is D120's device arriving
+  from a second independent source. Its contour turns rather than falling
+  (63 → 60 → **62** → 58) and **zero of the four pitch positions** match my
+  tokens on either root. The pair rhythm and the ×4 are real; the descent is
+  mine. The row is now `invented: true` and the card says "the pair rhythm is
+  attack on titan's; the descent is NOT".
+- **`sr_bass_offbeat`'s headline "no downbeat at all" is false.** ReawakeR bars
+  1–5 strike F#3 on every downbeat — six onsets, not five. What is missing on
+  beat 1 is the WEIGHT (the low pair does not arrive until the & of 1). The
+  onset is added and the card now says that.
+
+**CORRECTED (7), each in the row's own source string.** `sr_cell_neighbor`'s
+tail was an 11-semitone error — the source's two closing 16ths are D#2, the
+raised leading tone BELOW the root and the lowest note in the bar, where I wrote
+`s7` above it; the dialect cannot spell a note under its own root (`~-12` is
+invalid), so the row now carries the twenty events that are exact and states
+what it omits. `sr_cell_pairs` is relabelled `invented` — its DEVICE verifies at
+85.3% of that section's pair heads, but the source plays 8ths in the riff
+register and the row writes 16ths in the cell register on its own pitches.
+`sr_bass_332` is ×10 and the file's SECOND most repeated bass bar (the most
+repeated is an 8th push at ×14). `sr_bass_fifth_pump` is ×3 and every "fifth" is
+a fifth-plus-octave DYAD. `sr_bass_oct_alt`'s run is bars 66–73 ×8. 
+`sr_bass_walk_down` mixed two voice readings — the source's top voice turns UP
+to the octave before it falls. `sr_bass_oct_wander`'s "two strikes a bar" holds
+in 6 of its 8 bars. `sr_bass_push5`'s beat 3 is a dyad, not a lone fifth.
+
+**Two rows survived untouched:** `sr_bass_oct8ths` (onsets, intervals and ×7 all
+exact) and `sr_pedal_cell`, r40's own row, which reproduces E2 E2 G2 B2 / E2 E2
+G2 C3 exactly — that reproduction is also what calibrated the bar numbering, so
+the other ten verdicts rest on it.
+
+### What else the adversarial pass refuted, and what changed because of it
+
+- **"Every card differs from every other card in one figure" is false as
+  written, and it is now stated correctly.** It holds WITHIN a group — every
+  non-tested layer is bit-for-bit identical, with one realization each of every
+  other sound — and NOT across the cell/bass/riff boundary, because each group's
+  tested layer has to enter alone, so the lab stacks give the same slots
+  different entry points and gains. The comparison set is the group; the page
+  header and the source comment say so now.
+- **THREE OF THE FOUR RIFF CARDS WERE THIN AT THE BOTTOM, AND THAT WAS MY BED,
+  NOT THE PATTERN.** The riff figures seat an octave-plus above the cell ones,
+  so with the form's own bass stood down the only low layer left was the 2-per-
+  bar pedal: measured, `cl_riff_gallop` / `cl_riff_fall` / `cl_riff_332` carried
+  a summed gain of 13.6–17.4 under midi 48 against the cell control's 132.3 —
+  **7.6–9.7× less** — while 34–77% of their own notes sat inside the lead
+  trumpet's realized range. Judging a pattern through that is judging my
+  arrangement. `sr_stack_lab_riff` gives the riff group the octave push the
+  source itself plays that riff over (attack on titan bars 68–83); re-measured
+  **13.6 → 46.6**, and the four cards were re-rendered.
+- **One over-claim in my own comment.** "The cell variants share the control's
+  onsets and accents" is true of eight of the nine cell cards; `sr_cell_neighbor`
+  is a measured figure with a half-bar rest (352 onsets against 512). The card
+  always said so; the comment now does too.
+- **SIX OF THE 23 CARDS NEVER RESOLVE THE CELL'S COLOUR TONE, AND THAT IS WHAT
+  THE SOURCE PLAYS.** The grammar sweep measured the variable slot against
+  D101's resolution law: `sr_pedal_cell` and the three variants that keep its
+  shape, plus `sr_cell_oct_leap` and `sr_gallop`, carry 12.5–25% non-chord tones
+  with **0% step-resolution** — the alternate-bar raise lands on the cell's LAST
+  sixteenth and the next note is the root a fourth or fifth away, so the colour
+  tone never steps anywhere. Every tone is diatonic; the defect, if his ear calls
+  it one, is the exit rather than the pitch. It is NOT silently "fixed" here:
+  the control is a transcription of bars 9–20 and that is what those bars do.
+  What the lab can now settle is whether he prefers the three that DO resolve —
+  `sr_cell_step` 63.5%, `sr_cell_neighbor` 61.5%, `sr_gallop_fall` 50.0% — and
+  the mechanism is identical in all three: a step after the colour tone, which
+  is exactly what attack on titan's own bars 21–28 figure plays.
+- **Two findings about the BED, not the variable, both identical on all 23
+  cards** (the melody tier is one line counted 23 times): the lead is **16.9%
+  stepwise** against r33's 28–57% band because **44.1% of its intervals are
+  unisons and none merge** — the theme/vocal-writer path does not apply the
+  "consecutive same-pitch notes MERGE" law that bindMelody does; and the
+  companion takes **17.9% leaps beyond a fifth against its own lead's 8.5%**,
+  i.e. leapier than the line it shadows, which inverts D102's companion shape.
+  Both reach the serious page, not just this lab. Recorded, not acted on.
+- **Zero out-of-key parks.** All 93 candidate instances are G# over E7 — the
+  leading tone as a chord tone of V7 in A harmonic minor. The one shape the
+  references essentially never write (a chromatic drone) does not occur.
+- **A measurement trap worth carrying forward:** `song.symbols` is the A-loop
+  only, so the naive `bar % symbols.length` labelling mislabels bars 16–23 (the
+  chorus loop, Am G F G) — 25% of this page — and it moves flag verdicts in BOTH
+  directions (the lead reads 23.3% NCT naively and 6.7% against the derived
+  timeline). r33's L5 trap, live on a new page.
+- **The A/B is level-matched where it counts, which nobody had checked.** The
+  critic's strongest concern was a 10.3 dB spread in per-onset gain summed over
+  time — "he will hear which is louder, not which pattern". Measured on the
+  RENDERED WAVS, the thing he actually plays: 23 files, integrated loudness
+  **−14.3 to −13.8 LUFS, a spread of 0.5 LU**. The render tier's loudnorm closes
+  the symbolic gap. Every number in a verification being symbolic is a real
+  gap in the standing workflow; this one is now closed by an ffmpeg one-liner.
+- **`sr_ashes` and `sr_summit` have renders older than the sidecar mechanism**
+  (13:01 and 13:11, before r41 began writing `.mixsig`), so the page makes no
+  staleness claim about them either way — "no sidecar = unknown, not stale" is
+  the documented behaviour, and backfilling a sidecar we cannot prove would be
+  claiming currency rather than measuring it. What IS proven: both are pinned,
+  and both are byte-identical on music fields across every r42 build. The same
+  holds for all 47 wavs behind songs.html. Closing that properly means
+  re-rendering, which is its own decision.
+- **`letters` reads `["A","B","B*"]` on a form whose third section is an A.**
+  Cosmetic on the card, but `B*` is the statement-salt key (D97/D102), so a
+  mislabelled letter is a live re-roll vector for anything that keys on it
+  later. Identical on all 23 cards, so it confounds nothing here. Recorded.
+- **Not a defect, but worth recording:** the accompaniment hand runs at
+  **0.858× the lead's realized mean on all 23 cards** — D122's un-scoped acc
+  band (the piano band's top is a flat 1.0 and the r32 cap was scoped to
+  reel-faithful cards). Under the lead, so D77 holds; identical on every card,
+  so it cannot confound the A/B; still the loudest thing under the tune.
+
+### Three findings that are not his ask
+
+**(a) A GUARD THAT HAS NEVER FIRED, AND THE PAGE HE APPROVED IS THE PROOF.**
+r41's bass stand-down reads `SERIOUS_FIGURES[f]?.events?.length`; the field is
+`onsets`, so `bassOnsets` returns 0 for every figure and the rule is dead on
+every unpinned row. MEASURED on the judged page: **six songs, not four** — the
+verify pass corrected the count I first wrote from the code comment. sr_gate,
+sr_oath, sr_duel, sr_hunt, sr_vanguard and sr_resolve all carry `_vf_bass`
+(gm_synth_bass_1, 4+ onsets a bar) ALONGSIDE the stack's own moving bass — the
+double-booking r40 removed and r41 believed it was keeping removed. **Left exactly as it sounds, deliberately:** his verdict on
+this build is "it's better!" with the r41 bass complaint gone, and reading
+`onsets` would delete a bass from four songs he has just approved. The line now
+carries a comment saying the page runs two basses rather than pretending the
+guard is live; whichever round next touches the low end decides it with a card
+each way.
+
+**(b) FOUR SUNG PAGES ON DISK ARE STALE BUILDS.** Rebuilding vocal.html,
+vocaloid.html and vocarock.html moves 11 songs, and every single change is
+r41's own seam constant (`vc_cym_cresc:0` at `.late(0.86)` → `.late(0.8917)`,
+1.44 s → 1.40 s) plus the drum-info wording — r41 rebuilt songs.html and
+serious.html and not these. vocalab.html is older still: it predates
+`mixInstrumental` (r37) and its companion lines have moved. **The four pages
+were restored to the bytes he last saw**; refreshing them is a decision with a
+consequence (their renders would immediately, and correctly, show HQ STALE), so
+it is his call, not a side effect of a round about patterns.
+
+**(c) THE songs.html DETERMINISM FLAKE IS NOT WHAT r41 THOUGHT.** r41 recorded
+it as "several test files each run the generator". They do not — songs.test.js
+is the only file that executes it. What the others do is rewrite the
+generator's INPUT: test/facets.test.js and test/foundations.test.js run
+`import-verdicts.mjs <fixture>`, which overwrites `src/lib/verdicts.js` and
+restores it in a finally, and node --test runs files in parallel.
+
+A before/after byte check on verdicts.js does NOT catch it, and trying that
+first is how the mechanism was confirmed: the foreign write AND its restore both
+land inside the window, so the file looks unchanged at both ends while the build
+in the middle saw something else. The fix is mutual exclusion —
+`test/_verdicts-lock.mjs`, an atomic `mkdirSync` lock (stale locks stolen after
+180 s so a crashed run cannot wedge the suite) taken by the three writers around
+their mutation and by songs.test.js around its build pair. **Three consecutive
+full-suite runs at 458/458** where the same suite failed roughly two runs in
+three before. A retry-until-green would have hidden real drift; the VOID
+precondition check stays as a second line of defence if the lock is ever
+stolen.
+
+**(d) THE CINEMATIC KIT'S SNARE IS THE QUIETEST SAMPLE IN ITS OWN FOLDER.** The
+balance stage clamped `vc_snare_mil` on 2 of the 23 renders — it wanted +25.4 dB
+and the ceiling is +21.6, so the snare sits 3.8 dB under its target there.
+Cause, measured: `vc_snare_mil` points at `RopeSnare_stick_Main_vl1` — velocity
+layer ONE of the stick-on-rim articulation, −48.5 LUFS — while the same VCSL
+folder carries `Hi/RopeSnare_hi_sn_Main_vl4` at −34.6 LUFS, **13.9 dB louder**
+and struck on the head rather than the rim. That is a second, independent cause
+for "the percussion isn't serious" (r41 answered the kit CHOICE; this is the
+SAMPLE), and it is left alone here because re-pointing it re-renders every
+cinematic-kit song on two pages. Recorded with the numbers for the percussion
+round.
+
+Also completed here: **`render-hq-pages.mjs --page <file> [--only <regex>]`**,
+so a new page no longer needs a bespoke render script, and it writes the
+`.mixsig` sidecar that r41 added to the vocal path only — an HQ-only page had no
+staleness protection at all, which is the trap that cost him half of his second
+serious export.
+
+## D148 — r43: his second pattern export — the grid law, the bass that has its own melody, the vibraphone found on the sixth card, and a lab you can combine layers in (2026-09-13)
+
+His export on `audition/cells.html`: 21 keeps of 23, 14 notes. Then the ask, verbatim:
+
+> create a lab where you create more of these and extract more from our energetic
+> MIDI songs to analyze.
+>
+> next lab, allow me to combine different layers by enabling multiple at a time,
+> then press something to leave a note either individually for that song or for
+> the group, and i can do this multiple times with an extensive list with a
+> diversity of serious ones
+
+Read-out: `research/cells-r43.md`. Page: `audition/mixlab.html` (`MIXLAB=1`).
+
+### 1. TWO OF HIS NOTES WERE THE SAME SYMPTOM AND TWO DIFFERENT BUGS, BOTH MINE
+
+> `cl_cell_neighbor` — "I feel like it's not 4/4 - the next chord is always coming
+> in like an eight note too soon which should happened. this works"
+>
+> `cl_riff_motor16` — "should be aligned by measure - the next chord shouldn't come
+> in like a half step early"
+
+**(a) A TRIPLET FIGURE WAS WRITTEN ON A SIXTEENTH GRID.** Re-measured at ppq 96,
+The Raising Fighting Spirit's left hand hits ticks 0/96/128/160/192/256/320/352 from
+bar 8 on — every one an exact multiple of **32**, which is a triplet eighth. In
+twelfths: `0 3 4 5 6 8 10 11`. r40 wrote sixteenths `0 4 5 7 8 11 13 15`, so five of
+eight onsets sit a third of a sixteenth out and the last was pushed from 11/12 to
+**15/16, hard against the barline where the source leaves a gap**. That last onset is
+his "half step early". The pitches were wrong too: `R.5` throughout, where the source
+strikes root+fifth+**octave** on the downbeat and the half bar.
+
+**(b) A TWO-VOICE TEXTURE SHIPPED WITHOUT THE VOICE THAT CARRIES THE METER.** attack
+on titan bars 21–28 sound all sixteen sixteenths across two hands. The lower voice is
+`sr_cell_neighbor` — all twenty of its events are exact, the r42 transcription is
+right — and the upper voice is `sr_pedal_cell` itself an octave up, filling the
+lower one's holes at slots 5–8 and 14–15. Alone, the lower voice groups the bar
+5 + 4 rest + 5 + 2 rest: the second group starts a sixteenth after beat 3 and the bar
+ends two sixteenths early. His ear described that exactly. It is a property of the
+r42 A/B — which swapped the figure into a slot that plays alone — not of the file.
+
+**THE RULE: A FIGURE THAT DOES NOT TILE ITS OWN BAR NAMES THE PARTNER THAT FILLS IT**
+(`partial` / `fills`), and a test over every running (`arp`) ostinato requires a rest
+of a quarter bar or more to be followed by an onset ON A BEAT. Scoped to `arp`
+deliberately: scoping it wider flagged the 3+3+2 tresillo, which is the most legible
+syncopation in the literature and not a defect. The grid check is separate and
+general — every onset must be an exact multiple of 1/grid for the grid its row
+declares.
+
+Both r42 rows stay in the library. The corrected ones sit beside them in the
+combination lab, because straight-versus-swung is an ear question and `sr_duel` /
+`sr_vanguard` were judged on the straight one.
+
+### 2. THE MINE, AND THE GRID THE LIBRARY DID NOT HAVE
+
+52 files (his ten serious references + the 43-file Vocaloid set; one skipped for 3/4),
+repeated one-bar cells counted in three register bands, transposition-invariant
+signature, **grid 48** — the LCM of sixteenths and triplet eighths, because after §1(a)
+a miner that can only see sixteenths is the thing that caused the bug.
+
+984 cells repeating three times or more. **84 of them (8.5%) are triplet-grid, and
+`SERIOUS_FIGURES` contained not one.** One in twelve repeated cells in his own
+reference material was on a grid this engine could not write.
+
+18 rows added. The four his bass notes asked for ("of course, can also have its own
+melody too — think everything you learned from the walking bass stuff") come from the
+251 low-band cells carrying three or more distinct degrees in the LINE: `sr_bass_walk4`
+(Two Breaths Walking x16 — four beats, four degrees, nothing repeated),
+`sr_bass_line_arp` (x16), `sr_bass_synco_root5` (Rolling Girl **x45**, the most
+repeated low bar in the entire mine, and it has no downbeat at all) and
+`sr_bass_synco_down` (x26). Also: `sr_riff_run_down` is **his "falling instead of
+rising", measured** — where r42 had to mark `sr_gallop_fall` invented because the file
+it claimed refused to descend.
+
+Every xN in a row's source is the count of the EXACT onset-and-interval cell,
+re-counted by a second script sharing no code with the miner: exact on all six
+spot-checks. Counting the rhythm alone gives larger numbers (walk4 35 rather than 16,
+line_arp 77 rather than 16), so the rows understate rather than overstate — which is
+the direction a provenance claim should err in, and the opposite of the two false
+MEASURED labels r42's verify pass had to refute.
+
+### 3. THE VIBRAPHONE, FOUND ON THE SIXTH CARD — AND r41 FIXED THE WRONG LAYER
+
+Five cards on the r41 serious page and now a sixth on the pattern lab, all one thing:
+"the pitched percussion in the harmony should be replaced with another instrument"
+(x3), "the vibraphone isn't too serious", "the vibraphone or whatever that pitched
+percussive instrument still makes it a bit less serious (the one in the harmony that
+does the chord repeats and stuff, NOT the one that plays the melody)", and
+"I dont think the vibraphone conveys tense or fight at all".
+
+**r41 read it as the COMPANION.** That fix was real — gm_vibraphone is gone from the
+companion on 10 of 11 rows, measured — and the complaint came back anyway. The layer
+he describes is the **ACCOMPANIMENT HAND**: it is the harmony, it does the chord
+repeats, it is not the melody, and `gm_epiano1` is a pitched-percussive keyboard. The
+r41 replacement was a church organ, which nobody would call a vibraphone.
+
+It took six cards because on serious.html the e-piano is one of seventeen sounds and
+544 of 5007 notes; on the sparse pattern-lab bed it is the **second loudest thing in
+the mix**. His ear found it the moment the density dropped. **A layer can be wrong for
+six rounds and only become audible when something else gets quieter.**
+
+And it was louder than the tune. Against the INSTRUMENTAL TWIN (never the ducked
+`_lead` — D145): 0.79–1.36x before, **0.58–0.99x after**; against the ducked lead,
+1.88–2.05x on all six. D122 measured this band at 1.15x on the reels page, fixed it
+for reel-faithful cards only and recorded that the general band "reaches all 47 judged
+songs and that is a round of its own". Picked up here for six rows.
+
+**SCOPING IT COST TWO ATTEMPTS AND BOTH FAILURES ARE THE LESSON.** Keyed on the LANE
+(`opts.serious`) it moved nine songs instead of six — three prose keeps among them
+("I really like this a lot ... love the piano vst", "I like it! no complaints") and
+**all 23 cards of the judged pattern lab**. Switched to `pinFrom: 'r43'` on those rows
+it was worse: `pinFrom` flips every bare `!opts.pinFrom` gate, so **the pin MOVED two
+of the songs it was added to protect**, one of them on its harmony — D123's catch-22,
+third instance, and the second time in this project that a pin has destroyed what it
+was added to defend. Shipped scope: one opt, `seriousAcc`, on the six rows whose notes
+name the layer. It can reach nothing else by construction. Six of eleven moved;
+cells.html moved zero of 23.
+
+`sr_loopcat` still runs its electric piano at 1.51x the tune. It is the goofy control
+row, its note is "I like it!", and judged material is frozen even when it is wrong.
+
+### 4. A PAGE NAMED ITS PROGRESSION AND PLAYED SOMETHING ELSE (D119's shape again)
+
+`basePin` is set from the vocaloid form's VERSE loop and resolved through a lookup
+that knows seven progression tables. When the serious pack arrived in r40, its ten
+loops were never added to it — so `basePinned` came back **null on every serious row**
+and the song fell through to the hash-picked exemplar and the variation pass.
+
+Measured: serious.html declares `sr_loop_shuttle_i_bVII` (`i bVII i bVII`) on sr_gate
+and plays `VI VII Isus VI VII im VII VII^7 #vim`. The r42 pattern lab declares the same
+loop and plays a YNW Melly pop progression. The first combination-lab build declared
+`i bVII i bVII` and played `III^7 bII^7 III^7 bV` — **a bII and a bV, out of key, on a
+bed meant to be Aeolian**.
+
+This is D100's reel finding verbatim on a table added two rounds later: *"the four reel
+progressions were silently ignored and the songs built on them came out on unrelated
+exemplars — the build looked green and the music was wrong."* **When a page names a
+row from a NEW table, check the lookup that resolves it knows that table.**
+
+Gated on `opts.loopHarmony` (+ `rawBase`), not fixed in place: making it general
+rewrites the harmony of 11 serious songs and 23 judged cards, and a kept song's degrees
+are the degrees he judged (D64). The combination lab opts in; the judged pages keep
+what they were judged on until he rules.
+
+### 5. THE COMBINATION LAB
+
+Nine beds — nine progressions, nine tempos 88–152, one of them serious CALM.
+**51 layers per bed**, each bound separately and sounding all 32 bars. Three
+constraints, each a consequence of something already in this ledger:
+
+- **flat form, every stack entry at `at: -1`.** The entry SCHEDULE is what
+  `sr_stack_titan` and the r42 lab exist to test; running it here would leave a ticked
+  layer silent for sixteen bars and make the checkbox a lie.
+- **within a group ONE voice, across groups different voices.** A cell-for-cell swap
+  must be a pure pattern A/B (D139); a combination must stay legible, which is register
+  and timbre and not rhythm (D102). The `acc` group is the deliberate exception — one
+  figure on four voices — because there the variable IS the instrument, and that puts
+  §3 in front of his ear instead of asking him to trust my choice.
+- **no HQ renders, and the page says so.** 51 layers is more combinations than can be
+  pre-rendered; he listens with HQ on, so the header says the page is for judging
+  PATTERNS and COMBINATIONS, not timbre.
+
+Notes: three targets (LAYER / GROUP / COMBINATION) accumulating in a list rather than
+overwriting a box — his "i can do this multiple times" — and **every note records the
+exact selection that was sounding**, because a note about "the bass" otherwise names
+one of sixteen basses under one of fifty other layers. `import-verdicts.mjs` merges
+them into `LAYER_NOTES` / `GROUP_NOTES` / `COMBO_NOTES`, deduplicated on text +
+selection. Nothing in the generator reads those bags: a bag the engine reads is a bag
+that can re-roll a judged song (D95).
+
+Also: a combination-lab export is not a verdict map, and the importer's bare fallback
+treats an unrecognised object as `{name: verdict}` — so without an explicit clause the
+page tag itself is read as a verdict and the import dies. There is no keep/kill on that
+page by design: a verdict on whatever happened to be ticked is not a verdict on
+anything reproducible.
+
+### 6. THE LAB FOUND A BUG ON ITS FIRST BUILD: THE THIRD BELOW IS SOMETIMES A SIXTH ABOVE
+
+`themeThird` asks the vocal writer for the lead's own spec shifted **−2 scale
+degrees** at the SAME octave. Measured across the nine combination-lab beds, **0–22%
+of its shared onsets sit ABOVE the lead**, and every single one of them is exactly
+*(the correct third below) + 12* — the degree shift wraps inside the octave instead of
+descending out of it.
+
+Not a range clamp, and the check that proves it: the numbers are **bit-identical**
+with `gm_bassoon` (declared range [2,4]) substituted for `gm_viola` ([3,5]). A first
+diagnosis of "the voice's floor folds it up" was wrong and the substitution refuted it
+in one build.
+
+`audition/serious.html` measures 0% on all seven rows that carry theme3 — not because
+it is correct there but because theme3 enters at a LATE tune section and never covers
+the bars where the tune dips. **A flat form is a stronger test than a build schedule**:
+running every layer over every bar is what exposed it.
+
+Left in the lab with the caveat printed on the chip rather than silently dropped — it
+is one of his measured support devices ("63–100% of theme strikes carry a second note
+struck with them"), and a layer judged badly for a reason that is not the pattern is
+worse than one judged knowingly. The fix is in the writer's degree shift, which the
+judged serious page also uses, so it is a change of its own.
+
+### 7. HIS TWO FOLLOW-UPS, SAME SESSION
+
+> "can you allow HQ on for all of them because otherwise the strings dont sound good"
+>
+> "along with cello there should also be a repeat on violin like an octave up or
+> something because its all strings."
+
+**THE HQ ASK CANNOT BE ANSWERED THE WAY IT IS WORDED, AND THAT IS THE INTERESTING
+PART.** 64 togglable layers is 2^64 mixes; per-layer stems played back as
+synchronised `<audio>` elements were the only pre-render design that reaches
+arbitrary combinations, and they buy a start-skew/drift risk I cannot measure from
+here on top of ~300 MB and hours of rendering. So the fix went the other way: **give
+the BROWSER tier the renderer's own samples.** `kind: 'vsco'` in the sample pack reads
+a VSCO section folder, takes the loud velocity layer per note, applies the SAME
+de-swell offset sfizz uses, and encodes it into the local data-URI pack. Four new
+voices — `vsco_cello` (13 notes), `vsco_violin` (11), `vsco_viola` (13), `vsco_bass`
+(13) — and **44 of the lab's 64 layers now play them**, which is every string layer on
+the page. Pack 13.75 → 14.80 MB.
+
+Two details that are the whole difference between this working and not:
+
+- **The de-swell had to come along.** VSCO's section sustains reach half their peak
+  1.1–3.2 s in (D138, his "starts really soft and then becomes really loud"). A naive
+  folder-to-map build would have shipped that defect on the samples added to fix a
+  timbre complaint. The offset is measured by the same function the SFZ builder uses,
+  now extracted to `src/ingest/swell.js` — importing it from `build-sfz.mjs` re-ran
+  that script's whole top-level body as a side effect, so a sample-pack build was
+  silently regenerating every SFZ. Deterministic, so nothing moved, but a build step
+  that rebuilds an unrelated tier on import is a trap waiting for the library to change.
+- **PAGE-SCOPED NAMES.** `vsco_*`, never `gm_cello`. The local pack is loaded by every
+  audition page, so naming these after the GM voices would have re-timbred every judged
+  song in the project — D91 arriving through the sample tier, the same shape as r39's
+  "a vocal-tier default is a page pin, never a renderer default". `envOnly: []` and
+  `parts: []` so the planner can never cast them; a test counts their ASSIGNMENTS and
+  fails if one appears outside the lab's sound map; and all six judged pages byte-
+  compared at 0 after the additions. They also carry HQ entries pointing at the same
+  patch, so the two tiers cannot disagree exactly where this was meant to make them agree.
+
+**The violin double** is one entry per cell — thirteen of them, its own group, `vsco_violin`
+at octave 3 against the cell's 2, at 0.34 against the cell's 0.5 (support stays under
+the line it doubles). Verified the way D139 requires, by REALIZED interval and not by
+the octave parameter: **every note of all thirteen is exactly +12**, 512/512 on the
+full cells, and the double's median sits at midi 54 against a lead of 66. Each is its
+own checkbox rather than riding automatically — a doubling that cannot be switched off
+is not something his ear can rule on.
+
+### 8. THE VERIFY PASS
+
+Eight of eleven agents returned; the grammar, ratios and critic lanes died on an auth
+error, so this round's sweep is the stability + claims half only. What it found:
+
+**Stability: clean.** Exactly the six intended songs moved on serious; songs 47/47,
+cells 23/23 music-identical (one card, `cl_cell_neighbor`, moved in `why`/`vibeNotes`
+only — the r43 note about it being the lower voice), niche lanes 17/17, every
+`grammarPin`/`pinFrom` song identical in both music and text. **The (time, midi)
+multiset is IDENTICAL on all six movers** — 5007/3988/4528/5023/5599/5435 onsets
+unchanged. Not one note moved; the change is voice and gain only.
+
+**A FINDING I HAD MISSED, inside the six movers: the voice/gain edit silently
+re-rolled the entry stagger.** `entryPlan` orders co-entering layers by
+`fnv(exprs[a])` — the hash of the layer's own EXPRESSION STRING — so changing
+`gm_epiano1`→`piano` and the acc's gain numbers re-sorted the group. **27 of 168 entry
+envelopes changed stagger slot, and 13 swapped crescendo shape — 8 lost the six-bar
+ramp and 5 gained it.** Bidirectional, which is the signature of a re-roll rather than
+a fix, and the eight losses partially undo r41/D146's answer to his sr_ashes card
+("it should ease into its volume more fluidly rather than appear at that volume").
+NOT fixed this round, deliberately: any stable re-seed changes the stagger on every
+song that uses `entryPlan`, so doing it in the same round as the voice change would
+put two changes under one ear test. It is D122's shape — measured, written down,
+picked up on purpose next time.
+
+**The verifier corrected itself three times and said so**, which is the habit working:
+a `gain < 0.02` filter of its own making reported the note multiset as moved on five of
+six (the `.mul(gain)` ramp-zero trap); a greedy regex mis-tagged sr_resolve as pinned;
+and its first D77 read took the lead BY SOUND NAME, where `gm_lead_2_sawtooth` is also
+the riff on four of these rows — the shared-sound trap, and a new instance of the
+measure-in-the-mix family. All three were re-derived with acorn against a frozen copy
+of the pages.
+
+### 9. "A DAMPER PEDAL", AND "CONTROL DYNAMICS" — both his, both mine, both measured
+
+> "i feel like there's a damper petal or something because all of them have a lot of
+> reverb and duration. moreover, control dynamics - they're all pretty med-soft
+> dynamics and as i combine them it balances so i can actually hear the combinations"
+
+**(a) THE DAMPER PEDAL IS A MISSING `clip`, AND §7 MADE IT WORSE.** A serious-stack
+figure layer got `.room(0.2)` and no clip at all, so every note played its sample to
+the end. On the GM soundfont that was survivable. On the VSCO banks added hours
+earlier in this same round the sample is a **3-second sustain**, and a sixteenth at
+140 bpm is **0.107 s** — each note rang ~28x too long, so the cell had roughly 45
+copies of itself sounding at any instant. Measured: **43 of the lab's 64 layers
+carried no clip**. A fix for timbre created a fault in articulation, which is the
+cost of changing a sample set without re-checking what shapes the notes.
+
+**AND THE FIRST FIX WAS NOT ENOUGH — HIS FOLLOW-UP IS THE USEFUL PART.** With every
+layer clipped and the room cut to 0.08 he still heard it: *"i still feel like it's
+held for so long. like even when i just play one cell, it like fills up everything and
+is really wet and when i hit stop it reverberates for like a few more secs before
+stopping."*
+
+That last clause names the mechanism. **A reverb send outlives `hush`** — stopping the
+pattern stops the sources and the convolution tail keeps ringing, so ANY send at all
+survives the stop button. And "held for so long" on a single cell says the note-length
+control was not reaching the sampler, which is not something this repo can verify
+without a browser.
+
+So the second pass removed the uncertainty instead of tuning it:
+
+- **The SAMPLE is short now.** 3 s → 1.0 s for the two sixteenth-note banks, 1.4 s for
+  the viola (the theme third), 1.6 s for the bass (whose longest written note is a
+  whole bar), with a 0.25 s fade so a cut bowed sustain does not click. Nothing
+  downstream can make a one-second sample ring for three. Pack 14.80 → 13.92 MB.
+- **The lab is DRY.** No `.room()` anywhere on the page — not the figures, not the
+  harmony hand, not the tune — plus an explicit `.release(0.05)` so note-off is
+  immediate rather than left to the sample's own decay.
+- **Both are knobs.** A fix made blind should not need a round to correct, so reverb
+  (dry / a little / more) and note length (shorter / as built / longer) are buttons on
+  the page. "as built" appends nothing and keeps each layer's own articulation; the
+  overrides say on the tooltip that they flatten it.
+
+Legato/sustain rows clip at 1, everything else at 0.8, bass keeps its 0.9. The default
+`accFx` was the other half of the original fault: `.room(0.25)` and no clip on the
+harmony hand.
+
+**(b) THE ACCENTS WERE COMPRESSED TO ABOUT 1 dB.** `bindFigure` maps an accent
+linearly into its band — `lo + a*(hi-lo)` — and the band was `[0.78g, g]`. The rows
+write accents from **0.55 to 1.0**, so the realized span was 0.88g..1.0g: **a ratio of
+1.14**. Measured across the page: every cello layer realized 0.190–0.208, every acc
+layer 0.238–0.240, the pad 0.198–0.200. That is his "all pretty med-soft dynamics",
+exactly, and it is a written dynamic that never reached the mix — the same family as
+r33's clobbered envelope, by compression rather than replacement.
+
+A band of `[0.1g, g]` realizes 0.6g..1.0g instead. Measured after: cello 0.198–0.296,
+violin 0.134–0.200, bass 0.264–0.360 — **1.36–1.49x, about 3.5 dB**. **The band moves
+DOWNWARD and the ceiling does not**, so D77 is untouched: the loudest note is the same
+note it was. A test pins both halves, because widening a dynamic range by raising the
+top is a D77 breach wearing a dynamics hat.
+
+**(c) BALANCE BY THE TICKED COUNT.** Every layer's level is a fixed fraction of the
+lead, which is correct for one arrangement and wrong for a page where the number of
+sounding layers is a checkbox: seven ticked sits where it was designed, thirty is a
+wash, three is too quiet to judge. The stack is now normalised equal-power against the
+suggested stack — `sqrt(7/n)`, clamped to [0.4, 2.0] — with a visible switch so he can
+hear the raw levels. `.mul(gain())`, never `.gain()`: the second replaces every
+per-note accent underneath it and would have undone (b) in the same breath (r33).
+
+All three are page-scoped on `opts.labDynamics`; `accFx` and `leadFx` are shared with
+every song in the project, so the byte-compare after this change is the whole proof —
+songs 47/47, cells 23/23, layerstack, reels, energy and band all 0, serious still
+exactly its six.
+
+### Verified
+
+472/472 tests (+14). Of eleven built pages, only the six intended serious rows moved on
+music fields; songs.html, cells.html, layerstack, reels, energy, band, vocal, vocarock
+and vocaloid all 0. Six serious songs re-rendered.
+
+## D149 — r43 second pass: "is it just HQ?" — yes, and it was never the reverb (2026-09-14)
+
+His three messages, in order:
+
+> "i still feel like it's held for so long. like even when i just play one cell, it like
+> fills up everything and is reallt wet and when i hit stop it reverberates for like a
+> few more secs before topping"
+
+> "is it just HQ? like it wasn't like this before. however with HQ off it sounds bad.
+> it's still the same amount of wet and i cant layer them properly cus its too reverby"
+> … "it also overpowers the violin sound. the violin sounds also really reverby" …
+> "maybe just slow the tempo down by like 50%"
+
+> "although this level of reverb sounds good for really ambiant vibes actually and moody
+> days - it does fit a genre"
+
+**His question was the diagnosis.** "Is it just HQ" is a question about the TIER, and the
+answer is yes — with two independent mechanisms, neither of them reverb, and the first
+pass had fixed neither because it worked on the wrong page.
+
+### 1. THE FIRST PASS FIXED A PAGE HE WAS NOT LISTENING TO
+
+`audition/cells.html` is the page his export came from, the page with one cell per card
+("even when i just play one cell"), and the only one of the two labs **with an HQ button**.
+The first pass took `audition/mixlab.html` dry and left cells at **736 `.room()` calls,
+zero releases and no VSCO samples at all**. Measured, after a pass reported as done.
+
+The lesson is not "check the other page". It is that the round's own note — *"even when i
+just play one cell"* — named the page, and the fix went where the recent work was instead
+of where the words pointed.
+
+### 2. `clip` WORKS. THE BROWSER TIER WAS NEVER THE WET ONE
+
+Read out of the exact bundle the page loads (`@strudel/web@1.1.0`): superdough's sampler
+computes `ee = begin + value.duration` and calls `R.stop(ee + release + 0.01)`, and
+`superdough()` assigns `value.duration = hap.duration / cps` where the hap duration already
+has `clip` multiplied in. So every browser note IS bounded — a 16th at 140 bpm is 0.107 s,
+clipped to 0.086 s, stopped at 0.146 s.
+
+That is why he could hear the difference between HQ on and off, and why **three rounds of
+work on `room` and `clip` changed nothing he could hear.** HQ off "sounds bad" because it
+is the thin GM soundfont, not because it is wet. His sentence separated the two tiers
+exactly and I had been reading it as one complaint.
+
+### 3. THE HQ SMEAR IS `ampeg_release=0.7`, AND IT IS ARITHMETIC
+
+Every string voice on both labs rendered through `vendor/sfz/gen/strings-sections.sfz`,
+which declares `ampeg_release=0.7`. The labs write SIXTEENTHS. So each note sounds for
+0.107 + 0.7 = 0.807 s with a new one every 0.107 s: **about 8 notes of a single cello
+layer sounding at once**, before any second layer is ticked on. That is "it fills up everything",
+it is "i cant layer them properly", and no mix-side control can reach it.
+
+On top of it, `render-hq.mjs` derives each stem's convolution wet from **the page's own
+mean `.room()`** (`applyRoom`, active at ≥ 0.15, wet = room × 1.1) — 0.2–0.4 on cells, so
+22–44% wet. Which is the right design (D144: a tier default is a page pin, never a renderer
+default) and means the page going dry dries the render by itself, with no renderer change.
+
+### 4. THE SAMPLES DO NOT DECAY — AND THE FIRST TABLE HERE WAS MEASURED ON SILENCE
+
+**Corrected after the verify pass. The original table in this entry was wrong, and it was
+wrong because of a bug this round introduced.** `enc()` in `build-sample-pack.mjs` puts
+`-ss` AFTER `-i` — an OUTPUT seek, so the filter graph still counts from the start of the
+file — while computing `afade=t=out:st=trimS−fade` on that source timeline. Wherever the
+de-swell offset reached `trimS − fade`, the fade-out completed before the first surviving
+sample and the note encoded to **digital silence**: measured, **20 of 88 notes in the
+shipped pack, including ALL ELEVEN of `vsco_violin`.**
+
+So "the violin never falls 20 dB" was a silent file, not a sustain. **D85 exactly: a
+suspiciously BAD number is a bug until proven otherwise** — "this bank never decays at
+all" should have stopped me, and instead it became the headline of the round. It also
+re-explains his own words better than my answer did: *"it also overpowers the violin
+sound"* — the violin group was not quiet, **it was not there.**
+
+Re-encoded correctly (fade start moved onto the source timeline), 0 of 88 silent, and the
+conclusion survives in a form that does not depend on file length — median dB below each
+note's own peak half a second later:
+
+| | cello | viola | violin | bass |
+|---|---|---|---|---|
+| **sustain** | −4.8 | −4.7 | −8.5 | −2.7 |
+| **spiccato** | −26.1 | −40.0 | −50.5 | −16.9 |
+
+The sustains do not decay — the cello is **louder at +0.5 s than at +0.25 s**, because it
+is still swelling. The source explains it: VSCO's `susvib` peaks **5.25 s in** and holds
+for eight seconds, so the D138 de-swell takes a slice of a plateau. **Shortening a swell
+does not make a note decay.** And the verify pass's counter-claim — that struck samples
+stop being shorter below C3 — does not survive correct encoding either: note by note at
+the bottom of each range, spiccato is quieter than its sustain twin at +0.5 s on **every**
+low note (0.2 to 35 dB, median ~14).
+
+### 5. THE FIX IS AN ARTICULATION, NOT A MIX SETTING
+
+A struck note needs a struck SAMPLE. Same C3, same measurement: **spic** peaks at 0.10 s
+and is −20 dB down by 0.35 s; **pizzT** peaks at 0.05 s, −20 dB by 0.55 s. VSCO ships both
+for all four sections and they were never used.
+
+- `build-sfz.mjs`: `strings-spiccato.sfz` / `strings-pizz.sfz` (release 0.12 / 0.25) and
+  `contrabass-{spiccato,pizz,sus}.sfz`. **No `skipSwell`** — the de-swell seeks the first
+  window at 80% of peak, which on a struck sample is its ATTACK. (It happens to return 0
+  today via the `len − minLeftSec` clamp; a fix that survives on a coincidence is not one,
+  so `noSwell` states it in the data on the browser side too.)
+- Eight new browser banks + `INSTRUMENTS` entries (`envOnly: []`, `parts: []`) + HQ
+  mappings. All twelve string names now render through a patch that MATCHES THEIR
+  ARTICULATION, and the test pins that property — `ampeg_release ≤ 0.3` for a struck bank
+  — rather than a filename, which would pass the day someone repoints the mapping.
+- **The contrabass leaves the section patch.** `strings-sections.sfz` has 27 cello and 6
+  violin regions and NO contrabass, so every rendered "contrabass" was a cello stretched
+  down — D138's missing-violin defect, one instrument over, found by looking.
+
+### 6. THE CELLS PAGE IS TOUCHED, AND IT IS VOICE-AND-FX ONLY
+
+21 of its 23 cards carry a keep. His note asks for the sound to change, so the change is
+made under the voice-only rule and verified as one: **all 23 cards are byte-identical on
+the (time, midi) multiset**, only `.s()` and the fx move. The ostinato and bass slots take
+the spiccato banks (so HQ-on and HQ-off converge on the same samples — his "with HQ off it
+sounds bad"), `labDynamics` takes the room to zero, and the PAD keeps a sustain, because a
+pad is the one line here that should hold.
+
+`labDynamics` also had to reach the melody RIDERS: after the first pass the page still
+carried 92 `.room(0.4)` calls and every one was the COMPANION on gm_church_organ — and
+since a stem's convolution wet is the mean of its OWN haps, that stem came back 44% wet
+however dry the rest of the page was. **A lab page is dry all the way down or it is not
+dry.**
+
+### 7. HIS GENRE NOTE IS A ROW, NOT A CONCESSION
+
+> "although this level of reverb sounds good for really ambiant vibes actually and moody
+> days - it does fit a genre"
+
+The same three numbers that made his battle cells unlistenable are what he then said fit a
+genre. So the defect and the effect are ONE setting, and the engine should be able to ASK
+for it: `sustain_wash_ambient` in `src/lib/techniques.js`, with the measurement, the tell
+that it is wrong (onsets/bar × decay ≫ 1) and the tell that it is right (nothing rhythmic
+has to be read through it). On the page it is the `sustained` articulation and a reverb
+setting now NAMED "ambient / moody" instead of being the thing to get away from.
+
+### 8. TEMPO — HIS ASK, AND IT IS NOT ONLY A LEGIBILITY KNOB
+
+> "maybe just slow the tempo down by like 50%"
+
+Default 50% on the combination lab, 75% and 100% a click away. At half tempo a 16th is
+0.21 s rather than 0.107, so consecutive notes of one cell stop overlapping **at all** —
+the layers separate as arithmetic, not as taste. The cells page keeps its written tempo
+because its HQ wavs are pre-rendered and a browser-only tempo would desync them; halving
+those is a re-render and his word.
+
+### 9. THE VIOLIN, MEASURED AND LEFT ALONE
+
+"It also overpowers the violin sound": the violin doubler realizes **0.34 × the lead
+against the cello's 0.50 — 3.0 dB under it**, by design (D145: the doubling is quieter than
+the line it doubles; the cello is the primary of the pair). Not changed this pass, on
+purpose: the other half of his sentence — "the violin sounds also really reverby" — is the
+bank measured above with literally no decay, so the articulation change is the candidate
+explanation for both halves. Changing the gain in the same pass would make it impossible to
+tell which one worked, which is the mistake this round already made once. The number is
+here for whoever picks it up on his next verdict.
+
+### Verified
+
+472/472 tests. Of eleven built pages, **only cells moved** — songs, serious, layerstack,
+reels, energy, band, drums, foundations and facets are 0 on every music field, and cells is
+0 on the (time, midi) multiset. All 15 pre-existing SFZ patches byte-identical after adding
+five. Cells: 0 `.room()`, 805 `.release()`, every layer clipped. 23 HQ wavs re-rendered.
+
+### D149 addendum — the adversarial verify pass (10 agents), and what it refuted about this work
+
+Run after the fixes, before this addendum. It found **one defect that invalidated the
+round's headline measurement and two that were live in the rendered output**, all three in
+my own work, plus a containment hole. Fixed and re-verified; the numbers above are the
+corrected ones.
+
+**1. TWENTY SILENT SAMPLES, AND THEY WERE THE EVIDENCE (blocker, fixed).** Covered in §4:
+`enc()` faded on the source timeline while `-ss` seeked the output, 20 of 88 notes encoded
+to digital silence, and "the violin never decays" was a silent file. **The suite was green
+throughout** — every test here pinned DECLARATIONS (a name exists, a field says `vsco`, a
+patch is mapped) and none decoded a byte. That is D85 arriving *inside the verification
+tier*. `test/mixlab.test.js` now decodes every note of all twelve string banks and asserts
+non-zero peak plus audio in the first 100 ms; reverting the encoder fix makes it fail, and
+the re-encoded pack rebuilds byte-identically.
+
+**2. A SHARED PITCH-SPLIT PATCH IGNORES THE NAME (blocker, fixed).** `vsco_cello_spic`,
+`vsco_viola_spic` and `vsco_violin_spic` all pointed at one patch zoned by pitch, so
+measured over the lab's 387 layers **`vsco_violin_spic` played CELLO samples on 93.3% of
+its onsets** (55,888 against 3,952) — the layer sold as "the octave-up double" was the same
+section twice — and **no patch used a single viola sample**, because violin and viola both
+top at D5 and `autoSplit` left the viola nothing. **D138's missing-violin defect,
+reproduced by the fix for it.** Now one patch per instrument (12 of them): a pitch split is
+right for an ENSEMBLE name — `gm_string_ensemble_1` / `strings-sections.sfz`, judged and
+unchanged — and wrong wherever the name already says which instrument plays.
+
+**3. 1,338 NOTES FOLDED AN OCTAVE (blocker, fixed).** `contrabass-spiccato.sfz` topped at
+midi 53 against `INSTRUMENTS.vsco_bass_spic.range` of `[1,3]` (~59), reconciled nowhere, so
+render-hq folded (D83): 58 onsets on 4 cells cards and 1,280 in the lab — and on
+`cl_bass_offbeat` the fold **collapsed the figure's opening fifth to a unison**. The
+contrabass patches now carry a cello zone above the basses (what a real low-string section
+does), and `topSpread` lets a patch stretch its top sample rather than fold. Re-measured:
+**0 of 169,440 onsets out of range on either page**, and the re-render logs 0 folds.
+
+**4. `envOnly: []` WAS NOT ENFORCED BY ONE SELECTOR (fixed).** `voiceFor()` in
+`audition-corpus-suite.mjs` filtered on `lanes` alone, so the new banks entered its pool
+the moment they existed: rebuilding that page cast `vsco_cello_spic`, `vsco_viola` and
+`vsco_viola_pizz` and moved 13 of 16 companions. **Adding a library entry must never move a
+page** (D95), and `parts: [] + envOnly: []` is the contract that says so — now actually
+checked there. Verified by isolation: with and without the 8 new entries the page is
+byte-identical. (That page carries 2.5 weeks of unrelated drift from other rounds and has
+been restored to its Aug 29 bytes rather than silently rebuilt — it is on the open list.)
+
+**5. WHAT THE PASS GOT WRONG, MEASURED.** Two of its findings do not survive:
+
+- It reported that struck samples stop being shorter than sustains below C3
+  (`vsco_cello_spic` c1 "0.85 s vs its sustain twin's 0.64 s"), which would have undercut
+  the whole articulation decision. On correctly-encoded audio, spiccato is quieter at
+  +0.5 s than its sustain twin on **every** low note tested — cello c1 −18.7 vs −4.5, b1
+  −23.2 vs −1.9, bass a#0 −23.6 vs −2.3, range 0.2 to 35 dB, median ~14.
+- It reported the reverb removal as "−17%, wrong sign" and credited the improvement
+  entirely to `clip` and the patch swap. A single-variable isolation — the same build,
+  reverb restored on 20 layers of `cl_cell_orig` and nothing else changed — splits the
+  6.9 dB as **3.9 dB articulation + note length, 3.0 dB reverb**. The articulation is the
+  larger half; the reverb is not nothing.
+
+**6. CONFIRMED.** `cells-voice-only` (20,424 onsets, full `(begin, end, midi)` window
+identical on 23/23), `articulation-mapping` on all six sub-claims, `hq-release-arithmetic`
+(7.5 → about 8), and the stability sweep (songs 0/47, serious 0/11, all 7 `grammarPin` /
+`pinFrom` songs identical on music AND card text, 17 niche-lane songs identical, 15
+pre-existing SFZ patches byte-identical). Envelope health clean: 0 of 367 (song, sound)
+rows with min==max, **0 matches for the D123 gain-clobber shape**, no support layer at or
+above the lead.
+
+**7. FLAGGED, NOT FIXED — the open list.** (a) `audition/mixlab.html` moved and was not on
+my declared list; verified `.s()`-only on 387 of 387 layers, so it is the same
+voice-only change, but I should have declared it. (b) **`ml_lake` voices `Fsus` with a
+MAJOR THIRD** — `memberSemis`' `FALLBACK[3] = 4` writes the one note a sus exists to omit,
+the binder *printed the warning*, and the page shipped; held m2 against the lead, ×8,
+doubled by `acc_piano`. `ml_dawn` is the D122/D145 mode shape again. Both are library-level
+and reach judged material, so they are a round of their own — and they are on an unjudged
+page. (c) Odd-16th onsets measure **0.0%** against r33's 10–27% reference band and dotted
+values 0% against r40's 15–54% on two beds: the grid law plus the theme writer have removed
+pickups entirely — a known over-correction, his ear has not named it. (d) The browser tier
+was never measured directly this round (~1.3 concurrent voices by arithmetic against HQ's
+~3); his note was tier-scoped and only HQ was instrumented. (e) The cells page offers no
+articulation A/B, so the change cannot be compared there — only the lab's switch can.
+(f) `_acc` runs 0.858× the lead on all 23 cells cards (under it, D77 holds, but it is the
+shared bed and four rounds of "too loud" have landed in that band).
+
+## D150 — r44: his combination-lab rulings — the overlay cap, the pool behind "bass melodies like the zoltraak one", and D77 measured on ENERGY (2026-09-14)
+
+His export on `audition/mixlab.html` (page `r43-mixlab`, playback: spiccato strings,
+dry, tempo 50%, auto-balance on — i.e. through every D149 fix). No keep/kill on that
+page by design; the output is three COMBINATION notes, and they are RULINGS rather
+than complaints:
+
+> [5 +8ve violin variants ticked] "you can layer just about anything to achieve the
+> energetic serious vibe, just dont overlay (comes up to be greater than 3) but
+> anything works"
+>
+> [7 bass variants ticked] "you can just about layer any of these together, but I
+> found that bass melodies like the zoltraak one sound really good. but each of
+> these serve as good backbone"
+>
+> [3 cell variants ticked] "…this group volume should be reduced"
+
+Import: 3 new combination-lab notes, and the diff of `src/lib/verdicts.js` against a
+pre-import copy is ONLY the new bag — VERDICTS, DERIVED_VERDICTS and CARD_NOTES are
+untouched, so nothing could re-roll (the D118 check, run every import now).
+
+**READ THE `ticked` ARRAYS BEFORE BELIEVING THEM.** Eight of the nine beds report
+exactly `ML_PRESET` — the page's own suggested stack, never touched. The one bed he
+worked is `ml_bridge` (140 bpm, E aeolian, shuttle i–bVII), and all three notes were
+written with ONE GROUP ticked and nothing else: five violins alone, seven basses
+alone, three cells alone. That is what makes them rulings about GROUPS.
+
+### 1. "DONT OVERLAY (COMES UP TO BE GREATER THAN 3)" IS A PER-GROUP CAP
+
+Read as a total-layer cap it contradicts his own standing ask for more layers and the
+r40 measurement (his references carry 2.89–5.94 simultaneous notes; the shipped
+stacks run 5–7 entries). Read per GROUP it is a mechanism: within a group every layer
+shares its voice and register by the lab's own construction, which is D100's "two
+layers that always strike together on one instrument are one layer" and D102's
+"register and timbre separate a layer, rhythm does not". `OVERLAY_CAP = 3`, with a
+test over every shipped stack. **The alternative reading is his to settle** — it is in
+todo.md as a question, not guessed at silently.
+
+### 2. THE SLOT WAS A POOL OF ONE, AND HE HAD ALREADY SAID SO IN r41
+
+His r41 note on sr_resolve: *"im sure there are more patterns for you to use than the
+one in the beginning - you've used that for like 3-5 songs already"* — **four**,
+measured: every titan row plays `sr_pedal_cell`. Across the eleven judged serious
+songs the engine draws on **3 cells and 2 basses out of a library of 16 each**, and
+the melodic basses he has now asked for twice (r43 "can also have its own melody
+too", r44 "bass melodies like the zoltraak one sound really good") were reachable
+from NO song. D119, verbatim: "when a generator names a library entry as a string
+literal, that IS a pool of one".
+
+`SERIOUS_POOLS` + `rotateSeriousFigures(name, stack)`: each slot rotates inside the
+pool ITS OWN FIGURE belongs to (the battle stack calls its moving bass `bass` and the
+titan stack calls the same role `push` — keying on the slot id would rotate one and
+freeze the other), by `fnv(name|sr44|slot)`, never landing two slots on one figure.
+It returns the `figures` override map `seriousSpec` already accepts (r42), so it adds
+no new path into the binder and a typo still throws at build time.
+
+- Membership is HIS CLICKS, not the library (D95): the cells page's 21 keeps, its one
+  prose keep ("works"), the card whose only note is about its VOICE, and the lab
+  layers he ticked and praised. `sr_cell_neighbor` is excluded — it is `partial` and
+  playing it without its partner is the defect he heard in r43.
+- The lean is spelled as a repeated entry rather than a weight table, so the pick
+  stays one modulo: the two basses that WALK appear twice, and a melodic bass lands
+  on 4 of 11 rotations instead of 2.
+- **No `motor` pool, and my own membership test is what caught it.** The obvious
+  second member is `sr_motor16_triplet`, D148's corrected grid for the row he kept —
+  but a correction is not a verdict, D148 itself calls straight-versus-swung an ear
+  question, and D95 says an unratified entry does not enter a retrieval pool. It is
+  on the combination lab as `riff_motor_tri` waiting for a ruling.
+
+Five history-less rows carry it to his ear (the judged eleven cannot — see §4):
+
+| song | drew |
+|---|---|
+| sr_relay | `sr_cell_fall` + `sr_stabs_332` + **`sr_bass_walk_down`** (the Zoltraak walk) |
+| sr_tide | **`sr_bass_lament`** |
+| sr_verdict | `sr_cell_open5` + `sr_gallop_fall` + **`sr_bass_lament`** |
+| sr_frost | `sr_bass_oct_wander` |
+| sr_march | `sr_bass_offbeat` |
+
+Three of the four moving-bass slots drew a line with its own melody. The names were
+chosen for the scene and the hash fell where it fell — an A/B built to a name is
+testing the name (D120), and so is a demo.
+
+### 3. D77 IS MEASURED ON THE NOTE AND HIS EAR INTEGRATES THE BAR
+
+"This group volume should be reduced" is not a lab tweak. Every support layer on the
+judged page PASSES the per-note check and always has:
+
+| | per-NOTE gain vs the lead | per-BAR energy (gain × onsets) vs the lead |
+|---|---|---|
+| ostinato, 9 songs | 0.20–0.53, median **0.44** | **2.88–3.33** on the six 16th-cell songs |
+| | | 0.75–1.28 on the three running an 8-onset figure |
+
+and in the lab his ear drew the line between two numbers: the cell group he asked to
+reduce measures **3.77×** the lead's energy, the +8ve violin group he did not
+complain about **2.55×**.
+
+**THE FIRST NUMBER I MEASURED WAS 6.19× AND IT WAS WRONG** — whole-song per-bar
+energy counts the bars where the ostinato plays and the tune rests (ost 52–80 bars
+against the lead's 32–56). Over the bars where BOTH sound it is 3.09 median. D145's
+rule, from the other side: an implausible number is a bug until proven.
+
+`SUPPORT_ENERGY_CAP = 2.5`, applied where the layer is ASSEMBLED (D123: the drum cap
+was defeated twice by later multipliers), gated `ruleFresh(44)`, and expressed in the
+lead's own units like every other gain here — `e.gain × weightPerBar / the theme's
+own rate` predicts the measured ratio within 6% on all nine songs, so it can be
+applied at build time.
+
+**THE DENSITY TERM IS STRIKES WEIGHTED BY √NOTES, and both naive counts are refuted
+by his own verdicts.** Counting NOTES puts the battle stack's `sr_motor16_dyad` (8
+strikes, 16 notes) in the same band as the single-note 16th cell — and his ear
+separates those: the cell is what he asked to reduce, while the dyad-motor songs got
+"need more energetic layer patterns", the opposite complaint. Counting STRIKES alone
+lets a dense chordal figure through. Equal power reproduces every ruling: cell at 0.5
+over the cap, +8ve violin at 0.34 under it, dyad motor at 0.46 under it.
+
+Measured after:
+
+- the lab's cell group **0.296 → 0.229** (−22.6%, −2.2 dB), realized energy **3.84 →
+  2.96** (3.77× → **2.90×** the lead). Every other layer on all nine beds is
+  byte-identical; 108 changed layers, **0 structural**.
+- the +8ve violin double stays at 2.60 — still under the line it doubles, which is
+  the constraint that stops the cap going lower (Belkin, D77). Closing the last 14%
+  means trimming the double with it, and that is his call.
+- the serious page: four songs trimmed ×0.93 (ost 3.09 → **2.87** median).
+
+### 4. THREE DEFECTS IN MY OWN WORK, ALL CAUGHT BY MEASUREMENT
+
+**(a) `historyLess()` IS THE WRONG GATE FOR A RETRIEVAL RE-ROLL.** It answers "may a
+new RULE reach this song", and `noteBlind` makes it TRUE for a song whose own page
+has notes on it — correct for a capability (D118), fatal for retrieval. `vocaloidOpts`
+sets noteBlind for every serious row, so the first build **re-rolled the cell and the
+bass on TEN of the eleven judged rows, two of them pinned prose keeps.**
+`neverAuditioned()` asks only "has he ever heard this song". The layerstack test that
+bans the raw gate now allows exactly that ONE named declaration and still fails an
+inline one.
+
+**(b) A PAGE-WIDE DEFAULT RE-ROLLED BOTH LABS.** Both build every card under ONE
+shared name (D120), so the per-song gate is blind there: **14 of the 23 judged cards
+on cells.html and 26 of the 64 palette layers on the combination lab**, where a
+checkbox labelled "the one you have (R R b3 5)" would have played something else. The
+rotation is now opt-in per page (`serious.rotate`), on for the serious song page only.
+
+**(c) A SCARE THAT DISSOLVED, AND THE METRIC WAS THE BUG.** sr_march measured 3.74× —
+the loudest support on the page — under hap-sum energy, having drawn the triplet
+motor. Re-measured with the same equal-power weight the cap uses it is 2.49×; hap-sum
+is the note-counting error his own verdicts reject. (It is moot now: with the triplet
+out of the pool the row reverted to the dyad motor.)
+
+### What the FIRST build claimed, before the verify pass corrected it
+
+Recorded because the correction is the lesson, not the claim. The first build let
+the cap reach the four judged titan rows and reported them as "gain-only": the
+(time, midi, sound) multiset IS identical on all four (5007 / 3988 / 5023 / 5435
+haps in and out, mean gain 0.2762→0.2713, 0.3290→0.3252, 0.2839→0.2808,
+0.3400→0.3353), and that measurement was correct and still misleading — **a gain
+edit is not an inaudible edit when a hash downstream reads the gain.** See B1 in the
+addendum. The final build does not touch those four songs at all.
+
+Renders: the five new rows have no HQ and no vocal render (`hq: false`); no judged
+song's mix moved, so nothing on that page is stale.
+
+### Verify-pass addendum — THE PASS BLOCKED THE ROUND, AND IT WAS RIGHT
+
+Run TWICE. **The first run is itself the finding: its args take a structured object
+and it was handed prose**, so `pages` fell back to `['songs']`, `snapshots` to `{}`
+and `claims` to `[]` — every lane measured the one page this round did not touch and
+the claims lane produced nothing. Its own completeness critic returned DO-NOT-SHIP
+for exactly that reason ("a verify pass with no claims lane is not a verify pass; it
+is three sweeps"). Re-run with the object form: 9 agents, 2 claims CONFIRMED, 3
+CORRECTED, and a second DO-NOT-SHIP with four blocking items — **three of them
+regressions I had introduced and reported as clean.** All four are answered below.
+The round's intended effect on judged songs was −0.6 dB; its measured collateral was
+±5.8 dB, and that ratio is what settled it.
+
+**B1 — THE ENTRY STAGGER HASHES THE GAIN, SO A LEVEL EDIT RE-ROLLS THE
+CHOREOGRAPHY.** `audition-songs.mjs:7766` sorts co-entering layers by
+`fnv(exprs[a])`, and the rendered expression CONTAINS the gain literals. Two agents
+reproduced the attribution exactly (7/7 on sr_gate, 6/6 on sr_hunt; the only changed
+hash is the capped cell's): **9 sound layers changed which bars they sound in, 12
+whole bars of layer sound gained or lost**, and `useLong` flipped layers between the
+6-bar `SERIOUS_RAMP` and a 3-bar ramp behind two bars of silence. sr_gate's cello —
+the layer being trimmed — lost its crescendo and appeared at full level in bar 26,
+**which is verbatim the sr_ashes card that created SERIOUS_RAMP in r41** ("it should
+ease into its volume more fluidly rather than appear at that volume").
+The one-line fix (sort on identity, not rendered text) **re-rolls that hash once for
+every song with a 5+ layer entry group, judged material included**, so it is a round
+of its own and is recorded in the code at the sort. What r44 does instead is remove
+the TRIGGER: **the cap is now gated `ruleFresh(44) && neverAuditioned()`**, so no
+song he has heard changes a gain at all. His note was written on the LAB about the
+lab's cell group; it was never a licence to move four judged songs.
+
+**B2 — A COMPUTED PICK REVERTS ON HIS FIRST NOTE, and no lane but the critic saw
+it.** The rotation is gated on "never auditioned", so the instant a verdict or a note
+lands on one of the five fresh rows the gate flips false and the slot falls back to
+the STACK DEFAULT — a different FIGURE, not a different gain. D91's keep-transition
+law, one turn ahead of the click. Every pick is now written into its row as
+`serious.figures`, the rotation being the thing that CHOSE it, and a test fails if a
+fresh row would draw a pick its row does not pin.
+
+**B3 — THE CAP COLLAPSED A DOUBLING ONTO THE LINE IT DOUBLES.** Per entry, a capped
+gain becomes `cap × leadPB / perBar`, which is **independent of `e.gain`**: the lab's
+cell and its +8ve violin twin bind the SAME figure at 0.5 and 0.34, and capping them
+separately took their ratio 0.677 → 0.879, and to **exactly 1.000 on
+`neighbor_full`** (512/512 onsets, +12) — the double as loud as its own main line,
+which D77 and Belkin both forbid, on the exact pair his 3.77-vs-2.55 boundary came
+from. The trim is now taken from the loudest entry binding a FIGURE and applied to
+every entry of it, so the declared hierarchy survives by construction: re-measured,
+0.676 → **0.668** on all ten pairs and 0.681 on neighbor_full.
+
+**B4 — THE CAP'S STATED UNIT DOES NOT SURVIVE MEASUREMENT, and this is the honest
+limit of the round.** The denominator is nominal (`SERIOUS_THEME.notesPerBar`, and
+`e.gain` as a fraction of nominal `leadGain`) while the lead REALIZES 2.16–2.50
+onsets/bar at 0.24–0.31 per note under the ×0.45 vocal guide, so on the sung serious
+page the realized ost ratio is **5.0–6.2×**, not 2.5. Measured model bias on four
+other layers: 2.10–2.53×, i.e. systemic. **The same constant means two different
+things on two pages** (the lab lands at 2.91 realized, the serious page at 5.6) —
+D137's four-populations law inside one number. Two things make it defensible rather
+than wrong: the lab is where his ear was and the lab number is the one calibrated to
+it, and on a sung page the realized lead is the VOICE, not the ducked guide, so the
+guide-relative ratio is the wrong reference anyway (D146 already learned that). It
+is NOT "answered" on the serious page and is not claimed to be.
+
+Also corrected, from the same pass:
+
+- **`arp` is not safe by arithmetic**: `sr_stack_calm`'s `sr_calm_arp16` measures
+  **2.560**, over the cap. It was untrimmed only because `sr_ashes` carries
+  `pinFrom: 'r41'` — correct under the pin doctrine, named here so it is not read as
+  a miss. On a fresh calm row the cap WOULD bite, and the `Math.max(0.085, …)` floor
+  wins over the cap where they collide (a declared layer must be audible — D146).
+- **`figurePerBar`'s own justification was self-refuting** and is corrected in the
+  file: `sr_motor16_triplet` at its in-use gain measures 2.199, UNDER the cap, so the
+  equal-power weighting does not catch the case the comment cited. The 3.74 that
+  scared me came from summing haps — the note-counting error the rule itself rejects.
+- **117 mixlab chips printed the figure ROW's octave** while the binder seats the
+  layer at the ENTRY's (+12.0 median on 9/9 beds) — on exactly the group answering
+  "there should also be a repeat on violin like an octave up", where the chip claimed
+  the double was in the cell's octave. Now prints `e.octave`.
+- **A scripted row edit landed in the wrong song and I caught it before the build.**
+  Two rows share `id: 'march'` (the r36 Vocaloid keep and the new serious row), and a
+  forward search for `serious: {` from the first one walked into **sr_gate** and
+  pinned a bass there. Reverted; all five pins verified by row, stack and figure.
+  A blind scripted edit over a row table needs the id to be unique or the anchor to
+  be the row's own body.
+- Standing, unfixed, now named: the **battle `ost` slot has no pool** (a literal on 5
+  of 16 songs — D119 knowingly left open), `cl_cell_neighbor` and `cl_riff_motor16`
+  are keeps in no pool, and `sr_march`'s rotated bass puts 24 of its 320 notes inside
+  the lead's own register.
+
+### Verified (final state, after the pass's fixes)
+
+- `audition/serious.html`: **11 of 11 pre-existing songs byte-identical, 0 moved**, 5
+  added. Nothing he has judged moves at all.
+- `audition/songs.html` 47/47 and `audition/cells.html` 23/23 byte-identical; the
+  pass also independently confirmed 47/47 hap fingerprints against `git HEAD`, all 36
+  reachable derived keeps, all 9 pinned songs (music AND text) and all 20 niche-lane
+  songs identical.
+- `audition/mixlab.html`: the cell group trimmed 0.296 → 0.229 (realized per-bar
+  energy 3.840 → 2.960 on ml_bridge; the true range across nine beds is 2.02–3.77 →
+  1.56–2.91), every changed expression gain-only, 0 structural, and every
+  cell/violin pair still ordered (0.668).
+- `npm test`: 482 tests, 481 pass — the one failure is the known suite race
+  (reel-faithful's pools-of-one test passes alone).

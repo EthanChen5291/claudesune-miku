@@ -42,6 +42,28 @@
 
 export const TECHNIQUES = [
   // -------------------------------------------------------------------------
+  // TIMBRE / ARTICULATION — r43, read off his own ear on the pattern labs
+  // -------------------------------------------------------------------------
+  {
+    id: 'sustain_wash_ambient',
+    role: 'timbre',
+    intent: 'A bowed string SUSTAIN sample that does not decay, played at a rate faster than its own length, over a wet send — the notes never clear, so the layer stops reading as notes and reads as a WASH. Wrong for a rhythmic cell; right, by his ear, for an ambient or moody cue.',
+    evidence: {
+      kind: 'ear', song: 'cl_cell_orig', poster: 'ethan', file: 'audition/cells.html + audition/mixlab.html', at: 'r43',
+      hisComment: 'although this level of reverb sounds good for really ambiant vibes actually and moody days - it does fit a genre',
+      read: 'VSCO susvib de-swelled to 1.0 s sits 2.7-8.5 dB below its own peak half a second later (the cello is louder at +0.5 s than +0.25 s — still swelling), against 16.9-50.5 dB for the struck banks; rendered through a patch at ampeg_release=0.7 with 22-44% convolution wet. Under a 0.107 s sixteenth that is about 8 notes of one layer sounding at once.',
+    },
+    // WHY it is a row and not just a bug: the same three numbers that made his
+    // battle cells unlistenable are what he then said "fit a genre". The defect
+    // and the effect are ONE setting, so the engine should be able to ASK for
+    // it, not only avoid it.
+    shape: 'Sustain articulation + a release at or above half the note spacing + a room of 0.3 or more. The tell that it is wrong: onsets per bar times sample decay time far exceeding 1. The tell that it is right: no rhythmic layer needs to be read through it.',
+    applies: { roles: ['pad', 'harmony_bed', 'ambience'], lanes: ['ambient', 'moody', 'calm', 'manor'], rhythmic: false },
+    status: 'wired', impl: 'audition-mixlab-page.js ARTICS (sustained) + ROOMS (ambient / moody); the inverse is opts.labDynamics + the *_spic banks',
+    heardOn: ['cl_cell_orig', 'ml_bridge'],
+    verdict: 'it does fit a genre (r43) — and, of the same sound under a sixteenth-note cell: "it like fills up everything and is reallt wet"',
+  },
+  // -------------------------------------------------------------------------
   // HARMONY / VOICING — read note-by-note off piano rolls in his DM reels
   // -------------------------------------------------------------------------
   {

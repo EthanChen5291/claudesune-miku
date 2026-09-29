@@ -191,8 +191,8 @@ PERCUSSION  presence=none
 cs_lab_stealth
 ==============================================================================
 PARSE  "tense stealth music for sneaking through a research laboratory at night"
-  -> emotion=tense environment=stealth  [also saw lab]
-  -> key F:minor, 99bpm, 4/4
+  -> emotion=tense environment=lab  [also saw stealth]
+  -> key F:minor, 130bpm, 4/4
 HARMONY  Fsus Gm9 Bb2 Db2 Db^7 F^7
   roots F G Bb Db Db F
   ops tonic motion modal motion recolour plane
@@ -217,14 +217,14 @@ COMPANION  interval -3 semitones (same-register device: corpus median gap betwee
   density ratio 1 vs lead (corpus inverts: lead resting -> companion denser 1.57; lead continuous -> 0.88)
   chromatic licence 0.050 scaled by realised range 23 (corpus: static lines have median out-of-key EXACTLY 0; the chromatic drone is 0.16% of files)
 DOUBLING  echo at 0.5 beat (corpus: 48.5% of files carry one — unison 41.6%, echo 42.6%, octave 15.8%; echo clusters at 1/2 and 1/4 beat)
-PERCUSSION  presence=light
-  kit "dp_crunch" chosen by environment/latch/energy from a weighted pool, not a fixed name
+PERCUSSION  presence=driving
+  kit "dp_electrosequence_1" chosen by environment/latch/energy from a weighted pool, not a fixed name
   syncopation latch "straight" drawn ONCE per song (corpus is bimodal: 45.0% under 5% odd-16th, 30.7% over 30%)
   4-bar drum cell (corpus: a bar is 1.6x likelier to match the bar FOUR back than the one before)
-  colour-percussion probability 0.125 for "stealth" (corpus: jungle 40.3%, forest 26.9%, desert 25.5% vs boss 5.9%) — layered OVER an unchanged kit
+  colour-percussion probability 0.06 for "lab" (corpus: jungle 40.3%, forest 26.9%, desert 25.5% vs boss 5.9%) — layered OVER an unchanged kit
   accent by ARTICULATION not velocity (corpus median on-beat vs off-beat velocity difference is exactly 0.00)
   echo layer emitted: lead delayed 0.5 beat at 0.28 gain
-  kit bound: dp_crunch (3-bar pattern)
+  kit bound: dp_electrosequence_1 (16-bar pattern)
 
 ==============================================================================
 cs_cathedral_epic
@@ -345,8 +345,8 @@ PERCUSSION  presence=driving
 cs_frozen_ruins
 ==============================================================================
 PARSE  "lonely somber music for frozen ruins in a snowstorm, minimal and sparse"
-  -> emotion=somber environment=aftermath  [also saw snow]  mods={"sparse":true}
-  -> key D:minor, 50bpm, 4/4
+  -> emotion=somber environment=snow  [also saw aftermath]  mods={"sparse":true}
+  -> key D:minor, 55bpm, 3/4
 HARMONY  Dsus F^9 F9 F Gm9 Fsus A5 Dm11
   roots D F F F G F A D
   ops tonic motion recolour recolour modal motion approach return
@@ -375,7 +375,7 @@ PERCUSSION  presence=none
   kit "dp_basic" chosen by environment/latch/energy from a weighted pool, not a fixed name
   syncopation latch "straight" drawn ONCE per song (corpus is bimodal: 45.0% under 5% odd-16th, 30.7% over 30%)
   4-bar drum cell (corpus: a bar is 1.6x likelier to match the bar FOUR back than the one before)
-  colour-percussion probability 0.125 for "aftermath" (corpus: jungle 40.3%, forest 26.9%, desert 25.5% vs boss 5.9%) — layered OVER an unchanged kit
+  colour-percussion probability 0.125 for "snow" (corpus: jungle 40.3%, forest 26.9%, desert 25.5% vs boss 5.9%) — layered OVER an unchanged kit
   accent by ARTICULATION not velocity (corpus median on-beat vs off-beat velocity difference is exactly 0.00)
   echo layer emitted: lead delayed 1 beat at 0.28 gain
 
@@ -383,7 +383,7 @@ PERCUSSION  presence=none
 cs_catacomb_action
 ==============================================================================
 PARSE  "fast intense action music for fighting undead in the catacombs"
-  -> emotion=excited environment=catacombs  [also saw tense, fight]  mods={"tempo":0.16}
+  -> emotion=excited environment=catacombs  [also saw fight]  mods={"tempo":0.16}
   -> key B:minor, 174bpm, 4/4
 HARMONY  Bm9 Gbm6 Ebm Ebm6 Am6 Em9 G2 Bm
   roots B Gb Eb Eb A E G B
@@ -497,7 +497,7 @@ PERCUSSION  presence=light
 cs_campfire_rest
 ==============================================================================
 PARSE  "warm nostalgic music for resting at a campfire save point"
-  -> emotion=nostalgic environment=rest  [also saw fight]
+  -> emotion=nostalgic environment=rest
   -> key A:major, 51bpm, 3/4
 HARMONY  A2 A Bsus D5 C5 C Gsus A6
   roots A A B D C C G A
@@ -573,7 +573,7 @@ PERCUSSION  presence=foreground
 cs_shrine_choir
 ==============================================================================
 PARSE  "peaceful sacred choir music for an ancient forest shrine"
-  -> emotion=calm environment=shrine  [also saw rest]  mods={"choir":true}
+  -> emotion=calm environment=shrine  mods={"choir":true}
   -> key C:major, 52bpm, 4/4
 HARMONY  C6 Csus Am9 C
   roots C C A C

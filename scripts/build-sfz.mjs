@@ -15,6 +15,7 @@ import { readdirSync, writeFileSync, mkdirSync, existsSync } from 'node:fs';
 import { join, relative, resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { execFileSync } from 'node:child_process';
+import { swellOffset, SWELL } from '../src/ingest/swell.js';
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const SFZ_DIR = join(ROOT, 'vendor', 'sfz');
@@ -48,7 +49,12 @@ function parseSample(name) {
     const dm = /_(p{1,3}|m[pf]|f{1,3})(?:_|\.)/.exec(name);
     if (dm) layer = DYN_ORDER.indexOf(dm[1]) + 1;
   }
-  const rm = /_rr(\d+)/.exec(name) ?? /_v\d+_(\d+)\./.exec(name);
+  // r43: case-INSENSITIVE. VSCO's cello short articulations name the round
+  // robin `_RR1`, every other folder `_rr1`; matching only lowercase collapsed
+  // four distinct bow strokes onto seq_position 1..4 in directory order rather
+  // than by their own numbering. No patch built before r43 contains an uppercase
+  // RR, so this cannot move one.
+  const rm = /_rr(\d+)/i.exec(name) ?? /_v\d+_(\d+)\./.exec(name);
   const rr = rm ? Number(rm[1]) : 1;
   return { midi, layer: layer ?? 1, rr };
 }
@@ -80,28 +86,17 @@ function collect(dir, filter = null) {
 // sample remain), with a short envelope attack so the skipped-into sample
 // does not click. Measured on each file at build time, so the output stays
 // deterministic for a given library.
-const SWELL = { level: 0.8, maxSec: 4, minLeftSec: 3, attack: 0.04 };
-function swellOffset(path) {
-  const rateTxt = execFileSync('ffprobe', ['-v', 'error', '-select_streams', 'a:0', '-show_entries', 'stream=sample_rate', '-of', 'csv=p=0', path], { encoding: 'utf8' }).trim();
-  const rate = Number(rateTxt) || 44100;
-  const ANALYSIS_RATE = 8000;
-  const buf = execFileSync('ffmpeg', ['-v', 'error', '-i', path, '-f', 'f32le', '-ac', '1', '-ar', String(ANALYSIS_RATE), '-'], { maxBuffer: 1 << 28 });
-  const x = new Float32Array(buf.buffer, buf.byteOffset, Math.floor(buf.byteLength / 4));
-  const w = Math.round(ANALYSIS_RATE * 0.01);
-  const env = [];
-  for (let i = 0; i + w <= x.length; i += w) { let a = 0; for (let k = i; k < i + w; k++) a += x[k] * x[k]; env.push(Math.sqrt(a / w)); }
-  const peak = Math.max(...env, 1e-9);
-  let at = env.findIndex((e) => e >= SWELL.level * peak);
-  if (at < 0) at = 0;
-  let sec = at * w / ANALYSIS_RATE;
-  const len = x.length / ANALYSIS_RATE;
-  sec = Math.min(sec, SWELL.maxSec, Math.max(0, len - SWELL.minLeftSec));
-  return { samples: Math.round(sec * rate), sec, peakSec: env.indexOf(peak) * w / ANALYSIS_RATE };
-}
-
 // samples (one zone) -> sfz <region> lines. Key ranges are midpoints between
 // sampled pitches, clamped to [zoneLo, zoneHi] when given.
-function regions(samples, libRoot, { zoneLo = 0, zoneHi = 127, transpose = 0, skipSwell = false } = {}) {
+// r43: `topSpread` is how far ABOVE its highest keycentre a patch may stretch its
+// top sample. Default 6 (unchanged, so every patch built before this stays
+// byte-identical). A patch raises it only where the alternative is worse: notes
+// past the top FOLD DOWN AN OCTAVE (D83), and a wrong octave on a top line is
+// more audible than a stretched sample. Measured, the two cases that need it are
+// 32 cello onsets at midi 72 (patch top 71) and 64 violin onsets at 81-84 (top
+// 80) — 0.05% and 0.1% of their layers, and nothing above a violin section can
+// cover them.
+function regions(samples, libRoot, { zoneLo = 0, zoneHi = 127, transpose = 0, skipSwell = false, topSpread = 6 } = {}) {
   const byNote = new Map();
   for (const s of samples) {
     if (!byNote.has(s.midi)) byNote.set(s.midi, []);
@@ -111,7 +106,7 @@ function regions(samples, libRoot, { zoneLo = 0, zoneHi = 127, transpose = 0, sk
   const lines = [];
   notes.forEach((n, i) => {
     const lo = Math.max(zoneLo, i === 0 ? n - 6 : Math.floor((notes[i - 1] + n) / 2) + 1);
-    const hi = Math.min(zoneHi, i === notes.length - 1 ? n + 6 : Math.floor((n + notes[i + 1]) / 2));
+    const hi = Math.min(zoneHi, i === notes.length - 1 ? n + topSpread : Math.floor((n + notes[i + 1]) / 2));
     if (lo > hi) return;
     const group = byNote.get(n);
     const layers = [...new Set(group.map((s) => s.layer))].sort((a, b) => a - b);
@@ -157,6 +152,67 @@ const INSTRUMENTS = [
       { dir: 'Strings/Viola Section/susvib', autoSplit: true },
     ],
   },
+  // r43 — THE SHORT ARTICULATIONS. HIS NOTE: "i still feel like it's held for so
+  // long ... it like fills up everything and is reallt wet", then "is it just HQ?
+  // like it wasn't like this before. however with HQ off it sounds bad."
+  //
+  // Both halves are true and neither is reverb. MEASURED: `strings-sections.sfz`
+  // carries ampeg_release=0.7 and the pattern labs write SIXTEENTHS — 0.107 s at
+  // 140 bpm — so every note rings 0.8 s and ONE cello layer sounds about 8 notes
+  // at once. And the sustain sample it rings with does not decay: VSCO's susvib
+  // reaches its peak 5.25 s in and holds, so the de-swelled first second sits
+  // within 5 dB of its own peak half a second later. Nothing downstream of that
+  // can make a sixteenth sound like a sixteenth — not `clip`, not a dry mix.
+  //
+  // A struck note needs a struck SAMPLE. Measured on the same C3: spic peaks at
+  // 0.10 s and is 20 dB down by 0.35 s, pizzT peaks at 0.05 s and 20 dB down by
+  // 0.55 s. So the labs' ostinato voices play the spiccato patch, and the
+  // sustains stay for the lines that actually sustain (a pad, a theme).
+  //
+  // NO `skipSwell`: the de-swell offset seeks to the first window at 80% of peak,
+  // which on a struck sample is its ATTACK — measuring it here would cut off the
+  // bow. (It is currently saved only by the `len - minLeftSec` clamp, which is a
+  // coincidence, not an intent; `noSwell` in the pack def states the same thing
+  // on the browser side.)
+  // r43 SECOND PASS, corrected by the verify pass — ONE PATCH PER INSTRUMENT.
+  //
+  // The first cut of these gave cello, violin and viola a SHARED patch split by
+  // pitch, exactly like strings-sections.sfz. Measured over the combination
+  // lab's 387 layers, that made `vsco_violin_spic` play CELLO samples on 93.3%
+  // of its onsets (55,888 against 3,952) — the layer sold as "the octave-up
+  // double" was the same section again — and left every VSCO viola sample
+  // unused, because violin and viola both top at D5 so autoSplit hands the
+  // viola nothing. D138's missing-violin defect, reproduced by the fix for it.
+  //
+  // A pitch-split patch is right for an ENSEMBLE name (gm_string_ensemble_1,
+  // which is what strings-sections.sfz is for, and which is judged and stays).
+  // It is wrong wherever the NAME already says which instrument plays, which is
+  // every vsco_* name: the browser pack has one bank per instrument, so the HQ
+  // tier must have one patch per instrument or the two tiers disagree about
+  // WHICH INSTRUMENT a layer is — the exact invariant these names exist to hold.
+  { out: 'cello-sus.sfz', lib: 'VSCO-2-CE', release: 0.5, skipSwell: true, zones: [{ dir: 'Strings/Cello Section/susvib' }] },
+  // topSpread: 32 onsets land on midi 72, one semitone past the F4 keycentre's default reach
+  { out: 'cello-spiccato.sfz', lib: 'VSCO-2-CE', release: 0.12, topSpread: 7, zones: [{ dir: 'Strings/Cello Section/spic' }] },
+  { out: 'cello-pizz.sfz', lib: 'VSCO-2-CE', release: 0.25, zones: [{ dir: 'Strings/Cello Section/pizzT' }] },
+  { out: 'violin-sus.sfz', lib: 'VSCO-2-CE', release: 0.5, skipSwell: true, zones: [{ dir: 'Strings/Violin Section/susVib' }] },
+  // topSpread: 64 onsets land at 81-84 — the octave-up double of a cello cell that peaks at 72; nothing above a violin section can cover them, so the top sample stretches rather than the notes folding an octave
+  { out: 'violin-spiccato.sfz', lib: 'VSCO-2-CE', release: 0.12, topSpread: 10, zones: [{ dir: 'Strings/Violin Section/Spic' }] },
+  { out: 'violin-pizz.sfz', lib: 'VSCO-2-CE', release: 0.25, zones: [{ dir: 'Strings/Violin Section/Pizz' }] },
+  { out: 'viola-sus.sfz', lib: 'VSCO-2-CE', release: 0.5, skipSwell: true, zones: [{ dir: 'Strings/Viola Section/susvib' }] },
+  { out: 'viola-spiccato.sfz', lib: 'VSCO-2-CE', release: 0.12, zones: [{ dir: 'Strings/Viola Section/spic' }] },
+  { out: 'viola-pizz.sfz', lib: 'VSCO-2-CE', release: 0.25, zones: [{ dir: 'Strings/Viola Section/pizz' }] },
+  // The contrabass keycentres stop at B2 (47), so the patch topped out at 53 and
+  // render-hq FOLDED everything above it down an octave (D83) — measured, 100
+  // notes on 4 cells cards and 1,280 in the combination lab, and on
+  // cl_bass_offbeat the fold collapsed the figure's opening fifth to a unison.
+  // The cello section takes the band above the basses, which is what a real low
+  // string section does and what keeps the written pitch.
+  { out: 'contrabass-spiccato.sfz', lib: 'VSCO-2-CE', release: 0.12,
+    zones: [{ dir: 'Strings/Solo Contrabass/Spic' }, { dir: 'Strings/Cello Section/spic', autoSplit: true }] },
+  { out: 'contrabass-pizz.sfz', lib: 'VSCO-2-CE', release: 0.25,
+    zones: [{ dir: 'Strings/Solo Contrabass/Pizz' }, { dir: 'Strings/Cello Section/pizzT', autoSplit: true }] },
+  { out: 'contrabass-sus.sfz', lib: 'VSCO-2-CE', release: 0.5, skipSwell: true,
+    zones: [{ dir: 'Strings/Solo Contrabass/SusVib' }, { dir: 'Strings/Cello Section/susvib', autoSplit: true }] },
   { out: 'flute.sfz', lib: 'VSCO-2-CE', release: 0.35, zones: [{ dir: 'Woodwinds/Flute/susvib' }] },
   { out: 'harp.sfz', lib: 'VSCO-2-CE', release: 1.2, zones: [{ dir: 'Strings/Harp' }] },
   { out: 'trumpet.sfz', lib: 'VSCO-2-CE', release: 0.3, zones: [{ dir: 'Brass/Trumpet/sus', filter: /^Sum_/ }] },
@@ -256,7 +312,7 @@ for (const inst of INSTRUMENTS) {
     p.zoneHi = next && next.z.autoSplit ? next.zoneLo - 1 : 127;
   }
   for (const p of planned) {
-    const r = regions(p.kept, libRoot, { zoneLo: p.zoneLo, zoneHi: p.zoneHi, skipSwell: inst.skipSwell === true });
+    const r = regions(p.kept, libRoot, { zoneLo: p.zoneLo, zoneHi: p.zoneHi, skipSwell: inst.skipSwell === true, ...(inst.topSpread ? { topSpread: inst.topSpread } : {}) });
     total += r.length;
     lines.push(`// zone: ${p.z.dir} (${p.kept.length} samples${p.zoneHi < 127 ? `, capped at key ${p.zoneHi}` : ''})`);
     lines.push(...r);

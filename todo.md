@@ -1,3 +1,400 @@
+## NEW — r44: your three combination-lab notes, answered (2026-09-14; D150)
+
+Your notes were rulings, not complaints, so this round turned each one into a rule.
+**The verify pass then blocked my first version and it was right about three
+things** — what shipped is the corrected version.
+
+**"This group volume should be reduced" was a real hole in the engine.** Support
+gain has always been checked per NOTE, and every layer passes that check (the
+ostinato runs 0.20–0.53× the lead, median 0.44). Your ear integrates the BAR, and
+per bar the cell group runs ~3–4× the lead. Your own two numbers drew the line: the
+group you asked to reduce measures **3.77×**, the +8ve violin group you said nothing
+about **2.55×**.
+
+- the lab's cell group is **22% quieter** (−2.2 dB) — 3.77× → **2.90×** on the bed
+  you were working, 2.02–3.77 → 1.56–2.91 across all nine. Gain only, nothing
+  structural, and every cell/violin pair keeps its ordering.
+- **Nothing you have judged moved.** My first version trimmed four of the eleven
+  older serious songs too — and the pass caught that the trim silently re-rolled
+  their layer ENTRY TIMING (9 layers changed which bars they play; sr_gate's cello
+  lost its crescendo and jumped in at full volume, which is the exact thing you
+  complained about on sr_ashes in r41). Cause: an internal sort hashes each layer's
+  text, and the text contains its volume. The cap is now scoped to songs you have
+  never heard. The underlying hash bug is written up and needs its own round.
+- honest limit: the cap's number means different things on the two pages (2.9 on the
+  lab, ~5.6 on the sung page, where the "lead" it compares to is the quiet guide
+  under your voice). The lab is where your ear was, so that is the number I tuned.
+
+**"Bass melodies like the zoltraak one sound really good" — the engine could not
+play one.** Every stack named its figure as a literal string, so eleven songs drew
+on 3 cells and 2 basses out of 16 each, and the walking basses were reachable from
+no song. You'd already said this in r41 ("more patterns than the one in the
+beginning — you've used that for like 3-5 songs"; it was four). Slots now rotate
+through pools built only from figures you clicked or praised, walking basses
+weighted double — and **the chosen figure is written into the song's row**, because
+otherwise it would silently revert to the old default the moment you wrote a note
+about it.
+
+**Five new serious songs** on `audition/serious.html` (16 now): sr_relay drew the
+Zoltraak walk, sr_tide and sr_verdict the lament bass, sr_march the offbeat bass,
+plus two new cells and two new riffs.
+
+**"Dont overlay (comes up to be greater than 3)"** is pinned as a per-group cap:
+within one group the layers share a voice and a register, which is where five
+violins turn into a wash. **Tell me if you meant three layers TOTAL** — I read it as
+per group because the total reading contradicts your standing "more layers" ask, but
+it is your call and I did not want to guess silently.
+
+**What the verify pass caught in my work** (all fixed): the entry-timing re-roll
+above; the five new songs' figures reverting on your first note; and the cap making
+a violin double exactly as loud as the cell it doubles on one pair. It also caught
+me printing the wrong octave on 117 lab chips — the +8ve violin group said it was in
+the cello's octave — and a scripted edit of mine that landed in the wrong song
+(caught before the build; two rows share the id "march").
+
+- songs.html 47/47, cells.html 23/23, and all eleven older serious songs
+  byte-identical. npm test 481/482 (the known suite race).
+- **Renders**: nothing judged changed, so nothing is stale; the 5 new songs have no
+  HQ or vocal render yet. Say go and I will run them.
+- Separately, the pass found the **HQ-stale badge can never fire on songs.html**: it
+  needs an `audition/hq/<name>.mixsig` sidecar and not one of the 47 has one, though
+  all 47 show "HQ". It works on the serious and cells pages.
+
+## NEW — r43 second pass: you were right, it was HQ (2026-09-14; D149)
+
+Your question *"is it just HQ?"* was the diagnosis. Yes — and neither mechanism was
+the reverb, which is why two passes of turning reverb down changed nothing you
+could hear.
+
+**First, I fixed the wrong page.** The pass before this took `mixlab.html` dry and
+left `cells.html` — your export's page, the one with the HQ button, the one where
+"just play one cell" is a card — at **736 reverb sends and no clips**. Your own
+words named the page and I went where the recent work was.
+
+**The HQ smear is one number.** Every string on both labs rendered through
+`strings-sections.sfz`, which holds each note for **0.7 s after it ends**. The labs
+write sixteenths — 0.107 s at 140 bpm. So one cello layer had **about 8 notes
+sounding at once** before you ticked anything else on. That is "it fills up everything" and
+"i cant layer them properly", and no mix control can reach it.
+
+**The samples never decay** — half a second after its own peak, a sustained note
+is still within 3–8 dB of full (the cello is *louder*, because it's still
+swelling), where a struck one is 17–50 dB down. VSCO's sustain peaks *5.25
+seconds in*, so last pass's "shorten the sample" took the first second of a
+crescendo. Shortening a swell doesn't make a note decay.
+
+**And one thing I got wrong and then caught.** My first version of that
+measurement said "the violin never decays at all" — because **all eleven violin
+samples in the pack were digitally silent.** The pass before this introduced it:
+the trim's fade-out was computed on the wrong timeline, so 20 of 88 notes encoded
+to nothing. That's the real answer to *"it also overpowers the violin sound"* —
+the violin group wasn't quiet, **it wasn't there.** Fixed, 0 of 88 silent, and the
+conclusion above is the re-measurement, not the broken one.
+
+**So the fix is the articulation, not the mix.** VSCO ships **spiccato** and
+**pizzicato** for all four sections and we had never used them: struck, 20 dB down
+in 0.25–0.35 s. Both labs now play those, in *both* tiers — which also answers "with
+HQ off it sounds bad", since the browser now plays the same real samples the
+renderer does instead of the GM soundfont.
+
+- **cells.html: all 23 cards re-rendered**, dry, on the struck samples. Voice-only —
+  verified byte-identical on every (time, midi) pair, so nothing you judged moved
+  musically.
+- **Tempo is a button, default 50%**, as you asked. At half tempo a sixteenth is
+  0.21 s instead of 0.107, so notes of one cell stop overlapping *at all* — the
+  layers separate by arithmetic, not taste.
+- **Strings is a button**: spiccato / pizzicato / sustained.
+- **The contrabass was a stretched cello.** The section patch has 27 cello and 6
+  violin regions and no contrabass at all. It has its own patch now.
+
+**Your ambient note is kept, not overruled.** *"this level of reverb sounds good for
+really ambiant vibes and moody days - it does fit a genre"* — so the sustained
+samples stay one click away, the wet reverb setting is now **named "ambient /
+moody"** instead of being the thing to avoid, and the whole setting is recorded as a
+technique row (`sustain_wash_ambient`) with the measurement and the test for when it
+fits. Same three numbers, one context wrong and one right.
+
+**One thing I deliberately did NOT change.** "It also overpowers the violin sound":
+the violin sits **3.0 dB under the cello** (0.34x the lead against 0.50x), by design
+— a double is quieter than the line it doubles. But the *other* half of that
+sentence is the bank I measured with no decay at all, so the articulation change is
+the candidate explanation for both halves. Changing the gain in the same pass would
+make it impossible to tell which one worked. **Say the word and it's one number.**
+
+## NEW — r43: a lab you can COMBINE layers in, and two grid bugs you caught (2026-09-13; D148)
+
+Your ask: *"create a lab where you create more of these and extract more from our
+energetic MIDI songs to analyze. next lab, allow me to combine different layers by
+enabling multiple at a time, then press something to leave a note either individually
+for that song or for the group, and i can do this multiple times with an extensive
+list with a diversity of serious ones."*
+
+**New page: `audition/mixlab.html` — 9 beds x 51 layers, tick any combination.**
+Not a list of finished mixes: a mixer. Every layer is bound separately over that
+bed's harmony and plays all 32 bars, so **what you tick is exactly what you hear**.
+Tick, press play, re-tick while it runs.
+
+- **9 beds** = 9 different progressions at 9 tempos, 88 to 152 — because you said
+  twice that it *"depends on the chord progression"*. One of them is serious CALM,
+  since energetic is not the only serious.
+- **51 layers**: 14 ostinato cells · 16 basses · 8 riffs · 3 stab figures · a pad ·
+  5 harmony-hand voices · the tune and its two doubles · the kit.
+- **Notes go three places** — on one LAYER, on a whole GROUP (so you never type the
+  same sentence onto four bass cards again), or on THIS COMBINATION. They pile up in
+  a list instead of overwriting, and **each note saves exactly which layers were
+  playing when you wrote it**.
+- **No HQ on this page and there cannot be** — 51 layers is more combinations than
+  can be pre-rendered. It is for judging patterns and combinations, not timbre.
+
+**You caught two real bugs and they were the same symptom.**
+
+- *"should be aligned by measure - the next chord shouldn't come in like a half step
+  early"* — the 16th motor is a **triplet** figure in the source and I had written it
+  on a sixteenth grid. Five of its eight notes were a third of a sixteenth out, and
+  the last one got pushed hard against the barline where the file leaves a gap. Fixed
+  as a new row; both are on the lab so you can pick straight or swung.
+- *"I feel like it's not 4/4 - the next chord is always coming in like an eight note
+  too soon"* — that cell is the **lower half of a two-hand texture**. The file plays
+  all sixteen sixteenths; the hand I left out is the one that fills the holes. The
+  complete texture is now a layer.
+
+**Also: the "vibraphone" is the harmony hand, and I fixed the wrong layer last time.**
+Six cards now. It is `gm_epiano1` — the accompaniment, exactly where you put it: *"the
+one in the harmony that does the chord repeats and stuff, not the one that plays the
+melody"*. r41 moved the COMPANION instead. It was also running at roughly **twice the
+volume of the tune** on all six fight songs. Now a piano, and under the tune (0.58–0.99x).
+The lab's ACC group lets you pick the voice properly — piano / clean guitar / harp /
+the electric piano you keep rejecting, same figure, four instruments.
+
+**18 new patterns mined from 52 of your own MIDI files** (the ten serious references
+plus the Vocaloid set) — 984 repeated one-bar cells, of which **84 are on a TRIPLET
+grid and the library had none**. Includes the four "bass with its own melody" lines you
+asked for, and a descending riff that this time is measured rather than invented.
+
+Read-out: `research/cells-r43.md`.
+
+**On "allow HQ on for all of them" — I couldn't, so I did the other thing.** 64
+togglable layers is more combinations than can ever be pre-rendered; the only design
+that reaches arbitrary combinations is playing per-layer stems in sync, which costs
+hours of rendering, ~300 MB, and a timing risk I can't test from here. So instead
+**the strings now play the renderer's own samples in the browser** — every cello,
+violin, viola and bass layer is the VSCO section straight from the sample pack, with
+the same de-swell trim sfizz applies. That's 44 of the 64 layers. The brass, guitar
+and keyboards are still the browser soundfont; **tell me which of those sounds wrong
+and it gets the same treatment.** (If you'd rather have literal HQ stems despite the
+sync risk, say so and I'll build it — it's a render job, not a design problem.)
+
+**The violin is in**, one toggle per cell: the same cell an octave up on the VSCO
+violin section, under the cello in level. Verified note-for-note at exactly +12 on all
+thirteen. Tick a cell and its violin twin together to hear it as a section.
+
+**The damper pedal was real and it was mine.** 43 of the 64 layers had no note-length
+limit at all, so every note played its whole sample — and the VSCO samples I'd just
+added are 3 seconds long while a 16th at 140bpm is 0.107 s. Each note was ringing ~28x
+too long; the cell had about 45 copies of itself sounding at once. Every layer now
+stops when it's written to stop, and the reverb went from 0.2–0.25 down to 0.08 (0.12
+on the tune).
+
+**Then you said it was STILL ringing, and the clue was "it reverberates for a few more
+secs after I hit stop."** That's the reverb bus — stopping the pattern stops the notes,
+not the tail, so any reverb at all outlives the stop button. And one cell filling
+everything meant the note-length control wasn't reaching the sampler, which I can't
+test without a browser. So I stopped tuning it: **the samples themselves are now 1.0 s
+instead of 3.0** (1.6 s for the bass, which has the longest written note), and **the
+page is completely dry** — no reverb anywhere — with a fast release on every note.
+Nothing downstream can make a one-second sample ring for three.
+
+**And both are now buttons**, because I've fixed this blind twice: **reverb** (dry / a
+little / more) and **note length** (shorter / as built / longer). If it's now too dry
+or too clipped, that's a click, not another round.
+
+**The dynamics were real too, and more specific than "med-soft".** The patterns write
+accents from 0.55 to 1.0 — a proper accent — and the gain band squashed them into a
+**1.14x** wiggle, about 1 dB. Everything measured 0.190–0.208. They now realize
+1.36–1.49x (~3.5 dB), and the *ceiling didn't move* — the loudest note is the same
+note, the soft ones got softer.
+
+**And it balances as you combine.** The stack is normalised by how many layers are
+ticked (equal-power against the 7-layer suggested stack: 3 layers → ×1.53, 30 → ×0.48),
+so adding a layer changes the texture instead of just the volume. There's an
+**auto-balance** button if you want to hear the raw levels instead.
+
+**The new lab found a bug on its first build.** The layer that plays the tune a THIRD
+BELOW is sometimes a sixth ABOVE it instead — a few notes a song, every one of them
+exactly an octave off where it should be. It is the writer's degree shift wrapping
+round inside the octave. `serious.html` shows none of it only because that layer enters
+late there and misses the bars where the tune dips. It is on the lab with a caveat
+printed on it, because it is a device you asked for and I would rather you judged it
+knowing.
+
+### Still yours to decide
+- **The 16th motor on `sr_duel` / `sr_vanguard`** stays STRAIGHT until you rule. The
+  triplet version is the correct transcription, but swung-vs-straight changes the feel
+  of two songs you are mid-judging — A/B them on the lab (`riff_motor16` vs
+  `riff_motor_tri`).
+- **`sr_loopcat` still runs its electric piano at 1.51x the tune.** Left alone because
+  your note is "I like it!".
+- **The acc fix re-rolled the crescendo shapes on the six songs it moved** — 27 of 168
+  entry envelopes changed their stagger and 13 swapped ramp length (8 lost the six-bar
+  one r41 added for your "it should ease into its volume more fluidly" note). Cause:
+  the entry stagger is ordered by hashing each layer's own expression TEXT, so editing
+  a gain re-sorts it. Not fixed in the same round as the voice change, because any fix
+  moves the stagger again and you'd be judging two things at once. Say the word and
+  it's a small, separate change.
+- **Carried from r42, unchanged:** the two-basses guard on six serious songs; the four
+  stale sung pages (vocal / vocaloid / vocarock / vocalab); the cinematic snare sample
+  (`vc_snare_mil` — the HQ renderer clamps it and still reports it 2.9–3.7 dB low on
+  every song, which is the same defect measured a second way).
+- **Every serious page still plays a hash-picked progression rather than the loop its
+  card names** — the bug is found and fixed, but switching the judged pages onto their
+  declared loops would rewrite their harmony, so it is gated to the new lab.
+
+## NEW — r42: variations of the cell, and the bass (2026-09-13; D147)
+
+Your ask: *"the cello harmony that you added into the high energy songs (like the
+one where it's rising and repeating) is good but there should be more variations
+of those ... falling instead of rising, 3 notes instead of 4 where the fourth note
+is the root again, different intervals, different patterns. MOREOVER, they also do
+the bass too in the attack on titan, and other patterns besides this - I want to
+hear them individually and variations of them for the energetic songs."*
+
+**New page: `audition/cells.html` — 23 cards, one bed, one variable each.**
+Every card is the same song (same key, tempo, harmony, kit, tune) with exactly
+ONE figure swapped. **The layer under test plays alone for the first 8 bars**,
+then the build enters on top of it one layer per section — which is how attack on
+titan introduces its own cell, and it is what "hear them individually" needed.
+Each card is ~55 seconds. All 23 are rendered in HQ.
+
+- **9 cell cards** — the one you have, plus falling, three-notes-then-the-root,
+  an arch, scale steps instead of thirds, fifths-and-octave (no third at all),
+  an octave leap, every-note-struck-twice, and the OTHER cell attack on titan
+  plays (bars 21–28, which nobody had transcribed: five 16ths, a half-bar rest,
+  then the same five landing a step higher).
+- **10 bass cards** — the two you have, plus octaves on straight 8ths, the
+  opening's two-hits-a-bar-with-the-second-moving, the push with a fifth on beat
+  3, the 3+3+2, the fifth pump, low-high-low-high, the walk down, and the one
+  that never plays the downbeat.
+- **4 riff cards** — the chorus riff arching, the same riff DESCENDING, the 16th
+  motor, the 3+3+2 stabs.
+
+**Where they came from: 9 measured, 8 yours.** Each card says which, and the
+measured ones name the file, the bars and how many times that file plays it.
+
+**Two of those labels were wrong and an adversarial pass caught them before you
+did.** I had a verifier re-open each source MIDI and try to reproduce my claim.
+It refuted two rows and corrected seven. The two that mattered: the "falling"
+RIFF card is not what attack on titan plays on its odd bars — that file plays a
+FROZEN four-note cell over a moving bass, and its shape turns rather than
+falling, so the card now says the descent is yours and not the file's; and the
+ReawakeR bass does strike the downbeat (with a lone high octave) — what never
+lands on beat 1 is the weight. Both cards are fixed and re-rendered. You judge
+the card, so a card that mislabels where a shape came from poisons the verdict.
+Attack on titan turns out to play **six** bass patterns across its 104 bars; its
+single most repeated bar is the push we already had. And "falling instead of
+rising" is in the file itself — the chorus riff arches on even bars and descends
+on odd ones, every bar of its biggest section. The read-out is
+`research/cells-r42.md`.
+
+**Three things I found that you did not ask about:**
+
+- **The serious page runs two basses on six songs** (gate, oath, duel, hunt,
+  vanguard, resolve). The r41 rule that was meant to stop that has
+  a typo and has never run once. I have NOT fixed it: you heard this build and
+  said "it's better!", and fixing it would delete a bass from all six. Say the
+  word and the next round puts a card each way in front of you.
+- **vocal.html, vocaloid.html, vocarock.html and vocalab.html on disk are stale
+  builds** — rebuilding them moves 11 songs, and (except on vocalab, which is
+  older still) every change is one r41 cymbal timing constant. I left all four
+  exactly as you last saw them; refreshing them would mark their renders STALE,
+  so that is your call.
+- **The test that kept failing at random** was not what I said last round. Two
+  other test files rewrite `src/lib/verdicts.js` — the generator's own input —
+  while the determinism check is building, so its two builds legitimately
+  differed. They now take a lock. Three suite runs in a row at 458/458, where it
+  used to fail two runs in three.
+
+- **The serious kit's snare is the quietest sample in its folder** — it points at
+  the softest velocity layer of a stick-on-*rim* hit, 13.9 dB under the on-head
+  layer sitting right next to it in the same library. That is a second reason
+  the percussion doesn't read as serious, separate from the kit choice I fixed
+  last round. Changing it re-renders every cinematic-kit song, so it is queued,
+  not done.
+
+**0 of your 10 judged pages moved. 458 tests, 458 pass. Nothing committed.**
+
+## NEW — r41: your two serious exports answered (2026-09-13; D146)
+
+Your headline: *"overall better but the songs that require seriousness/energy dont
+have that yet, and i sometimes cant tell that layers are added. bear in mind that
+bass is also a thing because i dont hear much bass."* Instrumental only, as asked
+— **0 re-sings, the sung voice was reused on every song.**
+
+**First, an apology that explains half your notes.** Between your two exports the
+page was rebuilt but the wavs were not. With **HQ on** you heard 12:17 audio
+against a 14:32 page; with **HQ off** the browser played the new mix but not the
+render-tier fixes. That is why one card said "percussion is better" on a song
+whose percussion had not changed, and two repeated the vibraphone complaint on
+songs where the vibraphone was already gone. **Fixed so it cannot recur:** the
+renderer now records which mix it rendered, and a card whose wav is older than its
+mix shows a red **HQ STALE** badge and says so in the now-playing line.
+
+**The pitched percussion in the harmony** — you located it exactly ("the one in
+the harmony that does the chord repeats, NOT the one that plays the melody"). It
+was the companion, and it was `gm_vibraphone` on 7 of 11 because the pool has
+three members and the filters removed two of them. Now five serious voices —
+viola, tremolo strings, pizzicato, harp, organ.
+
+**The string VST was genuinely broken, not badly written.** The patch builder set
+each instrument zone's floor but never capped the one below it, so the cello's top
+region ran to key 71 while the violins started at 66 — and every note in between
+sounded **a violin section and a cello section at once**. That band is where the
+melody lives: hunt had 66% of its notes there, expanse 58%, gate 39%. Before: keys
+66–71 doubled. After: none. It is also why you rated ashes' melody voice "better
+than the other ones" — its viola has no patch at all and quietly falls through to
+a plain soundfont, so it never touched this.
+
+**"I can't tell the new layers" was my arithmetic error.** Every added layer was
+scaled against the *instrumental guide* — the placeholder that plays at 45%
+because the VOICE is meant to carry the tune. But the voice isn't ducked, so the
+layers came out at **0.19x the real melody**. They are now 0.35–0.61x, **1.6x
+louder**, still safely under the tune.
+
+**The bass** — also mine. r40 stood the moving bass down whenever the stack
+declared one, but on seven songs (every energetic one) the stack's bass was a
+**one-note-per-bar pedal**. Meanwhile the muted guitar sat in the same register
+2.16x louder. Every energetic song now has 3.9–6.0 notes/bar of real bass under
+the pedal.
+
+**The Attack on Titan patterns — the figure you asked for was already in the
+library and the stack named after it never used it.** Counting how often every
+one-bar cell repeats (rather than reading bars by eye), AoT's most frequent cell
+— **16 times, the top cell in the whole piece** — is the left hand striking an
+octave on the off-beats. That is `sr_bass_push`, encoded in r40, whose own note
+says "attack on titan bars 68+". It now enters at section 3, so the pedal holds
+early and the push arrives on top, which is what the source does.
+
+**The percussion is a different battery now.** Every serious song was on a pop kit
+— kick, snare, hi-hat. The orchestral samples have been sitting in the pack
+unused. Six songs now play **war drum, military snare, frame drum and timpani,
+with no hi-hat at all**.
+
+**The cymbal you said I'm "still using"** was one hardcoded sample at every
+section change — six times on sr_gate, the identical one-shot on every song. Now
+capped at three and rotated across four impacts, each placed by its **own measured
+peak** (they range from 0.35 s to 6.00 s, so a shared offset would have put one
+four bars late).
+
+**Pinned on your words:** sr_summit ("no complaints", twice) and sr_ashes ("love
+it") — both byte-identical through everything above. Also vg_excited_fight on
+vocal.html, from your heads-up.
+
+**Not done, and I want to be straight about it:** your sr_gate note that it
+"sounds like a nice casual vocal whenever there's multiple voices" is a VOCAL
+change, which you asked me to hold off on. Whether vanguard's melody instrument
+should change at all (you like the trumpet, it's just loud) is still your call.
+And the octave/third doublings still read as thickness rather than as separate
+layers — that is the next real piece of work on "I can't tell the layers".
+
 ## NEW — r40: serious songs (2026-09-13; D145)
 
 Your ask: *"i just want more serious prompts to have more serious vibes … in

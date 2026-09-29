@@ -4,7 +4,7 @@
 
 # Claudesune Miku
 
-**The best Claude skill.**
+**The best Claude skill**
 
 [![Decisions](https://img.shields.io/badge/decisions-D1%E2%80%93D150-blueviolet.svg)](DECISIONS.md)
 [![Strudel](https://img.shields.io/badge/strudel-1.1.0%20pinned-teal.svg)](#installation)
@@ -24,22 +24,36 @@ It began as an LLM song *editor* with mechanically gated, containment-verified e
 ## How a song is made
 
 ```
-prompt "somber space"
-  prompt-parse.js   emotion + environment
-  vibes.js          EMOTION is a transform (mode, tempo, register, percussion, chroma)
-                    ENVIRONMENT is the material (timbre, figuration classes, ensemble, perc)
-harmony       exemplar variation from the ratified progression pool
-accompaniment ratified foundation figure per class, varied per 4-bar block,
-              travelling between figures as letters change
-melody        letter form (A B A' ...), retrieved cells bound by the melody walker:
-              cadence grammar, chord spelling, leap folding, grid snap
-layers        companion, counterline, descant, pad top voice, marcato, textures, drums
-arrangement   roles, instrument handoffs at letter boundaries, section curves, breakdowns
-render        browser soundfont | HQ stems via sfizz, Surge XT, ffmpeg to -16 LUFS
-vocal         score export -> Japanese mora lyrics -> DiffSinger -> RVC timbre -> f0 verify
+┌──────────────────────────────────────────┐
+│  PROMPT        emotion + environment     │
+└────────────────────┬─────────────────────┘
+                     ▼
+┌──────────────────────────────────────────┐
+│  HARMONY       a chord progression       │
+└────────────────────┬─────────────────────┘
+                     ▼
+┌──────────────────────────────────────────┐
+│  MELODY        letter form, A B A'       │
+└────────────────────┬─────────────────────┘
+                     ▼
+┌──────────────────────────────────────────┐
+│  LAYERS        accompaniment, drums      │
+└────────────────────┬─────────────────────┘
+                     ▼
+┌──────────────────────────────────────────┐
+│  ARRANGEMENT   sections and handoffs     │
+└────────────────────┬─────────────────────┘
+                     ▼
+┌──────────────────────────────────────────┐
+│  RENDER        browser or HQ samplers    │
+└────────────────────┬─────────────────────┘
+                     ▼
+┌──────────────────────────────────────────┐
+│  VOCAL         Japanese lyrics, sung     │
+└──────────────────────────────────────────┘
 ```
 
-The generator with every rule inline next to its D-number is [scripts/audition-songs.mjs](scripts/audition-songs.mjs), on top of `src/binder/` and `src/lib/`. Song identity is hashed from the song's **name**: key, tempo, voice count and every pool pick rotate with it, so an A/B pair must share a name.
+The same prompt and song name always give the same song, so revisions compare against a fixed baseline instead of a re-roll.
 
 ## The round loop
 

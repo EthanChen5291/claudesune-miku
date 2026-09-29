@@ -61,6 +61,49 @@ export const HQ_INSTRUMENTS = {
     sfz: 'vendor/sfz/gen/strings-sections.sfz',
     velScale: 1, trimDb: -2,
   },
+  // r43 — the browser-tier string names render through the SAME patch, so a
+  // combination that sounds right in the page sounds the same if it is ever
+  // rendered. A page-scoped sound with no HQ entry would fall through to
+  // fluidsynth and the two tiers would disagree exactly where this round was
+  // trying to make them agree.
+  // r43 SECOND PASS — ONE PATCH PER INSTRUMENT, corrected by the verify pass.
+  //
+  // HIS NOTE: "is it just HQ? ... it's still the same amount of wet and i cant
+  // layer them properly cus its too reverby". It IS just HQ, and the mechanism
+  // was this table: every string name rendered through strings-sections.sfz,
+  // which declares ampeg_release=0.7. The labs write SIXTEENTHS — 0.107 s at
+  // 140 bpm — so each note rang 0.807 s and one cello layer sounded 8 notes at
+  // once. The browser tier never had this (superdough stops the sample at the
+  // clipped hap duration), which is exactly why he could hear the difference
+  // between HQ on and off, and why a pass that only touched `room` and `clip`
+  // changed nothing he could hear.
+  //
+  // Two things the first cut got wrong, both caught by measuring the rendered
+  // output rather than the mapping:
+  //  - a SHARED pitch-split patch ignores the name. vsco_violin_spic played
+  //    CELLO samples on 93.3% of its onsets and no patch used a viola sample at
+  //    all. A name that says which instrument plays needs its own patch; the
+  //    pitch split belongs to the ENSEMBLE name (gm_string_ensemble_1), which
+  //    is judged and unchanged.
+  //  - the contrabass patch topped at midi 53 and render-hq folded everything
+  //    above it down an octave (D83) — 100 notes on 4 cells cards, and on
+  //    cl_bass_offbeat the fold turned the figure's opening fifth into a
+  //    unison. The contrabass patches now carry a cello zone above the basses.
+  //
+  // The invariant: one browser bank, one HQ patch, same instrument, or the two
+  // tiers disagree about what a layer IS.
+  vsco_cello: { backend: 'sfz', sfz: 'vendor/sfz/gen/cello-sus.sfz', velScale: 1, trimDb: -2 },
+  vsco_viola: { backend: 'sfz', sfz: 'vendor/sfz/gen/viola-sus.sfz', velScale: 1, trimDb: -2 },
+  vsco_violin: { backend: 'sfz', sfz: 'vendor/sfz/gen/violin-sus.sfz', velScale: 1, trimDb: -2 },
+  vsco_bass: { backend: 'sfz', sfz: 'vendor/sfz/gen/contrabass-sus.sfz', velScale: 1, trimDb: -2 },
+  vsco_cello_spic: { backend: 'sfz', sfz: 'vendor/sfz/gen/cello-spiccato.sfz', velScale: 1, trimDb: -2 },
+  vsco_viola_spic: { backend: 'sfz', sfz: 'vendor/sfz/gen/viola-spiccato.sfz', velScale: 1, trimDb: -2 },
+  vsco_violin_spic: { backend: 'sfz', sfz: 'vendor/sfz/gen/violin-spiccato.sfz', velScale: 1, trimDb: -2 },
+  vsco_bass_spic: { backend: 'sfz', sfz: 'vendor/sfz/gen/contrabass-spiccato.sfz', velScale: 1, trimDb: -2 },
+  vsco_cello_pizz: { backend: 'sfz', sfz: 'vendor/sfz/gen/cello-pizz.sfz', velScale: 1, trimDb: -2 },
+  vsco_viola_pizz: { backend: 'sfz', sfz: 'vendor/sfz/gen/viola-pizz.sfz', velScale: 1, trimDb: -2 },
+  vsco_violin_pizz: { backend: 'sfz', sfz: 'vendor/sfz/gen/violin-pizz.sfz', velScale: 1, trimDb: -2 },
+  vsco_bass_pizz: { backend: 'sfz', sfz: 'vendor/sfz/gen/contrabass-pizz.sfz', velScale: 1, trimDb: -2 },
   gm_flute: {
     backend: 'sfz',
     sfz: 'vendor/sfz/gen/flute.sfz',

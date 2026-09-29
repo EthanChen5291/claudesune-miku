@@ -70,6 +70,21 @@ const mergedFigNotes = { ...((existsSync(OUT) ? (await import(OUT)).FIGURE_NOTES
 // keep has vouched for its vibe.
 const mergedDrum = { ...((existsSync(OUT) ? (await import(OUT)).DRUM_VERDICTS : null) ?? {}) };
 const mergedDrumNotes = { ...((existsSync(OUT) ? (await import(OUT)).DRUM_NOTES : null) ?? {}) };
+// r43 — the COMBINATION LAB (audition/mixlab.html) emits a different SHAPE of
+// evidence, and flattening it into CARD_NOTES would destroy the part that makes
+// it useful. His ask was "leave a note either individually for that song or for
+// the group, and i can do this multiple times": a note there is addressed at a
+// LAYER, a GROUP of layers, or one exact COMBINATION, and every note records
+// which layers were sounding when he wrote it. A note about a bass is worth
+// nothing without the eleven other layers that were playing under it.
+//
+// Three bags, merged like everything else so a second session's export cannot
+// erase the first's, and each note keyed by name -> a LIST (the whole point is
+// that he says several things about one layer over several sittings).
+const mergedLayerNotes = { ...((existsSync(OUT) ? (await import(OUT)).LAYER_NOTES : null) ?? {}) };
+const mergedGroupNotes = { ...((existsSync(OUT) ? (await import(OUT)).GROUP_NOTES : null) ?? {}) };
+const mergedComboNotes = [...((existsSync(OUT) ? (await import(OUT)).COMBO_NOTES : null) ?? [])];
+let mixlabN = 0;
 let added = 0, changed = 0, unknown = [], newNotes = [], derivedN = 0, impliedN = 0, figN = 0;
 
 // The judge page (D52) emits TRIAL results, not per-entry verdicts, so it takes
@@ -84,6 +99,19 @@ if (!CHECK && file) {
   // facet-verdicts.js are evidence too, and an export from a session where Ethan
   // never opened the cadence tab must not erase what the cadence tab knows.
   if (raw0.page === 'facets') { writeFacets(raw0); process.exit(0); }
+  // r43 — the combination lab's notes. A note is identified by its TEXT plus
+  // its selection, so re-pasting the same export twice cannot double it.
+  if (raw0.page === 'r43-mixlab' || raw0.layerNotes || raw0.groupNotes || raw0.comboNotes) {
+    const key = (r) => `${r.at}|${r.text}|${(r.sel?.layers ?? []).join('+')}`;
+    const mergeList = (bag, name, recs) => {
+      const have = new Set((bag[name] ?? []).map(key));
+      for (const r of recs) if (!have.has(key(r))) { (bag[name] ??= []).push(r); mixlabN++; }
+    };
+    for (const [n, recs] of Object.entries(raw0.layerNotes ?? {})) mergeList(mergedLayerNotes, n, recs);
+    for (const [n, recs] of Object.entries(raw0.groupNotes ?? {})) mergeList(mergedGroupNotes, n, recs);
+    const haveC = new Set(mergedComboNotes.map(key));
+    for (const r of raw0.comboNotes ?? []) if (!haveC.has(key(r))) { mergedComboNotes.push(r); mixlabN++; }
+  }
   if (raw0.page === 'judge' || raw0.answers) {
     reportJudge(raw0.answers ?? {}, raw0.strayNotes ?? {});
     writeFileSync(join(ROOT, 'src/lib/judgments.js'),
@@ -373,7 +401,13 @@ if (!CHECK) {
   // later analysis can tell an inference from a click, and NEVER allowed to
   // overwrite a click from any session.
   const implied = raw.impliedVerdicts != null;
-  const verdicts = raw.verdicts ?? raw.impliedVerdicts ?? (raw.derived ? {} : raw);
+  // r43 — ...and a combination-lab export is NOT a verdict map either. The bare
+  // fallback treats the whole object as {name: verdict}, so without this clause
+  // the page tag itself is read as a verdict and the import dies on `bad verdict
+  // "r43-mixlab"`. That lab has no keep/kill by design: a verdict on whatever
+  // happened to be ticked is not a verdict on anything reproducible.
+  const mixlabShape = raw.layerNotes || raw.groupNotes || raw.comboNotes;
+  const verdicts = raw.verdicts ?? raw.impliedVerdicts ?? ((raw.derived || mixlabShape) ? {} : raw);
   const pageTag = implied ? `${page ?? raw.page ?? 'unknown'}-implied` : page;
   const at = (raw.generated ?? new Date().toISOString()).slice(0, 10);
 
@@ -523,6 +557,25 @@ if (Object.keys(mergedDrum).length || Object.keys(mergedDrumNotes).length) {
   L.push('');
 }
 
+// r43 — the combination lab's three bags. Read by nothing in the generator on
+// purpose: these are notes about LAYERS and COMBINATIONS, which is design
+// evidence for the next round rather than a per-song pin, and a bag the engine
+// reads is a bag that can re-roll a judged song (D95).
+if (Object.keys(mergedLayerNotes).length || Object.keys(mergedGroupNotes).length || mergedComboNotes.length) {
+  L.push('// Notes from audition/mixlab.html (r43) — the COMBINATION lab. Each note');
+  L.push('// carries `sel`: the bed, the tempo, the loop and the exact list of layers');
+  L.push('// that were sounding when it was written. Without that a note about "the');
+  L.push('// bass" names one of sixteen basses under one of fifty other layers.');
+  L.push('// LAYER_NOTES / GROUP_NOTES are keyed by the slot and group ids in');
+  L.push('// SERIOUS_STACKS.sr_stack_mixlab; COMBO_NOTES is a flat list.');
+  L.push(`export const LAYER_NOTES = ${JSON.stringify(mergedLayerNotes, null, 2)};`);
+  L.push('');
+  L.push(`export const GROUP_NOTES = ${JSON.stringify(mergedGroupNotes, null, 2)};`);
+  L.push('');
+  L.push(`export const COMBO_NOTES = ${JSON.stringify(mergedComboNotes, null, 2)};`);
+  L.push('');
+}
+
 const out = L.join('\n');
 if (CHECK) {
   if (!existsSync(OUT)) { console.error(`${OUT} does not exist — run the importer`); process.exit(1); }
@@ -544,5 +597,6 @@ if (CHECK) {
     console.log(`  ${Object.keys(mergedNotes).length} card notes carried (${newNotes.length} new this import)`);
     for (const [n, t] of newNotes) console.log(`     [${n}] ${t}`);
   }
+  if (mixlabN) console.log(`  ${mixlabN} new combination-lab notes (${Object.keys(mergedLayerNotes).length} layers, ${Object.keys(mergedGroupNotes).length} groups, ${mergedComboNotes.length} combinations)`);
   for (const n of unknown) console.log(`  STALE: "${n}" is not in the library — verdict dropped`);
 }

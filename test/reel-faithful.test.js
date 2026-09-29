@@ -13,6 +13,12 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
+import { execFileSync } from 'node:child_process';
+import { join, dirname } from 'node:path';
+import { fileURLToPath } from 'node:url';
+import { acquireVerdictsLock, releaseVerdictsLock } from './_verdicts-lock.mjs';
+
+const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 import { bindFigure, bindMelody } from '../src/binder/bind.js';
 import { REEL_PROGRESSIONS, LAYER_PATTERNS } from '../src/lib/layer-patterns.js';
 import { parseDegrees } from '../src/lib/progressions.js';
@@ -338,10 +344,30 @@ test('r32: EIGHT foundation classes are pools of ONE — the answer to his "why?
   // exactly one ratified member: fnd_boogie_shuffle IS the riff class. That is
   // D119's pool-of-one at LIBRARY scale, and riff is not alone — this pins the
   // count so the situation is visible rather than rediscovered a fourth time.
-  const byClass = {};
-  for (const [k, f] of Object.entries(FOUNDATIONS)) {
-    if (!f.ratified || f.meter_class !== '4/4') continue;
-    (byClass[f.class] ??= []).push(k);
+  // r43 — DERIVE THIS IN A CHILD PROCESS UNDER THE VERDICTS LOCK.
+  //
+  // `ratified` is not static data: figurations-foundation.js applies
+  // FIGURE_VERDICTS at import time, and `fnd_boogie_shuffle` — the entire riff
+  // class — is ratified ONLY by a verdict. test/foundations.test.js and
+  // test/facets.test.js rewrite src/lib/verdicts.js with a fixture and restore
+  // it, and node --test runs files in parallel, so this file's top-level import
+  // can land while the fixture is live and see riff unratified. Measured: this
+  // assertion failed intermittently in full-suite runs (twice in six) and passed
+  // 5 of 5 alone. The lock already exists for exactly this (test/_verdicts-lock.mjs,
+  // r42) — the writers hold it and this reader did not, and a top-level import
+  // cannot be protected after the fact, so the read moves into a child process
+  // that starts while the lock is held.
+  acquireVerdictsLock();
+  let byClass;
+  try {
+    byClass = JSON.parse(execFileSync('node', ['--input-type=module', '-e',
+      `import { FIGURATIONS_FOUNDATION as F } from '${join(ROOT, 'src/lib/figurations-foundation.js')}';`
+      + 'const b = {};'
+      + "for (const [k, f] of Object.entries(F)) { if (!f.ratified || f.meter_class !== '4/4') continue; (b[f.class] ??= []).push(k); }"
+      + 'console.log(JSON.stringify(b));',
+    ], { cwd: ROOT, encoding: 'utf8' }));
+  } finally {
+    releaseVerdictsLock();
   }
   const singletons = Object.entries(byClass).filter(([, v]) => v.length === 1).map(([c]) => c).sort();
   assert.deepEqual(singletons,

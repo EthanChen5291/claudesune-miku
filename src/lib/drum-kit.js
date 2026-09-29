@@ -92,6 +92,27 @@ export const KIT_STYLES = {
   shuffle: { onsets: 14.5, odd16: 0, openHat: 0.05, ghost: 0.4, kick: 'four', hat: 'shuffle' },
   // Rock:Indie n=268 read quiet — a held-back kit for ballad and scene lanes
   ballad: { onsets: 8, odd16: 0.05, openHat: 0.15, ghost: 0.3, kick: 'sparse', hat: '8th' },
+  // r41/D146 — THE CINEMATIC KIT. His serious export, four cards: "the
+  // percussion isn't serious. think the percussion in movie soundtracks, or
+  // maybe even the percussion of the SAC with an actual complex beat" (x3) and
+  // "the drums are too casual (just a normal beat)".
+  //
+  // Every drummed serious song was running `rock` or `ballad` — a drum-kit
+  // kick, a drum-kit snare and a hi-hat. The sample pack has carried the whole
+  // orchestral battery since D93 and the serious page never reached for it:
+  // vc_wardrum (+cresc), vc_timpani, vc_snare_mil, vc_snare_roll, vc_gong,
+  // vc_frame, vc_log_hi/lo. There is no hi-hat in a film cue.
+  //
+  // The numbers are the practitioner consensus in research/serious-r40.md §1.8,
+  // not a genre-folder median like the rows above — stated plainly because this
+  // row is NOT measured off the archive the way the others are: orchestral bass
+  // drum on the downbeats, a steady accented ostinato instead of a hat, a
+  // military snare pattern on top, timpani for the accents and fills. Straight
+  // on the grid (odd16 0.05): syncopation is what reads "casual" here.
+  cinematic: {
+    onsets: 13, odd16: 0.05, openHat: 0, ghost: 0.15, kick: 'four', hat: '16th',
+    voices: { kick: 'vc_wardrum', snare: 'vc_snare_mil', hat: 'vc_frame', tomHi: 'vc_timpani', tomLo: 'vc_wardrum', open: 'vc_gong' },
+  },
 };
 
 const KICKS = {
@@ -115,7 +136,10 @@ const KICKS = {
  */
 export function writeKit({ seed = 'kit', style = 'rock', bars = 4, fill = true, deep = true } = {}) {
   const st = KIT_STYLES[style] ?? KIT_STYLES.rock;
-  const v = (k) => (deep ? VOICE[k].deep : VOICE[k].stock);
+  // r41: a style may name its own voices (the cinematic battery). Stock
+  // one-shots are unchanged — those are the browser fallback, and no local
+  // sample exists there to swap to.
+  const v = (k) => (deep ? (st.voices?.[k] ?? VOICE[k].deep) : VOICE[k].stock);
   const rnd = (tag) => fnv(`${seed}|${tag}`);
   // A 16th grid everywhere except `shuffle`, whose 8ths are triplet 8ths — that
   // is the ONLY way this engine has ever put an onset off the 16th grid, and

@@ -51,7 +51,9 @@ import { FIGURATIONS_FOUNDATION } from '../src/lib/figurations-foundation.js';
 import { FND_TRAVEL } from '../src/lib/figuration-graph.js';
 import { writeKit, kitStyleFor } from '../src/lib/drum-kit.js';
 import { VOCALOID_LOOPS, vocaloidFormSpec } from '../src/lib/vocaloid-form.js';
-import { seriousSpec, SERIOUS_LOOPS, SERIOUS_STACKS } from '../src/lib/serious-layers.js';
+import { seriousSpec, SERIOUS_LOOPS, SERIOUS_STACKS, SERIOUS_FIGURES, SERIOUS_THEME,
+  SUPPORT_ENERGY_CAP, figurePerBar, rotateSeriousFigures } from '../src/lib/serious-layers.js';
+import { mixlabPage } from './audition-mixlab-page.js';
 import { RHYTHMS } from '../src/lib/rhythms.js';
 import { INSTRUMENTS } from '../src/lib/instruments.js';
 import { chordCoreTones, parseKey, keyUsesFlats, pcToNoteName } from '../src/binder/theory.js';
@@ -499,6 +501,10 @@ function buildSong(prompt, name, opts = {}) {
   // song, not a rule: it is not ruleFresh-gated, and a keep on such a song must
   // pin it (D91 — keepFresh, never let a click strip the preset).
   let sr = null;
+  // r44 — what the slot rotation drew for this song, for the card. Empty on
+  // every song that has a history, so the field is spread conditionally into
+  // the record below and a judged page cannot diff on it.
+  let srPicksOut = [];
   // r40 — the bars where the VOICE rests and an instrument states the theme.
   // Hoisted out of the stack block below because the sung HARMONY voice masks
   // in a different scope and has to rest with the lead: the verify pass
@@ -711,6 +717,22 @@ function buildSong(prompt, name, opts = {}) {
   // suspended, and only for the page that asks.
   const historyLess = () => (opts.keepFresh === true || !DERIVED_VERDICTS?.[name])
     && (opts.noteBlind === true || !CARD_NOTES?.[name]);
+
+  // r44 — RETRIEVAL freshness, which is NOT capability freshness, and the one
+  // gate that must ignore `noteBlind`.
+  //
+  // `historyLess()` answers "may a new RULE reach this song", and noteBlind
+  // makes it TRUE for a song whose own page has notes on it — deliberately, so
+  // importing his notes cannot strip what he heard (D118). A slot ROTATION asks
+  // a different question: may this song draw a DIFFERENT PATTERN out of a pool.
+  // D95's rule is that a song he has already heard never re-rolls its
+  // retrieval, and noteBlind must not be able to license that — measured the
+  // first time this shipped through `historyLess()`: it re-rolled the cell and
+  // the bass on all eleven judged rows of audition/serious.html, including two
+  // pinned prose keeps, because `vocaloidOpts` sets noteBlind for the whole
+  // page. So this predicate asks only "has he ever heard this song", and it is
+  // the only gate in the file allowed to read CARD_NOTES outside historyLess.
+  const neverAuditioned = () => !DERIVED_VERDICTS?.[name] && !CARD_NOTES?.[name];
 
   // ==========================================================================
   // r26/D115 — THE DISSONANCE BUDGET, DECLARED PER LANE (HIS ASK)
@@ -1028,7 +1050,24 @@ function buildSong(prompt, name, opts = {}) {
   const colorFresh = opts.voicedColor === true
     || (opts.voicedColor !== false && !priorKeep && !opts.grammarPin && !opts.pinFrom
         && historyLess());
-  const PROG_ANY = (n) => ALL_PROGRESSIONS[n] ?? PROGRESSIONS_CHORDCAMERA[n] ?? PROGRESSIONS_VANRIVER[n] ?? PROGRESSIONS_CITYPOP[n] ?? PROGRESSIONS_SERUM[n] ?? REEL_PROGRESSIONS[n] ?? VOCALOID_LOOPS[n];
+  // r43 — A SERIOUS PAGE NAMED ITS PROGRESSION AND THE SONG PLAYED SOMETHING
+  // ELSE. `basePin` is set from the vocaloid form's VERSE loop (below, r38) and
+  // resolved through this lookup — and when the serious pack arrived in r40 its
+  // ten loops were never added here, so `basePinned` came back null on every
+  // serious row and the song fell through to the hash-picked exemplar. Measured:
+  // audition/serious.html declares `sr_loop_shuttle_i_bVII` on sr_gate and plays
+  // `VI VII Isus VI VII im VII VII^7 #vim`; the r42 cells bed declares the same
+  // loop and plays the YNW Melly pop progression. This is the r19/D100 finding
+  // repeated exactly — "the four reel progressions were silently ignored and the
+  // songs built on them came out on unrelated exemplars ... the build looked
+  // green and the music was wrong" — on a table added two rounds later.
+  //
+  // GATED ON `opts.loopHarmony`, NOT FIXED IN PLACE. Making it general would
+  // rewrite the harmony of the 11 serious songs and the 23 pattern-lab cards he
+  // has already judged, and a kept song's degrees are the degrees he judged
+  // (D64). A page that wants its declared loop asks for it; serious.html and
+  // cells.html keep the harmony they were judged on until he says otherwise.
+  const PROG_ANY = (n) => ALL_PROGRESSIONS[n] ?? PROGRESSIONS_CHORDCAMERA[n] ?? PROGRESSIONS_VANRIVER[n] ?? PROGRESSIONS_CITYPOP[n] ?? PROGRESSIONS_SERUM[n] ?? REEL_PROGRESSIONS[n] ?? VOCALOID_LOOPS[n] ?? (opts.loopHarmony ? SERIOUS_LOOPS[n] : undefined);
   const basePinned = opts.basePin
     && (EX.entries.some(([n]) => n === opts.basePin) || PROG_ANY(opts.basePin))
     ? opts.basePin : null;
@@ -1565,7 +1604,12 @@ function buildSong(prompt, name, opts = {}) {
   // opts RAISE the lead may pass the 1.0 ceiling (to 1.15) — the ceiling
   // stays for every formula-driven gain so no judged mix moves.
   const leadGain = Math.min(opts.leadGainMul > 1 ? 1.15 : 1, Math.round((0.85 * LEAD.gainMul + (v.percussion.presence === 'foreground' ? 0.18 : 0)) * (opts.leadGainMul ?? 1) * 100) / 100);
-  const accFx = ART.pedal ? '.clip(1.25).room(0.5)'
+  // r43 — the default acc fx carries `.room(0.25)` and NO clip, so the harmony
+  // hand rings its samples out the same way the figure layers did (his "a lot
+  // of reverb and duration"). Page-scoped to the combination lab: every other
+  // page was judged with this room.
+  const accFx = opts.labDynamics ? '.clip(0.9).release(0.05)'
+    : ART.pedal ? '.clip(1.25).room(0.5)'
     : ART.style === 'staccato' ? '.clip(0.55).room(0.15)'
     : ART.style === 'legato' ? '.clip(1.1).room(0.3)'
     : '.room(0.25)';
@@ -1630,7 +1674,12 @@ function buildSong(prompt, name, opts = {}) {
   // flat 0.85 IS "the flute is too loud" with no shading. `.mul(gain(x))`
   // composes; kept/pinned songs were JUDGED with the flat form and keep it.
   const gainFx = (g) => (r33() ? `.mul(gain(${g}))` : `.gain(${g})`);
-  const leadFx = ART.pedal ? `${gainFx(leadGainExpr)}.room(0.7)` : `${gainFx(leadGainExpr)}.room(0.25)`;
+  // r43: the tune keeps a little more room than the layers under it (it is the
+  // line, not the texture) but not the default 0.25 — on a page where the other
+  // 63 layers are at 0.08 the tune at 0.25 is the wash he is hearing.
+  const leadFx = ART.pedal ? `${gainFx(leadGainExpr)}.room(0.7)`
+    : opts.labDynamics ? `${gainFx(leadGainExpr)}.release(0.08)`
+      : `${gainFx(leadGainExpr)}.room(0.25)`;
   // r16 FOUNDATION-VARIATION LAW — supersedes D94's 2-bar composite.
   //
   // He rejected D94 in three independent places in one round. The jungle-floor
@@ -2359,6 +2408,43 @@ function buildSong(prompt, name, opts = {}) {
   const accVoiceFor = (fig0) => (vf ? fig0?.sound : undefined) ?? opts.accSound ?? (accToBass ? 'gm_synth_bass_1'
     : (!priorKeep && env === 'desert') ? (/drone|sustain|pad|held/.test(`${fig0.class ?? ''} ${fig0.name ?? ''}`) ? 'gm_pad_bowed' : 'gm_marimba')
       : (!priorKeep && env === 'jungle') ? 'gm_marimba' // the DKC acc voice
+        // r43/D148 — HIS SIXTH CARD ABOUT THIS ONE LAYER. Five on the r41
+        // serious page ("I dont think it sounds \"serious\" yet, this may be
+        // because the vibraphone isn't too serious"; "I think the vibraphone or
+        // whatever that pitched percussive instrument still makes it a bit less
+        // serious (the one in the harmony that does the chord repeats and
+        // stuff, NOT the one that plays the melody)"; "the pitched percussion
+        // in the harmony should be replaced with another instrument" x3) and a
+        // sixth on the r42 pattern lab ("I dont think the vibraphone conveys
+        // tense or fight at all").
+        //
+        // r41 READ THIS AS THE COMPANION AND FIXED THE WRONG LAYER. That fix
+        // was real — measured on the current page, gm_vibraphone is gone from
+        // the companion on 10 of 11 serious rows — and the complaint came back
+        // anyway, because the layer he describes is THE ACCOMPANIMENT HAND: it
+        // is the harmony, it does the chord repeats, and gm_epiano1 is a
+        // pitched-percussive keyboard. The r41 replacement was a church organ,
+        // which nobody would call a vibraphone.
+        //
+        // Why it took six cards to find: on serious.html the e-piano is one of
+        // seventeen sounds and 544 of 5007 notes, and on the sparse pattern-lab
+        // bed it is the second loudest thing in the mix. His ear located it the
+        // moment the density dropped.
+        //
+        // The piano is not a guess either — it is the harmony instrument of the
+        // reference he keeps naming (attack on titan's left hand) and the one
+        // voice on this page he has praised outright ("love the piano vst -
+        // it's very soft and ambient and fits the vibe", sr_expanse).
+        // SCOPED TO `opts.seriousAcc`, a per-row opt, NOT to `opts.serious`.
+        // The first cut keyed on the lane and moved nine songs instead of six:
+        // the three piano-acc rows are prose keeps ("I really like this a lot
+        // ... love the piano vst", "I like it! no complaints") and all 23 cards
+        // of the judged pattern lab. `pinFrom` was tried next and is worse — it
+        // flips every bare `!opts.pinFrom` gate, so the pin MOVED two of the
+        // songs it was added to protect (D123's catch-22, third instance). One
+        // opt, set on the six rows whose notes name this layer, can reach
+        // nothing else by construction.
+        : (!priorKeep && opts.seriousAcc && ruleFresh(43)) ? 'piano'
         : synthAcc ? 'gm_epiano1' : 'piano');
   // ==========================================================================
   // r26/D115 — THE LEFT HAND MAY ONLY SOUND 3rds, 6ths, 4ths AND 5ths
@@ -2579,7 +2665,18 @@ function buildSong(prompt, name, opts = {}) {
       // (set by reelFaithful) rather than made general, because the general acc
       // band reaches all 47 judged songs and that is a round of its own — the
       // measurement is in DECISIONS.md so the next round can pick it up.
-      : opts.accUnderLead
+      // r43/D148 — and the same layer is LOUDER THAN THE TUNE. Measured on
+      // audition/serious.html: `_acc` realizes 1.88-2.05x the lead's realized
+      // mean on all six rows where the acc voice differs from the lead's, 544
+      // to 728 notes each. D122 measured this band at 1.15x on the reels page,
+      // fixed it for reel-faithful cards only and wrote down that the general
+      // band "reaches all 47 judged songs and that is a round of its own". This
+      // picks it up for the SERIOUS lane only, through the same r33-tuned path,
+      // so songs.html does not move.
+      //
+      // A voice swap alone would not have answered him: an instrument at twice
+      // the tune's level is the thing you hear whatever it is.
+      : (opts.accUnderLead || (opts.seriousAcc && ruleFresh(43)))
       // r33: the r32 top of 0.9x left the reel-page acc at a REALIZED 0.80-0.85x
       // the lead and drew "piano too loud" on three more cards (r1, r5, cross
       // dark). 0.72x matches the kit's own relative cap; the acc is support,
@@ -2589,7 +2686,16 @@ function buildSong(prompt, name, opts = {}) {
       // 0.86-0.88 of nominal), and an acc capped against NOMINAL ran 0.99x the
       // realized lead on r5. The acc binds before the lead does, so the
       // envelope mean is approximated by its measured band rather than parsed.
-      ? { gainRange: [Math.round(0.35 * leadGain * 100) / 100, Math.round((r33() ? 0.72 * 0.85 : 0.9) * leadGain * 100) / 100] }
+      // r43 — and the serious lane takes a further MEASURED trim. The band above
+      // is a fraction of NOMINAL leadGain, while D77 is about the lead's
+      // REALIZED mean, and the two differ (the same residual the serious stack
+      // names at supportMulSr). Measured against the INSTRUMENTAL TWIN on
+      // audition/serious.html — never against the ducked `_lead`, which is
+      // D145's trap — the voice swap alone left the acc at 0.79-1.36x the tune
+      // on the six separable rows. 0.72 is the largest scaling that puts the
+      // WORST of them under 1.0, and it is the same number the kit and the
+      // support layers already use.
+      ? { gainRange: [Math.round(0.35 * (opts.seriousAcc && ruleFresh(43) ? 0.72 : 1) * leadGain * 100) / 100, Math.round((r33() ? 0.72 * 0.85 : 0.9) * (opts.seriousAcc && ruleFresh(43) ? 0.72 : 1) * leadGain * 100) / 100] }
       : opts.accGainMul
       ? { gainRange: (accToBass ? [0.6, 0.95] : synthAcc ? [0.5, 0.85] : [0.35, 1.0]).map((x) => Math.round(x * opts.accGainMul * 100) / 100) }
       : accToBass ? { gainRange: [0.6, 0.95] } : synthAcc ? { gainRange: [0.5, 0.85] } : {}),
@@ -3762,6 +3868,8 @@ function buildSong(prompt, name, opts = {}) {
   // ---- drums: vouched dp_* where a vibe note matches, else engine perc -----
   let drums = null;
   let drumBarsShared = null;
+  // r42 (pattern lab, opt-in): no kit in the letter-less intro — see drumBars.
+  const introDrumsOff = opts.introDrums === false;
   const drumInfo = [];
   const dpPick = !opts.dropIntro && v.percussion.presence !== 'none' ? (DP_DRUMS[name] ?? null) : null;
   if (dpPick) {
@@ -3772,7 +3880,7 @@ function buildSong(prompt, name, opts = {}) {
     let { expr } = dpStack(dpPick.pattern, { from: 0, to: d, gainMul: (DP_GAIN[v.percussion.presence] ?? 0.5) * (dpPick.gainMul ?? 1) });
     if (mul === 2) expr = `(${expr}).slow(2)`;
     const drumBars = form.sections.flatMap((sec) =>
-      Array(sec.bars).fill((ENERGY[sec.archetype] ?? 3) >= 3 ? 1 : 0));
+      Array(sec.bars).fill(introDrumsOff && sec.lead === 'none' ? 0 : (ENERGY[sec.archetype] ?? 3) >= 3 ? 1 : 0));
     if (drumBars.some(Boolean)) {
       const dm = maskString(drumBars);
       drumBarsShared = drumBars;
@@ -4060,7 +4168,13 @@ function buildSong(prompt, name, opts = {}) {
     // desert's whole 16-bar B section had zero hand drums — exactly the
     // "no percussion tips it into space" failure the pin exists to stop)
     const drumBars = form.sections.flatMap((sec) =>
-      Array(sec.bars).fill(opts.percAllBars ? 1 : (ENERGY[sec.archetype] ?? 3) >= 3 ? 1 : 0));
+      // r42 — `introDrums: false` keeps the kit out of the letter-less intro.
+      // OPT-IN, and only the pattern lab passes it: r39 gave the intro a
+      // 'statement' archetype precisely SO the kit would play under the intro
+      // riff, which is right for a song and wrong for a card whose whole point
+      // is hearing one figure by itself first.
+      Array(sec.bars).fill(introDrumsOff && sec.lead === 'none' ? 0
+        : opts.percAllBars ? 1 : (ENERGY[sec.archetype] ?? 3) >= 3 ? 1 : 0));
     // ---- r35 · THE CRASH LEADS INTO THE SEAM, AND ITS PEAK LANDS THERE ------
     // His cards: "random cymbal is in the middle of the section, not before a
     // drop or anything" (vx_tense_fight), "random cymbal doesn't fit either"
@@ -4124,12 +4238,39 @@ function buildSong(prompt, name, opts = {}) {
           + ` against a corpus median of 4 and 0.447.`);
       } else drumInfo.push(...picks.map((p) => `${p} (${RHYTHMS[p].band}) at ${presence}`));
       if (seamCrash) {
-        const CRASH_PEAK_S = 1.44; // measured: susCymb1-cresc-Short_v1.wav peak RMS at 1.44 s
-        const secPerBar = (60 / v.bpm) * beats;
+        // r41/D146 — HIS "the cymbal ... its overused" AND "that thing where it
+        // does the heavy hit at every 2 measures ... you're still using it".
+        // Two separate faults, both D119:
+        //  (a) the seam fired at EVERY letter change — six times on sr_gate;
+        //  (b) `vc_cym_cresc:0` names ONE sample by literal index, so every
+        //      seam of every song on every page is the identical one-shot.
+        // A pool of one is a pool of one whether the list has three members or
+        // the code indexes [0] of it.
+        //
+        // THE LEAD TIME IS PER SAMPLE AND MEASURED (D138: place the PEAK, not
+        // the start). Measured here, 50 ms RMS windows: susCymb1-cresc-Short
+        // peaks 1.40 s in, gong_hit_ff 0.35 s, Snare2-rollNS_v3 0.55 s,
+        // bassdrum_cresc_short 6.00 s. Rotating these on one shared offset
+        // would put the wardrum's peak four bars past its seam — exactly the
+        // "random cymbal in the middle of the section" bug D138 already fixed
+        // once.
+        const SEAM_IMPACTS = [
+          { s: 'vc_cym_cresc:0', peak: 1.40 },
+          { s: 'vc_gong:1', peak: 0.35 },
+          { s: 'vc_snare_roll:0', peak: 0.55 },
+          { s: 'vc_wardrum_cresc:0', peak: 6.00 },
+        ];
+        const seamFresh = !!opts.serious && ruleFresh(41);
+        const secPerBar0 = (60 / v.bpm) * beats;
+        const impact = seamFresh
+          ? SEAM_IMPACTS.filter((x) => x.peak / secPerBar0 <= 3)[fnv(`${name}|seam`) % SEAM_IMPACTS.filter((x) => x.peak / secPerBar0 <= 3).length]
+          : SEAM_IMPACTS[0];
+        const CRASH_PEAK_S = impact.peak;
+        const secPerBar = secPerBar0;
         const leadBars = CRASH_PEAK_S / secPerBar;
         const letterAt = (sec) => String(mf.sections.find((x) => x.index === sec.index)?.letter ?? 'A').replace('*', '');
         const stampBars = Array(form.totalBars).fill(0);
-        const seams = [];
+        let seams = [];
         let start = 0;
         form.sections.forEach((sec, i) => {
           if (i > 0) {
@@ -4141,12 +4282,21 @@ function buildSong(prompt, name, opts = {}) {
           }
           start += sec.bars;
         });
+        // r41: cap the count. Six impacts over 64 bars is what he heard as "that
+        // thing ... in most of the songs" — the DEVICE reading as a tic rather
+        // than as an arrival. The strongest seams are kept (an energy rise
+        // beats a bare letter change) and at most three survive.
+        if (seamFresh && seams.length > 3) {
+          const keep = new Set(seams.filter((_, i) => i % Math.ceil(seams.length / 3) === 0).slice(0, 3));
+          seams.forEach((b, i) => { if (!keep.has(b)) { const t = Math.floor(b - leadBars); if (t >= 0) stampBars[t] = 0; } });
+          seams = seams.filter((b) => keep.has(b));
+        }
         if (seams.length) {
           const frac = Math.round((1 - (leadBars - Math.floor(leadBars))) * 10000) / 10000; // bar-local onset inside the stamp bar
           const g = Math.round(0.85 * (PRESENCE_GAIN[presence] ?? 0.7) * 100) / 100;
-          const stamp = `s("vc_cym_cresc:0").gain(${g}).mask("<${maskString(stampBars)}>").late(${frac})`;
+          const stamp = `s("${impact.s}").gain(${g}).mask("<${maskString(stampBars)}>").late(${frac})`;
           drums = `stack(${drums}, ${stamp})`;
-          drumInfo.push(`seam crash (r35): vc_cym_cresc:0 peaking on the downbeat of bar${seams.length > 1 ? 's' : ''} ${seams.join(', ')} (starts ${CRASH_PEAK_S}s = ${leadBars.toFixed(2)} bars early)`);
+          drumInfo.push(`seam impact (r35, r41 rotated+capped): ${impact.s} peaking on the downbeat of bar${seams.length > 1 ? 's' : ''} ${seams.join(', ')} (starts ${CRASH_PEAK_S}s = ${leadBars.toFixed(2)} bars early — MEASURED peak for this sample)`);
         }
       }
     }
@@ -5235,6 +5385,40 @@ function buildSong(prompt, name, opts = {}) {
   // and the orchestration literature says the same: "the doubling must be
   // quieter than the main line" — Belkin), scaled by D140's 0.6 under a voice.
   if (sr) {
+    // ---- r44 · THE SLOT POOL REACHES A SONG THAT HAS NO HISTORY ------------
+    // Two of his notes ask for the same thing and D119 names the mechanism:
+    //
+    //   r41, on sr_resolve: "im sure there are more patterns for you to use
+    //     than the one in the beginning - you've used that for like 3-5 songs
+    //     already" — FOUR, measured: every titan row plays `sr_pedal_cell`.
+    //   r44, the combination lab: "bass melodies like the zoltraak one sound
+    //     really good. but each of these serve as good backbone."
+    //
+    // A stack names its figure as a STRING LITERAL, which is a pool of one, so
+    // eleven shipped songs drew on three cells and two basses out of a library
+    // of sixteen each — and the melodic basses he has now asked for twice were
+    // reachable from no song at all. `rotateSeriousFigures` picks each slot out
+    // of the pool its own figure belongs to, by hash, from names he ratified.
+    //
+    // THE GATE IS `neverAuditioned()`, NOT `historyLess()`, and the difference
+    // is the whole safety of this rule: the serious page sets `noteBlind` for
+    // every row, so historyLess() is true on all eleven judged songs and the
+    // first build of this re-rolled the cell and the bass on TEN of them,
+    // pinned prose keeps included. A rotation is retrieval, and a song he has
+    // heard never re-rolls its retrieval (D95). A row's own `serious.figures`
+    // still wins, and `rotate: false` opts out. It is resolved HERE rather than
+    // where `sr` is first built because that is 4,800 lines before the gate
+    // exists, and a freshness gate a caller cannot reach is the exact shape
+    // that let two rules past a pin in r25.
+    const srCfg = typeof opts.serious === 'object' ? opts.serious : {};
+    if (srCfg.rotate === true && neverAuditioned()) {
+      const picks = rotateSeriousFigures(name, srCfg.stack ?? 'sr_stack_titan');
+      for (const id of Object.keys(srCfg.figures ?? {})) delete picks[id];
+      if (Object.keys(picks).length) {
+        srPicksOut = Object.entries(picks).map(([id, f]) => `${id}=${f}`);
+        sr = seriousSpec({ ...srCfg, figures: { ...picks, ...(srCfg.figures ?? {}) } });
+      }
+    }
     const tuneSecsSr = form.sections.filter((x) => x.lead !== 'none');
     // D77/D140, CORRECTED BY THIS ROUND'S VERIFY PASS. Scaling support by 0.6
     // was wrong here: a sung song ducks its LEAD to the 0.45 guide, so a
@@ -5244,7 +5428,44 @@ function buildSong(prompt, name, opts = {}) {
     // takes the SAME duck the lead took, so the ratio is preserved whatever
     // the guide is set to — D119's "check the RATIO, never the number".
     const guideSr = typeof opts.vocalLead === 'number' ? opts.vocalLead : 0.45;
-    const supportMulSr = opts.vocalLead ? guideSr : 1;
+    // r41/D146 — I SCALED THE SUPPORT AGAINST A PLACEHOLDER, NOT THE MELODY.
+    // His card, four songs: "I cant really tell the new layers", "can't tell
+    // that any new layers were added", "I can't notably hear any other layers".
+    //
+    // r40 set this to the 0.45 guide because the verify pass measured _sr_bass
+    // at 1.07-1.23x "the lead" — but on a vocalLead page the instrumental lead
+    // is DUCKED to 0.45 precisely because the VOICE carries the tune, and the
+    // voice is mixed on top of the band at `vocalDb`, not ducked at all. So the
+    // ratio that was flagged was support-vs-placeholder, and the correction
+    // made every declared layer 0.42 x 0.45 = 0.19x the real melody. D77's own
+    // wording is "the lead's REALIZED mean"; on a sung page the realized lead
+    // is the voice. Measuring against the guide is the solo-vs-mix trap wearing
+    // a different hat — the reference was wrong, not the number.
+    //
+    // The honest reference is the INSTRUMENTAL TWIN, where the same tune plays
+    // un-ducked; that is what the D77 sweep checks after this change.
+    // ruleFresh(41), not an unconditional 1: sr_summit is a prose keep ("I like
+    // it! no complaints!") and was judged at the quiet scaling. A louder mix is
+    // still a changed mix.
+    // The value is MEASURED, not chosen: against the twin, a scaling of 1.0
+    // realizes a worst support/lead ratio of 1.233 (sr_hunt's theme8 — an
+    // octave DOUBLING louder than the line it doubles, which Belkin forbids
+    // outright). 0.9 / 1.233 = 0.73, so 0.73 is the largest scaling that keeps
+    // every declared layer under the tune. That is still 1.62x louder than the
+    // 0.45 he could not hear the layers at.
+    //
+    // The residual error this leaves is worth naming: `e.gain` is a fraction of
+    // NOMINAL leadGain, while the ratio that matters is against the lead's
+    // REALIZED mean (envelope x nominal, rests included) — the two differ by
+    // ~2.5x, which is why declared 0.48 realized 1.21. r33's drum trim already
+    // solves this properly by dividing the curve max out; doing the same here
+    // is the right fix and it is a round of its own.
+    const supportMulSr = ruleFresh(41) ? 0.73 : guideSr;
+    // r42 verify catch: this suffix said "under the voice" on 92 card lines of a
+    // page that sings nothing (`vocalLead: false`). The NUMBER is right and the
+    // REASON was false — the scaling keeps support under whatever carries the
+    // tune, which is the voice on a sung page and the lead instrument here.
+    const srUnder = opts.vocalLead ? 'under the voice' : 'under the tune';
     const barsFrom = (at, until) => {
       const m = Array(form.totalBars).fill(0);
       let start = 0;
@@ -5254,6 +5475,66 @@ function buildSong(prompt, name, opts = {}) {
       for (let b = start; b < end && b < m.length; b++) m[b] = 1;
       return m;
     };
+    // r44 — D77 ON ENERGY, NOT ON THE NOTE. HIS COMBINATION-LAB NOTE, on the
+    // cell group: "…this group volume should be reduced".
+    //
+    // The line below this comment has always scaled a layer by its share of the
+    // LEAD's gain, which is D77 done right for a layer that plays at the lead's
+    // own rate and wrong for one that plays sixteen notes to its two. Measured
+    // on the judged page over the bars where BOTH sound (the whole-song number
+    // is inflated by the ostinato playing where the tune rests — 6.19x drops to
+    // 3.09x when the masks are respected, D145's "a suspiciously bad number is
+    // a bug too"):
+    //
+    //   per-NOTE gain   ostinato 0.20–0.53x the lead, median 0.44  — passes
+    //   per-BAR energy  ostinato 2.88–3.33x the lead on the six 16th-cell songs,
+    //                   0.75–1.28x on the three that run an 8-onset figure
+    //
+    // and in the lab his ear drew the line between them: the cell group he asked
+    // to reduce measures 3.77x the lead's energy, the +8ve violin group he did
+    // not complain about 2.55x. `e.gain x onsets-per-bar / the theme's own rate`
+    // reproduces every one of those measurements within 6%, so the cap is
+    // applied here, where the layer is assembled, rather than trusted to a
+    // later multiplier (D123: the drum cap was defeated twice by exactly that).
+    //
+    // It reaches only figures — a theme double already follows the tune's own
+    // density — and in practice only the 16th cells: the pad, the basses, the
+    // gallop and the calm arpeggio all measure under the cap and are untouched.
+    const srLeadPB = sr.theme?.notesPerBar
+      ?? (typeof opts.vocalWriter === 'object' ? opts.vocalWriter.rate : null)
+      ?? SERIOUS_THEME.notesPerBar;
+    // r44 VERIFY CATCH 1 — THE CAP IS SCOPED TO A SONG HE HAS NEVER HEARD, not
+    // merely to `ruleFresh(44)`. Gated on the round alone it reached the four
+    // judged titan rows, and the −0.6 dB trim it delivered there re-rolled the
+    // ENTRY CHOREOGRAPHY of 14 other layers through the gain-hashing stagger
+    // above: intended effect −0.6 dB, measured collateral ±5.8 dB. His note was
+    // written on the LAB about the lab's cell group; it is not a licence to
+    // move four songs he has already judged. They keep their levels until he
+    // asks, and the trim lands where he was listening (the lab beds have no
+    // history) and on fresh rows.
+    //
+    // r44 VERIFY CATCH 2 — ONE MULTIPLIER PER FIGURE, so a doubling cannot
+    // collapse onto the line it doubles. Per ENTRY, a capped layer's gain
+    // becomes `cap × leadPB / perBar`, which is independent of `e.gain`: the
+    // lab's cell and its +8ve violin twin bind the SAME figure at 0.5 and 0.34,
+    // and capping them separately took their ratio 0.677 → 0.879, and to
+    // exactly 1.000 on `neighbor_full` — the double as loud as its own main
+    // line, which is the one thing D77 and Belkin both forbid. Trimming by the
+    // LOUDEST entry that binds a figure and applying that one multiplier to
+    // every entry of it preserves the declared hierarchy by construction.
+    const srCapOn = ruleFresh(44) && neverAuditioned();
+    const srFigMul = new Map();
+    if (srCapOn) {
+      for (const e of sr.stack.entries) {
+        if (e.kind !== 'figure' || !e.figure) continue;
+        const pb = figurePerBar(e.figure);
+        if (!pb) continue;
+        const ratio = (e.gain * pb) / srLeadPB;
+        const prev = srFigMul.get(e.fig);
+        const mul = ratio > SUPPORT_ENERGY_CAP ? SUPPORT_ENERGY_CAP / ratio : 1;
+        if (prev == null || mul < prev) srFigMul.set(e.fig, mul);
+      }
+    }
     const srNotes = [];
     for (const e of sr.stack.entries) {
       // A DECLARED BUILD EVENT MUST BE AUDIBLE. Verify catch: on the two calm
@@ -5264,17 +5545,63 @@ function buildSong(prompt, name, opts = {}) {
       // already the quietest thing in the mix, so a declared layer floors at
       // 0.085. (Checked against D77 on the quietest song: 0.085 is 0.71x
       // sr_expanse's realized lead and 0.61x sr_ashes's — still support.)
-      const g = Math.max(0.085, Math.round(leadGain * e.gain * supportMulSr * 100) / 100);
+      const ePerBar = figurePerBar(e.figure);
+      const eRatio = ePerBar ? (e.gain * ePerBar) / srLeadPB : 0;
+      const energyMul = srFigMul.get(e.fig) ?? 1;
+      const g = Math.max(0.085, Math.round(leadGain * e.gain * supportMulSr * energyMul * 100) / 100);
       const gainRange = [Math.round(g * 0.78 * 100) / 100, g];
       const bars = barsFrom(e.at, e.until);
       if (!bars.some(Boolean)) { srNotes.push(`${e.id}: NOT CAST — the form has no tune section ${e.at}`); continue; }
       if (e.kind === 'figure') {
-        const snd = sr.sounds[e.id] ?? 'gm_string_ensemble_1';
+        // r41: the fallback is ROLE-aware. A bass-role entry with no declared
+        // sound used to land on gm_string_ensemble_1 — a string pad at octave 1.
+        const snd = sr.sounds[e.id]
+          ?? (e.figure?.role === 'bass' ? (sr.sounds.bass ?? 'gm_contrabass') : 'gm_string_ensemble_1');
         const range = INSTRUMENTS[snd]?.range;
         const oct = range ? Math.max(range[0], Math.min(e.octave ?? 3, range[1])) : (e.octave ?? 3);
+        // r43 — HIS TWO NOTES ON THE COMBINATION LAB, and both were mine:
+        //
+        //   "i feel like there's a damper petal or something because all of them
+        //    have a lot of reverb and duration"
+        //   "control dynamics - they're all pretty med-soft dynamics"
+        //
+        // (1) THE DAMPER PEDAL IS A MISSING `clip`. A figure layer got
+        //     `.room(0.2)` and NO clip, so every note played its sample to the
+        //     end. On the soundfont that was survivable; with the r43 VSCO
+        //     banks the sample is a 3-SECOND sustain and a sixteenth at 140bpm
+        //     is 0.107 s, so each note rang ~28x too long and the cell had ~45
+        //     copies of itself sounding at once. Measured: 43 of the lab's 64
+        //     layers carried no clip at all. A sustained figure still holds
+        //     (legato rows clip at 1); everything else stops when it is written
+        //     to stop.
+        //
+        // (2) THE ACCENTS WERE COMPRESSED TO NOTHING. bindFigure maps an accent
+        //     linearly into the band, `lo + a*(hi-lo)`, and the band was
+        //     [0.78g, g]. The rows write accents from 0.55 to 1.0, so the
+        //     realized span was 0.88g..1.0g — a ratio of 1.14, about 1 dB.
+        //     Measured on the page: every cello layer realized 0.190-0.208 and
+        //     every acc layer 0.238-0.240, which is his "all pretty med-soft".
+        //     A band of [0.1g, g] realizes 0.6g..1.0g instead — 4.5 dB, the
+        //     accent as written. The band MOVES, the ceiling does not, so D77
+        //     is untouched: the loudest note is the same as before.
+        //
+        // Page-scoped (`opts.labDynamics`) because both changes are audible and
+        // serious.html was judged with the old ones.
+        const tight = !!opts.labDynamics;
+        // r43, HIS THIRD NOTE: "i still feel like it's held for so long ... is
+        // really wet and when i hit stop it reverberates for like a few more
+        // secs before stopping." That last clause is the reverb BUS: hush stops
+        // the sources and a convolution tail keeps ringing, so any send at all
+        // outlives the stop button. A page for judging patterns does not need a
+        // room — the lab is DRY, and `release` makes the note-off immediate
+        // instead of leaving it to the sample's own decay.
+        const figFx = tight
+          ? `.clip(${e.figure.legato || e.figure.class === 'sustain' ? 1 : 0.8}).release(0.05)`
+          : e.figure.role === 'bass' ? '.clip(0.9)' : '.room(0.2)';
+        const figGain = tight ? [Math.round(g * 0.1 * 100) / 100, g] : gainRange;
         const bindSr = (ctx) => bindFigure(e.figure, ctx, v.meter, {
-          octave: oct, sound: snd, loopRoots: true, gainRange,
-          fx: e.figure.role === 'bass' ? '.clip(0.9)' : '.room(0.2)', rhythmName: `sr-${e.id}`,
+          octave: oct, sound: snd, loopRoots: true, gainRange: figGain,
+          fx: figFx, rhythmName: `sr-${e.id}`,
         }).expr;
         extraParts.push(...varySplit(bindSr, bars));
         extraSolos[`_sr_${e.id}`] = bindSr(ctxBar);
@@ -5286,7 +5613,7 @@ function buildSong(prompt, name, opts = {}) {
         // register-2 layer at 0.42× the lead that his note asks for by name. The
         // clause's own worry (one shape repeating forever) does not hold either:
         // the cell has four shapes and its top note moves every bar.
-        srNotes.push(`${e.id} ${e.figure.name} on ${snd} (octave ${oct}, enters ${e.at < 0 ? 'in the intro' : `at tune section ${e.at}`}, ${bars.filter(Boolean).length} bars, ${perBar} onsets/bar, gain ${gainRange[0]}–${gainRange[1]} = ${e.gain}× the lead${supportMulSr < 1 ? ` × ${supportMulSr} under the voice` : ''})`);
+        srNotes.push(`${e.id} ${e.figure.name} on ${snd} (octave ${oct}, enters ${e.at < 0 ? 'in the intro' : `at tune section ${e.at}`}, ${bars.filter(Boolean).length} bars, ${perBar} onsets/bar, gain ${gainRange[0]}–${gainRange[1]} = ${e.gain}× the lead${supportMulSr < 1 ? ` × ${supportMulSr} ${srUnder}` : ''}${energyMul < 1 ? ` × ${Math.round(energyMul * 100) / 100} r44 energy cap: ${Math.round(eRatio * 100) / 100}× the lead's per-bar energy trimmed to ${SUPPORT_ENERGY_CAP}×` : ''})`);
       } else if (e.kind === 'themeOctave' || e.kind === 'themeThird') {
         // §2.5 — THE SUPPORT IS THE SAME LINE AT A FIXED INTERVAL, not a new
         // rhythm: 63–100% of theme strikes carry another note struck WITH them,
@@ -5303,14 +5630,16 @@ function buildSong(prompt, name, opts = {}) {
         const built = renderLetterLead(form, mfx, (L, stmt) => {
           const base0 = L.endsWith('*') ? L.slice(0, -1) : L;
           return writerBind(base0, L.endsWith('*') ? ctxBarV : ctxBar, stmt, {
-            octave: wantOct, shift: shiftDeg, sound: snd, fx: '.room(0.25)', gainRange,
+            // r43: the same reverb cut as the figures — his "all of them have a
+            // lot of reverb". The theme riders already clip per note.
+            octave: wantOct, shift: shiftDeg, sound: snd, fx: opts.labDynamics ? '.release(0.08)' : '.room(0.25)', gainRange,
           }).expr;
         }, { perStatement: leadStmtVary, phraseBars: leadPhraseBars });
         if (!built.lead) { srNotes.push(`${e.id}: NOT CAST — no lettered section carries the tune`); continue; }
         const expr = `(${built.lead}).mask("<${maskString(bars)}>")`;
         extraParts.push(expr);
         extraSolos[`_sr_${e.id}`] = built.lead;
-        srNotes.push(`${e.id} the theme ${e.kind === 'themeOctave' ? 'an OCTAVE below' : 'a THIRD below (two scale degrees)'} on ${snd} (enters ${e.at < 0 ? 'in the intro' : `at tune section ${e.at}`}, ${bars.filter(Boolean).length} bars, gain ${gainRange[0]}–${gainRange[1]} = ${e.gain}× the lead${supportMulSr < 1 ? ` × ${supportMulSr} under the voice` : ''})`);
+        srNotes.push(`${e.id} the theme ${e.kind === 'themeOctave' ? 'an OCTAVE below' : 'a THIRD below (two scale degrees)'} on ${snd} (enters ${e.at < 0 ? 'in the intro' : `at tune section ${e.at}`}, ${bars.filter(Boolean).length} bars, gain ${gainRange[0]}–${gainRange[1]} = ${e.gain}× the lead${supportMulSr < 1 ? ` × ${supportMulSr} ${srUnder}` : ''})`);
       }
     }
     // ---- the INSTRUMENTAL sections -----------------------------------------
@@ -5330,7 +5659,23 @@ function buildSong(prompt, name, opts = {}) {
     }
     if (instrBars.some(Boolean) && letterLead.lead && vocalWriterOn) {
       const snd = sr.instrumentalSound;
-      const iGain = [Math.round(leadGain * 0.8 * 100) / 100, Math.round(leadGain * 0.98 * 100) / 100];
+      // r41/D146 — THE INSTRUMENTAL-SECTION VOICE IS TOO LOUD, four cards over
+      // two exports: "main melody violin/cello too loud" (gate), "still too
+      // loud and should be more 'fluid'" (hunt), "better but a bit too loud"
+      // (expanse), "I like the melody trumpet but it's a bit too loud"
+      // (vanguard). Note the last one: the complaint survives a change of
+      // INSTRUMENT, so it is the level, not the patch — the patch fault
+      // (cello and violin sounding together across keys 66-71) was real and is
+      // fixed separately, but this layer would still have been loud without it.
+      //
+      // It was 0.80-0.98 x leadGain, i.e. essentially AT the tune's level while
+      // being the only thing carrying the tune in those bars. That is why it
+      // reads loud: nothing is competing with it, so it needs less, not more.
+      // 0.62-0.78 is a 22% cut. Four cards asking for the same thing twice over
+      // earns a decisive move rather than another 5%.
+      const iGain = ruleFresh(41)
+        ? [Math.round(leadGain * 0.62 * 100) / 100, Math.round(leadGain * 0.78 * 100) / 100]
+        : [Math.round(leadGain * 0.8 * 100) / 100, Math.round(leadGain * 0.98 * 100) / 100];
       const built = renderLetterLead(form, mfx, (L, stmt) => {
         const base0 = L.endsWith('*') ? L.slice(0, -1) : L;
         return writerBind(base0, L.endsWith('*') ? ctxBarV : ctxBar, stmt, { sound: snd, fx: '.room(0.3)', gainRange: iGain }).expr;
@@ -6010,12 +6355,20 @@ function buildSong(prompt, name, opts = {}) {
   // the melody too (different from the flute)". Same cells, same seeds, same
   // hold/merge — the (time,midi) multiset is the piano melody's; only the
   // voice and gain differ. Purely additive on the two kept songs.
+  // r43 SECOND PASS — the melody RIDERS were the last wet thing on the pattern
+  // labs. MEASURED after the first labDynamics pass: the cells page still
+  // carried 92 `.room(0.4)` calls and every one of them was the COMPANION on
+  // gm_church_organ — the wettest layer on the page, and in the render tier a
+  // stem's convolution wet is the mean of its OWN haps' room, so that stem came
+  // back 44% wet however dry the rest of the page was. A lab page is dry all the
+  // way down or it is not dry.
+  const riderFx = opts.labDynamics ? '.release(0.08)' : '.room(0.4)';
   let melodyDoubleExpr = null;
   if (opts.melodyDouble) {
     const md = opts.melodyDouble;
     const mdGain = Math.round(leadGain * (md.gainMul ?? 0.45) * 100) / 100;
-    const bindLetterDbl = (L, ctxL, stmt = 0) => vocalWriterOn ? writerBind(L, ctxL, stmt, { octave: md.octave ?? leadOctave, sound: md.sound, fx: `${gainFx(mdGain)}.room(0.4)` }) : bindMelody(letterCell(L), ctxL, v.meter, {
-      style: 'toby-fox', seed: letterSeed(L, stmt), octave: md.octave ?? leadOctave, sound: md.sound, fx: `${gainFx(mdGain)}.room(0.4)`,
+    const bindLetterDbl = (L, ctxL, stmt = 0) => vocalWriterOn ? writerBind(L, ctxL, stmt, { octave: md.octave ?? leadOctave, sound: md.sound, fx: `${gainFx(mdGain)}${riderFx}` }) : bindMelody(letterCell(L), ctxL, v.meter, {
+      style: 'toby-fox', seed: letterSeed(L, stmt), octave: md.octave ?? leadOctave, sound: md.sound, fx: `${gainFx(mdGain)}${riderFx}`,
       hold: LEAD.hold, mergeRepeats: LEAD.merge, articFloor: artFloor, cadenceNo7, chromCore, tailOff: grammarFresh, leapFold: grammarFresh, chordTop: chordTopOn, minNote: grammarFresh ? (opts.leadMinNote ?? 1) : 0, minNoteLast: noJitter, gridSnap: gridSnapOn, subBarChords: r33(), tissue: r33(), ...(opts.leadRangeSteps ? { rangeSteps: opts.leadRangeSteps } : {}),
     });
     melodyDoubleExpr = renderLetterLead(form, mfx, (L, stmt) => {
@@ -6169,9 +6522,9 @@ function buildSong(prompt, name, opts = {}) {
         // diatonic THIRD below (the corpus's verse texture: one counter-note a
         // 3rd/4th under the voice, rhythm-locked; strong beats snap to chord
         // tones through the guard)
-        const bindComp = (L, ctxL, stmt = 0) => vocalWriterOn ? writerBind(L, ctxL, stmt, { octave: leadOctave, sound: cSound, fx: `${gainFx(cGain)}.room(0.4)`, shift: -2, thin: true }) : bindMelody(letterCell(L), ctxL, v.meter, {
+        const bindComp = (L, ctxL, stmt = 0) => vocalWriterOn ? writerBind(L, ctxL, stmt, { octave: leadOctave, sound: cSound, fx: `${gainFx(cGain)}${riderFx}`, shift: -2, thin: true }) : bindMelody(letterCell(L), ctxL, v.meter, {
           style: 'toby-fox', seed: letterSeed(L, stmt), octave: cOct, sound: cSound,
-          fx: `${gainFx(cGain)}.room(0.4)`,
+          fx: `${gainFx(cGain)}${riderFx}`,
           // `hold` MUST be the lead's own value for this letter, not the song
           // default: a sustaining lead voice sets it true per letter, and taking
           // the default instead made the companion's note-merging diverge from
@@ -7442,6 +7795,24 @@ function buildSong(prompt, name, opts = {}) {
     });
     for (const ix of byBar.values()) {
       if (ix.length < 5) continue;
+      // r44 VERIFY CATCH, RECORDED AND DELIBERATELY NOT FIXED HERE — THIS SORT
+      // HASHES THE GAIN, SO ANY LEVEL EDIT RE-ROLLS THE ENTRY CHOREOGRAPHY.
+      // `exprs[i]` is the rendered expression and it CONTAINS the layer's gain
+      // literals. Measured when the r44 energy cap first reached judged songs: a
+      // −0.6 dB trim on ONE layer rotated this sort on all four movers, 9 sound
+      // layers changed which bars they sound in, 12 whole bars of layer sound
+      // were gained or lost, and sr_gate's cello — the layer being trimmed —
+      // lost its crescendo and appeared at full level in bar 26, which is
+      // verbatim the sr_ashes card that created SERIOUS_RAMP in r41 ("it should
+      // ease into its volume more fluidly rather than appear at that volume").
+      //
+      // The fix is one line — sort on the layer's IDENTITY (sound, entry bar,
+      // index) instead of its rendered text — but stabilizing a hash RE-ROLLS
+      // IT ONCE for every song with a 5+ layer entry group, judged material
+      // included. That is a round of its own with its own re-audition (D95's
+      // rule for the extractor, D119's for a widened pool), not a rider on a
+      // gain change. r44 instead scopes the cap so no judged song's gains move,
+      // which removes the trigger without moving anything.
       ix.slice().sort((a, b) => fnv(exprs[a]) - fnv(exprs[b]))
         .forEach((i, k) => { slot[i] = k % 3; });
     }
@@ -7969,6 +8340,8 @@ function buildSong(prompt, name, opts = {}) {
     // only present when the r27 uneven-length plan is live, so adding this
     // inspection field cannot diff a judged page that does not use it
     ...(chordBarPlan ? { chordBarPlan } : {}),
+    // r44, same rule: absent unless the slot rotation actually drew something
+    ...(srPicksOut.length ? { srPicks: srPicksOut } : {}),
     // accName still names the POOL pick, which is what the travel graph walks
     // from; when the jungle vamp overrides the A figure, report what actually
     // plays or the page reads as though the Alberti were still there.
@@ -10062,41 +10435,41 @@ if (VOCAROCK_PAGE) {
 // a chip synth, so the voice reads as one more instrument in the riff.
 const SERIOUS_PAGE = process.env.SERIOUS === '1';
 const SR_PROMPTS = [
-  { id: 'gate', pin: { emotion: 'tense', environment: 'fight' }, bpm: 126, kit: 'rock', text: 'the wall finally breaks and everyone runs for the gate',
+  { id: 'gate', pin: { emotion: 'tense', environment: 'fight' }, bpm: 126, kit: 'cinematic', text: 'the wall finally breaks and everyone runs for the gate',
     vf: { verse: 'sr_loop_shuttle_i_bVII', chorus: 'sr_loop_i_bVII_bVI_bVII', form: 'vf_form_standard', energy: 'high',
       introFig: 'vf_intro_none', introLoop: 'verse', verseBass: 'vf_bass_quarters', synthFig: false },
     serious: { stack: 'sr_stack_titan', instrumentalAt: [1, 4], sounds: { ost: 'gm_cello', riff: 'gm_lead_2_sawtooth', theme8: 'gm_trombone' }, instrumentalSound: 'gm_violin' },
-    extra: { marcato: true, crashSeams: true, guitar: 'rock' } },
+    extra: { seriousAcc: true, marcato: true, crashSeams: true, guitar: 'rock' } },
 
-  { id: 'oath', pin: { emotion: 'triumphant', environment: 'fight' }, bpm: 92, kit: 'rock', text: 'swearing an oath the night before the last march, everyone knows what it costs',
+  { id: 'oath', pin: { emotion: 'triumphant', environment: 'fight' }, bpm: 92, kit: 'cinematic', text: 'swearing an oath the night before the last march, everyone knows what it costs',
     vf: { verse: 'sr_loop_iv_bVI_bVII_i', chorus: 'sr_loop_i_bVII_bVI_III', form: 'vf_form_standard_4', energy: 'mid',
       introFig: 'vf_intro_hook', introLoop: 'chorus', padSound: 'gm_choir_aahs' },
     serious: { stack: 'sr_stack_titan', instrumentalAt: [2], sounds: { ost: 'gm_cello', theme8: 'gm_trombone', pad: 'gm_choir_aahs' }, instrumentalSound: 'gm_french_horn' },
-    extra: { guitar: false } },
+    extra: { seriousAcc: true, guitar: false } },
 
-  { id: 'duel', pin: { emotion: 'tense', environment: 'fight' }, bpm: 138, kit: 'rock', text: 'a duel at dawn where one strike decides it',
+  { id: 'duel', pin: { emotion: 'tense', environment: 'fight' }, bpm: 138, kit: 'cinematic', text: 'a duel at dawn where one strike decides it',
     vf: { verse: 'sr_loop_i_bVII_bVI_iv', chorus: 'sr_loop_bVII_iv_i_bVI7', form: 'vf_form_short', energy: 'high',
       introFig: 'vf_intro_stabs332', introSound: 'gm_string_ensemble_1', introLoop: 'verse', synthFig: false },
     serious: { stack: 'sr_stack_battle', instrumentalAt: [1, 3], theme: { dotted: 0.6 }, sounds: { ost: 'gm_electric_guitar_muted', theme8: 'gm_trombone' }, instrumentalSound: 'gm_violin' },
-    extra: { marcato: true, crashSeams: true, guitar: 'rock' } },
+    extra: { seriousAcc: true, marcato: true, crashSeams: true, guitar: 'rock' } },
 
-  { id: 'hunt', pin: { emotion: 'tense', environment: 'stealth' }, bpm: 142, kit: 'linear', text: 'hunting something through the dark forest that is also hunting us',
+  { id: 'hunt', pin: { emotion: 'tense', environment: 'stealth' }, bpm: 142, kit: 'cinematic', text: 'hunting something through the dark forest that is also hunting us',
     vf: { verse: 'sr_loop_pedal_i', chorus: 'sr_loop_i_bVII_bVI_bVII', form: 'vf_form_standard', energy: 'high',
       introFig: 'vf_intro_none', introLoop: 'verse', synthFig: false, padSound: 'gm_pad_bowed' },
     serious: { stack: 'sr_stack_titan', instrumentalAt: [0, 3], sounds: { ost: 'gm_cello', pad: 'gm_pad_bowed', riff: 'gm_lead_2_sawtooth', theme8: 'gm_trombone' }, instrumentalSound: 'gm_violin' },
-    extra: { crashSeams: true, guitar: 'rock' } },
+    extra: { seriousAcc: true, crashSeams: true, guitar: 'rock' } },
 
-  { id: 'vanguard', pin: { emotion: 'triumphant', environment: 'boss' }, bpm: 112, kit: 'rock', text: 'riding out ahead of the whole army carrying the banner',
+  { id: 'vanguard', pin: { emotion: 'triumphant', environment: 'boss' }, bpm: 112, kit: 'cinematic', text: 'riding out ahead of the whole army carrying the banner',
     vf: { verse: 'sr_loop_dorian_i_IV', chorus: 'sr_loop_iv_bVI_bVII_i', form: 'vf_form_long', energy: 'high',
       introFig: 'vf_intro_octaves', introSound: 'gm_french_horn', introLoop: 'chorus', synthFig: false },
     serious: { stack: 'sr_stack_battle', instrumentalAt: [2, 5], sounds: { ost: 'gm_cello', stabs: 'gm_string_ensemble_1', theme8: 'gm_trombone' }, instrumentalSound: 'gm_trumpet' },
-    extra: { marcato: true, crashSeams: true, guitar: false } },
+    extra: { seriousAcc: true, marcato: true, crashSeams: true, guitar: false } },
 
-  { id: 'resolve', pin: { emotion: 'triumphant', environment: 'boss' }, bpm: 132, kit: 'rock', text: 'standing up one more time when you should not be able to',
+  { id: 'resolve', pin: { emotion: 'triumphant', environment: 'boss' }, bpm: 132, kit: 'cinematic', text: 'standing up one more time when you should not be able to',
     vf: { verse: 'sr_loop_i_bVII_bVI_III', chorus: 'sr_loop_iv_bVI_bVII_i', form: 'vf_form_standard', energy: 'high',
       introFig: 'vf_intro_arp16', introSound: 'gm_lead_1_square', introLoop: 'chorus' },
     serious: { stack: 'sr_stack_titan', instrumentalAt: [4], theme: { dotted: 0.6 }, sounds: { ost: 'gm_electric_guitar_muted', theme8: 'gm_trombone', riff: 'gm_lead_2_sawtooth' }, instrumentalSound: 'gm_violin' },
-    extra: { marcato: true, crashSeams: true, guitar: 'rock' } },
+    extra: { seriousAcc: true, marcato: true, crashSeams: true, guitar: 'rock' } },
 
   { id: 'expanse', pin: { emotion: 'nostalgic', environment: 'space' }, bpm: 96, kit: null, text: 'watching a planet turn slowly from orbit, a long way from home',
     vf: { verse: 'sr_loop_calm_i7_bIII6_iv', chorus: 'sr_loop_calm_bVI7_bVII_i', form: 'vf_form_standard', energy: 'low',
@@ -10108,7 +10481,14 @@ const SR_PROMPTS = [
     vf: { verse: 'sr_loop_calm_bVI7_bVII_i', chorus: 'sr_loop_calm_i7_bIII6_iv', form: 'vf_form_standard_4', energy: 'low',
       introFig: 'vf_intro_hook', introLoop: 'verse', padSound: 'gm_string_ensemble_1' },
     serious: { stack: 'sr_stack_calm', instrumentalAt: [2], sounds: { arp: 'gm_epiano1', pad: 'gm_string_ensemble_1', bass: 'gm_contrabass', theme8: 'gm_cello' }, instrumentalSound: 'gm_viola' },
-    extra: { guitar: 'arp', counterline: true } },
+    // r41 — his second serious export: "love it. love the piano ... and the
+    // development is good. also love the part between the vocals." The r40
+    // card's one complaint (the high strings appearing at volume) is GONE from
+    // the text, answered by the six-bar crescendo. Nothing stands against it,
+    // so it is a PROSE KEEP and it is pinned before this round's louder support
+    // scaling reaches it — he praised this song at the quiet balance, and a
+    // louder mix is a different song. `voicedColor` for the colorFresh trap.
+    extra: { guitar: 'arp', counterline: true, pinFrom: 'r41', voicedColor: true } },
 
   { id: 'summit', pin: { emotion: 'triumphant', environment: 'snow' }, bpm: 104, kit: 'ballad', text: 'the last climb before the summit with the whole valley behind us',
     vf: { verse: 'sr_loop_dorian_i_IV', chorus: 'sr_loop_i_bVII_bVI_bVII', form: 'vf_form_standard', energy: 'mid',
@@ -10130,7 +10510,19 @@ const SR_PROMPTS = [
       introFig: 'vf_intro_arp16', introSound: 'gm_lead_1_square', introLoop: 'verse', synthSound: 'gm_lead_1_square' },
     // theme: false — this row is NOT the serious writer; the stack is here only
     // to double the sung riff an octave below on a chip synth
-    serious: { theme: false, stack: 'sr_stack_battle', sounds: { ost: 'gm_synth_bass_1', theme8: 'gm_lead_2_sawtooth', stabs: 'gm_epiano1' } },
+    serious: { theme: false, stack: 'sr_stack_battle', sounds: { ost: 'gm_synth_bass_1', theme8: 'gm_lead_2_sawtooth', stabs: 'gm_vibraphone' } },
+    // r41 — his "until the main melody came, then there was like a bit of
+    // dissonance. when it left it became good". Measured: the recurring struck
+    // pair is gm_epiano1 at 57/58 against the octave-doubled riff at 58 (a minor
+    // 2nd) and the synth lead at 69/70 (a minor 9th) — and the stabs were on
+    // gm_epiano1, which is ALSO this song's accompaniment hand, so the collision
+    // happened inside ONE timbre where nothing separates it (D100/D102: timbre
+    // separates a layer). NOTE the honest limit of this fix: loopcat is not the
+    // page's most frictional song (4.17 struck m2/M7/tritones per bar against
+    // hunt 6.19 and resolve 6.16, neither of which he called dissonant), so
+    // density is not what he is hearing — exposure is. The stabs get their own
+    // voice; the semitones themselves are left alone rather than over-corrected
+    // on a song he opened with "I like it!".
     writer: { hookVary: 'none', rate: 6.2 }, lyrics: 'nyan',
     extra: { fullSynth: true, crashSeams: true, guitar: false } },
 
@@ -10140,6 +10532,58 @@ const SR_PROMPTS = [
     serious: { theme: false, stack: 'sr_stack_calm', sounds: { arp: 'gm_accordion', pad: 'gm_string_ensemble_1', bass: 'gm_acoustic_bass', theme8: 'gm_bassoon' } },
     writer: { hookVary: 'none', rate: 6.5 }, lyrics: 'doo',
     extra: { guitar: false } },
+
+  // ======================================================================
+  // r44 — THE FIRST ROWS WHOSE LAYER CHOICE IS THE POOL'S, NOT A LITERAL
+  // ======================================================================
+  // Two of his notes ask for this and neither is answerable on the eleven rows
+  // above, because every one of them carries a CARD_NOTE and the rotation is
+  // gated on history:
+  //
+  //   r41, sr_resolve: "im sure there are more patterns for you to use than the
+  //     one in the beginning - you've used that for like 3-5 songs already"
+  //     (four, measured — the four titan rows all play `sr_pedal_cell`)
+  //   r44, the combination lab: "bass melodies like the zoltraak one sound
+  //     really good. but each of these serve as good backbone"
+  //
+  // So these five are history-less by construction: their cell, their pedal
+  // bass, their moving bass and their riff are picked by `rotateSeriousFigures`
+  // out of the pools his own clicks ratified, and the card's `why` line names
+  // what each one drew. Nothing here is hand-picked — the names were chosen for
+  // the scene and the hash fell where it fell, which is the only way the page
+  // reports what the rotation actually does.
+  //
+  // The prompts stay plain player scenes (his r39 ruling: they feed the lyric
+  // writer), the vibe lane is the row's own pin, and the loops are Aeolian.
+  { id: 'relay', pin: { emotion: 'tense', environment: 'fight' }, bpm: 148, kit: 'cinematic', text: 'passing the last torch down the line while the wall holds behind you',
+    vf: { verse: 'sr_loop_i_bVII_bVI_bVII', chorus: 'sr_loop_iv_bVI_bVII_i', form: 'vf_form_standard', energy: 'high',
+      introFig: 'vf_intro_octaves', introSound: 'gm_cello', introLoop: 'verse', synthFig: false },
+    serious: { stack: 'sr_stack_titan', figures: { ost: 'sr_cell_fall', riff: 'sr_stabs_332', push: 'sr_bass_walk_down' }, instrumentalAt: [2], sounds: { ost: 'gm_cello', theme8: 'gm_trombone', riff: 'gm_lead_2_sawtooth' }, instrumentalSound: 'gm_french_horn' },
+    extra: { seriousAcc: true, crashSeams: true, guitar: false } },
+
+  { id: 'tide', pin: { emotion: 'tense', environment: 'boss' }, bpm: 136, kit: 'cinematic', text: 'the water keeps rising and the thing under it is getting closer',
+    vf: { verse: 'sr_loop_bVII_iv_i_bVI7', chorus: 'sr_loop_i_bVII_bVI_iv', form: 'vf_form_standard', energy: 'high',
+      introFig: 'vf_intro_stabs332', introSound: 'gm_cello', introLoop: 'chorus', synthFig: false },
+    serious: { stack: 'sr_stack_battle', figures: { bass: 'sr_bass_lament' }, instrumentalAt: [1], sounds: { ost: 'gm_electric_guitar_muted', theme8: 'gm_trombone', stabs: 'gm_string_ensemble_1' }, instrumentalSound: 'gm_violin' },
+    extra: { seriousAcc: true, marcato: true, crashSeams: true, guitar: 'rock' } },
+
+  { id: 'verdict', pin: { emotion: 'somber', environment: 'citadel' }, bpm: 96, kit: 'cinematic', text: 'standing in the hall while they read out what happens to your city',
+    vf: { verse: 'sr_loop_i_bVII_bVI_iv', chorus: 'sr_loop_iv_bVI_bVII_i', form: 'vf_form_standard_4', energy: 'mid',
+      introFig: 'vf_intro_none', introLoop: 'chorus', padSound: 'gm_choir_aahs' },
+    serious: { stack: 'sr_stack_titan', figures: { ost: 'sr_cell_open5', riff: 'sr_gallop_fall', push: 'sr_bass_lament' }, instrumentalAt: [3], sounds: { ost: 'gm_cello', pad: 'gm_choir_aahs', theme8: 'gm_trombone', riff: 'gm_string_ensemble_1' }, instrumentalSound: 'gm_cello' },
+    extra: { seriousAcc: true, guitar: false } },
+
+  { id: 'frost', pin: { emotion: 'somber', environment: 'snow' }, bpm: 84, kit: null, text: 'the morning after the storm when nobody has come back yet',
+    vf: { verse: 'sr_loop_calm_bVI7_bVII_i', chorus: 'sr_loop_calm_i7_bIII6_iv', form: 'vf_form_standard', energy: 'low',
+      introFig: 'vf_intro_none', introLoop: 'verse', padSound: 'gm_pad_warm' },
+    serious: { stack: 'sr_stack_additive', figures: { bass: 'sr_bass_oct_wander' }, instrumentalAt: [2], sounds: { ost: 'gm_church_organ', pad: 'gm_pad_warm', arp: 'gm_orchestral_harp', theme8: 'gm_cello' }, instrumentalSound: 'gm_viola' },
+    extra: { guitar: 'arp', counterline: true } },
+
+  { id: 'march', pin: { emotion: 'triumphant', environment: 'training' }, bpm: 128, kit: 'cinematic', text: 'the whole squad running the hill again because one of us fell behind',
+    vf: { verse: 'sr_loop_i_bVII_bVI_III', chorus: 'sr_loop_dorian_i_IV', form: 'vf_form_short', energy: 'mid',
+      introFig: 'vf_intro_hook', introSound: 'gm_french_horn', introLoop: 'verse' },
+    serious: { stack: 'sr_stack_battle', figures: { bass: 'sr_bass_offbeat' }, instrumentalAt: [2], sounds: { ost: 'gm_cello', theme8: 'gm_trombone', stabs: 'gm_french_horn' }, instrumentalSound: 'gm_trumpet' },
+    extra: { seriousAcc: true, guitar: false } },
 ];
 let SR_FIRST = 0;
 if (SERIOUS_PAGE) {
@@ -10167,14 +10611,68 @@ if (SERIOUS_PAGE) {
     // roles — measured on the first build, sr_gate carried TWO basses (realized
     // medians 39 and 37) and two pads. The stack's plan is the one that enters
     // one layer at a time, so it wins and the tier's stand down.
-    const stackIds = new Set(SERIOUS_STACKS[row.serious.stack ?? 'sr_stack_titan'].entries.map((e) => e.id));
+    const srStack = SERIOUS_STACKS[row.serious.stack ?? 'sr_stack_titan'];
+    const stackIds = new Set(srStack.entries.map((e) => e.id));
+    // r41/D146 — A HELD PEDAL IS NOT A BASS PART, AND STANDING THE MOVING ONE
+    // DOWN FOR IT LOST THE LOW END. His note: "bear in mind that bass is also a
+    // thing because i dont hear much bass - we've done lots of practice with
+    // bass remember."
+    //
+    // r40 stood the tier's bass down whenever the stack declared one, to stop
+    // sr_gate carrying two basses. Correct for `sr_bass_push` (4 onsets/bar),
+    // WRONG for `sr_octave_bass_hold` — one onset per bar, which is the bass on
+    // titan / additive / calm, i.e. 7 of 11 songs including every energetic one.
+    // Measured on the judged page: the declared bass runs 1.3-1.8 notes/bar at
+    // 0.45-1.08x the lead on a fluidsynth contrabass, while the muted guitar
+    // sits in the SAME register at 2.16x and the piano's low hand at 2.1-2.98x.
+    // The bass was there and buried under two louder parts playing its range.
+    //
+    // The orchestration default is BOTH, not either (research/serious-r40.md
+    // §2.5: cellos and basses from identical parts an octave apart; Interstellar
+    // puts an organ pedal UNDER the moving basses). So the tier's bass only
+    // stands down for a stack bass that actually moves.
+    // The row's own pin gates this too. `vocaloidForm` is assembled HERE, in
+    // the page loop, outside buildSong — so `ruleFresh` cannot see it and a
+    // pinned song would silently gain a bass. Measured: it did, on sr_summit,
+    // which had been byte-identical one build earlier.
+    const srPinned = !!row.extra?.pinFrom;
+    // ANY bass-role entry counts, not just the one called `bass` — r41 adds
+    // `push` (attack on titan's octave push) to the titan stack, and a rule
+    // that matched on the id alone would have left the tier's bass running
+    // underneath it: two moving basses, the exact double-booking r40 fixed.
+    // r42 — THIS RULE HAS NEVER FIRED, AND THE PAGE HE APPROVED IS THE PROOF.
+    // A figure row's onset list is `onsets`; `events` does not exist on it, so
+    // `bassOnsets` returns 0 for every figure and `stackBassMoves` is false on
+    // every unpinned row. MEASURED on the judged page: sr_duel, sr_vanguard,
+    // sr_gate and sr_hunt all carry `_vf_bass` (gm_synth_bass_1, 4+ onsets a
+    // bar) ALONGSIDE the stack's own moving bass — the double-booking r40
+    // removed and r41 meant to keep removed.
+    //
+    // IT IS LEFT AS IT SOUNDS, DELIBERATELY. His verdict on this exact build is
+    // "it's better!" with the r41 bass complaint gone, and reading `onsets`
+    // here would delete a bass from four songs he has just approved. Naming a
+    // typo is cheaper than re-litigating his ear: the next round that touches
+    // the low end decides it, with a card each way, and until then this line
+    // documents that the page runs TWO basses on the battle rows rather than
+    // pretending the guard is live. (D146 addendum in DECISIONS.md.)
+    const bassOnsets = (f) => (SERIOUS_FIGURES[f]?.events?.length ?? 0) / (SERIOUS_FIGURES[f]?.bars || 1);
+    const stackBassFigs = srStack.entries
+      .filter((e) => e.fig && SERIOUS_FIGURES[e.fig]?.role === 'bass')
+      .map((e) => e.fig);
+    const stackBassMoves = srPinned || stackBassFigs.some((f) => bassOnsets(f) >= 2);
     o.vocaloidForm = {
       ...row.vf,
-      ...(stackIds.has('bass') ? { bass: false } : {}),
+      ...(stackIds.has('bass') && stackBassMoves ? { bass: false } : {}),
       ...(stackIds.has('pad') ? { padFig: false } : {}),
       ...(row.vf.synthFig === undefined && (stackIds.has('riff') || stackIds.has('arp')) ? { synthFig: false } : {}),
     };
-    o.serious = row.serious;
+    // r44 — the SLOT ROTATION is a property of THIS page, not of the engine:
+    // the two labs build every card under one shared name (D120), so the
+    // per-song history gate cannot see their verdicts and a page-wide default
+    // re-rolled 14 of 23 judged cards on cells.html and 26 of 64 palette
+    // layers on the combination lab. A row may still opt out with
+    // `rotate: false`, and a judged row is protected by the gate regardless.
+    o.serious = { rotate: true, ...row.serious };
     delete o.scheme; // the form names the letters
     o.vocalWriter = { ...(typeof o.vocalWriter === 'object' ? o.vocalWriter : {}), slowFloor: true, ...(row.writer ?? {}) };
     const tier = row.vf.energy ?? 'mid';
@@ -10191,7 +10689,7 @@ if (SERIOUS_PAGE) {
     const L = SERIOUS_LOOPS[row.vf.verse] ?? VOCALOID_LOOPS[row.vf.verse];
     const C = SERIOUS_LOOPS[row.vf.chorus] ?? VOCALOID_LOOPS[row.vf.chorus];
     const st = row.serious.stack ?? 'sr_stack_titan';
-    S.why = `"${row.text}" -> ${explainPrompt(d)} · ${bpm} bpm · ${row.kit ? `kit ${row.kit}` : 'NO drums (his serious-calm references and the Interstellar score carry none)'} · verse ${L?.numerals ?? row.vf.verse} / chorus ${C?.numerals ?? row.vf.chorus} · stack ${st}${row.serious.instrumentalAt?.length ? ` · the voice rests in tune sections ${row.serious.instrumentalAt.join(', ')} and ${row.serious.instrumentalSound ?? 'gm_violin'} states the theme` : ''}${row.serious.theme === false ? ' · VOICE AS AN INSTRUMENT: the theme writer is OFF, the cell never re-rolls and the line is doubled an octave below on a synth' : ' · THEME mode: 2.5 notes/bar, 30% dotted, phrases on the beat'}`;
+    S.why = `"${row.text}" -> ${explainPrompt(d)} · ${bpm} bpm${S.srPicks?.length ? ` · r44 slot rotation: ${S.srPicks.join(', ')}` : ''} · ${row.kit ? `kit ${row.kit}` : 'NO drums (his serious-calm references and the Interstellar score carry none)'} · verse ${L?.numerals ?? row.vf.verse} / chorus ${C?.numerals ?? row.vf.chorus} · stack ${st}${row.serious.instrumentalAt?.length ? ` · the voice rests in tune sections ${row.serious.instrumentalAt.join(', ')} and ${row.serious.instrumentalSound ?? 'gm_violin'} states the theme` : ''}${row.serious.theme === false ? ' · VOICE AS AN INSTRUMENT: the theme writer is OFF, the cell never re-rolls and the line is doubled an octave below on a synth' : ' · THEME mode: 2.5 notes/bar, 30% dotted, phrases on the beat'}`;
     S.vocalSuite = true;
     // the r39 vocal pins (page pins, never renderer defaults — D144)
     S.vocalDb = row.vocalDb ?? Math.round((vocalDb - 3) * 10) / 10;
@@ -10199,6 +10697,381 @@ if (SERIOUS_PAGE) {
     S.vocalTune = row.vocalTune ?? 0.7;
     if (vocalStyle !== 'lead') S.vocalStyle = vocalStyle;
     if (row.lyrics) S.lyricStyle = row.lyrics;
+  }
+}
+// ===========================================================================
+// r42 — THE PATTERN LAB (CELLS=1 -> audition/cells.html). HIS ASK, verbatim:
+//
+//   "the cello harmony that you added into the high energy songs (like the one
+//    where it's rising and repeating) is good but there should be more
+//    variations of those. like experiment with more variations, like falling
+//    instead of rising, 3 notes instead of 4 where the fourth note is the root
+//    again, different intervals, different patterns.
+//    MOREOVER, they also do the bass too in the attack on titan, and other
+//    patterns besides this - I want to hear them individually and variations of
+//    them for the energetic songs"
+//
+// WHAT HE NAMED. The layer is `sr_pedal_cell` on `gm_cello` — the `ost` slot of
+// sr_stack_titan, which is a cello on sr_gate, sr_oath and sr_hunt. It is
+// attack on titan bars 9-20: R R b3 5 in 16ths, four times a bar, the top note
+// raised to b6 on the alternate bar.
+//
+// HOW THE PAGE IS BUILT. One bed per GROUP, one variable per card. Every card is
+// the SAME song — same name (so the same key, the same cast, the same retrieval
+// hashes: D120, an A/B built under two names is testing the names), same bpm,
+// same loops, same kit, same theme — and swaps exactly ONE figure.
+//
+// THE COMPARISON SET IS THE GROUP, NOT THE PAGE, and that is a real limit
+// rather than a formality (the r42 verify pass measured it). Each group's
+// tested layer has to enter ALONE, so the three lab stacks give the same slots
+// different entry points and gains; across a group boundary the bed therefore
+// moves too. Within a group every non-tested layer is bit-for-bit identical —
+// verified as 13 of 13 and 10 of 10 distinct mixes with one realization each of
+// every other sound.
+//
+// Eight of the nine cell cards share one onset-and-accent signature exactly
+// (512 onsets, verified), so between those the only thing that moves is the
+// pitch shape.
+// `sr_cell_neighbor` deliberately does not (it is a measured figure with a
+// half-bar rest — 352 onsets against the control's 512) and its card says so.
+//
+// HOW YOU HEAR IT INDIVIDUALLY. The layer under test enters ALONE in the 8-bar
+// intro, which is how the source introduces its own cell (attack on titan bars
+// 9-20 are the left hand with nothing else under it), and the build enters on
+// top of it one layer per 8-bar section: bass, chords, the theme doubled an
+// octave below. So each card is the pattern by itself and then the pattern in
+// an energetic mix, in that order. Every layer also has its own solo button.
+//
+// WHERE THE ROWS CAME FROM. Nine of the seventeen new figures are MEASURED off
+// his own reference files (the read-out is research/cells-r42.md; each row's
+// `source` names the file, the bars and how many times that file plays it) and
+// the rest are the variations he asked for by name, marked `invented: true`.
+const CELLS_PAGE = process.env.CELLS === '1';
+const CL_BASE = {
+  bpm: 140, // the reference median for an energetic serious cue (AoT 125, Muzan 138, Naruto 140, Zoltraak 142)
+  pin: { emotion: 'tense', environment: 'fight' },
+  text: 'holding the bridge while the rest of the column gets across',
+  vf: {
+    verse: 'sr_loop_shuttle_i_bVII', chorus: 'sr_loop_i_bVII_bVI_bVII',
+    form: 'vf_form_lab', energy: 'high', introFig: 'vf_intro_none', introLoop: 'verse',
+    // the stack owns every added layer on this page, so the form's own synth
+    // hook, pad and bass stand down — otherwise the bed moves between the bass
+    // cards (two basses) and the variable stops being the variable
+    synthFig: false, bass: false, padFig: false,
+  },
+};
+// group: which stack, which slot the card varies. 'cell' and 'riff' both vary
+// the `ost` slot (the mid-register ostinato the cello plays); 'bass' varies the
+// low one. An overridden figure brings its own measured octave (seriousSpec).
+const CL_CARDS = [
+  // ---- the cell he named, and the variations he asked for ------------------
+  { id: 'cell_orig', group: 'cell', fig: 'sr_pedal_cell', head: 'THE ONE YOU HAVE',
+    what: 'the control: R R b3 5 in 16ths, four times a bar, the top note raised to b6 on alternate bars (attack on titan bars 9-20, x6 + x6)' },
+  { id: 'cell_fall', group: 'cell', fig: 'sr_cell_fall', head: 'FALLING',
+    what: 'your "falling instead of rising": the same rhythm with the fifth struck FIRST and the cell walking down to the doubled root' },
+  { id: 'cell_return', group: 'cell', fig: 'sr_cell_root_return', head: 'THREE NOTES, ROOT AGAIN',
+    what: 'your "3 notes instead of 4 where the fourth note is the root again": R b3 5 rising, then back to the root on the fourth 16th' },
+  { id: 'cell_arch', group: 'cell', fig: 'sr_cell_arch', head: 'ARCH',
+    what: 'up and back down inside the beat (R b3 5 b3) — the cell turns instead of resetting' },
+  { id: 'cell_step', group: 'cell', fig: 'sr_cell_step', head: 'STEPS, NOT THIRDS',
+    what: 'the same rhythm walked in scale steps (R 2 b3 4 / R 2 b3 5) instead of chord thirds' },
+  { id: 'cell_open5', group: 'cell', fig: 'sr_cell_open5', head: 'FIFTHS AND THE OCTAVE',
+    what: 'the wide-interval version: R 5 R+ 5 / R 5 b7 5 — no third in the cell at all' },
+  { id: 'cell_octleap', group: 'cell', fig: 'sr_cell_oct_leap', head: 'OCTAVE LEAP',
+    what: 'a leap to the octave every beat (R b3 R+ b3), the middle note moving to the 4th on the alternate bar' },
+  { id: 'cell_pairs', group: 'cell', fig: 'sr_cell_pairs', head: 'EACH NOTE TWICE',
+    what: 'attack on titan\'s chorus DEVICE moved into the cell register: every chord tone struck twice (R R b3 b3 / 5 5 b3 b3). The device is measured — 85% of that section\'s pair heads — but these pitches and this 16th grid are mine, not the file\'s' },
+  { id: 'cell_neighbor', group: 'cell', fig: 'sr_cell_neighbor', head: 'THE OTHER AoT CELL',
+    what: 'MEASURED, and nobody had transcribed it: attack on titan bars 21-28 — five 16ths (R b3 2 b3 R), a half-bar REST, then the same five landing on the 4th. (Its even bars also close on a leading tone BELOW the root; the figure dialect cannot spell a note under its own root, so that tail is the one thing this card does not carry)' },
+
+  // ---- the bass, which is the second half of your note ---------------------
+  { id: 'bass_push', group: 'bass', fig: 'sr_bass_push', head: 'THE ONE YOU HAVE',
+    what: 'the control: attack on titan bars 68-83, octave pairs on 1, the & of 2, 3, the & of 4 (x16 — the single most repeated bar in the file)' },
+  { id: 'bass_hold', group: 'bass', fig: 'sr_octave_bass_hold', head: 'ONE HIT A BAR',
+    what: 'the other control: the octave struck once and held. This is what the calm and additive stacks play, and what you could not hear as a bass' },
+  { id: 'bass_oct8', group: 'bass', fig: 'sr_bass_oct8ths', head: 'OCTAVES ON 8THS',
+    what: 'MEASURED attack on titan bars 29-36 (x7, the same bar eight times): the octave bass driving straight 8ths' },
+  { id: 'bass_wander', group: 'bass', fig: 'sr_bass_oct_wander', head: 'TWO HITS, THE SECOND MOVES',
+    what: 'MEASURED attack on titan bars 0-7 — the opening. Two octave strikes a bar, the second landing on beat 4, then 2, then 3, then 3: a bass that sits still and still never repeats a bar (exactly true of 6 of those 8 bars)' },
+  { id: 'bass_push5', group: 'bass', fig: 'sr_bass_push5', head: 'PUSH WITH A FIFTH',
+    what: 'MEASURED Muzan vs Hashiras bars 41-44 (x4): the push again, but beat 3 is a fifth-plus-octave DYAD instead of another root' },
+  { id: 'bass_332', group: 'bass', fig: 'sr_bass_332', head: '3+3+2',
+    what: 'MEASURED Muzan vs Hashiras bars 45-52 (x10): the tresillo in the bass, octave on 1 and root-fifth dyads on the two pushes' },
+  { id: 'bass_pump5', group: 'bass', fig: 'sr_bass_fifth_pump', head: 'FIFTH PUMP',
+    what: 'MEASURED Zoltraak bars 11-16 (x3): the root on the beat and a fifth-plus-octave dyad pumping every other 8th — one moving note, maximum drive' },
+  { id: 'bass_octalt', group: 'bass', fig: 'sr_bass_oct_alt', head: 'LOW HIGH LOW HIGH',
+    what: 'MEASURED A world where the sun never rises bars 66-73 (x8): the octave alternating on 8ths — your own words for this shape, about a layer you liked, were "low high high low low repeat"' },
+  { id: 'bass_walkdown', group: 'bass', fig: 'sr_bass_walk_down', head: 'WALKING DOWN',
+    what: 'MEASURED Zoltraak (x9): the bass turns UP to the octave and then walks down through b7 to b6 inside the bar, instead of restating the root — your "falling instead of rising", in the bass, from the source' },
+  { id: 'bass_offbeat', group: 'bass', fig: 'sr_bass_offbeat', head: 'WEIGHT OFF THE BEAT',
+    what: 'MEASURED Solo Leveling ReawakeR bars 1-5 (x5): the WEIGHT never lands on beat 1 — the downbeat is a lone high octave and the low pair enters on the & of 1, syncopating across the bar' },
+
+  // ---- the other patterns these files play, in the same slot ---------------
+  { id: 'riff_gallop', group: 'riff', fig: 'sr_gallop', head: 'PAIRS, ARCHING',
+    what: 'MEASURED attack on titan bars 68/70/72/74 (x4): the chorus riff in 8th pairs, each chord tone struck twice' },
+  { id: 'riff_fall', group: 'riff', fig: 'sr_gallop_fall', head: 'PAIRS, FALLING',
+    what: 'YOUR "falling instead of rising" in the riff register: the same 8th pairs walked strictly down. The pair rhythm is attack on titan\'s; the descent is NOT — re-measured, that file\'s odd riff bars are a frozen four-note cell over a moving bass, and its contour turns rather than falling' },
+  { id: 'riff_motor16', group: 'riff', fig: 'sr_motor16_dyad', head: 'THE 16TH MOTOR',
+    what: 'MEASURED The Raising Fighting Spirit bar 8+: the syncopated 16th root-fifth motor (this is what the battle stack plays under sr_duel and sr_vanguard)' },
+  { id: 'riff_332', group: 'riff', fig: 'sr_stabs_332', head: '3+3+2 STABS',
+    what: 'the 3+3+2 8th cell as chord stabs, accents on the direction changes (the orchestration literature\'s battle ostinato)' },
+];
+let CL_FIRST = 0;
+if (CELLS_PAGE) {
+  CL_FIRST = songs.length;
+  const d0 = describePrompt(CL_BASE.text);
+  const d = { ...d0, ...CL_BASE.pin };
+  for (const card of CL_CARDS) {
+    const slot = card.group === 'bass' ? 'bass' : 'ost';
+    // three beds, one per group, each internally constant — see the note above
+    const stackName = card.group === 'bass' ? 'sr_stack_lab_bass'
+      : card.group === 'riff' ? 'sr_stack_lab_riff' : 'sr_stack_lab_cell';
+    const { opts: o } = vocaloidOpts(d, { bpm: CL_BASE.bpm });
+    // EVERY CARD IS THE SAME SONG UNDER THE SAME NAME (D120) and is renamed
+    // afterwards; the key, the cast and every retrieval hash come from the name.
+    const name = 'cl_lab';
+    o.family = SERIOUS_LOOPS[CL_BASE.vf.verse].family;
+    o.keyScale = 'aeolian';
+    // NOT a sung page: the vocal tier's 0.45 guide would duck the theme under a
+    // voice that never arrives, and a pattern lab wants the tune at its own
+    // level so the support ratio under it is the real one (D77).
+    o.vocalLead = false;
+    o.vocaloidForm = { ...CL_BASE.vf };
+    o.serious = {
+      stack: stackName,
+      figures: { [slot]: card.fig },
+      // r43 SECOND PASS — HIS NOTE, and it names the tier: "is it just HQ? like
+      // it wasn't like this before. however with HQ off it sounds bad. it's
+      // still the same amount of wet and i cant layer them properly cus its too
+      // reverby."
+      //
+      // Both halves measured, and they are two different defects on the two
+      // tiers of THIS page — the page the first pass never touched (it fixed
+      // mixlab.html, which has no HQ button at all).
+      //   HQ ON  = the pre-rendered wav. `gm_cello` and the pad render through
+      //     strings-sections.sfz (ampeg_release=0.7), so a 0.107 s sixteenth
+      //     rings 0.8 s — about 8 notes sounding at once from one layer — and on top
+      //     of that render-hq derives its convolution wet from the page's own
+      //     mean `.room()`, which was 0.2-0.4 here: 22-44% wet.
+      //   HQ OFF = the browser GM soundfont, which is short but thin: "sounds
+      //     bad", and he is right.
+      // So the two tiers converge on the same struck VSCO samples: the ostinato
+      // slot and the bass take the spiccato banks (voice-only — the (time, midi)
+      // multiset is byte-identical, only `.s()` moves), and `labDynamics` below
+      // takes the room to zero, which also makes the re-render dry by itself
+      // because the renderer reads the page (D144 — never a renderer default).
+      // The PAD keeps a sustain: a pad is the one line here that should hold.
+      sounds: { ost: 'vsco_cello_spic', bass: 'vsco_bass_spic', pad: 'gm_string_ensemble_1', theme8: 'gm_trombone' },
+    };
+    delete o.scheme;
+    o.vocalWriter = { ...(typeof o.vocalWriter === 'object' ? o.vocalWriter : {}), slowFloor: true };
+    o.percPresence = 'foreground';
+    o.kitWriter = true;
+    o.kitStyle = 'cinematic';
+    // r43 — HE HAS JUDGED THIS PAGE: 21 of its 23 cards carry a keep click and
+    // 14 carry notes. The r43 serious-acc fix keys on `opts.serious`, which this
+    // page sets, and the first build after it moved ALL TWENTY-THREE cards on
+    // their mix. `pinFrom` is the mechanism for exactly this (D101 — it beats
+    // pinning feature by feature, which is how the next rule gets missed): rules
+    // from r43 on do not reach these cards, and everything r42 and earlier still
+    // does, so the page keeps the build he judged. NO `voicedColor` alongside it
+    // — these rows are not history-less, colorFresh is already false for them,
+    // and forcing it true would re-roll the harmony the pin exists to hold.
+    o.pinFrom = 'r43';
+    // the 8-bar intro is the tested layer and NOTHING else — his "I want to
+    // hear them individually". The kit enters with the first section.
+    o.introDrums = false;
+    // r43 SECOND PASS: dry, clipped, with an explicit fast release — the same
+    // treatment the combination lab ships with, on the page he is actually
+    // listening to. This is what takes the HQ re-render dry as well: the wet
+    // amount in render-hq.mjs is the mean of the page's own `.room()` haps and
+    // it does nothing at all below 0.15.
+    o.labDynamics = true;
+    // ---- everything that is NOT the variable is pinned ---------------------
+    // The lead stays on ONE instrument for every card and every letter: a
+    // handoff or the saw<->square vary would swap the tune's voice mid-card,
+    // which is a second variable inside a single card. The trumpet is the voice
+    // he named on the serious page ("I like the melody trumpet") and it leaves
+    // the cello's register free, which is where the tested cell lives.
+    o.noHandoff = true;
+    o.varyLeadVoice = false;
+    o.leadSound = 'gm_trumpet';
+    // no voice is sung on this page, so the two riders that exist to support a
+    // SINGER are just extra doublings of the theme instrument — off, so the
+    // count of competing lines is the same on every card and as low as an
+    // energetic bed allows
+    o.chorusDouble = false;
+    o.vocalHarmony = false;
+    o.guitar = false;
+    o.crashSeams = true;
+    buildSong({ emotion: d.emotion, environment: d.environment, meter: '4/4' }, name, o);
+    const S = songs[songs.length - 1];
+    S.name = `cl_${card.id}`;
+    S.labGroup = card.group; S.labFig = card.fig;
+    const F = SERIOUS_FIGURES[card.fig];
+    // the CARD TITLE is the pattern, not the prompt: every card shares one bed
+    // and one prompt, so printing the prompt on all 23 would make them look
+    // identical at the top, with the only thing that differs buried in DATA
+    S.description = `${card.head} — ${card.what}`;
+    const onsetsPerBar = Math.round((F.onsets.length / F.bars) * 10) / 10;
+    S.why = `${card.head} — ${card.what} · slot: the ${slot === 'bass' ? 'BASS' : 'ostinato (cello)'} layer, which enters ALONE in the 8-bar intro and keeps playing under everything after it · ${onsetsPerBar} onsets/bar, ${F.bars}-bar figure${F.invented ? ' · HIS ASK, not in the references' : ' · MEASURED off the reference file'} · source: ${F.source}`;
+    // and the trace panel carries the provenance, because `why` is DATA-only on
+    // every page — vibeNotes is what the card actually renders
+    S.vibeNotes = [
+      `${card.fig} in the ${slot === 'bass' ? 'BASS' : 'ostinato (cello)'} slot — ${onsetsPerBar} onsets/bar, ${F.bars}-bar figure at octave ${F.octave}`,
+      F.invented ? 'HIS ASK — the shape as written is his, not the file\'s; the card text says exactly what IS measured about it' : 'MEASURED off the reference file',
+      `source: ${F.source}`,
+      `the bed is identical on all 23 cards (${CL_BASE.text}); the tested layer plays alone for the 8-bar intro, then bass / chords / the theme an octave below enter one section at a time`,
+      ...(S.vibeNotes ?? []),
+    ];
+  }
+}
+// r43 — THE COMBINATION LAB (MIXLAB=1 -> audition/mixlab.html). HIS ASK,
+// verbatim:
+//
+//   "next lab, allow me to combine different layers by enabling multiple at a
+//    time, then press something to leave a note either individually for that
+//    song or for the group, and i can do this multiple times with an extensive
+//    list with a diversity of serious ones"
+//
+// WHAT MAKES THIS A DIFFERENT PAGE FROM cells.html. Every other audition page
+// is one card = one fixed mix; the variable is chosen at BUILD time and he
+// judges what the generator decided. Here the variable is chosen at LISTEN
+// time: each bed ships all 48 layers bound separately and the page stacks the
+// ticked ones. That is the only way "what goes with what" is answerable at all
+// — 48 layers is 2^48 mixes and no page can pre-build them.
+//
+// THE FORM IS FLAT ON PURPOSE (vf_form_flat, and every stack entry is `at: -1`).
+// The entry SCHEDULE is what sr_stack_titan and the r42 lab exist to test. If it
+// ran here, a layer he ticked would be silent for the first sixteen bars and the
+// checkbox would be lying about what he is hearing.
+//
+// WITHIN A GROUP ONE VOICE, ACROSS GROUPS DIFFERENT VOICES — see the stack's own
+// note. The `acc` group is the deliberate exception and the page says so on the
+// group header.
+//
+// NO HQ RENDERS, AND THAT IS THE TRADE. A combination lab cannot pre-render its
+// combinations, so this page is browser-audio only. He listens with HQ on
+// (r26), so the page says at the top that it is for judging PATTERNS and
+// COMBINATIONS and not timbre, and points at the pages that do carry renders.
+const MIXLAB_PAGE = process.env.MIXLAB === '1';
+// the sounds every slot plays on. Cells share the cello he named in r42; basses
+// share the contrabass; riffs share the muted guitar he praised ("staccato
+// good, octave alternation good"); stabs are brass, which is his "think the
+// percussion in movie soundtracks" answered in the pitched layers.
+const ML_SOUNDS = (() => {
+  const m = { pad: 'gm_string_ensemble_1', theme8: 'gm_trombone', theme3: 'vsco_viola' };
+  for (const e of SERIOUS_STACKS.sr_stack_mixlab.entries) {
+    if (m[e.id]) continue;
+    // r43 SECOND PASS — the struck articulations. MEASURED on the bytes the
+    // browser plays: the susvib banks sit 2.7-8.5 dB below their own peak half a
+    // second later (the struck ones 16.9-50.5), so a cell built on them
+    // accumulates rather than layers — his "i cant layer them properly". A
+    // spiccato is 20 dB down in 0.25-0.35 s. The page's ARTICULATION button
+    // swaps all three banks at once, so the sustained sound he liked for
+    // "ambiant vibes and moody days" is one click away, not deleted.
+    m[e.id] = e.id.startsWith('cell_') ? 'vsco_cello_spic'
+      : e.id.startsWith('vln_') ? 'vsco_violin_spic'
+      : e.id.startsWith('bass_') ? 'vsco_bass_spic'
+        : e.id.startsWith('riff_') ? 'gm_electric_guitar_muted'
+          : e.id.startsWith('stabs_') ? 'gm_french_horn'
+            : e.id === 'acc_piano' ? 'piano'
+              : e.id === 'acc_guitar' ? 'gm_electric_guitar_clean'
+                : e.id === 'acc_strings' ? 'gm_orchestral_harp'
+                  : e.id === 'acc_epiano' ? 'gm_epiano1'
+                    : 'gm_string_ensemble_1';
+  }
+  return m;
+})();
+// HIS "a diversity of serious ones", and the axis he named twice in his own
+// notes — "also depends on the chord progression" (on the four bass cards) and
+// "depends on the chord progression but works as a layer" (on the gallop). So
+// the BED is the progression: nine of them, every serious loop in the pack that
+// carries a distinct harmonic character, at nine tempos from 88 to 152.
+const ML_BEDS = [
+  { id: 'bridge', bpm: 140, loop: 'sr_loop_shuttle_i_bVII', lead: 'gm_trumpet',
+    text: 'holding the bridge while the rest of the column gets across',
+    what: 'the r42 lab bed, so anything you judged there is comparable: two chords shuttling, i and bVII' },
+  { id: 'charge', bpm: 152, loop: 'sr_loop_i_bVII_bVI_bVII', lead: 'gm_trumpet',
+    text: 'the last push up the hill before the gate closes',
+    what: 'the descending Aeolian axis at the top of the tempo range — the most common anime-battle loop there is' },
+  { id: 'pedal', bpm: 125, loop: 'sr_loop_pedal_i', lead: 'gm_trumpet',
+    text: 'standing on the wall watching the dust come closer',
+    what: 'ONE chord for the whole loop (attack on titan holds its tonic for twelve bars). With no progression underneath, the layers ARE the harmony — the hardest test of a pattern there is' },
+  { id: 'dawn', bpm: 132, loop: 'sr_loop_dorian_i_IV', lead: 'gm_french_horn',
+    text: 'riding out at dawn with the banners still wet',
+    what: 'DORIAN: a major IV against a minor tonic. The same patterns over a brighter mode — this is where a figure that leans on the b6 will show it' },
+  { id: 'gate', bpm: 118, loop: 'sr_loop_iv_bVI_bVII_i', lead: 'gm_french_horn',
+    text: 'carrying the wounded back through the gate',
+    what: 'the bVI-bVII-i Aeolian cadence: the loop RESOLVES onto the tonic every four bars instead of hanging' },
+  { id: 'reawaken', bpm: 146, loop: 'sr_loop_bVII_iv_i_bVI7', lead: 'gm_trumpet',
+    text: 'the thing in the dark finally stands up',
+    what: 'Solo Leveling ReawakeR’s own loop, which starts AWAY from the tonic and carries a maj7' },
+  { id: 'promise', bpm: 138, loop: 'sr_loop_i_bVII_bVI_III', lead: 'gm_cello',
+    text: 'the promise you made that you already know you cannot keep',
+    what: 'Homura’s loop, and a CELLO on the tune instead of brass — serious without being a battle' },
+  { id: 'spell', bpm: 142, loop: 'sr_loop_i_bVII_bVI_iv', lead: 'gm_trumpet',
+    text: 'the spell that was built to kill one specific thing',
+    what: 'Zoltraak’s loop: the axis again but landing on the minor iv, which is darker than the bVII turnaround' },
+  { id: 'lake', bpm: 88, loop: 'sr_loop_calm_i7_bIII6_iv', lead: 'gm_french_horn',
+    text: 'the long walk home across the frozen lake',
+    what: 'SERIOUS CALM (Interstellar’s measured loop, sevenths and a sus) at 88 bpm — because "energetic" is not the only serious, and a pattern that only works at 140 should show that here' },
+];
+let ML_FIRST = 0;
+if (MIXLAB_PAGE) {
+  ML_FIRST = songs.length;
+  for (const bed of ML_BEDS) {
+    const d0 = describePrompt(bed.text);
+    const d = { ...d0, emotion: 'tense', environment: 'fight' };
+    const { opts: o } = vocaloidOpts(d, { bpm: bed.bpm });
+    o.family = SERIOUS_LOOPS[bed.loop].family;
+    o.keyScale = 'aeolian';
+    o.vocalLead = false;
+    // the VERSE loop and the CHORUS loop are the same row on purpose. A solo is
+    // bound to the verse context by construction (D145), so on a page whose
+    // whole output is solos, a chorus that carried different chords would make
+    // every layer wrong for half the song. One loop per bed also makes "depends
+    // on the chord progression" a clean question: the bed IS the progression.
+    o.vocaloidForm = {
+      verse: bed.loop, chorus: bed.loop, form: 'vf_form_flat',
+      energy: 'high', introFig: 'vf_intro_none', introLoop: 'verse',
+      synthFig: false, bass: false, padFig: false,
+    };
+    // r43 — the bed must actually PLAY the loop it names. `loopHarmony` makes
+    // `basePin` resolve against SERIOUS_LOOPS (see PROG_ANY) and `rawBase` keeps
+    // the variation pass off it, because the axis he asked to test here is the
+    // progression itself: "also depends on the chord progression" (x2 in his
+    // notes). Without both, every bed plays the same hash-picked pop exemplar
+    // and nine beds are one bed.
+    o.loopHarmony = true;
+    o.rawBase = true;
+    o.serious = { stack: 'sr_stack_mixlab', sounds: ML_SOUNDS };
+    delete o.scheme;
+    o.vocalWriter = { ...(typeof o.vocalWriter === 'object' ? o.vocalWriter : {}), slowFloor: true };
+    o.percPresence = 'foreground';
+    o.kitWriter = true;
+    o.kitStyle = 'cinematic';
+    // r43 — HIS SIXTH CARD ABOUT THIS LAYER ("I dont think the vibraphone
+    // conveys tense or fight at all", and five on the serious page before it).
+    // The acc hand is gm_epiano1 on every synth-acc serious row; the acc GROUP
+    // on this page is the A/B that settles what it should be instead, and the
+    // bed itself takes the piano he praised on sr_expanse in the meantime.
+    o.seriousAcc = true;
+    o.labDynamics = true;
+    o.noHandoff = true;
+    o.varyLeadVoice = false;
+    o.leadSound = bed.lead;
+    o.chorusDouble = false;
+    o.vocalHarmony = false;
+    o.guitar = false;
+    o.crashSeams = true;
+    buildSong({ emotion: d.emotion, environment: d.environment, meter: '4/4' }, `ml_${bed.id}`, o);
+    const S = songs[songs.length - 1];
+    S.bedWhat = bed.what;
+    S.description = bed.text;
+    S.loopName = bed.loop;
+    S.loopSource = SERIOUS_LOOPS[bed.loop].source;
+    S.numeralsLine = SERIOUS_LOOPS[bed.loop].numerals;
   }
 }
 // THE LAB: A/B cards built under ONE name (D120 — the key and every retrieval
@@ -10692,6 +11565,26 @@ for (const s of songs) s.hq = existsSync(join(OUT, 'hq', `${s.name}.wav`));
 // toggle swaps it in when HQ mode is on. The field is only SET when the file
 // exists, so songs without a vocal render keep their DATA byte-identical.
 for (const s of songs) if (existsSync(join(OUT, 'hq', `${s.name}.withvocal.wav`))) s.vocal = true;
+// r41/D146 — THE PLAY SIGNATURE, AND WHETHER THE RENDER STILL MATCHES IT.
+// His ask was the CHANGED badge; this is the half of it I missed first time,
+// and missing it cost him a whole export. The badge tracks the MIX, but HQ mode
+// plays a WAV, and a wav can be older than the mix it was rendered from — which
+// is exactly what happened between his two serious exports: HQ on played 12:17
+// audio against a 14:32 page, so half his notes were about a build that no
+// longer existed and two repeated a complaint I had already fixed.
+//
+// `render-vocal.mjs` writes the page's own `sig` to <name>.mixsig when it
+// renders. One definition of the signature, computed here and consumed there,
+// so the two can never drift.
+for (const s of songs) {
+  s.sig = fnv(`${s.mix}|${s.mixInstrumental ?? ''}|${(s.drums ?? []).join('|')}`).toString(36);
+  if (!s.hq) continue;
+  const sigPath = join(OUT, 'hq', `${s.name}.mixsig`);
+  // no sidecar at all = a render from before r41: unknown, not stale. Claiming
+  // staleness we cannot prove would cry wolf on every older page.
+  if (!existsSync(sigPath)) continue;
+  if (readFileSync(sigPath, 'utf8').trim() !== s.sig) s.hqStale = true;
+}
 // r36 — the LYRIC SHEET: a vocal-suite song whose exported score carries the
 // writer's lines (src/lib/lyrics-ja-writer.js: kana / romaji / gloss per
 // 2-bar phrase, keyed by section) shows them on its card. Read from the score
@@ -10825,6 +11718,128 @@ if (SUITE) {
   const built = songs.slice(SR_FIRST);
   console.log(`wrote audition/serious.html — ${built.length} songs, page script parses clean, ${(inlsr.length / 1024).toFixed(0)} KB`);
   for (const b of built) console.log(`   ${b.name.padEnd(14)} ${String(b.bpm).padStart(3)}bpm ${String(b.key).padEnd(9)} ${b.totalBars}b  ${b.parsed}`);
+} else if (MIXLAB_PAGE) {
+  // r43 — the combination lab's DATA is not a list of mixes, it is a list of
+  // BEDS each carrying its layers as separate expressions. The page stacks the
+  // ticked ones at listen time; `mix` is never played here and is not emitted,
+  // which is also what keeps the file from being several megabytes.
+  const ML_GROUPS = {
+    cell: { what: 'the mid-register ostinato you named in r42 — “the one where it’s rising and repeating”, and every variation of it', voice: 'vsco_cello (the VSCO section, same samples the renderer uses — not the browser soundfont)' },
+    bass: { what: 'the low layer — “they also do the bass too in the attack on titan”, plus the four lines that answer “can also have its own melody”', voice: 'vsco_bass (the VSCO contrabass, same samples the renderer uses)' },
+    riff: { what: 'the upper-mid driving figure: gallops, motors, runs', voice: 'gm_electric_guitar_muted (the staccato you liked)' },
+    stabs: { what: 'chords that ANSWER rather than accompany — short, on the beat, brass', voice: 'gm_french_horn' },
+    vln: { what: 'YOUR "along with cello there should also be a repeat on violin like an octave up or something because its all strings" — every cell again, an octave up, on the violin section, under the cello in level. Tick a cell and its violin twin together to hear the cell as a SECTION rather than one instrument.', voice: 'vsco_violin (the VSCO section, same samples the renderer uses)' },
+    pad: { what: 'sustained chords under everything, the voicing rotating each bar', voice: 'gm_string_ensemble_1' },
+    acc: { what: 'THE VOICE TEST, and the exception to the one-voice rule: the SAME four-note chorale on four different instruments. Your note, six times over — “the pitched percussion in the harmony should be replaced with another instrument”. Tick them one at a time.', voice: null },
+    theme: { what: 'the tune itself and its two doubles — an octave below and a third below (63–100% of reference theme strikes carry one)', voice: null },
+    kit: { what: 'the drums', voice: null },
+  };
+  const ML_LABEL = {
+    cell_orig: 'the one you have (R R b3 5)', cell_fall: 'falling', cell_return: '3 notes, root again',
+    cell_arch: 'arch', cell_step: 'steps (as judged)', cell_step_ct: 'steps between chord tones',
+    cell_open5: 'fifths and the octave', cell_octleap: 'octave leap (as judged)', cell_octleap_b: 'octave leap, 2nd note fixed',
+    cell_pairs: 'each note twice', cell_neighbor: 'the other AoT cell (lower voice only)',
+    cell_neighbor_full: 'the other AoT cell, BOTH voices', cell_shuffle: 'triplet run (12 per bar)',
+    cell_pedal4: 'inner pedal on the 4th',
+    bass_push: 'the push (AoT x16)', bass_hold: 'one hit a bar', bass_oct8: 'octaves on 8ths',
+    bass_wander: 'two hits, the second moves', bass_push5: 'push with a fifth', bass_332: '3+3+2',
+    bass_pump5: 'fifth pump', bass_pump_rise: 'fifth pump, 3rd repeat rises', bass_octalt: 'low high low high',
+    bass_walkdown: 'walking down (Zoltraak)', bass_lament: 'lament: R b7 b6 5', bass_offbeat: 'weight off the beat',
+    bass_walk4: 'WALKING: 4 beats, 4 degrees', bass_line: 'a bass with its own line', bass_synco: 'syncopated, no downbeat',
+    bass_synco_dn: 'syncopated, downbeat struck',
+    riff_gallop: 'pairs, arching', riff_fall: 'pairs, falling', riff_motor16: '16th motor (as judged)',
+    riff_motor_tri: '16th motor, TRIPLET grid (fixed)', riff_tri_dyad: 'triplet riff, dyads',
+    riff_rundown: 'falling run, octave-doubled', riff_three_two: 'three and three, then rest', riff_power: 'power chords on 1 3 4',
+    stabs_332: '3+3+2 stabs', stabs_four: 'four-note stabs, off the beat', stabs_answer: 'block chords answering the tune',
+    pad: 'chorale, voicing rotating',
+    // the violin twins take their cell's label so the pair reads as a pair
+    ...Object.fromEntries(['orig', 'fall', 'return', 'arch', 'step', 'step_ct', 'open5', 'octleap', 'octleap_b', 'pairs', 'neighbor', 'neighbor_full', 'shuffle']
+      .map((k) => [`vln_${k}`, `+8ve violin: ${({ orig: 'the one you have', fall: 'falling', return: '3 notes, root again', arch: 'arch', step: 'steps (as judged)', step_ct: 'steps between chord tones', open5: 'fifths and the octave', octleap: 'octave leap (as judged)', octleap_b: 'octave leap, 2nd note fixed', pairs: 'each note twice', neighbor: 'the other AoT cell', neighbor_full: 'the other AoT cell, BOTH voices', shuffle: 'triplet run' })[k]}`])),
+    acc_piano: 'piano', acc_guitar: 'clean guitar', acc_strings: 'harp', acc_epiano: 'electric piano (the one you keep rejecting)',
+    theme8: 'the tune an octave below', theme3: 'the tune a third below (see the caveat)',
+  };
+  const groupOf = (id) => (id.startsWith('cell_') ? 'cell' : id.startsWith('vln_') ? 'vln' : id.startsWith('bass_') ? 'bass'
+    : id.startsWith('riff_') ? 'riff' : id.startsWith('stabs_') ? 'stabs' : id.startsWith('acc_') ? 'acc'
+      : id === 'pad' ? 'pad' : 'theme');
+  // the suggested starting stack: one of each job, which is the shape every
+  // reference file actually plays (a tune, a double, a cell, a bass, chords).
+  const ML_PRESET = ['lead', 'theme8', 'cell_orig', 'bass_push', 'pad', 'acc_piano', 'drums'];
+  const entries = SERIOUS_STACKS.sr_stack_mixlab.entries;
+  const beds = songs.slice(ML_FIRST).map((S) => {
+    const layers = [];
+    const push = (id, group, label, what, stat, expr) => { if (expr) layers.push({ id, group, label, what, stat, expr }); };
+    push('lead', 'theme', `the tune (${S.leadSound ?? 'lead'})`, 'the theme itself, written in THEME mode: 2.5 notes a bar, 40% dotted values, phrases starting on a beat', '', S.solos._lead_mix ?? S.solos._lead);
+    for (const e of entries) {
+      const expr = S.solos[`_sr_${e.id}`];
+      if (!expr) { console.log(`  ${S.name}: layer ${e.id} NOT CAST`); continue; }
+      const F = e.kind === 'figure' ? SERIOUS_FIGURES[e.fig] : null;
+      // r44 VERIFY CATCH: the chip printed the FIGURE ROW's octave while the
+      // binder seats the layer at the ENTRY's (`e.octave`), so 117 cards read
+      // "octave 2" for a layer realized an octave higher — measured at a +12.0
+      // median on 9 of 9 beds, and on exactly the +8ve violin group that exists
+      // to answer his "along with cello there should also be a repeat on violin
+      // like an octave up". The chip said the double was in the cell's octave.
+      const stat = F
+        ? `${Math.round((F.onsets.length / F.bars) * 10) / 10} onsets/bar · ${F.bars}-bar figure · octave ${e.octave ?? F.octave} · ${F.invented ? 'HIS ASK' : 'MEASURED'}`
+        : 'the theme itself, shifted';
+      push(e.id, groupOf(e.id), ML_LABEL[e.id] ?? e.id, F ? F.source : 'the tune doubled — the same line at a fixed interval, never a new rhythm', stat, expr);
+    }
+    // r43 VERIFY CATCH, and this lab found it on its first build: the THIRD
+    // BELOW is sometimes a SIXTH ABOVE. Measured across the nine beds, 0-22% of
+    // its shared onsets sit above the lead, and every one of them is exactly
+    // (the correct third below) + 12 — the writer's degree shift wraps inside
+    // the octave instead of descending out of it. It is NOT a range clamp: the
+    // numbers are bit-identical with gm_bassoon (range [2,4]) in place of
+    // gm_viola ([3,5]). serious.html shows 0% only because theme3 enters late
+    // there and never covers the bars where the tune dips. Left in with the
+    // caveat on the chip rather than silently dropped — it is one of his
+    // measured support devices, and a layer he judges badly for a reason that
+    // is not the pattern is worse than one he judges knowing.
+    const t3 = layers.find((l) => l.id === 'theme3');
+    if (t3) t3.what += ' — CAVEAT: a known engine bug puts this a sixth ABOVE the tune on a few notes per song (the degree shift wraps); judge the DEVICE, not those notes';
+    push('acc_engine', 'acc', 'the engine’s own harmony hand', 'not the chorale — this is the accompaniment the generator writes for every song, here on the piano rather than the electric piano', '', S.solos._acc_mix ?? S.solos._acc);
+    push('drums', 'kit', 'the kit', 'the cinematic kit: frame drum, war drum, military snare, timpani', '', S.solos._drums);
+    const ids = new Set(layers.map((l) => l.id));
+    return { name: S.name, description: S.description, bedWhat: S.bedWhat, bpm: S.bpm, beats: S.beats,
+      key: S.key, symbols: S.symbols, degrees: S.degrees, numerals: S.numerals,
+      numeralsLine: S.numeralsLine, loopName: S.loopName,
+      loopSource: S.loopSource, totalBars: S.totalBars,
+      preset: ML_PRESET.filter((x) => ids.has(x)), layers };
+  });
+  const mlHtml = mixlabPage({ beds, groups: ML_GROUPS }, RUNTIME_JS, WEB_BUNDLE);
+  writeFileSync(join(OUT, 'mixlab.html'), mlHtml);
+  const inlml = mlHtml.slice(mlHtml.lastIndexOf('<script>') + 8, mlHtml.lastIndexOf('</script>'));
+  acorn.parse(inlml, { ecmaVersion: 'latest' });
+  const nL = beds.map((b) => b.layers.length);
+  console.log(`wrote audition/mixlab.html — ${beds.length} beds x ${Math.min(...nL)}-${Math.max(...nL)} layers, page script parses clean, ${(mlHtml.length / 1024).toFixed(0)} KB`);
+  for (const b of beds) console.log(`   ${b.name.padEnd(14)} ${String(b.bpm).padStart(3)}bpm ${String(b.key).padEnd(9)} ${b.layers.length} layers  ${b.numeralsLine}`);
+} else if (CELLS_PAGE) {
+  const clHtml = page({ songs: songs.slice(CL_FIRST).map(({ solos, ...rest }) => ({ ...rest, solos })) })
+    .replace(/motif-engine:song-verdicts/g, 'motif-engine:cells-verdicts')
+    .replace(/motif-engine:song-notes/g, 'motif-engine:cells-notes')
+    .replace(/motif-engine:song-cards/g, 'motif-engine:cells-cards')
+    .replace(/motif-engine:songs-vocal/g, 'motif-engine:cells-vocal')
+    .replace("page: 'songs'", "page: 'r42-cells'")
+    .replace('<title>vibe songs — audition</title>', '<title>r42 — the pattern lab (the cell, the bass, one variable a card)</title>')
+    // the page's own header, so what he is listening FOR is on screen: one bed,
+    // one figure per card, and the tested layer alone for the first eight bars
+    .replace('<h1>vibe songs — 10 environmental + emotional prompts</h1>',
+      '<h1>r42 — the pattern lab: 23 cards, one variable each</h1>')
+    .replace(/each song: varied click-kept harmony[\s\S]*?b-52's note/,
+      'ONE bed on every card — same key, tempo, harmony, kit and tune — with exactly ONE figure swapped. '
+      + 'The layer under test plays ALONE for the first 8 bars (the way attack on titan introduces its own cell), '
+      + 'then the build enters on top of it one layer per section: bass, chords, the theme an octave below. '
+      + '9 CELL cards (the rising 16th cello cell you liked, and variations of it) · 10 BASS cards · 4 RIFF cards. '
+      + 'Each card says whether its figure was MEASURED off one of your reference files (with the bars and the repeat count) or is one of the variations you asked for. '
+      + 'COMPARE WITHIN A GROUP: the tested layer has to enter alone, so the cell, bass and riff groups each have their own bed — inside a group every other layer is identical, across groups it is not. '
+      + 'The riff cards also sit an octave above the cell cards, so they carry less low end by nature.');
+  writeFileSync(join(OUT, 'cells.html'), clHtml);
+  const inlcl = clHtml.slice(clHtml.lastIndexOf('<script>') + 8, clHtml.lastIndexOf('</script>'));
+  acorn.parse(inlcl, { ecmaVersion: 'latest' });
+  const built = songs.slice(CL_FIRST);
+  const groups = built.reduce((m, s) => ({ ...m, [s.labGroup]: (m[s.labGroup] ?? 0) + 1 }), {});
+  console.log(`wrote audition/cells.html — ${built.length} cards (${Object.entries(groups).map(([k, v]) => `${v} ${k}`).join(', ')}), page script parses clean, ${(inlcl.length / 1024).toFixed(0)} KB`);
+  for (const b of built) console.log(`   ${b.name.padEnd(18)} ${String(b.bpm).padStart(3)}bpm ${String(b.key).padEnd(9)} ${b.totalBars}b  ${b.labFig}`);
 } else if (VOCAROCK_PAGE) {
   const vrHtml = page({ songs: songs.slice(VK_FIRST).map(({ solos, ...rest }) => ({ ...rest, solos })) })
     .replace(/motif-engine:song-verdicts/g, 'motif-engine:vocarock-verdicts')
@@ -10928,7 +11943,7 @@ function page(DATA) {
   // badge that cried wolf on every rebuild would be worse than no badge.
   DATA = { ...DATA, songs: DATA.songs.map((s) => ({
     ...s,
-    sig: fnv(`${s.mix}|${s.mixInstrumental ?? ''}|${(s.drums ?? []).join('|')}`).toString(36),
+    sig: s.sig ?? fnv(`${s.mix}|${s.mixInstrumental ?? ''}|${(s.drums ?? []).join('|')}`).toString(36),
   })) };
   return `<!doctype html>
 <html lang="en">
@@ -11074,7 +12089,7 @@ async function play(s) {
     HQ_AUDIO.currentTime = 0;
     try { await HQ_AUDIO.play(); } catch (e) { $('now').textContent = 'HQ playback failed: ' + e.message; return; }
     playing = s.name;
-    $('now').textContent = '\\u25b6 ' + s.name + ' (HQ wav' + (withVocal ? ' + vocal' : (vocalMode ? ' \\u00b7 no vocal render' : '')) + ')';
+    $('now').textContent = '\\u25b6 ' + s.name + ' (HQ wav' + (withVocal ? ' + vocal' : (vocalMode ? ' \\u00b7 no vocal render' : '')) + (s.hqStale ? ' \\u00b7 STALE RENDER, older than this mix' : '') + ')';
     render();
     return;
   }
@@ -11130,7 +12145,9 @@ function render() {
         : played[s.name] !== s.sig
           ? '<span class="dim" style="background:#4a2f10;color:#f0c078;padding:0 6px;border-radius:3px;font-weight:600" title="the mix changed since you last played it — play it to clear this">CHANGED</span>'
           : '') +
-      (s.hq ? '<span class="dim" style="background:#1d3a2a;color:#9fdcb0;padding:0 6px;border-radius:3px" title="has an HQ render">HQ</span>' : '') +
+      (s.hq ? (s.hqStale
+        ? '<span class="dim" style="background:#4a1d1d;color:#f0a0a0;padding:0 6px;border-radius:3px;font-weight:600" title="the HQ wav was rendered from an OLDER mix than this card plays. HQ mode will play the stale audio — use HQ off, or ask for a re-render.">HQ STALE</span>'
+        : '<span class="dim" style="background:#1d3a2a;color:#9fdcb0;padding:0 6px;border-radius:3px" title="has an HQ render, and it matches the current mix">HQ</span>') : '') +
       (s.vocal ? '<span class="dim" style="background:#3a1d3a;color:#dc9fdc;padding:0 6px;border-radius:3px" title="has a sung vocal render (HQ on + Vocal on)">VOCAL</span>' : '') +
       // download links for the rendered wavs (his ask): the HQ mix and, where one
       // exists, the HQ mix with the sung vocal — the same files HQ/Vocal play

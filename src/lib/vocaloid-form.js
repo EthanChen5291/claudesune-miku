@@ -187,6 +187,27 @@ export const VOCALOID_FORMS = {
     intro: 0, sections: ['B', 'A', 'A', 'B', 'A', 'B', 'C', 'B'], silentVerse: 4,
     source: '§4 four of 36 open on the chorus (Ievan Polkka, Iya Iya Yo, Vampire, Yoru ni Kakeru)',
   },
+  // r42 — the PATTERN LAB's form (audition/cells.html): an 8-bar intro where
+  // the layer under test plays ALONE, then three 8-bar sections, one stack
+  // entry each. 32 bars, ~55 s at 140 bpm, because twenty cards of a 64-bar
+  // form is 40 minutes of listening to judge one figure at a time. No silent
+  // verse: the lab's variable is the figure, and dropping the accompaniment
+  // hand under one card and not another is a second variable.
+  vf_form_lab: {
+    intro: 8, sections: ['A', 'B', 'A'], silentVerse: null,
+    source: 'r42 lab form: intro 8 (the tested layer alone) + A B A, one stack entry per section',
+  },
+  // r43 — the COMBINATION LAB's form (audition/mixlab.html). HIS ASK: "allow me
+  // to combine different layers by enabling multiple at a time". Every layer in
+  // that page's stack enters at -1, so the form must have no section where the
+  // set of sounding layers changes — otherwise "enabled" and "audible" are
+  // different things and a combination he ticks is not the one he hears. Four
+  // statements of ONE letter, no intro, no silent verse: 32 bars in which the
+  // only thing that decides what is playing is the checkbox.
+  vf_form_flat: {
+    intro: 0, sections: ['A', 'A', 'A', 'A'], silentVerse: null,
+    source: 'r43 combination-lab form: no intro, four statements of one letter, every layer sounding throughout so a ticked layer is an audible layer',
+  },
   vf_form_standard_4: {
     intro: 4, sections: ['A', 'A', 'B', 'A', 'B', 'C', 'B'], silentVerse: 3,
     source: 'r39: the standard form with a 4-bar intro — one loop of the riff, then the voice (intro lengths were 8 on nine of ten rows)',

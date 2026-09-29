@@ -3,6 +3,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { execFileSync } from 'node:child_process';
+import { acquireVerdictsLock, releaseVerdictsLock } from './_verdicts-lock.mjs';
 import { readFileSync, writeFileSync, rmSync, existsSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -10,39 +11,67 @@ import { fileURLToPath } from 'node:url';
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 
 test('songs page: 10 prompts build, every expr green, structure varied', () => {
-  const log = execFileSync('node', ['scripts/audition-songs.mjs'], { cwd: ROOT, encoding: 'utf8' });
-  assert.match(log, /47 vibe-prompted songs/);
-  // D86: the four fully-synth songs exist and their acc hand left the piano
-  for (const n of ['vs_calm_lab', 'vs_calm_menu', 'vs_tense_stealth', 'vs_excited_casino']) {
-    const line = log.split('\n').find((l) => l.includes(n));
-    assert.ok(line, `${n} is missing`);
-    assert.ok(line.includes('acc hand on gm_epiano1') || line.includes('gm_synth_bass_1'), `${n} must not be piano-centered`);
-  }
-  assert.match(log, /(\d+)\/\1 exprs evaluated green/);
-  assert.match(log, /parses clean/);
-  // the genocide transform: sad shop must be slow and drum-free
-  const sad = log.split('\n').find((l) => l.includes('vs_sad_shop'));
-  assert.ok(sad && !sad.includes('drums:'), 'sad shop must strip drums');
-  assert.ok(Number(sad.match(/@(\d+)/)[1]) < 80, 'sad shop must be slow');
-  // his named vibes are present
-  for (const n of ['vs_happy_shop', 'vs_x_construction', 'vs_tense_fight']) assert.ok(log.includes(n));
-  // tone travel fires somewhere
-  assert.match(log, /travel/);
-  // the vouched drums ride with his notes quoted; the buildup/drop song exists
-  assert.match(log, /dp_residual_stress_study \(harvested — his note: “rising tension/);
-  const drop = log.split('\n').find((l) => l.includes('vs_excited_festival_drop'));
-  assert.ok(drop && drop.includes('BUILDUP+DROP'), 'the buildup/drop song is missing');
-  assert.ok(drop.includes('dp_b_52_s buildup bars 1-4'));
-  // articulation is stated per song: damper on the wet vibes, staccato on the crisp
-  assert.match(log, /vs_calm_water:.*legato \+ damper pedal/);
-  assert.match(log, /vs_goofy_kitchen:.*staccato/);
-  // determinism: a rebuild produces the identical page. The BUILD stamp has
-  // minute resolution and is exempt — two builds straddling a minute
-  // boundary flaked this test twice (D89, D92) with zero real drift.
-  const stripStamp = (s) => s.replace(/const BUILD = '[^']*';/, "const BUILD = '';");
-  const first = readFileSync(join(ROOT, 'audition/songs.html'), 'utf8');
-  execFileSync('node', ['scripts/audition-songs.mjs'], { cwd: ROOT });
-  assert.equal(stripStamp(readFileSync(join(ROOT, 'audition/songs.html'), 'utf8')), stripStamp(first));
+  // r42: the two builds below must see ONE state of src/lib/verdicts.js.
+  // Two other test files rewrite it (and restore it) while this runs, which
+  // is what made this assertion fail in ~2 of 3 full-suite runs — see
+  // test/_verdicts-lock.mjs for the measurement.
+  acquireVerdictsLock();
+  try {
+      const log = execFileSync('node', ['scripts/audition-songs.mjs'], { cwd: ROOT, encoding: 'utf8' });
+      assert.match(log, /47 vibe-prompted songs/);
+      // D86: the four fully-synth songs exist and their acc hand left the piano
+      for (const n of ['vs_calm_lab', 'vs_calm_menu', 'vs_tense_stealth', 'vs_excited_casino']) {
+        const line = log.split('\n').find((l) => l.includes(n));
+        assert.ok(line, `${n} is missing`);
+        assert.ok(line.includes('acc hand on gm_epiano1') || line.includes('gm_synth_bass_1'), `${n} must not be piano-centered`);
+      }
+      assert.match(log, /(\d+)\/\1 exprs evaluated green/);
+      assert.match(log, /parses clean/);
+      // the genocide transform: sad shop must be slow and drum-free
+      const sad = log.split('\n').find((l) => l.includes('vs_sad_shop'));
+      assert.ok(sad && !sad.includes('drums:'), 'sad shop must strip drums');
+      assert.ok(Number(sad.match(/@(\d+)/)[1]) < 80, 'sad shop must be slow');
+      // his named vibes are present
+      for (const n of ['vs_happy_shop', 'vs_x_construction', 'vs_tense_fight']) assert.ok(log.includes(n));
+      // tone travel fires somewhere
+      assert.match(log, /travel/);
+      // the vouched drums ride with his notes quoted; the buildup/drop song exists
+      assert.match(log, /dp_residual_stress_study \(harvested — his note: “rising tension/);
+      const drop = log.split('\n').find((l) => l.includes('vs_excited_festival_drop'));
+      assert.ok(drop && drop.includes('BUILDUP+DROP'), 'the buildup/drop song is missing');
+      assert.ok(drop.includes('dp_b_52_s buildup bars 1-4'));
+      // articulation is stated per song: damper on the wet vibes, staccato on the crisp
+      assert.match(log, /vs_calm_water:.*legato \+ damper pedal/);
+      assert.match(log, /vs_goofy_kitchen:.*staccato/);
+      // determinism: a rebuild produces the identical page. The BUILD stamp has
+      // minute resolution and is exempt — two builds straddling a minute
+      // boundary flaked this test twice (D89, D92) with zero real drift.
+      const stripStamp = (s) => s.replace(/const BUILD = '[^']*';/, "const BUILD = '';");
+      // r42 — WHY THIS NEEDS A GUARD, measured rather than guessed. This assertion
+      // failed in roughly two of three full-suite runs and passed alone every time,
+      // and r41 recorded it as "several test files each run the generator". They do
+      // not: songs.test.js is the ONLY file that executes it. What the other files
+      // do is WRITE THE GENERATOR'S INPUT — test/facets.test.js and
+      // test/foundations.test.js run `import-verdicts.mjs <fixture>`, which
+      // rewrites src/lib/verdicts.js and restores it in a finally. node --test runs
+      // files in parallel, so a fixture's verdicts can be live for one of the two
+      // builds below, and the page legitimately differs.
+      //
+      // So the precondition is "the verdicts file did not move underneath us", and
+      // the honest thing is to check it rather than to retry until green. A build
+      // pair straddling a foreign write is VOID, not a failure; a build pair over
+      // stable input must be byte-identical, and that is still asserted.
+      const vpath = join(ROOT, 'src/lib/verdicts.js');
+      const vBefore = readFileSync(vpath, 'utf8');
+      const first = readFileSync(join(ROOT, 'audition/songs.html'), 'utf8');
+      execFileSync('node', ['scripts/audition-songs.mjs'], { cwd: ROOT });
+      const second = readFileSync(join(ROOT, 'audition/songs.html'), 'utf8');
+      if (readFileSync(vpath, 'utf8') !== vBefore) {
+        console.log('  (determinism check VOID: another test file rewrote src/lib/verdicts.js mid-build)');
+      } else {
+        assert.equal(stripStamp(second), stripStamp(first));
+      }
+  } finally { releaseVerdictsLock(); }
 });
 
 test('a KEPT song never drifts from the harmony that was judged (D64 pin)', async () => {

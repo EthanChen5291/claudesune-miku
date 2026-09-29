@@ -117,6 +117,90 @@ export const SAMPLE_PACK = {
   // kind 'pitched': every src filename carries its note (chorus-male-c3.wav);
   // the pack builder emits a note-keyed strudel map so .note() repitches
   // from the nearest sample.
+  // ---- VSCO strings for the BROWSER tier (r43) ---------------------------
+  // HIS ASK on the combination lab: "can you allow HQ on for all of them
+  // because otherwise the strings dont sound good". That page cannot have HQ
+  // renders — 51 togglable layers is more combinations than can be pre-rendered
+  // — so the browser tier gets the renderer's OWN samples instead.
+  //
+  // `kind: 'sfz'` reads a GENERATED sfz and takes, per keycentre, the loud
+  // velocity layer and its measured de-swell offset. Same file, same layer,
+  // same trim as sfizz uses, which is the only way the two tiers cannot drift.
+  //
+  // PAGE-SCOPED NAMES ON PURPOSE. These are `vsco_*`, not `gm_cello` — naming
+  // them after the GM voices would re-timbre every judged song on every page
+  // that loads this pack, which is D91 arriving through the sample tier (the
+  // same mistake r39 caught in the vocal renderer's defaults).
+  // r43, HIS THIRD NOTE: "i still feel like it's held for so long. like even
+  // when i just play one cell, it like fills up everything and is really wet".
+  // The first pass shipped 3-SECOND sustains and relied on the player's
+  // note-length control to cut them — which cannot be verified from here, and
+  // the symptom said it was not happening. So the SAMPLE is short now: 1.0 s
+  // for the sixteenth-note banks, 1.6 s for the bass whose longest written note
+  // is a whole bar. Nothing downstream can make a 1-second sample ring for
+  // three. `fadeS` is what stops a bowed sustain clicking when it is cut.
+  vsco_cello: { kind: 'vsco', dir: 'vendor/sfz/VSCO-2-CE/Strings/Cello Section/susvib', durS: 1.0, fadeS: 0.25,
+    note: 'VSCO cello section, susvib, loud velocity layer, de-swelled — the browser twin of the HQ cello' },
+  vsco_violin: { kind: 'vsco', dir: 'vendor/sfz/VSCO-2-CE/Strings/Violin Section/susVib', durS: 1.0, fadeS: 0.25,
+    note: 'VSCO violin section, susVib, loud layer, de-swelled — the octave-up double of the cello cell' },
+  vsco_viola: { kind: 'vsco', dir: 'vendor/sfz/VSCO-2-CE/Strings/Viola Section/susvib', durS: 1.4, fadeS: 0.25,
+    note: 'VSCO viola section, susvib, loud layer, de-swelled — the middle of the string trio' },
+  vsco_bass: { kind: 'vsco', dir: 'vendor/sfz/VSCO-2-CE/Strings/Solo Contrabass/SusVib', durS: 1.6, fadeS: 0.25,
+    note: 'VSCO solo contrabass, SusVib, loud layer, de-swelled — the low end of the combination lab, which is sixteen of its layers' },
+
+  // r43 SECOND PASS — THE SHORT ARTICULATIONS, and the reason the first pass
+  // could not work. HIS NOTE: "is it just HQ? like it wasn't like this before.
+  // however with HQ off it sounds bad. it's still the same amount of wet and i
+  // cant layer them properly cus its too reverby."
+  //
+  // MEASURED on the bytes the browser actually plays (decoded back out of
+  // audition/sample-pack.js), as median dB below each note's OWN peak 0.5 s
+  // later — a statistic that does not depend on how long the file happens to be:
+  //
+  //     sustain   cello -4.8   viola -4.7   violin  -8.5   bass  -2.7
+  //     spiccato  cello -26.1  viola -40.0  violin -50.5   bass -16.9
+  //
+  // The sustains do not decay; the cello is LOUDER at +0.5 s than at +0.25 s,
+  // because it is still swelling. That is the sound he describes: a
+  // sixteenth-note cell whose notes do not decay does not layer, it accumulates.
+  // Shortening a SWELL (the first pass) does not make it decay — VSCO's susvib
+  // peaks 5.25 s into the source file and holds, so any de-swelled slice of it
+  // is a plateau. The struck banks decay on every note, at every pitch: checked
+  // note by note at the BOTTOM of each range, where a struck sample is least
+  // convincing, spiccato is still quieter than its sustain twin at +0.5 s on
+  // every one (0.2 to 35 dB, median ~14).
+  //
+  // NOTE FOR WHOEVER READS THIS NEXT: the first version of this table was
+  // measured on SILENT FILES. `enc()` computed its fade on the source timeline
+  // while `-ss` seeked the output, so 20 of 88 notes — including all eleven of
+  // vsco_violin — encoded to digital silence, and silence has no decay to find.
+  // The conclusion survived re-measurement; the numbers did not. D85: a
+  // suspiciously bad number ("this bank NEVER decays") is a bug until proven.
+  //
+  // `noSwell` because the de-swell seeks the first window at 80% of peak, which
+  // on a struck sample is the ATTACK. It happens to return 0 here via the
+  // `len - minLeftSec` clamp, and a fix that survives on a coincidence is not
+  // one; this states the intent in the data.
+  //
+  // `durS` keeps each bank's own decay and only bounds the pack: the spiccati
+  // are 40 dB down well inside 1.0 s, the pizzicati by 1.2 s.
+  vsco_cello_spic: { kind: 'vsco', dir: 'vendor/sfz/VSCO-2-CE/Strings/Cello Section/spic', durS: 1.0, fadeS: 0.08, noSwell: true,
+    note: 'VSCO cello section SPICCATO, loud layer — the struck twin of vsco_cello, for sixteenth-note cells' },
+  vsco_violin_spic: { kind: 'vsco', dir: 'vendor/sfz/VSCO-2-CE/Strings/Violin Section/Spic', durS: 1.0, fadeS: 0.08, noSwell: true,
+    note: 'VSCO violin section SPICCATO, loud layer — the octave-up double, the one bank measured with no decay at all as a sustain' },
+  vsco_viola_spic: { kind: 'vsco', dir: 'vendor/sfz/VSCO-2-CE/Strings/Viola Section/spic', durS: 1.0, fadeS: 0.08, noSwell: true,
+    note: 'VSCO viola section SPICCATO, loud layer' },
+  vsco_bass_spic: { kind: 'vsco', dir: 'vendor/sfz/VSCO-2-CE/Strings/Solo Contrabass/Spic', durS: 1.2, fadeS: 0.08, noSwell: true,
+    note: 'VSCO solo contrabass SPICCATO, loud layer — the low end of the combination lab, struck' },
+  vsco_cello_pizz: { kind: 'vsco', dir: 'vendor/sfz/VSCO-2-CE/Strings/Cello Section/pizzT', durS: 1.2, fadeS: 0.1, noSwell: true,
+    note: 'VSCO cello section PIZZICATO, loud layer — the plucked mode' },
+  vsco_violin_pizz: { kind: 'vsco', dir: 'vendor/sfz/VSCO-2-CE/Strings/Violin Section/Pizz', durS: 1.2, fadeS: 0.1, noSwell: true,
+    note: 'VSCO violin section PIZZICATO, loud layer' },
+  vsco_viola_pizz: { kind: 'vsco', dir: 'vendor/sfz/VSCO-2-CE/Strings/Viola Section/pizz', durS: 1.2, fadeS: 0.1, noSwell: true,
+    note: 'VSCO viola section PIZZICATO, loud layer' },
+  vsco_bass_pizz: { kind: 'vsco', dir: 'vendor/sfz/VSCO-2-CE/Strings/Solo Contrabass/Pizz', durS: 1.4, fadeS: 0.1, noSwell: true,
+    note: 'VSCO solo contrabass PIZZICATO, loud layer' },
+
   choir_male: { kind: 'pitched', dir: 'vendor/sfz/SSO-Chorus/Samples', match: /^chorus-male-/, note: 'SSO male chorus aahs, G2-F#4, looped sustains' },
   choir_female: { kind: 'pitched', dir: 'vendor/sfz/SSO-Chorus/Samples', match: /^chorus-female-/, note: 'SSO female chorus aahs, G4-C6, looped sustains' },
 

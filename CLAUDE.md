@@ -299,6 +299,64 @@ ambiguous). Read the LAST few D-entries before starting any round.
   intro loop; a test pins that no two rows share the tuple. And a
   letter-less section must never be starred (`null*` fell through every
   letter dispatch to the verse figure — five intros lost their riff).
+- **D77 IS CHECKED ON THE NOTE AND HIS EAR INTEGRATES THE BAR (r44/D150).** His
+  "this group volume should be reduced" (the cell group in the combination lab).
+  Every support layer PASSES the per-note check — the ostinato runs 0.20–0.53x the
+  lead, median 0.44 — while its per-BAR energy (gain x onsets) runs **2.88–3.33x**
+  over the bars where both sound. His own two numbers are the threshold: the group
+  he asked to reduce measures 3.77x, the +8ve violin group he did not 2.55x.
+  `SUPPORT_ENERGY_CAP` is applied where the layer is ASSEMBLED (D123) in the lead's
+  own units, and the density term is **STRIKES WEIGHTED BY √NOTES** — counting notes
+  bands the dyad motor with the single-note cell, which his verdicts separate
+  (he asked for MORE energy on the motor songs); counting strikes lets a dense
+  chordal figure through. The whole-song ratio said 6.19x and was WRONG: the
+  ostinato plays where the tune rests. Measure over SHARED bars.
+- **A GAIN EDIT IS NOT AN INAUDIBLE EDIT — THE ENTRY STAGGER HASHES THE RENDERED
+  EXPRESSION, GAIN LITERALS INCLUDED (r44/D150, verify catch).** `audition-songs.mjs`
+  sorts co-entering layers by `fnv(exprs[i])`, so the r44 cap's **−0.6 dB** trim on
+  ONE layer rotated that sort on all four judged movers: **9 layers changed which
+  bars they sound in, 12 bars of layer sound gained or lost**, and the trimmed cello
+  lost its `SERIOUS_RAMP` crescendo and appeared at full level — verbatim the
+  sr_ashes card that created the ramp. A "gain-only" byte compare is TRUE of the
+  (time, midi, sound) multiset and still misses this. **Fix identified and NOT taken
+  in r44** (sort on identity, not text) because stabilizing a hash re-rolls it once
+  for every song with a 5+ layer entry group; it is its own round. Until then, scope
+  any level change away from judged songs.
+- **A COMPUTED PICK REVERTS ON HIS FIRST NOTE — WRITE IT INTO THE ROW (r44/D150).**
+  A retrieval gated on "never auditioned" flips the moment he writes about the song,
+  and the slot falls back to the STACK DEFAULT — a different FIGURE, not a different
+  gain. D91's keep-transition law, one turn ahead of the click: the rotation CHOOSES,
+  the row RECORDS, and a test fails if a fresh row would draw a pick it does not pin.
+- **A CAP APPLIED PER ENTRY COLLAPSES A DOUBLING ONTO ITS MAIN LINE (r44/D150).**
+  Once it bites, the capped gain is `cap × leadPB / perBar` — independent of the
+  entry's own gain — so a cell at 0.5 and its +8ve twin at 0.34 went 0.677 → 0.879,
+  and to **exactly 1.000** on one pair. Take the multiplier from the LOUDEST entry
+  binding a figure and apply it to every entry of that figure; the hierarchy then
+  survives by construction (re-measured 0.668).
+- **A RETRIEVAL RE-ROLL CANNOT GATE ON `historyLess()` (r44/D150).** That helper
+  answers "may a new RULE reach this song", and `noteBlind` deliberately makes it
+  TRUE for a song whose own page has notes on it (D118). A re-roll asks whether he
+  has HEARD the song (D95). Gated on historyLess, the r44 slot rotation moved
+  **ten of the eleven judged serious rows, two of them pinned prose keeps** —
+  `vocaloidOpts` sets noteBlind page-wide. `neverAuditioned()` is the one gate
+  allowed to read CARD_NOTES outside historyLess, and the layerstack test now
+  admits exactly that one named declaration.
+- **A LAB PAGE BUILDS EVERY CARD UNDER ONE NAME, SO PER-SONG GATES ARE BLIND THERE
+  (r44/D150).** cells.html and mixlab.html share one hash name per card (D120 — an
+  A/B under two names tests the names), so a page-wide default re-rolled **14 of 23
+  judged cards and 26 of 64 palette layers**, where a checkbox labelled "the one you
+  have" would have played something else. Any retrieval rule is OPT-IN per page.
+- **THE SLOT LITERAL IS D119's POOL OF ONE, AND HE SAID SO FIRST (r44/D150).** "im
+  sure there are more patterns for you to use than the one in the beginning - you've
+  used that for like 3-5 songs already" (r41, four measured) and "bass melodies like
+  the zoltraak one sound really good … each of these serve as good backbone" (r44)
+  are one ask: eleven songs drew on 3 cells and 2 basses out of 16 each.
+  `SERIOUS_POOLS` + `rotateSeriousFigures`, membership from his CLICKS only — a
+  CORRECTION IS NOT A VERDICT (D148's fixed triplet grid was caught by the pool's own
+  membership test), and a `partial` figure never enters a pool. His overlay ruling —
+  "just dont overlay (comes up to be greater than 3)" — is a PER-GROUP cap (within a
+  group the layers share voice and register; the total reading contradicts his
+  standing "more layers" ask), pinned by a test and surfaced to him as a question.
 - **SERIOUS IS THREE MEASURED NUMBERS, NOT AN ENERGY (r40/D145).** His "all of
   our energetic songs sound like 'light energetic' … i just want more serious
   prompts to have more serious vibes". Ten reference files (AoT, Homura, Muzan,

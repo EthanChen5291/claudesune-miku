@@ -4,6 +4,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { execFileSync } from 'node:child_process';
+import { acquireVerdictsLock, releaseVerdictsLock } from './_verdicts-lock.mjs';
 import { readFileSync, writeFileSync, rmSync, existsSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -57,6 +58,10 @@ test('audition page builds with all 150 pattern×progression exprs green', () =>
 });
 
 test('foundations export round-trips: FIGURE_VERDICTS land and overlay ratifies', () => {
+  // r42: src/lib/verdicts.js is the GENERATOR'S INPUT and this test rewrites
+  // it — hold the suite-wide lock so a parallel build never sees the fixture
+  // (test/_verdicts-lock.mjs has the measurement behind it)
+  acquireVerdictsLock();
   const out = join(ROOT, 'src/lib/verdicts.js');
   const had = existsSync(out) ? readFileSync(out, 'utf8') : null;
   const fixture = join(ROOT, 'test', '.fnd-verdicts-fixture.json');
@@ -98,10 +103,15 @@ test('foundations export round-trips: FIGURE_VERDICTS land and overlay ratifies'
   } finally {
     rmSync(fixture, { force: true });
     if (had == null) rmSync(out, { force: true }); else writeFileSync(out, had);
+    releaseVerdictsLock();
   }
 });
 
 test('a stale figure snapshot is refused by the overlay', () => {
+  // r42: src/lib/verdicts.js is the GENERATOR'S INPUT and this test rewrites
+  // it — hold the suite-wide lock so a parallel build never sees the fixture
+  // (test/_verdicts-lock.mjs has the measurement behind it)
+  acquireVerdictsLock();
   const out = join(ROOT, 'src/lib/verdicts.js');
   const had = existsSync(out) ? readFileSync(out, 'utf8') : null;
   const fixture = join(ROOT, 'test', '.fnd-stale-fixture.json');
@@ -122,5 +132,6 @@ test('a stale figure snapshot is refused by the overlay', () => {
   } finally {
     rmSync(fixture, { force: true });
     if (had == null) rmSync(out, { force: true }); else writeFileSync(out, had);
+    releaseVerdictsLock();
   }
 });
