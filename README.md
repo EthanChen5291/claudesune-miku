@@ -60,7 +60,17 @@ npm install        # Node 22+; Strudel 1.1.0 exact-pinned
 
 **Do not upgrade Strudel.** Newer `@strudel/core` imports a browser-only module and dies under Node, and headless evaluation is how every song is measured. Two 1.1.0 quirks are worked around: `.voicing()` in root mode (D3) and mini-fied double-quoted object keys in the transpiler (D12).
 
-The HQ tier needs sfizz, DawDreamer with Surge XT, fluidsynth as fallback, and ffmpeg; sample libraries and patches live under `vendor/` and are gitignored. The vocal tier needs a Python 3.12 venv with onnxruntime, `infer_rvc_python` and torch, a DiffSinger voicebank under `vendor/vocal/`, and an RVC model. On macOS stage 2 must run with `KMP_DUPLICATE_LIB_OK=TRUE OMP_NUM_THREADS=1`; the orchestrator sets both.
+```
+┌──────────────────────┐  ┌──────────────────────┐  ┌──────────────────────┐
+│  BROWSER             │  │  HQ RENDER           │  │  VOCAL               │
+│                      │  │                      │  │                      │
+│  npm install         │  │  sfizz               │  │  Python 3.12 venv    │
+│  nothing else        │  │  DawDreamer + Surge  │  │  onnxruntime, torch  │
+│                      │  │  fluidsynth fallback │  │  infer_rvc_python    │
+│                      │  │  ffmpeg              │  │  DiffSinger voicebank│
+│                      │  │  vendor/ (ignored)   │  │  RVC model           │
+└──────────────────────┘  └──────────────────────┘  └──────────────────────┘
+```
 
 ## Quick start
 
