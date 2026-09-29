@@ -4,7 +4,7 @@
 
 # Claudesune Miku
 
-**The best Claude skill**
+**THE BEST CLAUDE SKILL**
 
 [![Decisions](https://img.shields.io/badge/decisions-D1%E2%80%93D150-blueviolet.svg)](DECISIONS.md)
 [![Strudel](https://img.shields.io/badge/strudel-1.1.0%20pinned-teal.svg)](#installation)
