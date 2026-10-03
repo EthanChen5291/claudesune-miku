@@ -14,11 +14,29 @@ Package name `motif-engine`
 
 </div>
 
-## Overview
+## What is Claudesune Miku?
 
-Claudesune Miku is a [Strudel](https://strudel.cc) game-music engine. An **emotion** plus an **environment** compiles to harmony, accompaniment, a letter-form melody, companion lines, drums, a section-by-section arrangement, an HQ sampled render, and a sung vocal with generated Japanese lyrics. Every rule was learned from my keep/kill verdicts, round by round.
+Outside of model APIs such as Suno, Udio, or Treblo, quality AI music generation APIs are highly limited, and, where they exist, accumulate high costs over time. Claudesune Miku aims to bring music generation back to home base, honing Claude's understandings of musical intent, fine-grained editing, "quality" sample libraries, deterministic outputs, and arrangement theory.
 
-## How a song is made
+## Why is Claudesune Miku?
+
+The name is derived from the popular Japanese Vocaloid voicebank, **Hatsune Miku**. I finalized this project in the weeks leading up to Hatsune Miku's 19th anniversary, and wanted to pay respect to the idol behind genius inventions such as Nyan Cat and (revised) Ievan Polkka. The Vocaloid bank was added as a token of appreciation.
+
+## The Problem of "Song Iteration"
+
+Music producers don't "one-shot" songs. In fact, artists spend up to 40+ hours on one track iterating and polishing. Thus, as AI becomes more and more incorporated into the arts, it is important that edits across sessions:
+
+  (1.) accurately map vague intent ("change the middle part to be scarier") to chord progression, instrument, and layering tweaks
+  (2.) are fine-grained (i.e. "change melody in climax" should preserve other sections and voices)
+  (3.) understand and remember each instrument's contribution to the song as a whole, small or large
+  (3.) do not drift across songs 
+  (4.) remain cheap in API costs 
+  
+...all while ensuring that stylistic intent is preserved and instrument quality/samples are pinned. 
+
+Claudesune Miku connects Claude with a custom [Strudel](https://strudel.cc) game-music engine and gives it access to extended harmonic support, arrangement theory, letter-form melody creation, companion lines, drums, a section-by-section arrangement, an HQ sampled render, and a sung copyright-free Hatsune Miku Vocaloid. This gives Claude a more focused music composition foundation while also leveraging state-of-the-art sample libraries for generation.
+
+## The magic.
 
 ```
 ┌──────────────────────────────────────────┐
@@ -50,7 +68,23 @@ Claudesune Miku is a [Strudel](https://strudel.cc) game-music engine. An **emoti
 └──────────────────────────────────────────┘
 ```
 
-The same prompt and song name always give the same song, so revisions compare against a fixed baseline instead of a re-roll.
+To ensure strictly legal, harmony edits, I used closed, typed operator sets rather than free perturbation as the default, with eight function-preserving substitutions: recolour, suspend, rotate, third_sub, tritone_sub and so on. Free perturbation doesn't work well because any edit to harmony is significant. So, if you were to change just one chord of a four-chord loop, you'd functionally be changing 25% of the harmony. If that progression landed on the cadence, it would break the loop itself. This creates the need for carefully set bounds.
+
+Each operator declares what it preserves and has a cost on an audibility scale. It may only produce chord degrees the corpus has actually played, and it can't introduce a neighboring duplicate like Cm Cm Eb Bb. This is not to say that neighboring duplicates are "bad composition", but moreso that non-specialized AI models are not advanced enough to leverage them well. So we just cut our losses.
+
+Descriptors (explicit or implicit from user prompt) such as "gentle" or a "bold" variation reaches for different operators by cost. This idea also applies the same idea to ostinato variation, where the pitch is changed, but the onsets and accents are fixed. 
+
+To protect against drift, we implement four core things:
+
+- Each instrument layer logs why it exists, so a request like "make the pad quieter" can easily point at a single decision instead of re-deciding the whole arrangement.
+
+- Every edit declares its scope (which layers, sections, and aspects it may touch), and anything that changes outside that scope rejected. Every new failures flagged to prevent hand edits from being undone by a later recompile.
+
+- The song name is hashed to pick key, tempo, and voices, so the same prompt and name always give the same song. This allows us to actually test if "change one variable" produces valid outputs.
+
+Lastly, since Strudel is ran headless, Claude can count notes, gains and overlaps in the actual mix before saying which layer is at fault.
+
+**Hope you enjoy!**
 
 ## Installation
 
