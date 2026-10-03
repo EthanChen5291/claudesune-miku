@@ -20,7 +20,7 @@ Outside of model APIs such as Suno, Udio, or Treblo, quality AI music generation
 
 ## Why is Claudesune Miku?
 
-The name is derived from the popular Japanese Vocaloid voicebank, **Hatsune Miku**. I finalized this project in the weeks leading up to Hatsune Miku's 19th anniversary, and wanted to pay respect to the idol behind genius inventions such as Nyan Cat and (revised) Ievan Polkka. The Vocaloid bank was added as a token of appreciation.
+The name is derived from the popular Japanese Vocaloid voicebank, **Hatsune Miku**. I finalized this project in the weeks leading up to Hatsune Miku's 19th anniversary, and wanted to pay respect to the idol behind genius inventions such as [Nyan Cat](https://www.youtube.com/watch?v=2yJgwwDcgV8) and (revised) [Ievan Polkka](https://www.youtube.com/watch?v=6qmUTclZhUo). The Vocaloid bank was added as a token of appreciation.
 
 ## The Problem of "Song Iteration"
 
