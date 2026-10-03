@@ -74,12 +74,12 @@ Free perturbation doesn't work well because any edit to harmony is significant. 
 
 Each operator declares what it preserves and has a cost on an audibility scale. It may only produce chord degrees the corpus has actually played, and it can't introduce a neighboring duplicate like `Cm Cm Eb Bb`. This is not to say that neighboring duplicates are "bad composition", but moreso that non-specialized AI models are not advanced enough to leverage them well. So we just cut our losses.
 
-Descriptors (explicit or implicit from user prompt) such as "gentle" or a "bold" variation reaches for different operators by cost. This idea also applies the same idea to ostinato variation, where the pitch is changed, but the onsets and accents are fixed.
+Descriptors (explicit or implicit from user prompt) such as "gentle" or a "bold" variation reaches for different operators by cost. This idea also applies to ostinato variation, where the pitch is changed, but the onsets and accents are fixed.
 
 To protect against drift, we implement four core things:
 
 - Each instrument layer logs why it exists, so a request like "make the pad quieter" can easily point at a single decision instead of re-deciding the whole arrangement.
-- Every edit declares its scope (which layers, sections, and aspects it may touch), and anything that changes outside that scope rejected. Every new failures flagged to prevent hand edits from being undone by a later recompile.
+- Every edit declares its scope (which layers, sections, and aspects it may touch), and anything that changes outside that scope is rejected. New failures are flagged to prevent hand edits from being undone by a later recompile.
 - The song name is hashed to pick key, tempo, and voices, so the same prompt and name always give the same song. This allows us to actually test if "change one variable" produces valid outputs.
 - Lastly, since Strudel is ran headless, Claude can count notes, gains and overlaps in the actual mix before saying which layer is at fault.
 
